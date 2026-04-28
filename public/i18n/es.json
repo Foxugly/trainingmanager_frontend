@@ -52,6 +52,37 @@
       "energy_segments": "Segmentos energéticos",
       "modalities": "Modalidades"
     },
+    "energy_segments": {
+      "title": "Segmentos energéticos",
+      "new": "Nuevo segmento",
+      "show_inactive": "Mostrar segmentos inactivos",
+      "fields": {
+        "abv": "Código",
+        "description": "Descripción",
+        "energy_system": "Sistema energético",
+        "active": "Activo",
+        "actions": "Acciones"
+      },
+      "form": {
+        "new_title": "Nuevo segmento energético",
+        "edit_title": "Editar segmento",
+        "abv": "Código corto (ej. Z1)",
+        "energy_system": "Sistema energético padre",
+        "energy_system_placeholder": "Selecciona un sistema",
+        "description": "Descripción",
+        "is_active": "Activo"
+      },
+      "actions": {
+        "delete_confirm_title": "¿Desactivar este segmento?",
+        "delete_confirm_message": "El segmento será desactivado (soft delete). Podrás reactivarlo más tarde.",
+        "deleted": "Segmento desactivado.",
+        "restored": "Segmento reactivado.",
+        "saved": "Segmento guardado."
+      },
+      "errors": {
+        "unknown": "Se ha producido un error."
+      }
+    },
     "energy_systems": {
       "title": "Sistemas energéticos",
       "new": "Nuevo sistema energético",

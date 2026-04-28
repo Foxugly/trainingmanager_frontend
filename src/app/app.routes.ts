@@ -41,10 +41,10 @@ export const routes: Routes = [
           },
           {
             path: 'energy-segments',
-            loadComponent: () =>
-              import(
-                './features/admin/energy-segments/energy-segments-placeholder.component'
-              ).then((m) => m.EnergySegmentsPlaceholderComponent),
+            loadChildren: () =>
+              import('./features/admin/energy-segments/energy-segments.routes').then(
+                (m) => m.ENERGY_SEGMENTS_ROUTES,
+              ),
           },
           {
             path: 'modalities',

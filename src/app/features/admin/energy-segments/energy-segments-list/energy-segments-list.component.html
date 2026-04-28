@@ -1,0 +1,81 @@
+<div class="flex justify-between items-center mb-6">
+  <h1 class="text-2xl font-bold">{{ 'admin.energy_segments.title' | transloco }}</h1>
+  <a [routerLink]="['new']">
+    <p-button [label]="'admin.energy_segments.new' | transloco" icon="pi pi-plus" />
+  </a>
+</div>
+
+<div class="mb-4 flex items-center gap-2">
+  <p-checkbox
+    [(ngModel)]="includeInactiveModel"
+    [binary]="true"
+    inputId="seg_include_inactive"
+  />
+  <label for="seg_include_inactive" class="text-sm text-gray-700 cursor-pointer">
+    {{ 'admin.energy_segments.show_inactive' | transloco }}
+  </label>
+</div>
+
+<p-table
+  [value]="segments()"
+  [loading]="loading()"
+  [paginator]="true"
+  [rows]="20"
+  styleClass="bg-white rounded shadow-sm"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th>{{ 'admin.energy_segments.fields.abv' | transloco }}</th>
+      <th>{{ 'admin.energy_segments.fields.description' | transloco }}</th>
+      <th>{{ 'admin.energy_segments.fields.energy_system' | transloco }}</th>
+      <th>{{ 'admin.energy_segments.fields.active' | transloco }}</th>
+      <th>{{ 'admin.energy_segments.fields.actions' | transloco }}</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-seg>
+    <tr>
+      <td><code class="text-xs text-gray-700">{{ seg.abv }}</code></td>
+      <td class="text-sm text-gray-600">{{ seg.description || '—' }}</td>
+      <td>{{ seg.energy_system?.name || '—' }}</td>
+      <td>
+        @if (seg.is_active) {
+          <span class="text-green-600" aria-label="active">●</span>
+        } @else {
+          <span class="text-red-500" aria-label="inactive">●</span>
+        }
+      </td>
+      <td class="flex gap-1">
+        <a [routerLink]="[seg.id, 'edit']">
+          <p-button
+            icon="pi pi-pencil"
+            [text]="true"
+            severity="secondary"
+            [ariaLabel]="'admin.energy_segments.fields.actions' | transloco"
+          />
+        </a>
+        @if (seg.is_active) {
+          <p-button
+            icon="pi pi-trash"
+            [text]="true"
+            severity="danger"
+            (onClick)="confirmDelete(seg)"
+          />
+        } @else {
+          <p-button
+            icon="pi pi-undo"
+            [text]="true"
+            severity="success"
+            (onClick)="restore(seg)"
+          />
+        }
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="5" class="text-center py-4 text-gray-500">—</td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-confirmDialog />

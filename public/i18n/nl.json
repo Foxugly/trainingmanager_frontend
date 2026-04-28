@@ -52,6 +52,37 @@
       "energy_segments": "Energiesegmenten",
       "modalities": "Modaliteiten"
     },
+    "energy_segments": {
+      "title": "Energiesegmenten",
+      "new": "Nieuw segment",
+      "show_inactive": "Inactieve segmenten tonen",
+      "fields": {
+        "abv": "Code",
+        "description": "Beschrijving",
+        "energy_system": "Energiesysteem",
+        "active": "Actief",
+        "actions": "Acties"
+      },
+      "form": {
+        "new_title": "Nieuw energiesegment",
+        "edit_title": "Segment bewerken",
+        "abv": "Korte code (bv. Z1)",
+        "energy_system": "Energiesysteem (ouder)",
+        "energy_system_placeholder": "Selecteer een systeem",
+        "description": "Beschrijving",
+        "is_active": "Actief"
+      },
+      "actions": {
+        "delete_confirm_title": "Dit segment deactiveren?",
+        "delete_confirm_message": "Het segment wordt gedeactiveerd (soft delete). Je kan het later opnieuw activeren.",
+        "deleted": "Segment gedeactiveerd.",
+        "restored": "Segment opnieuw geactiveerd.",
+        "saved": "Segment opgeslagen."
+      },
+      "errors": {
+        "unknown": "Er is een fout opgetreden."
+      }
+    },
     "energy_systems": {
       "title": "Energiesystemen",
       "new": "Nieuw energiesysteem",
