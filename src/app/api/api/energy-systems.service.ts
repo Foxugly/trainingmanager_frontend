@@ -174,6 +174,7 @@ export class EnergySystemsService extends BaseService implements EnergySystemsSe
      * List energy systems (public flavor)
      * CRUD on EnergySystem referential.
      * @endpoint get /api/v1/energy-systems/
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      * @param isActive 
      * @param name 
      * @param ordering Which field to use when ordering the results.
@@ -183,12 +184,21 @@ export class EnergySystemsService extends BaseService implements EnergySystemsSe
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public energySystemsList(isActive?: boolean, name?: string, ordering?: string, page?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedEnergySystemList>;
-    public energySystemsList(isActive?: boolean, name?: string, ordering?: string, page?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedEnergySystemList>>;
-    public energySystemsList(isActive?: boolean, name?: string, ordering?: string, page?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedEnergySystemList>>;
-    public energySystemsList(isActive?: boolean, name?: string, ordering?: string, page?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public energySystemsList(includeInactive?: boolean, isActive?: boolean, name?: string, ordering?: string, page?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedEnergySystemList>;
+    public energySystemsList(includeInactive?: boolean, isActive?: boolean, name?: string, ordering?: string, page?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedEnergySystemList>>;
+    public energySystemsList(includeInactive?: boolean, isActive?: boolean, name?: string, ordering?: string, page?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedEnergySystemList>>;
+    public energySystemsList(includeInactive?: boolean, isActive?: boolean, name?: string, ordering?: string, page?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'include_inactive',
+            <any>includeInactive,
+            QueryParamStyle.Form,
+            true,
+        );
+
 
         localVarQueryParameters = this.addToHttpParams(
             localVarQueryParameters,
@@ -283,18 +293,30 @@ export class EnergySystemsService extends BaseService implements EnergySystemsSe
      * CRUD on EnergySystem referential.
      * @endpoint patch /api/v1/energy-systems/{id}/
      * @param id A unique integer value identifying this energy system.
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      * @param patchedEnergySystemAdmin 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public energySystemsPartialUpdate(id: number, patchedEnergySystemAdmin?: PatchedEnergySystemAdmin, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<EnergySystemAdmin>;
-    public energySystemsPartialUpdate(id: number, patchedEnergySystemAdmin?: PatchedEnergySystemAdmin, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EnergySystemAdmin>>;
-    public energySystemsPartialUpdate(id: number, patchedEnergySystemAdmin?: PatchedEnergySystemAdmin, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EnergySystemAdmin>>;
-    public energySystemsPartialUpdate(id: number, patchedEnergySystemAdmin?: PatchedEnergySystemAdmin, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public energySystemsPartialUpdate(id: number, includeInactive?: boolean, patchedEnergySystemAdmin?: PatchedEnergySystemAdmin, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<EnergySystemAdmin>;
+    public energySystemsPartialUpdate(id: number, includeInactive?: boolean, patchedEnergySystemAdmin?: PatchedEnergySystemAdmin, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EnergySystemAdmin>>;
+    public energySystemsPartialUpdate(id: number, includeInactive?: boolean, patchedEnergySystemAdmin?: PatchedEnergySystemAdmin, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EnergySystemAdmin>>;
+    public energySystemsPartialUpdate(id: number, includeInactive?: boolean, patchedEnergySystemAdmin?: PatchedEnergySystemAdmin, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling energySystemsPartialUpdate.');
         }
+
+        let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'include_inactive',
+            <any>includeInactive,
+            QueryParamStyle.Form,
+            true,
+        );
+
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -341,6 +363,7 @@ export class EnergySystemsService extends BaseService implements EnergySystemsSe
             {
                 context: localVarHttpContext,
                 body: patchedEnergySystemAdmin,
+                params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -356,17 +379,29 @@ export class EnergySystemsService extends BaseService implements EnergySystemsSe
      * CRUD on EnergySystem referential.
      * @endpoint get /api/v1/energy-systems/{id}/
      * @param id A unique integer value identifying this energy system.
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public energySystemsRetrieve(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<EnergySystemAdmin>;
-    public energySystemsRetrieve(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EnergySystemAdmin>>;
-    public energySystemsRetrieve(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EnergySystemAdmin>>;
-    public energySystemsRetrieve(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public energySystemsRetrieve(id: number, includeInactive?: boolean, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<EnergySystemAdmin>;
+    public energySystemsRetrieve(id: number, includeInactive?: boolean, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EnergySystemAdmin>>;
+    public energySystemsRetrieve(id: number, includeInactive?: boolean, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EnergySystemAdmin>>;
+    public energySystemsRetrieve(id: number, includeInactive?: boolean, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling energySystemsRetrieve.');
         }
+
+        let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'include_inactive',
+            <any>includeInactive,
+            QueryParamStyle.Form,
+            true,
+        );
+
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -401,6 +436,7 @@ export class EnergySystemsService extends BaseService implements EnergySystemsSe
         return this.httpClient.request<EnergySystemAdmin>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -415,18 +451,30 @@ export class EnergySystemsService extends BaseService implements EnergySystemsSe
      * CRUD on EnergySystem referential.
      * @endpoint put /api/v1/energy-systems/{id}/
      * @param id A unique integer value identifying this energy system.
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      * @param energySystemAdmin 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public energySystemsUpdate(id: number, energySystemAdmin?: EnergySystemAdmin, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<EnergySystemAdmin>;
-    public energySystemsUpdate(id: number, energySystemAdmin?: EnergySystemAdmin, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EnergySystemAdmin>>;
-    public energySystemsUpdate(id: number, energySystemAdmin?: EnergySystemAdmin, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EnergySystemAdmin>>;
-    public energySystemsUpdate(id: number, energySystemAdmin?: EnergySystemAdmin, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public energySystemsUpdate(id: number, includeInactive?: boolean, energySystemAdmin?: EnergySystemAdmin, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<EnergySystemAdmin>;
+    public energySystemsUpdate(id: number, includeInactive?: boolean, energySystemAdmin?: EnergySystemAdmin, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EnergySystemAdmin>>;
+    public energySystemsUpdate(id: number, includeInactive?: boolean, energySystemAdmin?: EnergySystemAdmin, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EnergySystemAdmin>>;
+    public energySystemsUpdate(id: number, includeInactive?: boolean, energySystemAdmin?: EnergySystemAdmin, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling energySystemsUpdate.');
         }
+
+        let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'include_inactive',
+            <any>includeInactive,
+            QueryParamStyle.Form,
+            true,
+        );
+
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -473,6 +521,7 @@ export class EnergySystemsService extends BaseService implements EnergySystemsSe
             {
                 context: localVarHttpContext,
                 body: energySystemAdmin,
+                params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

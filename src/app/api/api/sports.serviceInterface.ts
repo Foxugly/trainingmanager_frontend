@@ -47,12 +47,13 @@ export interface SportsServiceInterface {
      * List sports (public flavor)
      * Returns the public Sport serializer with localized \&#39;name\&#39;. Available to all authenticated users.
      * @endpoint get /api/v1/sports/
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      * @param isActive 
      * @param ordering Which field to use when ordering the results.
      * @param page A page number within the paginated result set.
      * @param search A search term.
      */
-    sportsList(isActive?: boolean, ordering?: string, page?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedSportList>;
+    sportsList(includeInactive?: boolean, isActive?: boolean, ordering?: string, page?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedSportList>;
 
     /**
      * Create modality (staff only)
@@ -77,6 +78,7 @@ export interface SportsServiceInterface {
      * CRUD on Modality referential, scoped by sport when nested.
      * @endpoint get /api/v1/sports/{sport_pk}/modalities/
      * @param sportPk 
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      * @param isActive 
      * @param name 
      * @param ordering Which field to use when ordering the results.
@@ -84,7 +86,7 @@ export interface SportsServiceInterface {
      * @param search A search term.
      * @param sport 
      */
-    sportsModalitiesList(sportPk: number, isActive?: boolean, name?: string, ordering?: string, page?: number, search?: string, sport?: number, extraHttpRequestParams?: any): Observable<PaginatedModalityList>;
+    sportsModalitiesList(sportPk: number, includeInactive?: boolean, isActive?: boolean, name?: string, ordering?: string, page?: number, search?: string, sport?: number, extraHttpRequestParams?: any): Observable<PaginatedModalityList>;
 
     /**
      * 
@@ -92,9 +94,10 @@ export interface SportsServiceInterface {
      * @endpoint patch /api/v1/sports/{sport_pk}/modalities/{id}/
      * @param id A unique integer value identifying this modality.
      * @param sportPk 
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      * @param patchedModalityAdmin 
      */
-    sportsModalitiesPartialUpdate(id: number, sportPk: number, patchedModalityAdmin?: PatchedModalityAdmin, extraHttpRequestParams?: any): Observable<ModalityAdmin>;
+    sportsModalitiesPartialUpdate(id: number, sportPk: number, includeInactive?: boolean, patchedModalityAdmin?: PatchedModalityAdmin, extraHttpRequestParams?: any): Observable<ModalityAdmin>;
 
     /**
      * Retrieve modality (admin flavor for staff)
@@ -102,8 +105,9 @@ export interface SportsServiceInterface {
      * @endpoint get /api/v1/sports/{sport_pk}/modalities/{id}/
      * @param id A unique integer value identifying this modality.
      * @param sportPk 
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      */
-    sportsModalitiesRetrieve(id: number, sportPk: number, extraHttpRequestParams?: any): Observable<ModalityAdmin>;
+    sportsModalitiesRetrieve(id: number, sportPk: number, includeInactive?: boolean, extraHttpRequestParams?: any): Observable<ModalityAdmin>;
 
     /**
      * 
@@ -112,25 +116,28 @@ export interface SportsServiceInterface {
      * @param id A unique integer value identifying this modality.
      * @param sportPk 
      * @param modalityAdmin 
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      */
-    sportsModalitiesUpdate(id: number, sportPk: number, modalityAdmin: ModalityAdmin, extraHttpRequestParams?: any): Observable<ModalityAdmin>;
+    sportsModalitiesUpdate(id: number, sportPk: number, modalityAdmin: ModalityAdmin, includeInactive?: boolean, extraHttpRequestParams?: any): Observable<ModalityAdmin>;
 
     /**
      * 
      * CRUD on the Sport referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete via perform_destroy. Staff can pass ?include_inactive&#x3D;true to see inactive entries.
      * @endpoint patch /api/v1/sports/{id}/
      * @param id A unique integer value identifying this sport.
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      * @param patchedSportAdmin 
      */
-    sportsPartialUpdate(id: number, patchedSportAdmin?: PatchedSportAdmin, extraHttpRequestParams?: any): Observable<SportAdmin>;
+    sportsPartialUpdate(id: number, includeInactive?: boolean, patchedSportAdmin?: PatchedSportAdmin, extraHttpRequestParams?: any): Observable<SportAdmin>;
 
     /**
      * Retrieve sport (admin flavor for staff)
      * Returns the admin flavor with name_fr/nl/en/it/es when called by a staff user, otherwise the public flavor.
      * @endpoint get /api/v1/sports/{id}/
      * @param id A unique integer value identifying this sport.
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      */
-    sportsRetrieve(id: number, extraHttpRequestParams?: any): Observable<SportAdmin>;
+    sportsRetrieve(id: number, includeInactive?: boolean, extraHttpRequestParams?: any): Observable<SportAdmin>;
 
     /**
      * 
@@ -138,7 +145,8 @@ export interface SportsServiceInterface {
      * @endpoint put /api/v1/sports/{id}/
      * @param id A unique integer value identifying this sport.
      * @param sportAdmin 
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      */
-    sportsUpdate(id: number, sportAdmin: SportAdmin, extraHttpRequestParams?: any): Observable<SportAdmin>;
+    sportsUpdate(id: number, sportAdmin: SportAdmin, includeInactive?: boolean, extraHttpRequestParams?: any): Observable<SportAdmin>;
 
 }

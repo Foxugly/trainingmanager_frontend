@@ -183,6 +183,7 @@ export class SportsService extends BaseService implements SportsServiceInterface
      * List sports (public flavor)
      * Returns the public Sport serializer with localized \&#39;name\&#39;. Available to all authenticated users.
      * @endpoint get /api/v1/sports/
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      * @param isActive 
      * @param ordering Which field to use when ordering the results.
      * @param page A page number within the paginated result set.
@@ -191,12 +192,21 @@ export class SportsService extends BaseService implements SportsServiceInterface
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public sportsList(isActive?: boolean, ordering?: string, page?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedSportList>;
-    public sportsList(isActive?: boolean, ordering?: string, page?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedSportList>>;
-    public sportsList(isActive?: boolean, ordering?: string, page?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedSportList>>;
-    public sportsList(isActive?: boolean, ordering?: string, page?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public sportsList(includeInactive?: boolean, isActive?: boolean, ordering?: string, page?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedSportList>;
+    public sportsList(includeInactive?: boolean, isActive?: boolean, ordering?: string, page?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedSportList>>;
+    public sportsList(includeInactive?: boolean, isActive?: boolean, ordering?: string, page?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedSportList>>;
+    public sportsList(includeInactive?: boolean, isActive?: boolean, ordering?: string, page?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'include_inactive',
+            <any>includeInactive,
+            QueryParamStyle.Form,
+            true,
+        );
+
 
         localVarQueryParameters = this.addToHttpParams(
             localVarQueryParameters,
@@ -422,6 +432,7 @@ export class SportsService extends BaseService implements SportsServiceInterface
      * CRUD on Modality referential, scoped by sport when nested.
      * @endpoint get /api/v1/sports/{sport_pk}/modalities/
      * @param sportPk 
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      * @param isActive 
      * @param name 
      * @param ordering Which field to use when ordering the results.
@@ -432,15 +443,24 @@ export class SportsService extends BaseService implements SportsServiceInterface
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public sportsModalitiesList(sportPk: number, isActive?: boolean, name?: string, ordering?: string, page?: number, search?: string, sport?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedModalityList>;
-    public sportsModalitiesList(sportPk: number, isActive?: boolean, name?: string, ordering?: string, page?: number, search?: string, sport?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedModalityList>>;
-    public sportsModalitiesList(sportPk: number, isActive?: boolean, name?: string, ordering?: string, page?: number, search?: string, sport?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedModalityList>>;
-    public sportsModalitiesList(sportPk: number, isActive?: boolean, name?: string, ordering?: string, page?: number, search?: string, sport?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public sportsModalitiesList(sportPk: number, includeInactive?: boolean, isActive?: boolean, name?: string, ordering?: string, page?: number, search?: string, sport?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedModalityList>;
+    public sportsModalitiesList(sportPk: number, includeInactive?: boolean, isActive?: boolean, name?: string, ordering?: string, page?: number, search?: string, sport?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedModalityList>>;
+    public sportsModalitiesList(sportPk: number, includeInactive?: boolean, isActive?: boolean, name?: string, ordering?: string, page?: number, search?: string, sport?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedModalityList>>;
+    public sportsModalitiesList(sportPk: number, includeInactive?: boolean, isActive?: boolean, name?: string, ordering?: string, page?: number, search?: string, sport?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (sportPk === null || sportPk === undefined) {
             throw new Error('Required parameter sportPk was null or undefined when calling sportsModalitiesList.');
         }
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'include_inactive',
+            <any>includeInactive,
+            QueryParamStyle.Form,
+            true,
+        );
+
 
         localVarQueryParameters = this.addToHttpParams(
             localVarQueryParameters,
@@ -545,21 +565,33 @@ export class SportsService extends BaseService implements SportsServiceInterface
      * @endpoint patch /api/v1/sports/{sport_pk}/modalities/{id}/
      * @param id A unique integer value identifying this modality.
      * @param sportPk 
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      * @param patchedModalityAdmin 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public sportsModalitiesPartialUpdate(id: number, sportPk: number, patchedModalityAdmin?: PatchedModalityAdmin, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ModalityAdmin>;
-    public sportsModalitiesPartialUpdate(id: number, sportPk: number, patchedModalityAdmin?: PatchedModalityAdmin, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ModalityAdmin>>;
-    public sportsModalitiesPartialUpdate(id: number, sportPk: number, patchedModalityAdmin?: PatchedModalityAdmin, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ModalityAdmin>>;
-    public sportsModalitiesPartialUpdate(id: number, sportPk: number, patchedModalityAdmin?: PatchedModalityAdmin, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public sportsModalitiesPartialUpdate(id: number, sportPk: number, includeInactive?: boolean, patchedModalityAdmin?: PatchedModalityAdmin, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ModalityAdmin>;
+    public sportsModalitiesPartialUpdate(id: number, sportPk: number, includeInactive?: boolean, patchedModalityAdmin?: PatchedModalityAdmin, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ModalityAdmin>>;
+    public sportsModalitiesPartialUpdate(id: number, sportPk: number, includeInactive?: boolean, patchedModalityAdmin?: PatchedModalityAdmin, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ModalityAdmin>>;
+    public sportsModalitiesPartialUpdate(id: number, sportPk: number, includeInactive?: boolean, patchedModalityAdmin?: PatchedModalityAdmin, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling sportsModalitiesPartialUpdate.');
         }
         if (sportPk === null || sportPk === undefined) {
             throw new Error('Required parameter sportPk was null or undefined when calling sportsModalitiesPartialUpdate.');
         }
+
+        let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'include_inactive',
+            <any>includeInactive,
+            QueryParamStyle.Form,
+            true,
+        );
+
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -606,6 +638,7 @@ export class SportsService extends BaseService implements SportsServiceInterface
             {
                 context: localVarHttpContext,
                 body: patchedModalityAdmin,
+                params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -622,20 +655,32 @@ export class SportsService extends BaseService implements SportsServiceInterface
      * @endpoint get /api/v1/sports/{sport_pk}/modalities/{id}/
      * @param id A unique integer value identifying this modality.
      * @param sportPk 
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public sportsModalitiesRetrieve(id: number, sportPk: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ModalityAdmin>;
-    public sportsModalitiesRetrieve(id: number, sportPk: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ModalityAdmin>>;
-    public sportsModalitiesRetrieve(id: number, sportPk: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ModalityAdmin>>;
-    public sportsModalitiesRetrieve(id: number, sportPk: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public sportsModalitiesRetrieve(id: number, sportPk: number, includeInactive?: boolean, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ModalityAdmin>;
+    public sportsModalitiesRetrieve(id: number, sportPk: number, includeInactive?: boolean, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ModalityAdmin>>;
+    public sportsModalitiesRetrieve(id: number, sportPk: number, includeInactive?: boolean, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ModalityAdmin>>;
+    public sportsModalitiesRetrieve(id: number, sportPk: number, includeInactive?: boolean, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling sportsModalitiesRetrieve.');
         }
         if (sportPk === null || sportPk === undefined) {
             throw new Error('Required parameter sportPk was null or undefined when calling sportsModalitiesRetrieve.');
         }
+
+        let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'include_inactive',
+            <any>includeInactive,
+            QueryParamStyle.Form,
+            true,
+        );
+
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -670,6 +715,7 @@ export class SportsService extends BaseService implements SportsServiceInterface
         return this.httpClient.request<ModalityAdmin>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -686,14 +732,15 @@ export class SportsService extends BaseService implements SportsServiceInterface
      * @param id A unique integer value identifying this modality.
      * @param sportPk 
      * @param modalityAdmin 
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public sportsModalitiesUpdate(id: number, sportPk: number, modalityAdmin: ModalityAdmin, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ModalityAdmin>;
-    public sportsModalitiesUpdate(id: number, sportPk: number, modalityAdmin: ModalityAdmin, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ModalityAdmin>>;
-    public sportsModalitiesUpdate(id: number, sportPk: number, modalityAdmin: ModalityAdmin, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ModalityAdmin>>;
-    public sportsModalitiesUpdate(id: number, sportPk: number, modalityAdmin: ModalityAdmin, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public sportsModalitiesUpdate(id: number, sportPk: number, modalityAdmin: ModalityAdmin, includeInactive?: boolean, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ModalityAdmin>;
+    public sportsModalitiesUpdate(id: number, sportPk: number, modalityAdmin: ModalityAdmin, includeInactive?: boolean, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ModalityAdmin>>;
+    public sportsModalitiesUpdate(id: number, sportPk: number, modalityAdmin: ModalityAdmin, includeInactive?: boolean, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ModalityAdmin>>;
+    public sportsModalitiesUpdate(id: number, sportPk: number, modalityAdmin: ModalityAdmin, includeInactive?: boolean, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling sportsModalitiesUpdate.');
         }
@@ -703,6 +750,17 @@ export class SportsService extends BaseService implements SportsServiceInterface
         if (modalityAdmin === null || modalityAdmin === undefined) {
             throw new Error('Required parameter modalityAdmin was null or undefined when calling sportsModalitiesUpdate.');
         }
+
+        let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'include_inactive',
+            <any>includeInactive,
+            QueryParamStyle.Form,
+            true,
+        );
+
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -749,6 +807,7 @@ export class SportsService extends BaseService implements SportsServiceInterface
             {
                 context: localVarHttpContext,
                 body: modalityAdmin,
+                params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -763,18 +822,30 @@ export class SportsService extends BaseService implements SportsServiceInterface
      * CRUD on the Sport referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete via perform_destroy. Staff can pass ?include_inactive&#x3D;true to see inactive entries.
      * @endpoint patch /api/v1/sports/{id}/
      * @param id A unique integer value identifying this sport.
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      * @param patchedSportAdmin 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public sportsPartialUpdate(id: number, patchedSportAdmin?: PatchedSportAdmin, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<SportAdmin>;
-    public sportsPartialUpdate(id: number, patchedSportAdmin?: PatchedSportAdmin, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<SportAdmin>>;
-    public sportsPartialUpdate(id: number, patchedSportAdmin?: PatchedSportAdmin, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<SportAdmin>>;
-    public sportsPartialUpdate(id: number, patchedSportAdmin?: PatchedSportAdmin, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public sportsPartialUpdate(id: number, includeInactive?: boolean, patchedSportAdmin?: PatchedSportAdmin, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<SportAdmin>;
+    public sportsPartialUpdate(id: number, includeInactive?: boolean, patchedSportAdmin?: PatchedSportAdmin, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<SportAdmin>>;
+    public sportsPartialUpdate(id: number, includeInactive?: boolean, patchedSportAdmin?: PatchedSportAdmin, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<SportAdmin>>;
+    public sportsPartialUpdate(id: number, includeInactive?: boolean, patchedSportAdmin?: PatchedSportAdmin, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling sportsPartialUpdate.');
         }
+
+        let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'include_inactive',
+            <any>includeInactive,
+            QueryParamStyle.Form,
+            true,
+        );
+
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -821,6 +892,7 @@ export class SportsService extends BaseService implements SportsServiceInterface
             {
                 context: localVarHttpContext,
                 body: patchedSportAdmin,
+                params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -836,17 +908,29 @@ export class SportsService extends BaseService implements SportsServiceInterface
      * Returns the admin flavor with name_fr/nl/en/it/es when called by a staff user, otherwise the public flavor.
      * @endpoint get /api/v1/sports/{id}/
      * @param id A unique integer value identifying this sport.
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public sportsRetrieve(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<SportAdmin>;
-    public sportsRetrieve(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<SportAdmin>>;
-    public sportsRetrieve(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<SportAdmin>>;
-    public sportsRetrieve(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public sportsRetrieve(id: number, includeInactive?: boolean, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<SportAdmin>;
+    public sportsRetrieve(id: number, includeInactive?: boolean, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<SportAdmin>>;
+    public sportsRetrieve(id: number, includeInactive?: boolean, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<SportAdmin>>;
+    public sportsRetrieve(id: number, includeInactive?: boolean, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling sportsRetrieve.');
         }
+
+        let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'include_inactive',
+            <any>includeInactive,
+            QueryParamStyle.Form,
+            true,
+        );
+
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -881,6 +965,7 @@ export class SportsService extends BaseService implements SportsServiceInterface
         return this.httpClient.request<SportAdmin>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -896,20 +981,32 @@ export class SportsService extends BaseService implements SportsServiceInterface
      * @endpoint put /api/v1/sports/{id}/
      * @param id A unique integer value identifying this sport.
      * @param sportAdmin 
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public sportsUpdate(id: number, sportAdmin: SportAdmin, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<SportAdmin>;
-    public sportsUpdate(id: number, sportAdmin: SportAdmin, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<SportAdmin>>;
-    public sportsUpdate(id: number, sportAdmin: SportAdmin, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<SportAdmin>>;
-    public sportsUpdate(id: number, sportAdmin: SportAdmin, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public sportsUpdate(id: number, sportAdmin: SportAdmin, includeInactive?: boolean, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<SportAdmin>;
+    public sportsUpdate(id: number, sportAdmin: SportAdmin, includeInactive?: boolean, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<SportAdmin>>;
+    public sportsUpdate(id: number, sportAdmin: SportAdmin, includeInactive?: boolean, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<SportAdmin>>;
+    public sportsUpdate(id: number, sportAdmin: SportAdmin, includeInactive?: boolean, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling sportsUpdate.');
         }
         if (sportAdmin === null || sportAdmin === undefined) {
             throw new Error('Required parameter sportAdmin was null or undefined when calling sportsUpdate.');
         }
+
+        let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'include_inactive',
+            <any>includeInactive,
+            QueryParamStyle.Form,
+            true,
+        );
+
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -956,6 +1053,7 @@ export class SportsService extends BaseService implements SportsServiceInterface
             {
                 context: localVarHttpContext,
                 body: sportAdmin,
+                params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

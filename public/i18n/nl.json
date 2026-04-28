@@ -52,6 +52,31 @@
       "energy_segments": "Energiesegmenten",
       "modalities": "Modaliteiten"
     },
+    "energy_systems": {
+      "title": "Energiesystemen",
+      "new": "Nieuw energiesysteem",
+      "show_inactive": "Inactieve systemen tonen",
+      "fields": {
+        "name": "Naam",
+        "active": "Actief",
+        "actions": "Acties"
+      },
+      "form": {
+        "new_title": "Nieuw energiesysteem",
+        "edit_title": "Energiesysteem bewerken",
+        "is_active": "Actief"
+      },
+      "actions": {
+        "delete_confirm_title": "Dit systeem deactiveren?",
+        "delete_confirm_message": "Het systeem wordt gedeactiveerd (soft delete). Je kan het later opnieuw activeren.",
+        "deleted": "Systeem gedeactiveerd.",
+        "restored": "Systeem opnieuw geactiveerd.",
+        "saved": "Systeem opgeslagen."
+      },
+      "errors": {
+        "unknown": "Er is een fout opgetreden."
+      }
+    },
     "sports": {
       "title": "Sporten",
       "new": "Nieuwe sport",

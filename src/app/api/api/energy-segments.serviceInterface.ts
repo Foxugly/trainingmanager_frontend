@@ -45,29 +45,32 @@ export interface EnergySegmentsServiceInterface {
      * CRUD on EnergySegment referential.
      * @endpoint get /api/v1/energy-segments/
      * @param energysystem 
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      * @param isActive 
      * @param ordering Which field to use when ordering the results.
      * @param page A page number within the paginated result set.
      * @param search A search term.
      */
-    energySegmentsList(energysystem?: number, isActive?: boolean, ordering?: string, page?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedEnergySegmentList>;
+    energySegmentsList(energysystem?: number, includeInactive?: boolean, isActive?: boolean, ordering?: string, page?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedEnergySegmentList>;
 
     /**
      * 
      * CRUD on EnergySegment referential.
      * @endpoint patch /api/v1/energy-segments/{id}/
      * @param id A unique integer value identifying this energy segment.
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      * @param patchedEnergySegmentAdmin 
      */
-    energySegmentsPartialUpdate(id: number, patchedEnergySegmentAdmin?: PatchedEnergySegmentAdmin, extraHttpRequestParams?: any): Observable<EnergySegmentAdmin>;
+    energySegmentsPartialUpdate(id: number, includeInactive?: boolean, patchedEnergySegmentAdmin?: PatchedEnergySegmentAdmin, extraHttpRequestParams?: any): Observable<EnergySegmentAdmin>;
 
     /**
      * Retrieve energy segment (admin flavor for staff)
      * CRUD on EnergySegment referential.
      * @endpoint get /api/v1/energy-segments/{id}/
      * @param id A unique integer value identifying this energy segment.
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      */
-    energySegmentsRetrieve(id: number, extraHttpRequestParams?: any): Observable<EnergySegmentAdmin>;
+    energySegmentsRetrieve(id: number, includeInactive?: boolean, extraHttpRequestParams?: any): Observable<EnergySegmentAdmin>;
 
     /**
      * 
@@ -75,7 +78,8 @@ export interface EnergySegmentsServiceInterface {
      * @endpoint put /api/v1/energy-segments/{id}/
      * @param id A unique integer value identifying this energy segment.
      * @param energySegmentAdmin 
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      */
-    energySegmentsUpdate(id: number, energySegmentAdmin: EnergySegmentAdmin, extraHttpRequestParams?: any): Observable<EnergySegmentAdmin>;
+    energySegmentsUpdate(id: number, energySegmentAdmin: EnergySegmentAdmin, includeInactive?: boolean, extraHttpRequestParams?: any): Observable<EnergySegmentAdmin>;
 
 }

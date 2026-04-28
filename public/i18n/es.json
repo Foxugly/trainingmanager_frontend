@@ -52,6 +52,31 @@
       "energy_segments": "Segmentos energéticos",
       "modalities": "Modalidades"
     },
+    "energy_systems": {
+      "title": "Sistemas energéticos",
+      "new": "Nuevo sistema energético",
+      "show_inactive": "Mostrar sistemas inactivos",
+      "fields": {
+        "name": "Nombre",
+        "active": "Activo",
+        "actions": "Acciones"
+      },
+      "form": {
+        "new_title": "Nuevo sistema energético",
+        "edit_title": "Editar sistema energético",
+        "is_active": "Activo"
+      },
+      "actions": {
+        "delete_confirm_title": "¿Desactivar este sistema?",
+        "delete_confirm_message": "El sistema será desactivado (soft delete). Podrás reactivarlo más tarde.",
+        "deleted": "Sistema desactivado.",
+        "restored": "Sistema reactivado.",
+        "saved": "Sistema guardado."
+      },
+      "errors": {
+        "unknown": "Se ha producido un error."
+      }
+    },
     "sports": {
       "title": "Deportes",
       "new": "Nuevo deporte",

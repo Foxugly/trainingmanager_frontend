@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
@@ -45,7 +44,6 @@ describe('SportsListComponent', () => {
     sportsDestroy: ReturnType<typeof vi.fn>;
     sportsPartialUpdate: ReturnType<typeof vi.fn>;
   };
-  let httpMock: { get: ReturnType<typeof vi.fn>; patch: ReturnType<typeof vi.fn> };
   let confirmMock: { confirm: ReturnType<typeof vi.fn> };
   let messageMock: { add: ReturnType<typeof vi.fn> };
 
@@ -56,10 +54,6 @@ describe('SportsListComponent', () => {
       sportsList: vi.fn().mockReturnValue(of({ count: 1, results: [sport1] })),
       sportsDestroy: vi.fn().mockReturnValue(of({})),
       sportsPartialUpdate: vi.fn().mockReturnValue(of({})),
-    };
-    httpMock = {
-      get: vi.fn().mockReturnValue(of({ count: 2, results: [sport1, sport2] })),
-      patch: vi.fn().mockReturnValue(of({})),
     };
     confirmMock = { confirm: vi.fn() };
     messageMock = { add: vi.fn() };
@@ -76,7 +70,6 @@ describe('SportsListComponent', () => {
         provideNoopAnimations(),
         provideRouter([]),
         { provide: SportsService, useValue: sportsServiceMock },
-        { provide: HttpClient, useValue: httpMock },
         { provide: MessageService, useValue: messageMock },
       ],
     })
@@ -94,20 +87,19 @@ describe('SportsListComponent', () => {
     fixture.detectChanges();
   });
 
-  it('loads active sports through SportsService on init', () => {
+  it('loads active sports on init (no includeInactive)', () => {
     expect(sportsServiceMock.sportsList).toHaveBeenCalledTimes(1);
-    expect(httpMock.get).not.toHaveBeenCalled();
+    expect(sportsServiceMock.sportsList.mock.calls[0][0]).toBeUndefined();
     expect(access(component).sports()).toEqual([sport1]);
   });
 
-  it('reloads via HttpClient with include_inactive=true when the toggle flips', () => {
+  it('reloads with includeInactive=true when the toggle flips', () => {
+    sportsServiceMock.sportsList.mockReturnValue(of({ count: 2, results: [sport1, sport2] }));
     access(component).includeInactiveModel = true;
     fixture.detectChanges();
 
-    expect(httpMock.get).toHaveBeenCalledTimes(1);
-    const [url, options] = httpMock.get.mock.calls[0];
-    expect(url).toMatch(/\/api\/v1\/sports\/$/);
-    expect(options.params.include_inactive).toBe('true');
+    expect(sportsServiceMock.sportsList).toHaveBeenCalledTimes(2);
+    expect(sportsServiceMock.sportsList.mock.calls[1][0]).toBe(true);
     expect(access(component).sports()).toEqual([sport1, sport2]);
   });
 
@@ -123,15 +115,13 @@ describe('SportsListComponent', () => {
     expect(messageMock.add.mock.calls[0][0].severity).toBe('success');
   });
 
-  it('restore() PATCHes via HttpClient with include_inactive=true and reloads', () => {
+  it('restore() calls sportsPartialUpdate(id, true, {is_active:true}) and reloads', () => {
     sportsServiceMock.sportsList.mockClear();
     access(component).restore(sport2);
 
-    expect(httpMock.patch).toHaveBeenCalledTimes(1);
-    const [url, body, options] = httpMock.patch.mock.calls[0];
-    expect(url).toMatch(/\/api\/v1\/sports\/2\/$/);
-    expect(body).toEqual({ is_active: true });
-    expect(options.params.include_inactive).toBe('true');
+    expect(sportsServiceMock.sportsPartialUpdate).toHaveBeenCalledWith(sport2.id, true, {
+      is_active: true,
+    });
     expect(messageMock.add).toHaveBeenCalledTimes(1);
     expect(sportsServiceMock.sportsList).toHaveBeenCalled();
   });

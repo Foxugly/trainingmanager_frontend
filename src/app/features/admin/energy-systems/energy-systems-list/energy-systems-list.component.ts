@@ -17,11 +17,11 @@ import { Checkbox } from 'primeng/checkbox';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { TableModule } from 'primeng/table';
 import { catchError, finalize, of, tap } from 'rxjs';
-import { SportsService } from '../../../../api/api/sports.service';
-import { Sport } from '../../../../api/model/sport';
+import { EnergySystemsService } from '../../../../api/api/energy-systems.service';
+import { EnergySystem } from '../../../../api/model/energy-system';
 
 @Component({
-  selector: 'app-sports-list',
+  selector: 'app-energy-systems-list',
   imports: [
     FormsModule,
     RouterLink,
@@ -31,46 +31,46 @@ import { Sport } from '../../../../api/model/sport';
     ConfirmDialog,
     TranslocoPipe,
   ],
-  templateUrl: './sports-list.component.html',
-  styleUrl: './sports-list.component.scss',
+  templateUrl: './energy-systems-list.component.html',
+  styleUrl: './energy-systems-list.component.scss',
   providers: [ConfirmationService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SportsListComponent implements OnInit {
-  private readonly sportsService = inject(SportsService);
+export class EnergySystemsListComponent implements OnInit {
+  private readonly energySystemsService = inject(EnergySystemsService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
   private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
 
-  protected readonly sports = signal<Sport[]>([]);
+  protected readonly energySystems = signal<EnergySystem[]>([]);
   protected readonly loading = signal(false);
   protected readonly includeInactive = signal(false);
 
   constructor() {
     effect(() => {
       const include = this.includeInactive();
-      this.loadSports(include);
+      this.load(include);
     });
   }
 
   ngOnInit(): void {
-    // initial load handled by the effect above (fires once on init too)
+    // initial load handled by the effect (fires once on init too)
   }
 
-  private loadSports(includeInactive: boolean): void {
+  private load(includeInactive: boolean): void {
     this.loading.set(true);
-    this.sportsService
-      .sportsList(includeInactive || undefined)
+    this.energySystemsService
+      .energySystemsList(includeInactive || undefined)
       .pipe(
-        tap((res) => this.sports.set(res.results ?? [])),
+        tap((res) => this.energySystems.set(res.results ?? [])),
         catchError(() => {
           this.messageService.add({
             severity: 'error',
             summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('admin.sports.errors.unknown'),
+            detail: this.transloco.translate('admin.energy_systems.errors.unknown'),
           });
-          this.sports.set([]);
+          this.energySystems.set([]);
           return of(null);
         }),
         finalize(() => this.loading.set(false)),
@@ -79,58 +79,54 @@ export class SportsListComponent implements OnInit {
       .subscribe();
   }
 
-  protected confirmDelete(sport: Sport): void {
+  protected confirmDelete(es: EnergySystem): void {
     this.confirmationService.confirm({
-      header: this.transloco.translate('admin.sports.actions.delete_confirm_title'),
-      message: this.transloco.translate('admin.sports.actions.delete_confirm_message'),
-      accept: () => this.deleteSport(sport),
+      header: this.transloco.translate('admin.energy_systems.actions.delete_confirm_title'),
+      message: this.transloco.translate('admin.energy_systems.actions.delete_confirm_message'),
+      accept: () => this.deleteOne(es),
     });
   }
 
-  private deleteSport(sport: Sport): void {
-    this.sportsService
-      .sportsDestroy(sport.id)
+  private deleteOne(es: EnergySystem): void {
+    this.energySystemsService
+      .energySystemsDestroy(es.id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.messageService.add({
             severity: 'success',
             summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('admin.sports.actions.deleted'),
+            detail: this.transloco.translate('admin.energy_systems.actions.deleted'),
           });
-          this.loadSports(this.includeInactive());
+          this.load(this.includeInactive());
         },
-        error: () => {
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('admin.sports.errors.unknown'),
-          });
-        },
+        error: () => this.notifyUnknownError(),
       });
   }
 
-  protected restore(sport: Sport): void {
-    this.sportsService
-      .sportsPartialUpdate(sport.id, true, { is_active: true })
+  protected restore(es: EnergySystem): void {
+    this.energySystemsService
+      .energySystemsPartialUpdate(es.id, true, { is_active: true })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.messageService.add({
             severity: 'success',
             summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('admin.sports.actions.restored'),
+            detail: this.transloco.translate('admin.energy_systems.actions.restored'),
           });
-          this.loadSports(this.includeInactive());
+          this.load(this.includeInactive());
         },
-        error: () => {
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('admin.sports.errors.unknown'),
-          });
-        },
+        error: () => this.notifyUnknownError(),
       });
+  }
+
+  private notifyUnknownError(): void {
+    this.messageService.add({
+      severity: 'error',
+      summary: this.transloco.translate('common.error'),
+      detail: this.transloco.translate('admin.energy_systems.errors.unknown'),
+    });
   }
 
   protected get includeInactiveModel(): boolean {

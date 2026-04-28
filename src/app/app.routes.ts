@@ -34,10 +34,10 @@ export const routes: Routes = [
           },
           {
             path: 'energy-systems',
-            loadComponent: () =>
-              import(
-                './features/admin/energy-systems/energy-systems-placeholder.component'
-              ).then((m) => m.EnergySystemsPlaceholderComponent),
+            loadChildren: () =>
+              import('./features/admin/energy-systems/energy-systems.routes').then(
+                (m) => m.ENERGY_SYSTEMS_ROUTES,
+              ),
           },
           {
             path: 'energy-segments',

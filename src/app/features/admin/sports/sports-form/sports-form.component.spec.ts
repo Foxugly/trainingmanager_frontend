@@ -109,7 +109,7 @@ describe('SportsFormComponent', () => {
     await setup('7');
 
     expect(access(component).sportId()).toBe(7);
-    expect(sportsServiceMock.sportsRetrieve).toHaveBeenCalledWith(7);
+    expect(sportsServiceMock.sportsRetrieve).toHaveBeenCalledWith(7, true);
     expect(access(component).form.value).toMatchObject({
       name_fr: 'Course',
       name_nl: '',
@@ -140,8 +140,10 @@ describe('SportsFormComponent', () => {
     access(component).submit();
 
     expect(sportsServiceMock.sportsPartialUpdate).toHaveBeenCalledTimes(1);
-    const [id, payload] = sportsServiceMock.sportsPartialUpdate.mock.calls[0];
+    const [id, includeInactive, payload] =
+      sportsServiceMock.sportsPartialUpdate.mock.calls[0];
     expect(id).toBe(7);
+    expect(includeInactive).toBe(true);
     expect(payload).toMatchObject({ name_nl: 'Hardlopen' });
     expect(navigate).toHaveBeenCalledWith(['/admin/sports']);
   });

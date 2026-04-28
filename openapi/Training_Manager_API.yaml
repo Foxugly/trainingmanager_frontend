@@ -101,6 +101,12 @@ paths:
         schema:
           type: integer
       - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
+      - in: query
         name: is_active
         schema:
           type: boolean
@@ -172,6 +178,12 @@ paths:
           type: integer
         description: A unique integer value identifying this energy segment.
         required: true
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
       tags:
       - energy-segments
       security:
@@ -193,6 +205,12 @@ paths:
           type: integer
         description: A unique integer value identifying this energy segment.
         required: true
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
       tags:
       - energy-segments
       requestBody:
@@ -226,6 +244,12 @@ paths:
           type: integer
         description: A unique integer value identifying this energy segment.
         required: true
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
       tags:
       - energy-segments
       requestBody:
@@ -272,6 +296,12 @@ paths:
       description: CRUD on EnergySystem referential.
       summary: List energy systems (public flavor)
       parameters:
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
       - in: query
         name: is_active
         schema:
@@ -347,6 +377,12 @@ paths:
           type: integer
         description: A unique integer value identifying this energy system.
         required: true
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
       tags:
       - energy-systems
       security:
@@ -368,6 +404,12 @@ paths:
           type: integer
         description: A unique integer value identifying this energy system.
         required: true
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
       tags:
       - energy-systems
       requestBody:
@@ -400,6 +442,12 @@ paths:
           type: integer
         description: A unique integer value identifying this energy system.
         required: true
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
       tags:
       - energy-systems
       requestBody:
@@ -1935,6 +1983,12 @@ paths:
       summary: List sports (public flavor)
       parameters:
       - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
+      - in: query
         name: is_active
         schema:
           type: boolean
@@ -2007,6 +2061,12 @@ paths:
           type: integer
         description: A unique integer value identifying this sport.
         required: true
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
       tags:
       - sports
       security:
@@ -2033,6 +2093,12 @@ paths:
           type: integer
         description: A unique integer value identifying this sport.
         required: true
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
       tags:
       - sports
       requestBody:
@@ -2071,6 +2137,12 @@ paths:
           type: integer
         description: A unique integer value identifying this sport.
         required: true
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
       tags:
       - sports
       requestBody:
@@ -2117,6 +2189,12 @@ paths:
       description: CRUD on Modality referential, scoped by sport when nested.
       summary: List modalities (public flavor)
       parameters:
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
       - in: query
         name: is_active
         schema:
@@ -2208,6 +2286,12 @@ paths:
           type: integer
         description: A unique integer value identifying this modality.
         required: true
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
       - in: path
         name: sport_pk
         schema:
@@ -2234,6 +2318,12 @@ paths:
           type: integer
         description: A unique integer value identifying this modality.
         required: true
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
       - in: path
         name: sport_pk
         schema:
@@ -2272,6 +2362,12 @@ paths:
           type: integer
         description: A unique integer value identifying this modality.
         required: true
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
       - in: path
         name: sport_pk
         schema:

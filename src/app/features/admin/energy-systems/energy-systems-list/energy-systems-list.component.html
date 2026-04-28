@@ -1,0 +1,77 @@
+<div class="flex justify-between items-center mb-6">
+  <h1 class="text-2xl font-bold">{{ 'admin.energy_systems.title' | transloco }}</h1>
+  <a [routerLink]="['new']">
+    <p-button [label]="'admin.energy_systems.new' | transloco" icon="pi pi-plus" />
+  </a>
+</div>
+
+<div class="mb-4 flex items-center gap-2">
+  <p-checkbox
+    [(ngModel)]="includeInactiveModel"
+    [binary]="true"
+    inputId="es_include_inactive"
+  />
+  <label for="es_include_inactive" class="text-sm text-gray-700 cursor-pointer">
+    {{ 'admin.energy_systems.show_inactive' | transloco }}
+  </label>
+</div>
+
+<p-table
+  [value]="energySystems()"
+  [loading]="loading()"
+  [paginator]="true"
+  [rows]="20"
+  styleClass="bg-white rounded shadow-sm"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th>{{ 'admin.energy_systems.fields.name' | transloco }}</th>
+      <th>{{ 'admin.energy_systems.fields.active' | transloco }}</th>
+      <th>{{ 'admin.energy_systems.fields.actions' | transloco }}</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-es>
+    <tr>
+      <td>{{ es.name }}</td>
+      <td>
+        @if (es.is_active) {
+          <span class="text-green-600" aria-label="active">●</span>
+        } @else {
+          <span class="text-red-500" aria-label="inactive">●</span>
+        }
+      </td>
+      <td class="flex gap-1">
+        <a [routerLink]="[es.id, 'edit']">
+          <p-button
+            icon="pi pi-pencil"
+            [text]="true"
+            severity="secondary"
+            [ariaLabel]="'admin.energy_systems.fields.actions' | transloco"
+          />
+        </a>
+        @if (es.is_active) {
+          <p-button
+            icon="pi pi-trash"
+            [text]="true"
+            severity="danger"
+            (onClick)="confirmDelete(es)"
+          />
+        } @else {
+          <p-button
+            icon="pi pi-undo"
+            [text]="true"
+            severity="success"
+            (onClick)="restore(es)"
+          />
+        }
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="3" class="text-center py-4 text-gray-500">—</td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-confirmDialog />

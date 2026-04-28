@@ -9,7 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { MessageService } from 'primeng/api';
@@ -17,26 +17,22 @@ import { Button } from 'primeng/button';
 import { Checkbox } from 'primeng/checkbox';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
-import { MultiSelect } from 'primeng/multiselect';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { EnergySystemsService } from '../../../../api/api/energy-systems.service';
-import { SportsService } from '../../../../api/api/sports.service';
-import { EnergySystem } from '../../../../api/model/energy-system';
-import { PatchedSportAdmin } from '../../../../api/model/patched-sport-admin';
-import { SportAdmin } from '../../../../api/model/sport-admin';
+import { EnergySystemAdmin } from '../../../../api/model/energy-system-admin';
+import { PatchedEnergySystemAdmin } from '../../../../api/model/patched-energy-system-admin';
 
 interface FieldErrors {
   [field: string]: string[];
 }
 
 @Component({
-  selector: 'app-sports-form',
+  selector: 'app-energy-systems-form',
   imports: [
     KeyValuePipe,
     ReactiveFormsModule,
     RouterLink,
     InputText,
-    MultiSelect,
     Checkbox,
     Button,
     Message,
@@ -47,24 +43,22 @@ interface FieldErrors {
     TabPanel,
     TranslocoPipe,
   ],
-  templateUrl: './sports-form.component.html',
-  styleUrl: './sports-form.component.scss',
+  templateUrl: './energy-systems-form.component.html',
+  styleUrl: './energy-systems-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SportsFormComponent implements OnInit {
+export class EnergySystemsFormComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly sportsService = inject(SportsService);
   private readonly energySystemsService = inject(EnergySystemsService);
   private readonly messageService = inject(MessageService);
   private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
 
-  protected readonly sportId = signal<number | null>(null);
+  protected readonly esId = signal<number | null>(null);
   protected readonly loading = signal(false);
   protected readonly saving = signal(false);
-  protected readonly availableEnergySystems = signal<EnergySystem[]>([]);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly fieldErrors = signal<FieldErrors | null>(null);
 
@@ -74,42 +68,32 @@ export class SportsFormComponent implements OnInit {
     name_en: [''],
     name_it: [''],
     name_es: [''],
-    slug: ['', Validators.required],
-    energy_systems: [[] as number[]],
     is_active: [true],
   });
 
   ngOnInit(): void {
-    // Always load energy systems for the multiselect
-    this.energySystemsService
-      .energySystemsList()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((res) => this.availableEnergySystems.set(res.results ?? []));
-
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       const id = Number(idParam);
-      this.sportId.set(id);
+      this.esId.set(id);
       this.loading.set(true);
-      this.sportsService
-        .sportsRetrieve(id, true)
+      this.energySystemsService
+        .energySystemsRetrieve(id, true)
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
-          next: (sport) => {
+          next: (es) => {
             this.form.reset({
-              name_fr: sport.name_fr ?? '',
-              name_nl: sport.name_nl ?? '',
-              name_en: sport.name_en ?? '',
-              name_it: sport.name_it ?? '',
-              name_es: sport.name_es ?? '',
-              slug: sport.slug,
-              energy_systems: sport.energy_systems ?? [],
-              is_active: sport.is_active ?? true,
+              name_fr: es.name_fr ?? '',
+              name_nl: es.name_nl ?? '',
+              name_en: es.name_en ?? '',
+              name_it: es.name_it ?? '',
+              name_es: es.name_es ?? '',
+              is_active: es.is_active ?? true,
             });
             this.loading.set(false);
           },
           error: () => {
-            this.errorMessage.set('admin.sports.errors.unknown');
+            this.errorMessage.set('admin.energy_systems.errors.unknown');
             this.loading.set(false);
           },
         });
@@ -125,7 +109,7 @@ export class SportsFormComponent implements OnInit {
     this.fieldErrors.set(null);
 
     const value = this.form.getRawValue();
-    const id = this.sportId();
+    const id = this.esId();
 
     const payload = {
       name_fr: value.name_fr || null,
@@ -133,24 +117,26 @@ export class SportsFormComponent implements OnInit {
       name_en: value.name_en || null,
       name_it: value.name_it || null,
       name_es: value.name_es || null,
-      slug: value.slug,
-      energy_systems: value.energy_systems,
       is_active: value.is_active,
     };
 
     const request$ = id
-      ? this.sportsService.sportsPartialUpdate(id, true, payload as PatchedSportAdmin)
-      : this.sportsService.sportsCreate(payload as unknown as SportAdmin);
+      ? this.energySystemsService.energySystemsPartialUpdate(
+          id,
+          true,
+          payload as PatchedEnergySystemAdmin,
+        )
+      : this.energySystemsService.energySystemsCreate(payload as EnergySystemAdmin);
 
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.messageService.add({
           severity: 'success',
           summary: this.transloco.translate('common.success'),
-          detail: this.transloco.translate('admin.sports.actions.saved'),
+          detail: this.transloco.translate('admin.energy_systems.actions.saved'),
         });
         this.saving.set(false);
-        this.router.navigate(['/admin/sports']);
+        this.router.navigate(['/admin/energy-systems']);
       },
       error: (err: HttpErrorResponse) => {
         this.applyServerError(err);
@@ -184,6 +170,6 @@ export class SportsFormComponent implements OnInit {
       }
     }
 
-    this.errorMessage.set(body?.detail ?? 'admin.sports.errors.unknown');
+    this.errorMessage.set(body?.detail ?? 'admin.energy_systems.errors.unknown');
   }
 }
