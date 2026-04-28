@@ -3,6 +3,16 @@
     "title": "Gestor de Entrenamientos",
     "logout": "Cerrar sesión"
   },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "error": "Error",
+    "success": "Éxito"
+  },
+  "dashboard": {
+    "greeting": "Hola {{name}} 👋",
+    "coming_soon": "Panel de control próximamente."
+  },
   "auth": {
     "login": {
       "title": "Iniciar sesión",
@@ -12,6 +22,20 @@
     },
     "errors": {
       "invalid_credentials": "Credenciales no válidas",
+      "unknown": "Se ha producido un error, inténtalo de nuevo."
+    }
+  },
+  "profile": {
+    "title": "Mi perfil",
+    "username": "Nombre de usuario",
+    "email": "Correo",
+    "first_name": "Nombre",
+    "last_name": "Apellido",
+    "language": "Idioma",
+    "date_joined": "Fecha de registro",
+    "saved": "Perfil guardado.",
+    "language_switch_failed": "No se pudo cambiar el idioma, inténtalo de nuevo.",
+    "errors": {
       "unknown": "Se ha producido un error, inténtalo de nuevo."
     }
   }

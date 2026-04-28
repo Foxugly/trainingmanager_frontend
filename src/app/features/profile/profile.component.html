@@ -1,0 +1,90 @@
+<section class="max-w-2xl">
+  <h1 class="text-2xl font-bold mb-6">{{ 'profile.title' | transloco }}</h1>
+
+  @if (user(); as me) {
+    <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+      <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+        <div class="flex flex-col gap-1">
+          <span class="text-sm font-medium text-gray-700">
+            {{ 'profile.username' | transloco }}
+          </span>
+          <span class="text-gray-900">{{ me.username }}</span>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="email" class="text-sm font-medium text-gray-700">
+            {{ 'profile.email' | transloco }}
+          </label>
+          <input pInputText id="email" type="email" formControlName="email" autocomplete="email" />
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="first_name" class="text-sm font-medium text-gray-700">
+            {{ 'profile.first_name' | transloco }}
+          </label>
+          <input
+            pInputText
+            id="first_name"
+            formControlName="first_name"
+            autocomplete="given-name"
+          />
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="last_name" class="text-sm font-medium text-gray-700">
+            {{ 'profile.last_name' | transloco }}
+          </label>
+          <input
+            pInputText
+            id="last_name"
+            formControlName="last_name"
+            autocomplete="family-name"
+          />
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="language" class="text-sm font-medium text-gray-700">
+            {{ 'profile.language' | transloco }}
+          </label>
+          <p-select
+            inputId="language"
+            formControlName="language"
+            [options]="languages"
+            optionLabel="nativeName"
+            optionValue="code"
+            styleClass="w-full"
+          />
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <span class="text-sm font-medium text-gray-700">
+            {{ 'profile.date_joined' | transloco }}
+          </span>
+          <span class="text-gray-900">{{ me.date_joined | date: 'medium' }}</span>
+        </div>
+
+        @if (successMessage(); as msg) {
+          <p-message severity="success" [text]="msg | transloco" />
+        }
+        @if (errorMessage(); as msg) {
+          <p-message severity="error" [text]="msg | transloco" />
+        }
+
+        <div class="flex justify-end gap-2 mt-2">
+          <p-button
+            type="button"
+            severity="secondary"
+            [label]="'common.cancel' | transloco"
+            (onClick)="cancel()"
+          />
+          <p-button
+            type="submit"
+            [label]="'common.save' | transloco"
+            [loading]="loading()"
+            [disabled]="form.invalid"
+          />
+        </div>
+      </form>
+    </div>
+  }
+</section>

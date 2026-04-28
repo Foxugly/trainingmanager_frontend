@@ -3,6 +3,16 @@
     "title": "Gestore Allenamenti",
     "logout": "Disconnetti"
   },
+  "common": {
+    "save": "Salva",
+    "cancel": "Annulla",
+    "error": "Errore",
+    "success": "Successo"
+  },
+  "dashboard": {
+    "greeting": "Ciao {{name}} 👋",
+    "coming_soon": "Dashboard in arrivo."
+  },
   "auth": {
     "login": {
       "title": "Accedi",
@@ -12,6 +22,20 @@
     },
     "errors": {
       "invalid_credentials": "Credenziali non valide",
+      "unknown": "Si è verificato un errore, riprova."
+    }
+  },
+  "profile": {
+    "title": "Il mio profilo",
+    "username": "Nome utente",
+    "email": "Email",
+    "first_name": "Nome",
+    "last_name": "Cognome",
+    "language": "Lingua",
+    "date_joined": "Data di iscrizione",
+    "saved": "Profilo salvato.",
+    "language_switch_failed": "Impossibile cambiare la lingua, riprova.",
+    "errors": {
       "unknown": "Si è verificato un errore, riprova."
     }
   }

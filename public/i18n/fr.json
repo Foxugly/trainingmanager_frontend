@@ -3,6 +3,16 @@
     "title": "Training Manager",
     "logout": "Déconnexion"
   },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "error": "Erreur",
+    "success": "Succès"
+  },
+  "dashboard": {
+    "greeting": "Bonjour {{name}} 👋",
+    "coming_soon": "Tableau de bord à venir."
+  },
   "auth": {
     "login": {
       "title": "Connexion",
@@ -12,6 +22,20 @@
     },
     "errors": {
       "invalid_credentials": "Identifiants invalides",
+      "unknown": "Une erreur est survenue, réessayez."
+    }
+  },
+  "profile": {
+    "title": "Mon profil",
+    "username": "Nom d'utilisateur",
+    "email": "Email",
+    "first_name": "Prénom",
+    "last_name": "Nom",
+    "language": "Langue",
+    "date_joined": "Date d'inscription",
+    "saved": "Profil enregistré.",
+    "language_switch_failed": "Impossible de changer la langue, réessayez.",
+    "errors": {
       "unknown": "Une erreur est survenue, réessayez."
     }
   }

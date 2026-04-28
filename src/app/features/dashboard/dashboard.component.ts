@@ -1,11 +1,15 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
   selector: 'app-dashboard',
+  imports: [TranslocoPipe],
   template: `
-    <h1 class="text-2xl font-bold">Hello {{ greetingName() }} 👋</h1>
-    <p class="text-gray-600 mt-2">Dashboard à venir.</p>
+    <h1 class="text-2xl font-bold">
+      {{ 'dashboard.greeting' | transloco: { name: greetingName() } }}
+    </h1>
+    <p class="text-gray-600 mt-2">{{ 'dashboard.coming_soon' | transloco }}</p>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

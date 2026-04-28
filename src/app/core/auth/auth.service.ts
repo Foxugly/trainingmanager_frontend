@@ -69,4 +69,8 @@ export class AuthService {
   fetchMe(): Observable<Me> {
     return this.meService.meRetrieve().pipe(tap((user) => this._currentUser.set(user)));
   }
+
+  setCurrentUser(user: Me): void {
+    this._currentUser.set(user);
+  }
 }

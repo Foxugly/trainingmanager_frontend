@@ -9,6 +9,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
 import { provideTransloco } from '@jsverse/transloco';
+import { MessageService } from 'primeng/api';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeuix/themes/aura';
 import { firstValueFrom } from 'rxjs';
@@ -18,6 +19,7 @@ import { provideApi } from './api/provide-api';
 import { routes } from './app.routes';
 import { AuthService } from './core/auth/auth.service';
 import { authInterceptor } from './core/auth/auth.interceptor';
+import { LanguageService } from './core/i18n/language.service';
 import { TranslocoHttpLoader } from './transloco-loader';
 
 export const appConfig: ApplicationConfig = {
@@ -41,7 +43,11 @@ export const appConfig: ApplicationConfig = {
     }),
     provideAppInitializer(() => {
       const authService = inject(AuthService);
+      // Force LanguageService instantiation so its currentUser-watching effect is wired
+      // before bootstrap() sets the user, ensuring Transloco picks up me.language at startup.
+      inject(LanguageService);
       return firstValueFrom(authService.bootstrap()).catch(() => false);
     }),
+    MessageService,
   ],
 };

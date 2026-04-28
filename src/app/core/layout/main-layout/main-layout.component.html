@@ -3,11 +3,17 @@
     <h1 class="text-xl font-semibold text-gray-900">{{ 'app.title' | transloco }}</h1>
 
     <div class="flex items-center gap-4">
+      <app-language-switcher />
+
       @if (authService.currentUser(); as user) {
-        <span class="text-sm text-gray-700">
+        <a
+          [routerLink]="['/profile']"
+          class="text-sm text-gray-700 hover:underline cursor-pointer"
+        >
           {{ user.first_name || user.username }}
-        </span>
+        </a>
       }
+
       <p-button
         icon="pi pi-sign-out"
         severity="secondary"
@@ -22,3 +28,5 @@
 <main class="container mx-auto p-6">
   <router-outlet />
 </main>
+
+<p-toast />

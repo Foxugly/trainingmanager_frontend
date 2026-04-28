@@ -1,0 +1,8 @@
+<p-select
+  [options]="languages"
+  optionLabel="nativeName"
+  optionValue="code"
+  [ngModel]="current()"
+  (ngModelChange)="onChange($event)"
+  styleClass="w-40"
+/>

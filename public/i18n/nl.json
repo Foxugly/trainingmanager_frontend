@@ -3,6 +3,16 @@
     "title": "Trainingsbeheerder",
     "logout": "Afmelden"
   },
+  "common": {
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "error": "Fout",
+    "success": "Gelukt"
+  },
+  "dashboard": {
+    "greeting": "Hallo {{name}} 👋",
+    "coming_soon": "Dashboard komt eraan."
+  },
   "auth": {
     "login": {
       "title": "Inloggen",
@@ -12,6 +22,20 @@
     },
     "errors": {
       "invalid_credentials": "Ongeldige inloggegevens",
+      "unknown": "Er is een fout opgetreden, probeer het opnieuw."
+    }
+  },
+  "profile": {
+    "title": "Mijn profiel",
+    "username": "Gebruikersnaam",
+    "email": "E-mail",
+    "first_name": "Voornaam",
+    "last_name": "Achternaam",
+    "language": "Taal",
+    "date_joined": "Registratiedatum",
+    "saved": "Profiel opgeslagen.",
+    "language_switch_failed": "Taal wijzigen is mislukt, probeer het opnieuw.",
+    "errors": {
       "unknown": "Er is een fout opgetreden, probeer het opnieuw."
     }
   }

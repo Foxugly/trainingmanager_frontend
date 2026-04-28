@@ -3,6 +3,16 @@
     "title": "Training Manager",
     "logout": "Sign out"
   },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "error": "Error",
+    "success": "Success"
+  },
+  "dashboard": {
+    "greeting": "Hello {{name}} 👋",
+    "coming_soon": "Dashboard coming soon."
+  },
   "auth": {
     "login": {
       "title": "Sign in",
@@ -12,6 +22,20 @@
     },
     "errors": {
       "invalid_credentials": "Invalid credentials",
+      "unknown": "Something went wrong, please try again."
+    }
+  },
+  "profile": {
+    "title": "My profile",
+    "username": "Username",
+    "email": "Email",
+    "first_name": "First name",
+    "last_name": "Last name",
+    "language": "Language",
+    "date_joined": "Joined on",
+    "saved": "Profile saved.",
+    "language_switch_failed": "Could not change language, please try again.",
+    "errors": {
       "unknown": "Something went wrong, please try again."
     }
   }
