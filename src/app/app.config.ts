@@ -1,13 +1,24 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, isDevMode } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import {
+  ApplicationConfig,
+  inject,
+  isDevMode,
+  provideAppInitializer,
+  provideBrowserGlobalErrorListeners,
+} from '@angular/core';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideRouter } from '@angular/router';
+import { provideTransloco } from '@jsverse/transloco';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeuix/themes/aura';
+import { firstValueFrom } from 'rxjs';
 
+import { environment } from '../environments/environment';
+import { provideApi } from './api/provide-api';
 import { routes } from './app.routes';
-import { provideHttpClient } from '@angular/common/http';
+import { AuthService } from './core/auth/auth.service';
+import { authInterceptor } from './core/auth/auth.interceptor';
 import { TranslocoHttpLoader } from './transloco-loader';
-import { provideTransloco } from '@jsverse/transloco';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -17,7 +28,8 @@ export const appConfig: ApplicationConfig = {
     providePrimeNG({
       theme: { preset: Aura, options: { darkModeSelector: '.dark-mode' } },
     }),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([authInterceptor])),
+    provideApi(environment.apiBase),
     provideTransloco({
       config: {
         availableLangs: ['fr', 'nl', 'en', 'it', 'es'],
@@ -26,6 +38,10 @@ export const appConfig: ApplicationConfig = {
         prodMode: !isDevMode(),
       },
       loader: TranslocoHttpLoader,
+    }),
+    provideAppInitializer(() => {
+      const authService = inject(AuthService);
+      return firstValueFrom(authService.bootstrap()).catch(() => false);
     }),
   ],
 };

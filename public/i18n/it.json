@@ -1,5 +1,18 @@
 {
   "app": {
-    "title": "Gestore Allenamenti"
+    "title": "Gestore Allenamenti",
+    "logout": "Disconnetti"
+  },
+  "auth": {
+    "login": {
+      "title": "Accedi",
+      "username": "Nome utente",
+      "password": "Password",
+      "submit": "Accedi"
+    },
+    "errors": {
+      "invalid_credentials": "Credenziali non valide",
+      "unknown": "Si è verificato un errore, riprova."
+    }
   }
 }

@@ -1,5 +1,18 @@
 {
   "app": {
-    "title": "Gestor de Entrenamientos"
+    "title": "Gestor de Entrenamientos",
+    "logout": "Cerrar sesión"
+  },
+  "auth": {
+    "login": {
+      "title": "Iniciar sesión",
+      "username": "Nombre de usuario",
+      "password": "Contraseña",
+      "submit": "Iniciar sesión"
+    },
+    "errors": {
+      "invalid_credentials": "Credenciales no válidas",
+      "unknown": "Se ha producido un error, inténtalo de nuevo."
+    }
   }
 }

@@ -1,0 +1,45 @@
+<div class="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
+  <h1 class="text-2xl font-bold mb-6 text-center">{{ 'auth.login.title' | transloco }}</h1>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+    <div class="flex flex-col gap-2">
+      <label for="username" class="text-sm font-medium text-gray-700">
+        {{ 'auth.login.username' | transloco }}
+      </label>
+      <input
+        pInputText
+        id="username"
+        formControlName="username"
+        autocomplete="username"
+        class="w-full"
+      />
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="password" class="text-sm font-medium text-gray-700">
+        {{ 'auth.login.password' | transloco }}
+      </label>
+      <p-password
+        formControlName="password"
+        [feedback]="false"
+        [toggleMask]="true"
+        inputId="password"
+        autocomplete="current-password"
+        styleClass="w-full"
+        [inputStyle]="{ width: '100%' }"
+      />
+    </div>
+
+    @if (errorMessage(); as msg) {
+      <p-message severity="error" [text]="msg" />
+    }
+
+    <p-button
+      type="submit"
+      [label]="'auth.login.submit' | transloco"
+      [loading]="loading()"
+      [disabled]="form.invalid"
+      styleClass="w-full"
+    />
+  </form>
+</div>

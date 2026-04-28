@@ -1,5 +1,18 @@
 {
   "app": {
-    "title": "Training Manager"
+    "title": "Training Manager",
+    "logout": "Sign out"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "username": "Username",
+      "password": "Password",
+      "submit": "Sign in"
+    },
+    "errors": {
+      "invalid_credentials": "Invalid credentials",
+      "unknown": "Something went wrong, please try again."
+    }
   }
 }

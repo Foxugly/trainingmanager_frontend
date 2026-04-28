@@ -1,0 +1,46 @@
+import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { catchError, switchMap, throwError } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { AuthService } from './auth.service';
+import { TokenStorage } from './token.storage';
+
+const AUTH_PATHS = ['/auth/token/', '/auth/token/refresh/'];
+
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  const tokenStorage = inject(TokenStorage);
+  const authService = inject(AuthService);
+
+  const isAuthEndpoint = AUTH_PATHS.some((path) => req.url.includes(path));
+  const isApiCall = req.url.startsWith(environment.apiBase);
+
+  if (!isApiCall || isAuthEndpoint) {
+    return next(req);
+  }
+
+  const access = tokenStorage.getAccess();
+  const authedReq = access
+    ? req.clone({ setHeaders: { Authorization: `Bearer ${access}` } })
+    : req;
+
+  return next(authedReq).pipe(
+    catchError((err: HttpErrorResponse) => {
+      if (err.status !== 401) {
+        return throwError(() => err);
+      }
+      return authService.refresh().pipe(
+        switchMap(() => {
+          const newAccess = tokenStorage.getAccess();
+          const retried = req.clone({
+            setHeaders: { Authorization: `Bearer ${newAccess ?? ''}` },
+          });
+          return next(retried);
+        }),
+        catchError((refreshErr) => {
+          authService.logout();
+          return throwError(() => refreshErr);
+        }),
+      );
+    }),
+  );
+};

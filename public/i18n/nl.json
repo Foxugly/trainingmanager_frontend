@@ -1,5 +1,18 @@
 {
   "app": {
-    "title": "Trainingsbeheerder"
+    "title": "Trainingsbeheerder",
+    "logout": "Afmelden"
+  },
+  "auth": {
+    "login": {
+      "title": "Inloggen",
+      "username": "Gebruikersnaam",
+      "password": "Wachtwoord",
+      "submit": "Aanmelden"
+    },
+    "errors": {
+      "invalid_credentials": "Ongeldige inloggegevens",
+      "unknown": "Er is een fout opgetreden, probeer het opnieuw."
+    }
   }
 }

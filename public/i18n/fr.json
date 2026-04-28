@@ -1,5 +1,18 @@
 {
   "app": {
-    "title": "Training Manager"
+    "title": "Training Manager",
+    "logout": "Déconnexion"
+  },
+  "auth": {
+    "login": {
+      "title": "Connexion",
+      "username": "Nom d'utilisateur",
+      "password": "Mot de passe",
+      "submit": "Se connecter"
+    },
+    "errors": {
+      "invalid_credentials": "Identifiants invalides",
+      "unknown": "Une erreur est survenue, réessayez."
+    }
   }
 }
