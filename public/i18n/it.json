@@ -10,6 +10,7 @@
     "save": "Salva",
     "cancel": "Annulla",
     "back": "Indietro",
+    "loading": "Caricamento",
     "error": "Errore",
     "success": "Successo"
   },
@@ -51,6 +52,39 @@
       "energy_systems": "Sistemi energetici",
       "energy_segments": "Segmenti energetici",
       "modalities": "Modalità"
+    },
+    "modalities": {
+      "hub": {
+        "title": "Modalità",
+        "subtitle": "Scegli uno sport per gestire le sue modalità",
+        "manage": "Gestisci modalità",
+        "empty": "Nessuno sport disponibile. Crea prima uno sport."
+      },
+      "list": {
+        "title": "Modalità"
+      },
+      "new": "Nuova modalità",
+      "show_inactive": "Mostra modalità inattive",
+      "fields": {
+        "name": "Nome",
+        "active": "Attivo",
+        "actions": "Azioni"
+      },
+      "form": {
+        "new_title": "Nuova modalità",
+        "edit_title": "Modifica modalità",
+        "is_active": "Attivo"
+      },
+      "actions": {
+        "delete_confirm_title": "Disattivare questa modalità?",
+        "delete_confirm_message": "La modalità verrà disattivata (soft delete). Potrai riattivarla in seguito.",
+        "deleted": "Modalità disattivata.",
+        "restored": "Modalità riattivata.",
+        "saved": "Modalità salvata."
+      },
+      "errors": {
+        "unknown": "Si è verificato un errore."
+      }
     },
     "energy_segments": {
       "title": "Segmenti energetici",
@@ -125,7 +159,8 @@
         "slug": "Slug (identificatore tecnico)",
         "energy_systems": "Sistemi energetici associati",
         "energy_systems_placeholder": "Seleziona uno o più sistemi",
-        "is_active": "Attivo"
+        "is_active": "Attivo",
+        "manage_modalities": "Gestisci modalità"
       },
       "actions": {
         "delete_confirm_title": "Disattivare questo sport?",

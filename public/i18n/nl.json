@@ -10,6 +10,7 @@
     "save": "Opslaan",
     "cancel": "Annuleren",
     "back": "Terug",
+    "loading": "Laden",
     "error": "Fout",
     "success": "Gelukt"
   },
@@ -51,6 +52,39 @@
       "energy_systems": "Energiesystemen",
       "energy_segments": "Energiesegmenten",
       "modalities": "Modaliteiten"
+    },
+    "modalities": {
+      "hub": {
+        "title": "Modaliteiten",
+        "subtitle": "Kies een sport om zijn modaliteiten te beheren",
+        "manage": "Modaliteiten beheren",
+        "empty": "Geen sport beschikbaar. Maak eerst een sport aan."
+      },
+      "list": {
+        "title": "Modaliteiten"
+      },
+      "new": "Nieuwe modaliteit",
+      "show_inactive": "Inactieve modaliteiten tonen",
+      "fields": {
+        "name": "Naam",
+        "active": "Actief",
+        "actions": "Acties"
+      },
+      "form": {
+        "new_title": "Nieuwe modaliteit",
+        "edit_title": "Modaliteit bewerken",
+        "is_active": "Actief"
+      },
+      "actions": {
+        "delete_confirm_title": "Deze modaliteit deactiveren?",
+        "delete_confirm_message": "De modaliteit wordt gedeactiveerd (soft delete). Je kan haar later opnieuw activeren.",
+        "deleted": "Modaliteit gedeactiveerd.",
+        "restored": "Modaliteit opnieuw geactiveerd.",
+        "saved": "Modaliteit opgeslagen."
+      },
+      "errors": {
+        "unknown": "Er is een fout opgetreden."
+      }
     },
     "energy_segments": {
       "title": "Energiesegmenten",
@@ -125,7 +159,8 @@
         "slug": "Slug (technische identifier)",
         "energy_systems": "Gekoppelde energiesystemen",
         "energy_systems_placeholder": "Selecteer één of meer systemen",
-        "is_active": "Actief"
+        "is_active": "Actief",
+        "manage_modalities": "Modaliteiten beheren"
       },
       "actions": {
         "delete_confirm_title": "Deze sport deactiveren?",

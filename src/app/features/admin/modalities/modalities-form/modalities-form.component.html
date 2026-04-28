@@ -1,27 +1,26 @@
 <div class="max-w-3xl">
-  <a [routerLink]="['/admin/sports']" class="text-sm text-blue-600 hover:underline">
+  <a
+    [routerLink]="['/admin/sports', sportId(), 'modalities']"
+    class="text-sm text-blue-600 hover:underline"
+  >
     ← {{ 'common.back' | transloco }}
   </a>
 
   <h1 class="text-2xl font-bold mb-6 mt-2">
-    @if (sportId()) {
-      {{ 'admin.sports.form.edit_title' | transloco }}
+    @if (modalityId()) {
+      {{ 'admin.modalities.form.edit_title' | transloco }}
     } @else {
-      {{ 'admin.sports.form.new_title' | transloco }}
+      {{ 'admin.modalities.form.new_title' | transloco }}
+    }
+    @if (sport(); as s) {
+      — {{ s.name }}
     }
   </h1>
 
   <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-5">
     <div class="flex flex-col gap-2">
-      <label for="slug" class="text-sm font-medium text-gray-700">
-        {{ 'admin.sports.form.slug' | transloco }}
-      </label>
-      <input pInputText id="slug" formControlName="slug" class="w-full" />
-    </div>
-
-    <div class="flex flex-col gap-2">
       <span class="text-sm font-medium text-gray-700">
-        {{ 'admin.sports.fields.name' | transloco }}
+        {{ 'admin.modalities.fields.name' | transloco }}
       </span>
       <p-tabs value="fr">
         <p-tablist>
@@ -76,37 +75,12 @@
       </p-tabs>
     </div>
 
-    <div class="flex flex-col gap-2">
-      <label class="text-sm font-medium text-gray-700">
-        {{ 'admin.sports.form.energy_systems' | transloco }}
-      </label>
-      <p-multiSelect
-        [options]="availableEnergySystems()"
-        formControlName="energy_systems"
-        optionLabel="name"
-        optionValue="id"
-        [placeholder]="'admin.sports.form.energy_systems_placeholder' | transloco"
-        [filter]="true"
-        styleClass="w-full"
-      />
-    </div>
-
-    @if (sportId()) {
+    @if (modalityId()) {
       <div class="flex items-center gap-2">
-        <p-checkbox formControlName="is_active" [binary]="true" inputId="is_active" />
-        <label for="is_active" class="text-sm text-gray-700 cursor-pointer">
-          {{ 'admin.sports.form.is_active' | transloco }}
+        <p-checkbox formControlName="is_active" [binary]="true" inputId="mod_is_active" />
+        <label for="mod_is_active" class="text-sm text-gray-700 cursor-pointer">
+          {{ 'admin.modalities.form.is_active' | transloco }}
         </label>
-      </div>
-
-      <div class="border-t border-gray-200 pt-4 mt-2">
-        <a
-          [routerLink]="['/admin/sports', sportId(), 'modalities']"
-          class="inline-flex items-center gap-2 text-blue-600 hover:underline"
-        >
-          <i class="pi pi-tags"></i>
-          {{ 'admin.sports.form.manage_modalities' | transloco }} →
-        </a>
       </div>
     }
 
@@ -123,7 +97,7 @@
     }
 
     <div class="flex justify-end gap-2 mt-2">
-      <a [routerLink]="['/admin/sports']">
+      <a [routerLink]="['/admin/sports', sportId(), 'modalities']">
         <p-button
           type="button"
           severity="secondary"

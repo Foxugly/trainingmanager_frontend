@@ -49,9 +49,9 @@ export const routes: Routes = [
           {
             path: 'modalities',
             loadComponent: () =>
-              import('./features/admin/modalities/modalities-placeholder.component').then(
-                (m) => m.ModalitiesPlaceholderComponent,
-              ),
+              import(
+                './features/admin/modalities/modalities-hub/modalities-hub.component'
+              ).then((m) => m.ModalitiesHubComponent),
           },
         ],
       },

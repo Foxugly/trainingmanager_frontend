@@ -10,6 +10,7 @@
     "save": "Save",
     "cancel": "Cancel",
     "back": "Back",
+    "loading": "Loading",
     "error": "Error",
     "success": "Success"
   },
@@ -51,6 +52,39 @@
       "energy_systems": "Energy Systems",
       "energy_segments": "Energy Segments",
       "modalities": "Modalities"
+    },
+    "modalities": {
+      "hub": {
+        "title": "Modalities",
+        "subtitle": "Pick a sport to manage its modalities",
+        "manage": "Manage modalities",
+        "empty": "No sport available. Create a sport first."
+      },
+      "list": {
+        "title": "Modalities"
+      },
+      "new": "New modality",
+      "show_inactive": "Show inactive modalities",
+      "fields": {
+        "name": "Name",
+        "active": "Active",
+        "actions": "Actions"
+      },
+      "form": {
+        "new_title": "New modality",
+        "edit_title": "Edit modality",
+        "is_active": "Active"
+      },
+      "actions": {
+        "delete_confirm_title": "Deactivate this modality?",
+        "delete_confirm_message": "The modality will be deactivated (soft delete). You can reactivate it later.",
+        "deleted": "Modality deactivated.",
+        "restored": "Modality reactivated.",
+        "saved": "Modality saved."
+      },
+      "errors": {
+        "unknown": "Something went wrong."
+      }
     },
     "energy_segments": {
       "title": "Energy Segments",
@@ -125,7 +159,8 @@
         "slug": "Slug (technical identifier)",
         "energy_systems": "Linked energy systems",
         "energy_systems_placeholder": "Select one or more systems",
-        "is_active": "Active"
+        "is_active": "Active",
+        "manage_modalities": "Manage modalities"
       },
       "actions": {
         "delete_confirm_title": "Deactivate this sport?",
