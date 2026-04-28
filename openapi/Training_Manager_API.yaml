@@ -1,0 +1,3627 @@
+openapi: 3.0.3
+info:
+  title: Training Manager API
+  version: 1.0.0
+  description: API pour la gestion d entrainements
+paths:
+  /api/v1/ai/ping/:
+    post:
+      operationId: ai_ping_create
+      description: Diagnostic ping to the Anthropic API.
+      tags:
+      - ai
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIPingRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AIPingRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AIPingRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIPingResponse'
+          description: Claude responded successfully
+        '400':
+          description: Invalid prompt
+        '500':
+          description: AI configuration error
+        '502':
+          description: AI service error
+  /api/v1/auth/token/:
+    post:
+      operationId: auth_token_create
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenObtainPair'
+          description: ''
+  /api/v1/auth/token/refresh/:
+    post:
+      operationId: auth_token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/v1/energy-segments/:
+    get:
+      operationId: energy_segments_list
+      description: Lecture seule pour EnergySegment (référentiel).
+      parameters:
+      - in: query
+        name: energysystem
+        schema:
+          type: integer
+      - name: ordering
+        required: false
+        in: query
+        description: Quel champ utiliser pour classer les résultats.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un numéro de page de l'ensemble des résultats.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un terme de recherche.
+        schema:
+          type: string
+      tags:
+      - energy-segments
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEnergySegmentList'
+          description: ''
+  /api/v1/energy-segments/{id}/:
+    get:
+      operationId: energy_segments_retrieve
+      description: Lecture seule pour EnergySegment (référentiel).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) energy segment.
+        required: true
+      tags:
+      - energy-segments
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnergySegment'
+          description: ''
+  /api/v1/energy-systems/:
+    get:
+      operationId: energy_systems_list
+      description: Lecture seule pour EnergySystem (référentiel).
+      parameters:
+      - in: query
+        name: name
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Quel champ utiliser pour classer les résultats.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un numéro de page de l'ensemble des résultats.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un terme de recherche.
+        schema:
+          type: string
+      tags:
+      - energy-systems
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEnergySystemList'
+          description: ''
+  /api/v1/energy-systems/{id}/:
+    get:
+      operationId: energy_systems_retrieve
+      description: Lecture seule pour EnergySystem (référentiel).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) energy system.
+        required: true
+      tags:
+      - energy-systems
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnergySystem'
+          description: ''
+  /api/v1/events/:
+    get:
+      operationId: events_list
+      description: CRUD complet pour Event, scopé par team du program.
+      parameters:
+      - in: query
+        name: color
+        schema:
+          type: string
+      - in: query
+        name: date
+        schema:
+          type: string
+          format: date
+      - name: ordering
+        required: false
+        in: query
+        description: Quel champ utiliser pour classer les résultats.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un numéro de page de l'ensemble des résultats.
+        schema:
+          type: integer
+      - in: query
+        name: refer_program
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un terme de recherche.
+        schema:
+          type: string
+      tags:
+      - events
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEventList'
+          description: ''
+    post:
+      operationId: events_create
+      description: CRUD complet pour Event, scopé par team du program.
+      tags:
+      - events
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Event'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Event'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+          description: ''
+  /api/v1/events/{id}/:
+    get:
+      operationId: events_retrieve
+      description: CRUD complet pour Event, scopé par team du program.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) event.
+        required: true
+      tags:
+      - events
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+          description: ''
+    put:
+      operationId: events_update
+      description: CRUD complet pour Event, scopé par team du program.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) event.
+        required: true
+      tags:
+      - events
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Event'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Event'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+          description: ''
+    patch:
+      operationId: events_partial_update
+      description: CRUD complet pour Event, scopé par team du program.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) event.
+        required: true
+      tags:
+      - events
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedEvent'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedEvent'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedEvent'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+          description: ''
+    delete:
+      operationId: events_destroy
+      description: CRUD complet pour Event, scopé par team du program.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) event.
+        required: true
+      tags:
+      - events
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/events/{id}/generate-training/:
+    post:
+      operationId: events_generate_training_create
+      description: Generate detailed Rounds and Exercises with AI for an Event.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) event.
+        required: true
+      tags:
+      - events
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenerateTrainingResponse'
+          description: Training session generated successfully
+        '403':
+          description: Not a manager of this event team
+        '409':
+          description: Event already has rounds
+        '500':
+          description: AI configuration error
+        '502':
+          description: AI service error
+  /api/v1/exercises/:
+    get:
+      operationId: exercises_list
+      description: CRUD complet pour Exercise.
+      parameters:
+      - in: query
+        name: energysegment
+        schema:
+          type: integer
+      - in: query
+        name: language
+        schema:
+          type: string
+          enum:
+          - en
+          - es
+          - fr
+          - it
+          - nl
+        description: |-
+          * `fr` - Français
+          * `nl` - Nederlands
+          * `en` - English
+          * `it` - Italiano
+          * `es` - Español
+      - in: query
+        name: modality
+        schema:
+          type: integer
+      - name: ordering
+        required: false
+        in: query
+        description: Quel champ utiliser pour classer les résultats.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un numéro de page de l'ensemble des résultats.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un terme de recherche.
+        schema:
+          type: string
+      tags:
+      - exercises
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedExerciseList'
+          description: ''
+    post:
+      operationId: exercises_create
+      description: CRUD complet pour Exercise.
+      tags:
+      - exercises
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Exercise'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Exercise'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Exercise'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exercise'
+          description: ''
+  /api/v1/exercises/{id}/:
+    get:
+      operationId: exercises_retrieve
+      description: CRUD complet pour Exercise.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) Exercise.
+        required: true
+      tags:
+      - exercises
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exercise'
+          description: ''
+    put:
+      operationId: exercises_update
+      description: CRUD complet pour Exercise.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) Exercise.
+        required: true
+      tags:
+      - exercises
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Exercise'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Exercise'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Exercise'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exercise'
+          description: ''
+    patch:
+      operationId: exercises_partial_update
+      description: CRUD complet pour Exercise.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) Exercise.
+        required: true
+      tags:
+      - exercises
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedExercise'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedExercise'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedExercise'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exercise'
+          description: ''
+    delete:
+      operationId: exercises_destroy
+      description: CRUD complet pour Exercise.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) Exercise.
+        required: true
+      tags:
+      - exercises
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/exercises/{id}/clone/:
+    post:
+      operationId: exercises_clone_create
+      description: Clone this Exercise. Returns the new Exercise.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) Exercise.
+        required: true
+      tags:
+      - exercises
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exercise'
+          description: ''
+  /api/v1/invitations/:
+    get:
+      operationId: invitations_list
+      description: Trainer invitation flow.
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Quel champ utiliser pour classer les résultats.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un numéro de page de l'ensemble des résultats.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un terme de recherche.
+        schema:
+          type: string
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - cancelled
+          - completed
+          - expired
+          - pending
+        description: |-
+          * `pending` - Pending
+          * `completed` - Completed
+          * `expired` - Expired
+          * `cancelled` - Cancelled
+      - in: query
+        name: team
+        schema:
+          type: integer
+      tags:
+      - invitations
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTeamInvitationList'
+          description: ''
+    post:
+      operationId: invitations_create
+      description: Trainer pre-registers an athlete on a managed team. If the email
+        matches an existing user, the response payload is {detail, member_id} instead
+        of a TeamInvitation.
+      tags:
+      - invitations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInvitation'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateInvitation'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateInvitation'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamInvitation'
+          description: ''
+  /api/v1/invitations/{id}/:
+    get:
+      operationId: invitations_retrieve
+      description: Trainer invitation flow.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) team invitation.
+        required: true
+      tags:
+      - invitations
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamInvitation'
+          description: ''
+    delete:
+      operationId: invitations_destroy
+      description: Trainer invitation flow.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) team invitation.
+        required: true
+      tags:
+      - invitations
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/invitations/lookup/{token}/:
+    get:
+      operationId: invitations_lookup_retrieve
+      description: Lookup an invitation by token. No authentication required.
+      parameters:
+      - in: path
+        name: token
+        schema:
+          type: string
+        required: true
+      tags:
+      - invitations
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidateInvitation'
+          description: ''
+        '400':
+          description: Invitation not pending (already handled)
+        '404':
+          description: Token not found
+        '410':
+          description: Invitation expired
+    post:
+      operationId: invitations_lookup_create
+      description: 'Finalize invitation: create the user, link Member, return JWT.'
+      parameters:
+      - in: path
+        name: token
+        schema:
+          type: string
+        required: true
+      tags:
+      - invitations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompleteInvitation'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CompleteInvitation'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CompleteInvitation'
+        required: true
+      security:
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompleteInvitationResponse'
+          description: User created and JWT issued
+        '400':
+          description: Invalid token state, username taken, or weak password
+        '404':
+          description: Token not found
+  /api/v1/join-requests/:
+    get:
+      operationId: join_requests_list
+      description: Self-signup join request flow.
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Quel champ utiliser pour classer les résultats.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un numéro de page de l'ensemble des résultats.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un terme de recherche.
+        schema:
+          type: string
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - accepted
+          - cancelled
+          - pending
+          - rejected
+        description: |-
+          * `pending` - Pending
+          * `accepted` - Accepted
+          * `rejected` - Rejected
+          * `cancelled` - Cancelled
+      - in: query
+        name: team
+        schema:
+          type: integer
+      tags:
+      - join-requests
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTeamJoinRequestList'
+          description: ''
+    post:
+      operationId: join_requests_create
+      description: Self-signup join request flow.
+      tags:
+      - join-requests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateJoinRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateJoinRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateJoinRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateJoinRequest'
+          description: ''
+  /api/v1/join-requests/{id}/:
+    get:
+      operationId: join_requests_retrieve
+      description: Self-signup join request flow.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) team join
+          request.
+        required: true
+      tags:
+      - join-requests
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamJoinRequest'
+          description: ''
+    put:
+      operationId: join_requests_update
+      description: Self-signup join request flow.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) team join
+          request.
+        required: true
+      tags:
+      - join-requests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TeamJoinRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TeamJoinRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TeamJoinRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamJoinRequest'
+          description: ''
+    patch:
+      operationId: join_requests_partial_update
+      description: Self-signup join request flow.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) team join
+          request.
+        required: true
+      tags:
+      - join-requests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedTeamJoinRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedTeamJoinRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedTeamJoinRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamJoinRequest'
+          description: ''
+    delete:
+      operationId: join_requests_destroy
+      description: Self-signup join request flow.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) team join
+          request.
+        required: true
+      tags:
+      - join-requests
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/me/:
+    get:
+      operationId: me_retrieve
+      description: GET/PATCH du profil de l'utilisateur connecté.
+      tags:
+      - me
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Me'
+          description: ''
+    put:
+      operationId: me_update
+      description: GET/PATCH du profil de l'utilisateur connecté.
+      tags:
+      - me
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Me'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Me'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Me'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Me'
+          description: ''
+    patch:
+      operationId: me_partial_update
+      description: GET/PATCH du profil de l'utilisateur connecté.
+      tags:
+      - me
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedMe'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedMe'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedMe'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Me'
+          description: ''
+  /api/v1/members/:
+    get:
+      operationId: members_list
+      description: CRUD complet pour Member, scopé par teams du Member.
+      parameters:
+      - in: query
+        name: firstname
+        schema:
+          type: string
+      - in: query
+        name: lastname
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Quel champ utiliser pour classer les résultats.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un numéro de page de l'ensemble des résultats.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un terme de recherche.
+        schema:
+          type: string
+      tags:
+      - members
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedMemberList'
+          description: ''
+    post:
+      operationId: members_create
+      description: CRUD complet pour Member, scopé par teams du Member.
+      tags:
+      - members
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Member'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Member'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Member'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Member'
+          description: ''
+  /api/v1/members/{id}/:
+    get:
+      operationId: members_retrieve
+      description: CRUD complet pour Member, scopé par teams du Member.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) Member.
+        required: true
+      tags:
+      - members
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Member'
+          description: ''
+    put:
+      operationId: members_update
+      description: CRUD complet pour Member, scopé par teams du Member.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) Member.
+        required: true
+      tags:
+      - members
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Member'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Member'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Member'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Member'
+          description: ''
+    patch:
+      operationId: members_partial_update
+      description: CRUD complet pour Member, scopé par teams du Member.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) Member.
+        required: true
+      tags:
+      - members
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedMember'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedMember'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedMember'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Member'
+          description: ''
+    delete:
+      operationId: members_destroy
+      description: CRUD complet pour Member, scopé par teams du Member.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) Member.
+        required: true
+      tags:
+      - members
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/programs/:
+    get:
+      operationId: programs_list
+      description: CRUD complet pour Program, scopé par team.
+      parameters:
+      - in: query
+        name: date_end
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: date_start
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: name
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Quel champ utiliser pour classer les résultats.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un numéro de page de l'ensemble des résultats.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un terme de recherche.
+        schema:
+          type: string
+      - in: query
+        name: team
+        schema:
+          type: integer
+      tags:
+      - programs
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProgramList'
+          description: ''
+    post:
+      operationId: programs_create
+      description: CRUD complet pour Program, scopé par team.
+      tags:
+      - programs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Program'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Program'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Program'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Program'
+          description: ''
+  /api/v1/programs/{id}/:
+    get:
+      operationId: programs_retrieve
+      description: CRUD complet pour Program, scopé par team.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) Program.
+        required: true
+      tags:
+      - programs
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Program'
+          description: ''
+    put:
+      operationId: programs_update
+      description: CRUD complet pour Program, scopé par team.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) Program.
+        required: true
+      tags:
+      - programs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Program'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Program'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Program'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Program'
+          description: ''
+    patch:
+      operationId: programs_partial_update
+      description: CRUD complet pour Program, scopé par team.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) Program.
+        required: true
+      tags:
+      - programs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProgram'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProgram'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProgram'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Program'
+          description: ''
+    delete:
+      operationId: programs_destroy
+      description: CRUD complet pour Program, scopé par team.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) Program.
+        required: true
+      tags:
+      - programs
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/programs/{id}/generate-events/:
+    post:
+      operationId: programs_generate_events_create
+      description: Generate a training plan with AI for the given Program.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) Program.
+        required: true
+      tags:
+      - programs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GeneratePlanRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GeneratePlanRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GeneratePlanRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeneratePlanResponse'
+          description: Plan generated successfully
+        '400':
+          description: Invalid request data
+        '403':
+          description: Not a manager of this program team
+        '500':
+          description: AI configuration error
+        '502':
+          description: AI service error
+  /api/v1/rounds/:
+    get:
+      operationId: rounds_list
+      description: CRUD complet pour Round.
+      parameters:
+      - in: query
+        name: language
+        schema:
+          type: string
+          enum:
+          - en
+          - es
+          - fr
+          - it
+          - nl
+        description: |-
+          * `fr` - Français
+          * `nl` - Nederlands
+          * `en` - English
+          * `it` - Italiano
+          * `es` - Español
+      - name: ordering
+        required: false
+        in: query
+        description: Quel champ utiliser pour classer les résultats.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un numéro de page de l'ensemble des résultats.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un terme de recherche.
+        schema:
+          type: string
+      - in: query
+        name: sport
+        schema:
+          type: integer
+      tags:
+      - rounds
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedRoundList'
+          description: ''
+    post:
+      operationId: rounds_create
+      description: CRUD complet pour Round.
+      tags:
+      - rounds
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Round'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Round'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Round'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Round'
+          description: ''
+  /api/v1/rounds/{id}/:
+    get:
+      operationId: rounds_retrieve
+      description: CRUD complet pour Round.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) Round.
+        required: true
+      tags:
+      - rounds
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Round'
+          description: ''
+    put:
+      operationId: rounds_update
+      description: CRUD complet pour Round.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) Round.
+        required: true
+      tags:
+      - rounds
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Round'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Round'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Round'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Round'
+          description: ''
+    patch:
+      operationId: rounds_partial_update
+      description: CRUD complet pour Round.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) Round.
+        required: true
+      tags:
+      - rounds
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedRound'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedRound'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedRound'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Round'
+          description: ''
+    delete:
+      operationId: rounds_destroy
+      description: CRUD complet pour Round.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) Round.
+        required: true
+      tags:
+      - rounds
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/rounds/{id}/clone/:
+    post:
+      operationId: rounds_clone_create
+      description: Clone this Round (scalar fields + M2M exercises). Returns the new
+        Round.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) Round.
+        required: true
+      tags:
+      - rounds
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Round'
+          description: ''
+  /api/v1/rounds/{id}/clone-exercise/:
+    post:
+      operationId: rounds_clone_exercise_create
+      description: Clone an Exercise and attach the copy to this Round.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) Round.
+        required: true
+      tags:
+      - rounds
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CloneExerciseRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CloneExerciseRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CloneExerciseRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exercise'
+          description: ''
+        '400':
+          description: No response body
+        '404':
+          description: No response body
+  /api/v1/sports/:
+    get:
+      operationId: sports_list
+      description: Catalogue des sports. Création via admin Django uniquement.
+      parameters:
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Quel champ utiliser pour classer les résultats.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un numéro de page de l'ensemble des résultats.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un terme de recherche.
+        schema:
+          type: string
+      tags:
+      - sports
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSportList'
+          description: ''
+  /api/v1/sports/{id}/:
+    get:
+      operationId: sports_retrieve
+      description: Catalogue des sports. Création via admin Django uniquement.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) sport.
+        required: true
+      tags:
+      - sports
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sport'
+          description: ''
+  /api/v1/sports/{sport_pk}/modalities/:
+    get:
+      operationId: sports_modalities_list
+      description: Lecture seule pour Modality (référentiel par sport, nested via
+        /sports/<id>/modalities/).
+      parameters:
+      - in: query
+        name: name
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Quel champ utiliser pour classer les résultats.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un numéro de page de l'ensemble des résultats.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un terme de recherche.
+        schema:
+          type: string
+      - in: path
+        name: sport_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - sports
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedModalityList'
+          description: ''
+  /api/v1/sports/{sport_pk}/modalities/{id}/:
+    get:
+      operationId: sports_modalities_retrieve
+      description: Lecture seule pour Modality (référentiel par sport, nested via
+        /sports/<id>/modalities/).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) modality.
+        required: true
+      - in: path
+        name: sport_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - sports
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Modality'
+          description: ''
+  /api/v1/teams/:
+    get:
+      operationId: teams_list
+      description: CRUD sur Teams. Liste = teams gérées par l'user + teams publiques
+        actives.
+      parameters:
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - in: query
+        name: is_public
+        schema:
+          type: boolean
+      - in: query
+        name: language
+        schema:
+          type: string
+          enum:
+          - en
+          - es
+          - fr
+          - it
+          - nl
+        description: |-
+          * `fr` - Français
+          * `nl` - Nederlands
+          * `en` - English
+          * `it` - Italiano
+          * `es` - Español
+      - name: ordering
+        required: false
+        in: query
+        description: Quel champ utiliser pour classer les résultats.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un numéro de page de l'ensemble des résultats.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: Un terme de recherche.
+        schema:
+          type: string
+      tags:
+      - teams
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTeamList'
+          description: ''
+    post:
+      operationId: teams_create
+      description: CRUD sur Teams. Liste = teams gérées par l'user + teams publiques
+        actives.
+      tags:
+      - teams
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Team'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Team'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Team'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+          description: ''
+  /api/v1/teams/{id}/:
+    get:
+      operationId: teams_retrieve
+      description: CRUD sur Teams. Liste = teams gérées par l'user + teams publiques
+        actives.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) team.
+        required: true
+      tags:
+      - teams
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+          description: ''
+    put:
+      operationId: teams_update
+      description: CRUD sur Teams. Liste = teams gérées par l'user + teams publiques
+        actives.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) team.
+        required: true
+      tags:
+      - teams
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Team'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Team'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Team'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+          description: ''
+    patch:
+      operationId: teams_partial_update
+      description: CRUD sur Teams. Liste = teams gérées par l'user + teams publiques
+        actives.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) team.
+        required: true
+      tags:
+      - teams
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedTeam'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedTeam'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedTeam'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+          description: ''
+    delete:
+      operationId: teams_destroy
+      description: CRUD sur Teams. Liste = teams gérées par l'user + teams publiques
+        actives.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un(une) valeur entière unique identifiant ce(cette) team.
+        required: true
+      tags:
+      - teams
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+components:
+  schemas:
+    AIPingRequest:
+      type: object
+      properties:
+        prompt:
+          type: string
+          description: Prompt to send to Claude. Defaults to a hello-world prompt.
+    AIPingResponse:
+      type: object
+      properties:
+        text:
+          type: string
+        model:
+          type: string
+        input_tokens:
+          type: integer
+        output_tokens:
+          type: integer
+        stop_reason:
+          type: string
+      required:
+      - input_tokens
+      - model
+      - output_tokens
+      - stop_reason
+      - text
+    CloneExerciseRequest:
+      type: object
+      properties:
+        exercise_id:
+          type: integer
+      required:
+      - exercise_id
+    CompleteInvitation:
+      type: object
+      properties:
+        username:
+          type: string
+          maxLength: 150
+        password:
+          type: string
+          writeOnly: true
+          minLength: 8
+      required:
+      - password
+      - username
+    CompleteInvitationResponse:
+      type: object
+      properties:
+        detail:
+          type: string
+        username:
+          type: string
+        access:
+          type: string
+        refresh:
+          type: string
+      required:
+      - access
+      - detail
+      - refresh
+      - username
+    CreateInvitation:
+      type: object
+      properties:
+        team:
+          type: integer
+        email:
+          type: string
+          format: email
+        firstname:
+          type: string
+          maxLength: 100
+        lastname:
+          type: string
+          maxLength: 100
+        phonenumber:
+          type: string
+          default: ''
+          maxLength: 20
+      required:
+      - email
+      - firstname
+      - lastname
+      - team
+    CreateJoinRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        team:
+          type: integer
+        message:
+          type: string
+      required:
+      - id
+      - team
+    CustomUserPublic:
+      type: object
+      description: |-
+        Public user payload for nested read contexts.
+
+        Excludes email and other privacy-sensitive fields. Use this whenever
+        a user is exposed inside another resource (Team.owner, Member.user,
+        TeamInvitation.invited_by, ...).
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+          title: Nom d’utilisateur
+          description: Requis. 150 caractères maximum. Uniquement des lettres, nombres
+            et les caractères « @ », « . », « + », « - » et « _ ».
+        first_name:
+          type: string
+          readOnly: true
+          title: Prénom
+        last_name:
+          type: string
+          readOnly: true
+          title: Nom
+      required:
+      - first_name
+      - id
+      - last_name
+      - username
+    EnergySegment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        abv:
+          type: string
+          maxLength: 10
+        description:
+          type: string
+          nullable: true
+          maxLength: 200
+        energysystem:
+          allOf:
+          - $ref: '#/components/schemas/EnergySystem'
+          readOnly: true
+        energysystem_id:
+          type: integer
+          writeOnly: true
+          nullable: true
+      required:
+      - abv
+      - energysystem
+      - id
+    EnergySystem:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 20
+      required:
+      - id
+      - name
+    Event:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        goal:
+          type: string
+          nullable: true
+          maxLength: 100
+        color:
+          type: string
+          maxLength: 10
+        date:
+          type: string
+          format: date
+          nullable: true
+        hour_start:
+          type: string
+          format: time
+          nullable: true
+        hour_end:
+          type: string
+          format: time
+          nullable: true
+        total:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        refer_program:
+          allOf:
+          - $ref: '#/components/schemas/ProgramMinimal'
+          readOnly: true
+        refer_program_id:
+          type: integer
+          writeOnly: true
+        rounds:
+          type: array
+          items:
+            type: integer
+        members:
+          type: array
+          items:
+            type: integer
+        generated_by_ai:
+          type: boolean
+          readOnly: true
+        ai_response:
+          type: string
+          readOnly: true
+        ai_generated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - ai_generated_at
+      - ai_response
+      - created_at
+      - generated_by_ai
+      - id
+      - name
+      - refer_program
+      - refer_program_id
+      - updated_at
+    Exercise:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        order:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        repetition:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        distance:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        notes:
+          type: string
+          maxLength: 200
+        t_start:
+          type: string
+          nullable: true
+          title: Start
+          maxLength: 10
+        t_break:
+          type: string
+          nullable: true
+          title: Break
+          maxLength: 10
+        modality:
+          allOf:
+          - $ref: '#/components/schemas/Modality'
+          readOnly: true
+        modality_id:
+          type: integer
+          writeOnly: true
+          nullable: true
+        energysegment:
+          allOf:
+          - $ref: '#/components/schemas/EnergySegment'
+          readOnly: true
+        energysegment_id:
+          type: integer
+          writeOnly: true
+          nullable: true
+        language:
+          $ref: '#/components/schemas/LanguageEnum'
+        usage_count:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - energysegment
+      - id
+      - language
+      - modality
+      - updated_at
+      - usage_count
+    GeneratePlanRequest:
+      type: object
+      properties:
+        date_start:
+          type: string
+          format: date
+        date_end:
+          type: string
+          format: date
+        frequency_per_week:
+          type: integer
+          maximum: 14
+          minimum: 1
+        description:
+          type: string
+          default: ''
+        overlap_strategy:
+          allOf:
+          - $ref: '#/components/schemas/OverlapStrategyEnum'
+          default: add_only
+      required:
+      - date_end
+      - date_start
+      - frequency_per_week
+    GeneratePlanResponse:
+      type: object
+      properties:
+        created_count:
+          type: integer
+        deleted_count:
+          type: integer
+        rationale:
+          type: string
+        model:
+          type: string
+        tokens_used:
+          $ref: '#/components/schemas/GeneratePlanTokensUsed'
+      required:
+      - created_count
+      - deleted_count
+      - model
+      - rationale
+      - tokens_used
+    GeneratePlanTokensUsed:
+      type: object
+      properties:
+        input:
+          type: integer
+        output:
+          type: integer
+      required:
+      - input
+      - output
+    GenerateTrainingResponse:
+      type: object
+      properties:
+        rounds_created:
+          type: integer
+        exercises_created:
+          type: integer
+        exercises_reused:
+          type: integer
+        rationale:
+          type: string
+        model:
+          type: string
+        tokens_used:
+          $ref: '#/components/schemas/GenerateTrainingTokensUsed'
+      required:
+      - exercises_created
+      - exercises_reused
+      - model
+      - rationale
+      - rounds_created
+      - tokens_used
+    GenerateTrainingTokensUsed:
+      type: object
+      properties:
+        input:
+          type: integer
+        output:
+          type: integer
+      required:
+      - input
+      - output
+    InvitationStatusEnum:
+      enum:
+      - pending
+      - completed
+      - expired
+      - cancelled
+      type: string
+      description: |-
+        * `pending` - Pending
+        * `completed` - Completed
+        * `expired` - Expired
+        * `cancelled` - Cancelled
+    JoinRequestStatusEnum:
+      enum:
+      - pending
+      - accepted
+      - rejected
+      - cancelled
+      type: string
+      description: |-
+        * `pending` - Pending
+        * `accepted` - Accepted
+        * `rejected` - Rejected
+        * `cancelled` - Cancelled
+    LanguageEnum:
+      enum:
+      - fr
+      - nl
+      - en
+      - it
+      - es
+      type: string
+      description: |-
+        * `fr` - Français
+        * `nl` - Nederlands
+        * `en` - English
+        * `it` - Italiano
+        * `es` - Español
+    Me:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+          title: Nom d’utilisateur
+          description: Requis. 150 caractères maximum. Uniquement des lettres, nombres
+            et les caractères « @ », « . », « + », « - » et « _ ».
+        email:
+          type: string
+          format: email
+          title: Adresse électronique
+          maxLength: 254
+        first_name:
+          type: string
+          title: Prénom
+          maxLength: 150
+        last_name:
+          type: string
+          title: Nom
+          maxLength: 150
+        language:
+          $ref: '#/components/schemas/LanguageEnum'
+        last_login:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: Dernière connexion
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date d’inscription
+      required:
+      - date_joined
+      - id
+      - last_login
+      - username
+    Member:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        firstname:
+          type: string
+          maxLength: 100
+        lastname:
+          type: string
+          maxLength: 100
+        fullname:
+          type: string
+          readOnly: true
+        email:
+          type: string
+          format: email
+          nullable: true
+          maxLength: 50
+        phonenumber:
+          type: string
+          nullable: true
+          maxLength: 20
+        teams:
+          type: array
+          items:
+            type: integer
+        user:
+          allOf:
+          - $ref: '#/components/schemas/CustomUserPublic'
+          readOnly: true
+        user_id:
+          type: integer
+          writeOnly: true
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - firstname
+      - fullname
+      - id
+      - lastname
+      - updated_at
+      - user
+    Modality:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+        sport:
+          allOf:
+          - $ref: '#/components/schemas/Sport'
+          readOnly: true
+      required:
+      - id
+      - name
+      - sport
+    OverlapStrategyEnum:
+      enum:
+      - add_only
+      - merge
+      - replace
+      type: string
+      description: |-
+        * `add_only` - Add only
+        * `merge` - Merge
+        * `replace` - Replace
+    PaginatedEnergySegmentList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/EnergySegment'
+    PaginatedEnergySystemList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/EnergySystem'
+    PaginatedEventList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+    PaginatedExerciseList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Exercise'
+    PaginatedMemberList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Member'
+    PaginatedModalityList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Modality'
+    PaginatedProgramList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Program'
+    PaginatedRoundList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Round'
+    PaginatedSportList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Sport'
+    PaginatedTeamInvitationList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeamInvitation'
+    PaginatedTeamJoinRequestList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeamJoinRequest'
+    PaginatedTeamList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Team'
+    PatchedEvent:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        goal:
+          type: string
+          nullable: true
+          maxLength: 100
+        color:
+          type: string
+          maxLength: 10
+        date:
+          type: string
+          format: date
+          nullable: true
+        hour_start:
+          type: string
+          format: time
+          nullable: true
+        hour_end:
+          type: string
+          format: time
+          nullable: true
+        total:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        refer_program:
+          allOf:
+          - $ref: '#/components/schemas/ProgramMinimal'
+          readOnly: true
+        refer_program_id:
+          type: integer
+          writeOnly: true
+        rounds:
+          type: array
+          items:
+            type: integer
+        members:
+          type: array
+          items:
+            type: integer
+        generated_by_ai:
+          type: boolean
+          readOnly: true
+        ai_response:
+          type: string
+          readOnly: true
+        ai_generated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedExercise:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        order:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        repetition:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        distance:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        notes:
+          type: string
+          maxLength: 200
+        t_start:
+          type: string
+          nullable: true
+          title: Start
+          maxLength: 10
+        t_break:
+          type: string
+          nullable: true
+          title: Break
+          maxLength: 10
+        modality:
+          allOf:
+          - $ref: '#/components/schemas/Modality'
+          readOnly: true
+        modality_id:
+          type: integer
+          writeOnly: true
+          nullable: true
+        energysegment:
+          allOf:
+          - $ref: '#/components/schemas/EnergySegment'
+          readOnly: true
+        energysegment_id:
+          type: integer
+          writeOnly: true
+          nullable: true
+        language:
+          $ref: '#/components/schemas/LanguageEnum'
+        usage_count:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedMe:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+          title: Nom d’utilisateur
+          description: Requis. 150 caractères maximum. Uniquement des lettres, nombres
+            et les caractères « @ », « . », « + », « - » et « _ ».
+        email:
+          type: string
+          format: email
+          title: Adresse électronique
+          maxLength: 254
+        first_name:
+          type: string
+          title: Prénom
+          maxLength: 150
+        last_name:
+          type: string
+          title: Nom
+          maxLength: 150
+        language:
+          $ref: '#/components/schemas/LanguageEnum'
+        last_login:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: Dernière connexion
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Date d’inscription
+    PatchedMember:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        firstname:
+          type: string
+          maxLength: 100
+        lastname:
+          type: string
+          maxLength: 100
+        fullname:
+          type: string
+          readOnly: true
+        email:
+          type: string
+          format: email
+          nullable: true
+          maxLength: 50
+        phonenumber:
+          type: string
+          nullable: true
+          maxLength: 20
+        teams:
+          type: array
+          items:
+            type: integer
+        user:
+          allOf:
+          - $ref: '#/components/schemas/CustomUserPublic'
+          readOnly: true
+        user_id:
+          type: integer
+          writeOnly: true
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedProgram:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        date_start:
+          type: string
+          format: date
+          nullable: true
+        date_end:
+          type: string
+          format: date
+          nullable: true
+        team:
+          allOf:
+          - $ref: '#/components/schemas/TeamMinimal'
+          readOnly: true
+        team_id:
+          type: integer
+          writeOnly: true
+        events:
+          type: array
+          items:
+            type: integer
+        members:
+          type: array
+          items:
+            type: integer
+        frequency_per_week:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+        description:
+          type: string
+        generated_by_ai:
+          type: boolean
+          readOnly: true
+        ai_response:
+          type: string
+          readOnly: true
+        ai_generated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedRound:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        sport:
+          allOf:
+          - $ref: '#/components/schemas/Sport'
+          readOnly: true
+        sport_id:
+          type: integer
+          writeOnly: true
+        language:
+          $ref: '#/components/schemas/LanguageEnum'
+        order:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        count:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        t_start:
+          type: string
+          nullable: true
+          title: Start
+          maxLength: 10
+        t_break:
+          type: string
+          nullable: true
+          title: Break
+          maxLength: 10
+        exercises:
+          type: array
+          items:
+            type: integer
+        usage_count:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedTeam:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 200
+        sport:
+          allOf:
+          - $ref: '#/components/schemas/Sport'
+          readOnly: true
+        sport_id:
+          type: integer
+          writeOnly: true
+        owner:
+          allOf:
+          - $ref: '#/components/schemas/CustomUserPublic'
+          readOnly: true
+        managers:
+          type: array
+          items:
+            type: integer
+        language:
+          $ref: '#/components/schemas/LanguageEnum'
+        is_active:
+          type: boolean
+        is_public:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedTeamJoinRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
+        team:
+          type: integer
+        status:
+          $ref: '#/components/schemas/JoinRequestStatusEnum'
+        message:
+          type: string
+        response_message:
+          type: string
+        requested_at:
+          type: string
+          format: date-time
+          readOnly: true
+        responded_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        responded_by:
+          type: integer
+          readOnly: true
+          nullable: true
+    Program:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        date_start:
+          type: string
+          format: date
+          nullable: true
+        date_end:
+          type: string
+          format: date
+          nullable: true
+        team:
+          allOf:
+          - $ref: '#/components/schemas/TeamMinimal'
+          readOnly: true
+        team_id:
+          type: integer
+          writeOnly: true
+        events:
+          type: array
+          items:
+            type: integer
+        members:
+          type: array
+          items:
+            type: integer
+        frequency_per_week:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+          nullable: true
+        description:
+          type: string
+        generated_by_ai:
+          type: boolean
+          readOnly: true
+        ai_response:
+          type: string
+          readOnly: true
+        ai_generated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - ai_generated_at
+      - ai_response
+      - created_at
+      - generated_by_ai
+      - id
+      - name
+      - team
+      - team_id
+      - updated_at
+    ProgramMinimal:
+      type: object
+      description: Compact program payload for nested read contexts.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+      required:
+      - id
+      - name
+    Round:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        sport:
+          allOf:
+          - $ref: '#/components/schemas/Sport'
+          readOnly: true
+        sport_id:
+          type: integer
+          writeOnly: true
+        language:
+          $ref: '#/components/schemas/LanguageEnum'
+        order:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        count:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        t_start:
+          type: string
+          nullable: true
+          title: Start
+          maxLength: 10
+        t_break:
+          type: string
+          nullable: true
+          title: Break
+          maxLength: 10
+        exercises:
+          type: array
+          items:
+            type: integer
+        usage_count:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - language
+      - sport
+      - sport_id
+      - updated_at
+      - usage_count
+    Sport:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        is_active:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - is_active
+      - name
+      - slug
+    Team:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 200
+        sport:
+          allOf:
+          - $ref: '#/components/schemas/Sport'
+          readOnly: true
+        sport_id:
+          type: integer
+          writeOnly: true
+        owner:
+          allOf:
+          - $ref: '#/components/schemas/CustomUserPublic'
+          readOnly: true
+        managers:
+          type: array
+          items:
+            type: integer
+        language:
+          $ref: '#/components/schemas/LanguageEnum'
+        is_active:
+          type: boolean
+        is_public:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - name
+      - owner
+      - sport
+      - sport_id
+      - updated_at
+    TeamInvitation:
+      type: object
+      description: List/detail view for managers. Token is intentionally excluded.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        team:
+          type: integer
+        invited_by:
+          type: integer
+          readOnly: true
+          nullable: true
+        member:
+          type: integer
+          readOnly: true
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        status:
+          allOf:
+          - $ref: '#/components/schemas/InvitationStatusEnum'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        expires_at:
+          type: string
+          format: date-time
+          readOnly: true
+        completed_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+      required:
+      - completed_at
+      - created_at
+      - email
+      - expires_at
+      - id
+      - invited_by
+      - member
+      - status
+      - team
+    TeamJoinRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
+        team:
+          type: integer
+        status:
+          $ref: '#/components/schemas/JoinRequestStatusEnum'
+        message:
+          type: string
+        response_message:
+          type: string
+        requested_at:
+          type: string
+          format: date-time
+          readOnly: true
+        responded_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        responded_by:
+          type: integer
+          readOnly: true
+          nullable: true
+      required:
+      - id
+      - requested_at
+      - responded_at
+      - responded_by
+      - team
+      - user
+    TeamMinimal:
+      type: object
+      description: Compact team payload for nested read contexts.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+        language:
+          allOf:
+          - $ref: '#/components/schemas/LanguageEnum'
+          readOnly: true
+      required:
+      - id
+      - language
+      - name
+    TokenObtainPair:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          readOnly: true
+      required:
+      - access
+      - password
+      - refresh
+      - username
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+      required:
+      - access
+      - refresh
+    ValidateInvitation:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          readOnly: true
+        team_name:
+          type: string
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/InvitationStatusEnum'
+          readOnly: true
+        expires_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - email
+      - expires_at
+      - status
+      - team_name
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,21 @@
+{
+  "$schema": "./node_modules/@openapitools/openapi-generator-cli/config.schema.json",
+  "spaces": 2,
+  "generator-cli": {
+    "version": "7.21.0",
+    "generators": {
+      "trainingmanager-api": {
+        "generatorName": "typescript-angular",
+        "inputSpec": "./openapi/Training_Manager_API.yaml",
+        "output": "./src/app/api",
+        "additionalProperties": {
+          "ngVersion": "21.0.0",
+          "providedIn": "root",
+          "withInterfaces": true,
+          "fileNaming": "kebab-case",
+          "stringEnums": true
+        }
+      }
+    }
+  }
+}
