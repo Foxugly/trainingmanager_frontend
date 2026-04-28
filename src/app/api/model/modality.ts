@@ -14,5 +14,6 @@ export interface Modality {
     readonly id: number;
     readonly name: string;
     readonly sport: Sport;
+    readonly is_active: boolean;
 }
 

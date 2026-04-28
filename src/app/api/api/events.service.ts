@@ -118,7 +118,7 @@ export class EventsService extends BaseService implements EventsServiceInterface
     /**
      * CRUD complet pour Event, scopé par team du program.
      * @endpoint delete /api/v1/events/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) event.
+     * @param id A unique integer value identifying this event.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
@@ -176,7 +176,7 @@ export class EventsService extends BaseService implements EventsServiceInterface
     /**
      * Generate detailed Rounds and Exercises with AI for an Event.
      * @endpoint post /api/v1/events/{id}/generate-training/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) event.
+     * @param id A unique integer value identifying this event.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
@@ -237,10 +237,10 @@ export class EventsService extends BaseService implements EventsServiceInterface
      * @endpoint get /api/v1/events/
      * @param color 
      * @param date 
-     * @param ordering Quel champ utiliser pour classer les résultats.
-     * @param page Un numéro de page de l\&#39;ensemble des résultats.
+     * @param ordering Which field to use when ordering the results.
+     * @param page A page number within the paginated result set.
      * @param referProgram 
-     * @param search Un terme de recherche.
+     * @param search A search term.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
@@ -353,7 +353,7 @@ export class EventsService extends BaseService implements EventsServiceInterface
     /**
      * CRUD complet pour Event, scopé par team du program.
      * @endpoint patch /api/v1/events/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) event.
+     * @param id A unique integer value identifying this event.
      * @param patchedEvent 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -425,7 +425,7 @@ export class EventsService extends BaseService implements EventsServiceInterface
     /**
      * CRUD complet pour Event, scopé par team du program.
      * @endpoint get /api/v1/events/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) event.
+     * @param id A unique integer value identifying this event.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
@@ -484,7 +484,7 @@ export class EventsService extends BaseService implements EventsServiceInterface
     /**
      * CRUD complet pour Event, scopé par team du program.
      * @endpoint put /api/v1/events/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) event.
+     * @param id A unique integer value identifying this event.
      * @param event 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.

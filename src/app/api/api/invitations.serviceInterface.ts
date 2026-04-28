@@ -39,7 +39,7 @@ export interface InvitationsServiceInterface {
      * 
      * Trainer invitation flow.
      * @endpoint delete /api/v1/invitations/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) team invitation.
+     * @param id A unique integer value identifying this team invitation.
      */
     invitationsDestroy(id: number, extraHttpRequestParams?: any): Observable<{}>;
 
@@ -47,9 +47,9 @@ export interface InvitationsServiceInterface {
      * 
      * Trainer invitation flow.
      * @endpoint get /api/v1/invitations/
-     * @param ordering Quel champ utiliser pour classer les résultats.
-     * @param page Un numéro de page de l\&#39;ensemble des résultats.
-     * @param search Un terme de recherche.
+     * @param ordering Which field to use when ordering the results.
+     * @param page A page number within the paginated result set.
+     * @param search A search term.
      * @param status * &#x60;pending&#x60; - Pending * &#x60;completed&#x60; - Completed * &#x60;expired&#x60; - Expired * &#x60;cancelled&#x60; - Cancelled
      * @param team 
      */
@@ -76,7 +76,7 @@ export interface InvitationsServiceInterface {
      * 
      * Trainer invitation flow.
      * @endpoint get /api/v1/invitations/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) team invitation.
+     * @param id A unique integer value identifying this team invitation.
      */
     invitationsRetrieve(id: number, extraHttpRequestParams?: any): Observable<TeamInvitation>;
 

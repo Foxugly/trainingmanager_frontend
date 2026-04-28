@@ -11,10 +11,12 @@ import { HttpHeaders }                                       from '@angular/comm
 
 import { Observable }                                        from 'rxjs';
 
-import { Modality } from '../model/models';
+import { ModalityAdmin } from '../model/models';
 import { PaginatedModalityList } from '../model/models';
 import { PaginatedSportList } from '../model/models';
-import { Sport } from '../model/models';
+import { PatchedModalityAdmin } from '../model/models';
+import { PatchedSportAdmin } from '../model/models';
+import { SportAdmin } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
@@ -26,43 +28,117 @@ export interface SportsServiceInterface {
     configuration: Configuration;
 
     /**
-     * 
-     * Catalogue des sports. Création via admin Django uniquement.
+     * Create sport (staff only)
+     * Accepts the admin flavor with name_fr/nl/en/it/es.
+     * @endpoint post /api/v1/sports/
+     * @param sportAdmin 
+     */
+    sportsCreate(sportAdmin: SportAdmin, extraHttpRequestParams?: any): Observable<SportAdmin>;
+
+    /**
+     * Soft delete sport (staff only)
+     * Sets is_active&#x3D;False; does not hard delete.
+     * @endpoint delete /api/v1/sports/{id}/
+     * @param id A unique integer value identifying this sport.
+     */
+    sportsDestroy(id: number, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * List sports (public flavor)
+     * Returns the public Sport serializer with localized \&#39;name\&#39;. Available to all authenticated users.
      * @endpoint get /api/v1/sports/
      * @param isActive 
-     * @param ordering Quel champ utiliser pour classer les résultats.
-     * @param page Un numéro de page de l\&#39;ensemble des résultats.
-     * @param search Un terme de recherche.
+     * @param ordering Which field to use when ordering the results.
+     * @param page A page number within the paginated result set.
+     * @param search A search term.
      */
     sportsList(isActive?: boolean, ordering?: string, page?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedSportList>;
 
     /**
-     * 
-     * Lecture seule pour Modality (référentiel par sport, nested via /sports/&lt;id&gt;/modalities/).
+     * Create modality (staff only)
+     * CRUD on Modality referential, scoped by sport when nested.
+     * @endpoint post /api/v1/sports/{sport_pk}/modalities/
+     * @param sportPk 
+     * @param modalityAdmin 
+     */
+    sportsModalitiesCreate(sportPk: number, modalityAdmin: ModalityAdmin, extraHttpRequestParams?: any): Observable<ModalityAdmin>;
+
+    /**
+     * Soft delete modality (staff only)
+     * CRUD on Modality referential, scoped by sport when nested.
+     * @endpoint delete /api/v1/sports/{sport_pk}/modalities/{id}/
+     * @param id A unique integer value identifying this modality.
+     * @param sportPk 
+     */
+    sportsModalitiesDestroy(id: number, sportPk: number, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * List modalities (public flavor)
+     * CRUD on Modality referential, scoped by sport when nested.
      * @endpoint get /api/v1/sports/{sport_pk}/modalities/
      * @param sportPk 
+     * @param isActive 
      * @param name 
-     * @param ordering Quel champ utiliser pour classer les résultats.
-     * @param page Un numéro de page de l\&#39;ensemble des résultats.
-     * @param search Un terme de recherche.
+     * @param ordering Which field to use when ordering the results.
+     * @param page A page number within the paginated result set.
+     * @param search A search term.
+     * @param sport 
      */
-    sportsModalitiesList(sportPk: number, name?: string, ordering?: string, page?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedModalityList>;
+    sportsModalitiesList(sportPk: number, isActive?: boolean, name?: string, ordering?: string, page?: number, search?: string, sport?: number, extraHttpRequestParams?: any): Observable<PaginatedModalityList>;
 
     /**
      * 
-     * Lecture seule pour Modality (référentiel par sport, nested via /sports/&lt;id&gt;/modalities/).
+     * CRUD on Modality referential, scoped by sport when nested.
+     * @endpoint patch /api/v1/sports/{sport_pk}/modalities/{id}/
+     * @param id A unique integer value identifying this modality.
+     * @param sportPk 
+     * @param patchedModalityAdmin 
+     */
+    sportsModalitiesPartialUpdate(id: number, sportPk: number, patchedModalityAdmin?: PatchedModalityAdmin, extraHttpRequestParams?: any): Observable<ModalityAdmin>;
+
+    /**
+     * Retrieve modality (admin flavor for staff)
+     * CRUD on Modality referential, scoped by sport when nested.
      * @endpoint get /api/v1/sports/{sport_pk}/modalities/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) modality.
+     * @param id A unique integer value identifying this modality.
      * @param sportPk 
      */
-    sportsModalitiesRetrieve(id: number, sportPk: number, extraHttpRequestParams?: any): Observable<Modality>;
+    sportsModalitiesRetrieve(id: number, sportPk: number, extraHttpRequestParams?: any): Observable<ModalityAdmin>;
 
     /**
      * 
-     * Catalogue des sports. Création via admin Django uniquement.
-     * @endpoint get /api/v1/sports/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) sport.
+     * CRUD on Modality referential, scoped by sport when nested.
+     * @endpoint put /api/v1/sports/{sport_pk}/modalities/{id}/
+     * @param id A unique integer value identifying this modality.
+     * @param sportPk 
+     * @param modalityAdmin 
      */
-    sportsRetrieve(id: number, extraHttpRequestParams?: any): Observable<Sport>;
+    sportsModalitiesUpdate(id: number, sportPk: number, modalityAdmin: ModalityAdmin, extraHttpRequestParams?: any): Observable<ModalityAdmin>;
+
+    /**
+     * 
+     * CRUD on the Sport referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete via perform_destroy. Staff can pass ?include_inactive&#x3D;true to see inactive entries.
+     * @endpoint patch /api/v1/sports/{id}/
+     * @param id A unique integer value identifying this sport.
+     * @param patchedSportAdmin 
+     */
+    sportsPartialUpdate(id: number, patchedSportAdmin?: PatchedSportAdmin, extraHttpRequestParams?: any): Observable<SportAdmin>;
+
+    /**
+     * Retrieve sport (admin flavor for staff)
+     * Returns the admin flavor with name_fr/nl/en/it/es when called by a staff user, otherwise the public flavor.
+     * @endpoint get /api/v1/sports/{id}/
+     * @param id A unique integer value identifying this sport.
+     */
+    sportsRetrieve(id: number, extraHttpRequestParams?: any): Observable<SportAdmin>;
+
+    /**
+     * 
+     * CRUD on the Sport referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete via perform_destroy. Staff can pass ?include_inactive&#x3D;true to see inactive entries.
+     * @endpoint put /api/v1/sports/{id}/
+     * @param id A unique integer value identifying this sport.
+     * @param sportAdmin 
+     */
+    sportsUpdate(id: number, sportAdmin: SportAdmin, extraHttpRequestParams?: any): Observable<SportAdmin>;
 
 }

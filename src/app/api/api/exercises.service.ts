@@ -45,7 +45,7 @@ export class ExercisesService extends BaseService implements ExercisesServiceInt
     /**
      * Clone this Exercise. Returns the new Exercise.
      * @endpoint post /api/v1/exercises/{id}/clone/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Exercise.
+     * @param id A unique integer value identifying this Exercise.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
@@ -175,7 +175,7 @@ export class ExercisesService extends BaseService implements ExercisesServiceInt
     /**
      * CRUD complet pour Exercise.
      * @endpoint delete /api/v1/exercises/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Exercise.
+     * @param id A unique integer value identifying this Exercise.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
@@ -236,9 +236,9 @@ export class ExercisesService extends BaseService implements ExercisesServiceInt
      * @param energysegment 
      * @param language * &#x60;fr&#x60; - Français * &#x60;nl&#x60; - Nederlands * &#x60;en&#x60; - English * &#x60;it&#x60; - Italiano * &#x60;es&#x60; - Español
      * @param modality 
-     * @param ordering Quel champ utiliser pour classer les résultats.
-     * @param page Un numéro de page de l\&#39;ensemble des résultats.
-     * @param search Un terme de recherche.
+     * @param ordering Which field to use when ordering the results.
+     * @param page A page number within the paginated result set.
+     * @param search A search term.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
@@ -351,7 +351,7 @@ export class ExercisesService extends BaseService implements ExercisesServiceInt
     /**
      * CRUD complet pour Exercise.
      * @endpoint patch /api/v1/exercises/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Exercise.
+     * @param id A unique integer value identifying this Exercise.
      * @param patchedExercise 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -423,7 +423,7 @@ export class ExercisesService extends BaseService implements ExercisesServiceInt
     /**
      * CRUD complet pour Exercise.
      * @endpoint get /api/v1/exercises/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Exercise.
+     * @param id A unique integer value identifying this Exercise.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
@@ -482,7 +482,7 @@ export class ExercisesService extends BaseService implements ExercisesServiceInt
     /**
      * CRUD complet pour Exercise.
      * @endpoint put /api/v1/exercises/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Exercise.
+     * @param id A unique integer value identifying this Exercise.
      * @param exercise 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.

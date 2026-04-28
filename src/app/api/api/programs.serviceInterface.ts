@@ -38,7 +38,7 @@ export interface ProgramsServiceInterface {
      * 
      * CRUD complet pour Program, scopé par team.
      * @endpoint delete /api/v1/programs/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Program.
+     * @param id A unique integer value identifying this Program.
      */
     programsDestroy(id: number, extraHttpRequestParams?: any): Observable<{}>;
 
@@ -46,7 +46,7 @@ export interface ProgramsServiceInterface {
      * 
      * Generate a training plan with AI for the given Program.
      * @endpoint post /api/v1/programs/{id}/generate-events/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Program.
+     * @param id A unique integer value identifying this Program.
      * @param generatePlanRequest 
      */
     programsGenerateEventsCreate(id: number, generatePlanRequest: GeneratePlanRequest, extraHttpRequestParams?: any): Observable<GeneratePlanResponse>;
@@ -58,9 +58,9 @@ export interface ProgramsServiceInterface {
      * @param dateEnd 
      * @param dateStart 
      * @param name 
-     * @param ordering Quel champ utiliser pour classer les résultats.
-     * @param page Un numéro de page de l\&#39;ensemble des résultats.
-     * @param search Un terme de recherche.
+     * @param ordering Which field to use when ordering the results.
+     * @param page A page number within the paginated result set.
+     * @param search A search term.
      * @param team 
      */
     programsList(dateEnd?: string, dateStart?: string, name?: string, ordering?: string, page?: number, search?: string, team?: number, extraHttpRequestParams?: any): Observable<PaginatedProgramList>;
@@ -69,7 +69,7 @@ export interface ProgramsServiceInterface {
      * 
      * CRUD complet pour Program, scopé par team.
      * @endpoint patch /api/v1/programs/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Program.
+     * @param id A unique integer value identifying this Program.
      * @param patchedProgram 
      */
     programsPartialUpdate(id: number, patchedProgram?: PatchedProgram, extraHttpRequestParams?: any): Observable<Program>;
@@ -78,7 +78,7 @@ export interface ProgramsServiceInterface {
      * 
      * CRUD complet pour Program, scopé par team.
      * @endpoint get /api/v1/programs/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Program.
+     * @param id A unique integer value identifying this Program.
      */
     programsRetrieve(id: number, extraHttpRequestParams?: any): Observable<Program>;
 
@@ -86,7 +86,7 @@ export interface ProgramsServiceInterface {
      * 
      * CRUD complet pour Program, scopé par team.
      * @endpoint put /api/v1/programs/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Program.
+     * @param id A unique integer value identifying this Program.
      * @param program 
      */
     programsUpdate(id: number, program: Program, extraHttpRequestParams?: any): Observable<Program>;

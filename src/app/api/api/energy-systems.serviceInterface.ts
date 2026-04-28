@@ -11,8 +11,9 @@ import { HttpHeaders }                                       from '@angular/comm
 
 import { Observable }                                        from 'rxjs';
 
-import { EnergySystem } from '../model/models';
+import { EnergySystemAdmin } from '../model/models';
 import { PaginatedEnergySystemList } from '../model/models';
+import { PatchedEnergySystemAdmin } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
@@ -24,22 +25,57 @@ export interface EnergySystemsServiceInterface {
     configuration: Configuration;
 
     /**
-     * 
-     * Lecture seule pour EnergySystem (référentiel).
-     * @endpoint get /api/v1/energy-systems/
-     * @param name 
-     * @param ordering Quel champ utiliser pour classer les résultats.
-     * @param page Un numéro de page de l\&#39;ensemble des résultats.
-     * @param search Un terme de recherche.
+     * Create energy system (staff only)
+     * CRUD on EnergySystem referential.
+     * @endpoint post /api/v1/energy-systems/
+     * @param energySystemAdmin 
      */
-    energySystemsList(name?: string, ordering?: string, page?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedEnergySystemList>;
+    energySystemsCreate(energySystemAdmin?: EnergySystemAdmin, extraHttpRequestParams?: any): Observable<EnergySystemAdmin>;
+
+    /**
+     * Soft delete energy system (staff only)
+     * CRUD on EnergySystem referential.
+     * @endpoint delete /api/v1/energy-systems/{id}/
+     * @param id A unique integer value identifying this energy system.
+     */
+    energySystemsDestroy(id: number, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * List energy systems (public flavor)
+     * CRUD on EnergySystem referential.
+     * @endpoint get /api/v1/energy-systems/
+     * @param isActive 
+     * @param name 
+     * @param ordering Which field to use when ordering the results.
+     * @param page A page number within the paginated result set.
+     * @param search A search term.
+     */
+    energySystemsList(isActive?: boolean, name?: string, ordering?: string, page?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedEnergySystemList>;
 
     /**
      * 
-     * Lecture seule pour EnergySystem (référentiel).
-     * @endpoint get /api/v1/energy-systems/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) energy system.
+     * CRUD on EnergySystem referential.
+     * @endpoint patch /api/v1/energy-systems/{id}/
+     * @param id A unique integer value identifying this energy system.
+     * @param patchedEnergySystemAdmin 
      */
-    energySystemsRetrieve(id: number, extraHttpRequestParams?: any): Observable<EnergySystem>;
+    energySystemsPartialUpdate(id: number, patchedEnergySystemAdmin?: PatchedEnergySystemAdmin, extraHttpRequestParams?: any): Observable<EnergySystemAdmin>;
+
+    /**
+     * Retrieve energy system (admin flavor for staff)
+     * CRUD on EnergySystem referential.
+     * @endpoint get /api/v1/energy-systems/{id}/
+     * @param id A unique integer value identifying this energy system.
+     */
+    energySystemsRetrieve(id: number, extraHttpRequestParams?: any): Observable<EnergySystemAdmin>;
+
+    /**
+     * 
+     * CRUD on EnergySystem referential.
+     * @endpoint put /api/v1/energy-systems/{id}/
+     * @param id A unique integer value identifying this energy system.
+     * @param energySystemAdmin 
+     */
+    energySystemsUpdate(id: number, energySystemAdmin?: EnergySystemAdmin, extraHttpRequestParams?: any): Observable<EnergySystemAdmin>;
 
 }

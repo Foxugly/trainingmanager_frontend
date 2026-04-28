@@ -116,7 +116,7 @@ export class MembersService extends BaseService implements MembersServiceInterfa
     /**
      * CRUD complet pour Member, scopé par teams du Member.
      * @endpoint delete /api/v1/members/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Member.
+     * @param id A unique integer value identifying this Member.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
@@ -176,9 +176,9 @@ export class MembersService extends BaseService implements MembersServiceInterfa
      * @endpoint get /api/v1/members/
      * @param firstname 
      * @param lastname 
-     * @param ordering Quel champ utiliser pour classer les résultats.
-     * @param page Un numéro de page de l\&#39;ensemble des résultats.
-     * @param search Un terme de recherche.
+     * @param ordering Which field to use when ordering the results.
+     * @param page A page number within the paginated result set.
+     * @param search A search term.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
@@ -282,7 +282,7 @@ export class MembersService extends BaseService implements MembersServiceInterfa
     /**
      * CRUD complet pour Member, scopé par teams du Member.
      * @endpoint patch /api/v1/members/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Member.
+     * @param id A unique integer value identifying this Member.
      * @param patchedMember 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -354,7 +354,7 @@ export class MembersService extends BaseService implements MembersServiceInterfa
     /**
      * CRUD complet pour Member, scopé par teams du Member.
      * @endpoint get /api/v1/members/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Member.
+     * @param id A unique integer value identifying this Member.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
@@ -413,7 +413,7 @@ export class MembersService extends BaseService implements MembersServiceInterfa
     /**
      * CRUD complet pour Member, scopé par teams du Member.
      * @endpoint put /api/v1/members/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Member.
+     * @param id A unique integer value identifying this Member.
      * @param member 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.

@@ -14,7 +14,8 @@ export interface EnergySegment {
     readonly id: number;
     abv: string;
     description?: string | null;
-    readonly energysystem: EnergySystem;
-    energysystem_id?: number | null;
+    readonly energy_system: EnergySystem;
+    energy_system_id?: number | null;
+    readonly is_active: boolean;
 }
 

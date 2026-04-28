@@ -3,9 +3,13 @@
     "title": "Gestor de Entrenamientos",
     "logout": "Cerrar sesión"
   },
+  "nav": {
+    "admin": "Administración"
+  },
   "common": {
     "save": "Guardar",
     "cancel": "Cancelar",
+    "back": "Volver",
     "error": "Error",
     "success": "Éxito"
   },
@@ -37,6 +41,46 @@
     "language_switch_failed": "No se pudo cambiar el idioma, inténtalo de nuevo.",
     "errors": {
       "unknown": "Se ha producido un error, inténtalo de nuevo."
+    }
+  },
+  "admin": {
+    "title": "Administración",
+    "coming_soon": "Próximamente",
+    "nav": {
+      "sports": "Deportes",
+      "energy_systems": "Sistemas energéticos",
+      "energy_segments": "Segmentos energéticos",
+      "modalities": "Modalidades"
+    },
+    "sports": {
+      "title": "Deportes",
+      "new": "Nuevo deporte",
+      "show_inactive": "Mostrar deportes inactivos",
+      "fields": {
+        "name": "Nombre",
+        "slug": "Slug",
+        "energy_systems": "Sistemas energéticos",
+        "active": "Activo",
+        "actions": "Acciones"
+      },
+      "form": {
+        "new_title": "Nuevo deporte",
+        "edit_title": "Editar deporte",
+        "slug": "Slug (identificador técnico)",
+        "energy_systems": "Sistemas energéticos asociados",
+        "energy_systems_placeholder": "Selecciona uno o más sistemas",
+        "is_active": "Activo"
+      },
+      "actions": {
+        "delete_confirm_title": "¿Desactivar este deporte?",
+        "delete_confirm_message": "El deporte será desactivado (soft delete). Podrás reactivarlo más tarde.",
+        "deleted": "Deporte desactivado.",
+        "restored": "Deporte reactivado.",
+        "saved": "Deporte guardado."
+      },
+      "errors": {
+        "unknown": "Se ha producido un error."
+      }
     }
   }
 }

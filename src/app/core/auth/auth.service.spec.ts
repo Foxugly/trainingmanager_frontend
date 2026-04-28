@@ -18,6 +18,8 @@ const fakeUser: Me = {
   language: LanguageEnum.Fr,
   last_login: null,
   date_joined: '2026-01-01T00:00:00Z',
+  is_staff: false,
+  is_superuser: false,
 };
 
 describe('AuthService', () => {

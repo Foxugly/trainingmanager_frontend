@@ -11,6 +11,7 @@
 
 export interface EnergySystem { 
     readonly id: number;
-    name: string;
+    readonly name: string;
+    readonly is_active: boolean;
 }
 

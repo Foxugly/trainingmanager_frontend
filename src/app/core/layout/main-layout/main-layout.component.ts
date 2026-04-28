@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { Toast } from 'primeng/toast';
@@ -8,7 +8,15 @@ import { LanguageSwitcherComponent } from '../../i18n/language-switcher/language
 
 @Component({
   selector: 'app-main-layout',
-  imports: [RouterOutlet, RouterLink, Button, Toast, TranslocoPipe, LanguageSwitcherComponent],
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    Button,
+    Toast,
+    TranslocoPipe,
+    LanguageSwitcherComponent,
+  ],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

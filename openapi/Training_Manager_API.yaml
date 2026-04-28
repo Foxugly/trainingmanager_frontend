@@ -93,28 +93,33 @@ paths:
   /api/v1/energy-segments/:
     get:
       operationId: energy_segments_list
-      description: Lecture seule pour EnergySegment (référentiel).
+      description: CRUD on EnergySegment referential.
+      summary: List energy segments (public flavor)
       parameters:
       - in: query
         name: energysystem
         schema:
           type: integer
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
       - name: ordering
         required: false
         in: query
-        description: Quel champ utiliser pour classer les résultats.
+        description: Which field to use when ordering the results.
         schema:
           type: string
       - name: page
         required: false
         in: query
-        description: Un numéro de page de l'ensemble des résultats.
+        description: A page number within the paginated result set.
         schema:
           type: integer
       - name: search
         required: false
         in: query
-        description: Un terme de recherche.
+        description: A search term.
         schema:
           type: string
       tags:
@@ -128,16 +133,44 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaginatedEnergySegmentList'
           description: ''
+    post:
+      operationId: energy_segments_create
+      description: CRUD on EnergySegment referential.
+      summary: Create energy segment (staff only)
+      tags:
+      - energy-segments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnergySegmentAdmin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EnergySegmentAdmin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EnergySegmentAdmin'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnergySegmentAdmin'
+          description: ''
   /api/v1/energy-segments/{id}/:
     get:
       operationId: energy_segments_retrieve
-      description: Lecture seule pour EnergySegment (référentiel).
+      description: CRUD on EnergySegment referential.
+      summary: Retrieve energy segment (admin flavor for staff)
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) energy segment.
+        description: A unique integer value identifying this energy segment.
         required: true
       tags:
       - energy-segments
@@ -148,13 +181,101 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EnergySegment'
+                $ref: '#/components/schemas/EnergySegmentAdmin'
           description: ''
+    put:
+      operationId: energy_segments_update
+      description: CRUD on EnergySegment referential.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this energy segment.
+        required: true
+      tags:
+      - energy-segments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnergySegmentAdmin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EnergySegmentAdmin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EnergySegmentAdmin'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnergySegmentAdmin'
+          description: ''
+    patch:
+      operationId: energy_segments_partial_update
+      description: CRUD on EnergySegment referential.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this energy segment.
+        required: true
+      tags:
+      - energy-segments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedEnergySegmentAdmin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedEnergySegmentAdmin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedEnergySegmentAdmin'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnergySegmentAdmin'
+          description: ''
+    delete:
+      operationId: energy_segments_destroy
+      description: CRUD on EnergySegment referential.
+      summary: Soft delete energy segment (staff only)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this energy segment.
+        required: true
+      tags:
+      - energy-segments
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
   /api/v1/energy-systems/:
     get:
       operationId: energy_systems_list
-      description: Lecture seule pour EnergySystem (référentiel).
+      description: CRUD on EnergySystem referential.
+      summary: List energy systems (public flavor)
       parameters:
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
       - in: query
         name: name
         schema:
@@ -162,19 +283,19 @@ paths:
       - name: ordering
         required: false
         in: query
-        description: Quel champ utiliser pour classer les résultats.
+        description: Which field to use when ordering the results.
         schema:
           type: string
       - name: page
         required: false
         in: query
-        description: Un numéro de page de l'ensemble des résultats.
+        description: A page number within the paginated result set.
         schema:
           type: integer
       - name: search
         required: false
         in: query
-        description: Un terme de recherche.
+        description: A search term.
         schema:
           type: string
       tags:
@@ -188,16 +309,43 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaginatedEnergySystemList'
           description: ''
+    post:
+      operationId: energy_systems_create
+      description: CRUD on EnergySystem referential.
+      summary: Create energy system (staff only)
+      tags:
+      - energy-systems
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnergySystemAdmin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EnergySystemAdmin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EnergySystemAdmin'
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnergySystemAdmin'
+          description: ''
   /api/v1/energy-systems/{id}/:
     get:
       operationId: energy_systems_retrieve
-      description: Lecture seule pour EnergySystem (référentiel).
+      description: CRUD on EnergySystem referential.
+      summary: Retrieve energy system (admin flavor for staff)
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) energy system.
+        description: A unique integer value identifying this energy system.
         required: true
       tags:
       - energy-systems
@@ -208,8 +356,90 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EnergySystem'
+                $ref: '#/components/schemas/EnergySystemAdmin'
           description: ''
+    put:
+      operationId: energy_systems_update
+      description: CRUD on EnergySystem referential.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this energy system.
+        required: true
+      tags:
+      - energy-systems
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnergySystemAdmin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EnergySystemAdmin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EnergySystemAdmin'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnergySystemAdmin'
+          description: ''
+    patch:
+      operationId: energy_systems_partial_update
+      description: CRUD on EnergySystem referential.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this energy system.
+        required: true
+      tags:
+      - energy-systems
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedEnergySystemAdmin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedEnergySystemAdmin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedEnergySystemAdmin'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnergySystemAdmin'
+          description: ''
+    delete:
+      operationId: energy_systems_destroy
+      description: CRUD on EnergySystem referential.
+      summary: Soft delete energy system (staff only)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this energy system.
+        required: true
+      tags:
+      - energy-systems
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
   /api/v1/events/:
     get:
       operationId: events_list
@@ -227,13 +457,13 @@ paths:
       - name: ordering
         required: false
         in: query
-        description: Quel champ utiliser pour classer les résultats.
+        description: Which field to use when ordering the results.
         schema:
           type: string
       - name: page
         required: false
         in: query
-        description: Un numéro de page de l'ensemble des résultats.
+        description: A page number within the paginated result set.
         schema:
           type: integer
       - in: query
@@ -243,7 +473,7 @@ paths:
       - name: search
         required: false
         in: query
-        description: Un terme de recherche.
+        description: A search term.
         schema:
           type: string
       tags:
@@ -292,7 +522,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) event.
+        description: A unique integer value identifying this event.
         required: true
       tags:
       - events
@@ -313,7 +543,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) event.
+        description: A unique integer value identifying this event.
         required: true
       tags:
       - events
@@ -346,7 +576,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) event.
+        description: A unique integer value identifying this event.
         required: true
       tags:
       - events
@@ -378,7 +608,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) event.
+        description: A unique integer value identifying this event.
         required: true
       tags:
       - events
@@ -396,7 +626,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) event.
+        description: A unique integer value identifying this event.
         required: true
       tags:
       - events
@@ -449,19 +679,19 @@ paths:
       - name: ordering
         required: false
         in: query
-        description: Quel champ utiliser pour classer les résultats.
+        description: Which field to use when ordering the results.
         schema:
           type: string
       - name: page
         required: false
         in: query
-        description: Un numéro de page de l'ensemble des résultats.
+        description: A page number within the paginated result set.
         schema:
           type: integer
       - name: search
         required: false
         in: query
-        description: Un terme de recherche.
+        description: A search term.
         schema:
           type: string
       tags:
@@ -510,7 +740,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) Exercise.
+        description: A unique integer value identifying this Exercise.
         required: true
       tags:
       - exercises
@@ -531,7 +761,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) Exercise.
+        description: A unique integer value identifying this Exercise.
         required: true
       tags:
       - exercises
@@ -564,7 +794,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) Exercise.
+        description: A unique integer value identifying this Exercise.
         required: true
       tags:
       - exercises
@@ -596,7 +826,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) Exercise.
+        description: A unique integer value identifying this Exercise.
         required: true
       tags:
       - exercises
@@ -614,7 +844,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) Exercise.
+        description: A unique integer value identifying this Exercise.
         required: true
       tags:
       - exercises
@@ -635,19 +865,19 @@ paths:
       - name: ordering
         required: false
         in: query
-        description: Quel champ utiliser pour classer les résultats.
+        description: Which field to use when ordering the results.
         schema:
           type: string
       - name: page
         required: false
         in: query
-        description: Un numéro de page de l'ensemble des résultats.
+        description: A page number within the paginated result set.
         schema:
           type: integer
       - name: search
         required: false
         in: query
-        description: Un terme de recherche.
+        description: A search term.
         schema:
           type: string
       - in: query
@@ -716,7 +946,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) team invitation.
+        description: A unique integer value identifying this team invitation.
         required: true
       tags:
       - invitations
@@ -737,7 +967,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) team invitation.
+        description: A unique integer value identifying this team invitation.
         required: true
       tags:
       - invitations
@@ -817,19 +1047,19 @@ paths:
       - name: ordering
         required: false
         in: query
-        description: Quel champ utiliser pour classer les résultats.
+        description: Which field to use when ordering the results.
         schema:
           type: string
       - name: page
         required: false
         in: query
-        description: Un numéro de page de l'ensemble des résultats.
+        description: A page number within the paginated result set.
         schema:
           type: integer
       - name: search
         required: false
         in: query
-        description: Un terme de recherche.
+        description: A search term.
         schema:
           type: string
       - in: query
@@ -896,8 +1126,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) team join
-          request.
+        description: A unique integer value identifying this team join request.
         required: true
       tags:
       - join-requests
@@ -918,8 +1147,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) team join
-          request.
+        description: A unique integer value identifying this team join request.
         required: true
       tags:
       - join-requests
@@ -952,8 +1180,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) team join
-          request.
+        description: A unique integer value identifying this team join request.
         required: true
       tags:
       - join-requests
@@ -985,8 +1212,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) team join
-          request.
+        description: A unique integer value identifying this team join request.
         required: true
       tags:
       - join-requests
@@ -1076,19 +1302,19 @@ paths:
       - name: ordering
         required: false
         in: query
-        description: Quel champ utiliser pour classer les résultats.
+        description: Which field to use when ordering the results.
         schema:
           type: string
       - name: page
         required: false
         in: query
-        description: Un numéro de page de l'ensemble des résultats.
+        description: A page number within the paginated result set.
         schema:
           type: integer
       - name: search
         required: false
         in: query
-        description: Un terme de recherche.
+        description: A search term.
         schema:
           type: string
       tags:
@@ -1137,7 +1363,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) Member.
+        description: A unique integer value identifying this Member.
         required: true
       tags:
       - members
@@ -1158,7 +1384,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) Member.
+        description: A unique integer value identifying this Member.
         required: true
       tags:
       - members
@@ -1191,7 +1417,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) Member.
+        description: A unique integer value identifying this Member.
         required: true
       tags:
       - members
@@ -1223,7 +1449,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) Member.
+        description: A unique integer value identifying this Member.
         required: true
       tags:
       - members
@@ -1254,19 +1480,19 @@ paths:
       - name: ordering
         required: false
         in: query
-        description: Quel champ utiliser pour classer les résultats.
+        description: Which field to use when ordering the results.
         schema:
           type: string
       - name: page
         required: false
         in: query
-        description: Un numéro de page de l'ensemble des résultats.
+        description: A page number within the paginated result set.
         schema:
           type: integer
       - name: search
         required: false
         in: query
-        description: Un terme de recherche.
+        description: A search term.
         schema:
           type: string
       - in: query
@@ -1319,7 +1545,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) Program.
+        description: A unique integer value identifying this Program.
         required: true
       tags:
       - programs
@@ -1340,7 +1566,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) Program.
+        description: A unique integer value identifying this Program.
         required: true
       tags:
       - programs
@@ -1373,7 +1599,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) Program.
+        description: A unique integer value identifying this Program.
         required: true
       tags:
       - programs
@@ -1405,7 +1631,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) Program.
+        description: A unique integer value identifying this Program.
         required: true
       tags:
       - programs
@@ -1423,7 +1649,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) Program.
+        description: A unique integer value identifying this Program.
         required: true
       tags:
       - programs
@@ -1480,19 +1706,19 @@ paths:
       - name: ordering
         required: false
         in: query
-        description: Quel champ utiliser pour classer les résultats.
+        description: Which field to use when ordering the results.
         schema:
           type: string
       - name: page
         required: false
         in: query
-        description: Un numéro de page de l'ensemble des résultats.
+        description: A page number within the paginated result set.
         schema:
           type: integer
       - name: search
         required: false
         in: query
-        description: Un terme de recherche.
+        description: A search term.
         schema:
           type: string
       - in: query
@@ -1545,7 +1771,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) Round.
+        description: A unique integer value identifying this Round.
         required: true
       tags:
       - rounds
@@ -1566,7 +1792,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) Round.
+        description: A unique integer value identifying this Round.
         required: true
       tags:
       - rounds
@@ -1599,7 +1825,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) Round.
+        description: A unique integer value identifying this Round.
         required: true
       tags:
       - rounds
@@ -1631,7 +1857,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) Round.
+        description: A unique integer value identifying this Round.
         required: true
       tags:
       - rounds
@@ -1650,7 +1876,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) Round.
+        description: A unique integer value identifying this Round.
         required: true
       tags:
       - rounds
@@ -1672,7 +1898,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) Round.
+        description: A unique integer value identifying this Round.
         required: true
       tags:
       - rounds
@@ -1704,7 +1930,9 @@ paths:
   /api/v1/sports/:
     get:
       operationId: sports_list
-      description: Catalogue des sports. Création via admin Django uniquement.
+      description: Returns the public Sport serializer with localized 'name'. Available
+        to all authenticated users.
+      summary: List sports (public flavor)
       parameters:
       - in: query
         name: is_active
@@ -1713,19 +1941,19 @@ paths:
       - name: ordering
         required: false
         in: query
-        description: Quel champ utiliser pour classer les résultats.
+        description: Which field to use when ordering the results.
         schema:
           type: string
       - name: page
         required: false
         in: query
-        description: Un numéro de page de l'ensemble des résultats.
+        description: A page number within the paginated result set.
         schema:
           type: integer
       - name: search
         required: false
         in: query
-        description: Un terme de recherche.
+        description: A search term.
         schema:
           type: string
       tags:
@@ -1739,16 +1967,45 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaginatedSportList'
           description: ''
+    post:
+      operationId: sports_create
+      description: Accepts the admin flavor with name_fr/nl/en/it/es.
+      summary: Create sport (staff only)
+      tags:
+      - sports
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SportAdmin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SportAdmin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SportAdmin'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SportAdmin'
+          description: ''
   /api/v1/sports/{id}/:
     get:
       operationId: sports_retrieve
-      description: Catalogue des sports. Création via admin Django uniquement.
+      description: Returns the admin flavor with name_fr/nl/en/it/es when called by
+        a staff user, otherwise the public flavor.
+      summary: Retrieve sport (admin flavor for staff)
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) sport.
+        description: A unique integer value identifying this sport.
         required: true
       tags:
       - sports
@@ -1759,14 +2016,111 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Sport'
+                $ref: '#/components/schemas/SportAdmin'
           description: ''
+    put:
+      operationId: sports_update
+      description: |-
+        CRUD on the Sport referential.
+
+        Read: any authenticated user (default queryset filters is_active=True).
+        Write: staff only. Soft delete via perform_destroy.
+        Staff can pass ?include_inactive=true to see inactive entries.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this sport.
+        required: true
+      tags:
+      - sports
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SportAdmin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SportAdmin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SportAdmin'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SportAdmin'
+          description: ''
+    patch:
+      operationId: sports_partial_update
+      description: |-
+        CRUD on the Sport referential.
+
+        Read: any authenticated user (default queryset filters is_active=True).
+        Write: staff only. Soft delete via perform_destroy.
+        Staff can pass ?include_inactive=true to see inactive entries.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this sport.
+        required: true
+      tags:
+      - sports
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedSportAdmin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedSportAdmin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedSportAdmin'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SportAdmin'
+          description: ''
+    delete:
+      operationId: sports_destroy
+      description: Sets is_active=False; does not hard delete.
+      summary: Soft delete sport (staff only)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this sport.
+        required: true
+      tags:
+      - sports
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
   /api/v1/sports/{sport_pk}/modalities/:
     get:
       operationId: sports_modalities_list
-      description: Lecture seule pour Modality (référentiel par sport, nested via
-        /sports/<id>/modalities/).
+      description: CRUD on Modality referential, scoped by sport when nested.
+      summary: List modalities (public flavor)
       parameters:
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
       - in: query
         name: name
         schema:
@@ -1774,21 +2128,25 @@ paths:
       - name: ordering
         required: false
         in: query
-        description: Quel champ utiliser pour classer les résultats.
+        description: Which field to use when ordering the results.
         schema:
           type: string
       - name: page
         required: false
         in: query
-        description: Un numéro de page de l'ensemble des résultats.
+        description: A page number within the paginated result set.
         schema:
           type: integer
       - name: search
         required: false
         in: query
-        description: Un terme de recherche.
+        description: A search term.
         schema:
           type: string
+      - in: query
+        name: sport
+        schema:
+          type: integer
       - in: path
         name: sport_pk
         schema:
@@ -1805,17 +2163,50 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaginatedModalityList'
           description: ''
+    post:
+      operationId: sports_modalities_create
+      description: CRUD on Modality referential, scoped by sport when nested.
+      summary: Create modality (staff only)
+      parameters:
+      - in: path
+        name: sport_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - sports
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModalityAdmin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ModalityAdmin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ModalityAdmin'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModalityAdmin'
+          description: ''
   /api/v1/sports/{sport_pk}/modalities/{id}/:
     get:
       operationId: sports_modalities_retrieve
-      description: Lecture seule pour Modality (référentiel par sport, nested via
-        /sports/<id>/modalities/).
+      description: CRUD on Modality referential, scoped by sport when nested.
+      summary: Retrieve modality (admin flavor for staff)
       parameters:
       - in: path
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) modality.
+        description: A unique integer value identifying this modality.
         required: true
       - in: path
         name: sport_pk
@@ -1831,8 +2222,106 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Modality'
+                $ref: '#/components/schemas/ModalityAdmin'
           description: ''
+    put:
+      operationId: sports_modalities_update
+      description: CRUD on Modality referential, scoped by sport when nested.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this modality.
+        required: true
+      - in: path
+        name: sport_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - sports
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModalityAdmin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ModalityAdmin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ModalityAdmin'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModalityAdmin'
+          description: ''
+    patch:
+      operationId: sports_modalities_partial_update
+      description: CRUD on Modality referential, scoped by sport when nested.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this modality.
+        required: true
+      - in: path
+        name: sport_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - sports
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedModalityAdmin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedModalityAdmin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedModalityAdmin'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModalityAdmin'
+          description: ''
+    delete:
+      operationId: sports_modalities_destroy
+      description: CRUD on Modality referential, scoped by sport when nested.
+      summary: Soft delete modality (staff only)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this modality.
+        required: true
+      - in: path
+        name: sport_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - sports
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
   /api/v1/teams/:
     get:
       operationId: teams_list
@@ -1866,19 +2355,19 @@ paths:
       - name: ordering
         required: false
         in: query
-        description: Quel champ utiliser pour classer les résultats.
+        description: Which field to use when ordering the results.
         schema:
           type: string
       - name: page
         required: false
         in: query
-        description: Un numéro de page de l'ensemble des résultats.
+        description: A page number within the paginated result set.
         schema:
           type: integer
       - name: search
         required: false
         in: query
-        description: Un terme de recherche.
+        description: A search term.
         schema:
           type: string
       tags:
@@ -1929,7 +2418,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) team.
+        description: A unique integer value identifying this team.
         required: true
       tags:
       - teams
@@ -1951,7 +2440,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) team.
+        description: A unique integer value identifying this team.
         required: true
       tags:
       - teams
@@ -1985,7 +2474,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) team.
+        description: A unique integer value identifying this team.
         required: true
       tags:
       - teams
@@ -2018,7 +2507,7 @@ paths:
         name: id
         schema:
           type: integer
-        description: Un(une) valeur entière unique identifiant ce(cette) team.
+        description: A unique integer value identifying this team.
         required: true
       tags:
       - teams
@@ -2141,17 +2630,14 @@ components:
         username:
           type: string
           readOnly: true
-          title: Nom d’utilisateur
-          description: Requis. 150 caractères maximum. Uniquement des lettres, nombres
-            et les caractères « @ », « . », « + », « - » et « _ ».
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
         first_name:
           type: string
           readOnly: true
-          title: Prénom
         last_name:
           type: string
           readOnly: true
-          title: Nom
       required:
       - first_name
       - id
@@ -2170,17 +2656,64 @@ components:
           type: string
           nullable: true
           maxLength: 200
-        energysystem:
+        energy_system:
           allOf:
           - $ref: '#/components/schemas/EnergySystem'
           readOnly: true
-        energysystem_id:
+        energy_system_id:
           type: integer
           writeOnly: true
           nullable: true
+        is_active:
+          type: boolean
+          readOnly: true
       required:
       - abv
-      - energysystem
+      - energy_system
+      - id
+      - is_active
+    EnergySegmentAdmin:
+      type: object
+      description: 'Admin flavor: per-language description variants + writable energy_system_id.'
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        abv:
+          type: string
+          maxLength: 10
+        description_fr:
+          type: string
+          nullable: true
+          title: Description [fr]
+          maxLength: 200
+        description_nl:
+          type: string
+          nullable: true
+          title: Description [nl]
+          maxLength: 200
+        description_en:
+          type: string
+          nullable: true
+          title: Description [en]
+          maxLength: 200
+        description_it:
+          type: string
+          nullable: true
+          title: Description [it]
+          maxLength: 200
+        description_es:
+          type: string
+          nullable: true
+          title: Description [es]
+          maxLength: 200
+        energy_system_id:
+          type: integer
+        is_active:
+          type: boolean
+      required:
+      - abv
+      - energy_system_id
       - id
     EnergySystem:
       type: object
@@ -2190,10 +2723,50 @@ components:
           readOnly: true
         name:
           type: string
-          maxLength: 20
+          readOnly: true
+        is_active:
+          type: boolean
+          readOnly: true
       required:
       - id
+      - is_active
       - name
+    EnergySystemAdmin:
+      type: object
+      description: 'Admin flavor: per-language name variants.'
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name_fr:
+          type: string
+          nullable: true
+          title: Name [fr]
+          maxLength: 20
+        name_nl:
+          type: string
+          nullable: true
+          title: Name [nl]
+          maxLength: 20
+        name_en:
+          type: string
+          nullable: true
+          title: Name [en]
+          maxLength: 20
+        name_it:
+          type: string
+          nullable: true
+          title: Name [it]
+          maxLength: 20
+        name_es:
+          type: string
+          nullable: true
+          title: Name [es]
+          maxLength: 20
+        is_active:
+          type: boolean
+      required:
+      - id
     Event:
       type: object
       properties:
@@ -2474,21 +3047,18 @@ components:
         username:
           type: string
           readOnly: true
-          title: Nom d’utilisateur
-          description: Requis. 150 caractères maximum. Uniquement des lettres, nombres
-            et les caractères « @ », « . », « + », « - » et « _ ».
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
         email:
           type: string
           format: email
-          title: Adresse électronique
+          title: Email address
           maxLength: 254
         first_name:
           type: string
-          title: Prénom
           maxLength: 150
         last_name:
           type: string
-          title: Nom
           maxLength: 150
         language:
           $ref: '#/components/schemas/LanguageEnum'
@@ -2497,15 +3067,26 @@ components:
           format: date-time
           readOnly: true
           nullable: true
-          title: Dernière connexion
         date_joined:
           type: string
           format: date-time
           readOnly: true
-          title: Date d’inscription
+        is_staff:
+          type: boolean
+          readOnly: true
+          title: Staff status
+          description: Designates whether the user can log into this admin site.
+        is_superuser:
+          type: boolean
+          readOnly: true
+          title: Superuser status
+          description: Designates that this user has all permissions without explicitly
+            assigning them.
       required:
       - date_joined
       - id
+      - is_staff
+      - is_superuser
       - last_login
       - username
     Member:
@@ -2573,9 +3154,52 @@ components:
           allOf:
           - $ref: '#/components/schemas/Sport'
           readOnly: true
+        is_active:
+          type: boolean
+          readOnly: true
       required:
       - id
+      - is_active
       - name
+      - sport
+    ModalityAdmin:
+      type: object
+      description: 'Admin flavor: per-language name variants + writable sport FK.'
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name_fr:
+          type: string
+          nullable: true
+          title: Name [fr]
+          maxLength: 20
+        name_nl:
+          type: string
+          nullable: true
+          title: Name [nl]
+          maxLength: 20
+        name_en:
+          type: string
+          nullable: true
+          title: Name [en]
+          maxLength: 20
+        name_it:
+          type: string
+          nullable: true
+          title: Name [it]
+          maxLength: 20
+        name_es:
+          type: string
+          nullable: true
+          title: Name [es]
+          maxLength: 20
+        sport:
+          type: integer
+        is_active:
+          type: boolean
+      required:
+      - id
       - sport
     OverlapStrategyEnum:
       enum:
@@ -2863,6 +3487,79 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Team'
+    PatchedEnergySegmentAdmin:
+      type: object
+      description: 'Admin flavor: per-language description variants + writable energy_system_id.'
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        abv:
+          type: string
+          maxLength: 10
+        description_fr:
+          type: string
+          nullable: true
+          title: Description [fr]
+          maxLength: 200
+        description_nl:
+          type: string
+          nullable: true
+          title: Description [nl]
+          maxLength: 200
+        description_en:
+          type: string
+          nullable: true
+          title: Description [en]
+          maxLength: 200
+        description_it:
+          type: string
+          nullable: true
+          title: Description [it]
+          maxLength: 200
+        description_es:
+          type: string
+          nullable: true
+          title: Description [es]
+          maxLength: 200
+        energy_system_id:
+          type: integer
+        is_active:
+          type: boolean
+    PatchedEnergySystemAdmin:
+      type: object
+      description: 'Admin flavor: per-language name variants.'
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name_fr:
+          type: string
+          nullable: true
+          title: Name [fr]
+          maxLength: 20
+        name_nl:
+          type: string
+          nullable: true
+          title: Name [nl]
+          maxLength: 20
+        name_en:
+          type: string
+          nullable: true
+          title: Name [en]
+          maxLength: 20
+        name_it:
+          type: string
+          nullable: true
+          title: Name [it]
+          maxLength: 20
+        name_es:
+          type: string
+          nullable: true
+          title: Name [es]
+          maxLength: 20
+        is_active:
+          type: boolean
     PatchedEvent:
       type: object
       properties:
@@ -3002,21 +3699,18 @@ components:
         username:
           type: string
           readOnly: true
-          title: Nom d’utilisateur
-          description: Requis. 150 caractères maximum. Uniquement des lettres, nombres
-            et les caractères « @ », « . », « + », « - » et « _ ».
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
         email:
           type: string
           format: email
-          title: Adresse électronique
+          title: Email address
           maxLength: 254
         first_name:
           type: string
-          title: Prénom
           maxLength: 150
         last_name:
           type: string
-          title: Nom
           maxLength: 150
         language:
           $ref: '#/components/schemas/LanguageEnum'
@@ -3025,12 +3719,21 @@ components:
           format: date-time
           readOnly: true
           nullable: true
-          title: Dernière connexion
         date_joined:
           type: string
           format: date-time
           readOnly: true
-          title: Date d’inscription
+        is_staff:
+          type: boolean
+          readOnly: true
+          title: Staff status
+          description: Designates whether the user can log into this admin site.
+        is_superuser:
+          type: boolean
+          readOnly: true
+          title: Superuser status
+          description: Designates that this user has all permissions without explicitly
+            assigning them.
     PatchedMember:
       type: object
       properties:
@@ -3075,6 +3778,42 @@ components:
           type: string
           format: date-time
           readOnly: true
+    PatchedModalityAdmin:
+      type: object
+      description: 'Admin flavor: per-language name variants + writable sport FK.'
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name_fr:
+          type: string
+          nullable: true
+          title: Name [fr]
+          maxLength: 20
+        name_nl:
+          type: string
+          nullable: true
+          title: Name [nl]
+          maxLength: 20
+        name_en:
+          type: string
+          nullable: true
+          title: Name [en]
+          maxLength: 20
+        name_it:
+          type: string
+          nullable: true
+          title: Name [it]
+          maxLength: 20
+        name_es:
+          type: string
+          nullable: true
+          title: Name [es]
+          maxLength: 20
+        sport:
+          type: integer
+        is_active:
+          type: boolean
     PatchedProgram:
       type: object
       properties:
@@ -3181,6 +3920,54 @@ components:
           format: date-time
           readOnly: true
         updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedSportAdmin:
+      type: object
+      description: |-
+        Admin flavor: exposes per-language name variants and write-capable
+        M2M energy_systems (PK list).
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name_fr:
+          type: string
+          nullable: true
+          title: Name [fr]
+          maxLength: 100
+        name_nl:
+          type: string
+          nullable: true
+          title: Name [nl]
+          maxLength: 100
+        name_en:
+          type: string
+          nullable: true
+          title: Name [en]
+          maxLength: 100
+        name_it:
+          type: string
+          nullable: true
+          title: Name [it]
+          maxLength: 100
+        name_es:
+          type: string
+          nullable: true
+          title: Name [es]
+          maxLength: 100
+        slug:
+          type: string
+          maxLength: 100
+          pattern: ^[-a-zA-Z0-9_]+$
+        is_active:
+          type: boolean
+        energy_systems:
+          type: array
+          items:
+            type: integer
+        created_at:
           type: string
           format: date-time
           readOnly: true
@@ -3394,6 +4181,9 @@ components:
       - usage_count
     Sport:
       type: object
+      description: |-
+        Public read serializer: 'name' is auto-localised by modeltranslation.
+        energy_systems exposed as PK list (frontend joins via /energy-systems/).
       properties:
         id:
           type: integer
@@ -3408,6 +4198,66 @@ components:
         is_active:
           type: boolean
           readOnly: true
+        energy_systems:
+          type: array
+          items:
+            type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - energy_systems
+      - id
+      - is_active
+      - name
+      - slug
+    SportAdmin:
+      type: object
+      description: |-
+        Admin flavor: exposes per-language name variants and write-capable
+        M2M energy_systems (PK list).
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name_fr:
+          type: string
+          nullable: true
+          title: Name [fr]
+          maxLength: 100
+        name_nl:
+          type: string
+          nullable: true
+          title: Name [nl]
+          maxLength: 100
+        name_en:
+          type: string
+          nullable: true
+          title: Name [en]
+          maxLength: 100
+        name_it:
+          type: string
+          nullable: true
+          title: Name [it]
+          maxLength: 100
+        name_es:
+          type: string
+          nullable: true
+          title: Name [es]
+          maxLength: 100
+        slug:
+          type: string
+          maxLength: 100
+          pattern: ^[-a-zA-Z0-9_]+$
+        is_active:
+          type: boolean
+        energy_systems:
+          type: array
+          items:
+            type: integer
         created_at:
           type: string
           format: date-time
@@ -3415,8 +4265,6 @@ components:
       required:
       - created_at
       - id
-      - is_active
-      - name
       - slug
     Team:
       type: object

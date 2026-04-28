@@ -15,7 +15,7 @@
 export interface CustomUserPublic { 
     readonly id: number;
     /**
-     * Requis. 150 caractères maximum. Uniquement des lettres, nombres et les caractères « @ », « . », « + », « - » et « _ ».
+     * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
      */
     readonly username: string;
     readonly first_name: string;

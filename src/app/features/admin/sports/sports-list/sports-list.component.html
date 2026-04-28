@@ -1,0 +1,81 @@
+<div class="flex justify-between items-center mb-6">
+  <h1 class="text-2xl font-bold">{{ 'admin.sports.title' | transloco }}</h1>
+  <a [routerLink]="['new']">
+    <p-button [label]="'admin.sports.new' | transloco" icon="pi pi-plus" />
+  </a>
+</div>
+
+<div class="mb-4 flex items-center gap-2">
+  <p-checkbox
+    [(ngModel)]="includeInactiveModel"
+    [binary]="true"
+    inputId="include_inactive"
+  />
+  <label for="include_inactive" class="text-sm text-gray-700 cursor-pointer">
+    {{ 'admin.sports.show_inactive' | transloco }}
+  </label>
+</div>
+
+<p-table
+  [value]="sports()"
+  [loading]="loading()"
+  [paginator]="true"
+  [rows]="20"
+  styleClass="bg-white rounded shadow-sm"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th>{{ 'admin.sports.fields.name' | transloco }}</th>
+      <th>{{ 'admin.sports.fields.slug' | transloco }}</th>
+      <th>{{ 'admin.sports.fields.energy_systems' | transloco }}</th>
+      <th>{{ 'admin.sports.fields.active' | transloco }}</th>
+      <th>{{ 'admin.sports.fields.actions' | transloco }}</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-sport>
+    <tr>
+      <td>{{ sport.name }}</td>
+      <td><code class="text-xs text-gray-600">{{ sport.slug }}</code></td>
+      <td>{{ sport.energy_systems?.length || 0 }}</td>
+      <td>
+        @if (sport.is_active) {
+          <span class="text-green-600" aria-label="active">●</span>
+        } @else {
+          <span class="text-red-500" aria-label="inactive">●</span>
+        }
+      </td>
+      <td class="flex gap-1">
+        <a [routerLink]="[sport.id, 'edit']">
+          <p-button
+            icon="pi pi-pencil"
+            [text]="true"
+            severity="secondary"
+            [ariaLabel]="'admin.sports.fields.actions' | transloco"
+          />
+        </a>
+        @if (sport.is_active) {
+          <p-button
+            icon="pi pi-trash"
+            [text]="true"
+            severity="danger"
+            (onClick)="confirmDelete(sport)"
+          />
+        } @else {
+          <p-button
+            icon="pi pi-undo"
+            [text]="true"
+            severity="success"
+            (onClick)="restore(sport)"
+          />
+        }
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="5" class="text-center py-4 text-gray-500">—</td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-confirmDialog />

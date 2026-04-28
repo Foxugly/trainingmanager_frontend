@@ -3,9 +3,13 @@
     "title": "Training Manager",
     "logout": "Sign out"
   },
+  "nav": {
+    "admin": "Admin"
+  },
   "common": {
     "save": "Save",
     "cancel": "Cancel",
+    "back": "Back",
     "error": "Error",
     "success": "Success"
   },
@@ -37,6 +41,46 @@
     "language_switch_failed": "Could not change language, please try again.",
     "errors": {
       "unknown": "Something went wrong, please try again."
+    }
+  },
+  "admin": {
+    "title": "Administration",
+    "coming_soon": "Coming soon",
+    "nav": {
+      "sports": "Sports",
+      "energy_systems": "Energy Systems",
+      "energy_segments": "Energy Segments",
+      "modalities": "Modalities"
+    },
+    "sports": {
+      "title": "Sports",
+      "new": "New sport",
+      "show_inactive": "Show inactive sports",
+      "fields": {
+        "name": "Name",
+        "slug": "Slug",
+        "energy_systems": "Energy systems",
+        "active": "Active",
+        "actions": "Actions"
+      },
+      "form": {
+        "new_title": "New sport",
+        "edit_title": "Edit sport",
+        "slug": "Slug (technical identifier)",
+        "energy_systems": "Linked energy systems",
+        "energy_systems_placeholder": "Select one or more systems",
+        "is_active": "Active"
+      },
+      "actions": {
+        "delete_confirm_title": "Deactivate this sport?",
+        "delete_confirm_message": "The sport will be deactivated (soft delete). You can reactivate it later.",
+        "deleted": "Sport deactivated.",
+        "restored": "Sport reactivated.",
+        "saved": "Sport saved."
+      },
+      "errors": {
+        "unknown": "Something went wrong."
+      }
     }
   }
 }

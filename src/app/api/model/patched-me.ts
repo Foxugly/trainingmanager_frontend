@@ -13,7 +13,7 @@ import { LanguageEnum } from './language-enum';
 export interface PatchedMe { 
     readonly id?: number;
     /**
-     * Requis. 150 caractères maximum. Uniquement des lettres, nombres et les caractères « @ », « . », « + », « - » et « _ ».
+     * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
      */
     readonly username?: string;
     email?: string;
@@ -22,6 +22,14 @@ export interface PatchedMe {
     language?: LanguageEnum;
     readonly last_login?: string | null;
     readonly date_joined?: string;
+    /**
+     * Designates whether the user can log into this admin site.
+     */
+    readonly is_staff?: boolean;
+    /**
+     * Designates that this user has all permissions without explicitly assigning them.
+     */
+    readonly is_superuser?: boolean;
 }
 
 

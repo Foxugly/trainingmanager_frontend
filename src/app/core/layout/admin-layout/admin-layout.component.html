@@ -1,0 +1,38 @@
+<div class="flex min-h-[calc(100vh-4rem)]">
+  <aside class="w-64 bg-gray-100 border-r border-gray-200 p-4 shrink-0">
+    <h2 class="text-lg font-bold mb-4">{{ 'admin.title' | transloco }}</h2>
+    <nav class="flex flex-col gap-1">
+      <a
+        [routerLink]="['/admin/sports']"
+        routerLinkActive="bg-white font-semibold"
+        class="px-3 py-2 rounded hover:bg-white text-sm text-gray-700"
+      >
+        {{ 'admin.nav.sports' | transloco }}
+      </a>
+      <a
+        [routerLink]="['/admin/energy-systems']"
+        routerLinkActive="bg-white font-semibold"
+        class="px-3 py-2 rounded hover:bg-white text-sm text-gray-700"
+      >
+        {{ 'admin.nav.energy_systems' | transloco }}
+      </a>
+      <a
+        [routerLink]="['/admin/energy-segments']"
+        routerLinkActive="bg-white font-semibold"
+        class="px-3 py-2 rounded hover:bg-white text-sm text-gray-700"
+      >
+        {{ 'admin.nav.energy_segments' | transloco }}
+      </a>
+      <a
+        [routerLink]="['/admin/modalities']"
+        routerLinkActive="bg-white font-semibold"
+        class="px-3 py-2 rounded hover:bg-white text-sm text-gray-700"
+      >
+        {{ 'admin.nav.modalities' | transloco }}
+      </a>
+    </nav>
+  </aside>
+  <main class="flex-1 p-6 overflow-x-auto">
+    <router-outlet />
+  </main>
+</div>

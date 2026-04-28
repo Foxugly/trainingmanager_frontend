@@ -120,7 +120,7 @@ export class ProgramsService extends BaseService implements ProgramsServiceInter
     /**
      * CRUD complet pour Program, scopé par team.
      * @endpoint delete /api/v1/programs/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Program.
+     * @param id A unique integer value identifying this Program.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
@@ -178,7 +178,7 @@ export class ProgramsService extends BaseService implements ProgramsServiceInter
     /**
      * Generate a training plan with AI for the given Program.
      * @endpoint post /api/v1/programs/{id}/generate-events/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Program.
+     * @param id A unique integer value identifying this Program.
      * @param generatePlanRequest 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -256,9 +256,9 @@ export class ProgramsService extends BaseService implements ProgramsServiceInter
      * @param dateEnd 
      * @param dateStart 
      * @param name 
-     * @param ordering Quel champ utiliser pour classer les résultats.
-     * @param page Un numéro de page de l\&#39;ensemble des résultats.
-     * @param search Un terme de recherche.
+     * @param ordering Which field to use when ordering the results.
+     * @param page A page number within the paginated result set.
+     * @param search A search term.
      * @param team 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -381,7 +381,7 @@ export class ProgramsService extends BaseService implements ProgramsServiceInter
     /**
      * CRUD complet pour Program, scopé par team.
      * @endpoint patch /api/v1/programs/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Program.
+     * @param id A unique integer value identifying this Program.
      * @param patchedProgram 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -453,7 +453,7 @@ export class ProgramsService extends BaseService implements ProgramsServiceInter
     /**
      * CRUD complet pour Program, scopé par team.
      * @endpoint get /api/v1/programs/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Program.
+     * @param id A unique integer value identifying this Program.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
@@ -512,7 +512,7 @@ export class ProgramsService extends BaseService implements ProgramsServiceInter
     /**
      * CRUD complet pour Program, scopé par team.
      * @endpoint put /api/v1/programs/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Program.
+     * @param id A unique integer value identifying this Program.
      * @param program 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.

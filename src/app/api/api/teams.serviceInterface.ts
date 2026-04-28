@@ -36,7 +36,7 @@ export interface TeamsServiceInterface {
      * 
      * CRUD sur Teams. Liste &#x3D; teams gérées par l\&#39;user + teams publiques actives.
      * @endpoint delete /api/v1/teams/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) team.
+     * @param id A unique integer value identifying this team.
      */
     teamsDestroy(id: number, extraHttpRequestParams?: any): Observable<{}>;
 
@@ -47,9 +47,9 @@ export interface TeamsServiceInterface {
      * @param isActive 
      * @param isPublic 
      * @param language * &#x60;fr&#x60; - Français * &#x60;nl&#x60; - Nederlands * &#x60;en&#x60; - English * &#x60;it&#x60; - Italiano * &#x60;es&#x60; - Español
-     * @param ordering Quel champ utiliser pour classer les résultats.
-     * @param page Un numéro de page de l\&#39;ensemble des résultats.
-     * @param search Un terme de recherche.
+     * @param ordering Which field to use when ordering the results.
+     * @param page A page number within the paginated result set.
+     * @param search A search term.
      */
     teamsList(isActive?: boolean, isPublic?: boolean, language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedTeamList>;
 
@@ -57,7 +57,7 @@ export interface TeamsServiceInterface {
      * 
      * CRUD sur Teams. Liste &#x3D; teams gérées par l\&#39;user + teams publiques actives.
      * @endpoint patch /api/v1/teams/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) team.
+     * @param id A unique integer value identifying this team.
      * @param patchedTeam 
      */
     teamsPartialUpdate(id: number, patchedTeam?: PatchedTeam, extraHttpRequestParams?: any): Observable<Team>;
@@ -66,7 +66,7 @@ export interface TeamsServiceInterface {
      * 
      * CRUD sur Teams. Liste &#x3D; teams gérées par l\&#39;user + teams publiques actives.
      * @endpoint get /api/v1/teams/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) team.
+     * @param id A unique integer value identifying this team.
      */
     teamsRetrieve(id: number, extraHttpRequestParams?: any): Observable<Team>;
 
@@ -74,7 +74,7 @@ export interface TeamsServiceInterface {
      * 
      * CRUD sur Teams. Liste &#x3D; teams gérées par l\&#39;user + teams publiques actives.
      * @endpoint put /api/v1/teams/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) team.
+     * @param id A unique integer value identifying this team.
      * @param team 
      */
     teamsUpdate(id: number, team: Team, extraHttpRequestParams?: any): Observable<Team>;

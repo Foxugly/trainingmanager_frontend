@@ -1,0 +1,132 @@
+<div class="max-w-3xl">
+  <a [routerLink]="['/admin/sports']" class="text-sm text-blue-600 hover:underline">
+    ← {{ 'common.back' | transloco }}
+  </a>
+
+  <h1 class="text-2xl font-bold mb-6 mt-2">
+    @if (sportId()) {
+      {{ 'admin.sports.form.edit_title' | transloco }}
+    } @else {
+      {{ 'admin.sports.form.new_title' | transloco }}
+    }
+  </h1>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-5">
+    <div class="flex flex-col gap-2">
+      <label for="slug" class="text-sm font-medium text-gray-700">
+        {{ 'admin.sports.form.slug' | transloco }}
+      </label>
+      <input pInputText id="slug" formControlName="slug" class="w-full" />
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <span class="text-sm font-medium text-gray-700">
+        {{ 'admin.sports.fields.name' | transloco }}
+      </span>
+      <p-tabs value="fr">
+        <p-tablist>
+          <p-tab value="fr">FR</p-tab>
+          <p-tab value="nl">NL</p-tab>
+          <p-tab value="en">EN</p-tab>
+          <p-tab value="it">IT</p-tab>
+          <p-tab value="es">ES</p-tab>
+        </p-tablist>
+        <p-tabpanels>
+          <p-tabpanel value="fr">
+            <input
+              pInputText
+              formControlName="name_fr"
+              placeholder="Français"
+              class="w-full"
+            />
+          </p-tabpanel>
+          <p-tabpanel value="nl">
+            <input
+              pInputText
+              formControlName="name_nl"
+              placeholder="Nederlands"
+              class="w-full"
+            />
+          </p-tabpanel>
+          <p-tabpanel value="en">
+            <input
+              pInputText
+              formControlName="name_en"
+              placeholder="English"
+              class="w-full"
+            />
+          </p-tabpanel>
+          <p-tabpanel value="it">
+            <input
+              pInputText
+              formControlName="name_it"
+              placeholder="Italiano"
+              class="w-full"
+            />
+          </p-tabpanel>
+          <p-tabpanel value="es">
+            <input
+              pInputText
+              formControlName="name_es"
+              placeholder="Español"
+              class="w-full"
+            />
+          </p-tabpanel>
+        </p-tabpanels>
+      </p-tabs>
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-medium text-gray-700">
+        {{ 'admin.sports.form.energy_systems' | transloco }}
+      </label>
+      <p-multiSelect
+        [options]="availableEnergySystems()"
+        formControlName="energy_systems"
+        optionLabel="name"
+        optionValue="id"
+        [placeholder]="'admin.sports.form.energy_systems_placeholder' | transloco"
+        [filter]="true"
+        styleClass="w-full"
+      />
+    </div>
+
+    @if (sportId()) {
+      <div class="flex items-center gap-2">
+        <p-checkbox formControlName="is_active" [binary]="true" inputId="is_active" />
+        <label for="is_active" class="text-sm text-gray-700 cursor-pointer">
+          {{ 'admin.sports.form.is_active' | transloco }}
+        </label>
+      </div>
+    }
+
+    @if (errorMessage(); as msg) {
+      <p-message severity="error" [text]="msg | transloco" />
+    }
+
+    @if (fieldErrors(); as errors) {
+      <div class="flex flex-col gap-1">
+        @for (entry of errors | keyvalue; track entry.key) {
+          <p-message severity="warn" [text]="entry.key + ': ' + entry.value.join(', ')" />
+        }
+      </div>
+    }
+
+    <div class="flex justify-end gap-2 mt-2">
+      <a [routerLink]="['/admin/sports']">
+        <p-button
+          type="button"
+          severity="secondary"
+          [text]="true"
+          [label]="'common.cancel' | transloco"
+        />
+      </a>
+      <p-button
+        type="submit"
+        [label]="'common.save' | transloco"
+        [loading]="saving()"
+        [disabled]="form.invalid"
+      />
+    </div>
+  </form>
+</div>

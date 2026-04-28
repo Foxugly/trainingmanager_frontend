@@ -3,6 +3,16 @@
     <h1 class="text-xl font-semibold text-gray-900">{{ 'app.title' | transloco }}</h1>
 
     <div class="flex items-center gap-4">
+      @if (authService.currentUser()?.is_staff) {
+        <a
+          [routerLink]="['/admin']"
+          routerLinkActive="font-bold"
+          class="text-sm text-gray-700 hover:underline"
+        >
+          {{ 'nav.admin' | transloco }}
+        </a>
+      }
+
       <app-language-switcher />
 
       @if (authService.currentUser(); as user) {

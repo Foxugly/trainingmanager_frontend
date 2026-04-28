@@ -3,9 +3,13 @@
     "title": "Trainingsbeheerder",
     "logout": "Afmelden"
   },
+  "nav": {
+    "admin": "Beheer"
+  },
   "common": {
     "save": "Opslaan",
     "cancel": "Annuleren",
+    "back": "Terug",
     "error": "Fout",
     "success": "Gelukt"
   },
@@ -37,6 +41,46 @@
     "language_switch_failed": "Taal wijzigen is mislukt, probeer het opnieuw.",
     "errors": {
       "unknown": "Er is een fout opgetreden, probeer het opnieuw."
+    }
+  },
+  "admin": {
+    "title": "Beheer",
+    "coming_soon": "Binnenkort beschikbaar",
+    "nav": {
+      "sports": "Sporten",
+      "energy_systems": "Energiesystemen",
+      "energy_segments": "Energiesegmenten",
+      "modalities": "Modaliteiten"
+    },
+    "sports": {
+      "title": "Sporten",
+      "new": "Nieuwe sport",
+      "show_inactive": "Inactieve sporten tonen",
+      "fields": {
+        "name": "Naam",
+        "slug": "Slug",
+        "energy_systems": "Energiesystemen",
+        "active": "Actief",
+        "actions": "Acties"
+      },
+      "form": {
+        "new_title": "Nieuwe sport",
+        "edit_title": "Sport bewerken",
+        "slug": "Slug (technische identifier)",
+        "energy_systems": "Gekoppelde energiesystemen",
+        "energy_systems_placeholder": "Selecteer één of meer systemen",
+        "is_active": "Actief"
+      },
+      "actions": {
+        "delete_confirm_title": "Deze sport deactiveren?",
+        "delete_confirm_message": "De sport wordt gedeactiveerd (soft delete). Je kan hem later opnieuw activeren.",
+        "deleted": "Sport gedeactiveerd.",
+        "restored": "Sport opnieuw geactiveerd.",
+        "saved": "Sport opgeslagen."
+      },
+      "errors": {
+        "unknown": "Er is een fout opgetreden."
+      }
     }
   }
 }

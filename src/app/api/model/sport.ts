@@ -9,11 +9,15 @@
  */
 
 
+/**
+ * Public read serializer: \'name\' is auto-localised by modeltranslation. energy_systems exposed as PK list (frontend joins via /energy-systems/).
+ */
 export interface Sport { 
     readonly id: number;
     readonly name: string;
     readonly slug: string;
     readonly is_active: boolean;
+    readonly energy_systems: Array<number>;
     readonly created_at: string;
 }
 

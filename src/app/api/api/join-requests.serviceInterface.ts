@@ -37,7 +37,7 @@ export interface JoinRequestsServiceInterface {
      * 
      * Self-signup join request flow.
      * @endpoint delete /api/v1/join-requests/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) team join request.
+     * @param id A unique integer value identifying this team join request.
      */
     joinRequestsDestroy(id: number, extraHttpRequestParams?: any): Observable<{}>;
 
@@ -45,9 +45,9 @@ export interface JoinRequestsServiceInterface {
      * 
      * Self-signup join request flow.
      * @endpoint get /api/v1/join-requests/
-     * @param ordering Quel champ utiliser pour classer les résultats.
-     * @param page Un numéro de page de l\&#39;ensemble des résultats.
-     * @param search Un terme de recherche.
+     * @param ordering Which field to use when ordering the results.
+     * @param page A page number within the paginated result set.
+     * @param search A search term.
      * @param status * &#x60;pending&#x60; - Pending * &#x60;accepted&#x60; - Accepted * &#x60;rejected&#x60; - Rejected * &#x60;cancelled&#x60; - Cancelled
      * @param team 
      */
@@ -57,7 +57,7 @@ export interface JoinRequestsServiceInterface {
      * 
      * Self-signup join request flow.
      * @endpoint patch /api/v1/join-requests/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) team join request.
+     * @param id A unique integer value identifying this team join request.
      * @param patchedTeamJoinRequest 
      */
     joinRequestsPartialUpdate(id: number, patchedTeamJoinRequest?: PatchedTeamJoinRequest, extraHttpRequestParams?: any): Observable<TeamJoinRequest>;
@@ -66,7 +66,7 @@ export interface JoinRequestsServiceInterface {
      * 
      * Self-signup join request flow.
      * @endpoint get /api/v1/join-requests/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) team join request.
+     * @param id A unique integer value identifying this team join request.
      */
     joinRequestsRetrieve(id: number, extraHttpRequestParams?: any): Observable<TeamJoinRequest>;
 
@@ -74,7 +74,7 @@ export interface JoinRequestsServiceInterface {
      * 
      * Self-signup join request flow.
      * @endpoint put /api/v1/join-requests/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) team join request.
+     * @param id A unique integer value identifying this team join request.
      * @param teamJoinRequest 
      */
     joinRequestsUpdate(id: number, teamJoinRequest: TeamJoinRequest, extraHttpRequestParams?: any): Observable<TeamJoinRequest>;

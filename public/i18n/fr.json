@@ -3,9 +3,13 @@
     "title": "Training Manager",
     "logout": "Déconnexion"
   },
+  "nav": {
+    "admin": "Admin"
+  },
   "common": {
     "save": "Enregistrer",
     "cancel": "Annuler",
+    "back": "Retour",
     "error": "Erreur",
     "success": "Succès"
   },
@@ -37,6 +41,46 @@
     "language_switch_failed": "Impossible de changer la langue, réessayez.",
     "errors": {
       "unknown": "Une erreur est survenue, réessayez."
+    }
+  },
+  "admin": {
+    "title": "Administration",
+    "coming_soon": "Bientôt disponible",
+    "nav": {
+      "sports": "Sports",
+      "energy_systems": "Systèmes énergétiques",
+      "energy_segments": "Segments énergétiques",
+      "modalities": "Modalités"
+    },
+    "sports": {
+      "title": "Sports",
+      "new": "Nouveau sport",
+      "show_inactive": "Afficher les sports inactifs",
+      "fields": {
+        "name": "Nom",
+        "slug": "Slug",
+        "energy_systems": "Systèmes énergétiques",
+        "active": "Actif",
+        "actions": "Actions"
+      },
+      "form": {
+        "new_title": "Nouveau sport",
+        "edit_title": "Modifier le sport",
+        "slug": "Slug (identifiant technique)",
+        "energy_systems": "Systèmes énergétiques associés",
+        "energy_systems_placeholder": "Sélectionnez un ou plusieurs systèmes",
+        "is_active": "Actif"
+      },
+      "actions": {
+        "delete_confirm_title": "Désactiver ce sport ?",
+        "delete_confirm_message": "Le sport sera désactivé (soft delete). Vous pourrez le réactiver plus tard.",
+        "deleted": "Sport désactivé.",
+        "restored": "Sport réactivé.",
+        "saved": "Sport enregistré."
+      },
+      "errors": {
+        "unknown": "Une erreur est survenue."
+      }
     }
   }
 }

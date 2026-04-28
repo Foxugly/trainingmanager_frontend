@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth.guard';
+import { staffGuard } from './core/auth/staff.guard';
+import { AdminLayoutComponent } from './core/layout/admin-layout/admin-layout.component';
 import { AuthLayoutComponent } from './core/layout/auth-layout/auth-layout.component';
 import { MainLayoutComponent } from './core/layout/main-layout/main-layout.component';
 
@@ -12,6 +14,46 @@ export const routes: Routes = [
         path: '',
         loadComponent: () =>
           import('./features/auth/login/login.component').then((m) => m.LoginComponent),
+      },
+    ],
+  },
+  {
+    path: 'admin',
+    component: MainLayoutComponent,
+    canActivate: [authGuard, staffGuard],
+    children: [
+      {
+        path: '',
+        component: AdminLayoutComponent,
+        children: [
+          { path: '', redirectTo: 'sports', pathMatch: 'full' },
+          {
+            path: 'sports',
+            loadChildren: () =>
+              import('./features/admin/sports/sports.routes').then((m) => m.SPORTS_ROUTES),
+          },
+          {
+            path: 'energy-systems',
+            loadComponent: () =>
+              import(
+                './features/admin/energy-systems/energy-systems-placeholder.component'
+              ).then((m) => m.EnergySystemsPlaceholderComponent),
+          },
+          {
+            path: 'energy-segments',
+            loadComponent: () =>
+              import(
+                './features/admin/energy-segments/energy-segments-placeholder.component'
+              ).then((m) => m.EnergySegmentsPlaceholderComponent),
+          },
+          {
+            path: 'modalities',
+            loadComponent: () =>
+              import('./features/admin/modalities/modalities-placeholder.component').then(
+                (m) => m.ModalitiesPlaceholderComponent,
+              ),
+          },
+        ],
       },
     ],
   },

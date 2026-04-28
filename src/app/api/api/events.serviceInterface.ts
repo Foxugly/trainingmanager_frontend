@@ -37,7 +37,7 @@ export interface EventsServiceInterface {
      * 
      * CRUD complet pour Event, scopé par team du program.
      * @endpoint delete /api/v1/events/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) event.
+     * @param id A unique integer value identifying this event.
      */
     eventsDestroy(id: number, extraHttpRequestParams?: any): Observable<{}>;
 
@@ -45,7 +45,7 @@ export interface EventsServiceInterface {
      * 
      * Generate detailed Rounds and Exercises with AI for an Event.
      * @endpoint post /api/v1/events/{id}/generate-training/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) event.
+     * @param id A unique integer value identifying this event.
      */
     eventsGenerateTrainingCreate(id: number, extraHttpRequestParams?: any): Observable<GenerateTrainingResponse>;
 
@@ -55,10 +55,10 @@ export interface EventsServiceInterface {
      * @endpoint get /api/v1/events/
      * @param color 
      * @param date 
-     * @param ordering Quel champ utiliser pour classer les résultats.
-     * @param page Un numéro de page de l\&#39;ensemble des résultats.
+     * @param ordering Which field to use when ordering the results.
+     * @param page A page number within the paginated result set.
      * @param referProgram 
-     * @param search Un terme de recherche.
+     * @param search A search term.
      */
     eventsList(color?: string, date?: string, ordering?: string, page?: number, referProgram?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedEventList>;
 
@@ -66,7 +66,7 @@ export interface EventsServiceInterface {
      * 
      * CRUD complet pour Event, scopé par team du program.
      * @endpoint patch /api/v1/events/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) event.
+     * @param id A unique integer value identifying this event.
      * @param patchedEvent 
      */
     eventsPartialUpdate(id: number, patchedEvent?: PatchedEvent, extraHttpRequestParams?: any): Observable<Event>;
@@ -75,7 +75,7 @@ export interface EventsServiceInterface {
      * 
      * CRUD complet pour Event, scopé par team du program.
      * @endpoint get /api/v1/events/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) event.
+     * @param id A unique integer value identifying this event.
      */
     eventsRetrieve(id: number, extraHttpRequestParams?: any): Observable<Event>;
 
@@ -83,7 +83,7 @@ export interface EventsServiceInterface {
      * 
      * CRUD complet pour Event, scopé par team du program.
      * @endpoint put /api/v1/events/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) event.
+     * @param id A unique integer value identifying this event.
      * @param event 
      */
     eventsUpdate(id: number, event: Event, extraHttpRequestParams?: any): Observable<Event>;

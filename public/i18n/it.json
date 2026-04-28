@@ -3,9 +3,13 @@
     "title": "Gestore Allenamenti",
     "logout": "Disconnetti"
   },
+  "nav": {
+    "admin": "Admin"
+  },
   "common": {
     "save": "Salva",
     "cancel": "Annulla",
+    "back": "Indietro",
     "error": "Errore",
     "success": "Successo"
   },
@@ -37,6 +41,46 @@
     "language_switch_failed": "Impossibile cambiare la lingua, riprova.",
     "errors": {
       "unknown": "Si è verificato un errore, riprova."
+    }
+  },
+  "admin": {
+    "title": "Amministrazione",
+    "coming_soon": "Disponibile a breve",
+    "nav": {
+      "sports": "Sport",
+      "energy_systems": "Sistemi energetici",
+      "energy_segments": "Segmenti energetici",
+      "modalities": "Modalità"
+    },
+    "sports": {
+      "title": "Sport",
+      "new": "Nuovo sport",
+      "show_inactive": "Mostra sport inattivi",
+      "fields": {
+        "name": "Nome",
+        "slug": "Slug",
+        "energy_systems": "Sistemi energetici",
+        "active": "Attivo",
+        "actions": "Azioni"
+      },
+      "form": {
+        "new_title": "Nuovo sport",
+        "edit_title": "Modifica sport",
+        "slug": "Slug (identificatore tecnico)",
+        "energy_systems": "Sistemi energetici associati",
+        "energy_systems_placeholder": "Seleziona uno o più sistemi",
+        "is_active": "Attivo"
+      },
+      "actions": {
+        "delete_confirm_title": "Disattivare questo sport?",
+        "delete_confirm_message": "Lo sport verrà disattivato (soft delete). Potrai riattivarlo in seguito.",
+        "deleted": "Sport disattivato.",
+        "restored": "Sport riattivato.",
+        "saved": "Sport salvato."
+      },
+      "errors": {
+        "unknown": "Si è verificato un errore."
+      }
     }
   }
 }

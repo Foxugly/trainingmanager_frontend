@@ -11,8 +11,9 @@ import { HttpHeaders }                                       from '@angular/comm
 
 import { Observable }                                        from 'rxjs';
 
-import { EnergySegment } from '../model/models';
+import { EnergySegmentAdmin } from '../model/models';
 import { PaginatedEnergySegmentList } from '../model/models';
+import { PatchedEnergySegmentAdmin } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
@@ -24,22 +25,57 @@ export interface EnergySegmentsServiceInterface {
     configuration: Configuration;
 
     /**
-     * 
-     * Lecture seule pour EnergySegment (référentiel).
+     * Create energy segment (staff only)
+     * CRUD on EnergySegment referential.
+     * @endpoint post /api/v1/energy-segments/
+     * @param energySegmentAdmin 
+     */
+    energySegmentsCreate(energySegmentAdmin: EnergySegmentAdmin, extraHttpRequestParams?: any): Observable<EnergySegmentAdmin>;
+
+    /**
+     * Soft delete energy segment (staff only)
+     * CRUD on EnergySegment referential.
+     * @endpoint delete /api/v1/energy-segments/{id}/
+     * @param id A unique integer value identifying this energy segment.
+     */
+    energySegmentsDestroy(id: number, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * List energy segments (public flavor)
+     * CRUD on EnergySegment referential.
      * @endpoint get /api/v1/energy-segments/
      * @param energysystem 
-     * @param ordering Quel champ utiliser pour classer les résultats.
-     * @param page Un numéro de page de l\&#39;ensemble des résultats.
-     * @param search Un terme de recherche.
+     * @param isActive 
+     * @param ordering Which field to use when ordering the results.
+     * @param page A page number within the paginated result set.
+     * @param search A search term.
      */
-    energySegmentsList(energysystem?: number, ordering?: string, page?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedEnergySegmentList>;
+    energySegmentsList(energysystem?: number, isActive?: boolean, ordering?: string, page?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedEnergySegmentList>;
 
     /**
      * 
-     * Lecture seule pour EnergySegment (référentiel).
-     * @endpoint get /api/v1/energy-segments/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) energy segment.
+     * CRUD on EnergySegment referential.
+     * @endpoint patch /api/v1/energy-segments/{id}/
+     * @param id A unique integer value identifying this energy segment.
+     * @param patchedEnergySegmentAdmin 
      */
-    energySegmentsRetrieve(id: number, extraHttpRequestParams?: any): Observable<EnergySegment>;
+    energySegmentsPartialUpdate(id: number, patchedEnergySegmentAdmin?: PatchedEnergySegmentAdmin, extraHttpRequestParams?: any): Observable<EnergySegmentAdmin>;
+
+    /**
+     * Retrieve energy segment (admin flavor for staff)
+     * CRUD on EnergySegment referential.
+     * @endpoint get /api/v1/energy-segments/{id}/
+     * @param id A unique integer value identifying this energy segment.
+     */
+    energySegmentsRetrieve(id: number, extraHttpRequestParams?: any): Observable<EnergySegmentAdmin>;
+
+    /**
+     * 
+     * CRUD on EnergySegment referential.
+     * @endpoint put /api/v1/energy-segments/{id}/
+     * @param id A unique integer value identifying this energy segment.
+     * @param energySegmentAdmin 
+     */
+    energySegmentsUpdate(id: number, energySegmentAdmin: EnergySegmentAdmin, extraHttpRequestParams?: any): Observable<EnergySegmentAdmin>;
 
 }

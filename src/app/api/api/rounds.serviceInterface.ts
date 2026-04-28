@@ -30,7 +30,7 @@ export interface RoundsServiceInterface {
      * 
      * Clone this Round (scalar fields + M2M exercises). Returns the new Round.
      * @endpoint post /api/v1/rounds/{id}/clone/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Round.
+     * @param id A unique integer value identifying this Round.
      */
     roundsCloneCreate(id: number, extraHttpRequestParams?: any): Observable<Round>;
 
@@ -38,7 +38,7 @@ export interface RoundsServiceInterface {
      * 
      * Clone an Exercise and attach the copy to this Round.
      * @endpoint post /api/v1/rounds/{id}/clone-exercise/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Round.
+     * @param id A unique integer value identifying this Round.
      * @param cloneExerciseRequest 
      */
     roundsCloneExerciseCreate(id: number, cloneExerciseRequest: CloneExerciseRequest, extraHttpRequestParams?: any): Observable<Exercise>;
@@ -55,7 +55,7 @@ export interface RoundsServiceInterface {
      * 
      * CRUD complet pour Round.
      * @endpoint delete /api/v1/rounds/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Round.
+     * @param id A unique integer value identifying this Round.
      */
     roundsDestroy(id: number, extraHttpRequestParams?: any): Observable<{}>;
 
@@ -64,9 +64,9 @@ export interface RoundsServiceInterface {
      * CRUD complet pour Round.
      * @endpoint get /api/v1/rounds/
      * @param language * &#x60;fr&#x60; - Français * &#x60;nl&#x60; - Nederlands * &#x60;en&#x60; - English * &#x60;it&#x60; - Italiano * &#x60;es&#x60; - Español
-     * @param ordering Quel champ utiliser pour classer les résultats.
-     * @param page Un numéro de page de l\&#39;ensemble des résultats.
-     * @param search Un terme de recherche.
+     * @param ordering Which field to use when ordering the results.
+     * @param page A page number within the paginated result set.
+     * @param search A search term.
      * @param sport 
      */
     roundsList(language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, search?: string, sport?: number, extraHttpRequestParams?: any): Observable<PaginatedRoundList>;
@@ -75,7 +75,7 @@ export interface RoundsServiceInterface {
      * 
      * CRUD complet pour Round.
      * @endpoint patch /api/v1/rounds/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Round.
+     * @param id A unique integer value identifying this Round.
      * @param patchedRound 
      */
     roundsPartialUpdate(id: number, patchedRound?: PatchedRound, extraHttpRequestParams?: any): Observable<Round>;
@@ -84,7 +84,7 @@ export interface RoundsServiceInterface {
      * 
      * CRUD complet pour Round.
      * @endpoint get /api/v1/rounds/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Round.
+     * @param id A unique integer value identifying this Round.
      */
     roundsRetrieve(id: number, extraHttpRequestParams?: any): Observable<Round>;
 
@@ -92,7 +92,7 @@ export interface RoundsServiceInterface {
      * 
      * CRUD complet pour Round.
      * @endpoint put /api/v1/rounds/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Round.
+     * @param id A unique integer value identifying this Round.
      * @param round 
      */
     roundsUpdate(id: number, round: Round, extraHttpRequestParams?: any): Observable<Round>;

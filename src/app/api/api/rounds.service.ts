@@ -49,7 +49,7 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
     /**
      * Clone this Round (scalar fields + M2M exercises). Returns the new Round.
      * @endpoint post /api/v1/rounds/{id}/clone/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Round.
+     * @param id A unique integer value identifying this Round.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
@@ -108,7 +108,7 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
     /**
      * Clone an Exercise and attach the copy to this Round.
      * @endpoint post /api/v1/rounds/{id}/clone-exercise/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Round.
+     * @param id A unique integer value identifying this Round.
      * @param cloneExerciseRequest 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -254,7 +254,7 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
     /**
      * CRUD complet pour Round.
      * @endpoint delete /api/v1/rounds/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Round.
+     * @param id A unique integer value identifying this Round.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
@@ -313,9 +313,9 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
      * CRUD complet pour Round.
      * @endpoint get /api/v1/rounds/
      * @param language * &#x60;fr&#x60; - Français * &#x60;nl&#x60; - Nederlands * &#x60;en&#x60; - English * &#x60;it&#x60; - Italiano * &#x60;es&#x60; - Español
-     * @param ordering Quel champ utiliser pour classer les résultats.
-     * @param page Un numéro de page de l\&#39;ensemble des résultats.
-     * @param search Un terme de recherche.
+     * @param ordering Which field to use when ordering the results.
+     * @param page A page number within the paginated result set.
+     * @param search A search term.
      * @param sport 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -420,7 +420,7 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
     /**
      * CRUD complet pour Round.
      * @endpoint patch /api/v1/rounds/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Round.
+     * @param id A unique integer value identifying this Round.
      * @param patchedRound 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -492,7 +492,7 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
     /**
      * CRUD complet pour Round.
      * @endpoint get /api/v1/rounds/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Round.
+     * @param id A unique integer value identifying this Round.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
@@ -551,7 +551,7 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
     /**
      * CRUD complet pour Round.
      * @endpoint put /api/v1/rounds/{id}/
-     * @param id Un(une) valeur entière unique identifiant ce(cette) Round.
+     * @param id A unique integer value identifying this Round.
      * @param round 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
