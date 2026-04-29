@@ -1,0 +1,51 @@
+<div>
+  @if (!teamFilter()) {
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold">{{ 'programs.list.title' | transloco }}</h1>
+    </div>
+  }
+
+  @if (loading()) {
+    <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+  } @else if (programs().length === 0) {
+    <p class="text-gray-500">{{ 'programs.list.empty' | transloco }}</p>
+  } @else {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      @for (p of programs(); track p.id) {
+        <a
+          [routerLink]="['/programs', p.id]"
+          class="block p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md hover:border-blue-300 transition"
+        >
+          <div class="flex justify-between items-start mb-2 gap-2">
+            <h2 class="font-semibold text-lg text-gray-900">{{ p.name }}</h2>
+            @if (p.generated_by_ai) {
+              <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded shrink-0">
+                {{ 'programs.ai_generated' | transloco }}
+              </span>
+            }
+          </div>
+          <p class="text-sm text-gray-600">
+            @if (!teamFilter() && p.team?.name) {
+              {{ p.team.name }} ·
+            }
+            @if (p.date_start) {
+              {{ p.date_start | date: 'mediumDate' }}
+            }
+            @if (p.date_start && p.date_end) {
+              →
+            }
+            @if (p.date_end) {
+              {{ p.date_end | date: 'mediumDate' }}
+            }
+          </p>
+          @if (p.frequency_per_week != null) {
+            <p class="text-xs text-gray-500 mt-1">
+              {{ 'programs.frequency_per_week' | transloco }}:
+              {{ p.frequency_per_week }}
+            </p>
+          }
+        </a>
+      }
+    </div>
+  }
+</div>

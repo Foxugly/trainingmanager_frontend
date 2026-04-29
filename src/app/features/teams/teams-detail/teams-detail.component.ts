@@ -29,6 +29,7 @@ import { TeamMembership } from '../../../api/model/team-membership';
 import { AuthService } from '../../../core/auth/auth.service';
 import { MemberMembershipService } from '../member-membership.service';
 import { TeamRole, computeTeamRole } from '../teams-list/teams-list.component';
+import { ProgramsListComponent } from '../../programs/programs-list/programs-list.component';
 
 interface FieldErrors {
   [field: string]: string[];
@@ -47,6 +48,7 @@ interface FieldErrors {
     InputText,
     Message,
     TranslocoPipe,
+    ProgramsListComponent,
   ],
   templateUrl: './teams-detail.component.html',
   styleUrl: './teams-detail.component.scss',

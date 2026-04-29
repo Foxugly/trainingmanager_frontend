@@ -1,0 +1,91 @@
+<div>
+  <a [routerLink]="['/programs']" class="text-sm text-blue-600 hover:underline">
+    ← {{ 'common.back' | transloco }}
+  </a>
+
+  @if (loading()) {
+    <p class="mt-4 text-gray-500">{{ 'common.loading' | transloco }}…</p>
+  } @else if (notFound()) {
+    <p class="mt-4 text-gray-500">{{ 'programs.detail.not_found' | transloco }}</p>
+  } @else if (program(); as p) {
+    <div class="mt-2">
+      <div class="flex items-center gap-3 mb-6 flex-wrap">
+        <h1 class="text-2xl font-bold">{{ p.name }}</h1>
+        @if (p.generated_by_ai) {
+          <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">
+            {{ 'programs.ai_generated' | transloco }}
+          </span>
+        }
+      </div>
+
+      <dl class="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2 mb-6 max-w-xl">
+        <dt class="font-semibold text-gray-700">{{ 'programs.fields.team' | transloco }}</dt>
+        <dd>
+          @if (p.team) {
+            <a
+              [routerLink]="['/teams', p.team.id]"
+              class="text-blue-600 hover:underline"
+            >
+              {{ p.team.name }}
+            </a>
+          } @else {
+            <span class="text-gray-500">{{ 'programs.unknown_team' | transloco }}</span>
+          }
+        </dd>
+
+        <dt class="font-semibold text-gray-700">{{ 'programs.fields.date_start' | transloco }}</dt>
+        <dd>
+          @if (p.date_start) {
+            {{ p.date_start | date: 'fullDate' }}
+          } @else {
+            —
+          }
+        </dd>
+
+        <dt class="font-semibold text-gray-700">{{ 'programs.fields.date_end' | transloco }}</dt>
+        <dd>
+          @if (p.date_end) {
+            {{ p.date_end | date: 'fullDate' }}
+          } @else {
+            —
+          }
+        </dd>
+
+        <dt class="font-semibold text-gray-700">{{ 'programs.fields.frequency' | transloco }}</dt>
+        <dd>
+          @if (p.frequency_per_week != null) {
+            {{ p.frequency_per_week }} {{ 'programs.times_per_week' | transloco }}
+          } @else {
+            —
+          }
+        </dd>
+
+        @if (p.generated_by_ai && p.ai_generated_at) {
+          <dt class="font-semibold text-gray-700">
+            {{ 'programs.fields.ai_generated_at' | transloco }}
+          </dt>
+          <dd>{{ p.ai_generated_at | date: 'medium' }}</dd>
+        }
+      </dl>
+
+      @if (p.description) {
+        <section class="mb-6 max-w-2xl">
+          <h2 class="text-lg font-semibold mb-2">
+            {{ 'programs.fields.description' | transloco }}
+          </h2>
+          <p class="text-gray-700 whitespace-pre-line">{{ p.description }}</p>
+        </section>
+      }
+
+      <section class="mb-6">
+        <h2 class="text-lg font-semibold mb-2">
+          {{ 'programs.detail.events_count' | transloco }}
+        </h2>
+        <p>
+          {{ p.events?.length || 0 }}
+          {{ 'programs.detail.events_label' | transloco }}
+        </p>
+      </section>
+    </div>
+  }
+</div>

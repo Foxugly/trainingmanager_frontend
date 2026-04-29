@@ -5,7 +5,31 @@
   },
   "nav": {
     "teams": "Équipes",
+    "programs": "Programmes",
     "admin": "Admin"
+  },
+  "programs": {
+    "list": {
+      "title": "Programmes",
+      "empty": "Aucun programme"
+    },
+    "detail": {
+      "not_found": "Programme introuvable",
+      "events_count": "Séances",
+      "events_label": "séance(s) planifiée(s)"
+    },
+    "fields": {
+      "team": "Équipe",
+      "date_start": "Date de début",
+      "date_end": "Date de fin",
+      "frequency": "Fréquence",
+      "ai_generated_at": "Généré le",
+      "description": "Description"
+    },
+    "frequency_per_week": "Fréquence par semaine",
+    "times_per_week": "fois par semaine",
+    "ai_generated": "IA",
+    "unknown_team": "Équipe inconnue"
   },
   "teams": {
     "list": {
@@ -28,7 +52,8 @@
       "deactivate": "Désactiver l'équipe",
       "deactivate_confirm_title": "Désactiver cette équipe ?",
       "deactivate_confirm_message": "L'équipe sera désactivée. Vous pourrez la réactiver plus tard.",
-      "deactivated": "Équipe désactivée."
+      "deactivated": "Équipe désactivée.",
+      "programs_section": "Programmes"
     },
     "form": {
       "new_title": "Nouvelle équipe",

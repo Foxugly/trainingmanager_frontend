@@ -116,6 +116,13 @@
         }
       </section>
 
+      <section class="mb-6">
+        <h2 class="text-lg font-semibold mb-2">
+          {{ 'teams.detail.programs_section' | transloco }}
+        </h2>
+        <app-programs-list [teamFilter]="teamId()" />
+      </section>
+
       @if (canManage()) {
         <section class="mb-6">
           <div class="flex items-center justify-between mb-2 gap-2 flex-wrap">

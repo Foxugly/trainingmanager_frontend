@@ -5,7 +5,31 @@
   },
   "nav": {
     "teams": "Teams",
+    "programs": "Programs",
     "admin": "Admin"
+  },
+  "programs": {
+    "list": {
+      "title": "Programs",
+      "empty": "No program"
+    },
+    "detail": {
+      "not_found": "Program not found",
+      "events_count": "Sessions",
+      "events_label": "scheduled session(s)"
+    },
+    "fields": {
+      "team": "Team",
+      "date_start": "Start date",
+      "date_end": "End date",
+      "frequency": "Frequency",
+      "ai_generated_at": "Generated on",
+      "description": "Description"
+    },
+    "frequency_per_week": "Frequency per week",
+    "times_per_week": "times per week",
+    "ai_generated": "AI",
+    "unknown_team": "Unknown team"
   },
   "teams": {
     "list": {
@@ -28,7 +52,8 @@
       "deactivate": "Deactivate team",
       "deactivate_confirm_title": "Deactivate this team?",
       "deactivate_confirm_message": "The team will be deactivated. You can reactivate it later.",
-      "deactivated": "Team deactivated."
+      "deactivated": "Team deactivated.",
+      "programs_section": "Programs"
     },
     "form": {
       "new_title": "New team",

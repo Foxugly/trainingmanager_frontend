@@ -92,6 +92,25 @@ export const routes: Routes = [
           import('./features/profile/profile.component').then((m) => m.ProfileComponent),
       },
       {
+        path: 'programs',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./features/programs/programs-list/programs-list.component').then(
+                (m) => m.ProgramsListComponent,
+              ),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./features/programs/programs-detail/programs-detail.component').then(
+                (m) => m.ProgramsDetailComponent,
+              ),
+          },
+        ],
+      },
+      {
         path: 'teams',
         children: [
           {

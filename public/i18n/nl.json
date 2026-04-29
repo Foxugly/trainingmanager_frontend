@@ -5,7 +5,31 @@
   },
   "nav": {
     "teams": "Teams",
+    "programs": "Programma's",
     "admin": "Beheer"
+  },
+  "programs": {
+    "list": {
+      "title": "Programma's",
+      "empty": "Geen programma's"
+    },
+    "detail": {
+      "not_found": "Programma niet gevonden",
+      "events_count": "Sessies",
+      "events_label": "geplande sessie(s)"
+    },
+    "fields": {
+      "team": "Team",
+      "date_start": "Startdatum",
+      "date_end": "Einddatum",
+      "frequency": "Frequentie",
+      "ai_generated_at": "Gegenereerd op",
+      "description": "Beschrijving"
+    },
+    "frequency_per_week": "Frequentie per week",
+    "times_per_week": "keer per week",
+    "ai_generated": "AI",
+    "unknown_team": "Onbekend team"
   },
   "teams": {
     "list": {
@@ -28,7 +52,8 @@
       "deactivate": "Team deactiveren",
       "deactivate_confirm_title": "Dit team deactiveren?",
       "deactivate_confirm_message": "Het team wordt gedeactiveerd. Je kan het later opnieuw activeren.",
-      "deactivated": "Team gedeactiveerd."
+      "deactivated": "Team gedeactiveerd.",
+      "programs_section": "Programma's"
     },
     "form": {
       "new_title": "Nieuw team",

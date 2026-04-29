@@ -11,6 +11,14 @@
         {{ 'nav.teams' | transloco }}
       </a>
 
+      <a
+        [routerLink]="['/programs']"
+        routerLinkActive="font-bold"
+        class="text-sm text-gray-700 hover:underline"
+      >
+        {{ 'nav.programs' | transloco }}
+      </a>
+
       @if (authService.currentUser()?.is_staff) {
         <a
           [routerLink]="['/admin']"
