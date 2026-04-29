@@ -10,13 +10,50 @@
   "teams": {
     "list": {
       "title": "Mijn teams",
-      "empty": "Je hebt nog geen teams."
+      "empty": "Je hebt nog geen teams.",
+      "new": "Nieuw team"
     },
     "detail": {
       "no_managers": "Geen managers",
       "no_members": "Geen actieve leden",
       "joined_at": "Lid sinds",
-      "not_found": "Team niet gevonden"
+      "not_found": "Team niet gevonden",
+      "edit": "Bewerken",
+      "add_member": "Lid toevoegen",
+      "remove_member": "Verwijderen",
+      "remove_confirm_title": "Dit lid verwijderen?",
+      "remove_confirm_message": "Het lid wordt uit dit team verwijderd.",
+      "removed": "Lid verwijderd.",
+      "danger_zone": "Gevarenzone",
+      "deactivate": "Team deactiveren",
+      "deactivate_confirm_title": "Dit team deactiveren?",
+      "deactivate_confirm_message": "Het team wordt gedeactiveerd. Je kan het later opnieuw activeren.",
+      "deactivated": "Team gedeactiveerd."
+    },
+    "form": {
+      "new_title": "Nieuw team",
+      "edit_title": "Team bewerken",
+      "name": "Naam",
+      "sport": "Sport",
+      "language": "Taal",
+      "is_public": "Openbaar team",
+      "is_active": "Actief",
+      "managers": "Managers",
+      "managers_placeholder": "Selecteer managers",
+      "managers_help": "Voor het toevoegen van nieuwe managers is een speciaal backend-endpoint nodig (binnenkort). Bestaande managers kun je verwijderen door ze te deselecteren.",
+      "managers_empty": "Geen managers om weer te geven",
+      "saved_create": "Team aangemaakt.",
+      "saved_edit": "Team opgeslagen."
+    },
+    "member_dialog": {
+      "title": "Lid toevoegen",
+      "firstname": "Voornaam",
+      "lastname": "Achternaam",
+      "email": "E-mail",
+      "phonenumber": "Telefoon",
+      "submit": "Toevoegen",
+      "cancel": "Annuleren",
+      "added": "Lid toegevoegd."
     },
     "roles": {
       "owner": "Eigenaar",
@@ -30,6 +67,33 @@
       "owner": "Eigenaar",
       "managers": "Managers",
       "members": "Leden"
+    },
+    "invitations": {
+      "title": "Lopende uitnodigingen",
+      "invite": "Uitnodigen",
+      "empty": "Geen lopende uitnodigingen",
+      "sent_at": "Verzonden op",
+      "expires_at": "Verloopt op",
+      "cancel": "Uitnodiging annuleren",
+      "cancel_confirm_title": "Deze uitnodiging annuleren?",
+      "cancel_confirm_message": "De uitnodiging wordt geannuleerd en kan niet meer worden gebruikt.",
+      "cancelled": "Uitnodiging geannuleerd."
+    },
+    "invite_dialog": {
+      "title": "Een lid uitnodigen",
+      "email": "E-mail",
+      "firstname": "Voornaam",
+      "lastname": "Achternaam",
+      "submit": "Uitnodiging verzenden",
+      "cancel": "Annuleren",
+      "sent": "Uitnodiging verzonden."
+    },
+    "errors": {
+      "unknown": "Er is iets misgegaan.",
+      "user_already_has_member": "Deze gebruiker heeft al een lidprofiel.",
+      "already_member": "Dit lid maakt al deel uit van het team.",
+      "invitation_already_pending": "Er is al een uitnodiging in behandeling voor deze e-mail.",
+      "email_already_member": "Dit e-mailadres is al lid van het team."
     }
   },
   "common": {
@@ -86,6 +150,31 @@
     },
     "footer": {
       "rights": "© 2026 Training Manager. Alle rechten voorbehouden."
+    }
+  },
+  "invitation_accept": {
+    "title": "Je bent uitgenodigd",
+    "greeting": "Je bent uitgenodigd om bij {{team}} te komen. Maak een account aan met {{email}} om je bij het team aan te sluiten.",
+    "username": "Gebruikersnaam",
+    "username_help": "De naam die je gebruikt om in te loggen.",
+    "password": "Wachtwoord",
+    "password_confirm": "Wachtwoord bevestigen",
+    "submit": "Account aanmaken en deelnemen",
+    "success": "Welkom! Je account is aangemaakt.",
+    "go_to_login": "Naar inloggen",
+    "already_logged_in": "Je bent ingelogd als {{username}}. Door deze uitnodiging te aanvaarden wordt een nieuw account aangemaakt met het uitgenodigde e-mailadres — log eerst uit indien nodig.",
+    "errors": {
+      "password_mismatch": "De wachtwoorden komen niet overeen.",
+      "expired_title": "Uitnodiging verlopen",
+      "expired_message": "Deze uitnodiging is verlopen. Vraag je coach om een nieuwe.",
+      "completed_title": "Uitnodiging al aanvaard",
+      "completed_message": "Deze uitnodiging is al aanvaard. Log in met je account.",
+      "cancelled_title": "Uitnodiging geannuleerd",
+      "cancelled_message": "Deze uitnodiging is geannuleerd door je coach.",
+      "unknown_title": "Uitnodiging niet gevonden",
+      "unknown_message": "De link is ongeldig of al gebruikt.",
+      "unknown": "Er is iets misgegaan, probeer het opnieuw.",
+      "login_failed": "Account aangemaakt maar automatisch inloggen is mislukt. Log in met je gebruikersnaam en wachtwoord."
     }
   },
   "auth": {

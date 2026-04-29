@@ -1,0 +1,135 @@
+<div class="max-w-3xl">
+  <a [routerLink]="teamId() ? ['/teams', teamId()] : ['/teams']" class="text-sm text-blue-600 hover:underline">
+    ← {{ 'common.back' | transloco }}
+  </a>
+
+  <h1 class="text-2xl font-bold mb-6 mt-2">
+    @if (teamId()) {
+      {{ 'teams.form.edit_title' | transloco }}
+    } @else {
+      {{ 'teams.form.new_title' | transloco }}
+    }
+  </h1>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-5">
+    <div class="flex flex-col gap-2">
+      <label for="name" class="text-sm font-medium text-gray-700">
+        {{ 'teams.form.name' | transloco }}
+      </label>
+      <input pInputText id="name" formControlName="name" class="w-full" />
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="sport_id" class="text-sm font-medium text-gray-700">
+        {{ 'teams.form.sport' | transloco }}
+      </label>
+      <p-select
+        inputId="sport_id"
+        [options]="availableSports()"
+        formControlName="sport_id"
+        optionLabel="name"
+        optionValue="id"
+        [filter]="true"
+        styleClass="w-full"
+      />
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="language" class="text-sm font-medium text-gray-700">
+        {{ 'teams.form.language' | transloco }}
+      </label>
+      <p-select
+        inputId="language"
+        [options]="availableLanguages"
+        formControlName="language"
+        optionLabel="nativeName"
+        optionValue="code"
+        styleClass="w-full"
+      />
+    </div>
+
+    <div class="flex items-center gap-2">
+      <p-checkbox formControlName="is_public" [binary]="true" inputId="is_public" />
+      <label for="is_public" class="text-sm text-gray-700 cursor-pointer">
+        {{ 'teams.form.is_public' | transloco }}
+      </label>
+    </div>
+
+    @if (isEditMode()) {
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-gray-700">
+          {{ 'teams.form.managers' | transloco }}
+        </label>
+        <p-multiSelect
+          [options]="availableManagers()"
+          formControlName="managers_ids"
+          optionLabel="username"
+          optionValue="id"
+          [placeholder]="'teams.form.managers_placeholder' | transloco"
+          [filter]="true"
+          [emptyMessage]="'teams.form.managers_empty' | transloco"
+          styleClass="w-full"
+        />
+        <small class="text-xs text-gray-500">
+          {{ 'teams.form.managers_help' | transloco }}
+        </small>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <p-checkbox formControlName="is_active" [binary]="true" inputId="is_active" />
+        <label for="is_active" class="text-sm text-gray-700 cursor-pointer">
+          {{ 'teams.form.is_active' | transloco }}
+        </label>
+      </div>
+    }
+
+    @if (errorMessage(); as msg) {
+      <p-message severity="error" [text]="msg | transloco" />
+    }
+
+    @if (fieldErrors(); as errors) {
+      <div class="flex flex-col gap-1">
+        @for (entry of errors | keyvalue; track entry.key) {
+          <p-message severity="warn" [text]="entry.key + ': ' + entry.value.join(', ')" />
+        }
+      </div>
+    }
+
+    <div class="flex justify-end gap-2 mt-2">
+      <a [routerLink]="teamId() ? ['/teams', teamId()] : ['/teams']">
+        <p-button
+          type="button"
+          severity="secondary"
+          [text]="true"
+          [label]="'common.cancel' | transloco"
+        />
+      </a>
+      <p-button
+        type="submit"
+        [label]="'common.save' | transloco"
+        [loading]="saving()"
+        [disabled]="form.invalid"
+      />
+    </div>
+  </form>
+
+  @if (isEditMode() && isOwner()) {
+    <section class="mt-12 border border-red-200 bg-red-50/40 rounded p-5">
+      <h2 class="text-base font-semibold text-red-800 mb-1">
+        {{ 'teams.detail.danger_zone' | transloco }}
+      </h2>
+      <p class="text-sm text-red-700/80 mb-3">
+        {{ 'teams.detail.deactivate_confirm_message' | transloco }}
+      </p>
+      <p-button
+        severity="danger"
+        icon="pi pi-trash"
+        [outlined]="true"
+        [label]="'teams.detail.deactivate' | transloco"
+        (onClick)="confirmDeactivate()"
+      />
+    </section>
+  }
+</div>
+
+<p-confirmDialog />

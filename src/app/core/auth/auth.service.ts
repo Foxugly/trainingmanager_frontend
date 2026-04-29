@@ -42,6 +42,11 @@ export class AuthService {
     );
   }
 
+  loginWithTokens(access: string, refresh: string): Observable<Me> {
+    this.tokenStorage.setTokens(access, refresh);
+    return this.fetchMe();
+  }
+
   logout(): void {
     this.tokenStorage.clear();
     this._currentUser.set(null);

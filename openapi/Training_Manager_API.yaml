@@ -6060,7 +6060,14 @@ components:
         managers:
           type: array
           items:
+            $ref: '#/components/schemas/CustomUserPublic'
+          readOnly: true
+        managers_ids:
+          type: array
+          items:
             type: integer
+            writeOnly: true
+          writeOnly: true
         language:
           $ref: '#/components/schemas/LanguageEnum'
         is_active:
@@ -6409,7 +6416,14 @@ components:
         managers:
           type: array
           items:
+            $ref: '#/components/schemas/CustomUserPublic'
+          readOnly: true
+        managers_ids:
+          type: array
+          items:
             type: integer
+            writeOnly: true
+          writeOnly: true
         language:
           $ref: '#/components/schemas/LanguageEnum'
         is_active:
@@ -6445,6 +6459,7 @@ components:
       required:
       - created_at
       - id
+      - managers
       - name
       - owner
       - sport

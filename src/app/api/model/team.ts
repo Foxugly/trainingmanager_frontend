@@ -19,7 +19,8 @@ export interface Team {
     readonly sport: Sport;
     sport_id: number;
     readonly owner: CustomUserPublic;
-    managers?: Array<number>;
+    readonly managers: Array<CustomUserPublic>;
+    managers_ids?: Array<number>;
     language?: LanguageEnum;
     is_active?: boolean;
     is_public?: boolean;

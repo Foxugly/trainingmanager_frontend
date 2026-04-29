@@ -11,6 +11,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { Button } from 'primeng/button';
 import { TeamsService } from '../../../api/api/teams.service';
 import { Team } from '../../../api/model/team';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -19,7 +20,7 @@ export type TeamRole = 'owner' | 'manager' | 'member';
 
 export function computeTeamRole(team: Team, userId: number): TeamRole {
   if (team.owner?.id === userId) return 'owner';
-  if (team.managers?.some((m) => m === userId)) return 'manager';
+  if (team.managers?.some((m) => m.id === userId)) return 'manager';
   return 'member';
 }
 
@@ -29,7 +30,7 @@ export interface TeamWithRole extends Team {
 
 @Component({
   selector: 'app-teams-list',
-  imports: [CommonModule, RouterLink, TranslocoPipe],
+  imports: [CommonModule, RouterLink, Button, TranslocoPipe],
   templateUrl: './teams-list.component.html',
   styleUrl: './teams-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -57,7 +58,7 @@ export class TeamsListComponent implements OnInit {
   ngOnInit(): void {
     this.loading.set(true);
     this.teamsService
-      .teamsList()
+      .teamsList(true)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {

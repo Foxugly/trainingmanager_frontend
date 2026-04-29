@@ -43,7 +43,12 @@ function makeTeam(partial: Partial<Team>): Team {
 }
 
 const teamOwner = makeTeam({ id: 4, name: 'Team owner', owner: ownerUser });
-const teamManager = makeTeam({ id: 5, name: 'Team manager', owner: otherUser, managers: [17] });
+const teamManager = makeTeam({
+  id: 5,
+  name: 'Team manager',
+  owner: otherUser,
+  managers: [ownerUser],
+});
 const teamMember = makeTeam({ id: 6, name: 'Team member', owner: otherUser, managers: [] });
 
 interface ProtectedFields {
@@ -111,8 +116,9 @@ describe('TeamsListComponent', () => {
     await setup();
   });
 
-  it('loads teams on init', () => {
+  it('loads teams on init filtered by is_active=true', () => {
     expect(serviceMock.teamsList).toHaveBeenCalledTimes(1);
+    expect(serviceMock.teamsList).toHaveBeenCalledWith(true);
     expect(access(component).teams().length).toBe(3);
   });
 

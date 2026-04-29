@@ -10,13 +10,50 @@
   "teams": {
     "list": {
       "title": "Mes équipes",
-      "empty": "Vous n'avez encore aucune équipe."
+      "empty": "Vous n'avez encore aucune équipe.",
+      "new": "Nouvelle équipe"
     },
     "detail": {
       "no_managers": "Aucun manager",
       "no_members": "Aucun membre actif",
       "joined_at": "Rejoint le",
-      "not_found": "Équipe introuvable"
+      "not_found": "Équipe introuvable",
+      "edit": "Modifier",
+      "add_member": "Ajouter un membre",
+      "remove_member": "Retirer",
+      "remove_confirm_title": "Retirer ce membre ?",
+      "remove_confirm_message": "Le membre sera retiré de cette équipe.",
+      "removed": "Membre retiré.",
+      "danger_zone": "Zone de danger",
+      "deactivate": "Désactiver l'équipe",
+      "deactivate_confirm_title": "Désactiver cette équipe ?",
+      "deactivate_confirm_message": "L'équipe sera désactivée. Vous pourrez la réactiver plus tard.",
+      "deactivated": "Équipe désactivée."
+    },
+    "form": {
+      "new_title": "Nouvelle équipe",
+      "edit_title": "Modifier l'équipe",
+      "name": "Nom",
+      "sport": "Sport",
+      "language": "Langue",
+      "is_public": "Équipe publique",
+      "is_active": "Active",
+      "managers": "Managers",
+      "managers_placeholder": "Sélectionnez les managers",
+      "managers_help": "Pour ajouter de nouveaux managers, un endpoint backend dédié est nécessaire (à venir). Vous pouvez retirer les managers existants en les désélectionnant.",
+      "managers_empty": "Aucun manager à afficher",
+      "saved_create": "Équipe créée.",
+      "saved_edit": "Équipe enregistrée."
+    },
+    "member_dialog": {
+      "title": "Ajouter un membre",
+      "firstname": "Prénom",
+      "lastname": "Nom",
+      "email": "Email",
+      "phonenumber": "Téléphone",
+      "submit": "Ajouter",
+      "cancel": "Annuler",
+      "added": "Membre ajouté."
     },
     "roles": {
       "owner": "Propriétaire",
@@ -30,6 +67,33 @@
       "owner": "Propriétaire",
       "managers": "Managers",
       "members": "Membres"
+    },
+    "invitations": {
+      "title": "Invitations en cours",
+      "invite": "Inviter",
+      "empty": "Aucune invitation en cours",
+      "sent_at": "Envoyée le",
+      "expires_at": "Expire le",
+      "cancel": "Annuler l'invitation",
+      "cancel_confirm_title": "Annuler cette invitation ?",
+      "cancel_confirm_message": "L'invitation sera annulée et ne pourra plus être utilisée.",
+      "cancelled": "Invitation annulée."
+    },
+    "invite_dialog": {
+      "title": "Inviter un membre",
+      "email": "Email",
+      "firstname": "Prénom",
+      "lastname": "Nom",
+      "submit": "Envoyer l'invitation",
+      "cancel": "Annuler",
+      "sent": "Invitation envoyée."
+    },
+    "errors": {
+      "unknown": "Une erreur est survenue.",
+      "user_already_has_member": "Cet utilisateur a déjà un profil membre.",
+      "already_member": "Ce membre fait déjà partie de l'équipe.",
+      "invitation_already_pending": "Une invitation est déjà en cours pour cet email.",
+      "email_already_member": "Cet email est déjà membre de l'équipe."
     }
   },
   "common": {
@@ -98,6 +162,31 @@
     "errors": {
       "invalid_credentials": "Identifiants invalides",
       "unknown": "Une erreur est survenue, réessayez."
+    }
+  },
+  "invitation_accept": {
+    "title": "Vous êtes invité",
+    "greeting": "Vous avez été invité à rejoindre l'équipe {{team}}. Créez votre compte avec l'adresse {{email}} pour rejoindre l'équipe.",
+    "username": "Nom d'utilisateur",
+    "username_help": "Le nom que vous utiliserez pour vous connecter.",
+    "password": "Mot de passe",
+    "password_confirm": "Confirmer le mot de passe",
+    "submit": "Créer mon compte et rejoindre",
+    "success": "Bienvenue ! Votre compte a été créé.",
+    "go_to_login": "Aller à la connexion",
+    "already_logged_in": "Vous êtes connecté en tant que {{username}}. L'acceptation de cette invitation va créer un nouveau compte avec l'email indiqué — déconnectez-vous d'abord si nécessaire.",
+    "errors": {
+      "password_mismatch": "Les mots de passe ne correspondent pas.",
+      "expired_title": "Invitation expirée",
+      "expired_message": "Cette invitation a expiré. Demandez à votre coach d'en envoyer une nouvelle.",
+      "completed_title": "Invitation déjà acceptée",
+      "completed_message": "Cette invitation a déjà été acceptée. Connectez-vous avec votre compte.",
+      "cancelled_title": "Invitation annulée",
+      "cancelled_message": "Cette invitation a été annulée par votre coach.",
+      "unknown_title": "Invitation introuvable",
+      "unknown_message": "Le lien est invalide ou a déjà été utilisé.",
+      "unknown": "Une erreur est survenue, réessayez.",
+      "login_failed": "Compte créé mais la connexion automatique a échoué. Connectez-vous avec votre nom d'utilisateur et mot de passe."
     }
   },
   "profile": {

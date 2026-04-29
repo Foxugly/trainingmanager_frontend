@@ -1,0 +1,215 @@
+import { signal } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { ActivatedRoute, Router, provideRouter } from '@angular/router';
+import { TranslocoTestingModule } from '@jsverse/transloco';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { of, throwError } from 'rxjs';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { SportsService } from '../../../api/api/sports.service';
+import { TeamsService } from '../../../api/api/teams.service';
+import { CustomUserPublic } from '../../../api/model/custom-user-public';
+import { LanguageEnum } from '../../../api/model/language-enum';
+import { Sport } from '../../../api/model/sport';
+import { Team } from '../../../api/model/team';
+import { AuthService } from '../../../core/auth/auth.service';
+import { TeamsFormComponent } from './teams-form.component';
+
+const ownerUser = { id: 17, username: 'testfrontend' } as CustomUserPublic;
+const otherUser = { id: 20, username: 'coach2' } as CustomUserPublic;
+const managerUser = {
+  id: 99,
+  username: 'mgr',
+  first_name: 'M',
+  last_name: 'Gr',
+} as CustomUserPublic;
+
+const sport: Sport = {
+  id: 1,
+  name: 'Natation',
+  slug: 'natation',
+  is_active: true,
+  energy_systems: [],
+  created_at: '2026-04-01T00:00:00Z',
+};
+
+const team: Team = {
+  id: 5,
+  name: 'Team P9',
+  sport,
+  sport_id: 1,
+  owner: ownerUser,
+  managers: [managerUser],
+  language: LanguageEnum.Fr,
+  is_active: true,
+  is_public: false,
+  attendance_statuses: [],
+  created_at: '2026-04-01T00:00:00Z',
+  updated_at: '2026-04-01T00:00:00Z',
+};
+
+interface ProtectedFields {
+  team(): Team | null;
+  teamId(): number | null;
+  isEditMode(): boolean;
+  isOwner(): boolean;
+  saving(): boolean;
+  errorMessage(): string | null;
+  fieldErrors(): { [k: string]: string[] } | null;
+  availableSports(): Sport[];
+  availableManagers(): CustomUserPublic[];
+  form: {
+    getRawValue(): Record<string, unknown>;
+    patchValue(v: Record<string, unknown>): void;
+    setValue?(v: Record<string, unknown>): void;
+    invalid: boolean;
+    valid: boolean;
+  };
+  submit(): void;
+  confirmDeactivate(): void;
+}
+
+describe('TeamsFormComponent', () => {
+  let fixture: ComponentFixture<TeamsFormComponent>;
+  let component: TeamsFormComponent;
+  let teamsMock: {
+    teamsRetrieve: ReturnType<typeof vi.fn>;
+    teamsCreate: ReturnType<typeof vi.fn>;
+    teamsPartialUpdate: ReturnType<typeof vi.fn>;
+  };
+  let sportsMock: { sportsList: ReturnType<typeof vi.fn> };
+  let userSig: ReturnType<typeof signal<CustomUserPublic | null>>;
+  let routeIdParam: string | null;
+  let router: Router;
+
+  const access = (c: TeamsFormComponent) => c as unknown as ProtectedFields;
+
+  async function setup(idParam: string | null = null, currentUser = ownerUser, retrieved: Team | null = team) {
+    TestBed.resetTestingModule();
+    routeIdParam = idParam;
+    teamsMock = {
+      teamsRetrieve: vi
+        .fn()
+        .mockReturnValue(retrieved ? of(retrieved) : throwError(() => new Error('404'))),
+      teamsCreate: vi.fn().mockReturnValue(of({ ...team, id: 42 })),
+      teamsPartialUpdate: vi.fn().mockReturnValue(of(team)),
+    };
+    sportsMock = {
+      sportsList: vi.fn().mockReturnValue(of({ count: 1, results: [sport] })),
+    };
+    userSig = signal<CustomUserPublic | null>(currentUser);
+
+    await TestBed.configureTestingModule({
+      imports: [
+        TeamsFormComponent,
+        TranslocoTestingModule.forRoot({
+          langs: { fr: {} },
+          translocoConfig: { availableLangs: ['fr'], defaultLang: 'fr' },
+        }),
+      ],
+      providers: [
+        provideNoopAnimations(),
+        provideRouter([]),
+        ConfirmationService,
+        MessageService,
+        { provide: TeamsService, useValue: teamsMock },
+        { provide: SportsService, useValue: sportsMock },
+        { provide: AuthService, useValue: { currentUser: userSig.asReadonly() } },
+        {
+          provide: ActivatedRoute,
+          useValue: { snapshot: { paramMap: { get: () => routeIdParam } } },
+        },
+      ],
+    })
+      .overrideComponent(TeamsFormComponent, { set: { template: '', imports: [] } })
+      .compileComponents();
+
+    fixture = TestBed.createComponent(TeamsFormComponent);
+    component = fixture.componentInstance;
+    router = TestBed.inject(Router);
+    vi.spyOn(router, 'navigate').mockReturnValue(Promise.resolve(true));
+    fixture.detectChanges();
+  }
+
+  beforeEach(async () => {
+    await setup();
+  });
+
+  it('starts in create mode with empty form when no id route param', () => {
+    expect(access(component).isEditMode()).toBe(false);
+    expect(access(component).form.getRawValue()).toMatchObject({
+      name: '',
+      sport_id: null,
+      language: 'fr',
+      is_public: false,
+    });
+    expect(teamsMock.teamsRetrieve).not.toHaveBeenCalled();
+  });
+
+  it('blocks submit while form is invalid', () => {
+    expect(access(component).form.invalid).toBe(true);
+    access(component).submit();
+    expect(teamsMock.teamsCreate).not.toHaveBeenCalled();
+  });
+
+  it('on edit mode, pre-fills the form from the team and exposes managers', async () => {
+    await setup('5');
+    expect(access(component).isEditMode()).toBe(true);
+    expect(access(component).team()?.id).toBe(5);
+    expect(access(component).availableManagers()).toHaveLength(1);
+    expect(access(component).form.getRawValue()).toMatchObject({
+      name: 'Team P9',
+      sport_id: 1,
+      language: 'fr',
+      is_public: false,
+      is_active: true,
+      managers_ids: [99],
+    });
+  });
+
+  it('on create success, navigates to /teams/:id/edit with the new id', async () => {
+    access(component).form.patchValue({ name: 'New', sport_id: 1, language: 'fr' });
+    access(component).submit();
+    expect(teamsMock.teamsCreate).toHaveBeenCalledTimes(1);
+    expect(router.navigate).toHaveBeenCalledWith(['/teams', 42, 'edit']);
+  });
+
+  it('on edit success, navigates to /teams/:id detail page', async () => {
+    await setup('5');
+    access(component).form.patchValue({ name: 'Renamed' });
+    access(component).submit();
+    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledTimes(1);
+    expect(router.navigate).toHaveBeenCalledWith(['/teams', 5]);
+  });
+
+  it('maps server field errors into fieldErrors signal', () => {
+    teamsMock.teamsCreate.mockReturnValueOnce(
+      throwError(() => ({
+        error: { code: 'validation_error', fields: { name: [{ code: 'required', detail: 'required' }] } },
+      })),
+    );
+    access(component).form.patchValue({ name: 'X', sport_id: 1, language: 'fr' });
+    access(component).submit();
+    expect(access(component).fieldErrors()).not.toBeNull();
+  });
+
+  it('isOwner is true only when current user matches team owner', async () => {
+    await setup('5', otherUser);
+    expect(access(component).isOwner()).toBe(false);
+
+    await setup('5', ownerUser);
+    expect(access(component).isOwner()).toBe(true);
+  });
+
+  it('confirmDeactivate triggers a partialUpdate with is_active=false on accept', async () => {
+    await setup('5');
+    const confirmation = fixture.debugElement.injector.get(ConfirmationService);
+    vi.spyOn(confirmation, 'confirm').mockImplementation((cfg) => {
+      cfg.accept?.();
+      return confirmation;
+    });
+    access(component).confirmDeactivate();
+    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(5, { is_active: false });
+    expect(router.navigate).toHaveBeenCalledWith(['/teams']);
+  });
+});

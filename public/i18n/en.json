@@ -10,13 +10,50 @@
   "teams": {
     "list": {
       "title": "My teams",
-      "empty": "You don't have any team yet."
+      "empty": "You don't have any team yet.",
+      "new": "New team"
     },
     "detail": {
       "no_managers": "No managers",
       "no_members": "No active members",
       "joined_at": "Joined",
-      "not_found": "Team not found"
+      "not_found": "Team not found",
+      "edit": "Edit",
+      "add_member": "Add a member",
+      "remove_member": "Remove",
+      "remove_confirm_title": "Remove this member?",
+      "remove_confirm_message": "The member will be removed from this team.",
+      "removed": "Member removed.",
+      "danger_zone": "Danger zone",
+      "deactivate": "Deactivate team",
+      "deactivate_confirm_title": "Deactivate this team?",
+      "deactivate_confirm_message": "The team will be deactivated. You can reactivate it later.",
+      "deactivated": "Team deactivated."
+    },
+    "form": {
+      "new_title": "New team",
+      "edit_title": "Edit team",
+      "name": "Name",
+      "sport": "Sport",
+      "language": "Language",
+      "is_public": "Public team",
+      "is_active": "Active",
+      "managers": "Managers",
+      "managers_placeholder": "Select managers",
+      "managers_help": "Adding new managers requires a dedicated backend endpoint (coming soon). You can remove existing managers by deselecting them.",
+      "managers_empty": "No managers to display",
+      "saved_create": "Team created.",
+      "saved_edit": "Team saved."
+    },
+    "member_dialog": {
+      "title": "Add a member",
+      "firstname": "First name",
+      "lastname": "Last name",
+      "email": "Email",
+      "phonenumber": "Phone",
+      "submit": "Add",
+      "cancel": "Cancel",
+      "added": "Member added."
     },
     "roles": {
       "owner": "Owner",
@@ -30,6 +67,33 @@
       "owner": "Owner",
       "managers": "Managers",
       "members": "Members"
+    },
+    "invitations": {
+      "title": "Pending invitations",
+      "invite": "Invite",
+      "empty": "No pending invitations",
+      "sent_at": "Sent on",
+      "expires_at": "Expires on",
+      "cancel": "Cancel invitation",
+      "cancel_confirm_title": "Cancel this invitation?",
+      "cancel_confirm_message": "The invitation will be cancelled and can no longer be used.",
+      "cancelled": "Invitation cancelled."
+    },
+    "invite_dialog": {
+      "title": "Invite a member",
+      "email": "Email",
+      "firstname": "First name",
+      "lastname": "Last name",
+      "submit": "Send invitation",
+      "cancel": "Cancel",
+      "sent": "Invitation sent."
+    },
+    "errors": {
+      "unknown": "Something went wrong.",
+      "user_already_has_member": "This user already has a member profile.",
+      "already_member": "This member is already part of the team.",
+      "invitation_already_pending": "An invitation is already pending for this email.",
+      "email_already_member": "This email is already a member of the team."
     }
   },
   "common": {
@@ -98,6 +162,31 @@
     "errors": {
       "invalid_credentials": "Invalid credentials",
       "unknown": "Something went wrong, please try again."
+    }
+  },
+  "invitation_accept": {
+    "title": "You're invited",
+    "greeting": "You have been invited to join {{team}}. Create your account with {{email}} to join the team.",
+    "username": "Username",
+    "username_help": "The name you'll use to sign in.",
+    "password": "Password",
+    "password_confirm": "Confirm password",
+    "submit": "Create account and join",
+    "success": "Welcome! Your account has been created.",
+    "go_to_login": "Go to sign in",
+    "already_logged_in": "You are signed in as {{username}}. Accepting this invitation creates a new account with the invited email — sign out first if needed.",
+    "errors": {
+      "password_mismatch": "The passwords do not match.",
+      "expired_title": "Invitation expired",
+      "expired_message": "This invitation has expired. Ask your coach to send a new one.",
+      "completed_title": "Invitation already accepted",
+      "completed_message": "This invitation has already been accepted. Sign in with your account.",
+      "cancelled_title": "Invitation cancelled",
+      "cancelled_message": "This invitation has been cancelled by your coach.",
+      "unknown_title": "Invitation not found",
+      "unknown_message": "The link is invalid or has already been used.",
+      "unknown": "Something went wrong, please try again.",
+      "login_failed": "Account created but auto sign-in failed. Sign in with your username and password."
     }
   },
   "profile": {

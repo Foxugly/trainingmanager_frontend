@@ -1,5 +1,10 @@
 <div>
-  <h1 class="text-2xl font-bold mb-6">{{ 'teams.list.title' | transloco }}</h1>
+  <div class="flex justify-between items-center mb-6 gap-4 flex-wrap">
+    <h1 class="text-2xl font-bold">{{ 'teams.list.title' | transloco }}</h1>
+    <a [routerLink]="['/teams', 'new']">
+      <p-button [label]="'teams.list.new' | transloco" icon="pi pi-plus" />
+    </a>
+  </div>
 
   @if (loading()) {
     <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>

@@ -23,6 +23,19 @@ export const routes: Routes = [
     ],
   },
   {
+    path: 'invitation/:token',
+    component: AuthLayoutComponent,
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./features/auth/invitation-accept/invitation-accept.component').then(
+            (m) => m.InvitationAcceptComponent,
+          ),
+      },
+    ],
+  },
+  {
     path: 'admin',
     component: MainLayoutComponent,
     canActivate: [authGuard, staffGuard],
@@ -89,10 +102,24 @@ export const routes: Routes = [
               ),
           },
           {
+            path: 'new',
+            loadComponent: () =>
+              import('./features/teams/teams-form/teams-form.component').then(
+                (m) => m.TeamsFormComponent,
+              ),
+          },
+          {
             path: ':id',
             loadComponent: () =>
               import('./features/teams/teams-detail/teams-detail.component').then(
                 (m) => m.TeamsDetailComponent,
+              ),
+          },
+          {
+            path: ':id/edit',
+            loadComponent: () =>
+              import('./features/teams/teams-form/teams-form.component').then(
+                (m) => m.TeamsFormComponent,
               ),
           },
         ],

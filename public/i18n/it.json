@@ -10,13 +10,50 @@
   "teams": {
     "list": {
       "title": "Le mie squadre",
-      "empty": "Non hai ancora nessuna squadra."
+      "empty": "Non hai ancora nessuna squadra.",
+      "new": "Nuova squadra"
     },
     "detail": {
       "no_managers": "Nessun manager",
       "no_members": "Nessun membro attivo",
       "joined_at": "Iscritto il",
-      "not_found": "Squadra non trovata"
+      "not_found": "Squadra non trovata",
+      "edit": "Modifica",
+      "add_member": "Aggiungi un membro",
+      "remove_member": "Rimuovi",
+      "remove_confirm_title": "Rimuovere questo membro?",
+      "remove_confirm_message": "Il membro sarà rimosso da questa squadra.",
+      "removed": "Membro rimosso.",
+      "danger_zone": "Zona di pericolo",
+      "deactivate": "Disattiva la squadra",
+      "deactivate_confirm_title": "Disattivare questa squadra?",
+      "deactivate_confirm_message": "La squadra sarà disattivata. Potrai riattivarla più tardi.",
+      "deactivated": "Squadra disattivata."
+    },
+    "form": {
+      "new_title": "Nuova squadra",
+      "edit_title": "Modifica la squadra",
+      "name": "Nome",
+      "sport": "Sport",
+      "language": "Lingua",
+      "is_public": "Squadra pubblica",
+      "is_active": "Attiva",
+      "managers": "Manager",
+      "managers_placeholder": "Seleziona i manager",
+      "managers_help": "Per aggiungere nuovi manager è necessario un endpoint backend dedicato (in arrivo). Puoi rimuovere i manager esistenti deselezionandoli.",
+      "managers_empty": "Nessun manager da mostrare",
+      "saved_create": "Squadra creata.",
+      "saved_edit": "Squadra salvata."
+    },
+    "member_dialog": {
+      "title": "Aggiungi un membro",
+      "firstname": "Nome",
+      "lastname": "Cognome",
+      "email": "Email",
+      "phonenumber": "Telefono",
+      "submit": "Aggiungi",
+      "cancel": "Annulla",
+      "added": "Membro aggiunto."
     },
     "roles": {
       "owner": "Proprietario",
@@ -30,6 +67,33 @@
       "owner": "Proprietario",
       "managers": "Manager",
       "members": "Membri"
+    },
+    "invitations": {
+      "title": "Inviti in corso",
+      "invite": "Invita",
+      "empty": "Nessun invito in corso",
+      "sent_at": "Inviato il",
+      "expires_at": "Scade il",
+      "cancel": "Annulla l'invito",
+      "cancel_confirm_title": "Annullare questo invito?",
+      "cancel_confirm_message": "L'invito verrà annullato e non potrà più essere utilizzato.",
+      "cancelled": "Invito annullato."
+    },
+    "invite_dialog": {
+      "title": "Invita un membro",
+      "email": "Email",
+      "firstname": "Nome",
+      "lastname": "Cognome",
+      "submit": "Invia l'invito",
+      "cancel": "Annulla",
+      "sent": "Invito inviato."
+    },
+    "errors": {
+      "unknown": "Si è verificato un errore.",
+      "user_already_has_member": "Questo utente ha già un profilo membro.",
+      "already_member": "Questo membro fa già parte della squadra.",
+      "invitation_already_pending": "Esiste già un invito in corso per questa email.",
+      "email_already_member": "Questa email fa già parte della squadra."
     }
   },
   "common": {
@@ -86,6 +150,31 @@
     },
     "footer": {
       "rights": "© 2026 Training Manager. Tutti i diritti riservati."
+    }
+  },
+  "invitation_accept": {
+    "title": "Sei invitato",
+    "greeting": "Sei stato invitato a unirti a {{team}}. Crea il tuo account con {{email}} per entrare nella squadra.",
+    "username": "Nome utente",
+    "username_help": "Il nome che userai per accedere.",
+    "password": "Password",
+    "password_confirm": "Conferma password",
+    "submit": "Crea l'account e unisciti",
+    "success": "Benvenuto! Il tuo account è stato creato.",
+    "go_to_login": "Vai al login",
+    "already_logged_in": "Sei connesso come {{username}}. Accettando questo invito verrà creato un nuovo account con l'email invitata — disconnettiti prima, se necessario.",
+    "errors": {
+      "password_mismatch": "Le password non corrispondono.",
+      "expired_title": "Invito scaduto",
+      "expired_message": "Questo invito è scaduto. Chiedi al tuo allenatore di inviarne uno nuovo.",
+      "completed_title": "Invito già accettato",
+      "completed_message": "Questo invito è già stato accettato. Accedi con il tuo account.",
+      "cancelled_title": "Invito annullato",
+      "cancelled_message": "Questo invito è stato annullato dal tuo allenatore.",
+      "unknown_title": "Invito non trovato",
+      "unknown_message": "Il link non è valido o è già stato utilizzato.",
+      "unknown": "Si è verificato un errore, riprova.",
+      "login_failed": "Account creato ma l'accesso automatico è fallito. Accedi con il tuo nome utente e password."
     }
   },
   "auth": {

@@ -10,13 +10,50 @@
   "teams": {
     "list": {
       "title": "Mis equipos",
-      "empty": "Aún no tienes ningún equipo."
+      "empty": "Aún no tienes ningún equipo.",
+      "new": "Nuevo equipo"
     },
     "detail": {
       "no_managers": "Ningún manager",
       "no_members": "Ningún miembro activo",
       "joined_at": "Se unió el",
-      "not_found": "Equipo no encontrado"
+      "not_found": "Equipo no encontrado",
+      "edit": "Modificar",
+      "add_member": "Añadir un miembro",
+      "remove_member": "Retirar",
+      "remove_confirm_title": "¿Retirar este miembro?",
+      "remove_confirm_message": "El miembro será retirado de este equipo.",
+      "removed": "Miembro retirado.",
+      "danger_zone": "Zona de peligro",
+      "deactivate": "Desactivar el equipo",
+      "deactivate_confirm_title": "¿Desactivar este equipo?",
+      "deactivate_confirm_message": "El equipo será desactivado. Podrás reactivarlo más tarde.",
+      "deactivated": "Equipo desactivado."
+    },
+    "form": {
+      "new_title": "Nuevo equipo",
+      "edit_title": "Modificar el equipo",
+      "name": "Nombre",
+      "sport": "Deporte",
+      "language": "Idioma",
+      "is_public": "Equipo público",
+      "is_active": "Activo",
+      "managers": "Managers",
+      "managers_placeholder": "Selecciona los managers",
+      "managers_help": "Para añadir nuevos managers se necesita un endpoint backend dedicado (próximamente). Puedes retirar los managers existentes deseleccionándolos.",
+      "managers_empty": "Ningún manager para mostrar",
+      "saved_create": "Equipo creado.",
+      "saved_edit": "Equipo guardado."
+    },
+    "member_dialog": {
+      "title": "Añadir un miembro",
+      "firstname": "Nombre",
+      "lastname": "Apellido",
+      "email": "Correo",
+      "phonenumber": "Teléfono",
+      "submit": "Añadir",
+      "cancel": "Cancelar",
+      "added": "Miembro añadido."
     },
     "roles": {
       "owner": "Propietario",
@@ -30,6 +67,33 @@
       "owner": "Propietario",
       "managers": "Managers",
       "members": "Miembros"
+    },
+    "invitations": {
+      "title": "Invitaciones pendientes",
+      "invite": "Invitar",
+      "empty": "Ninguna invitación pendiente",
+      "sent_at": "Enviada el",
+      "expires_at": "Expira el",
+      "cancel": "Anular la invitación",
+      "cancel_confirm_title": "¿Anular esta invitación?",
+      "cancel_confirm_message": "La invitación será anulada y no podrá utilizarse más.",
+      "cancelled": "Invitación anulada."
+    },
+    "invite_dialog": {
+      "title": "Invitar a un miembro",
+      "email": "Correo",
+      "firstname": "Nombre",
+      "lastname": "Apellido",
+      "submit": "Enviar la invitación",
+      "cancel": "Cancelar",
+      "sent": "Invitación enviada."
+    },
+    "errors": {
+      "unknown": "Se ha producido un error.",
+      "user_already_has_member": "Este usuario ya tiene un perfil de miembro.",
+      "already_member": "Este miembro ya pertenece al equipo.",
+      "invitation_already_pending": "Ya existe una invitación pendiente para este correo.",
+      "email_already_member": "Este correo ya pertenece al equipo."
     }
   },
   "common": {
@@ -86,6 +150,31 @@
     },
     "footer": {
       "rights": "© 2026 Training Manager. Todos los derechos reservados."
+    }
+  },
+  "invitation_accept": {
+    "title": "Estás invitado",
+    "greeting": "Has sido invitado a unirte al equipo {{team}}. Crea tu cuenta con {{email}} para unirte al equipo.",
+    "username": "Nombre de usuario",
+    "username_help": "El nombre que usarás para iniciar sesión.",
+    "password": "Contraseña",
+    "password_confirm": "Confirmar contraseña",
+    "submit": "Crear cuenta y unirme",
+    "success": "¡Bienvenido! Tu cuenta ha sido creada.",
+    "go_to_login": "Ir al inicio de sesión",
+    "already_logged_in": "Has iniciado sesión como {{username}}. Aceptar esta invitación creará una nueva cuenta con el correo invitado — cierra sesión primero si es necesario.",
+    "errors": {
+      "password_mismatch": "Las contraseñas no coinciden.",
+      "expired_title": "Invitación caducada",
+      "expired_message": "Esta invitación ha caducado. Pide a tu entrenador que envíe una nueva.",
+      "completed_title": "Invitación ya aceptada",
+      "completed_message": "Esta invitación ya ha sido aceptada. Inicia sesión con tu cuenta.",
+      "cancelled_title": "Invitación anulada",
+      "cancelled_message": "Esta invitación ha sido anulada por tu entrenador.",
+      "unknown_title": "Invitación no encontrada",
+      "unknown_message": "El enlace no es válido o ya ha sido utilizado.",
+      "unknown": "Se ha producido un error, inténtalo de nuevo.",
+      "login_failed": "Cuenta creada pero el inicio de sesión automático ha fallado. Inicia sesión con tu nombre de usuario y contraseña."
     }
   },
   "auth": {

@@ -1,0 +1,127 @@
+<div class="w-full max-w-lg p-8 bg-white rounded-lg shadow-md">
+  @if (loading()) {
+    <p class="text-center text-gray-500">{{ 'common.loading' | transloco }}…</p>
+  } @else if (lookupError(); as kind) {
+    <div class="flex flex-col gap-4">
+      <h1 class="text-xl font-bold text-center">
+        {{ 'invitation_accept.errors.' + kind + '_title' | transloco }}
+      </h1>
+      <p class="text-center text-gray-600">
+        {{ 'invitation_accept.errors.' + kind + '_message' | transloco }}
+      </p>
+      <div class="flex justify-center pt-2">
+        <a [routerLink]="['/login']">
+          <p-button [label]="'invitation_accept.go_to_login' | transloco" />
+        </a>
+      </div>
+    </div>
+  } @else if (invitation(); as inv) {
+    <div class="flex flex-col gap-5">
+      <header class="text-center">
+        <h1 class="text-2xl font-bold mb-2">
+          {{ 'invitation_accept.title' | transloco }}
+        </h1>
+        <p class="text-gray-700">
+          {{
+            'invitation_accept.greeting'
+              | transloco: { team: inv.team_name, email: inv.email }
+          }}
+        </p>
+      </header>
+
+      @if (currentUser(); as user) {
+        <div class="rounded border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900 flex flex-col gap-2">
+          <span>
+            {{
+              'invitation_accept.already_logged_in'
+                | transloco: { username: user.username }
+            }}
+          </span>
+          <div>
+            <p-button
+              [label]="'app.logout' | transloco"
+              severity="secondary"
+              [outlined]="true"
+              size="small"
+              (onClick)="logout()"
+            />
+          </div>
+        </div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+        <div class="flex flex-col gap-2">
+          <label for="username" class="text-sm font-medium text-gray-700">
+            {{ 'invitation_accept.username' | transloco }}
+          </label>
+          <input
+            pInputText
+            id="username"
+            formControlName="username"
+            autocomplete="username"
+            class="w-full"
+          />
+          <small class="text-xs text-gray-500">
+            {{ 'invitation_accept.username_help' | transloco }}
+          </small>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="password" class="text-sm font-medium text-gray-700">
+            {{ 'invitation_accept.password' | transloco }}
+          </label>
+          <p-password
+            formControlName="password"
+            [feedback]="true"
+            [toggleMask]="true"
+            inputId="password"
+            autocomplete="new-password"
+            styleClass="w-full"
+            [inputStyle]="{ width: '100%' }"
+          />
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="password_confirm" class="text-sm font-medium text-gray-700">
+            {{ 'invitation_accept.password_confirm' | transloco }}
+          </label>
+          <p-password
+            formControlName="password_confirm"
+            [feedback]="false"
+            [toggleMask]="true"
+            inputId="password_confirm"
+            autocomplete="new-password"
+            styleClass="w-full"
+            [inputStyle]="{ width: '100%' }"
+          />
+          @if (form.errors?.['password_mismatch'] && form.controls.password_confirm.touched) {
+            <p-message
+              severity="warn"
+              [text]="'invitation_accept.errors.password_mismatch' | transloco"
+            />
+          }
+        </div>
+
+        @if (acceptError(); as msg) {
+          <p-message severity="error" [text]="msg | transloco" />
+        }
+
+        @if (fieldErrors(); as errors) {
+          <div class="flex flex-col gap-1">
+            @for (entry of errors | keyvalue; track entry.key) {
+              <p-message severity="warn" [text]="entry.key + ': ' + entry.value.join(', ')" />
+            }
+          </div>
+        }
+
+        <p-button
+          type="submit"
+          [label]="'invitation_accept.submit' | transloco"
+          [loading]="accepting()"
+          [disabled]="form.invalid || !canSubmit()"
+          styleClass="w-full"
+        />
+      </form>
+    </div>
+  }
+</div>
