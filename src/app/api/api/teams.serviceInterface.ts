@@ -11,9 +11,18 @@ import { HttpHeaders }                                       from '@angular/comm
 
 import { Observable }                                        from 'rxjs';
 
+import { AIUsageAggregateResponse } from '../model/models';
+import { Message } from '../model/models';
+import { Note } from '../model/models';
+import { PaginatedAIUsageDetailList } from '../model/models';
+import { PaginatedNoteList } from '../model/models';
 import { PaginatedTeamList } from '../model/models';
+import { PatchedMessage } from '../model/models';
+import { PatchedNote } from '../model/models';
 import { PatchedTeam } from '../model/models';
+import { PatchedTeamMembership } from '../model/models';
 import { Team } from '../model/models';
+import { TeamMembership } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
@@ -23,6 +32,31 @@ import { Configuration }                                     from '../configurat
 export interface TeamsServiceInterface {
     defaultHeaders: HttpHeaders;
     configuration: Configuration;
+
+    /**
+     * AI usage detailed rows for a team
+     * GET /api/v1/teams/ai-usage/{team_id}/details/?since&#x3D;2026-04-01
+     * @endpoint get /api/v1/teams/{team_id}/ai-usage/details/
+     * @param teamId 
+     * @param endpoint 
+     * @param ordering Which field to use when ordering the results.
+     * @param page A page number within the paginated result set.
+     * @param search A search term.
+     * @param since 
+     */
+    teamsAiUsageDetailsList(teamId: number, endpoint?: string, ordering?: string, page?: number, search?: string, since?: string, extraHttpRequestParams?: any): Observable<PaginatedAIUsageDetailList>;
+
+    /**
+     * AI usage aggregated by period for a team
+     * GET /api/v1/teams/ai-usage/{team_id}/?period&#x3D;month
+     * @endpoint get /api/v1/teams/{team_id}/ai-usage/
+     * @param teamId 
+     * @param end 
+     * @param excludePing Exclude /ai/ping/ from aggregates (default true).
+     * @param period One of: day, week, month, year (default: month).
+     * @param start 
+     */
+    teamsAiUsageRetrieve(teamId: number, end?: string, excludePing?: boolean, period?: string, start?: string, extraHttpRequestParams?: any): Observable<AIUsageAggregateResponse>;
 
     /**
      * 
@@ -52,6 +86,197 @@ export interface TeamsServiceInterface {
      * @param search A search term.
      */
     teamsList(isActive?: boolean, isPublic?: boolean, language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedTeamList>;
+
+    /**
+     * 
+     * CRUD on coach notes within a team-member nested context.  URL: /api/v1/teams/{team_pk}/members/{member_pk}/notes/
+     * @endpoint post /api/v1/teams/{team_pk}/members/{member_pk}/notes/
+     * @param memberPk 
+     * @param teamPk 
+     * @param note 
+     */
+    teamsMembersNotesCreate(memberPk: number, teamPk: number, note: Note, extraHttpRequestParams?: any): Observable<Note>;
+
+    /**
+     * 
+     * CRUD on coach notes within a team-member nested context.  URL: /api/v1/teams/{team_pk}/members/{member_pk}/notes/
+     * @endpoint delete /api/v1/teams/{team_pk}/members/{member_pk}/notes/{id}/
+     * @param id A unique integer value identifying this note.
+     * @param memberPk 
+     * @param teamPk 
+     */
+    teamsMembersNotesDestroy(id: number, memberPk: number, teamPk: number, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * List coach notes for a member in a team
+     * CRUD on coach notes within a team-member nested context.  URL: /api/v1/teams/{team_pk}/members/{member_pk}/notes/
+     * @endpoint get /api/v1/teams/{team_pk}/members/{member_pk}/notes/
+     * @param memberPk 
+     * @param teamPk 
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+     * @param ordering Which field to use when ordering the results.
+     * @param page A page number within the paginated result set.
+     * @param search A search term.
+     */
+    teamsMembersNotesList(memberPk: number, teamPk: number, includeInactive?: boolean, ordering?: string, page?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedNoteList>;
+
+    /**
+     * 
+     * CRUD on coach notes within a team-member nested context.  URL: /api/v1/teams/{team_pk}/members/{member_pk}/notes/
+     * @endpoint patch /api/v1/teams/{team_pk}/members/{member_pk}/notes/{id}/
+     * @param id A unique integer value identifying this note.
+     * @param memberPk 
+     * @param teamPk 
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+     * @param patchedNote 
+     */
+    teamsMembersNotesPartialUpdate(id: number, memberPk: number, teamPk: number, includeInactive?: boolean, patchedNote?: PatchedNote, extraHttpRequestParams?: any): Observable<Note>;
+
+    /**
+     * 
+     * CRUD on coach notes within a team-member nested context.  URL: /api/v1/teams/{team_pk}/members/{member_pk}/notes/
+     * @endpoint get /api/v1/teams/{team_pk}/members/{member_pk}/notes/{id}/
+     * @param id A unique integer value identifying this note.
+     * @param memberPk 
+     * @param teamPk 
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+     */
+    teamsMembersNotesRetrieve(id: number, memberPk: number, teamPk: number, includeInactive?: boolean, extraHttpRequestParams?: any): Observable<Note>;
+
+    /**
+     * 
+     * CRUD on coach notes within a team-member nested context.  URL: /api/v1/teams/{team_pk}/members/{member_pk}/notes/
+     * @endpoint put /api/v1/teams/{team_pk}/members/{member_pk}/notes/{id}/
+     * @param id A unique integer value identifying this note.
+     * @param memberPk 
+     * @param teamPk 
+     * @param note 
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+     */
+    teamsMembersNotesUpdate(id: number, memberPk: number, teamPk: number, note: Note, includeInactive?: boolean, extraHttpRequestParams?: any): Observable<Note>;
+
+    /**
+     * 
+     * Manage team memberships.  URL: /api/v1/teams/{team_pk}/memberships/  - GET (list): active memberships of the team. Pass ?include_inactive&#x3D;true   to also see historical (left_at IS NOT NULL) rows. - POST: add a member to the team (manager-only). Idempotent: rejects with   400 already_member if an active membership already exists for the same   (team, member) pair. - DELETE /{id}/: end a membership (sets left_at &#x3D; now). Allowed for the   member herself or a team manager. The team owner cannot leave their own   team via this endpoint.
+     * @endpoint post /api/v1/teams/{team_pk}/memberships/
+     * @param teamPk 
+     * @param teamMembership 
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+     */
+    teamsMembershipsCreate(teamPk: number, teamMembership: TeamMembership, includeInactive?: boolean, extraHttpRequestParams?: any): Observable<TeamMembership>;
+
+    /**
+     * 
+     * Manage team memberships.  URL: /api/v1/teams/{team_pk}/memberships/  - GET (list): active memberships of the team. Pass ?include_inactive&#x3D;true   to also see historical (left_at IS NOT NULL) rows. - POST: add a member to the team (manager-only). Idempotent: rejects with   400 already_member if an active membership already exists for the same   (team, member) pair. - DELETE /{id}/: end a membership (sets left_at &#x3D; now). Allowed for the   member herself or a team manager. The team owner cannot leave their own   team via this endpoint.
+     * @endpoint delete /api/v1/teams/{team_pk}/memberships/{id}/
+     * @param id A unique integer value identifying this team membership.
+     * @param teamPk 
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+     */
+    teamsMembershipsDestroy(id: number, teamPk: number, includeInactive?: boolean, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * 
+     * Manage team memberships.  URL: /api/v1/teams/{team_pk}/memberships/  - GET (list): active memberships of the team. Pass ?include_inactive&#x3D;true   to also see historical (left_at IS NOT NULL) rows. - POST: add a member to the team (manager-only). Idempotent: rejects with   400 already_member if an active membership already exists for the same   (team, member) pair. - DELETE /{id}/: end a membership (sets left_at &#x3D; now). Allowed for the   member herself or a team manager. The team owner cannot leave their own   team via this endpoint.
+     * @endpoint get /api/v1/teams/{team_pk}/memberships/
+     * @param teamPk 
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+     * @param ordering Which field to use when ordering the results.
+     * @param search A search term.
+     */
+    teamsMembershipsList(teamPk: number, includeInactive?: boolean, ordering?: string, search?: string, extraHttpRequestParams?: any): Observable<Array<TeamMembership>>;
+
+    /**
+     * 
+     * Manage team memberships.  URL: /api/v1/teams/{team_pk}/memberships/  - GET (list): active memberships of the team. Pass ?include_inactive&#x3D;true   to also see historical (left_at IS NOT NULL) rows. - POST: add a member to the team (manager-only). Idempotent: rejects with   400 already_member if an active membership already exists for the same   (team, member) pair. - DELETE /{id}/: end a membership (sets left_at &#x3D; now). Allowed for the   member herself or a team manager. The team owner cannot leave their own   team via this endpoint.
+     * @endpoint patch /api/v1/teams/{team_pk}/memberships/{id}/
+     * @param id A unique integer value identifying this team membership.
+     * @param teamPk 
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+     * @param patchedTeamMembership 
+     */
+    teamsMembershipsPartialUpdate(id: number, teamPk: number, includeInactive?: boolean, patchedTeamMembership?: PatchedTeamMembership, extraHttpRequestParams?: any): Observable<TeamMembership>;
+
+    /**
+     * 
+     * Manage team memberships.  URL: /api/v1/teams/{team_pk}/memberships/  - GET (list): active memberships of the team. Pass ?include_inactive&#x3D;true   to also see historical (left_at IS NOT NULL) rows. - POST: add a member to the team (manager-only). Idempotent: rejects with   400 already_member if an active membership already exists for the same   (team, member) pair. - DELETE /{id}/: end a membership (sets left_at &#x3D; now). Allowed for the   member herself or a team manager. The team owner cannot leave their own   team via this endpoint.
+     * @endpoint get /api/v1/teams/{team_pk}/memberships/{id}/
+     * @param id A unique integer value identifying this team membership.
+     * @param teamPk 
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+     */
+    teamsMembershipsRetrieve(id: number, teamPk: number, includeInactive?: boolean, extraHttpRequestParams?: any): Observable<TeamMembership>;
+
+    /**
+     * 
+     * Manage team memberships.  URL: /api/v1/teams/{team_pk}/memberships/  - GET (list): active memberships of the team. Pass ?include_inactive&#x3D;true   to also see historical (left_at IS NOT NULL) rows. - POST: add a member to the team (manager-only). Idempotent: rejects with   400 already_member if an active membership already exists for the same   (team, member) pair. - DELETE /{id}/: end a membership (sets left_at &#x3D; now). Allowed for the   member herself or a team manager. The team owner cannot leave their own   team via this endpoint.
+     * @endpoint put /api/v1/teams/{team_pk}/memberships/{id}/
+     * @param id A unique integer value identifying this team membership.
+     * @param teamPk 
+     * @param teamMembership 
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+     */
+    teamsMembershipsUpdate(id: number, teamPk: number, teamMembership: TeamMembership, includeInactive?: boolean, extraHttpRequestParams?: any): Observable<TeamMembership>;
+
+    /**
+     * 
+     * CRUD on team chat messages with cursor-based pagination.  URL: /api/v1/teams/{team_pk}/messages/
+     * @endpoint post /api/v1/teams/{team_pk}/messages/
+     * @param teamPk 
+     * @param message 
+     */
+    teamsMessagesCreate(teamPk: number, message: Message, extraHttpRequestParams?: any): Observable<Message>;
+
+    /**
+     * 
+     * CRUD on team chat messages with cursor-based pagination.  URL: /api/v1/teams/{team_pk}/messages/
+     * @endpoint delete /api/v1/teams/{team_pk}/messages/{id}/
+     * @param id A unique integer value identifying this message.
+     * @param teamPk 
+     */
+    teamsMessagesDestroy(id: number, teamPk: number, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * List team chat messages with cursor-based pagination
+     * Three modes: - Initial load: ?limit&#x3D;50 returns the 50 most recent messages (default order: newest first). - Polling: ?since&#x3D;&lt;ISO timestamp&gt; returns messages created strictly after the given timestamp (chronological order). - Historical scroll: ?before&#x3D;&lt;ISO timestamp&gt;&amp;limit&#x3D;50 returns 50 messages older than the given timestamp.  Soft-deleted messages are returned with deleted_at set so the frontend can render a \&#39;message deleted\&#39; placeholder.
+     * @endpoint get /api/v1/teams/{team_pk}/messages/
+     * @param teamPk 
+     * @param before Returns messages created strictly BEFORE this timestamp. Used for historical scroll: pass the timestamp of the oldest message you have.
+     * @param limit Maximum number of messages to return. Default 50, max 200.
+     * @param ordering Which field to use when ordering the results.
+     * @param search A search term.
+     * @param since Returns messages created strictly AFTER this timestamp. Used for polling: pass the timestamp of the most recent message you have.
+     */
+    teamsMessagesList(teamPk: number, before?: string, limit?: number, ordering?: string, search?: string, since?: string, extraHttpRequestParams?: any): Observable<Array<Message>>;
+
+    /**
+     * 
+     * CRUD on team chat messages with cursor-based pagination.  URL: /api/v1/teams/{team_pk}/messages/
+     * @endpoint patch /api/v1/teams/{team_pk}/messages/{id}/
+     * @param id A unique integer value identifying this message.
+     * @param teamPk 
+     * @param patchedMessage 
+     */
+    teamsMessagesPartialUpdate(id: number, teamPk: number, patchedMessage?: PatchedMessage, extraHttpRequestParams?: any): Observable<Message>;
+
+    /**
+     * 
+     * CRUD on team chat messages with cursor-based pagination.  URL: /api/v1/teams/{team_pk}/messages/
+     * @endpoint get /api/v1/teams/{team_pk}/messages/{id}/
+     * @param id A unique integer value identifying this message.
+     * @param teamPk 
+     */
+    teamsMessagesRetrieve(id: number, teamPk: number, extraHttpRequestParams?: any): Observable<Message>;
+
+    /**
+     * 
+     * CRUD on team chat messages with cursor-based pagination.  URL: /api/v1/teams/{team_pk}/messages/
+     * @endpoint put /api/v1/teams/{team_pk}/messages/{id}/
+     * @param id A unique integer value identifying this message.
+     * @param teamPk 
+     * @param message 
+     */
+    teamsMessagesUpdate(id: number, teamPk: number, message: Message, extraHttpRequestParams?: any): Observable<Message>;
 
     /**
      * 

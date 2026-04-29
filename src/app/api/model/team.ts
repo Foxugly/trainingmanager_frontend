@@ -9,6 +9,7 @@
  */
 import { Sport } from './sport';
 import { CustomUserPublic } from './custom-user-public';
+import { ChatModeEnum } from './chat-mode-enum';
 import { LanguageEnum } from './language-enum';
 
 
@@ -22,6 +23,18 @@ export interface Team {
     language?: LanguageEnum;
     is_active?: boolean;
     is_public?: boolean;
+    /**
+     * Defines who can post messages in the team chat.  * `all` - All members can post * `coaches_only` - Only coaches can post
+     */
+    chat_mode?: ChatModeEnum;
+    /**
+     * If True, athletes can read their own coach notes. Default False (notes are coach-only).
+     */
+    athlete_can_read_notes?: boolean;
+    /**
+     * Statuses available for marking attendance in this team\'s events. Default: present, absent, excused.
+     */
+    attendance_statuses?: Array<number>;
     readonly created_at: string;
     readonly updated_at: string;
 }

@@ -36,6 +36,224 @@ paths:
           description: AI configuration error
         '502':
           description: AI service error
+  /api/v1/attendance-statuses/:
+    get:
+      operationId: attendance_statuses_list
+      description: Returns the public AttendanceStatus serializer with localized 'label'.
+        Available to all authenticated users. Pass ?include_inactive=true (staff only)
+        to include soft-deleted rows.
+      summary: List attendance statuses (public flavor)
+      parameters:
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - in: query
+        name: is_default
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - attendance-statuses
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAttendanceStatusList'
+          description: ''
+    post:
+      operationId: attendance_statuses_create
+      description: |-
+        CRUD on the AttendanceStatus referential.
+
+        Read: any authenticated user (default queryset filters is_active=True).
+        Write: staff only. Soft delete via perform_destroy.
+      summary: Create attendance status (staff only)
+      tags:
+      - attendance-statuses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttendanceStatusAdmin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AttendanceStatusAdmin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AttendanceStatusAdmin'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceStatusAdmin'
+          description: ''
+  /api/v1/attendance-statuses/{id}/:
+    get:
+      operationId: attendance_statuses_retrieve
+      description: |-
+        CRUD on the AttendanceStatus referential.
+
+        Read: any authenticated user (default queryset filters is_active=True).
+        Write: staff only. Soft delete via perform_destroy.
+      summary: Retrieve attendance status (admin flavor for staff)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this attendance status.
+        required: true
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
+      tags:
+      - attendance-statuses
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceStatusAdmin'
+          description: ''
+    put:
+      operationId: attendance_statuses_update
+      description: |-
+        CRUD on the AttendanceStatus referential.
+
+        Read: any authenticated user (default queryset filters is_active=True).
+        Write: staff only. Soft delete via perform_destroy.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this attendance status.
+        required: true
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
+      tags:
+      - attendance-statuses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttendanceStatusAdmin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AttendanceStatusAdmin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AttendanceStatusAdmin'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceStatusAdmin'
+          description: ''
+    patch:
+      operationId: attendance_statuses_partial_update
+      description: |-
+        CRUD on the AttendanceStatus referential.
+
+        Read: any authenticated user (default queryset filters is_active=True).
+        Write: staff only. Soft delete via perform_destroy.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this attendance status.
+        required: true
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
+      tags:
+      - attendance-statuses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAttendanceStatusAdmin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAttendanceStatusAdmin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAttendanceStatusAdmin'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceStatusAdmin'
+          description: ''
+    delete:
+      operationId: attendance_statuses_destroy
+      description: Sets is_active=False; does not hard delete.
+      summary: Soft delete attendance status (staff only)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this attendance status.
+        required: true
+      tags:
+      - attendance-statuses
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
   /api/v1/auth/token/:
     post:
       operationId: auth_token_create
@@ -561,6 +779,262 @@ paths:
               schema:
                 $ref: '#/components/schemas/Event'
           description: ''
+  /api/v1/events/{event_pk}/attendance/:
+    get:
+      operationId: events_attendance_list
+      description: Returns all attendance rows. Coaches see everyone; athletes see
+        only their own row.
+      summary: List attendance for an event
+      parameters:
+      - in: path
+        name: event_pk
+        schema:
+          type: integer
+        required: true
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - events
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAttendanceList'
+          description: ''
+    post:
+      operationId: events_attendance_create
+      description: Member must be in the team via an active TeamMembership. Returns
+        400 if a row already exists for (event, member) — use PATCH.
+      summary: Create an attendance row (coach only)
+      parameters:
+      - in: path
+        name: event_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - events
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Attendance'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Attendance'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Attendance'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attendance'
+          description: ''
+  /api/v1/events/{event_pk}/attendance/{id}/:
+    get:
+      operationId: events_attendance_retrieve
+      description: |-
+        CRUD on event attendance.
+
+        URL: /api/v1/events/{event_pk}/attendance/
+      summary: Retrieve a single attendance row
+      parameters:
+      - in: path
+        name: event_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this attendance.
+        required: true
+      tags:
+      - events
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attendance'
+          description: ''
+    put:
+      operationId: events_attendance_update
+      description: |-
+        CRUD on event attendance.
+
+        URL: /api/v1/events/{event_pk}/attendance/
+      summary: Replace attendance row (coach only)
+      parameters:
+      - in: path
+        name: event_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this attendance.
+        required: true
+      tags:
+      - events
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Attendance'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Attendance'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Attendance'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attendance'
+          description: ''
+    patch:
+      operationId: events_attendance_partial_update
+      description: |-
+        CRUD on event attendance.
+
+        URL: /api/v1/events/{event_pk}/attendance/
+      summary: Update attendance status (coach only)
+      parameters:
+      - in: path
+        name: event_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this attendance.
+        required: true
+      tags:
+      - events
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAttendance'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAttendance'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAttendance'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attendance'
+          description: ''
+    delete:
+      operationId: events_attendance_destroy
+      description: |-
+        CRUD on event attendance.
+
+        URL: /api/v1/events/{event_pk}/attendance/
+      summary: Delete an attendance row (coach only)
+      parameters:
+      - in: path
+        name: event_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this attendance.
+        required: true
+      tags:
+      - events
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/events/{event_pk}/attendance/bulk/:
+    post:
+      operationId: events_attendance_bulk_create
+      description: 'Creates or updates multiple attendance rows in a single atomic
+        call. For each item: if (event, member) exists, update status; otherwise,
+        create new. Members not in the payload are NOT touched. All-or-nothing: any
+        validation error rolls back the entire batch.'
+      summary: Bulk set attendances for an event
+      parameters:
+      - in: path
+        name: event_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - events
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttendanceBulk'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AttendanceBulk'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AttendanceBulk'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAttendanceList'
+          description: Returns counts and full attendance list of the event.
+        '400':
+          description: Validation error (member or status)
+        '403':
+          description: Not a team manager
   /api/v1/events/{id}/:
     get:
       operationId: events_retrieve
@@ -2612,6 +3086,896 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/teams/{team_id}/ai-usage/:
+    get:
+      operationId: teams_ai_usage_retrieve
+      description: GET /api/v1/teams/ai-usage/{team_id}/?period=month
+      summary: AI usage aggregated by period for a team
+      parameters:
+      - in: query
+        name: end
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: exclude_ping
+        schema:
+          type: boolean
+        description: Exclude /ai/ping/ from aggregates (default true).
+      - in: query
+        name: period
+        schema:
+          type: string
+        description: 'One of: day, week, month, year (default: month).'
+      - in: query
+        name: start
+        schema:
+          type: string
+          format: date
+      - in: path
+        name: team_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - teams
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIUsageAggregateResponse'
+          description: ''
+  /api/v1/teams/{team_id}/ai-usage/details/:
+    get:
+      operationId: teams_ai_usage_details_list
+      description: GET /api/v1/teams/ai-usage/{team_id}/details/?since=2026-04-01
+      summary: AI usage detailed rows for a team
+      parameters:
+      - in: query
+        name: endpoint
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: since
+        schema:
+          type: string
+          format: date-time
+      - in: path
+        name: team_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - teams
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAIUsageDetailList'
+          description: ''
+  /api/v1/teams/{team_pk}/members/{member_pk}/notes/:
+    get:
+      operationId: teams_members_notes_list
+      description: |-
+        CRUD on coach notes within a team-member nested context.
+
+        URL: /api/v1/teams/{team_pk}/members/{member_pk}/notes/
+      summary: List coach notes for a member in a team
+      parameters:
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
+      - in: path
+        name: member_pk
+        schema:
+          type: integer
+        required: true
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: path
+        name: team_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - teams
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedNoteList'
+          description: ''
+    post:
+      operationId: teams_members_notes_create
+      description: |-
+        CRUD on coach notes within a team-member nested context.
+
+        URL: /api/v1/teams/{team_pk}/members/{member_pk}/notes/
+      parameters:
+      - in: path
+        name: member_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: team_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - teams
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Note'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Note'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Note'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+          description: ''
+  /api/v1/teams/{team_pk}/members/{member_pk}/notes/{id}/:
+    get:
+      operationId: teams_members_notes_retrieve
+      description: |-
+        CRUD on coach notes within a team-member nested context.
+
+        URL: /api/v1/teams/{team_pk}/members/{member_pk}/notes/
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this note.
+        required: true
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
+      - in: path
+        name: member_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: team_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - teams
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+          description: ''
+    put:
+      operationId: teams_members_notes_update
+      description: |-
+        CRUD on coach notes within a team-member nested context.
+
+        URL: /api/v1/teams/{team_pk}/members/{member_pk}/notes/
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this note.
+        required: true
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
+      - in: path
+        name: member_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: team_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - teams
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Note'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Note'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Note'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+          description: ''
+    patch:
+      operationId: teams_members_notes_partial_update
+      description: |-
+        CRUD on coach notes within a team-member nested context.
+
+        URL: /api/v1/teams/{team_pk}/members/{member_pk}/notes/
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this note.
+        required: true
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
+      - in: path
+        name: member_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: team_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - teams
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNote'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedNote'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedNote'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+          description: ''
+    delete:
+      operationId: teams_members_notes_destroy
+      description: |-
+        CRUD on coach notes within a team-member nested context.
+
+        URL: /api/v1/teams/{team_pk}/members/{member_pk}/notes/
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this note.
+        required: true
+      - in: path
+        name: member_pk
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: team_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - teams
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/teams/{team_pk}/memberships/:
+    get:
+      operationId: teams_memberships_list
+      description: |-
+        Manage team memberships.
+
+        URL: /api/v1/teams/{team_pk}/memberships/
+
+        - GET (list): active memberships of the team. Pass ?include_inactive=true
+          to also see historical (left_at IS NOT NULL) rows.
+        - POST: add a member to the team (manager-only). Idempotent: rejects with
+          400 already_member if an active membership already exists for the same
+          (team, member) pair.
+        - DELETE /{id}/: end a membership (sets left_at = now). Allowed for the
+          member herself or a team manager. The team owner cannot leave their own
+          team via this endpoint.
+      parameters:
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: path
+        name: team_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - teams
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TeamMembership'
+          description: ''
+    post:
+      operationId: teams_memberships_create
+      description: |-
+        Manage team memberships.
+
+        URL: /api/v1/teams/{team_pk}/memberships/
+
+        - GET (list): active memberships of the team. Pass ?include_inactive=true
+          to also see historical (left_at IS NOT NULL) rows.
+        - POST: add a member to the team (manager-only). Idempotent: rejects with
+          400 already_member if an active membership already exists for the same
+          (team, member) pair.
+        - DELETE /{id}/: end a membership (sets left_at = now). Allowed for the
+          member herself or a team manager. The team owner cannot leave their own
+          team via this endpoint.
+      parameters:
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
+      - in: path
+        name: team_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - teams
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TeamMembership'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TeamMembership'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TeamMembership'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamMembership'
+          description: ''
+  /api/v1/teams/{team_pk}/memberships/{id}/:
+    get:
+      operationId: teams_memberships_retrieve
+      description: |-
+        Manage team memberships.
+
+        URL: /api/v1/teams/{team_pk}/memberships/
+
+        - GET (list): active memberships of the team. Pass ?include_inactive=true
+          to also see historical (left_at IS NOT NULL) rows.
+        - POST: add a member to the team (manager-only). Idempotent: rejects with
+          400 already_member if an active membership already exists for the same
+          (team, member) pair.
+        - DELETE /{id}/: end a membership (sets left_at = now). Allowed for the
+          member herself or a team manager. The team owner cannot leave their own
+          team via this endpoint.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this team membership.
+        required: true
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
+      - in: path
+        name: team_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - teams
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamMembership'
+          description: ''
+    put:
+      operationId: teams_memberships_update
+      description: |-
+        Manage team memberships.
+
+        URL: /api/v1/teams/{team_pk}/memberships/
+
+        - GET (list): active memberships of the team. Pass ?include_inactive=true
+          to also see historical (left_at IS NOT NULL) rows.
+        - POST: add a member to the team (manager-only). Idempotent: rejects with
+          400 already_member if an active membership already exists for the same
+          (team, member) pair.
+        - DELETE /{id}/: end a membership (sets left_at = now). Allowed for the
+          member herself or a team manager. The team owner cannot leave their own
+          team via this endpoint.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this team membership.
+        required: true
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
+      - in: path
+        name: team_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - teams
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TeamMembership'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TeamMembership'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TeamMembership'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamMembership'
+          description: ''
+    patch:
+      operationId: teams_memberships_partial_update
+      description: |-
+        Manage team memberships.
+
+        URL: /api/v1/teams/{team_pk}/memberships/
+
+        - GET (list): active memberships of the team. Pass ?include_inactive=true
+          to also see historical (left_at IS NOT NULL) rows.
+        - POST: add a member to the team (manager-only). Idempotent: rejects with
+          400 already_member if an active membership already exists for the same
+          (team, member) pair.
+        - DELETE /{id}/: end a membership (sets left_at = now). Allowed for the
+          member herself or a team manager. The team owner cannot leave their own
+          team via this endpoint.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this team membership.
+        required: true
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
+      - in: path
+        name: team_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - teams
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedTeamMembership'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedTeamMembership'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedTeamMembership'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamMembership'
+          description: ''
+    delete:
+      operationId: teams_memberships_destroy
+      description: |-
+        Manage team memberships.
+
+        URL: /api/v1/teams/{team_pk}/memberships/
+
+        - GET (list): active memberships of the team. Pass ?include_inactive=true
+          to also see historical (left_at IS NOT NULL) rows.
+        - POST: add a member to the team (manager-only). Idempotent: rejects with
+          400 already_member if an active membership already exists for the same
+          (team, member) pair.
+        - DELETE /{id}/: end a membership (sets left_at = now). Allowed for the
+          member herself or a team manager. The team owner cannot leave their own
+          team via this endpoint.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this team membership.
+        required: true
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
+      - in: path
+        name: team_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - teams
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/teams/{team_pk}/messages/:
+    get:
+      operationId: teams_messages_list
+      description: |-
+        Three modes:
+        - Initial load: ?limit=50 returns the 50 most recent messages (default order: newest first).
+        - Polling: ?since=<ISO timestamp> returns messages created strictly after the given timestamp (chronological order).
+        - Historical scroll: ?before=<ISO timestamp>&limit=50 returns 50 messages older than the given timestamp.
+
+        Soft-deleted messages are returned with deleted_at set so the frontend can render a 'message deleted' placeholder.
+      summary: List team chat messages with cursor-based pagination
+      parameters:
+      - in: query
+        name: before
+        schema:
+          type: string
+          format: date-time
+        description: 'Returns messages created strictly BEFORE this timestamp. Used
+          for historical scroll: pass the timestamp of the oldest message you have.'
+      - in: query
+        name: limit
+        schema:
+          type: integer
+        description: Maximum number of messages to return. Default 50, max 200.
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: since
+        schema:
+          type: string
+          format: date-time
+        description: 'Returns messages created strictly AFTER this timestamp. Used
+          for polling: pass the timestamp of the most recent message you have.'
+      - in: path
+        name: team_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - teams
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+          description: ''
+    post:
+      operationId: teams_messages_create
+      description: |-
+        CRUD on team chat messages with cursor-based pagination.
+
+        URL: /api/v1/teams/{team_pk}/messages/
+      parameters:
+      - in: path
+        name: team_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - teams
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Message'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Message'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+          description: ''
+  /api/v1/teams/{team_pk}/messages/{id}/:
+    get:
+      operationId: teams_messages_retrieve
+      description: |-
+        CRUD on team chat messages with cursor-based pagination.
+
+        URL: /api/v1/teams/{team_pk}/messages/
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this message.
+        required: true
+      - in: path
+        name: team_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - teams
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+          description: ''
+    put:
+      operationId: teams_messages_update
+      description: |-
+        CRUD on team chat messages with cursor-based pagination.
+
+        URL: /api/v1/teams/{team_pk}/messages/
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this message.
+        required: true
+      - in: path
+        name: team_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - teams
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Message'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Message'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+          description: ''
+    patch:
+      operationId: teams_messages_partial_update
+      description: |-
+        CRUD on team chat messages with cursor-based pagination.
+
+        URL: /api/v1/teams/{team_pk}/messages/
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this message.
+        required: true
+      - in: path
+        name: team_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - teams
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedMessage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedMessage'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedMessage'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+          description: ''
+    delete:
+      operationId: teams_messages_destroy
+      description: |-
+        CRUD on team chat messages with cursor-based pagination.
+
+        URL: /api/v1/teams/{team_pk}/messages/
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this message.
+        required: true
+      - in: path
+        name: team_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - teams
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
 components:
   schemas:
     AIPingRequest:
@@ -2639,6 +4003,254 @@ components:
       - output_tokens
       - stop_reason
       - text
+    AIUsageAggregateResponse:
+      type: object
+      description: Top-level aggregate response.
+      properties:
+        team_id:
+          type: integer
+        period:
+          type: string
+        exclude_ping:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/AIUsageAggregateRow'
+      required:
+      - data
+      - exclude_ping
+      - period
+      - team_id
+    AIUsageAggregateRow:
+      type: object
+      description: One row of the aggregated usage response (per period bucket).
+      properties:
+        period:
+          type: string
+        total_calls:
+          type: integer
+        total_tokens:
+          type: integer
+        input_tokens:
+          type: integer
+        output_tokens:
+          type: integer
+      required:
+      - input_tokens
+      - output_tokens
+      - period
+      - total_calls
+      - total_tokens
+    AIUsageDetail:
+      type: object
+      description: Single AI call row, with username for display.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        endpoint:
+          allOf:
+          - $ref: '#/components/schemas/EndpointEnum'
+          readOnly: true
+        model_used:
+          type: string
+          readOnly: true
+          description: Anthropic model identifier (e.g. claude-haiku-4-5)
+        input_tokens:
+          type: integer
+          readOnly: true
+        output_tokens:
+          type: integer
+          readOnly: true
+        cache_creation_tokens:
+          type: integer
+          readOnly: true
+        cache_read_tokens:
+          type: integer
+          readOnly: true
+        total_tokens:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - cache_creation_tokens
+      - cache_read_tokens
+      - created_at
+      - endpoint
+      - id
+      - input_tokens
+      - model_used
+      - output_tokens
+      - total_tokens
+      - username
+    Attendance:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        event:
+          type: integer
+          readOnly: true
+        member:
+          type: integer
+        member_fullname:
+          type: string
+          readOnly: true
+        status:
+          type: integer
+        status_code:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - event
+      - id
+      - member
+      - member_fullname
+      - status
+      - status_code
+      - updated_at
+    AttendanceBulk:
+      type: object
+      properties:
+        attendances:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttendanceBulkItem'
+      required:
+      - attendances
+    AttendanceBulkItem:
+      type: object
+      properties:
+        member_id:
+          type: integer
+        status_code:
+          type: string
+          maxLength: 30
+      required:
+      - member_id
+      - status_code
+    AttendanceStatus:
+      type: object
+      description: 'Public flavor: ''label'' is auto-localized by modeltranslation.'
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        code:
+          type: string
+          readOnly: true
+          description: Snake_case identifier (e.g. 'present', 'absent', 'excused')
+        label:
+          type: string
+          readOnly: true
+          description: Display label, translated via modeltranslation.
+        is_default:
+          type: boolean
+          readOnly: true
+          description: If True, pre-selected as default in the frontend UI.
+        order:
+          type: integer
+          readOnly: true
+          description: Display order for buttons in the frontend.
+        color:
+          type: string
+          readOnly: true
+          description: Hex color (#xxxxxx) for the frontend, optional.
+        is_active:
+          type: boolean
+          readOnly: true
+      required:
+      - code
+      - color
+      - id
+      - is_active
+      - is_default
+      - label
+      - order
+    AttendanceStatusAdmin:
+      type: object
+      description: 'Admin flavor: exposes per-language label variants.'
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        code:
+          type: string
+          description: Snake_case identifier (e.g. 'present', 'absent', 'excused')
+          maxLength: 30
+        label_fr:
+          type: string
+          nullable: true
+          title: Label [fr]
+          description: Display label, translated via modeltranslation.
+          maxLength: 100
+        label_nl:
+          type: string
+          nullable: true
+          title: Label [nl]
+          description: Display label, translated via modeltranslation.
+          maxLength: 100
+        label_en:
+          type: string
+          nullable: true
+          title: Label [en]
+          description: Display label, translated via modeltranslation.
+          maxLength: 100
+        label_it:
+          type: string
+          nullable: true
+          title: Label [it]
+          description: Display label, translated via modeltranslation.
+          maxLength: 100
+        label_es:
+          type: string
+          nullable: true
+          title: Label [es]
+          description: Display label, translated via modeltranslation.
+          maxLength: 100
+        is_default:
+          type: boolean
+          description: If True, pre-selected as default in the frontend UI.
+        order:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+          description: Display order for buttons in the frontend.
+        color:
+          type: string
+          description: Hex color (#xxxxxx) for the frontend, optional.
+          maxLength: 20
+        is_active:
+          type: boolean
+      required:
+      - code
+      - id
+    ChatModeEnum:
+      enum:
+      - all
+      - coaches_only
+      type: string
+      description: |-
+        * `all` - All members can post
+        * `coaches_only` - Only coaches can post
     CloneExerciseRequest:
       type: object
       properties:
@@ -2739,6 +4351,16 @@ components:
       - id
       - last_name
       - username
+    EndpointEnum:
+      enum:
+      - ping
+      - plan
+      - training
+      type: string
+      description: |-
+        * `ping` - Ping
+        * `plan` - Generate plan
+        * `training` - Generate training
     EnergySegment:
       type: object
       properties:
@@ -2911,6 +4533,7 @@ components:
           type: array
           items:
             type: integer
+          readOnly: true
         generated_by_ai:
           type: boolean
           readOnly: true
@@ -2936,6 +4559,7 @@ components:
       - created_at
       - generated_by_ai
       - id
+      - members
       - name
       - refer_program
       - refer_program_id
@@ -3213,6 +4837,7 @@ components:
           type: array
           items:
             type: integer
+          readOnly: true
         user:
           allOf:
           - $ref: '#/components/schemas/CustomUserPublic'
@@ -3235,8 +4860,55 @@ components:
       - fullname
       - id
       - lastname
+      - teams
       - updated_at
       - user
+    Message:
+      type: object
+      description: Message serializer with author username for display.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        team:
+          type: integer
+          readOnly: true
+        author:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: Author of the message. SET_NULL on user deletion.
+        author_username:
+          type: string
+          readOnly: true
+        content:
+          type: string
+          description: Rich HTML content (sanitized via bleach on save).
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        edited_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          description: Set when the message is edited after creation.
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          description: Soft delete timestamp. Non-null = deleted.
+      required:
+      - author
+      - author_username
+      - content
+      - created_at
+      - deleted_at
+      - edited_at
+      - id
+      - team
     Modality:
       type: object
       properties:
@@ -3297,6 +4969,55 @@ components:
       required:
       - id
       - sport
+    Note:
+      type: object
+      description: |-
+        Serializer for Note. team/member/author are derived from the URL
+        and the request user; they are read-only here. The 'content' field
+        is sanitized via bleach on every write.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        team:
+          type: integer
+          readOnly: true
+        member:
+          type: integer
+          readOnly: true
+        author:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: The coach who wrote this note. SET_NULL if the author account
+            is deleted.
+        author_username:
+          type: string
+          readOnly: true
+        content:
+          type: string
+          description: Rich HTML content (sanitized via bleach on save).
+        is_active:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - author
+      - author_username
+      - content
+      - created_at
+      - id
+      - is_active
+      - member
+      - team
+      - updated_at
     OverlapStrategyEnum:
       enum:
       - add_only
@@ -3307,6 +5028,75 @@ components:
         * `add_only` - Add only
         * `merge` - Merge
         * `replace` - Replace
+    PaginatedAIUsageDetailList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AIUsageDetail'
+    PaginatedAttendanceList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attendance'
+    PaginatedAttendanceStatusList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttendanceStatus'
     PaginatedEnergySegmentList:
       type: object
       required:
@@ -3445,6 +5235,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Modality'
+    PaginatedNoteList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Note'
     PaginatedProgramList:
       type: object
       required:
@@ -3583,6 +5396,89 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Team'
+    PatchedAttendance:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        event:
+          type: integer
+          readOnly: true
+        member:
+          type: integer
+        member_fullname:
+          type: string
+          readOnly: true
+        status:
+          type: integer
+        status_code:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedAttendanceStatusAdmin:
+      type: object
+      description: 'Admin flavor: exposes per-language label variants.'
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        code:
+          type: string
+          description: Snake_case identifier (e.g. 'present', 'absent', 'excused')
+          maxLength: 30
+        label_fr:
+          type: string
+          nullable: true
+          title: Label [fr]
+          description: Display label, translated via modeltranslation.
+          maxLength: 100
+        label_nl:
+          type: string
+          nullable: true
+          title: Label [nl]
+          description: Display label, translated via modeltranslation.
+          maxLength: 100
+        label_en:
+          type: string
+          nullable: true
+          title: Label [en]
+          description: Display label, translated via modeltranslation.
+          maxLength: 100
+        label_it:
+          type: string
+          nullable: true
+          title: Label [it]
+          description: Display label, translated via modeltranslation.
+          maxLength: 100
+        label_es:
+          type: string
+          nullable: true
+          title: Label [es]
+          description: Display label, translated via modeltranslation.
+          maxLength: 100
+        is_default:
+          type: boolean
+          description: If True, pre-selected as default in the frontend UI.
+        order:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+          description: Display order for buttons in the frontend.
+        color:
+          type: string
+          description: Hex color (#xxxxxx) for the frontend, optional.
+          maxLength: 20
+        is_active:
+          type: boolean
     PatchedEnergySegmentAdmin:
       type: object
       description: 'Admin flavor: per-language description variants + writable energy_system_id.'
@@ -3704,6 +5600,7 @@ components:
           type: array
           items:
             type: integer
+          readOnly: true
         generated_by_ai:
           type: boolean
           readOnly: true
@@ -3858,6 +5755,7 @@ components:
           type: array
           items:
             type: integer
+          readOnly: true
         user:
           allOf:
           - $ref: '#/components/schemas/CustomUserPublic'
@@ -3874,6 +5772,43 @@ components:
           type: string
           format: date-time
           readOnly: true
+    PatchedMessage:
+      type: object
+      description: Message serializer with author username for display.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        team:
+          type: integer
+          readOnly: true
+        author:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: Author of the message. SET_NULL on user deletion.
+        author_username:
+          type: string
+          readOnly: true
+        content:
+          type: string
+          description: Rich HTML content (sanitized via bleach on save).
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        edited_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          description: Set when the message is edited after creation.
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          description: Soft delete timestamp. Non-null = deleted.
     PatchedModalityAdmin:
       type: object
       description: 'Admin flavor: per-language name variants + writable sport FK.'
@@ -3910,6 +5845,45 @@ components:
           type: integer
         is_active:
           type: boolean
+    PatchedNote:
+      type: object
+      description: |-
+        Serializer for Note. team/member/author are derived from the URL
+        and the request user; they are read-only here. The 'content' field
+        is sanitized via bleach on every write.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        team:
+          type: integer
+          readOnly: true
+        member:
+          type: integer
+          readOnly: true
+        author:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: The coach who wrote this note. SET_NULL if the author account
+            is deleted.
+        author_username:
+          type: string
+          readOnly: true
+        content:
+          type: string
+          description: Rich HTML content (sanitized via bleach on save).
+        is_active:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
     PatchedProgram:
       type: object
       properties:
@@ -3935,10 +5909,6 @@ components:
           type: integer
           writeOnly: true
         events:
-          type: array
-          items:
-            type: integer
-        members:
           type: array
           items:
             type: integer
@@ -4097,6 +6067,24 @@ components:
           type: boolean
         is_public:
           type: boolean
+        chat_mode:
+          allOf:
+          - $ref: '#/components/schemas/ChatModeEnum'
+          description: |-
+            Defines who can post messages in the team chat.
+
+            * `all` - All members can post
+            * `coaches_only` - Only coaches can post
+        athlete_can_read_notes:
+          type: boolean
+          description: If True, athletes can read their own coach notes. Default False
+            (notes are coach-only).
+        attendance_statuses:
+          type: array
+          items:
+            type: integer
+          description: 'Statuses available for marking attendance in this team''s
+            events. Default: present, absent, excused.'
         created_at:
           type: string
           format: date-time
@@ -4135,6 +6123,46 @@ components:
           type: integer
           readOnly: true
           nullable: true
+    PatchedTeamMembership:
+      type: object
+      description: |-
+        Read/write serializer for TeamMembership.
+
+        `team` is set by the view from URL kwargs; only `member` is accepted on POST.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        team:
+          type: integer
+          readOnly: true
+        member:
+          type: integer
+        member_username:
+          type: string
+          readOnly: true
+        member_fullname:
+          type: string
+          readOnly: true
+        joined_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: When this athlete joined the team.
+        left_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          description: When this athlete left the team. NULL = currently active.
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
     Program:
       type: object
       properties:
@@ -4160,10 +6188,6 @@ components:
           type: integer
           writeOnly: true
         events:
-          type: array
-          items:
-            type: integer
-        members:
           type: array
           items:
             type: integer
@@ -4392,6 +6416,24 @@ components:
           type: boolean
         is_public:
           type: boolean
+        chat_mode:
+          allOf:
+          - $ref: '#/components/schemas/ChatModeEnum'
+          description: |-
+            Defines who can post messages in the team chat.
+
+            * `all` - All members can post
+            * `coaches_only` - Only coaches can post
+        athlete_can_read_notes:
+          type: boolean
+          description: If True, athletes can read their own coach notes. Default False
+            (notes are coach-only).
+        attendance_statuses:
+          type: array
+          items:
+            type: integer
+          description: 'Statuses available for marking attendance in this team''s
+            events. Default: present, absent, excused.'
         created_at:
           type: string
           format: date-time
@@ -4492,6 +6534,56 @@ components:
       - responded_by
       - team
       - user
+    TeamMembership:
+      type: object
+      description: |-
+        Read/write serializer for TeamMembership.
+
+        `team` is set by the view from URL kwargs; only `member` is accepted on POST.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        team:
+          type: integer
+          readOnly: true
+        member:
+          type: integer
+        member_username:
+          type: string
+          readOnly: true
+        member_fullname:
+          type: string
+          readOnly: true
+        joined_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: When this athlete joined the team.
+        left_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          description: When this athlete left the team. NULL = currently active.
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - joined_at
+      - left_at
+      - member
+      - member_fullname
+      - member_username
+      - team
+      - updated_at
     TeamMinimal:
       type: object
       description: Compact team payload for nested read contexts.

@@ -4,7 +4,33 @@
     "logout": "Déconnexion"
   },
   "nav": {
+    "teams": "Équipes",
     "admin": "Admin"
+  },
+  "teams": {
+    "list": {
+      "title": "Mes équipes",
+      "empty": "Vous n'avez encore aucune équipe."
+    },
+    "detail": {
+      "no_managers": "Aucun manager",
+      "no_members": "Aucun membre actif",
+      "joined_at": "Rejoint le",
+      "not_found": "Équipe introuvable"
+    },
+    "roles": {
+      "owner": "Propriétaire",
+      "manager": "Manager",
+      "member": "Membre"
+    },
+    "fields": {
+      "name": "Nom",
+      "sport": "Sport",
+      "language": "Langue",
+      "owner": "Propriétaire",
+      "managers": "Managers",
+      "members": "Membres"
+    }
   },
   "common": {
     "save": "Enregistrer",
@@ -17,6 +43,50 @@
   "dashboard": {
     "greeting": "Bonjour {{name}} 👋",
     "coming_soon": "Tableau de bord à venir."
+  },
+  "home": {
+    "nav": {
+      "home": "Accueil",
+      "features": "Fonctionnalités",
+      "contribute": "Contribuer",
+      "sign_up": "S'inscrire",
+      "toggle": "Ouvrir le menu"
+    },
+    "hero": {
+      "tagline": "Pour les coachs et leurs équipes",
+      "title": "Gérez vos équipes. Planifiez vos entraînements. Progressez ensemble.",
+      "subtitle": "Training Manager rassemble l'équipe, le planning, les présences et les statistiques dans un seul outil pensé pour les coachs.",
+      "cta_primary": "Commencer gratuitement",
+      "cta_secondary": "Voir les fonctionnalités"
+    },
+    "features": {
+      "section_title": "Tout ce dont votre équipe a besoin",
+      "section_subtitle": "Une plateforme complète pour gérer le quotidien sportif, du vestiaire au terrain.",
+      "teams": {
+        "title": "Équipes & chat",
+        "description": "Rassemblez joueurs, coachs et managers dans des équipes dédiées et discutez en temps réel."
+      },
+      "training": {
+        "title": "Plan d'entraînement",
+        "description": "Construisez vos cycles, partagez vos séances et adaptez la charge à chaque athlète."
+      },
+      "attendance": {
+        "title": "Présences",
+        "description": "Suivez en un clic les présences à l'entraînement et aux matchs, et anticipez les absences."
+      },
+      "stats": {
+        "title": "Statistiques",
+        "description": "Visualisez la progression de votre équipe avec des indicateurs clairs et personnalisables."
+      }
+    },
+    "contribute": {
+      "title": "Open source, par les coachs, pour les coachs",
+      "description": "Training Manager est un projet open source. Apportez vos idées, signalez les bugs, proposez des évolutions — chaque contribution compte.",
+      "github": "Voir sur GitHub"
+    },
+    "footer": {
+      "rights": "© 2026 Training Manager. Tous droits réservés."
+    }
   },
   "auth": {
     "login": {

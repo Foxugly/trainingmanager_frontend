@@ -4,7 +4,33 @@
     "logout": "Afmelden"
   },
   "nav": {
+    "teams": "Teams",
     "admin": "Beheer"
+  },
+  "teams": {
+    "list": {
+      "title": "Mijn teams",
+      "empty": "Je hebt nog geen teams."
+    },
+    "detail": {
+      "no_managers": "Geen managers",
+      "no_members": "Geen actieve leden",
+      "joined_at": "Lid sinds",
+      "not_found": "Team niet gevonden"
+    },
+    "roles": {
+      "owner": "Eigenaar",
+      "manager": "Manager",
+      "member": "Lid"
+    },
+    "fields": {
+      "name": "Naam",
+      "sport": "Sport",
+      "language": "Taal",
+      "owner": "Eigenaar",
+      "managers": "Managers",
+      "members": "Leden"
+    }
   },
   "common": {
     "save": "Opslaan",
@@ -17,6 +43,50 @@
   "dashboard": {
     "greeting": "Hallo {{name}} 👋",
     "coming_soon": "Dashboard komt eraan."
+  },
+  "home": {
+    "nav": {
+      "home": "Home",
+      "features": "Functies",
+      "contribute": "Bijdragen",
+      "sign_up": "Aanmelden",
+      "toggle": "Menu openen"
+    },
+    "hero": {
+      "tagline": "Voor coaches en hun teams",
+      "title": "Beheer je teams. Plan je trainingen. Groei samen.",
+      "subtitle": "Training Manager brengt je team, planning, aanwezigheden en statistieken samen in één tool, gemaakt voor coaches.",
+      "cta_primary": "Gratis starten",
+      "cta_secondary": "Bekijk de functies"
+    },
+    "features": {
+      "section_title": "Alles wat je team nodig heeft",
+      "section_subtitle": "Een complete tool voor de dagelijkse sportwerking, van kleedkamer tot veld.",
+      "teams": {
+        "title": "Teams & chat",
+        "description": "Verzamel spelers, coaches en managers in toegewijde teams en chat in realtime."
+      },
+      "training": {
+        "title": "Trainingsplan",
+        "description": "Bouw je cycli op, deel je sessies en stem de belasting af op elke atleet."
+      },
+      "attendance": {
+        "title": "Aanwezigheden",
+        "description": "Volg met één klik de aanwezigheden voor trainingen en wedstrijden, en anticipeer op afwezigheden."
+      },
+      "stats": {
+        "title": "Statistieken",
+        "description": "Visualiseer de evolutie van je team met heldere, aanpasbare indicatoren."
+      }
+    },
+    "contribute": {
+      "title": "Open source — door coaches, voor coaches",
+      "description": "Training Manager is een open source project. Deel ideeën, meld bugs, stel verbeteringen voor — elke bijdrage telt.",
+      "github": "Bekijk op GitHub"
+    },
+    "footer": {
+      "rights": "© 2026 Training Manager. Alle rechten voorbehouden."
+    }
   },
   "auth": {
     "login": {

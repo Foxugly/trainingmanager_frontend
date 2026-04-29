@@ -1,6 +1,9 @@
 export * from './ai.service';
 import { AiService } from './ai.service';
 export * from './ai.serviceInterface';
+export * from './attendance-statuses.service';
+import { AttendanceStatusesService } from './attendance-statuses.service';
+export * from './attendance-statuses.serviceInterface';
 export * from './auth.service';
 import { AuthService } from './auth.service';
 export * from './auth.serviceInterface';
@@ -40,4 +43,4 @@ export * from './sports.serviceInterface';
 export * from './teams.service';
 import { TeamsService } from './teams.service';
 export * from './teams.serviceInterface';
-export const APIS = [AiService, AuthService, EnergySegmentsService, EnergySystemsService, EventsService, ExercisesService, InvitationsService, JoinRequestsService, MeService, MembersService, ProgramsService, RoundsService, SportsService, TeamsService];
+export const APIS = [AiService, AttendanceStatusesService, AuthService, EnergySegmentsService, EnergySystemsService, EventsService, ExercisesService, InvitationsService, JoinRequestsService, MeService, MembersService, ProgramsService, RoundsService, SportsService, TeamsService];

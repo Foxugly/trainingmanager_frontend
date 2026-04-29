@@ -1,0 +1,201 @@
+<div class="min-h-screen bg-white text-gray-900">
+  <header class="sticky top-0 z-30 border-b border-gray-200/60 bg-white/80 backdrop-blur">
+    <div class="container mx-auto flex items-center justify-between px-6 py-4">
+      <a href="#hero" class="flex items-center gap-2 text-lg font-semibold tracking-tight" (click)="closeMobileMenu()">
+        <span
+          class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 text-white shadow-sm"
+          aria-hidden="true"
+        >
+          <i class="pi pi-bolt text-base"></i>
+        </span>
+        <span>{{ 'app.title' | transloco }}</span>
+      </a>
+
+      <nav class="hidden items-center gap-8 md:flex" aria-label="Primary">
+        <a href="#hero" class="text-sm font-medium text-gray-700 transition hover:text-indigo-600">
+          {{ 'home.nav.home' | transloco }}
+        </a>
+        <a href="#features" class="text-sm font-medium text-gray-700 transition hover:text-indigo-600">
+          {{ 'home.nav.features' | transloco }}
+        </a>
+        <a href="#contribute" class="text-sm font-medium text-gray-700 transition hover:text-indigo-600">
+          {{ 'home.nav.contribute' | transloco }}
+        </a>
+      </nav>
+
+      <div class="hidden items-center gap-3 md:flex">
+        <app-language-switcher />
+        <a
+          [routerLink]="['/login']"
+          class="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:from-indigo-500 hover:to-violet-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+        >
+          {{ 'home.nav.sign_up' | transloco }}
+        </a>
+      </div>
+
+      <button
+        type="button"
+        class="inline-flex h-10 w-10 items-center justify-center rounded-lg text-gray-700 transition hover:bg-gray-100 md:hidden"
+        [attr.aria-expanded]="mobileMenuOpen()"
+        [attr.aria-label]="'home.nav.toggle' | transloco"
+        (click)="toggleMobileMenu()"
+      >
+        <i class="pi" [class.pi-bars]="!mobileMenuOpen()" [class.pi-times]="mobileMenuOpen()"></i>
+      </button>
+    </div>
+
+    @if (mobileMenuOpen()) {
+      <div class="border-t border-gray-200 bg-white md:hidden">
+        <div class="container mx-auto flex flex-col gap-4 px-6 py-4">
+          <a href="#hero" class="text-sm font-medium text-gray-700" (click)="closeMobileMenu()">
+            {{ 'home.nav.home' | transloco }}
+          </a>
+          <a href="#features" class="text-sm font-medium text-gray-700" (click)="closeMobileMenu()">
+            {{ 'home.nav.features' | transloco }}
+          </a>
+          <a href="#contribute" class="text-sm font-medium text-gray-700" (click)="closeMobileMenu()">
+            {{ 'home.nav.contribute' | transloco }}
+          </a>
+          <div class="flex items-center justify-between gap-3 border-t border-gray-100 pt-4">
+            <app-language-switcher />
+            <a
+              [routerLink]="['/login']"
+              class="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-sm"
+              (click)="closeMobileMenu()"
+            >
+              {{ 'home.nav.sign_up' | transloco }}
+            </a>
+          </div>
+        </div>
+      </div>
+    }
+  </header>
+
+  <main>
+    <section id="hero" class="relative overflow-hidden">
+      <div
+        class="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-indigo-50 via-white to-violet-50"
+        aria-hidden="true"
+      ></div>
+      <div
+        class="pointer-events-none absolute -top-32 right-0 -z-10 h-[28rem] w-[28rem] rounded-full bg-gradient-to-br from-indigo-200/60 to-violet-200/40 blur-3xl"
+        aria-hidden="true"
+      ></div>
+      <div
+        class="pointer-events-none absolute -bottom-40 -left-32 -z-10 h-[28rem] w-[28rem] rounded-full bg-gradient-to-br from-emerald-100/60 to-cyan-100/40 blur-3xl"
+        aria-hidden="true"
+      ></div>
+
+      <div class="container mx-auto px-6 py-20 md:py-28">
+        <div class="mx-auto max-w-3xl text-center">
+          <span class="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-white/70 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-indigo-700 shadow-sm">
+            <i class="pi pi-sparkles text-[10px]" aria-hidden="true"></i>
+            {{ 'home.hero.tagline' | transloco }}
+          </span>
+          <h1 class="mt-6 text-4xl font-extrabold leading-tight tracking-tight text-gray-900 md:text-6xl">
+            {{ 'home.hero.title' | transloco }}
+          </h1>
+          <p class="mt-6 text-lg text-gray-600 md:text-xl">
+            {{ 'home.hero.subtitle' | transloco }}
+          </p>
+          <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <a
+              [routerLink]="['/login']"
+              class="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 px-7 py-3 text-base font-semibold text-white shadow-lg shadow-indigo-500/20 transition hover:from-indigo-500 hover:to-violet-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+            >
+              {{ 'home.hero.cta_primary' | transloco }}
+              <i class="pi pi-arrow-right text-sm" aria-hidden="true"></i>
+            </a>
+            <a
+              href="#features"
+              class="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-7 py-3 text-base font-semibold text-gray-800 transition hover:border-indigo-300 hover:text-indigo-700"
+            >
+              {{ 'home.hero.cta_secondary' | transloco }}
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="border-y border-gray-100 bg-white py-20 md:py-28">
+      <div class="container mx-auto px-6">
+        <div class="mx-auto max-w-2xl text-center">
+          <h2 class="text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">
+            {{ 'home.features.section_title' | transloco }}
+          </h2>
+          <p class="mt-4 text-base text-gray-600 md:text-lg">
+            {{ 'home.features.section_subtitle' | transloco }}
+          </p>
+        </div>
+
+        <div class="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          @for (f of features; track f.key) {
+            <article
+              class="group relative flex flex-col rounded-2xl border border-gray-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-lg"
+            >
+              <div
+                class="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl"
+                [class]="toneClasses[f.tone]"
+                aria-hidden="true"
+              >
+                <i class="pi text-xl" [class]="f.icon"></i>
+              </div>
+              <h3 class="text-lg font-semibold text-gray-900">
+                {{ 'home.features.' + f.key + '.title' | transloco }}
+              </h3>
+              <p class="mt-3 text-sm leading-relaxed text-gray-600">
+                {{ 'home.features.' + f.key + '.description' | transloco }}
+              </p>
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section id="contribute" class="bg-gradient-to-br from-gray-900 via-indigo-950 to-violet-950 py-20 text-white md:py-28">
+      <div class="container mx-auto px-6">
+        <div class="mx-auto max-w-3xl text-center">
+          <span class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-indigo-200">
+            <i class="pi pi-github text-[10px]" aria-hidden="true"></i>
+            {{ 'home.nav.contribute' | transloco }}
+          </span>
+          <h2 class="mt-6 text-3xl font-bold tracking-tight md:text-4xl">
+            {{ 'home.contribute.title' | transloco }}
+          </h2>
+          <p class="mt-4 text-base text-indigo-100/90 md:text-lg">
+            {{ 'home.contribute.description' | transloco }}
+          </p>
+          <div class="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <a
+              href="https://github.com/foxugly/trainingmanager"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-7 py-3 text-base font-semibold text-gray-900 shadow-md transition hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-indigo-950"
+            >
+              <i class="pi pi-github" aria-hidden="true"></i>
+              {{ 'home.contribute.github' | transloco }}
+            </a>
+            <a
+              [routerLink]="['/login']"
+              class="inline-flex items-center justify-center gap-2 rounded-lg border border-white/30 bg-white/0 px-7 py-3 text-base font-semibold text-white transition hover:bg-white/10"
+            >
+              {{ 'home.hero.cta_primary' | transloco }}
+              <i class="pi pi-arrow-right text-sm" aria-hidden="true"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-gray-200 bg-white py-8">
+    <div class="container mx-auto flex flex-col items-center justify-between gap-4 px-6 text-sm text-gray-500 md:flex-row">
+      <p>{{ 'home.footer.rights' | transloco }}</p>
+      <div class="flex items-center gap-6">
+        <a href="#hero" class="transition hover:text-indigo-600">{{ 'home.nav.home' | transloco }}</a>
+        <a href="#features" class="transition hover:text-indigo-600">{{ 'home.nav.features' | transloco }}</a>
+        <a href="#contribute" class="transition hover:text-indigo-600">{{ 'home.nav.contribute' | transloco }}</a>
+      </div>
+    </div>
+  </footer>
+</div>

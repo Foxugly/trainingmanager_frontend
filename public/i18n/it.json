@@ -4,7 +4,33 @@
     "logout": "Disconnetti"
   },
   "nav": {
+    "teams": "Squadre",
     "admin": "Admin"
+  },
+  "teams": {
+    "list": {
+      "title": "Le mie squadre",
+      "empty": "Non hai ancora nessuna squadra."
+    },
+    "detail": {
+      "no_managers": "Nessun manager",
+      "no_members": "Nessun membro attivo",
+      "joined_at": "Iscritto il",
+      "not_found": "Squadra non trovata"
+    },
+    "roles": {
+      "owner": "Proprietario",
+      "manager": "Manager",
+      "member": "Membro"
+    },
+    "fields": {
+      "name": "Nome",
+      "sport": "Sport",
+      "language": "Lingua",
+      "owner": "Proprietario",
+      "managers": "Manager",
+      "members": "Membri"
+    }
   },
   "common": {
     "save": "Salva",
@@ -17,6 +43,50 @@
   "dashboard": {
     "greeting": "Ciao {{name}} 👋",
     "coming_soon": "Dashboard in arrivo."
+  },
+  "home": {
+    "nav": {
+      "home": "Home",
+      "features": "Funzionalità",
+      "contribute": "Contribuisci",
+      "sign_up": "Registrati",
+      "toggle": "Apri il menu"
+    },
+    "hero": {
+      "tagline": "Per gli allenatori e le loro squadre",
+      "title": "Gestisci le tue squadre. Pianifica gli allenamenti. Cresci insieme.",
+      "subtitle": "Training Manager riunisce squadra, calendario, presenze e statistiche in un unico strumento pensato per gli allenatori.",
+      "cta_primary": "Inizia gratis",
+      "cta_secondary": "Scopri le funzionalità"
+    },
+    "features": {
+      "section_title": "Tutto ciò di cui la tua squadra ha bisogno",
+      "section_subtitle": "Una piattaforma completa per la quotidianità sportiva, dallo spogliatoio al campo.",
+      "teams": {
+        "title": "Squadre & chat",
+        "description": "Riunisci giocatori, allenatori e manager in squadre dedicate e chatta in tempo reale."
+      },
+      "training": {
+        "title": "Piano di allenamento",
+        "description": "Costruisci i tuoi cicli, condividi le sedute e adatta il carico a ogni atleta."
+      },
+      "attendance": {
+        "title": "Presenze",
+        "description": "Tieni traccia delle presenze ad allenamenti e partite con un clic e anticipa le assenze."
+      },
+      "stats": {
+        "title": "Statistiche",
+        "description": "Visualizza i progressi della tua squadra con indicatori chiari e personalizzabili."
+      }
+    },
+    "contribute": {
+      "title": "Open source — dagli allenatori, per gli allenatori",
+      "description": "Training Manager è un progetto open source. Condividi idee, segnala bug, proponi miglioramenti — ogni contributo conta.",
+      "github": "Visualizza su GitHub"
+    },
+    "footer": {
+      "rights": "© 2026 Training Manager. Tutti i diritti riservati."
+    }
   },
   "auth": {
     "login": {

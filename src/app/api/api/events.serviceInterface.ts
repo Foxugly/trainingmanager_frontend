@@ -11,9 +11,13 @@ import { HttpHeaders }                                       from '@angular/comm
 
 import { Observable }                                        from 'rxjs';
 
+import { Attendance } from '../model/models';
+import { AttendanceBulk } from '../model/models';
 import { Event } from '../model/models';
 import { GenerateTrainingResponse } from '../model/models';
+import { PaginatedAttendanceList } from '../model/models';
 import { PaginatedEventList } from '../model/models';
+import { PatchedAttendance } from '../model/models';
 import { PatchedEvent } from '../model/models';
 
 
@@ -24,6 +28,73 @@ import { Configuration }                                     from '../configurat
 export interface EventsServiceInterface {
     defaultHeaders: HttpHeaders;
     configuration: Configuration;
+
+    /**
+     * Bulk set attendances for an event
+     * Creates or updates multiple attendance rows in a single atomic call. For each item: if (event, member) exists, update status; otherwise, create new. Members not in the payload are NOT touched. All-or-nothing: any validation error rolls back the entire batch.
+     * @endpoint post /api/v1/events/{event_pk}/attendance/bulk/
+     * @param eventPk 
+     * @param attendanceBulk 
+     */
+    eventsAttendanceBulkCreate(eventPk: number, attendanceBulk: AttendanceBulk, extraHttpRequestParams?: any): Observable<PaginatedAttendanceList>;
+
+    /**
+     * Create an attendance row (coach only)
+     * Member must be in the team via an active TeamMembership. Returns 400 if a row already exists for (event, member) — use PATCH.
+     * @endpoint post /api/v1/events/{event_pk}/attendance/
+     * @param eventPk 
+     * @param attendance 
+     */
+    eventsAttendanceCreate(eventPk: number, attendance: Attendance, extraHttpRequestParams?: any): Observable<Attendance>;
+
+    /**
+     * Delete an attendance row (coach only)
+     * CRUD on event attendance.  URL: /api/v1/events/{event_pk}/attendance/
+     * @endpoint delete /api/v1/events/{event_pk}/attendance/{id}/
+     * @param eventPk 
+     * @param id A unique integer value identifying this attendance.
+     */
+    eventsAttendanceDestroy(eventPk: number, id: number, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * List attendance for an event
+     * Returns all attendance rows. Coaches see everyone; athletes see only their own row.
+     * @endpoint get /api/v1/events/{event_pk}/attendance/
+     * @param eventPk 
+     * @param ordering Which field to use when ordering the results.
+     * @param page A page number within the paginated result set.
+     * @param search A search term.
+     */
+    eventsAttendanceList(eventPk: number, ordering?: string, page?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedAttendanceList>;
+
+    /**
+     * Update attendance status (coach only)
+     * CRUD on event attendance.  URL: /api/v1/events/{event_pk}/attendance/
+     * @endpoint patch /api/v1/events/{event_pk}/attendance/{id}/
+     * @param eventPk 
+     * @param id A unique integer value identifying this attendance.
+     * @param patchedAttendance 
+     */
+    eventsAttendancePartialUpdate(eventPk: number, id: number, patchedAttendance?: PatchedAttendance, extraHttpRequestParams?: any): Observable<Attendance>;
+
+    /**
+     * Retrieve a single attendance row
+     * CRUD on event attendance.  URL: /api/v1/events/{event_pk}/attendance/
+     * @endpoint get /api/v1/events/{event_pk}/attendance/{id}/
+     * @param eventPk 
+     * @param id A unique integer value identifying this attendance.
+     */
+    eventsAttendanceRetrieve(eventPk: number, id: number, extraHttpRequestParams?: any): Observable<Attendance>;
+
+    /**
+     * Replace attendance row (coach only)
+     * CRUD on event attendance.  URL: /api/v1/events/{event_pk}/attendance/
+     * @endpoint put /api/v1/events/{event_pk}/attendance/{id}/
+     * @param eventPk 
+     * @param id A unique integer value identifying this attendance.
+     * @param attendance 
+     */
+    eventsAttendanceUpdate(eventPk: number, id: number, attendance: Attendance, extraHttpRequestParams?: any): Observable<Attendance>;
 
     /**
      * 

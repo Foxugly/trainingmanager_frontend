@@ -1,0 +1,79 @@
+<div>
+  <a [routerLink]="['/teams']" class="text-sm text-blue-600 hover:underline">
+    ← {{ 'common.back' | transloco }}
+  </a>
+
+  @if (loading()) {
+    <p class="mt-4 text-gray-500">{{ 'common.loading' | transloco }}…</p>
+  } @else if (notFound()) {
+    <p class="mt-4 text-gray-500">{{ 'teams.detail.not_found' | transloco }}</p>
+  } @else if (team(); as t) {
+    <div class="mt-2">
+      <div class="flex items-center gap-3 mb-6">
+        <h1 class="text-2xl font-bold">{{ t.name }}</h1>
+        @if (currentUserRole(); as role) {
+          <span [class]="roleClasses[role]">
+            {{ 'teams.roles.' + role | transloco }}
+          </span>
+        }
+      </div>
+
+      <dl class="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2 mb-6 max-w-xl">
+        <dt class="font-semibold text-gray-700">{{ 'teams.fields.sport' | transloco }}</dt>
+        <dd>{{ t.sport?.name || '—' }}</dd>
+
+        <dt class="font-semibold text-gray-700">{{ 'teams.fields.language' | transloco }}</dt>
+        <dd>{{ (t.language || '') | uppercase }}</dd>
+
+        <dt class="font-semibold text-gray-700">{{ 'teams.fields.owner' | transloco }}</dt>
+        <dd>
+          {{ t.owner?.first_name || t.owner?.username || '—' }}
+          @if (t.owner?.username && t.owner?.first_name) {
+            <span class="text-gray-500 text-sm">({{ t.owner?.username }})</span>
+          }
+        </dd>
+      </dl>
+
+      <section class="mb-6">
+        <h2 class="text-lg font-semibold mb-2">
+          {{ 'teams.fields.managers' | transloco }} ({{ t.managers?.length || 0 }})
+        </h2>
+        @if (t.managers && t.managers.length > 0) {
+          <ul class="list-disc pl-5 text-gray-700">
+            @for (m of t.managers; track m) {
+              <li>#{{ m }}</li>
+            }
+          </ul>
+        } @else {
+          <p class="text-gray-500">{{ 'teams.detail.no_managers' | transloco }}</p>
+        }
+      </section>
+
+      <section class="mb-6">
+        <h2 class="text-lg font-semibold mb-2">
+          {{ 'teams.fields.members' | transloco }} ({{ memberships().length }})
+        </h2>
+        @if (memberships().length === 0) {
+          <p class="text-gray-500">{{ 'teams.detail.no_members' | transloco }}</p>
+        } @else {
+          <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
+            @for (mb of memberships(); track mb.id) {
+              <li class="p-3 flex justify-between items-center">
+                <div>
+                  <span class="font-medium">{{ mb.member_fullname || mb.member_username }}</span>
+                  @if (mb.member_fullname && mb.member_username) {
+                    <span class="text-gray-500 text-sm ml-2">{{ mb.member_username }}</span>
+                  }
+                </div>
+                <span class="text-xs text-gray-500">
+                  {{ 'teams.detail.joined_at' | transloco }}
+                  {{ mb.joined_at | date: 'mediumDate' }}
+                </span>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    </div>
+  }
+</div>

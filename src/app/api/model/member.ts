@@ -17,7 +17,7 @@ export interface Member {
     readonly fullname: string;
     email?: string | null;
     phonenumber?: string | null;
-    teams?: Array<number>;
+    readonly teams: Array<number>;
     readonly user: CustomUserPublic;
     user_id?: number | null;
     readonly created_at: string;

@@ -22,7 +22,7 @@ export interface PatchedEvent {
     readonly refer_program?: ProgramMinimal;
     refer_program_id?: number;
     rounds?: Array<number>;
-    members?: Array<number>;
+    readonly members?: Array<number>;
     readonly generated_by_ai?: boolean;
     readonly ai_response?: string;
     readonly ai_generated_at?: string | null;

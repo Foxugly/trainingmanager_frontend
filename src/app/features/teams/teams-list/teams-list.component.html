@@ -1,0 +1,30 @@
+<div>
+  <h1 class="text-2xl font-bold mb-6">{{ 'teams.list.title' | transloco }}</h1>
+
+  @if (loading()) {
+    <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+  } @else if (teamsWithRole().length === 0) {
+    <div class="text-center py-12 text-gray-500">
+      <p>{{ 'teams.list.empty' | transloco }}</p>
+    </div>
+  } @else {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      @for (team of teamsWithRole(); track team.id) {
+        <a
+          [routerLink]="['/teams', team.id]"
+          class="block p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md hover:border-blue-300 transition"
+        >
+          <div class="flex justify-between items-start mb-2 gap-2">
+            <h2 class="font-semibold text-lg text-gray-900">{{ team.name }}</h2>
+            <span [class]="roleClasses[team.role]">
+              {{ 'teams.roles.' + team.role | transloco }}
+            </span>
+          </div>
+          <p class="text-sm text-gray-600">
+            {{ team.sport?.name }} · {{ (team.language || '') | uppercase }}
+          </p>
+        </a>
+      }
+    </div>
+  }
+</div>

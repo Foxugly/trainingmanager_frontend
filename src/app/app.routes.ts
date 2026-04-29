@@ -7,6 +7,11 @@ import { MainLayoutComponent } from './core/layout/main-layout/main-layout.compo
 
 export const routes: Routes = [
   {
+    path: 'home',
+    loadComponent: () =>
+      import('./features/home/home.component').then((m) => m.HomeComponent),
+  },
+  {
     path: 'login',
     component: AuthLayoutComponent,
     children: [
@@ -72,6 +77,25 @@ export const routes: Routes = [
         path: 'profile',
         loadComponent: () =>
           import('./features/profile/profile.component').then((m) => m.ProfileComponent),
+      },
+      {
+        path: 'teams',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./features/teams/teams-list/teams-list.component').then(
+                (m) => m.TeamsListComponent,
+              ),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./features/teams/teams-detail/teams-detail.component').then(
+                (m) => m.TeamsDetailComponent,
+              ),
+          },
+        ],
       },
       { path: '**', redirectTo: '' },
     ],

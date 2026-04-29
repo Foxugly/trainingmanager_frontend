@@ -1,0 +1,130 @@
+import { signal } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { provideRouter } from '@angular/router';
+import { TranslocoTestingModule } from '@jsverse/transloco';
+import { of } from 'rxjs';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { TeamsService } from '../../../api/api/teams.service';
+import { CustomUserPublic } from '../../../api/model/custom-user-public';
+import { LanguageEnum } from '../../../api/model/language-enum';
+import { Sport } from '../../../api/model/sport';
+import { Team } from '../../../api/model/team';
+import { AuthService } from '../../../core/auth/auth.service';
+import { TeamsListComponent, TeamRole, computeTeamRole } from './teams-list.component';
+
+const ownerUser = { id: 17, username: 'testfrontend' } as CustomUserPublic;
+const otherUser = { id: 20, username: 'coach2' } as CustomUserPublic;
+const sport: Sport = {
+  id: 1,
+  name: 'Natation',
+  slug: 'natation',
+  is_active: true,
+  energy_systems: [],
+  created_at: '2026-04-01T00:00:00Z',
+};
+
+function makeTeam(partial: Partial<Team>): Team {
+  return {
+    id: 0,
+    name: 'T',
+    sport,
+    sport_id: 1,
+    owner: ownerUser,
+    managers: [],
+    language: LanguageEnum.Fr,
+    is_active: true,
+    is_public: true,
+    attendance_statuses: [],
+    created_at: '2026-04-01T00:00:00Z',
+    updated_at: '2026-04-01T00:00:00Z',
+    ...partial,
+  };
+}
+
+const teamOwner = makeTeam({ id: 4, name: 'Team owner', owner: ownerUser });
+const teamManager = makeTeam({ id: 5, name: 'Team manager', owner: otherUser, managers: [17] });
+const teamMember = makeTeam({ id: 6, name: 'Team member', owner: otherUser, managers: [] });
+
+interface ProtectedFields {
+  teams(): Team[];
+  loading(): boolean;
+  teamsWithRole(): Array<Team & { role: TeamRole }>;
+}
+
+describe('computeTeamRole()', () => {
+  it('detects owner', () => {
+    expect(computeTeamRole(teamOwner, 17)).toBe('owner');
+  });
+  it('detects manager', () => {
+    expect(computeTeamRole(teamManager, 17)).toBe('manager');
+  });
+  it('falls back to member', () => {
+    expect(computeTeamRole(teamMember, 17)).toBe('member');
+  });
+});
+
+describe('TeamsListComponent', () => {
+  let fixture: ComponentFixture<TeamsListComponent>;
+  let component: TeamsListComponent;
+  let serviceMock: { teamsList: ReturnType<typeof vi.fn> };
+  let userSig: ReturnType<typeof signal<CustomUserPublic | null>>;
+
+  const access = (c: TeamsListComponent) => c as unknown as ProtectedFields;
+
+  async function setup(results: Team[] = [teamOwner, teamManager, teamMember]) {
+    TestBed.resetTestingModule();
+    serviceMock = {
+      teamsList: vi.fn().mockReturnValue(of({ count: results.length, results })),
+    };
+    userSig = signal<CustomUserPublic | null>(ownerUser);
+
+    await TestBed.configureTestingModule({
+      imports: [
+        TeamsListComponent,
+        TranslocoTestingModule.forRoot({
+          langs: { fr: {} },
+          translocoConfig: { availableLangs: ['fr'], defaultLang: 'fr' },
+        }),
+      ],
+      providers: [
+        provideNoopAnimations(),
+        provideRouter([]),
+        { provide: TeamsService, useValue: serviceMock },
+        {
+          provide: AuthService,
+          useValue: { currentUser: userSig.asReadonly() },
+        },
+      ],
+    })
+      .overrideComponent(TeamsListComponent, {
+        set: { template: '', imports: [] },
+      })
+      .compileComponents();
+
+    fixture = TestBed.createComponent(TeamsListComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  }
+
+  beforeEach(async () => {
+    await setup();
+  });
+
+  it('loads teams on init', () => {
+    expect(serviceMock.teamsList).toHaveBeenCalledTimes(1);
+    expect(access(component).teams().length).toBe(3);
+  });
+
+  it('shows empty state when no teams', async () => {
+    await setup([]);
+    expect(access(component).teamsWithRole()).toEqual([]);
+  });
+
+  it('computes role per team based on currentUser id', () => {
+    const list = access(component).teamsWithRole();
+    expect(list.find((t) => t.id === 4)?.role).toBe('owner');
+    expect(list.find((t) => t.id === 5)?.role).toBe('manager');
+    expect(list.find((t) => t.id === 6)?.role).toBe('member');
+  });
+});

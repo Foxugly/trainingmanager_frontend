@@ -35,4 +35,12 @@ describe('authGuard', () => {
     });
     expect(router.serializeUrl(result as UrlTree)).toBe(router.serializeUrl(expected));
   });
+
+  it('redirects anonymous users at root to /home', () => {
+    const result = runGuard({ url: '/' } as RouterStateSnapshot);
+    expect(result).toBeInstanceOf(UrlTree);
+
+    const expected = router.createUrlTree(['/home']);
+    expect(router.serializeUrl(result as UrlTree)).toBe(router.serializeUrl(expected));
+  });
 });
