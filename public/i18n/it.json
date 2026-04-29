@@ -8,6 +8,42 @@
     "programs": "Programmi",
     "admin": "Admin"
   },
+  "ai": {
+    "errors": {
+      "throttled": "Limite raggiunto. Riprova tra {{minutes}} minuto/i.",
+      "date_range_invalid": "La data di fine deve essere successiva alla data di inizio.",
+      "date_range_too_long": "Il periodo non può superare i 365 giorni.",
+      "validation": "Dati non validi. Controlla il modulo.",
+      "not_a_manager": "Solo il proprietario e i manager possono generare.",
+      "event_has_rounds": "Questa sessione ha già esercizi. Rimuovili prima di rigenerare.",
+      "configuration": "Servizio AI configurato male. Contatta l'amministratore.",
+      "service": "Il servizio AI ha fallito o è temporaneamente non disponibile. Riprova tra qualche minuto.",
+      "unknown": "Si è verificato un errore. Riprova."
+    }
+  },
+  "events": {
+    "detail": {
+      "regenerate": "Rigenera la sessione",
+      "not_found": "Sessione non trovata"
+    },
+    "fields": {
+      "date": "Data",
+      "program": "Programma",
+      "goal": "Obiettivo",
+      "total": "Volume",
+      "rounds_count": "Numero di blocchi"
+    },
+    "regenerate": {
+      "confirm_title": "Rigenerare questa sessione?",
+      "confirm_message": "L'AI genererà nuovi esercizi.",
+      "has_rounds_title": "Rigenerare questa sessione?",
+      "has_rounds_message": "Questa sessione ha già esercizi. Vuoi rimuoverli e rigenerare tutto?",
+      "delete_and_regen": "Elimina e rigenera",
+      "success_title": "Rigenerazione riuscita",
+      "success_summary": "{{rounds}} blocco/i, {{exercises}} esercizio/i creati, {{reused}} esercizio/i riutilizzati."
+    },
+    "unknown_program": "Programma sconosciuto"
+  },
   "programs": {
     "list": {
       "title": "Programmi",
@@ -16,7 +52,26 @@
     "detail": {
       "not_found": "Programma non trovato",
       "events_count": "Sessioni",
-      "events_label": "sessione/i pianificata/e"
+      "events_label": "sessione/i pianificata/e",
+      "generate": "Genera sessioni"
+    },
+    "generate": {
+      "dialog_title": "Generazione AI delle sessioni",
+      "date_start": "Data di inizio",
+      "date_end": "Data di fine",
+      "frequency_per_week": "Frequenza (sessioni/settimana)",
+      "frequency_help": "Da 1 a 14 sessioni a settimana",
+      "description": "Descrizione / obiettivi",
+      "description_placeholder": "Es. focus resistenza, preparazione gara, intensità progressiva…",
+      "description_help": "Specifica l'orientamento per guidare l'AI",
+      "overlap_strategy": "Strategia in caso di sovrapposizione",
+      "overlap": {
+        "add_only": "Aggiungi senza toccare le sessioni esistenti",
+        "replace": "Sostituisci le sessioni esistenti nel periodo"
+      },
+      "submit": "Genera",
+      "success_title": "Generazione riuscita",
+      "success_summary": "{{created}} sessione/i create, {{deleted}} sessione/i eliminate."
     },
     "fields": {
       "team": "Squadra",

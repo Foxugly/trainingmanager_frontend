@@ -1,0 +1,109 @@
+<p-dialog
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '32rem' }"
+  [closable]="!loading()"
+  [header]="'programs.generate.dialog_title' | transloco"
+>
+  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+    <div class="grid grid-cols-2 gap-4">
+      <div class="flex flex-col gap-1">
+        <label for="date_start" class="text-sm font-medium text-gray-700">
+          {{ 'programs.generate.date_start' | transloco }}
+        </label>
+        <p-datepicker
+          inputId="date_start"
+          formControlName="date_start"
+          dateFormat="dd/mm/yy"
+          [showIcon]="true"
+          appendTo="body"
+          styleClass="w-full"
+        />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label for="date_end" class="text-sm font-medium text-gray-700">
+          {{ 'programs.generate.date_end' | transloco }}
+        </label>
+        <p-datepicker
+          inputId="date_end"
+          formControlName="date_end"
+          dateFormat="dd/mm/yy"
+          [showIcon]="true"
+          appendTo="body"
+          styleClass="w-full"
+        />
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="frequency_per_week" class="text-sm font-medium text-gray-700">
+        {{ 'programs.generate.frequency_per_week' | transloco }}
+      </label>
+      <p-inputnumber
+        inputId="frequency_per_week"
+        formControlName="frequency_per_week"
+        [min]="1"
+        [max]="14"
+        [showButtons]="true"
+        styleClass="w-full"
+      />
+      <small class="text-xs text-gray-500">
+        {{ 'programs.generate.frequency_help' | transloco }}
+      </small>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="description" class="text-sm font-medium text-gray-700">
+        {{ 'programs.generate.description' | transloco }}
+      </label>
+      <textarea
+        pTextarea
+        id="description"
+        formControlName="description"
+        rows="3"
+        [placeholder]="'programs.generate.description_placeholder' | transloco"
+        class="w-full"
+      ></textarea>
+      <small class="text-xs text-gray-500">
+        {{ 'programs.generate.description_help' | transloco }}
+      </small>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="overlap_strategy" class="text-sm font-medium text-gray-700">
+        {{ 'programs.generate.overlap_strategy' | transloco }}
+      </label>
+      <p-select
+        inputId="overlap_strategy"
+        formControlName="overlap_strategy"
+        [options]="overlapOptions()"
+        optionLabel="label"
+        optionValue="value"
+        appendTo="body"
+        styleClass="w-full"
+      />
+    </div>
+
+    @if (errorMessage(); as msg) {
+      <p-message severity="error" [text]="msg" />
+    }
+
+    <div class="flex justify-end gap-2 pt-2">
+      <p-button
+        type="button"
+        severity="secondary"
+        [text]="true"
+        [label]="'common.cancel' | transloco"
+        [disabled]="loading()"
+        (onClick)="cancel()"
+      />
+      <p-button
+        type="submit"
+        icon="pi pi-sparkles"
+        [label]="'programs.generate.submit' | transloco"
+        [loading]="loading()"
+        [disabled]="form.invalid || loading()"
+      />
+    </div>
+  </form>
+</p-dialog>

@@ -1,0 +1,113 @@
+<div>
+  @if (event(); as e) {
+    <a
+      [routerLink]="['/programs', e.refer_program?.id]"
+      class="text-sm text-blue-600 hover:underline"
+    >
+      ← {{ 'common.back' | transloco }}
+    </a>
+  } @else {
+    <a [routerLink]="['/programs']" class="text-sm text-blue-600 hover:underline">
+      ← {{ 'common.back' | transloco }}
+    </a>
+  }
+
+  @if (loading() && !event()) {
+    <p class="mt-4 text-gray-500">{{ 'common.loading' | transloco }}…</p>
+  } @else if (notFound()) {
+    <p class="mt-4 text-gray-500">{{ 'events.detail.not_found' | transloco }}</p>
+  } @else if (event(); as e) {
+    <div class="mt-2">
+      <div class="flex items-start gap-3 mb-6 flex-wrap">
+        <div class="flex items-center gap-3 flex-wrap flex-1 min-w-0">
+          <h1 class="text-2xl font-bold">{{ e.name }}</h1>
+          @if (e.generated_by_ai) {
+            <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">
+              {{ 'programs.ai_generated' | transloco }}
+            </span>
+          }
+        </div>
+        @if (canRegenerate()) {
+          <p-button
+            [label]="'events.detail.regenerate' | transloco"
+            icon="pi pi-sparkles"
+            severity="secondary"
+            [loading]="regenerating()"
+            (onClick)="confirmRegenerate()"
+          />
+        }
+      </div>
+
+      <dl class="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2 mb-6 max-w-xl">
+        <dt class="font-semibold text-gray-700">{{ 'events.fields.date' | transloco }}</dt>
+        <dd>
+          @if (e.date) {
+            {{ e.date | date: 'fullDate' }}
+          } @else {
+            —
+          }
+        </dd>
+
+        <dt class="font-semibold text-gray-700">{{ 'events.fields.program' | transloco }}</dt>
+        <dd>
+          @if (e.refer_program) {
+            <a
+              [routerLink]="['/programs', e.refer_program.id]"
+              class="text-blue-600 hover:underline"
+            >
+              {{ e.refer_program.name }}
+            </a>
+          } @else {
+            <span class="text-gray-500">{{ 'events.unknown_program' | transloco }}</span>
+          }
+        </dd>
+
+        @if (e.goal) {
+          <dt class="font-semibold text-gray-700">{{ 'events.fields.goal' | transloco }}</dt>
+          <dd class="whitespace-pre-line">{{ e.goal }}</dd>
+        }
+
+        @if (e.total != null && e.total > 0) {
+          <dt class="font-semibold text-gray-700">{{ 'events.fields.total' | transloco }}</dt>
+          <dd>{{ e.total }}</dd>
+        }
+
+        <dt class="font-semibold text-gray-700">
+          {{ 'events.fields.rounds_count' | transloco }}
+        </dt>
+        <dd>{{ e.rounds?.length || 0 }}</dd>
+      </dl>
+
+      @if (lastResult(); as result) {
+        <div class="mb-6 p-4 bg-purple-50 border border-purple-200 rounded">
+          <h3 class="font-semibold text-purple-900 mb-2 flex items-center gap-2">
+            <i class="pi pi-check-circle"></i>
+            {{ 'events.regenerate.success_title' | transloco }}
+          </h3>
+          <p class="text-sm text-purple-800 mb-2">
+            {{
+              'events.regenerate.success_summary'
+                | transloco
+                  : {
+                      rounds: result.rounds_created,
+                      exercises: result.exercises_created,
+                      reused: result.exercises_reused,
+                    }
+            }}
+          </p>
+          @if (result.rationale) {
+            <div class="text-sm text-gray-700 italic whitespace-pre-line">
+              {{ result.rationale }}
+            </div>
+          }
+        </div>
+      }
+
+      @if (errorMessage(); as msg) {
+        <p-message severity="error" [text]="msg" />
+      }
+    </div>
+  }
+</div>
+
+<p-confirmDialog />

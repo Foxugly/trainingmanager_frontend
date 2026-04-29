@@ -8,6 +8,42 @@
     "programs": "Programmes",
     "admin": "Admin"
   },
+  "ai": {
+    "errors": {
+      "throttled": "Limite atteinte. Réessayez dans {{minutes}} minute(s).",
+      "date_range_invalid": "La date de fin doit être postérieure à la date de début.",
+      "date_range_too_long": "La période ne peut pas dépasser 365 jours.",
+      "validation": "Données invalides. Vérifiez le formulaire.",
+      "not_a_manager": "Seuls le propriétaire et les managers peuvent générer.",
+      "event_has_rounds": "Cette séance a déjà des exercices. Supprimez-les avant de régénérer.",
+      "configuration": "Service IA mal configuré. Contactez l'administrateur.",
+      "service": "Le service IA a échoué ou est temporairement indisponible. Réessayez dans quelques minutes.",
+      "unknown": "Une erreur est survenue. Réessayez."
+    }
+  },
+  "events": {
+    "detail": {
+      "regenerate": "Régénérer la séance",
+      "not_found": "Séance introuvable"
+    },
+    "fields": {
+      "date": "Date",
+      "program": "Programme",
+      "goal": "Objectif",
+      "total": "Volume",
+      "rounds_count": "Nombre de blocs"
+    },
+    "regenerate": {
+      "confirm_title": "Régénérer cette séance ?",
+      "confirm_message": "L'IA générera de nouveaux exercices.",
+      "has_rounds_title": "Régénérer cette séance ?",
+      "has_rounds_message": "Cette séance a déjà des exercices. Voulez-vous les supprimer et tout régénérer ?",
+      "delete_and_regen": "Supprimer et régénérer",
+      "success_title": "Régénération réussie",
+      "success_summary": "{{rounds}} bloc(s), {{exercises}} exercice(s) créé(s), {{reused}} exercice(s) réutilisé(s)."
+    },
+    "unknown_program": "Programme inconnu"
+  },
   "programs": {
     "list": {
       "title": "Programmes",
@@ -16,7 +52,26 @@
     "detail": {
       "not_found": "Programme introuvable",
       "events_count": "Séances",
-      "events_label": "séance(s) planifiée(s)"
+      "events_label": "séance(s) planifiée(s)",
+      "generate": "Générer des séances"
+    },
+    "generate": {
+      "dialog_title": "Génération IA des séances",
+      "date_start": "Date de début",
+      "date_end": "Date de fin",
+      "frequency_per_week": "Fréquence (séances/semaine)",
+      "frequency_help": "De 1 à 14 séances par semaine",
+      "description": "Description / objectifs",
+      "description_placeholder": "Ex : focus endurance, préparation compétition, intensité progressive…",
+      "description_help": "Précisez l'orientation pour guider l'IA",
+      "overlap_strategy": "Stratégie en cas de chevauchement",
+      "overlap": {
+        "add_only": "Ajouter sans toucher aux séances existantes",
+        "replace": "Remplacer les séances existantes dans la période"
+      },
+      "submit": "Générer",
+      "success_title": "Génération réussie",
+      "success_summary": "{{created}} séance(s) créée(s), {{deleted}} séance(s) supprimée(s)."
     },
     "fields": {
       "team": "Équipe",

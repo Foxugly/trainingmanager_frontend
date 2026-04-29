@@ -92,6 +92,18 @@ export const routes: Routes = [
           import('./features/profile/profile.component').then((m) => m.ProfileComponent),
       },
       {
+        path: 'events',
+        children: [
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./features/events/events-detail/events-detail.component').then(
+                (m) => m.EventsDetailComponent,
+              ),
+          },
+        ],
+      },
+      {
         path: 'programs',
         children: [
           {

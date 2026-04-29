@@ -8,6 +8,42 @@
     "programs": "Programma's",
     "admin": "Beheer"
   },
+  "ai": {
+    "errors": {
+      "throttled": "Limiet bereikt. Probeer het over {{minutes}} minuut(en) opnieuw.",
+      "date_range_invalid": "Einddatum moet na de startdatum liggen.",
+      "date_range_too_long": "De periode mag niet langer zijn dan 365 dagen.",
+      "validation": "Ongeldige gegevens. Controleer het formulier.",
+      "not_a_manager": "Alleen de eigenaar en managers kunnen genereren.",
+      "event_has_rounds": "Deze sessie heeft al oefeningen. Verwijder ze voordat je opnieuw genereert.",
+      "configuration": "AI-service onjuist geconfigureerd. Neem contact op met de beheerder.",
+      "service": "De AI-service is mislukt of tijdelijk niet beschikbaar. Probeer het over enkele minuten opnieuw.",
+      "unknown": "Er is iets misgegaan. Probeer het opnieuw."
+    }
+  },
+  "events": {
+    "detail": {
+      "regenerate": "Sessie opnieuw genereren",
+      "not_found": "Sessie niet gevonden"
+    },
+    "fields": {
+      "date": "Datum",
+      "program": "Programma",
+      "goal": "Doel",
+      "total": "Volume",
+      "rounds_count": "Aantal blokken"
+    },
+    "regenerate": {
+      "confirm_title": "Deze sessie opnieuw genereren?",
+      "confirm_message": "De AI zal nieuwe oefeningen genereren.",
+      "has_rounds_title": "Deze sessie opnieuw genereren?",
+      "has_rounds_message": "Deze sessie heeft al oefeningen. Wil je ze verwijderen en alles opnieuw genereren?",
+      "delete_and_regen": "Verwijderen en opnieuw genereren",
+      "success_title": "Generatie geslaagd",
+      "success_summary": "{{rounds}} blok(ken), {{exercises}} oefening(en) aangemaakt, {{reused}} oefening(en) hergebruikt."
+    },
+    "unknown_program": "Onbekend programma"
+  },
   "programs": {
     "list": {
       "title": "Programma's",
@@ -16,7 +52,26 @@
     "detail": {
       "not_found": "Programma niet gevonden",
       "events_count": "Sessies",
-      "events_label": "geplande sessie(s)"
+      "events_label": "geplande sessie(s)",
+      "generate": "Sessies genereren"
+    },
+    "generate": {
+      "dialog_title": "AI-generatie van sessies",
+      "date_start": "Startdatum",
+      "date_end": "Einddatum",
+      "frequency_per_week": "Frequentie (sessies/week)",
+      "frequency_help": "Van 1 tot 14 sessies per week",
+      "description": "Beschrijving / doelen",
+      "description_placeholder": "Bijv. focus op uithoudingsvermogen, wedstrijdvoorbereiding, progressieve intensiteit…",
+      "description_help": "Geef de oriëntatie aan om de AI te sturen",
+      "overlap_strategy": "Strategie bij overlap",
+      "overlap": {
+        "add_only": "Toevoegen zonder bestaande sessies te wijzigen",
+        "replace": "Bestaande sessies binnen de periode vervangen"
+      },
+      "submit": "Genereren",
+      "success_title": "Generatie geslaagd",
+      "success_summary": "{{created}} sessie(s) aangemaakt, {{deleted}} sessie(s) verwijderd."
     },
     "fields": {
       "team": "Team",
