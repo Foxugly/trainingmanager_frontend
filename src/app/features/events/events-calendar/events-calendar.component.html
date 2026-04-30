@@ -1,0 +1,105 @@
+<div>
+  <div class="flex items-center justify-between gap-4 mb-4 flex-wrap">
+    <h1 class="text-2xl font-bold">{{ 'events.calendar.title' | transloco }}</h1>
+    <div class="flex items-center gap-2">
+      <p-button
+        icon="pi pi-chevron-left"
+        severity="secondary"
+        [text]="true"
+        [rounded]="true"
+        [ariaLabel]="'events.calendar.previous_month' | transloco"
+        (onClick)="previousMonth()"
+      />
+      <h2 class="text-lg font-semibold capitalize min-w-[10rem] text-center">
+        {{ monthLabel() }}
+      </h2>
+      <p-button
+        icon="pi pi-chevron-right"
+        severity="secondary"
+        [text]="true"
+        [rounded]="true"
+        [ariaLabel]="'events.calendar.next_month' | transloco"
+        (onClick)="nextMonth()"
+      />
+      <p-button
+        [label]="'events.calendar.today' | transloco"
+        severity="secondary"
+        [text]="true"
+        size="small"
+        (onClick)="goToToday()"
+      />
+    </div>
+  </div>
+
+  <div class="flex gap-3 mb-4 flex-wrap">
+    <div class="flex flex-col gap-1 min-w-[14rem]">
+      <label class="text-xs font-medium text-gray-700">
+        {{ 'events.calendar.filter_teams' | transloco }}
+      </label>
+      <p-multiSelect
+        [options]="availableTeams()"
+        [(ngModel)]="selectedTeamIdsModel"
+        optionLabel="name"
+        optionValue="id"
+        [placeholder]="'events.calendar.filter_teams' | transloco"
+        [filter]="true"
+        styleClass="w-full"
+      />
+    </div>
+    <div class="flex flex-col gap-1 min-w-[14rem]">
+      <label class="text-xs font-medium text-gray-700">
+        {{ 'events.calendar.filter_programs' | transloco }}
+      </label>
+      <p-multiSelect
+        [options]="filteredAvailablePrograms()"
+        [(ngModel)]="selectedProgramIdsModel"
+        optionLabel="name"
+        optionValue="id"
+        [placeholder]="'events.calendar.filter_programs' | transloco"
+        [filter]="true"
+        [emptyMessage]="'events.calendar.no_programs' | transloco"
+        styleClass="w-full"
+      />
+    </div>
+  </div>
+
+  @if (loading()) {
+    <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+  }
+
+  <div class="grid grid-cols-7 gap-px bg-gray-200 rounded overflow-hidden border border-gray-200">
+    @for (label of weekDayLabels(); track label) {
+      <div class="bg-gray-50 px-2 py-1.5 text-xs font-semibold text-gray-700 text-center capitalize">
+        {{ label }}
+      </div>
+    }
+    @for (day of daysInGrid(); track dayKey(day)) {
+      <div
+        class="bg-white min-h-[6rem] p-1.5"
+        [class.bg-gray-50]="!isSameMonth(day, currentMonth())"
+        [class.opacity-60]="!isSameMonth(day, currentMonth())"
+      >
+        <div
+          class="text-xs mb-1 inline-flex items-center justify-center w-6 h-6 rounded-full"
+          [class.bg-indigo-600]="isToday(day)"
+          [class.text-white]="isToday(day)"
+          [class.font-semibold]="isToday(day)"
+          [class.text-gray-500]="!isToday(day)"
+        >
+          {{ day | date: 'd' }}
+        </div>
+        @for (event of eventsByDay().get(dayKey(day)) || []; track event.id) {
+          <a
+            [routerLink]="['/events', event.id]"
+            class="block text-xs px-1.5 py-1 mb-1 rounded truncate cursor-pointer hover:opacity-80 transition"
+            [style.background-color]="eventBgColor(event)"
+            [style.color]="eventTextColor(event)"
+            [title]="event.name"
+          >
+            {{ event.name }}
+          </a>
+        }
+      </div>
+    }
+  </div>
+</div>

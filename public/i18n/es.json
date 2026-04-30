@@ -6,6 +6,7 @@
   "nav": {
     "teams": "Equipos",
     "programs": "Programas",
+    "calendar": "Calendario",
     "admin": "Administración"
   },
   "ai": {
@@ -22,9 +23,22 @@
     }
   },
   "events": {
+    "calendar": {
+      "title": "Calendario",
+      "today": "Hoy",
+      "previous_month": "Mes anterior",
+      "next_month": "Mes siguiente",
+      "filter_teams": "Filtrar por equipo",
+      "filter_programs": "Filtrar por programa",
+      "no_programs": "Ningún programa para los equipos seleccionados"
+    },
     "detail": {
       "regenerate": "Regenerar la sesión",
-      "not_found": "Sesión no encontrada"
+      "not_found": "Sesión no encontrada",
+      "training_blocks": "Bloques de entrenamiento",
+      "block_label": "Bloque",
+      "break": "Descanso",
+      "no_exercises": "Ningún ejercicio en este bloque"
     },
     "fields": {
       "date": "Fecha",

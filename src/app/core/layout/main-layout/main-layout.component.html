@@ -19,6 +19,14 @@
         {{ 'nav.programs' | transloco }}
       </a>
 
+      <a
+        [routerLink]="['/events']"
+        routerLinkActive="font-bold"
+        class="text-sm text-gray-700 hover:underline"
+      >
+        {{ 'nav.calendar' | transloco }}
+      </a>
+
       @if (authService.currentUser()?.is_staff) {
         <a
           [routerLink]="['/admin']"

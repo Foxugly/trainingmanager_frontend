@@ -95,6 +95,13 @@ export const routes: Routes = [
         path: 'events',
         children: [
           {
+            path: '',
+            loadComponent: () =>
+              import('./features/events/events-calendar/events-calendar.component').then(
+                (m) => m.EventsCalendarComponent,
+              ),
+          },
+          {
             path: ':id',
             loadComponent: () =>
               import('./features/events/events-detail/events-detail.component').then(

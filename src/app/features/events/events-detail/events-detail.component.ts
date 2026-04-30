@@ -18,11 +18,14 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Message } from 'primeng/message';
 import { firstValueFrom } from 'rxjs';
 import { EventsService } from '../../../api/api/events.service';
+import { ExercisesService } from '../../../api/api/exercises.service';
 import { ProgramsService } from '../../../api/api/programs.service';
 import { RoundsService } from '../../../api/api/rounds.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { Event } from '../../../api/model/event';
+import { Exercise } from '../../../api/model/exercise';
 import { GenerateTrainingResponse } from '../../../api/model/generate-training-response';
+import { Round } from '../../../api/model/round';
 import { Team } from '../../../api/model/team';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AiErrorMappingService } from '../../ai/ai-error-mapping.service';
@@ -49,6 +52,7 @@ export class EventsDetailComponent implements OnInit {
   private readonly programsService = inject(ProgramsService);
   private readonly teamsService = inject(TeamsService);
   private readonly roundsService = inject(RoundsService);
+  private readonly exercisesService = inject(ExercisesService);
   private readonly authService = inject(AuthService);
   private readonly aiErrorMapping = inject(AiErrorMappingService);
   private readonly confirmationService = inject(ConfirmationService);
@@ -64,6 +68,9 @@ export class EventsDetailComponent implements OnInit {
   protected readonly regenerating = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly lastResult = signal<GenerateTrainingResponse | null>(null);
+  protected readonly rounds = signal<Round[]>([]);
+  protected readonly exercisesByRound = signal<Map<number, Exercise[]>>(new Map());
+  protected readonly loadingRounds = signal(false);
 
   protected readonly currentUserRole = computed<TeamRole | null>(() => {
     const t = this.team();
@@ -100,12 +107,48 @@ export class EventsDetailComponent implements OnInit {
           if (e.refer_program?.id != null) {
             this.loadProgramTeam(e.refer_program.id);
           }
+          this.loadRoundsAndExercises(e.rounds ?? []);
         },
         error: () => {
           this.notFound.set(true);
           this.loading.set(false);
         },
       });
+  }
+
+  private async loadRoundsAndExercises(roundIds: readonly number[]): Promise<void> {
+    if (roundIds.length === 0) {
+      this.rounds.set([]);
+      this.exercisesByRound.set(new Map());
+      return;
+    }
+    this.loadingRounds.set(true);
+    try {
+      const fetchedRounds = await Promise.all(
+        roundIds.map((rid) => firstValueFrom(this.roundsService.roundsRetrieve(rid))),
+      );
+      const sortedRounds = [...fetchedRounds].sort(
+        (a, b) => (a.order ?? 0) - (b.order ?? 0),
+      );
+      this.rounds.set(sortedRounds);
+
+      const exerciseFetches = sortedRounds.map(async (round) => {
+        const ids = round.exercises ?? [];
+        const fetched = await Promise.all(
+          ids.map((eid) => firstValueFrom(this.exercisesService.exercisesRetrieve(eid))),
+        );
+        const sorted = [...fetched].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+        return [round.id, sorted] as const;
+      });
+      const entries = await Promise.all(exerciseFetches);
+      const map = new Map<number, Exercise[]>();
+      for (const [rid, list] of entries) {
+        map.set(rid, list);
+      }
+      this.exercisesByRound.set(map);
+    } finally {
+      this.loadingRounds.set(false);
+    }
   }
 
   private loadProgramTeam(programId: number): void {

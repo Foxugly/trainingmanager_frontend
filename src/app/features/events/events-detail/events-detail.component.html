@@ -78,6 +78,72 @@
         <dd>{{ e.rounds?.length || 0 }}</dd>
       </dl>
 
+      @if (rounds().length > 0 || loadingRounds()) {
+        <section class="mb-6">
+          <h2 class="text-lg font-semibold mb-3">
+            {{ 'events.detail.training_blocks' | transloco }}
+          </h2>
+          @if (loadingRounds()) {
+            <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+          } @else {
+            <div class="space-y-3">
+              @for (round of rounds(); track round.id) {
+                <div class="border border-gray-200 rounded p-3">
+                  <div class="flex items-baseline justify-between gap-2 mb-2 flex-wrap">
+                    <h3 class="font-semibold">
+                      {{ 'events.detail.block_label' | transloco }} {{ round.order ?? 1 }}
+                      @if ((round.count ?? 1) > 1) {
+                        <span class="text-sm text-gray-500 ml-1">
+                          × {{ round.count }}
+                        </span>
+                      }
+                    </h3>
+                    @if (round.t_break) {
+                      <span class="text-xs text-gray-500">
+                        {{ 'events.detail.break' | transloco }} {{ round.t_break }}
+                      </span>
+                    }
+                  </div>
+                  @if ((exercisesByRound().get(round.id) || []).length > 0) {
+                    <ul class="divide-y divide-gray-100 text-sm">
+                      @for (ex of exercisesByRound().get(round.id) || []; track ex.id) {
+                        <li class="py-1.5 flex justify-between gap-3">
+                          <div class="flex-1">
+                            <span class="font-medium">
+                              {{ ex.repetition ?? 1 }} × {{ ex.distance ?? 0 }}m
+                            </span>
+                            @if (ex.modality?.name) {
+                              <span class="text-gray-700"> · {{ ex.modality.name }}</span>
+                            }
+                            @if (ex.energysegment?.abv) {
+                              <span class="text-gray-500 ml-1">
+                                · {{ ex.energysegment.abv }}
+                              </span>
+                            }
+                            @if (ex.notes) {
+                              <div class="text-xs text-gray-500 mt-0.5">{{ ex.notes }}</div>
+                            }
+                          </div>
+                          @if (ex.t_break) {
+                            <span class="text-xs text-gray-500 shrink-0">
+                              {{ ex.t_break }}
+                            </span>
+                          }
+                        </li>
+                      }
+                    </ul>
+                  } @else {
+                    <p class="text-xs text-gray-500">
+                      {{ 'events.detail.no_exercises' | transloco }}
+                    </p>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </section>
+      }
+
       @if (lastResult(); as result) {
         <div class="mb-6 p-4 bg-purple-50 border border-purple-200 rounded">
           <h3 class="font-semibold text-purple-900 mb-2 flex items-center gap-2">

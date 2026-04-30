@@ -6,6 +6,7 @@
   "nav": {
     "teams": "Teams",
     "programs": "Programma's",
+    "calendar": "Kalender",
     "admin": "Beheer"
   },
   "ai": {
@@ -22,9 +23,22 @@
     }
   },
   "events": {
+    "calendar": {
+      "title": "Kalender",
+      "today": "Vandaag",
+      "previous_month": "Vorige maand",
+      "next_month": "Volgende maand",
+      "filter_teams": "Filter op team",
+      "filter_programs": "Filter op programma",
+      "no_programs": "Geen programma voor de geselecteerde teams"
+    },
     "detail": {
       "regenerate": "Sessie opnieuw genereren",
-      "not_found": "Sessie niet gevonden"
+      "not_found": "Sessie niet gevonden",
+      "training_blocks": "Trainingsblokken",
+      "block_label": "Blok",
+      "break": "Rust",
+      "no_exercises": "Geen oefening in dit blok"
     },
     "fields": {
       "date": "Datum",

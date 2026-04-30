@@ -7,13 +7,16 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { EventsService } from '../../../api/api/events.service';
+import { ExercisesService } from '../../../api/api/exercises.service';
 import { ProgramsService } from '../../../api/api/programs.service';
 import { RoundsService } from '../../../api/api/rounds.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { CustomUserPublic } from '../../../api/model/custom-user-public';
 import { Event } from '../../../api/model/event';
+import { Exercise } from '../../../api/model/exercise';
 import { LanguageEnum } from '../../../api/model/language-enum';
 import { Program } from '../../../api/model/program';
+import { Round } from '../../../api/model/round';
 import { Sport } from '../../../api/model/sport';
 import { Team } from '../../../api/model/team';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -85,12 +88,50 @@ const eventNoRounds: Event = {
 
 const eventWithRounds: Event = { ...eventNoRounds, rounds: [11, 12, 13] };
 
+const round1: Round = {
+  id: 11,
+  sport,
+  sport_id: 1,
+  language: LanguageEnum.Fr,
+  order: 1,
+  count: 2,
+  t_start: null,
+  t_break: null,
+  exercises: [201, 202],
+  usage_count: 0,
+  created_at: '2026-04-01T00:00:00Z',
+  updated_at: '2026-04-01T00:00:00Z',
+};
+
+const exercise1 = {
+  id: 201,
+  order: 1,
+  repetition: 4,
+  distance: 50,
+  notes: '',
+  t_start: null,
+  t_break: '00:30',
+  modality: { id: 1, name: 'Crawl', sport, is_active: true },
+  modality_id: 1,
+  energysegment: { id: 1, abv: 'Z2', description: '', energy_system: { id: 1, name: 'Aérobie', abbreviation: 'AE' }, is_active: true },
+  energysegment_id: 1,
+  language: LanguageEnum.Fr,
+  usage_count: 0,
+  created_at: '2026-04-01T00:00:00Z',
+  updated_at: '2026-04-01T00:00:00Z',
+} as unknown as Exercise;
+
+const exercise2 = { ...exercise1, id: 202, order: 2, distance: 100 } as Exercise;
+
 interface ProtectedFields {
   event(): Event | null;
   loading(): boolean;
   notFound(): boolean;
   canRegenerate(): boolean;
   confirmRegenerate(): void;
+  rounds(): Round[];
+  exercisesByRound(): Map<number, Exercise[]>;
+  loadingRounds(): boolean;
 }
 
 describe('EventsDetailComponent', () => {
@@ -102,7 +143,11 @@ describe('EventsDetailComponent', () => {
   };
   let programsMock: { programsRetrieve: ReturnType<typeof vi.fn> };
   let teamsMock: { teamsRetrieve: ReturnType<typeof vi.fn> };
-  let roundsMock: { roundsDestroy: ReturnType<typeof vi.fn> };
+  let roundsMock: {
+    roundsDestroy: ReturnType<typeof vi.fn>;
+    roundsRetrieve: ReturnType<typeof vi.fn>;
+  };
+  let exercisesMock: { exercisesRetrieve: ReturnType<typeof vi.fn> };
   let userSig: ReturnType<typeof signal<CustomUserPublic | null>>;
   let routeIdParam: string | null;
 
@@ -132,7 +177,15 @@ describe('EventsDetailComponent', () => {
     };
     programsMock = { programsRetrieve: vi.fn().mockReturnValue(of(program)) };
     teamsMock = { teamsRetrieve: vi.fn().mockReturnValue(of(team)) };
-    roundsMock = { roundsDestroy: vi.fn().mockReturnValue(of(null)) };
+    roundsMock = {
+      roundsDestroy: vi.fn().mockReturnValue(of(null)),
+      roundsRetrieve: vi.fn().mockImplementation((id: number) => of({ ...round1, id })),
+    };
+    exercisesMock = {
+      exercisesRetrieve: vi.fn().mockImplementation((id: number) =>
+        of(id === 201 ? exercise1 : exercise2),
+      ),
+    };
     userSig = signal<CustomUserPublic | null>(currentUser);
 
     await TestBed.configureTestingModule({
@@ -152,6 +205,7 @@ describe('EventsDetailComponent', () => {
         { provide: ProgramsService, useValue: programsMock },
         { provide: TeamsService, useValue: teamsMock },
         { provide: RoundsService, useValue: roundsMock },
+        { provide: ExercisesService, useValue: exercisesMock },
         { provide: AuthService, useValue: { currentUser: userSig.asReadonly() } },
         {
           provide: ActivatedRoute,
@@ -214,5 +268,30 @@ describe('EventsDetailComponent', () => {
     expect(roundsMock.roundsDestroy).toHaveBeenCalledTimes(3);
     expect(roundsMock.roundsDestroy).toHaveBeenNthCalledWith(1, 11);
     expect(eventsMock.eventsGenerateTrainingCreate).toHaveBeenCalledWith(7);
+  });
+
+  it('skips roundsRetrieve when event has no rounds', () => {
+    expect(roundsMock.roundsRetrieve).not.toHaveBeenCalled();
+    expect(access(component).rounds()).toEqual([]);
+    expect(access(component).exercisesByRound().size).toBe(0);
+  });
+
+  it('fetches rounds + exercises when event has rounds', async () => {
+    await setup('7', eventWithRounds);
+    await new Promise((r) => setTimeout(r, 0));
+    await new Promise((r) => setTimeout(r, 0));
+    expect(roundsMock.roundsRetrieve).toHaveBeenCalledTimes(3);
+    expect(exercisesMock.exercisesRetrieve).toHaveBeenCalled();
+    expect(access(component).rounds().length).toBe(3);
+  });
+
+  it('exposes ordered exercises per round', async () => {
+    await setup('7', eventWithRounds);
+    await new Promise((r) => setTimeout(r, 0));
+    await new Promise((r) => setTimeout(r, 0));
+    const map = access(component).exercisesByRound();
+    const exercises = map.get(11);
+    expect(exercises?.length).toBe(2);
+    expect(exercises?.[0].order).toBeLessThanOrEqual(exercises?.[1].order ?? 999);
   });
 });
