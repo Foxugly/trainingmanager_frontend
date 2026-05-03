@@ -28,15 +28,15 @@ export interface ProgramsServiceInterface {
 
     /**
      * 
-     * CRUD complet pour Program, scopé par team.
+     * CRUD complet pour Program, scopé par team.  Soft-delete convention: DELETE flips is_active&#x3D;False (no hard delete). Default queryset hides is_active&#x3D;False. ?include_inactive&#x3D;true is honored for staff (sees all inactives across visible teams) and for managers (sees inactives of teams they manage).
      * @endpoint post /api/v1/programs/
      * @param program 
      */
     programsCreate(program: Program, extraHttpRequestParams?: any): Observable<Program>;
 
     /**
-     * 
-     * CRUD complet pour Program, scopé par team.
+     * Soft delete program (manager of team only)
+     * Sets is_active&#x3D;False; does not hard delete.
      * @endpoint delete /api/v1/programs/{id}/
      * @param id A unique integer value identifying this Program.
      */
@@ -53,42 +53,47 @@ export interface ProgramsServiceInterface {
 
     /**
      * 
-     * CRUD complet pour Program, scopé par team.
+     * CRUD complet pour Program, scopé par team.  Soft-delete convention: DELETE flips is_active&#x3D;False (no hard delete). Default queryset hides is_active&#x3D;False. ?include_inactive&#x3D;true is honored for staff (sees all inactives across visible teams) and for managers (sees inactives of teams they manage).
      * @endpoint get /api/v1/programs/
      * @param dateEnd 
      * @param dateStart 
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+     * @param isActive 
      * @param name 
      * @param ordering Which field to use when ordering the results.
      * @param page A page number within the paginated result set.
      * @param search A search term.
      * @param team 
      */
-    programsList(dateEnd?: string, dateStart?: string, name?: string, ordering?: string, page?: number, search?: string, team?: number, extraHttpRequestParams?: any): Observable<PaginatedProgramList>;
+    programsList(dateEnd?: string, dateStart?: string, includeInactive?: boolean, isActive?: boolean, name?: string, ordering?: string, page?: number, search?: string, team?: number, extraHttpRequestParams?: any): Observable<PaginatedProgramList>;
 
     /**
      * 
-     * CRUD complet pour Program, scopé par team.
+     * CRUD complet pour Program, scopé par team.  Soft-delete convention: DELETE flips is_active&#x3D;False (no hard delete). Default queryset hides is_active&#x3D;False. ?include_inactive&#x3D;true is honored for staff (sees all inactives across visible teams) and for managers (sees inactives of teams they manage).
      * @endpoint patch /api/v1/programs/{id}/
      * @param id A unique integer value identifying this Program.
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      * @param patchedProgram 
      */
-    programsPartialUpdate(id: number, patchedProgram?: PatchedProgram, extraHttpRequestParams?: any): Observable<Program>;
+    programsPartialUpdate(id: number, includeInactive?: boolean, patchedProgram?: PatchedProgram, extraHttpRequestParams?: any): Observable<Program>;
 
     /**
      * 
-     * CRUD complet pour Program, scopé par team.
+     * CRUD complet pour Program, scopé par team.  Soft-delete convention: DELETE flips is_active&#x3D;False (no hard delete). Default queryset hides is_active&#x3D;False. ?include_inactive&#x3D;true is honored for staff (sees all inactives across visible teams) and for managers (sees inactives of teams they manage).
      * @endpoint get /api/v1/programs/{id}/
      * @param id A unique integer value identifying this Program.
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      */
-    programsRetrieve(id: number, extraHttpRequestParams?: any): Observable<Program>;
+    programsRetrieve(id: number, includeInactive?: boolean, extraHttpRequestParams?: any): Observable<Program>;
 
     /**
      * 
-     * CRUD complet pour Program, scopé par team.
+     * CRUD complet pour Program, scopé par team.  Soft-delete convention: DELETE flips is_active&#x3D;False (no hard delete). Default queryset hides is_active&#x3D;False. ?include_inactive&#x3D;true is honored for staff (sees all inactives across visible teams) and for managers (sees inactives of teams they manage).
      * @endpoint put /api/v1/programs/{id}/
      * @param id A unique integer value identifying this Program.
      * @param program 
+     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      */
-    programsUpdate(id: number, program: Program, extraHttpRequestParams?: any): Observable<Program>;
+    programsUpdate(id: number, program: Program, includeInactive?: boolean, extraHttpRequestParams?: any): Observable<Program>;
 
 }

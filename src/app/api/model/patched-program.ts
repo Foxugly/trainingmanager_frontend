@@ -23,6 +23,7 @@ export interface PatchedProgram {
     readonly generated_by_ai?: boolean;
     readonly ai_response?: string;
     readonly ai_generated_at?: string | null;
+    is_active?: boolean;
     readonly created_at?: string;
     readonly updated_at?: string;
 }

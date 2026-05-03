@@ -1983,7 +1983,13 @@ paths:
   /api/v1/programs/:
     get:
       operationId: programs_list
-      description: CRUD complet pour Program, scopé par team.
+      description: |-
+        CRUD complet pour Program, scopé par team.
+
+        Soft-delete convention: DELETE flips is_active=False (no hard delete).
+        Default queryset hides is_active=False. ?include_inactive=true is honored
+        for staff (sees all inactives across visible teams) and for managers
+        (sees inactives of teams they manage).
       parameters:
       - in: query
         name: date_end
@@ -1995,6 +2001,16 @@ paths:
         schema:
           type: string
           format: date
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
       - in: query
         name: name
         schema:
@@ -2034,7 +2050,13 @@ paths:
           description: ''
     post:
       operationId: programs_create
-      description: CRUD complet pour Program, scopé par team.
+      description: |-
+        CRUD complet pour Program, scopé par team.
+
+        Soft-delete convention: DELETE flips is_active=False (no hard delete).
+        Default queryset hides is_active=False. ?include_inactive=true is honored
+        for staff (sees all inactives across visible teams) and for managers
+        (sees inactives of teams they manage).
       tags:
       - programs
       requestBody:
@@ -2061,7 +2083,13 @@ paths:
   /api/v1/programs/{id}/:
     get:
       operationId: programs_retrieve
-      description: CRUD complet pour Program, scopé par team.
+      description: |-
+        CRUD complet pour Program, scopé par team.
+
+        Soft-delete convention: DELETE flips is_active=False (no hard delete).
+        Default queryset hides is_active=False. ?include_inactive=true is honored
+        for staff (sees all inactives across visible teams) and for managers
+        (sees inactives of teams they manage).
       parameters:
       - in: path
         name: id
@@ -2069,6 +2097,12 @@ paths:
           type: integer
         description: A unique integer value identifying this Program.
         required: true
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
       tags:
       - programs
       security:
@@ -2082,7 +2116,13 @@ paths:
           description: ''
     put:
       operationId: programs_update
-      description: CRUD complet pour Program, scopé par team.
+      description: |-
+        CRUD complet pour Program, scopé par team.
+
+        Soft-delete convention: DELETE flips is_active=False (no hard delete).
+        Default queryset hides is_active=False. ?include_inactive=true is honored
+        for staff (sees all inactives across visible teams) and for managers
+        (sees inactives of teams they manage).
       parameters:
       - in: path
         name: id
@@ -2090,6 +2130,12 @@ paths:
           type: integer
         description: A unique integer value identifying this Program.
         required: true
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
       tags:
       - programs
       requestBody:
@@ -2115,7 +2161,13 @@ paths:
           description: ''
     patch:
       operationId: programs_partial_update
-      description: CRUD complet pour Program, scopé par team.
+      description: |-
+        CRUD complet pour Program, scopé par team.
+
+        Soft-delete convention: DELETE flips is_active=False (no hard delete).
+        Default queryset hides is_active=False. ?include_inactive=true is honored
+        for staff (sees all inactives across visible teams) and for managers
+        (sees inactives of teams they manage).
       parameters:
       - in: path
         name: id
@@ -2123,6 +2175,12 @@ paths:
           type: integer
         description: A unique integer value identifying this Program.
         required: true
+      - in: query
+        name: include_inactive
+        schema:
+          type: boolean
+        description: If true and the user is staff, include soft-deleted (is_active=False)
+          records in the result. Silently ignored for non-staff users.
       tags:
       - programs
       requestBody:
@@ -2147,7 +2205,8 @@ paths:
           description: ''
     delete:
       operationId: programs_destroy
-      description: CRUD complet pour Program, scopé par team.
+      description: Sets is_active=False; does not hard delete.
+      summary: Soft delete program (manager of team only)
       parameters:
       - in: path
         name: id
@@ -5931,6 +5990,8 @@ components:
           format: date-time
           readOnly: true
           nullable: true
+        is_active:
+          type: boolean
         created_at:
           type: string
           format: date-time
@@ -6217,6 +6278,8 @@ components:
           format: date-time
           readOnly: true
           nullable: true
+        is_active:
+          type: boolean
         created_at:
           type: string
           format: date-time
