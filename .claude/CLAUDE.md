@@ -1,54 +1,85 @@
-You are an expert in TypeScript, Angular, and scalable web application development. You write functional, maintainable, performant, and accessible code following Angular and TypeScript best practices.
+# CLAUDE.md
 
-## TypeScript Best Practices
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-- Use strict type checking
-- Prefer type inference when the type is obvious
-- Avoid the `any` type; use `unknown` when type is uncertain
+## Common commands
 
-## Angular Best Practices
+- `npm start` — dev server on http://localhost:4200 (proxies nothing; the app calls `environment.apiBase` directly).
+- `npm run build` — production build into `dist/` (default config is `production`; budgets: 1MB initial / 8kB per component style).
+- `npm run watch` — incremental dev build.
+- `npm test` — Vitest via `@angular/build:unit-test`. Run a single spec by filtering: `npm test -- src/app/core/auth/auth.service.spec.ts` (or any substring).
+- `npm run api:gen` — regenerates the typed API client in `src/app/api/` from `openapi/Training_Manager_API.yaml` using `openapi-generator-cli` (config in `openapitools.json`).
 
-- Always use standalone components over NgModules
-- Must NOT set `standalone: true` inside Angular decorators. It's the default in Angular v20+.
-- Use signals for state management
-- Implement lazy loading for feature routes
-- Do NOT use the `@HostBinding` and `@HostListener` decorators. Put host bindings inside the `host` object of the `@Component` or `@Directive` decorator instead
-- Use `NgOptimizedImage` for all static images.
-  - `NgOptimizedImage` does not work for inline base64 images.
+The backend runs separately at `http://localhost:8000` (set in `src/environments/environment.ts`). API is still in flux, so regenerate after spec changes.
 
-## Accessibility Requirements
+## Architecture
 
-- It MUST pass all AXE checks.
-- It MUST follow all WCAG AA minimums, including focus management, color contrast, and ARIA attributes.
+Standalone-only Angular 21 app. All providers live in `src/app/app.config.ts`; routes in `src/app/app.routes.ts`.
 
-### Components
+### Layouts and routing
+Three layout shells, each composed via nested routes:
+- `AuthLayoutComponent` — `/login`, `/invitation/:token` (no auth).
+- `MainLayoutComponent` — authenticated app shell (`canActivate: [authGuard]`); hosts `/`, `/profile`, `/events`, `/programs`, `/teams`.
+- `AdminLayoutComponent` — nested inside `MainLayout` under `/admin` with `[authGuard, staffGuard]`; hosts taxonomy CRUD (sports, energy-systems, energy-segments, modalities).
 
-- Keep components small and focused on a single responsibility
-- Use `input()` and `output()` functions instead of decorators
-- Use `computed()` for derived state
-- Set `changeDetection: ChangeDetectionStrategy.OnPush` in `@Component` decorator
-- Prefer inline templates for small components
-- Prefer Reactive forms instead of Template-driven ones
-- Do NOT use `ngClass`, use `class` bindings instead
-- Do NOT use `ngStyle`, use `style` bindings instead
-- When using external templates/styles, use paths relative to the component TS file.
+Feature routes use `loadComponent` / `loadChildren` for lazy loading. Convention per feature: `{feature}-list`, `{feature}-form`, `{feature}-detail` components under `src/app/features/{feature}/`.
 
-## State Management
+### Auth flow
+`AuthService` (`src/app/core/auth/auth.service.ts`) holds the current user as a signal. JWT pair lives in `TokenStorage`. `authInterceptor` (`src/app/core/auth/auth.interceptor.ts`):
+1. Skips non-API URLs and the `/auth/token/` + `/auth/token/refresh/` endpoints.
+2. Attaches `Authorization: Bearer <access>`.
+3. On 401, calls `AuthService.refresh()`, retries with the new access token, and on refresh failure calls `logout()` (which redirects to `/login`).
 
-- Use signals for local component state
-- Use `computed()` for derived state
-- Keep state transformations pure and predictable
-- Do NOT use `mutate` on signals, use `update` or `set` instead
+`provideAppInitializer` in `app.config.ts` runs `AuthService.bootstrap()` at startup: if a refresh token exists it refreshes + fetches `/me/` before the router activates, so guards see the correct auth state on the first navigation.
 
-## Templates
+### Generated API client (`src/app/api/`)
+Do NOT hand-edit anything under `src/app/api/` — it is fully overwritten by `npm run api:gen`. The client is wired via `provideApi(environment.apiBase)` in `app.config.ts`. Import services and models like:
+```ts
+import { EventsService } from '../../api/api/events.service';
+import { Event } from '../../api/model/event';
+```
 
-- Keep templates simple and avoid complex logic
-- Use native control flow (`@if`, `@for`, `@switch`) instead of `*ngIf`, `*ngFor`, `*ngSwitch`
-- Use the async pipe to handle observables
-- Do not assume globals like (`new Date()`) are available.
+### i18n
+Transloco with langs `fr` (default), `nl`, `en`, `it`, `es`. JSON catalogs live in `public/i18n/`. `LanguageService` (`src/app/core/i18n/language.service.ts`) is the single source of truth:
+- `switchLanguage(code)` applies to Transloco optimistically, persists via `PATCH /me/`, and rolls back on failure.
+- An `effect` watches `AuthService.currentUser()` and applies `me.language` to Transloco at bootstrap/login. `LanguageService` is force-instantiated in `provideAppInitializer` so this effect is wired before `bootstrap()` resolves.
 
-## Services
+### UI
+PrimeNG 21 with the Aura preset; dark mode toggled via the `.dark-mode` class on `<html>` (configured in `providePrimeNG`). Tailwind 4 is enabled via `@tailwindcss/postcss` (see `.postcssrc.json`); use Tailwind utilities alongside PrimeNG components.
 
-- Design services around a single responsibility
-- Use the `providedIn: 'root'` option for singleton services
-- Use the `inject()` function instead of constructor injection
+### Toasts and confirmations
+`MessageService` is provided globally in `app.config.ts`. `ConfirmationService` is provided per-component (e.g. `EventsDetailComponent`) since PrimeNG's confirm dialog is scoped.
+
+## Code conventions
+
+### TypeScript
+- Strict mode is on (`strict`, `noImplicitOverride`, `noPropertyAccessFromIndexSignature`, `noImplicitReturns`, `noFallthroughCasesInSwitch`, `strictTemplates`).
+- Prefer type inference when obvious. Avoid `any`; use `unknown` when the type is uncertain.
+
+### Angular
+- Standalone components only. Do NOT set `standalone: true` in decorators — it is the default in v20+.
+- Use signals for state (`signal`, `computed`, `update`/`set` — never `mutate`).
+- Use `inject()` instead of constructor injection.
+- `input()` / `output()` functions instead of `@Input` / `@Output` decorators.
+- Set `changeDetection: ChangeDetectionStrategy.OnPush` on every component.
+- Lazy-load feature routes (`loadComponent` / `loadChildren`).
+- Do NOT use `@HostBinding` / `@HostListener` — put bindings in the `host` object of the decorator.
+- Use `NgOptimizedImage` for static images (does not work for inline base64).
+- Prefer reactive forms over template-driven forms.
+- External templates/styles use paths relative to the component TS file.
+
+### Templates
+- Use native control flow (`@if`, `@for`, `@switch`) — not `*ngIf` / `*ngFor` / `*ngSwitch`.
+- Use `class` and `style` bindings — not `ngClass` / `ngStyle`.
+- Use the `async` pipe for observables.
+- Do not assume globals like `new Date()` are available in templates.
+
+### Services
+- Single responsibility. Singletons use `providedIn: 'root'`.
+- Use `inject()`.
+
+### Accessibility
+- Must pass AXE checks and meet WCAG AA (focus management, contrast, ARIA).
+
+### Formatting
+- Prettier: 100-col, single quotes, Angular parser for `*.html`. 2-space indent (`.editorconfig`).
