@@ -301,4 +301,10 @@ describe('EventsDetailComponent', () => {
     await setup('7', eventNoRounds, otherUser);
     expect(access(component).canManage()).toBe(false);
   });
+
+  it('canManage drives both Edit and Saisir présences buttons visibility (owner sees, member-only does not)', async () => {
+    expect(access(component).canManage()).toBe(true);
+    await setup('7', eventNoRounds, otherUser);
+    expect(access(component).canManage()).toBe(false);
+  });
 });

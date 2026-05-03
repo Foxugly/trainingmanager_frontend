@@ -37,6 +37,13 @@
                 [outlined]="true"
               />
             </a>
+            <a [routerLink]="['/events', e.id, 'attendance']">
+              <p-button
+                [label]="'events.actions.attendance' | transloco"
+                icon="pi pi-list-check"
+                [outlined]="true"
+              />
+            </a>
           }
           @if (canRegenerate()) {
             <p-button
