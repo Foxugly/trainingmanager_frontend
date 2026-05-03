@@ -307,14 +307,25 @@
       "pending": "Impossible de vérifier les présences en attente."
     }
   },
-  "home": {
+  "public": {
     "nav": {
       "home": "Accueil",
+      "dashboard": "Tableau de bord",
       "features": "Fonctionnalités",
       "contribute": "Contribuer",
-      "sign_up": "S'inscrire",
       "toggle": "Ouvrir le menu"
     },
+    "user_menu": {
+      "login": "Connexion",
+      "profile": "Profil",
+      "admin": "Admin",
+      "logout": "Déconnexion"
+    },
+    "footer": {
+      "rights": "© 2026 Training Manager. Tous droits réservés."
+    }
+  },
+  "home": {
     "hero": {
       "tagline": "Pour les coachs et leurs équipes",
       "title": "Gérez vos équipes. Planifiez vos entraînements. Progressez ensemble.",
@@ -346,9 +357,6 @@
       "title": "Open source, par les coachs, pour les coachs",
       "description": "Training Manager est un projet open source. Apportez vos idées, signalez les bugs, proposez des évolutions — chaque contribution compte.",
       "github": "Voir sur GitHub"
-    },
-    "footer": {
-      "rights": "© 2026 Training Manager. Tous droits réservés."
     }
   },
   "auth": {

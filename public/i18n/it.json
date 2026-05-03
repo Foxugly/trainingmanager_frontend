@@ -307,14 +307,25 @@
       "pending": "Impossibile verificare le presenze in attesa."
     }
   },
-  "home": {
+  "public": {
     "nav": {
       "home": "Home",
+      "dashboard": "Dashboard",
       "features": "Funzionalità",
       "contribute": "Contribuisci",
-      "sign_up": "Registrati",
       "toggle": "Apri il menu"
     },
+    "user_menu": {
+      "login": "Accedi",
+      "profile": "Profilo",
+      "admin": "Admin",
+      "logout": "Esci"
+    },
+    "footer": {
+      "rights": "© 2026 Training Manager. Tutti i diritti riservati."
+    }
+  },
+  "home": {
     "hero": {
       "tagline": "Per gli allenatori e le loro squadre",
       "title": "Gestisci le tue squadre. Pianifica gli allenamenti. Cresci insieme.",
@@ -346,9 +357,6 @@
       "title": "Open source — dagli allenatori, per gli allenatori",
       "description": "Training Manager è un progetto open source. Condividi idee, segnala bug, proponi miglioramenti — ogni contributo conta.",
       "github": "Visualizza su GitHub"
-    },
-    "footer": {
-      "rights": "© 2026 Training Manager. Tutti i diritti riservati."
     }
   },
   "invitation_accept": {

@@ -307,14 +307,25 @@
       "pending": "No se ha podido verificar las asistencias pendientes."
     }
   },
-  "home": {
+  "public": {
     "nav": {
       "home": "Inicio",
+      "dashboard": "Panel",
       "features": "Funciones",
       "contribute": "Contribuir",
-      "sign_up": "Registrarse",
       "toggle": "Abrir menú"
     },
+    "user_menu": {
+      "login": "Iniciar sesión",
+      "profile": "Perfil",
+      "admin": "Admin",
+      "logout": "Cerrar sesión"
+    },
+    "footer": {
+      "rights": "© 2026 Training Manager. Todos los derechos reservados."
+    }
+  },
+  "home": {
     "hero": {
       "tagline": "Para entrenadores y sus equipos",
       "title": "Gestiona tus equipos. Planifica los entrenamientos. Progresa en equipo.",
@@ -346,9 +357,6 @@
       "title": "Código abierto — por entrenadores, para entrenadores",
       "description": "Training Manager es un proyecto de código abierto. Comparte ideas, reporta errores, propón mejoras — cada contribución cuenta.",
       "github": "Ver en GitHub"
-    },
-    "footer": {
-      "rights": "© 2026 Training Manager. Todos los derechos reservados."
     }
   },
   "invitation_accept": {

@@ -307,14 +307,25 @@
       "pending": "Could not check pending attendance."
     }
   },
-  "home": {
+  "public": {
     "nav": {
       "home": "Home",
+      "dashboard": "Dashboard",
       "features": "Features",
       "contribute": "Contribute",
-      "sign_up": "Sign up",
       "toggle": "Open menu"
     },
+    "user_menu": {
+      "login": "Sign in",
+      "profile": "Profile",
+      "admin": "Admin",
+      "logout": "Sign out"
+    },
+    "footer": {
+      "rights": "© 2026 Training Manager. All rights reserved."
+    }
+  },
+  "home": {
     "hero": {
       "tagline": "For coaches and their teams",
       "title": "Manage your teams. Plan your training. Grow together.",
@@ -346,9 +357,6 @@
       "title": "Open source — by coaches, for coaches",
       "description": "Training Manager is an open source project. Share ideas, report bugs, propose improvements — every contribution counts.",
       "github": "View on GitHub"
-    },
-    "footer": {
-      "rights": "© 2026 Training Manager. All rights reserved."
     }
   },
   "auth": {

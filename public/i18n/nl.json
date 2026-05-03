@@ -307,14 +307,25 @@
       "pending": "Aanwezigheden in afwachting konden niet worden gecontroleerd."
     }
   },
-  "home": {
+  "public": {
     "nav": {
       "home": "Home",
+      "dashboard": "Dashboard",
       "features": "Functies",
       "contribute": "Bijdragen",
-      "sign_up": "Aanmelden",
       "toggle": "Menu openen"
     },
+    "user_menu": {
+      "login": "Aanmelden",
+      "profile": "Profiel",
+      "admin": "Admin",
+      "logout": "Afmelden"
+    },
+    "footer": {
+      "rights": "© 2026 Training Manager. Alle rechten voorbehouden."
+    }
+  },
+  "home": {
     "hero": {
       "tagline": "Voor coaches en hun teams",
       "title": "Beheer je teams. Plan je trainingen. Groei samen.",
@@ -346,9 +357,6 @@
       "title": "Open source — door coaches, voor coaches",
       "description": "Training Manager is een open source project. Deel ideeën, meld bugs, stel verbeteringen voor — elke bijdrage telt.",
       "github": "Bekijk op GitHub"
-    },
-    "footer": {
-      "rights": "© 2026 Training Manager. Alle rechten voorbehouden."
     }
   },
   "invitation_accept": {
