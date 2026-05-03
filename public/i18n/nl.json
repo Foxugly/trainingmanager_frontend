@@ -4,6 +4,7 @@
     "logout": "Afmelden"
   },
   "nav": {
+    "dashboard": "Dashboard",
     "teams": "Teams",
     "programs": "Programma's",
     "calendar": "Kalender",
@@ -273,7 +274,38 @@
   },
   "dashboard": {
     "greeting": "Hallo {{name}} 👋",
-    "coming_soon": "Dashboard komt eraan."
+    "subtitle": "Overzicht van je teams en sessies.",
+    "teams": {
+      "title": "Mijn teams",
+      "programs_active": "Actieve programma's",
+      "events_next_7d": "Sessies 7d",
+      "members": "Leden"
+    },
+    "upcoming_events": {
+      "title": "Komende sessies (14 dagen)",
+      "view_calendar": "Kalender bekijken",
+      "overflow": "+ {{count}} extra geplande sessie(s)."
+    },
+    "attendances_pending": {
+      "title": "Aanwezigheden te registreren",
+      "action": "Invoeren",
+      "up_to_date": "Alles is bijgewerkt.",
+      "audit_truncated": "Audit beperkt tot de 30 meest recente sessies."
+    },
+    "quick_actions": {
+      "new_team": "Nieuw team",
+      "new_program": "Nieuw programma",
+      "new_event": "Nieuwe sessie"
+    },
+    "empty": {
+      "no_managed_team": "Geen team onder jouw beheer.",
+      "no_upcoming_events": "Geen sessie gepland in de komende 14 dagen."
+    },
+    "errors": {
+      "teams": "Je teams konden niet worden geladen.",
+      "upcoming": "Komende sessies konden niet worden geladen.",
+      "pending": "Aanwezigheden in afwachting konden niet worden gecontroleerd."
+    }
   },
   "home": {
     "nav": {

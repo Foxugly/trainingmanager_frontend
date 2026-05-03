@@ -4,6 +4,7 @@
     "logout": "Sign out"
   },
   "nav": {
+    "dashboard": "Dashboard",
     "teams": "Teams",
     "programs": "Programs",
     "calendar": "Calendar",
@@ -273,7 +274,38 @@
   },
   "dashboard": {
     "greeting": "Hello {{name}} 👋",
-    "coming_soon": "Dashboard coming soon."
+    "subtitle": "Overview of your teams and sessions.",
+    "teams": {
+      "title": "My teams",
+      "programs_active": "Active programs",
+      "events_next_7d": "Sessions 7d",
+      "members": "Members"
+    },
+    "upcoming_events": {
+      "title": "Upcoming sessions (14 days)",
+      "view_calendar": "View calendar",
+      "overflow": "+ {{count}} more upcoming session(s)."
+    },
+    "attendances_pending": {
+      "title": "Attendance to log",
+      "action": "Log",
+      "up_to_date": "You're all caught up.",
+      "audit_truncated": "Audit limited to the 30 most recent sessions."
+    },
+    "quick_actions": {
+      "new_team": "New team",
+      "new_program": "New program",
+      "new_event": "New session"
+    },
+    "empty": {
+      "no_managed_team": "No team under your management.",
+      "no_upcoming_events": "No session planned in the next 14 days."
+    },
+    "errors": {
+      "teams": "Could not load your teams.",
+      "upcoming": "Could not load upcoming sessions.",
+      "pending": "Could not check pending attendance."
+    }
   },
   "home": {
     "nav": {

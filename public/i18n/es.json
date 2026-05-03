@@ -4,6 +4,7 @@
     "logout": "Cerrar sesión"
   },
   "nav": {
+    "dashboard": "Panel",
     "teams": "Equipos",
     "programs": "Programas",
     "calendar": "Calendario",
@@ -273,7 +274,38 @@
   },
   "dashboard": {
     "greeting": "Hola {{name}} 👋",
-    "coming_soon": "Panel de control próximamente."
+    "subtitle": "Vista general de tus equipos y sesiones.",
+    "teams": {
+      "title": "Mis equipos",
+      "programs_active": "Programas activos",
+      "events_next_7d": "Sesiones 7d",
+      "members": "Miembros"
+    },
+    "upcoming_events": {
+      "title": "Próximas sesiones (14 días)",
+      "view_calendar": "Ver calendario",
+      "overflow": "+ {{count}} sesión(es) próxima(s) más."
+    },
+    "attendances_pending": {
+      "title": "Asistencias pendientes de registrar",
+      "action": "Registrar",
+      "up_to_date": "Todo al día.",
+      "audit_truncated": "Auditoría limitada a las 30 sesiones más recientes."
+    },
+    "quick_actions": {
+      "new_team": "Nuevo equipo",
+      "new_program": "Nuevo programa",
+      "new_event": "Nueva sesión"
+    },
+    "empty": {
+      "no_managed_team": "Ningún equipo bajo tu responsabilidad.",
+      "no_upcoming_events": "Ninguna sesión prevista en los próximos 14 días."
+    },
+    "errors": {
+      "teams": "No se han podido cargar tus equipos.",
+      "upcoming": "No se han podido cargar las próximas sesiones.",
+      "pending": "No se ha podido verificar las asistencias pendientes."
+    }
   },
   "home": {
     "nav": {

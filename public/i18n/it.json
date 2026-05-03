@@ -4,6 +4,7 @@
     "logout": "Disconnetti"
   },
   "nav": {
+    "dashboard": "Dashboard",
     "teams": "Squadre",
     "programs": "Programmi",
     "calendar": "Calendario",
@@ -273,7 +274,38 @@
   },
   "dashboard": {
     "greeting": "Ciao {{name}} 👋",
-    "coming_soon": "Dashboard in arrivo."
+    "subtitle": "Panoramica delle tue squadre e sessioni.",
+    "teams": {
+      "title": "Le mie squadre",
+      "programs_active": "Programmi attivi",
+      "events_next_7d": "Sessioni 7g",
+      "members": "Membri"
+    },
+    "upcoming_events": {
+      "title": "Prossime sessioni (14 giorni)",
+      "view_calendar": "Vedi calendario",
+      "overflow": "+ {{count}} altra/e sessione/i in programma."
+    },
+    "attendances_pending": {
+      "title": "Presenze da registrare",
+      "action": "Registra",
+      "up_to_date": "Tutto in regola.",
+      "audit_truncated": "Audit limitato alle 30 sessioni più recenti."
+    },
+    "quick_actions": {
+      "new_team": "Nuova squadra",
+      "new_program": "Nuovo programma",
+      "new_event": "Nuova sessione"
+    },
+    "empty": {
+      "no_managed_team": "Nessuna squadra sotto la tua gestione.",
+      "no_upcoming_events": "Nessuna sessione prevista nei prossimi 14 giorni."
+    },
+    "errors": {
+      "teams": "Impossibile caricare le tue squadre.",
+      "upcoming": "Impossibile caricare le prossime sessioni.",
+      "pending": "Impossibile verificare le presenze in attesa."
+    }
   },
   "home": {
     "nav": {

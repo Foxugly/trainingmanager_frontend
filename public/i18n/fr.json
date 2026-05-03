@@ -4,6 +4,7 @@
     "logout": "Déconnexion"
   },
   "nav": {
+    "dashboard": "Tableau de bord",
     "teams": "Équipes",
     "programs": "Programmes",
     "calendar": "Calendrier",
@@ -273,7 +274,38 @@
   },
   "dashboard": {
     "greeting": "Bonjour {{name}} 👋",
-    "coming_soon": "Tableau de bord à venir."
+    "subtitle": "Vue d'ensemble de vos équipes et entraînements.",
+    "teams": {
+      "title": "Mes équipes",
+      "programs_active": "Programmes actifs",
+      "events_next_7d": "Séances 7j",
+      "members": "Membres"
+    },
+    "upcoming_events": {
+      "title": "Prochains entraînements (14 jours)",
+      "view_calendar": "Voir le calendrier",
+      "overflow": "+ {{count}} autre(s) séance(s) à venir."
+    },
+    "attendances_pending": {
+      "title": "Présences à enregistrer",
+      "action": "Saisir",
+      "up_to_date": "Tout est à jour.",
+      "audit_truncated": "Audit limité aux 30 séances les plus récentes."
+    },
+    "quick_actions": {
+      "new_team": "Nouvelle équipe",
+      "new_program": "Nouveau programme",
+      "new_event": "Nouvelle séance"
+    },
+    "empty": {
+      "no_managed_team": "Aucune équipe sous votre responsabilité.",
+      "no_upcoming_events": "Aucune séance prévue dans les 14 prochains jours."
+    },
+    "errors": {
+      "teams": "Impossible de charger vos équipes.",
+      "upcoming": "Impossible de charger les prochaines séances.",
+      "pending": "Impossible de vérifier les présences en attente."
+    }
   },
   "home": {
     "nav": {
