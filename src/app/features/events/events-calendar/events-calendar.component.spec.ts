@@ -1,4 +1,4 @@
-import { WritableSignal } from '@angular/core';
+import { WritableSignal, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
@@ -14,6 +14,7 @@ import { LanguageEnum } from '../../../api/model/language-enum';
 import { Program } from '../../../api/model/program';
 import { Sport } from '../../../api/model/sport';
 import { Team } from '../../../api/model/team';
+import { AuthService } from '../../../core/auth/auth.service';
 import { EventsCalendarComponent } from './events-calendar.component';
 
 const ownerUser = { id: 17, username: 'testfrontend' } as CustomUserPublic;
@@ -108,6 +109,7 @@ interface ProtectedFields {
   selectedTeamIdsModel: number[];
   selectedProgramIdsModel: number[];
   eventBgColor(e: Event): string;
+  canCreate(): boolean;
 }
 
 describe('EventsCalendarComponent', () => {
@@ -116,13 +118,15 @@ describe('EventsCalendarComponent', () => {
   let teamsMock: { teamsList: ReturnType<typeof vi.fn> };
   let programsMock: { programsList: ReturnType<typeof vi.fn> };
   let eventsMock: { eventsList: ReturnType<typeof vi.fn> };
+  let userSig: ReturnType<typeof signal<CustomUserPublic | null>>;
 
   const access = (c: EventsCalendarComponent) => c as unknown as ProtectedFields;
 
-  async function setup() {
+  async function setup(currentUser: CustomUserPublic | null = ownerUser, teams: Team[] = [team, team2]) {
     TestBed.resetTestingModule();
+    userSig = signal<CustomUserPublic | null>(currentUser);
     teamsMock = {
-      teamsList: vi.fn().mockReturnValue(of({ count: 2, results: [team, team2] })),
+      teamsList: vi.fn().mockReturnValue(of({ count: teams.length, results: teams })),
     };
     programsMock = {
       programsList: vi.fn().mockImplementation(
@@ -156,6 +160,7 @@ describe('EventsCalendarComponent', () => {
         { provide: TeamsService, useValue: teamsMock },
         { provide: ProgramsService, useValue: programsMock },
         { provide: EventsService, useValue: eventsMock },
+        { provide: AuthService, useValue: { currentUser: userSig.asReadonly() } },
       ],
     })
       .overrideComponent(EventsCalendarComponent, {
@@ -239,5 +244,15 @@ describe('EventsCalendarComponent', () => {
   it('eventBgColor falls back to neutral for invalid hex', () => {
     expect(access(component).eventBgColor(event1)).toBe('#FF573333');
     expect(access(component).eventBgColor(event2)).toBe('#E0E7FF');
+  });
+
+  it('canCreate is true when current user owns or manages at least one team', () => {
+    expect(access(component).canCreate()).toBe(true);
+  });
+
+  it('canCreate is false when current user is member-only of every team', async () => {
+    const stranger = { id: 999, username: 'guest' } as CustomUserPublic;
+    await setup(stranger);
+    expect(access(component).canCreate()).toBe(false);
   });
 });

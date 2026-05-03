@@ -27,15 +27,27 @@
             </span>
           }
         </div>
-        @if (canRegenerate()) {
-          <p-button
-            [label]="'events.detail.regenerate' | transloco"
-            icon="pi pi-sparkles"
-            severity="secondary"
-            [loading]="regenerating()"
-            (onClick)="confirmRegenerate()"
-          />
-        }
+        <div class="flex items-center gap-2 flex-wrap">
+          @if (canManage()) {
+            <a [routerLink]="['/events', e.id, 'edit']">
+              <p-button
+                [label]="'events.actions.edit' | transloco"
+                icon="pi pi-pencil"
+                severity="secondary"
+                [outlined]="true"
+              />
+            </a>
+          }
+          @if (canRegenerate()) {
+            <p-button
+              [label]="'events.detail.regenerate' | transloco"
+              icon="pi pi-sparkles"
+              severity="secondary"
+              [loading]="regenerating()"
+              (onClick)="confirmRegenerate()"
+            />
+          }
+        </div>
       </div>
 
       <dl class="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2 mb-6 max-w-xl">

@@ -22,7 +22,9 @@ import { TeamsService } from '../../../api/api/teams.service';
 import { Event } from '../../../api/model/event';
 import { Program } from '../../../api/model/program';
 import { Team } from '../../../api/model/team';
+import { AuthService } from '../../../core/auth/auth.service';
 import { LanguageService } from '../../../core/i18n/language.service';
+import { computeTeamRole } from '../../teams/teams-list/teams-list.component';
 
 const HEX_RE = /^#([0-9a-f]{6}|[0-9a-f]{3})$/i;
 
@@ -80,6 +82,7 @@ export class EventsCalendarComponent implements OnInit {
   private readonly teamsService = inject(TeamsService);
   private readonly programsService = inject(ProgramsService);
   private readonly eventsService = inject(EventsService);
+  private readonly authService = inject(AuthService);
   private readonly transloco = inject(TranslocoService);
   private readonly languageService = inject(LanguageService);
   private readonly destroyRef = inject(DestroyRef);
@@ -91,6 +94,15 @@ export class EventsCalendarComponent implements OnInit {
   protected readonly availablePrograms = signal<Program[]>([]);
   protected readonly events = signal<Event[]>([]);
   protected readonly loading = signal(false);
+
+  protected readonly canCreate = computed(() => {
+    const userId = this.authService.currentUser()?.id;
+    if (userId == null) return false;
+    return this.availableTeams().some((t) => {
+      const role = computeTeamRole(t, userId);
+      return role === 'owner' || role === 'manager';
+    });
+  });
 
   protected readonly monthStart = computed(() => startOfMonth(this.currentMonth()));
   protected readonly monthEnd = computed(() => endOfMonth(this.currentMonth()));

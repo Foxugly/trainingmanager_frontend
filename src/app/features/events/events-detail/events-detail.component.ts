@@ -79,10 +79,12 @@ export class EventsDetailComponent implements OnInit {
     return computeTeamRole(t, userId);
   });
 
-  protected readonly canRegenerate = computed(() => {
+  protected readonly canManage = computed(() => {
     const role = this.currentUserRole();
     return role === 'owner' || role === 'manager';
   });
+
+  protected readonly canRegenerate = this.canManage;
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');

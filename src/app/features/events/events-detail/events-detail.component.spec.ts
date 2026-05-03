@@ -128,6 +128,7 @@ interface ProtectedFields {
   loading(): boolean;
   notFound(): boolean;
   canRegenerate(): boolean;
+  canManage(): boolean;
   confirmRegenerate(): void;
   rounds(): Round[];
   exercisesByRound(): Map<number, Exercise[]>;
@@ -293,5 +294,11 @@ describe('EventsDetailComponent', () => {
     const exercises = map.get(11);
     expect(exercises?.length).toBe(2);
     expect(exercises?.[0].order).toBeLessThanOrEqual(exercises?.[1].order ?? 999);
+  });
+
+  it('canManage is true for owner and false for member-only user', async () => {
+    expect(access(component).canManage()).toBe(true);
+    await setup('7', eventNoRounds, otherUser);
+    expect(access(component).canManage()).toBe(false);
   });
 });
