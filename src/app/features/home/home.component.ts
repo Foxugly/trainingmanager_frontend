@@ -1,8 +1,6 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { Button } from 'primeng/button';
-import { LanguageSwitcherComponent } from '../../core/i18n/language-switcher/language-switcher.component';
 
 interface FeatureBlock {
   readonly key: 'teams' | 'training' | 'attendance' | 'stats';
@@ -12,14 +10,12 @@ interface FeatureBlock {
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, Button, TranslocoPipe, LanguageSwitcherComponent],
+  imports: [RouterLink, TranslocoPipe],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent {
-  protected readonly mobileMenuOpen = signal(false);
-
   protected readonly features: readonly FeatureBlock[] = [
     { key: 'teams', icon: 'pi-users', tone: 'indigo' },
     { key: 'training', icon: 'pi-calendar', tone: 'emerald' },
@@ -33,12 +29,4 @@ export class HomeComponent {
     amber: 'bg-amber-100 text-amber-700',
     rose: 'bg-rose-100 text-rose-700',
   };
-
-  protected toggleMobileMenu(): void {
-    this.mobileMenuOpen.update((v) => !v);
-  }
-
-  protected closeMobileMenu(): void {
-    this.mobileMenuOpen.set(false);
-  }
 }

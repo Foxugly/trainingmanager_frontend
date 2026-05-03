@@ -4,12 +4,25 @@ import { staffGuard } from './core/auth/staff.guard';
 import { AdminLayoutComponent } from './core/layout/admin-layout/admin-layout.component';
 import { AuthLayoutComponent } from './core/layout/auth-layout/auth-layout.component';
 import { MainLayoutComponent } from './core/layout/main-layout/main-layout.component';
+import { PublicLayoutComponent } from './core/layout/public-layout/public-layout.component';
 
 export const routes: Routes = [
   {
-    path: 'home',
-    loadComponent: () =>
-      import('./features/home/home.component').then((m) => m.HomeComponent),
+    path: '',
+    component: PublicLayoutComponent,
+    children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        loadComponent: () =>
+          import('./features/home/home.component').then((m) => m.HomeComponent),
+      },
+      {
+        path: 'home',
+        pathMatch: 'full',
+        redirectTo: '',
+      },
+    ],
   },
   {
     path: 'login',
@@ -80,11 +93,6 @@ export const routes: Routes = [
     component: MainLayoutComponent,
     canActivate: [authGuard],
     children: [
-      {
-        path: '',
-        pathMatch: 'full',
-        redirectTo: 'dashboard',
-      },
       {
         path: 'dashboard',
         loadComponent: () =>
