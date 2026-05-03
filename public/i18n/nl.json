@@ -76,7 +76,22 @@
       }
     },
     "actions": {
-      "edit": "Bewerken"
+      "edit": "Bewerken",
+      "attendance": "Aanwezigheden invoeren"
+    },
+    "attendance": {
+      "title": "Aanwezigheden invoeren",
+      "save": "Opslaan",
+      "cancel": "Annuleren",
+      "saved": "Aanwezigheden opgeslagen",
+      "save_error": "Aanwezigheden opslaan mislukt.",
+      "no_members": "Geen leden gekoppeld aan deze sessie.",
+      "no_statuses": "Geen aanwezigheidsstatus beschikbaar.",
+      "manager_only": "Alleen de eigenaar en managers van het team kunnen aanwezigheden invoeren.",
+      "headers": {
+        "member": "Lid",
+        "status": "Status"
+      }
     },
     "errors": {
       "unknown": "Er is een fout opgetreden."

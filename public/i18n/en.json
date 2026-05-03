@@ -76,7 +76,22 @@
       }
     },
     "actions": {
-      "edit": "Edit"
+      "edit": "Edit",
+      "attendance": "Set attendance"
+    },
+    "attendance": {
+      "title": "Attendance entry",
+      "save": "Save",
+      "cancel": "Cancel",
+      "saved": "Attendance saved",
+      "save_error": "Failed to save attendance.",
+      "no_members": "No member registered for this session.",
+      "no_statuses": "No attendance status available.",
+      "manager_only": "Only the team owner and managers can set attendance.",
+      "headers": {
+        "member": "Member",
+        "status": "Status"
+      }
     },
     "errors": {
       "unknown": "An error occurred."

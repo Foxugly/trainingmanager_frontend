@@ -76,7 +76,22 @@
       }
     },
     "actions": {
-      "edit": "Editar"
+      "edit": "Editar",
+      "attendance": "Registrar asistencias"
+    },
+    "attendance": {
+      "title": "Registro de asistencias",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "saved": "Asistencias guardadas",
+      "save_error": "Error al guardar las asistencias.",
+      "no_members": "Ningún miembro asociado a esta sesión.",
+      "no_statuses": "Ningún estado de asistencia disponible.",
+      "manager_only": "Solo el propietario y los managers del equipo pueden registrar las asistencias.",
+      "headers": {
+        "member": "Miembro",
+        "status": "Estado"
+      }
     },
     "errors": {
       "unknown": "Se ha producido un error."

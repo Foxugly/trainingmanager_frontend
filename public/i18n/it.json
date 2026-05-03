@@ -76,7 +76,22 @@
       }
     },
     "actions": {
-      "edit": "Modifica"
+      "edit": "Modifica",
+      "attendance": "Registra presenze"
+    },
+    "attendance": {
+      "title": "Registrazione presenze",
+      "save": "Salva",
+      "cancel": "Annulla",
+      "saved": "Presenze salvate",
+      "save_error": "Salvataggio delle presenze non riuscito.",
+      "no_members": "Nessun membro associato a questa sessione.",
+      "no_statuses": "Nessuno stato di presenza disponibile.",
+      "manager_only": "Solo il proprietario e i manager della squadra possono registrare le presenze.",
+      "headers": {
+        "member": "Membro",
+        "status": "Stato"
+      }
     },
     "errors": {
       "unknown": "Si è verificato un errore."

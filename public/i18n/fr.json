@@ -76,7 +76,22 @@
       }
     },
     "actions": {
-      "edit": "Modifier"
+      "edit": "Modifier",
+      "attendance": "Saisir présences"
+    },
+    "attendance": {
+      "title": "Saisie des présences",
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "saved": "Présences enregistrées",
+      "save_error": "Échec de l'enregistrement des présences.",
+      "no_members": "Aucun membre rattaché à cette séance.",
+      "no_statuses": "Aucun statut de présence disponible.",
+      "manager_only": "Seuls le propriétaire et les managers de l'équipe peuvent saisir les présences.",
+      "headers": {
+        "member": "Membre",
+        "status": "Statut"
+      }
     },
     "errors": {
       "unknown": "Une erreur est survenue."
