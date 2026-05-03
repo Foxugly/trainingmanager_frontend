@@ -47,22 +47,7 @@
 
       <app-language-switcher />
 
-      @if (authService.currentUser(); as user) {
-        <a
-          [routerLink]="['/profile']"
-          class="text-sm text-gray-700 hover:underline cursor-pointer"
-        >
-          {{ user.first_name || user.username }}
-        </a>
-      }
-
-      <p-button
-        icon="pi pi-sign-out"
-        severity="secondary"
-        [text]="true"
-        [ariaLabel]="'app.logout' | transloco"
-        (onClick)="logout()"
-      />
+      <app-user-menu />
     </div>
   </div>
 </header>
