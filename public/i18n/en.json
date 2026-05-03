@@ -61,13 +61,16 @@
   "programs": {
     "list": {
       "title": "Programs",
-      "empty": "No program"
+      "empty": "No program",
+      "show_archived": "Show archived",
+      "archived_badge": "Archived"
     },
     "detail": {
       "not_found": "Program not found",
       "events_count": "Sessions",
       "events_label": "scheduled session(s)",
-      "generate": "Generate sessions"
+      "generate": "Generate sessions",
+      "archived_banner": "This program is archived."
     },
     "generate": {
       "dialog_title": "AI session generation",
@@ -98,7 +101,38 @@
     "frequency_per_week": "Frequency per week",
     "times_per_week": "times per week",
     "ai_generated": "AI",
-    "unknown_team": "Unknown team"
+    "unknown_team": "Unknown team",
+    "form": {
+      "new_title": "New program",
+      "edit_title": "Edit program",
+      "name": "Name",
+      "name_placeholder": "E.g. Winter prep",
+      "team": "Team",
+      "team_placeholder": "Select a team",
+      "team_locked_help": "A program's team cannot be changed.",
+      "no_manager_team": "You don't manage any team — you cannot create a program.",
+      "date_start": "Start date",
+      "date_end": "End date",
+      "frequency": "Frequency (sessions/week)",
+      "frequency_help": "0 to 14 sessions per week",
+      "description": "Description",
+      "description_placeholder": "Goals, context, constraints…",
+      "saved_create": "Program created",
+      "saved_edit": "Program updated"
+    },
+    "actions": {
+      "new": "New program",
+      "edit": "Edit",
+      "archive": "Archive",
+      "archive_confirm_title": "Archive this program?",
+      "archive_confirm_message": "The program will be hidden by default. You can restore it later.",
+      "archived": "Program archived",
+      "restore": "Restore",
+      "restored": "Program restored"
+    },
+    "errors": {
+      "unknown": "An error occurred."
+    }
   },
   "teams": {
     "list": {

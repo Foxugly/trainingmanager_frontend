@@ -61,13 +61,16 @@
   "programs": {
     "list": {
       "title": "Programmi",
-      "empty": "Nessun programma"
+      "empty": "Nessun programma",
+      "show_archived": "Mostra archiviati",
+      "archived_badge": "Archiviato"
     },
     "detail": {
       "not_found": "Programma non trovato",
       "events_count": "Sessioni",
       "events_label": "sessione/i pianificata/e",
-      "generate": "Genera sessioni"
+      "generate": "Genera sessioni",
+      "archived_banner": "Questo programma è archiviato."
     },
     "generate": {
       "dialog_title": "Generazione AI delle sessioni",
@@ -98,7 +101,38 @@
     "frequency_per_week": "Frequenza settimanale",
     "times_per_week": "volte a settimana",
     "ai_generated": "AI",
-    "unknown_team": "Squadra sconosciuta"
+    "unknown_team": "Squadra sconosciuta",
+    "form": {
+      "new_title": "Nuovo programma",
+      "edit_title": "Modifica programma",
+      "name": "Nome",
+      "name_placeholder": "Es. Preparazione invernale",
+      "team": "Squadra",
+      "team_placeholder": "Seleziona una squadra",
+      "team_locked_help": "La squadra di un programma non può essere modificata.",
+      "no_manager_team": "Non gestisci nessuna squadra — non puoi creare un programma.",
+      "date_start": "Data di inizio",
+      "date_end": "Data di fine",
+      "frequency": "Frequenza (sessioni/settimana)",
+      "frequency_help": "Da 0 a 14 sessioni a settimana",
+      "description": "Descrizione",
+      "description_placeholder": "Obiettivi, contesto, vincoli…",
+      "saved_create": "Programma creato",
+      "saved_edit": "Programma aggiornato"
+    },
+    "actions": {
+      "new": "Nuovo programma",
+      "edit": "Modifica",
+      "archive": "Archivia",
+      "archive_confirm_title": "Archiviare questo programma?",
+      "archive_confirm_message": "Il programma sarà nascosto per default. Potrai ripristinarlo in seguito.",
+      "archived": "Programma archiviato",
+      "restore": "Ripristina",
+      "restored": "Programma ripristinato"
+    },
+    "errors": {
+      "unknown": "Si è verificato un errore."
+    }
   },
   "teams": {
     "list": {

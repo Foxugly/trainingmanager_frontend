@@ -61,13 +61,16 @@
   "programs": {
     "list": {
       "title": "Programas",
-      "empty": "Ningún programa"
+      "empty": "Ningún programa",
+      "show_archived": "Mostrar archivados",
+      "archived_badge": "Archivado"
     },
     "detail": {
       "not_found": "Programa no encontrado",
       "events_count": "Sesiones",
       "events_label": "sesión/es planificada/s",
-      "generate": "Generar sesiones"
+      "generate": "Generar sesiones",
+      "archived_banner": "Este programa está archivado."
     },
     "generate": {
       "dialog_title": "Generación IA de sesiones",
@@ -98,7 +101,38 @@
     "frequency_per_week": "Frecuencia semanal",
     "times_per_week": "veces por semana",
     "ai_generated": "IA",
-    "unknown_team": "Equipo desconocido"
+    "unknown_team": "Equipo desconocido",
+    "form": {
+      "new_title": "Nuevo programa",
+      "edit_title": "Editar programa",
+      "name": "Nombre",
+      "name_placeholder": "Ej. Pretemporada invierno",
+      "team": "Equipo",
+      "team_placeholder": "Selecciona un equipo",
+      "team_locked_help": "El equipo de un programa no puede modificarse.",
+      "no_manager_team": "No gestionas ningún equipo — no puedes crear un programa.",
+      "date_start": "Fecha de inicio",
+      "date_end": "Fecha de fin",
+      "frequency": "Frecuencia (sesiones/semana)",
+      "frequency_help": "De 0 a 14 sesiones por semana",
+      "description": "Descripción",
+      "description_placeholder": "Objetivos, contexto, limitaciones…",
+      "saved_create": "Programa creado",
+      "saved_edit": "Programa actualizado"
+    },
+    "actions": {
+      "new": "Nuevo programa",
+      "edit": "Editar",
+      "archive": "Archivar",
+      "archive_confirm_title": "¿Archivar este programa?",
+      "archive_confirm_message": "El programa quedará oculto por defecto. Podrás restaurarlo más tarde.",
+      "archived": "Programa archivado",
+      "restore": "Restaurar",
+      "restored": "Programa restaurado"
+    },
+    "errors": {
+      "unknown": "Se ha producido un error."
+    }
   },
   "teams": {
     "list": {

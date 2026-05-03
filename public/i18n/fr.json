@@ -61,13 +61,16 @@
   "programs": {
     "list": {
       "title": "Programmes",
-      "empty": "Aucun programme"
+      "empty": "Aucun programme",
+      "show_archived": "Afficher les archivés",
+      "archived_badge": "Archivé"
     },
     "detail": {
       "not_found": "Programme introuvable",
       "events_count": "Séances",
       "events_label": "séance(s) planifiée(s)",
-      "generate": "Générer des séances"
+      "generate": "Générer des séances",
+      "archived_banner": "Ce programme est archivé."
     },
     "generate": {
       "dialog_title": "Génération IA des séances",
@@ -98,7 +101,38 @@
     "frequency_per_week": "Fréquence par semaine",
     "times_per_week": "fois par semaine",
     "ai_generated": "IA",
-    "unknown_team": "Équipe inconnue"
+    "unknown_team": "Équipe inconnue",
+    "form": {
+      "new_title": "Nouveau programme",
+      "edit_title": "Modifier le programme",
+      "name": "Nom",
+      "name_placeholder": "Ex : Préparation hivernale",
+      "team": "Équipe",
+      "team_placeholder": "Sélectionner une équipe",
+      "team_locked_help": "L'équipe d'un programme ne peut pas être modifiée.",
+      "no_manager_team": "Vous n'êtes manager d'aucune équipe : impossible de créer un programme.",
+      "date_start": "Date de début",
+      "date_end": "Date de fin",
+      "frequency": "Fréquence (séances/semaine)",
+      "frequency_help": "0 à 14 séances par semaine",
+      "description": "Description",
+      "description_placeholder": "Objectifs, contexte, contraintes…",
+      "saved_create": "Programme créé",
+      "saved_edit": "Programme mis à jour"
+    },
+    "actions": {
+      "new": "Nouveau programme",
+      "edit": "Modifier",
+      "archive": "Archiver",
+      "archive_confirm_title": "Archiver ce programme ?",
+      "archive_confirm_message": "Le programme sera masqué par défaut. Vous pourrez le restaurer ensuite.",
+      "archived": "Programme archivé",
+      "restore": "Restaurer",
+      "restored": "Programme restauré"
+    },
+    "errors": {
+      "unknown": "Une erreur est survenue."
+    }
   },
   "teams": {
     "list": {

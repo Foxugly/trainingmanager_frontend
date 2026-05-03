@@ -61,13 +61,16 @@
   "programs": {
     "list": {
       "title": "Programma's",
-      "empty": "Geen programma's"
+      "empty": "Geen programma's",
+      "show_archived": "Gearchiveerde tonen",
+      "archived_badge": "Gearchiveerd"
     },
     "detail": {
       "not_found": "Programma niet gevonden",
       "events_count": "Sessies",
       "events_label": "geplande sessie(s)",
-      "generate": "Sessies genereren"
+      "generate": "Sessies genereren",
+      "archived_banner": "Dit programma is gearchiveerd."
     },
     "generate": {
       "dialog_title": "AI-generatie van sessies",
@@ -98,7 +101,38 @@
     "frequency_per_week": "Frequentie per week",
     "times_per_week": "keer per week",
     "ai_generated": "AI",
-    "unknown_team": "Onbekend team"
+    "unknown_team": "Onbekend team",
+    "form": {
+      "new_title": "Nieuw programma",
+      "edit_title": "Programma bewerken",
+      "name": "Naam",
+      "name_placeholder": "Bijv. Winterperiode",
+      "team": "Team",
+      "team_placeholder": "Kies een team",
+      "team_locked_help": "Het team van een programma kan niet worden gewijzigd.",
+      "no_manager_team": "Je beheert geen enkel team — je kunt geen programma aanmaken.",
+      "date_start": "Startdatum",
+      "date_end": "Einddatum",
+      "frequency": "Frequentie (sessies/week)",
+      "frequency_help": "0 tot 14 sessies per week",
+      "description": "Beschrijving",
+      "description_placeholder": "Doelen, context, beperkingen…",
+      "saved_create": "Programma aangemaakt",
+      "saved_edit": "Programma bijgewerkt"
+    },
+    "actions": {
+      "new": "Nieuw programma",
+      "edit": "Bewerken",
+      "archive": "Archiveren",
+      "archive_confirm_title": "Dit programma archiveren?",
+      "archive_confirm_message": "Het programma wordt standaard verborgen. Je kunt het later herstellen.",
+      "archived": "Programma gearchiveerd",
+      "restore": "Herstellen",
+      "restored": "Programma hersteld"
+    },
+    "errors": {
+      "unknown": "Er is een fout opgetreden."
+    }
   },
   "teams": {
     "list": {
