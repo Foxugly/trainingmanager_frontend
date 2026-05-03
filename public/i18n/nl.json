@@ -30,7 +30,8 @@
       "next_month": "Volgende maand",
       "filter_teams": "Filter op team",
       "filter_programs": "Filter op programma",
-      "no_programs": "Geen programma voor de geselecteerde teams"
+      "no_programs": "Geen programma voor de geselecteerde teams",
+      "new_event": "Nieuwe sessie"
     },
     "detail": {
       "regenerate": "Sessie opnieuw genereren",
@@ -56,7 +57,30 @@
       "success_title": "Generatie geslaagd",
       "success_summary": "{{rounds}} blok(ken), {{exercises}} oefening(en) aangemaakt, {{reused}} oefening(en) hergebruikt."
     },
-    "unknown_program": "Onbekend programma"
+    "unknown_program": "Onbekend programma",
+    "form": {
+      "new_title": "Nieuwe sessie",
+      "edit_title": "Sessie bewerken",
+      "name": "Naam",
+      "program": "Programma",
+      "goal": "Doel",
+      "date": "Datum",
+      "hour_start": "Starttijd",
+      "hour_end": "Eindtijd",
+      "total": "Volume",
+      "color": "Kleur",
+      "save": "Opslaan",
+      "saved": "Sessie opgeslagen",
+      "errors": {
+        "time_range": "De eindtijd moet na de starttijd liggen."
+      }
+    },
+    "actions": {
+      "edit": "Bewerken"
+    },
+    "errors": {
+      "unknown": "Er is een fout opgetreden."
+    }
   },
   "programs": {
     "list": {

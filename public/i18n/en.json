@@ -30,7 +30,8 @@
       "next_month": "Next month",
       "filter_teams": "Filter by team",
       "filter_programs": "Filter by program",
-      "no_programs": "No program for the selected teams"
+      "no_programs": "No program for the selected teams",
+      "new_event": "New session"
     },
     "detail": {
       "regenerate": "Regenerate session",
@@ -56,7 +57,30 @@
       "success_title": "Regeneration successful",
       "success_summary": "{{rounds}} block(s), {{exercises}} exercise(s) created, {{reused}} exercise(s) reused."
     },
-    "unknown_program": "Unknown program"
+    "unknown_program": "Unknown program",
+    "form": {
+      "new_title": "New session",
+      "edit_title": "Edit session",
+      "name": "Name",
+      "program": "Program",
+      "goal": "Goal",
+      "date": "Date",
+      "hour_start": "Start time",
+      "hour_end": "End time",
+      "total": "Volume",
+      "color": "Color",
+      "save": "Save",
+      "saved": "Session saved",
+      "errors": {
+        "time_range": "End time must be after start time."
+      }
+    },
+    "actions": {
+      "edit": "Edit"
+    },
+    "errors": {
+      "unknown": "An error occurred."
+    }
   },
   "programs": {
     "list": {

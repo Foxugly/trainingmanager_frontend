@@ -30,7 +30,8 @@
       "next_month": "Mois suivant",
       "filter_teams": "Filtrer par équipe",
       "filter_programs": "Filtrer par programme",
-      "no_programs": "Aucun programme pour les équipes sélectionnées"
+      "no_programs": "Aucun programme pour les équipes sélectionnées",
+      "new_event": "Nouvelle séance"
     },
     "detail": {
       "regenerate": "Régénérer la séance",
@@ -56,7 +57,30 @@
       "success_title": "Régénération réussie",
       "success_summary": "{{rounds}} bloc(s), {{exercises}} exercice(s) créé(s), {{reused}} exercice(s) réutilisé(s)."
     },
-    "unknown_program": "Programme inconnu"
+    "unknown_program": "Programme inconnu",
+    "form": {
+      "new_title": "Nouvelle séance",
+      "edit_title": "Modifier la séance",
+      "name": "Nom",
+      "program": "Programme",
+      "goal": "Objectif",
+      "date": "Date",
+      "hour_start": "Heure de début",
+      "hour_end": "Heure de fin",
+      "total": "Volume",
+      "color": "Couleur",
+      "save": "Enregistrer",
+      "saved": "Séance enregistrée",
+      "errors": {
+        "time_range": "L'heure de fin doit être après l'heure de début."
+      }
+    },
+    "actions": {
+      "edit": "Modifier"
+    },
+    "errors": {
+      "unknown": "Une erreur est survenue."
+    }
   },
   "programs": {
     "list": {
