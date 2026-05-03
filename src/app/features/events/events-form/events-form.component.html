@@ -1,0 +1,146 @@
+<div class="max-w-3xl">
+  <a
+    [routerLink]="eventId() ? ['/events', eventId()] : ['/events']"
+    class="text-sm text-blue-600 hover:underline"
+  >
+    ← {{ 'common.back' | transloco }}
+  </a>
+
+  <h1 class="text-2xl font-bold mb-6 mt-2">
+    @if (eventId()) {
+      {{ 'events.form.edit_title' | transloco }}
+    } @else {
+      {{ 'events.form.new_title' | transloco }}
+    }
+  </h1>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-5">
+    <div class="flex flex-col gap-2">
+      <label for="name" class="text-sm font-medium text-gray-700">
+        {{ 'events.form.name' | transloco }}
+      </label>
+      <input pInputText id="name" formControlName="name" class="w-full" />
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="refer_program_id" class="text-sm font-medium text-gray-700">
+        {{ 'events.form.program' | transloco }}
+      </label>
+      <p-select
+        inputId="refer_program_id"
+        [options]="availablePrograms()"
+        formControlName="refer_program_id"
+        optionLabel="name"
+        optionValue="id"
+        [filter]="true"
+        styleClass="w-full"
+      />
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="goal" class="text-sm font-medium text-gray-700">
+        {{ 'events.form.goal' | transloco }}
+      </label>
+      <input pInputText id="goal" formControlName="goal" class="w-full" />
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="flex flex-col gap-2">
+        <label for="date" class="text-sm font-medium text-gray-700">
+          {{ 'events.form.date' | transloco }}
+        </label>
+        <p-datepicker
+          inputId="date"
+          formControlName="date"
+          dateFormat="dd/mm/yy"
+          [showIcon]="true"
+          appendTo="body"
+          styleClass="w-full"
+        />
+      </div>
+      <div class="flex flex-col gap-2">
+        <label for="hour_start" class="text-sm font-medium text-gray-700">
+          {{ 'events.form.hour_start' | transloco }}
+        </label>
+        <p-datepicker
+          inputId="hour_start"
+          formControlName="hour_start"
+          [timeOnly]="true"
+          [showIcon]="true"
+          appendTo="body"
+          styleClass="w-full"
+        />
+      </div>
+      <div class="flex flex-col gap-2">
+        <label for="hour_end" class="text-sm font-medium text-gray-700">
+          {{ 'events.form.hour_end' | transloco }}
+        </label>
+        <p-datepicker
+          inputId="hour_end"
+          formControlName="hour_end"
+          [timeOnly]="true"
+          [showIcon]="true"
+          appendTo="body"
+          styleClass="w-full"
+        />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="flex flex-col gap-2">
+        <label for="total" class="text-sm font-medium text-gray-700">
+          {{ 'events.form.total' | transloco }}
+        </label>
+        <p-inputnumber
+          inputId="total"
+          formControlName="total"
+          [min]="0"
+          [showButtons]="true"
+          styleClass="w-full"
+        />
+      </div>
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-gray-700">
+          {{ 'events.form.color' | transloco }}
+        </label>
+        <div class="flex items-center gap-3">
+          <p-colorpicker formControlName="color" [inline]="false" />
+          <input pInputText formControlName="color" class="flex-1" maxlength="10" />
+        </div>
+      </div>
+    </div>
+
+    @if (form.errors?.['time_range']) {
+      <p-message severity="warn" [text]="'events.form.errors.time_range' | transloco" />
+    }
+
+    @if (errorMessage(); as msg) {
+      <p-message severity="error" [text]="msg | transloco" />
+    }
+
+    @if (fieldErrors(); as errors) {
+      <div class="flex flex-col gap-1">
+        @for (entry of errors | keyvalue; track entry.key) {
+          <p-message severity="warn" [text]="entry.key + ': ' + entry.value.join(', ')" />
+        }
+      </div>
+    }
+
+    <div class="flex justify-end gap-2 mt-2">
+      <a [routerLink]="eventId() ? ['/events', eventId()] : ['/events']">
+        <p-button
+          type="button"
+          severity="secondary"
+          [text]="true"
+          [label]="'common.cancel' | transloco"
+        />
+      </a>
+      <p-button
+        type="submit"
+        [label]="'events.form.save' | transloco"
+        [loading]="saving()"
+        [disabled]="form.invalid"
+      />
+    </div>
+  </form>
+</div>

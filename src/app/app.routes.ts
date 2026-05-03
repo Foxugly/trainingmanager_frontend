@@ -102,10 +102,24 @@ export const routes: Routes = [
               ),
           },
           {
+            path: 'new',
+            loadComponent: () =>
+              import('./features/events/events-form/events-form.component').then(
+                (m) => m.EventsFormComponent,
+              ),
+          },
+          {
             path: ':id',
             loadComponent: () =>
               import('./features/events/events-detail/events-detail.component').then(
                 (m) => m.EventsDetailComponent,
+              ),
+          },
+          {
+            path: ':id/edit',
+            loadComponent: () =>
+              import('./features/events/events-form/events-form.component').then(
+                (m) => m.EventsFormComponent,
               ),
           },
         ],
