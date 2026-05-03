@@ -1,8 +1,9 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { ActivatedRoute, provideRouter } from '@angular/router';
+import { ActivatedRoute, Router, provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ProgramsService } from '../../../api/api/programs.service';
@@ -42,14 +43,14 @@ const fullTeam: Team = {
   updated_at: '2026-04-01T00:00:00Z',
 };
 
-const team = { id: 4, name: 'RBP WP Senior', language: LanguageEnum.Fr } as const;
+const teamMinimal = { id: 4, name: 'RBP WP Senior', language: LanguageEnum.Fr } as const;
 
 const program: Program = {
   id: 7,
   name: 'Plan IA été',
   date_start: '2026-06-01',
   date_end: '2026-08-31',
-  team,
+  team: teamMinimal,
   team_id: 4,
   events: [10, 11, 12],
   frequency_per_week: 4,
@@ -57,29 +58,41 @@ const program: Program = {
   generated_by_ai: true,
   ai_response: '...',
   ai_generated_at: '2026-04-15T00:00:00Z',
+  is_active: true,
   created_at: '2026-04-01T00:00:00Z',
   updated_at: '2026-04-01T00:00:00Z',
 };
+
+const archivedProgram: Program = { ...program, is_active: false };
 
 interface ProtectedFields {
   programId(): number | null;
   program(): Program | null;
   loading(): boolean;
   notFound(): boolean;
+  archiving(): boolean;
+  canManage(): boolean;
   canGenerate(): boolean;
+  isArchived(): boolean;
   showGenerateDialog(): boolean;
   lastGenerationResult(): { created: number; deleted: number; rationale: string } | null;
   openGenerateDialog(): void;
   onGenerated(r: { created: number; deleted: number; rationale: string }): void;
+  confirmArchive(): void;
+  restore(): void;
 }
 
 describe('ProgramsDetailComponent', () => {
   let fixture: ComponentFixture<ProgramsDetailComponent>;
   let component: ProgramsDetailComponent;
-  let serviceMock: { programsRetrieve: ReturnType<typeof vi.fn> };
+  let serviceMock: {
+    programsRetrieve: ReturnType<typeof vi.fn>;
+    programsPartialUpdate: ReturnType<typeof vi.fn>;
+  };
   let teamsMock: { teamsRetrieve: ReturnType<typeof vi.fn> };
   let userSig: ReturnType<typeof signal<CustomUserPublic | null>>;
   let routeIdParam: string | null;
+  let router: Router;
 
   const access = (c: ProgramsDetailComponent) => c as unknown as ProtectedFields;
 
@@ -94,6 +107,7 @@ describe('ProgramsDetailComponent', () => {
       programsRetrieve: vi
         .fn()
         .mockReturnValue(retrieveResult ? of(retrieveResult) : throwError(() => new Error('404'))),
+      programsPartialUpdate: vi.fn().mockReturnValue(of({ ...program, is_active: false })),
     };
     teamsMock = { teamsRetrieve: vi.fn().mockReturnValue(of(fullTeam)) };
     userSig = signal<CustomUserPublic | null>(currentUser);
@@ -109,6 +123,8 @@ describe('ProgramsDetailComponent', () => {
       providers: [
         provideNoopAnimations(),
         provideRouter([]),
+        ConfirmationService,
+        MessageService,
         { provide: ProgramsService, useValue: serviceMock },
         { provide: TeamsService, useValue: teamsMock },
         { provide: AuthService, useValue: { currentUser: userSig.asReadonly() } },
@@ -125,6 +141,8 @@ describe('ProgramsDetailComponent', () => {
 
     fixture = TestBed.createComponent(ProgramsDetailComponent);
     component = fixture.componentInstance;
+    router = TestBed.inject(Router);
+    vi.spyOn(router, 'navigate').mockReturnValue(Promise.resolve(true));
     fixture.detectChanges();
   }
 
@@ -132,8 +150,8 @@ describe('ProgramsDetailComponent', () => {
     await setup();
   });
 
-  it('loads the program for the route :id on init', () => {
-    expect(serviceMock.programsRetrieve).toHaveBeenCalledWith(7);
+  it('loads the program for the route :id on init with includeInactive=true', () => {
+    expect(serviceMock.programsRetrieve).toHaveBeenCalledWith(7, true);
     expect(access(component).program()?.id).toBe(7);
   });
 
@@ -154,13 +172,15 @@ describe('ProgramsDetailComponent', () => {
     expect(access(component).program()?.ai_generated_at).toBe('2026-04-15T00:00:00Z');
   });
 
-  it('canGenerate is true for owner', () => {
+  it('canManage and canGenerate are true for owner', () => {
     expect(teamsMock.teamsRetrieve).toHaveBeenCalledWith(4);
+    expect(access(component).canManage()).toBe(true);
     expect(access(component).canGenerate()).toBe(true);
   });
 
-  it('canGenerate is false for member-only user', async () => {
+  it('canManage and canGenerate are false for a member-only user', async () => {
     await setup('7', program, otherUser);
+    expect(access(component).canManage()).toBe(false);
     expect(access(component).canGenerate()).toBe(false);
   });
 
@@ -176,5 +196,29 @@ describe('ProgramsDetailComponent', () => {
     access(component).onGenerated({ created: 5, deleted: 0, rationale: 'ok' });
     expect(access(component).lastGenerationResult()?.created).toBe(5);
     expect(serviceMock.programsRetrieve).toHaveBeenCalled();
+  });
+
+  it('confirmArchive triggers a partialUpdate with is_active=false on accept and routes to /programs', () => {
+    const confirmation = fixture.debugElement.injector.get(ConfirmationService);
+    vi.spyOn(confirmation, 'confirm').mockImplementation((cfg) => {
+      cfg.accept?.();
+      return confirmation;
+    });
+    access(component).confirmArchive();
+    expect(serviceMock.programsPartialUpdate).toHaveBeenCalledWith(7, undefined, { is_active: false });
+    expect(router.navigate).toHaveBeenCalledWith(['/programs']);
+  });
+
+  it('restore() patches with is_active=true and includeInactive=true to retrieve archived', async () => {
+    await setup('7', archivedProgram);
+    serviceMock.programsPartialUpdate.mockReturnValueOnce(of({ ...archivedProgram, is_active: true }));
+    expect(access(component).isArchived()).toBe(true);
+    access(component).restore();
+    expect(serviceMock.programsPartialUpdate).toHaveBeenCalledWith(7, true, { is_active: true });
+  });
+
+  it('isArchived reflects is_active=false', async () => {
+    await setup('7', archivedProgram);
+    expect(access(component).isArchived()).toBe(true);
   });
 });

@@ -127,7 +127,7 @@ describe('EventsCalendarComponent', () => {
     programsMock = {
       programsList: vi.fn().mockImplementation(
         (...args: unknown[]) => {
-          const teamId = args[6] as number;
+          const teamId = args[8] as number;
           if (teamId === 4) return of({ count: 1, results: [program] });
           if (teamId === 5) return of({ count: 1, results: [program2] });
           return of({ count: 0, results: [] });

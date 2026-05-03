@@ -1,7 +1,38 @@
 <div>
   @if (!teamFilter()) {
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex justify-between items-center mb-6 gap-3 flex-wrap">
       <h1 class="text-2xl font-bold">{{ 'programs.list.title' | transloco }}</h1>
+      <div class="flex items-center gap-3 flex-wrap">
+        @if (canShowArchivedToggle()) {
+          <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+            <p-toggleswitch [(ngModel)]="showArchived" inputId="show-archived" />
+            <span>{{ 'programs.list.show_archived' | transloco }}</span>
+          </label>
+        }
+        @if (canCreate()) {
+          <a [routerLink]="newRouterLink()" [queryParams]="newQueryParams()">
+            <p-button [label]="'programs.actions.new' | transloco" icon="pi pi-plus" />
+          </a>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="flex items-center justify-end gap-3 mb-3 flex-wrap">
+      @if (canShowArchivedToggle()) {
+        <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+          <p-toggleswitch [(ngModel)]="showArchived" inputId="show-archived-nested" />
+          <span>{{ 'programs.list.show_archived' | transloco }}</span>
+        </label>
+      }
+      @if (canCreate()) {
+        <a [routerLink]="newRouterLink()" [queryParams]="newQueryParams()">
+          <p-button
+            [label]="'programs.actions.new' | transloco"
+            icon="pi pi-plus"
+            size="small"
+          />
+        </a>
+      }
     </div>
   }
 
@@ -14,15 +45,34 @@
       @for (p of programs(); track p.id) {
         <a
           [routerLink]="['/programs', p.id]"
-          class="block p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md hover:border-blue-300 transition"
+          [class]="
+            p.is_active === false
+              ? 'block p-4 bg-gray-50 border border-gray-300 rounded-lg hover:shadow-md transition opacity-75'
+              : 'block p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md hover:border-blue-300 transition'
+          "
         >
           <div class="flex justify-between items-start mb-2 gap-2">
-            <h2 class="font-semibold text-lg text-gray-900">{{ p.name }}</h2>
-            @if (p.generated_by_ai) {
-              <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded shrink-0">
-                {{ 'programs.ai_generated' | transloco }}
-              </span>
-            }
+            <h2
+              [class]="
+                p.is_active === false
+                  ? 'font-semibold text-lg text-gray-600 line-through'
+                  : 'font-semibold text-lg text-gray-900'
+              "
+            >
+              {{ p.name }}
+            </h2>
+            <div class="flex items-center gap-1 shrink-0">
+              @if (p.is_active === false) {
+                <span class="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded">
+                  {{ 'programs.list.archived_badge' | transloco }}
+                </span>
+              }
+              @if (p.generated_by_ai) {
+                <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">
+                  {{ 'programs.ai_generated' | transloco }}
+                </span>
+              }
+            </div>
           </div>
           <p class="text-sm text-gray-600">
             @if (!teamFilter() && p.team?.name) {

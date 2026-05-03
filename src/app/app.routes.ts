@@ -121,10 +121,24 @@ export const routes: Routes = [
               ),
           },
           {
+            path: 'new',
+            loadComponent: () =>
+              import('./features/programs/programs-form/programs-form.component').then(
+                (m) => m.ProgramsFormComponent,
+              ),
+          },
+          {
             path: ':id',
             loadComponent: () =>
               import('./features/programs/programs-detail/programs-detail.component').then(
                 (m) => m.ProgramsDetailComponent,
+              ),
+          },
+          {
+            path: ':id/edit',
+            loadComponent: () =>
+              import('./features/programs/programs-form/programs-form.component').then(
+                (m) => m.ProgramsFormComponent,
               ),
           },
         ],

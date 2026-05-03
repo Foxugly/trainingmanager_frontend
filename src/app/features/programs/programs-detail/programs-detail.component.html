@@ -8,6 +8,27 @@
   } @else if (notFound()) {
     <p class="mt-4 text-gray-500">{{ 'programs.detail.not_found' | transloco }}</p>
   } @else if (program(); as p) {
+    @if (isArchived()) {
+      <div
+        class="mt-4 mb-4 p-4 bg-amber-50 border border-amber-200 rounded flex items-center justify-between gap-3 flex-wrap"
+      >
+        <div class="flex items-center gap-2 text-amber-900">
+          <i class="pi pi-archive"></i>
+          <span class="font-medium">{{ 'programs.detail.archived_banner' | transloco }}</span>
+        </div>
+        @if (canManage()) {
+          <p-button
+            [label]="'programs.actions.restore' | transloco"
+            icon="pi pi-replay"
+            severity="warn"
+            [outlined]="true"
+            [loading]="archiving()"
+            (onClick)="restore()"
+          />
+        }
+      </div>
+    }
+
     <div class="mt-2">
       <div class="flex items-start gap-3 mb-6 flex-wrap">
         <div class="flex items-center gap-3 flex-wrap flex-1 min-w-0">
@@ -17,14 +38,41 @@
               {{ 'programs.ai_generated' | transloco }}
             </span>
           }
+          @if (isArchived()) {
+            <span class="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded">
+              {{ 'programs.list.archived_badge' | transloco }}
+            </span>
+          }
         </div>
-        @if (canGenerate()) {
-          <p-button
-            [label]="'programs.detail.generate' | transloco"
-            icon="pi pi-sparkles"
-            (onClick)="openGenerateDialog()"
-          />
-        }
+        <div class="flex items-center gap-2 flex-wrap">
+          @if (canManage()) {
+            <a [routerLink]="['/programs', p.id, 'edit']">
+              <p-button
+                [label]="'programs.actions.edit' | transloco"
+                icon="pi pi-pencil"
+                severity="secondary"
+                [outlined]="true"
+              />
+            </a>
+            @if (!isArchived()) {
+              <p-button
+                [label]="'programs.actions.archive' | transloco"
+                icon="pi pi-archive"
+                severity="danger"
+                [outlined]="true"
+                [loading]="archiving()"
+                (onClick)="confirmArchive()"
+              />
+            }
+          }
+          @if (canGenerate() && !isArchived()) {
+            <p-button
+              [label]="'programs.detail.generate' | transloco"
+              icon="pi pi-sparkles"
+              (onClick)="openGenerateDialog()"
+            />
+          }
+        </div>
       </div>
 
       @if (lastGenerationResult(); as result) {
@@ -126,3 +174,5 @@
     }
   }
 </div>
+
+<p-confirmDialog />
