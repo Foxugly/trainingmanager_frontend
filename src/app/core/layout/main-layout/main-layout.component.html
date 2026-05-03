@@ -4,6 +4,14 @@
 
     <div class="flex items-center gap-4">
       <a
+        [routerLink]="['/dashboard']"
+        routerLinkActive="font-bold"
+        class="text-sm text-gray-700 hover:underline"
+      >
+        {{ 'nav.dashboard' | transloco }}
+      </a>
+
+      <a
         [routerLink]="['/teams']"
         routerLinkActive="font-bold"
         class="text-sm text-gray-700 hover:underline"
