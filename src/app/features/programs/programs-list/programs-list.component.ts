@@ -40,7 +40,17 @@ export class ProgramsListComponent {
   private load(team: number | undefined): void {
     this.loading.set(true);
     this.programsService
-      .programsList(undefined, undefined, undefined, undefined, undefined, undefined, team)
+      .programsList(
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        team,
+      )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
