@@ -1,0 +1,68 @@
+<section class="flex min-h-[60vh] items-center justify-center px-4 py-12 md:py-16">
+  <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-md border border-gray-200">
+    <div class="text-center mb-6">
+      <i class="pi pi-envelope text-5xl text-indigo-500 mb-4" aria-hidden="true"></i>
+      <h1 class="text-2xl font-bold mb-2">{{ 'auth.check_email.title' | transloco }}</h1>
+    </div>
+
+    @if (email(); as e) {
+      <p class="text-gray-700 text-center mb-6">
+        {{ 'auth.check_email.body_with_email' | transloco: { email: e } }}
+      </p>
+
+      @if (errorMessage(); as msg) {
+        <div class="mb-4">
+          <p-message severity="warn" [text]="msg | transloco" />
+        </div>
+      }
+
+      <p-button
+        type="button"
+        [label]="
+          cooldownActive()
+            ? ('auth.check_email.resend_cooldown' | transloco: { seconds: cooldownSeconds() })
+            : ('auth.check_email.resend_button' | transloco)
+        "
+        icon="pi pi-refresh"
+        [loading]="resending()"
+        [disabled]="resending() || cooldownActive()"
+        (onClick)="resend()"
+        styleClass="w-full"
+      />
+    } @else {
+      <p class="text-gray-700 text-center mb-6">
+        {{ 'auth.check_email.body_no_email' | transloco }}
+      </p>
+
+      <form [formGroup]="emailForm" (ngSubmit)="submitEmailForm()" class="flex flex-col gap-3">
+        <input
+          pInputText
+          type="email"
+          formControlName="email"
+          [placeholder]="'auth.register.fields.email' | transloco"
+          autocomplete="email"
+        />
+        @if (errorMessage(); as msg) {
+          <p-message severity="warn" [text]="msg | transloco" />
+        }
+        <p-button
+          type="submit"
+          [label]="
+            cooldownActive()
+              ? ('auth.check_email.resend_cooldown' | transloco: { seconds: cooldownSeconds() })
+              : ('auth.check_email.resend_button' | transloco)
+          "
+          [loading]="resending()"
+          [disabled]="emailForm.invalid || resending() || cooldownActive()"
+          styleClass="w-full"
+        />
+      </form>
+    }
+
+    <p class="text-center text-sm text-gray-600 mt-6">
+      <a [routerLink]="['/login']" class="text-indigo-600 hover:underline font-medium">
+        {{ 'auth.check_email.back_to_login' | transloco }}
+      </a>
+    </p>
+  </div>
+</section>
