@@ -93,4 +93,31 @@ describe('PublicLayoutComponent', () => {
       expect(access(component).isAuthenticated()).toBe(true);
     });
   });
+
+  describe('header structure', () => {
+    beforeEach(async () => {
+      await setup(null);
+    });
+
+    it('nav links use routerLinks for /, /features, /contribute (no #-anchors)', () => {
+      const html = fixture.nativeElement.innerHTML as string;
+      expect(html).toContain('public.nav.home');
+      expect(html).toContain('public.nav.features');
+      expect(html).toContain('public.nav.contribute');
+      // No legacy #-anchors leak
+      expect(html).not.toContain('href="#hero"');
+      expect(html).not.toContain('href="#features"');
+      expect(html).not.toContain('href="#contribute"');
+    });
+
+    it('footer is minimal — only the rights line, no nav links', () => {
+      const footer = fixture.nativeElement.querySelector('footer');
+      expect(footer).not.toBeNull();
+      const footerHtml = (footer as HTMLElement).innerHTML;
+      expect(footerHtml).toContain('public.footer.rights');
+      expect(footerHtml).not.toContain('public.nav.home');
+      expect(footerHtml).not.toContain('public.nav.features');
+      expect(footerHtml).not.toContain('public.nav.contribute');
+    });
+  });
 });

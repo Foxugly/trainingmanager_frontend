@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { AuthService } from '../../auth/auth.service';
 import { LanguageSwitcherComponent } from '../../i18n/language-switcher/language-switcher.component';
@@ -7,7 +7,14 @@ import { UserMenuComponent } from '../../../shared/ui/user-menu/user-menu.compon
 
 @Component({
   selector: 'app-public-layout',
-  imports: [RouterLink, RouterOutlet, TranslocoPipe, LanguageSwitcherComponent, UserMenuComponent],
+  imports: [
+    RouterLink,
+    RouterLinkActive,
+    RouterOutlet,
+    TranslocoPipe,
+    LanguageSwitcherComponent,
+    UserMenuComponent,
+  ],
   templateUrl: './public-layout.component.html',
   styleUrl: './public-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

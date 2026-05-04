@@ -12,18 +12,35 @@
       </a>
 
       <nav class="hidden items-center gap-8 md:flex" aria-label="Primary">
-        <a href="#hero" class="text-sm font-medium text-gray-700 transition hover:text-indigo-600">
+        <a
+          [routerLink]="['/']"
+          routerLinkActive="text-indigo-700 font-semibold"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="text-sm font-medium text-gray-700 transition hover:text-indigo-600"
+        >
           {{ 'public.nav.home' | transloco }}
         </a>
         @if (isAuthenticated()) {
-          <a [routerLink]="['/dashboard']" class="text-sm font-medium text-gray-700 transition hover:text-indigo-600">
+          <a
+            [routerLink]="['/dashboard']"
+            routerLinkActive="text-indigo-700 font-semibold"
+            class="text-sm font-medium text-gray-700 transition hover:text-indigo-600"
+          >
             {{ 'public.nav.dashboard' | transloco }}
           </a>
         }
-        <a href="#features" class="text-sm font-medium text-gray-700 transition hover:text-indigo-600">
+        <a
+          [routerLink]="['/features']"
+          routerLinkActive="text-indigo-700 font-semibold"
+          class="text-sm font-medium text-gray-700 transition hover:text-indigo-600"
+        >
           {{ 'public.nav.features' | transloco }}
         </a>
-        <a href="#contribute" class="text-sm font-medium text-gray-700 transition hover:text-indigo-600">
+        <a
+          [routerLink]="['/contribute']"
+          routerLinkActive="text-indigo-700 font-semibold"
+          class="text-sm font-medium text-gray-700 transition hover:text-indigo-600"
+        >
           {{ 'public.nav.contribute' | transloco }}
         </a>
       </nav>
@@ -47,18 +64,39 @@
     @if (mobileMenuOpen()) {
       <div class="border-t border-gray-200 bg-white md:hidden">
         <div class="container mx-auto flex flex-col gap-4 px-6 py-4">
-          <a href="#hero" class="text-sm font-medium text-gray-700" (click)="closeMobileMenu()">
+          <a
+            [routerLink]="['/']"
+            routerLinkActive="text-indigo-700 font-semibold"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="text-sm font-medium text-gray-700"
+            (click)="closeMobileMenu()"
+          >
             {{ 'public.nav.home' | transloco }}
           </a>
           @if (isAuthenticated()) {
-            <a [routerLink]="['/dashboard']" class="text-sm font-medium text-gray-700" (click)="closeMobileMenu()">
+            <a
+              [routerLink]="['/dashboard']"
+              routerLinkActive="text-indigo-700 font-semibold"
+              class="text-sm font-medium text-gray-700"
+              (click)="closeMobileMenu()"
+            >
               {{ 'public.nav.dashboard' | transloco }}
             </a>
           }
-          <a href="#features" class="text-sm font-medium text-gray-700" (click)="closeMobileMenu()">
+          <a
+            [routerLink]="['/features']"
+            routerLinkActive="text-indigo-700 font-semibold"
+            class="text-sm font-medium text-gray-700"
+            (click)="closeMobileMenu()"
+          >
             {{ 'public.nav.features' | transloco }}
           </a>
-          <a href="#contribute" class="text-sm font-medium text-gray-700" (click)="closeMobileMenu()">
+          <a
+            [routerLink]="['/contribute']"
+            routerLinkActive="text-indigo-700 font-semibold"
+            class="text-sm font-medium text-gray-700"
+            (click)="closeMobileMenu()"
+          >
             {{ 'public.nav.contribute' | transloco }}
           </a>
           <div class="flex items-center justify-between gap-3 border-t border-gray-100 pt-4">
@@ -74,14 +112,9 @@
     <router-outlet />
   </main>
 
-  <footer class="border-t border-gray-200 bg-white py-8">
-    <div class="container mx-auto flex flex-col items-center justify-between gap-4 px-6 text-sm text-gray-500 md:flex-row">
-      <p>{{ 'public.footer.rights' | transloco }}</p>
-      <div class="flex items-center gap-6">
-        <a href="#hero" class="transition hover:text-indigo-600">{{ 'public.nav.home' | transloco }}</a>
-        <a href="#features" class="transition hover:text-indigo-600">{{ 'public.nav.features' | transloco }}</a>
-        <a href="#contribute" class="transition hover:text-indigo-600">{{ 'public.nav.contribute' | transloco }}</a>
-      </div>
+  <footer class="border-t border-gray-200 bg-white py-6">
+    <div class="container mx-auto px-6 text-center text-sm text-gray-500">
+      {{ 'public.footer.rights' | transloco }}
     </div>
   </footer>
 </div>
