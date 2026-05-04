@@ -39,11 +39,21 @@ interface FieldErrors {
   [field: string]: string[];
 }
 
+interface TurnstileRenderOptions {
+  sitekey: string;
+  callback?: (token: string) => void;
+  'error-callback'?: (error: string) => void;
+  'expired-callback'?: () => void;
+  theme?: 'light' | 'dark' | 'auto';
+  size?: 'normal' | 'compact' | 'flexible';
+}
+
 declare global {
   interface Window {
     turnstile?: {
       reset: (widgetId?: string) => void;
-      render?: (container: string | HTMLElement, options: Record<string, unknown>) => string;
+      render: (container: string | HTMLElement, options: TurnstileRenderOptions) => string;
+      remove?: (widgetId: string) => void;
     };
   }
 }
@@ -114,17 +124,43 @@ export class RegisterComponent implements AfterViewInit, OnDestroy {
   );
 
   private countdownTimer: ReturnType<typeof setInterval> | null = null;
+  private turnstileWidgetId: string | null = null;
+  private turnstileRetryTimer: ReturnType<typeof setTimeout> | null = null;
 
   ngAfterViewInit(): void {
-    // Cloudflare's auto-render scans the DOM for `.cf-turnstile` divs once the
-    // script is loaded; the widget added to the template will be picked up
-    // automatically. No explicit render() call required.
+    this.tryRenderTurnstile(0);
   }
 
   ngOnDestroy(): void {
-    if (this.countdownTimer !== null) {
-      clearInterval(this.countdownTimer);
+    if (this.countdownTimer !== null) clearInterval(this.countdownTimer);
+    if (this.turnstileRetryTimer !== null) clearTimeout(this.turnstileRetryTimer);
+    if (this.turnstileWidgetId !== null && window.turnstile?.remove) {
+      window.turnstile.remove(this.turnstileWidgetId);
+      this.turnstileWidgetId = null;
     }
+  }
+
+  // Cloudflare's auto-render only scans the DOM once at script load.
+  // In a lazy-loaded SPA route the .cf-turnstile div arrives AFTER that
+  // scan, so the widget never mounts on its own. We render explicitly
+  // via window.turnstile.render() once the script is ready, retrying a
+  // few times in case the async <script> hasn't finished downloading.
+  private tryRenderTurnstile(attempts: number): void {
+    if (typeof window === 'undefined') return;
+    if (!window.turnstile?.render) {
+      if (attempts >= 20) return;
+      this.turnstileRetryTimer = setTimeout(
+        () => this.tryRenderTurnstile(attempts + 1),
+        500,
+      );
+      return;
+    }
+    const container = this.turnstileContainer?.nativeElement;
+    if (!container) return;
+    if (this.turnstileWidgetId !== null) return;
+    this.turnstileWidgetId = window.turnstile.render(container, {
+      sitekey: this.turnstileSiteKey,
+    });
   }
 
   protected submit(): void {
@@ -221,7 +257,10 @@ export class RegisterComponent implements AfterViewInit, OnDestroy {
   }
 
   private resetTurnstileWidget(): void {
-    if (typeof window !== 'undefined' && window.turnstile?.reset) {
+    if (typeof window === 'undefined' || !window.turnstile?.reset) return;
+    if (this.turnstileWidgetId !== null) {
+      window.turnstile.reset(this.turnstileWidgetId);
+    } else {
       window.turnstile.reset();
     }
   }
