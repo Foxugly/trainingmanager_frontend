@@ -29,7 +29,7 @@ export interface InvitationsServiceInterface {
 
     /**
      * 
-     * Trainer pre-registers an athlete on a managed team. If the email matches an existing user, the response payload is {detail, member_id} instead of a TeamInvitation.
+     * Trainer pre-registers an athlete on a managed team by sending an invitation email. Refused with code&#x3D;user_already_registered if the email matches an existing user account; the trainer must use a different flow (e.g. ask the user to issue a TeamJoinRequest) for registered users.
      * @endpoint post /api/v1/invitations/
      * @param createInvitation 
      */

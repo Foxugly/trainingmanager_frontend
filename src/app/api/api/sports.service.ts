@@ -819,7 +819,7 @@ export class SportsService extends BaseService implements SportsServiceInterface
     }
 
     /**
-     * CRUD on the Sport referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete via perform_destroy. Staff can pass ?include_inactive&#x3D;true to see inactive entries.
+     * CRUD on the Sport referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete + ?include_inactive&#x3D;true via mixins.
      * @endpoint patch /api/v1/sports/{id}/
      * @param id A unique integer value identifying this sport.
      * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
@@ -977,7 +977,7 @@ export class SportsService extends BaseService implements SportsServiceInterface
     }
 
     /**
-     * CRUD on the Sport referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete via perform_destroy. Staff can pass ?include_inactive&#x3D;true to see inactive entries.
+     * CRUD on the Sport referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete + ?include_inactive&#x3D;true via mixins.
      * @endpoint put /api/v1/sports/{id}/
      * @param id A unique integer value identifying this sport.
      * @param sportAdmin 

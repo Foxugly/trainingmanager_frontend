@@ -26,7 +26,7 @@ export interface AttendanceStatusesServiceInterface {
 
     /**
      * Create attendance status (staff only)
-     * CRUD on the AttendanceStatus referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete via perform_destroy.
+     * CRUD on the AttendanceStatus referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete bumps updated_at.
      * @endpoint post /api/v1/attendance-statuses/
      * @param attendanceStatusAdmin 
      */
@@ -55,7 +55,7 @@ export interface AttendanceStatusesServiceInterface {
 
     /**
      * 
-     * CRUD on the AttendanceStatus referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete via perform_destroy.
+     * CRUD on the AttendanceStatus referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete bumps updated_at.
      * @endpoint patch /api/v1/attendance-statuses/{id}/
      * @param id A unique integer value identifying this attendance status.
      * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
@@ -65,7 +65,7 @@ export interface AttendanceStatusesServiceInterface {
 
     /**
      * Retrieve attendance status (admin flavor for staff)
-     * CRUD on the AttendanceStatus referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete via perform_destroy.
+     * CRUD on the AttendanceStatus referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete bumps updated_at.
      * @endpoint get /api/v1/attendance-statuses/{id}/
      * @param id A unique integer value identifying this attendance status.
      * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
@@ -74,7 +74,7 @@ export interface AttendanceStatusesServiceInterface {
 
     /**
      * 
-     * CRUD on the AttendanceStatus referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete via perform_destroy.
+     * CRUD on the AttendanceStatus referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete bumps updated_at.
      * @endpoint put /api/v1/attendance-statuses/{id}/
      * @param id A unique integer value identifying this attendance status.
      * @param attendanceStatusAdmin 

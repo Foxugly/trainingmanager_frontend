@@ -93,7 +93,7 @@ paths:
         CRUD on the AttendanceStatus referential.
 
         Read: any authenticated user (default queryset filters is_active=True).
-        Write: staff only. Soft delete via perform_destroy.
+        Write: staff only. Soft delete bumps updated_at.
       summary: Create attendance status (staff only)
       tags:
       - attendance-statuses
@@ -125,7 +125,7 @@ paths:
         CRUD on the AttendanceStatus referential.
 
         Read: any authenticated user (default queryset filters is_active=True).
-        Write: staff only. Soft delete via perform_destroy.
+        Write: staff only. Soft delete bumps updated_at.
       summary: Retrieve attendance status (admin flavor for staff)
       parameters:
       - in: path
@@ -157,7 +157,7 @@ paths:
         CRUD on the AttendanceStatus referential.
 
         Read: any authenticated user (default queryset filters is_active=True).
-        Write: staff only. Soft delete via perform_destroy.
+        Write: staff only. Soft delete bumps updated_at.
       parameters:
       - in: path
         name: id
@@ -200,7 +200,7 @@ paths:
         CRUD on the AttendanceStatus referential.
 
         Read: any authenticated user (default queryset filters is_active=True).
-        Write: staff only. Soft delete via perform_destroy.
+        Write: staff only. Soft delete bumps updated_at.
       parameters:
       - in: path
         name: id
@@ -887,10 +887,9 @@ paths:
           description: ''
     put:
       operationId: events_attendance_update
-      description: |-
-        CRUD on event attendance.
-
-        URL: /api/v1/events/{event_pk}/attendance/
+      description: Replace an attendance row. `member` is read-only after create and
+        is silently ignored on update — to reassign attendance, DELETE the row and
+        create a new one.
       summary: Replace attendance row (coach only)
       parameters:
       - in: path
@@ -929,10 +928,9 @@ paths:
           description: ''
     patch:
       operationId: events_attendance_partial_update
-      description: |-
-        CRUD on event attendance.
-
-        URL: /api/v1/events/{event_pk}/attendance/
+      description: Update one or more fields of an attendance row. `member` is read-only
+        after create and is silently ignored — to reassign attendance, DELETE the
+        row and create a new one.
       summary: Update attendance status (coach only)
       parameters:
       - in: path
@@ -1433,9 +1431,10 @@ paths:
           description: ''
     post:
       operationId: invitations_create
-      description: Trainer pre-registers an athlete on a managed team. If the email
-        matches an existing user, the response payload is {detail, member_id} instead
-        of a TeamInvitation.
+      description: Trainer pre-registers an athlete on a managed team by sending an
+        invitation email. Refused with code=user_already_registered if the email matches
+        an existing user account; the trainer must use a different flow (e.g. ask
+        the user to issue a TeamJoinRequest) for registered users.
       tags:
       - invitations
       requestBody:
@@ -1459,6 +1458,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/TeamInvitation'
           description: ''
+        '400':
+          description: 'Validation error. Possible codes include: `user_already_registered`
+            when the email matches an existing user account (direct enrolment is refused
+            for existing users); `email_already_invited`, `not_a_manager`, `team_not_active`.'
   /api/v1/invitations/{id}/:
     get:
       operationId: invitations_retrieve
@@ -1746,34 +1749,17 @@ paths:
   /api/v1/me/:
     get:
       operationId: me_retrieve
-      description: GET/PATCH du profil de l'utilisateur connecté.
+      description: |-
+        GET/PATCH du profil de l'utilisateur connecté.
+
+        PUT is intentionally disabled to prevent partial bodies from resetting
+        unspecified writable fields (first_name, last_name, language) to their
+        defaults. Use PATCH for any update.
+
+        `email` is read-only here; changing the email requires admin intervention
+        in v1 (a verified change-email flow is deferred to v2).
       tags:
       - me
-      security:
-      - jwtAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Me'
-          description: ''
-    put:
-      operationId: me_update
-      description: GET/PATCH du profil de l'utilisateur connecté.
-      tags:
-      - me
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Me'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Me'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Me'
       security:
       - jwtAuth: []
       responses:
@@ -1785,7 +1771,15 @@ paths:
           description: ''
     patch:
       operationId: me_partial_update
-      description: GET/PATCH du profil de l'utilisateur connecté.
+      description: |-
+        GET/PATCH du profil de l'utilisateur connecté.
+
+        PUT is intentionally disabled to prevent partial bodies from resetting
+        unspecified writable fields (first_name, last_name, language) to their
+        defaults. Use PATCH for any update.
+
+        `email` is read-only here; changing the email requires admin intervention
+        in v1 (a verified change-email flow is deferred to v2).
       tags:
       - me
       requestBody:
@@ -2617,8 +2611,7 @@ paths:
         CRUD on the Sport referential.
 
         Read: any authenticated user (default queryset filters is_active=True).
-        Write: staff only. Soft delete via perform_destroy.
-        Staff can pass ?include_inactive=true to see inactive entries.
+        Write: staff only. Soft delete + ?include_inactive=true via mixins.
       parameters:
       - in: path
         name: id
@@ -2661,8 +2654,7 @@ paths:
         CRUD on the Sport referential.
 
         Read: any authenticated user (default queryset filters is_active=True).
-        Write: staff only. Soft delete via perform_destroy.
-        Staff can pass ?include_inactive=true to see inactive entries.
+        Write: staff only. Soft delete + ?include_inactive=true via mixins.
       parameters:
       - in: path
         name: id
@@ -4831,8 +4823,8 @@ components:
         email:
           type: string
           format: email
+          readOnly: true
           title: Email address
-          maxLength: 254
         first_name:
           type: string
           maxLength: 150
@@ -4863,6 +4855,7 @@ components:
             assigning them.
       required:
       - date_joined
+      - email
       - id
       - is_staff
       - is_superuser
@@ -5756,8 +5749,8 @@ components:
         email:
           type: string
           format: email
+          readOnly: true
           title: Email address
-          maxLength: 254
         first_name:
           type: string
           maxLength: 150

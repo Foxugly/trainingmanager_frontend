@@ -69,7 +69,7 @@ export interface EventsServiceInterface {
 
     /**
      * Update attendance status (coach only)
-     * CRUD on event attendance.  URL: /api/v1/events/{event_pk}/attendance/
+     * Update one or more fields of an attendance row. &#x60;member&#x60; is read-only after create and is silently ignored — to reassign attendance, DELETE the row and create a new one.
      * @endpoint patch /api/v1/events/{event_pk}/attendance/{id}/
      * @param eventPk 
      * @param id A unique integer value identifying this attendance.
@@ -88,7 +88,7 @@ export interface EventsServiceInterface {
 
     /**
      * Replace attendance row (coach only)
-     * CRUD on event attendance.  URL: /api/v1/events/{event_pk}/attendance/
+     * Replace an attendance row. &#x60;member&#x60; is read-only after create and is silently ignored on update — to reassign attendance, DELETE the row and create a new one.
      * @endpoint put /api/v1/events/{event_pk}/attendance/{id}/
      * @param eventPk 
      * @param id A unique integer value identifying this attendance.

@@ -25,7 +25,7 @@ export interface MeServiceInterface {
 
     /**
      * 
-     * GET/PATCH du profil de l\&#39;utilisateur connecté.
+     * GET/PATCH du profil de l\&#39;utilisateur connecté.  PUT is intentionally disabled to prevent partial bodies from resetting unspecified writable fields (first_name, last_name, language) to their defaults. Use PATCH for any update.  &#x60;email&#x60; is read-only here; changing the email requires admin intervention in v1 (a verified change-email flow is deferred to v2).
      * @endpoint patch /api/v1/me/
      * @param patchedMe 
      */
@@ -33,17 +33,9 @@ export interface MeServiceInterface {
 
     /**
      * 
-     * GET/PATCH du profil de l\&#39;utilisateur connecté.
+     * GET/PATCH du profil de l\&#39;utilisateur connecté.  PUT is intentionally disabled to prevent partial bodies from resetting unspecified writable fields (first_name, last_name, language) to their defaults. Use PATCH for any update.  &#x60;email&#x60; is read-only here; changing the email requires admin intervention in v1 (a verified change-email flow is deferred to v2).
      * @endpoint get /api/v1/me/
      */
     meRetrieve(extraHttpRequestParams?: any): Observable<Me>;
-
-    /**
-     * 
-     * GET/PATCH du profil de l\&#39;utilisateur connecté.
-     * @endpoint put /api/v1/me/
-     * @param me 
-     */
-    meUpdate(me?: Me, extraHttpRequestParams?: any): Observable<Me>;
 
 }
