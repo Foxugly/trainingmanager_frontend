@@ -350,32 +350,55 @@
       "subtitle": "Training Manager brings your team, schedule, attendance and stats into one tool built for coaches.",
       "cta_primary": "Get started free",
       "cta_secondary": "See features"
-    },
-    "features": {
-      "section_title": "Everything your team needs",
-      "section_subtitle": "A complete platform to handle the day-to-day, from the locker room to the field.",
+    }
+  },
+  "features_page": {
+    "title": "Everything you need to run your teams",
+    "subtitle": "From session planning to attendance logging, with AI-assisted training generation. Built for coaches, by coaches.",
+    "cta": "Get started free",
+    "sections": {
       "teams": {
-        "title": "Teams & chat",
-        "description": "Bring players, coaches and managers into focused teams and chat with them in real time."
+        "title": "Team management",
+        "description": "Create your teams, invite athletes by email, assign manager roles, manage rosters across the season."
       },
-      "training": {
-        "title": "Training plan",
-        "description": "Build your cycles, share your sessions and tailor the load to every athlete."
+      "planning": {
+        "title": "Programs & calendar",
+        "description": "Build your training cycles, plan sessions on the calendar, adjust on the fly."
+      },
+      "ai": {
+        "title": "AI generation",
+        "description": "Ask the AI to generate a session schedule from a program, or a complete training from a single session."
       },
       "attendance": {
-        "title": "Attendance",
-        "description": "Track attendance for trainings and games in a single click, and anticipate absences."
+        "title": "Attendance tracking",
+        "description": "Bulk-log attendance after each session. View your own attendance history as an athlete."
       },
-      "stats": {
-        "title": "Statistics",
-        "description": "Visualize your team's progress with clear, customizable indicators."
+      "i18n": {
+        "title": "5 languages",
+        "description": "Interface available in French, Dutch, English, Italian and Spanish. Choice saved on your profile."
+      },
+      "roles": {
+        "title": "Coach and athlete roles",
+        "description": "One app, two views: coach dashboard to manage, athlete view to follow your sessions and your attendance."
       }
-    },
-    "contribute": {
-      "title": "Open source — by coaches, for coaches",
-      "description": "Training Manager is an open source project. Share ideas, report bugs, propose improvements — every contribution counts.",
-      "github": "View on GitHub"
     }
+  },
+  "contribute_page": {
+    "title": "Contribute to Training Manager",
+    "intro": "Training Manager is an open source project. Your contributions, bug reports and ideas push the project forward.",
+    "oss": {
+      "title": "Open source code",
+      "description": "The source code is available on GitHub. Angular frontend and Django backend, both under an open source licence.",
+      "cta_repo_frontend": "Frontend repo (Angular)",
+      "cta_repo_backend": "Backend repo (Django)",
+      "cta_issues": "Report a bug or suggest an improvement"
+    },
+    "financial": {
+      "title": "Financial support",
+      "description": "If Training Manager helps you and you'd like to support its development, donation channels will be announced here soon.",
+      "placeholder": "More channels coming soon."
+    },
+    "thanks": "Thanks to everyone who pushes this project forward — code, ideas, feedback, encouragements. Every contribution counts."
   },
   "auth": {
     "login": {

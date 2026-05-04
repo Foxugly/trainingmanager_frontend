@@ -350,32 +350,55 @@
       "subtitle": "Training Manager reúne tu equipo, calendario, asistencia y estadísticas en una sola herramienta pensada para entrenadores.",
       "cta_primary": "Empezar gratis",
       "cta_secondary": "Ver funciones"
-    },
-    "features": {
-      "section_title": "Todo lo que tu equipo necesita",
-      "section_subtitle": "Una plataforma completa para el día a día deportivo, del vestuario al campo.",
+    }
+  },
+  "features_page": {
+    "title": "Todo lo que necesitas para gestionar tus equipos",
+    "subtitle": "De la planificación de sesiones al registro de asistencias, con generación IA de entrenamientos. Para entrenadores, por entrenadores.",
+    "cta": "Empezar gratis",
+    "sections": {
       "teams": {
-        "title": "Equipos y chat",
-        "description": "Reúne a jugadores, entrenadores y managers en equipos dedicados y chatea en tiempo real."
+        "title": "Gestión de equipos",
+        "description": "Crea tus equipos, invita a los atletas por email, asigna roles de manager, gestiona la composición a lo largo de la temporada."
       },
-      "training": {
-        "title": "Plan de entrenamiento",
-        "description": "Construye tus ciclos, comparte tus sesiones y adapta la carga a cada atleta."
+      "planning": {
+        "title": "Programas y calendario",
+        "description": "Construye tus ciclos de entrenamiento, planifica las sesiones en el calendario, ajusta sobre la marcha."
+      },
+      "ai": {
+        "title": "Generación IA",
+        "description": "Pide a la IA que genere un calendario de sesiones desde un programa, o un entrenamiento completo desde una sesión."
       },
       "attendance": {
-        "title": "Asistencia",
-        "description": "Controla las asistencias a entrenamientos y partidos con un clic y anticipa las ausencias."
+        "title": "Seguimiento de asistencias",
+        "description": "Registra las asistencias en lote tras cada sesión. Consulta tu propio historial de asistencias como atleta."
       },
-      "stats": {
-        "title": "Estadísticas",
-        "description": "Visualiza la progresión de tu equipo con indicadores claros y personalizables."
+      "i18n": {
+        "title": "5 idiomas",
+        "description": "Interfaz disponible en francés, neerlandés, inglés, italiano y español. Selección guardada en tu perfil."
+      },
+      "roles": {
+        "title": "Roles entrenador y atleta",
+        "description": "Una única app, dos vistas: panel de entrenador para gestionar, vista de atleta para seguir tus sesiones y tus asistencias."
       }
-    },
-    "contribute": {
-      "title": "Código abierto — por entrenadores, para entrenadores",
-      "description": "Training Manager es un proyecto de código abierto. Comparte ideas, reporta errores, propón mejoras — cada contribución cuenta.",
-      "github": "Ver en GitHub"
     }
+  },
+  "contribute_page": {
+    "title": "Contribuir a Training Manager",
+    "intro": "Training Manager es un proyecto de código abierto. Tus contribuciones, reportes de errores e ideas hacen avanzar el proyecto.",
+    "oss": {
+      "title": "Código abierto",
+      "description": "El código fuente está disponible en GitHub. Frontend Angular y backend Django, ambos bajo licencia open source.",
+      "cta_repo_frontend": "Repo frontend (Angular)",
+      "cta_repo_backend": "Repo backend (Django)",
+      "cta_issues": "Reportar un error o sugerir una mejora"
+    },
+    "financial": {
+      "title": "Apoyo financiero",
+      "description": "Si Training Manager te resulta útil y quieres apoyar su desarrollo, los canales de donación se anunciarán aquí próximamente.",
+      "placeholder": "Más canales próximamente."
+    },
+    "thanks": "Gracias a todos los que hacen avanzar este proyecto — código, ideas, feedback, ánimos. Cada contribución cuenta."
   },
   "invitation_accept": {
     "title": "Estás invitado",

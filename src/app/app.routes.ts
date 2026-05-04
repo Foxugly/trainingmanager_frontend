@@ -33,6 +33,20 @@ export const routes: Routes = [
           import('./features/home/home.component').then((m) => m.HomeComponent),
       },
       {
+        path: 'features',
+        loadComponent: () =>
+          import('./features/features-page/features-page.component').then(
+            (m) => m.FeaturesPageComponent,
+          ),
+      },
+      {
+        path: 'contribute',
+        loadComponent: () =>
+          import('./features/contribute-page/contribute-page.component').then(
+            (m) => m.ContributePageComponent,
+          ),
+      },
+      {
         path: 'login',
         loadComponent: () =>
           import('./features/auth/login/login.component').then((m) => m.LoginComponent),

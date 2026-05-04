@@ -350,32 +350,55 @@
       "subtitle": "Training Manager riunisce squadra, calendario, presenze e statistiche in un unico strumento pensato per gli allenatori.",
       "cta_primary": "Inizia gratis",
       "cta_secondary": "Scopri le funzionalità"
-    },
-    "features": {
-      "section_title": "Tutto ciò di cui la tua squadra ha bisogno",
-      "section_subtitle": "Una piattaforma completa per la quotidianità sportiva, dallo spogliatoio al campo.",
+    }
+  },
+  "features_page": {
+    "title": "Tutto ciò che ti serve per gestire le tue squadre",
+    "subtitle": "Dalla pianificazione delle sedute alla registrazione delle presenze, con generazione AI degli allenamenti. Per allenatori, dagli allenatori.",
+    "cta": "Inizia gratis",
+    "sections": {
       "teams": {
-        "title": "Squadre & chat",
-        "description": "Riunisci giocatori, allenatori e manager in squadre dedicate e chatta in tempo reale."
+        "title": "Gestione squadre",
+        "description": "Crea le tue squadre, invita gli atleti via email, assegna ruoli da manager, gestisci le rose lungo la stagione."
       },
-      "training": {
-        "title": "Piano di allenamento",
-        "description": "Costruisci i tuoi cicli, condividi le sedute e adatta il carico a ogni atleta."
+      "planning": {
+        "title": "Programmi & calendario",
+        "description": "Costruisci i tuoi cicli di allenamento, pianifica le sedute sul calendario, modifica al volo."
+      },
+      "ai": {
+        "title": "Generazione AI",
+        "description": "Chiedi all'AI di generare un calendario di sedute da un programma, o un allenamento completo da una singola seduta."
       },
       "attendance": {
-        "title": "Presenze",
-        "description": "Tieni traccia delle presenze ad allenamenti e partite con un clic e anticipa le assenze."
+        "title": "Tracciamento presenze",
+        "description": "Registra le presenze in massa dopo ogni seduta. Consulta il tuo storico presenze come atleta."
       },
-      "stats": {
-        "title": "Statistiche",
-        "description": "Visualizza i progressi della tua squadra con indicatori chiari e personalizzabili."
+      "i18n": {
+        "title": "5 lingue",
+        "description": "Interfaccia disponibile in francese, olandese, inglese, italiano e spagnolo. Scelta salvata sul tuo profilo."
+      },
+      "roles": {
+        "title": "Ruoli allenatore e atleta",
+        "description": "Una sola app, due viste: dashboard allenatore per gestire, vista atleta per seguire le tue sedute e le tue presenze."
       }
-    },
-    "contribute": {
-      "title": "Open source — dagli allenatori, per gli allenatori",
-      "description": "Training Manager è un progetto open source. Condividi idee, segnala bug, proponi miglioramenti — ogni contributo conta.",
-      "github": "Visualizza su GitHub"
     }
+  },
+  "contribute_page": {
+    "title": "Contribuire a Training Manager",
+    "intro": "Training Manager è un progetto open source. I tuoi contributi, segnalazioni di bug e idee fanno avanzare il progetto.",
+    "oss": {
+      "title": "Codice open source",
+      "description": "Il codice sorgente è disponibile su GitHub. Frontend Angular e backend Django, entrambi sotto licenza open source.",
+      "cta_repo_frontend": "Repo frontend (Angular)",
+      "cta_repo_backend": "Repo backend (Django)",
+      "cta_issues": "Segnala un bug o suggerisci un miglioramento"
+    },
+    "financial": {
+      "title": "Sostegno finanziario",
+      "description": "Se Training Manager ti aiuta e vuoi sostenerne lo sviluppo, i canali di donazione saranno annunciati qui a breve.",
+      "placeholder": "Altri canali in arrivo."
+    },
+    "thanks": "Grazie a tutti coloro che fanno avanzare questo progetto — codice, idee, feedback, incoraggiamenti. Ogni contributo conta."
   },
   "invitation_accept": {
     "title": "Sei invitato",

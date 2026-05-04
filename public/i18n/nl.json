@@ -350,32 +350,55 @@
       "subtitle": "Training Manager brengt je team, planning, aanwezigheden en statistieken samen in één tool, gemaakt voor coaches.",
       "cta_primary": "Gratis starten",
       "cta_secondary": "Bekijk de functies"
-    },
-    "features": {
-      "section_title": "Alles wat je team nodig heeft",
-      "section_subtitle": "Een complete tool voor de dagelijkse sportwerking, van kleedkamer tot veld.",
+    }
+  },
+  "features_page": {
+    "title": "Alles wat je nodig hebt om je teams te beheren",
+    "subtitle": "Van sessieplanning tot aanwezigheidsregistratie, met AI-ondersteunde trainingsgeneratie. Voor coaches, door coaches.",
+    "cta": "Gratis starten",
+    "sections": {
       "teams": {
-        "title": "Teams & chat",
-        "description": "Verzamel spelers, coaches en managers in toegewijde teams en chat in realtime."
+        "title": "Teambeheer",
+        "description": "Maak je teams aan, nodig atleten uit per e-mail, ken managerrollen toe, beheer de samenstelling doorheen het seizoen."
       },
-      "training": {
-        "title": "Trainingsplan",
-        "description": "Bouw je cycli op, deel je sessies en stem de belasting af op elke atleet."
+      "planning": {
+        "title": "Programma's & kalender",
+        "description": "Bouw je trainingscycli op, plan sessies in de kalender, stuur bij wanneer nodig."
+      },
+      "ai": {
+        "title": "AI-generatie",
+        "description": "Vraag de AI om een sessieplanning te genereren vanuit een programma, of een complete training vanuit een sessie."
       },
       "attendance": {
-        "title": "Aanwezigheden",
-        "description": "Volg met één klik de aanwezigheden voor trainingen en wedstrijden, en anticipeer op afwezigheden."
+        "title": "Aanwezigheden volgen",
+        "description": "Registreer aanwezigheden in bulk na elke sessie. Bekijk je eigen aanwezigheidsgeschiedenis als atleet."
       },
-      "stats": {
-        "title": "Statistieken",
-        "description": "Visualiseer de evolutie van je team met heldere, aanpasbare indicatoren."
+      "i18n": {
+        "title": "5 talen",
+        "description": "Interface beschikbaar in het Frans, Nederlands, Engels, Italiaans en Spaans. Keuze opgeslagen op je profiel."
+      },
+      "roles": {
+        "title": "Rol coach en atleet",
+        "description": "Eén app, twee weergaves: coach-dashboard om te beheren, atleet-weergave om je sessies en aanwezigheden te volgen."
       }
-    },
-    "contribute": {
-      "title": "Open source — door coaches, voor coaches",
-      "description": "Training Manager is een open source project. Deel ideeën, meld bugs, stel verbeteringen voor — elke bijdrage telt.",
-      "github": "Bekijk op GitHub"
     }
+  },
+  "contribute_page": {
+    "title": "Bijdragen aan Training Manager",
+    "intro": "Training Manager is een open source project. Jouw bijdragen, bugmeldingen en ideeën stuwen het project vooruit.",
+    "oss": {
+      "title": "Open source code",
+      "description": "De broncode is beschikbaar op GitHub. Angular frontend en Django backend, beide onder een open source licentie.",
+      "cta_repo_frontend": "Frontend repo (Angular)",
+      "cta_repo_backend": "Backend repo (Django)",
+      "cta_issues": "Een bug melden of verbetering voorstellen"
+    },
+    "financial": {
+      "title": "Financiële steun",
+      "description": "Als Training Manager je helpt en je de ontwikkeling wil steunen, worden donatiekanalen hier binnenkort aangekondigd.",
+      "placeholder": "Meer kanalen binnenkort."
+    },
+    "thanks": "Dank aan iedereen die dit project vooruit helpt — code, ideeën, feedback, aanmoedigingen. Elke bijdrage telt."
   },
   "invitation_accept": {
     "title": "Je bent uitgenodigd",
