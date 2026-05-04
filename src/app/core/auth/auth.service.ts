@@ -11,11 +11,6 @@ import { Register } from '../../api/model/register';
 import { TokenRefresh } from '../../api/model/token-refresh';
 import { VerifiedTokenObtainPair } from '../../api/model/verified-token-obtain-pair';
 
-interface TokenPair {
-  readonly access: string;
-  readonly refresh: string;
-}
-
 export interface RegisterResponse {
   readonly detail: string;
   readonly code: 'registration_pending_verification';
@@ -62,7 +57,7 @@ export class AuthService {
 
   login(username: string, password: string): Observable<Me> {
     const payload: VerifiedTokenObtainPair = { username, password };
-    return (this.apiAuth.authTokenCreate(payload) as unknown as Observable<TokenPair>).pipe(
+    return this.apiAuth.authTokenCreate(payload).pipe(
       tap((tokens) => this.tokenStorage.setTokens(tokens.access, tokens.refresh)),
       switchMap(() => this.fetchMe()),
     );
