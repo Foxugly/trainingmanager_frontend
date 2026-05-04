@@ -17,9 +17,15 @@ import { Observable }                                        from 'rxjs';
 import { OpenApiHttpParams, QueryParamStyle } from '../query.params';
 
 // @ts-ignore
-import { TokenObtainPair } from '../model/token-obtain-pair';
+import { EmailConfirm } from '../model/email-confirm';
+// @ts-ignore
+import { EmailResend } from '../model/email-resend';
+// @ts-ignore
+import { Register } from '../model/register';
 // @ts-ignore
 import { TokenRefresh } from '../model/token-refresh';
+// @ts-ignore
+import { VerifiedTokenObtainPair } from '../model/verified-token-obtain-pair';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -41,19 +47,220 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     }
 
     /**
-     * Takes a set of user credentials and returns an access and refresh JSON web token pair to prove the authentication of those credentials.
-     * @endpoint post /api/v1/auth/token/
-     * @param tokenObtainPair 
+     * POST /api/v1/auth/email/confirm/ — finalize signup with the key received by email. Returns JWT tokens for auto-login.
+     * @endpoint post /api/v1/auth/email/confirm/
+     * @param emailConfirm 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public authTokenCreate(tokenObtainPair: TokenObtainPair, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TokenObtainPair>;
-    public authTokenCreate(tokenObtainPair: TokenObtainPair, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TokenObtainPair>>;
-    public authTokenCreate(tokenObtainPair: TokenObtainPair, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TokenObtainPair>>;
-    public authTokenCreate(tokenObtainPair: TokenObtainPair, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        if (tokenObtainPair === null || tokenObtainPair === undefined) {
-            throw new Error('Required parameter tokenObtainPair was null or undefined when calling authTokenCreate.');
+    public authEmailConfirmCreate(emailConfirm: EmailConfirm, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public authEmailConfirmCreate(emailConfirm: EmailConfirm, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public authEmailConfirmCreate(emailConfirm: EmailConfirm, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public authEmailConfirmCreate(emailConfirm: EmailConfirm, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (emailConfirm === null || emailConfirm === undefined) {
+            throw new Error('Required parameter emailConfirm was null or undefined when calling authEmailConfirmCreate.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'application/x-www-form-urlencoded',
+            'multipart/form-data'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/auth/email/confirm/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<any>('post', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: emailConfirm,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * POST /api/v1/auth/email/resend/ — re-send confirmation link.  Anti-leak: always returns 200 regardless of whether the email exists, so an attacker cannot enumerate registered emails. The fact that no email is sent for unknown addresses must remain invisible to the client.  Rate-limited to 3 requests per hour per IP (anti-enumeration + anti-mail-spam).
+     * @endpoint post /api/v1/auth/email/resend/
+     * @param emailResend 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public authEmailResendCreate(emailResend: EmailResend, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public authEmailResendCreate(emailResend: EmailResend, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public authEmailResendCreate(emailResend: EmailResend, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public authEmailResendCreate(emailResend: EmailResend, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (emailResend === null || emailResend === undefined) {
+            throw new Error('Required parameter emailResend was null or undefined when calling authEmailResendCreate.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'application/x-www-form-urlencoded',
+            'multipart/form-data'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/auth/email/resend/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<any>('post', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: emailResend,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * POST /api/v1/auth/register/ — public self-signup.  Creates a CustomUser (is_active&#x3D;True) plus an unverified EmailAddress via allauth, then sends a confirmation email. No JWT is returned — the caller must verify their email before obtaining tokens.  Rate-limited to 5 requests per hour per IP (anti-bot signup).
+     * @endpoint post /api/v1/auth/register/
+     * @param register 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public authRegisterCreate(register: Register, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public authRegisterCreate(register: Register, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public authRegisterCreate(register: Register, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public authRegisterCreate(register: Register, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (register === null || register === undefined) {
+            throw new Error('Required parameter register was null or undefined when calling authRegisterCreate.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'application/x-www-form-urlencoded',
+            'multipart/form-data'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/auth/register/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<any>('post', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: register,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Drop-in replacement for SimpleJWT\&#39;s TokenObtainPairView that refuses login when the user\&#39;s primary email is unverified.  Rate-limited to 10 requests per minute per IP (anti-bruteforce).
+     * @endpoint post /api/v1/auth/token/
+     * @param verifiedTokenObtainPair 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public authTokenCreate(verifiedTokenObtainPair: VerifiedTokenObtainPair, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<VerifiedTokenObtainPair>;
+    public authTokenCreate(verifiedTokenObtainPair: VerifiedTokenObtainPair, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<VerifiedTokenObtainPair>>;
+    public authTokenCreate(verifiedTokenObtainPair: VerifiedTokenObtainPair, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<VerifiedTokenObtainPair>>;
+    public authTokenCreate(verifiedTokenObtainPair: VerifiedTokenObtainPair, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (verifiedTokenObtainPair === null || verifiedTokenObtainPair === undefined) {
+            throw new Error('Required parameter verifiedTokenObtainPair was null or undefined when calling authTokenCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -94,10 +301,10 @@ export class AuthService extends BaseService implements AuthServiceInterface {
 
         let localVarPath = `/api/v1/auth/token/`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<TokenObtainPair>('post', `${basePath}${localVarPath}`,
+        return this.httpClient.request<VerifiedTokenObtainPair>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: tokenObtainPair,
+                body: verifiedTokenObtainPair,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

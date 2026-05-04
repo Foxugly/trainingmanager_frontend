@@ -5,7 +5,13 @@ import { environment } from '../../../environments/environment';
 import { AuthService } from './auth.service';
 import { TokenStorage } from './token.storage';
 
-const AUTH_PATHS = ['/auth/token/', '/auth/token/refresh/'];
+const AUTH_PATHS = [
+  '/auth/token/',
+  '/auth/token/refresh/',
+  '/auth/register/',
+  '/auth/email/confirm/',
+  '/auth/email/resend/',
+];
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const tokenStorage = inject(TokenStorage);

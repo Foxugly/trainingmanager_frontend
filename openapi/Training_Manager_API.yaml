@@ -254,32 +254,132 @@ paths:
       responses:
         '204':
           description: No response body
-  /api/v1/auth/token/:
+  /api/v1/auth/email/confirm/:
     post:
-      operationId: auth_token_create
+      operationId: auth_email_confirm_create
       description: |-
-        Takes a set of user credentials and returns an access and refresh JSON web
-        token pair to prove the authentication of those credentials.
+        POST /api/v1/auth/email/confirm/ — finalize signup with the key
+        received by email. Returns JWT tokens for auto-login.
       tags:
       - auth
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TokenObtainPair'
+              $ref: '#/components/schemas/EmailConfirm'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/TokenObtainPair'
+              $ref: '#/components/schemas/EmailConfirm'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/TokenObtainPair'
+              $ref: '#/components/schemas/EmailConfirm'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          description: Email verified. Returns {access, refresh, user}.
+        '400':
+          description: Token invalid or expired. code=invalid_or_expired_token.
+  /api/v1/auth/email/resend/:
+    post:
+      operationId: auth_email_resend_create
+      description: |-
+        POST /api/v1/auth/email/resend/ — re-send confirmation link.
+
+        Anti-leak: always returns 200 regardless of whether the email exists,
+        so an attacker cannot enumerate registered emails. The fact that no
+        email is sent for unknown addresses must remain invisible to the
+        client.
+
+        Rate-limited to 3 requests per hour per IP (anti-enumeration +
+        anti-mail-spam).
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailResend'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EmailResend'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EmailResend'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          description: 'Always 200. Returns {detail, code: ''resend_processed''}.
+            If a matching unverified account exists, a new confirmation email has
+            been dispatched; otherwise the response is identical.'
+        '400':
+          description: Body validation error (e.g. malformed email).
+  /api/v1/auth/register/:
+    post:
+      operationId: auth_register_create
+      description: |-
+        POST /api/v1/auth/register/ — public self-signup.
+
+        Creates a CustomUser (is_active=True) plus an unverified EmailAddress
+        via allauth, then sends a confirmation email. No JWT is returned —
+        the caller must verify their email before obtaining tokens.
+
+        Rate-limited to 5 requests per hour per IP (anti-bot signup).
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Register'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Register'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Register'
+        required: true
+      security:
+      - {}
+      responses:
+        '201':
+          description: 'Account created. Returns {detail, code: ''registration_pending_verification'',
+            username, email}. JWT is intentionally NOT returned — the user must confirm
+            their email first.'
+        '400':
+          description: Validation error. Field-level codes include `username_taken`,
+            `email_taken`, password validators.
+  /api/v1/auth/token/:
+    post:
+      operationId: auth_token_create
+      description: |-
+        Drop-in replacement for SimpleJWT's TokenObtainPairView that refuses
+        login when the user's primary email is unverified.
+
+        Rate-limited to 10 requests per minute per IP (anti-bruteforce).
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifiedTokenObtainPair'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VerifiedTokenObtainPair'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VerifiedTokenObtainPair'
         required: true
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TokenObtainPair'
+                $ref: '#/components/schemas/VerifiedTokenObtainPair'
           description: ''
   /api/v1/auth/token/refresh/:
     post:
@@ -4402,6 +4502,23 @@ components:
       - id
       - last_name
       - username
+    EmailConfirm:
+      type: object
+      description: Body for POST /api/v1/auth/email/confirm/.
+      properties:
+        key:
+          type: string
+      required:
+      - key
+    EmailResend:
+      type: object
+      description: Body for POST /api/v1/auth/email/resend/.
+      properties:
+        email:
+          type: string
+          format: email
+      required:
+      - email
     EndpointEnum:
       enum:
       - ping
@@ -6304,6 +6421,48 @@ components:
       required:
       - id
       - name
+    Register:
+      type: object
+      description: |-
+        Public registration payload for POST /api/v1/auth/register/.
+
+        Validates uniqueness against both CustomUser AND allauth.EmailAddress
+        (allauth allows two unverified entries for the same email otherwise).
+
+        `turnstile_token` is required: server-side verification with Cloudflare
+        happens in the view (not here, because we need the request to extract
+        the remote IP). The serializer just enforces presence.
+      properties:
+        username:
+          type: string
+          maxLength: 150
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          writeOnly: true
+          minLength: 8
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        language:
+          allOf:
+          - $ref: '#/components/schemas/LanguageEnum'
+          default: en
+        turnstile_token:
+          type: string
+          writeOnly: true
+      required:
+      - email
+      - first_name
+      - last_name
+      - password
+      - turnstile_token
+      - username
     Round:
       type: object
       properties:
@@ -6673,26 +6832,6 @@ components:
       - id
       - language
       - name
-    TokenObtainPair:
-      type: object
-      properties:
-        username:
-          type: string
-          writeOnly: true
-        password:
-          type: string
-          writeOnly: true
-        access:
-          type: string
-          readOnly: true
-        refresh:
-          type: string
-          readOnly: true
-      required:
-      - access
-      - password
-      - refresh
-      - username
     TokenRefresh:
       type: object
       properties:
@@ -6727,6 +6866,25 @@ components:
       - expires_at
       - status
       - team_name
+    VerifiedTokenObtainPair:
+      type: object
+      description: |-
+        Block JWT login when the user has an unverified primary email.
+
+        Legacy users predating allauth integration have no EmailAddress row;
+        they are treated as verified to preserve backwards compatibility (no
+        data migration). Once an EmailAddress exists for a user, the
+        `verified` flag becomes authoritative.
+      properties:
+        username:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - password
+      - username
   securitySchemes:
     jwtAuth:
       type: http

@@ -9,10 +9,10 @@
  */
 
 
-export interface TokenObtainPair { 
-    username: string;
-    password: string;
-    readonly access: string;
-    readonly refresh: string;
+/**
+ * Body for POST /api/v1/auth/email/resend/.
+ */
+export interface EmailResend { 
+    email: string;
 }
 

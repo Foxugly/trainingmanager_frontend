@@ -11,8 +11,11 @@ import { HttpHeaders }                                       from '@angular/comm
 
 import { Observable }                                        from 'rxjs';
 
-import { TokenObtainPair } from '../model/models';
+import { EmailConfirm } from '../model/models';
+import { EmailResend } from '../model/models';
+import { Register } from '../model/models';
 import { TokenRefresh } from '../model/models';
+import { VerifiedTokenObtainPair } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
@@ -25,11 +28,35 @@ export interface AuthServiceInterface {
 
     /**
      * 
-     * Takes a set of user credentials and returns an access and refresh JSON web token pair to prove the authentication of those credentials.
-     * @endpoint post /api/v1/auth/token/
-     * @param tokenObtainPair 
+     * POST /api/v1/auth/email/confirm/ — finalize signup with the key received by email. Returns JWT tokens for auto-login.
+     * @endpoint post /api/v1/auth/email/confirm/
+     * @param emailConfirm 
      */
-    authTokenCreate(tokenObtainPair: TokenObtainPair, extraHttpRequestParams?: any): Observable<TokenObtainPair>;
+    authEmailConfirmCreate(emailConfirm: EmailConfirm, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * 
+     * POST /api/v1/auth/email/resend/ — re-send confirmation link.  Anti-leak: always returns 200 regardless of whether the email exists, so an attacker cannot enumerate registered emails. The fact that no email is sent for unknown addresses must remain invisible to the client.  Rate-limited to 3 requests per hour per IP (anti-enumeration + anti-mail-spam).
+     * @endpoint post /api/v1/auth/email/resend/
+     * @param emailResend 
+     */
+    authEmailResendCreate(emailResend: EmailResend, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * 
+     * POST /api/v1/auth/register/ — public self-signup.  Creates a CustomUser (is_active&#x3D;True) plus an unverified EmailAddress via allauth, then sends a confirmation email. No JWT is returned — the caller must verify their email before obtaining tokens.  Rate-limited to 5 requests per hour per IP (anti-bot signup).
+     * @endpoint post /api/v1/auth/register/
+     * @param register 
+     */
+    authRegisterCreate(register: Register, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * 
+     * Drop-in replacement for SimpleJWT\&#39;s TokenObtainPairView that refuses login when the user\&#39;s primary email is unverified.  Rate-limited to 10 requests per minute per IP (anti-bruteforce).
+     * @endpoint post /api/v1/auth/token/
+     * @param verifiedTokenObtainPair 
+     */
+    authTokenCreate(verifiedTokenObtainPair: VerifiedTokenObtainPair, extraHttpRequestParams?: any): Observable<VerifiedTokenObtainPair>;
 
     /**
      * 

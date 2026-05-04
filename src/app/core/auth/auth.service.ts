@@ -4,9 +4,35 @@ import { Observable, catchError, map, of, switchMap, tap, throwError } from 'rxj
 import { TokenStorage } from './token.storage';
 import { AuthService as ApiAuthService } from '../../api/api/auth.service';
 import { MeService } from '../../api/api/me.service';
+import { EmailConfirm } from '../../api/model/email-confirm';
+import { EmailResend } from '../../api/model/email-resend';
 import { Me } from '../../api/model/me';
-import { TokenObtainPair } from '../../api/model/token-obtain-pair';
+import { Register } from '../../api/model/register';
 import { TokenRefresh } from '../../api/model/token-refresh';
+import { VerifiedTokenObtainPair } from '../../api/model/verified-token-obtain-pair';
+
+interface TokenPair {
+  readonly access: string;
+  readonly refresh: string;
+}
+
+export interface RegisterResponse {
+  readonly detail: string;
+  readonly code: 'registration_pending_verification';
+  readonly username: string;
+  readonly email: string;
+}
+
+export interface EmailConfirmResponse {
+  readonly access: string;
+  readonly refresh: string;
+  readonly user: Me;
+}
+
+export interface EmailResendResponse {
+  readonly detail: string;
+  readonly code?: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -35,8 +61,8 @@ export class AuthService {
   }
 
   login(username: string, password: string): Observable<Me> {
-    const payload = { username, password } as unknown as TokenObtainPair;
-    return this.apiAuth.authTokenCreate(payload).pipe(
+    const payload: VerifiedTokenObtainPair = { username, password };
+    return (this.apiAuth.authTokenCreate(payload) as unknown as Observable<TokenPair>).pipe(
       tap((tokens) => this.tokenStorage.setTokens(tokens.access, tokens.refresh)),
       switchMap(() => this.fetchMe()),
     );
@@ -77,5 +103,21 @@ export class AuthService {
 
   setCurrentUser(user: Me): void {
     this._currentUser.set(user);
+  }
+
+  register(payload: Register): Observable<RegisterResponse> {
+    return this.apiAuth.authRegisterCreate(payload) as unknown as Observable<RegisterResponse>;
+  }
+
+  confirmEmail(key: string): Observable<Me> {
+    const payload: EmailConfirm = { key };
+    return (this.apiAuth.authEmailConfirmCreate(payload) as unknown as Observable<EmailConfirmResponse>).pipe(
+      switchMap((res) => this.loginWithTokens(res.access, res.refresh)),
+    );
+  }
+
+  resendEmail(email: string): Observable<EmailResendResponse> {
+    const payload: EmailResend = { email };
+    return this.apiAuth.authEmailResendCreate(payload) as unknown as Observable<EmailResendResponse>;
   }
 }

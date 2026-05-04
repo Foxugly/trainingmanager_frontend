@@ -54,6 +54,8 @@ model/complete-invitation.ts
 model/create-invitation.ts
 model/create-join-request.ts
 model/custom-user-public.ts
+model/email-confirm.ts
+model/email-resend.ts
 model/endpoint-enum.ts
 model/energy-segment-admin.ts
 model/energy-segment.ts
@@ -112,6 +114,7 @@ model/patched-team-membership.ts
 model/patched-team.ts
 model/program-minimal.ts
 model/program.ts
+model/register.ts
 model/round.ts
 model/sport-admin.ts
 model/sport.ts
@@ -120,9 +123,9 @@ model/team-join-request.ts
 model/team-membership.ts
 model/team-minimal.ts
 model/team.ts
-model/token-obtain-pair.ts
 model/token-refresh.ts
 model/validate-invitation.ts
+model/verified-token-obtain-pair.ts
 param.ts
 provide-api.ts
 query.params.ts
