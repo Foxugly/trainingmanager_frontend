@@ -458,6 +458,7 @@
       "submit": "Crea il mio account",
       "signing_up": "Creazione in corso…",
       "captcha_required": "Convalida il captcha prima di inviare.",
+      "fix_errors_below": "Compila tutti i campi obbligatori. La password deve essere di almeno 8 caratteri e le due password devono corrispondere.",
       "captcha_failed": "Captcha non valido. Riprova.",
       "rate_limit_message": "Troppe registrazioni recenti. Riprova più tardi.",
       "rate_limit_countdown": "Riprova tra {{seconds}} secondi.",

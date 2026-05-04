@@ -433,6 +433,7 @@
       "submit": "Create my account",
       "signing_up": "Creating account…",
       "captcha_required": "Validate the captcha before submitting.",
+      "fix_errors_below": "Please complete all required fields. Password must be at least 8 characters and both passwords must match.",
       "captcha_failed": "Invalid captcha. Please retry.",
       "rate_limit_message": "Too many recent registrations. Try again later.",
       "rate_limit_countdown": "Retry in {{seconds}} seconds.",

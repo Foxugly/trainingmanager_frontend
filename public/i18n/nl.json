@@ -458,6 +458,7 @@
       "submit": "Mijn account aanmaken",
       "signing_up": "Account wordt aangemaakt…",
       "captcha_required": "Bevestig de captcha voordat je verzendt.",
+      "fix_errors_below": "Vul alle verplichte velden in. Het wachtwoord moet minstens 8 tekens lang zijn en beide wachtwoorden moeten overeenkomen.",
       "captcha_failed": "Ongeldige captcha. Probeer het opnieuw.",
       "rate_limit_message": "Te veel recente registraties. Probeer het later opnieuw.",
       "rate_limit_countdown": "Probeer over {{seconds}} seconden opnieuw.",

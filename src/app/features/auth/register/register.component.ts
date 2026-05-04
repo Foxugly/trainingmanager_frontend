@@ -92,7 +92,7 @@ export class RegisterComponent implements AfterViewInit, OnDestroy {
   protected readonly submitDisabled = computed(() => {
     if (this.loading()) return true;
     if (this.retryCountdown() !== null && this.retryCountdown()! > 0) return true;
-    return this.form.invalid;
+    return false;
   });
 
   @ViewChild('turnstile', { static: false })
@@ -128,7 +128,11 @@ export class RegisterComponent implements AfterViewInit, OnDestroy {
   }
 
   protected submit(): void {
-    if (this.form.invalid) return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.errorMessage.set('auth.register.fix_errors_below');
+      return;
+    }
     this.loading.set(true);
     this.errorMessage.set(null);
     this.fieldErrors.set(null);

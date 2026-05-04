@@ -83,6 +83,13 @@ describe('RegisterComponent', () => {
     expect(access(component).form.invalid).toBe(true);
   });
 
+  it('submit on invalid form: surfaces fix_errors_below + does NOT call register', () => {
+    ensureTurnstileInput('TOKEN_OK');
+    access(component).submit();
+    expect(authMock.register).not.toHaveBeenCalled();
+    expect(access(component).errorMessage()).toBe('auth.register.fix_errors_below');
+  });
+
   it('flags password_mismatch when password and confirm_password differ', () => {
     access(component).form.patchValue({ password: 'abcdefgh', confirm_password: 'different' });
     expect(access(component).form.errors?.['password_mismatch']).toBe(true);

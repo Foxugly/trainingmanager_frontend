@@ -458,6 +458,7 @@
       "submit": "Crear mi cuenta",
       "signing_up": "Creando la cuenta…",
       "captcha_required": "Valida el captcha antes de enviar.",
+      "fix_errors_below": "Completa todos los campos obligatorios. La contraseña debe tener al menos 8 caracteres y ambas contraseñas deben coincidir.",
       "captcha_failed": "Captcha no válido. Vuelve a intentarlo.",
       "rate_limit_message": "Demasiados registros recientes. Inténtalo más tarde.",
       "rate_limit_countdown": "Reintenta en {{seconds}} segundos.",
