@@ -32,23 +32,23 @@
 
       <dl class="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2 mb-6 max-w-xl">
         <dt class="font-semibold text-gray-700">{{ 'teams.fields.sport' | transloco }}</dt>
-        <dd>{{ t.sport?.name || '—' }}</dd>
+        <dd>{{ t.sport.name || '—' }}</dd>
 
         <dt class="font-semibold text-gray-700">{{ 'teams.fields.language' | transloco }}</dt>
         <dd>{{ (t.language || '') | uppercase }}</dd>
 
         <dt class="font-semibold text-gray-700">{{ 'teams.fields.owner' | transloco }}</dt>
         <dd>
-          {{ t.owner?.first_name || t.owner?.username || '—' }}
-          @if (t.owner?.username && t.owner?.first_name) {
-            <span class="text-gray-500 text-sm">(&#64;{{ t.owner?.username }})</span>
+          {{ t.owner.first_name || t.owner.username || '—' }}
+          @if (t.owner.username && t.owner.first_name) {
+            <span class="text-gray-500 text-sm">(&#64;{{ t.owner.username }})</span>
           }
         </dd>
       </dl>
 
       <section class="mb-6">
         <h2 class="text-lg font-semibold mb-2">
-          {{ 'teams.fields.managers' | transloco }} ({{ t.managers?.length || 0 }})
+          {{ 'teams.fields.managers' | transloco }} ({{ t.managers.length || 0 }})
         </h2>
         @if (t.managers && t.managers.length > 0) {
           <ul class="list-disc pl-5 text-gray-700">

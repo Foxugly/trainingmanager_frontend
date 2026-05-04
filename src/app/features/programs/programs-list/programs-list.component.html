@@ -75,7 +75,7 @@
             </div>
           </div>
           <p class="text-sm text-gray-600">
-            @if (!teamFilter() && p.team?.name) {
+            @if (!teamFilter() && p.team.name) {
               {{ p.team.name }} ·
             }
             @if (p.date_start) {

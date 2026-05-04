@@ -57,7 +57,7 @@
               class="block p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md hover:border-blue-300 transition"
             >
               <h3 class="font-semibold text-base text-gray-900 mb-1">{{ card.team.name }}</h3>
-              <p class="text-xs text-gray-500 mb-3">{{ card.team.sport?.name ?? '—' }}</p>
+              <p class="text-xs text-gray-500 mb-3">{{ card.team.sport.name }}</p>
               <dl class="grid grid-cols-3 gap-2 text-center">
                 <div>
                   <dt class="text-xs text-gray-500">
@@ -208,7 +208,7 @@
                   {{ 'dashboard.member_teams.badge' | transloco }}
                 </span>
               </div>
-              <p class="text-xs text-gray-500 mb-3">{{ card.team.sport?.name ?? '—' }}</p>
+              <p class="text-xs text-gray-500 mb-3">{{ card.team.sport.name }}</p>
               <dl class="text-center">
                 <dt class="text-xs text-gray-500">
                   {{ 'dashboard.member_teams.members' | transloco }}

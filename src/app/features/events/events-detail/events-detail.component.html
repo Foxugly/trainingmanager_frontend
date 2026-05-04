@@ -1,7 +1,7 @@
 <div>
   @if (event(); as e) {
     <a
-      [routerLink]="['/programs', e.refer_program?.id]"
+      [routerLink]="['/programs', e.refer_program.id]"
       class="text-sm text-blue-600 hover:underline"
     >
       ← {{ 'common.back' | transloco }}
@@ -131,10 +131,10 @@
                             <span class="font-medium">
                               {{ ex.repetition ?? 1 }} × {{ ex.distance ?? 0 }}m
                             </span>
-                            @if (ex.modality?.name) {
+                            @if (ex.modality.name) {
                               <span class="text-gray-700"> · {{ ex.modality.name }}</span>
                             }
-                            @if (ex.energysegment?.abv) {
+                            @if (ex.energysegment.abv) {
                               <span class="text-gray-500 ml-1">
                                 · {{ ex.energysegment.abv }}
                               </span>
