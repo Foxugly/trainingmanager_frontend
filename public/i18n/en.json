@@ -405,7 +405,59 @@
       "title": "Sign in",
       "username": "Username",
       "password": "Password",
-      "submit": "Sign in"
+      "submit": "Sign in",
+      "rate_limit_message": "Too many attempts. Try again in a few minutes.",
+      "rate_limit_countdown": "Retry in {{seconds}} seconds.",
+      "email_not_verified_banner": "Your email is not verified. Enter it below to receive a new confirmation link.",
+      "email_for_resend_placeholder": "you@example.com",
+      "resend_email_button": "Resend confirmation email",
+      "resend_email_required": "Enter your email to receive a new link.",
+      "resend_email_sent": "Email sent. Check your inbox.",
+      "resend_rate_limited": "Too many requests. Try again in a few minutes.",
+      "no_account_yet": "Don't have an account yet?",
+      "no_account_yet_link": "Sign up"
+    },
+    "register": {
+      "title": "Create an account",
+      "subtitle": "Sign up for free to manage your teams and your training.",
+      "fields": {
+        "username": "Username",
+        "email": "Email",
+        "password": "Password",
+        "confirm_password": "Confirm password",
+        "first_name": "First name",
+        "last_name": "Last name",
+        "language": "Interface language"
+      },
+      "password_mismatch": "Passwords do not match.",
+      "submit": "Create my account",
+      "signing_up": "Creating account…",
+      "captcha_required": "Validate the captcha before submitting.",
+      "captcha_failed": "Invalid captcha. Please retry.",
+      "rate_limit_message": "Too many recent registrations. Try again later.",
+      "rate_limit_countdown": "Retry in {{seconds}} seconds.",
+      "already_have_account": "Already have an account?",
+      "already_have_account_link": "Sign in"
+    },
+    "check_email": {
+      "title": "Check your inbox",
+      "body_with_email": "A confirmation email has been sent to {{email}}. Click the link in the email to activate your account.",
+      "body_no_email": "Enter the email you signed up with to receive a new confirmation link.",
+      "resend_button": "Resend email",
+      "resend_cooldown": "Resend ({{seconds}}s)",
+      "resent_toast": "Email sent. Check your inbox.",
+      "resend_rate_limited": "Too many requests. Try again in a few minutes.",
+      "back_to_login": "← Back to sign in"
+    },
+    "email_confirm": {
+      "loading": "Confirming your email…",
+      "success_title": "Email confirmed!",
+      "success_redirect": "You are signed in. Redirecting to the dashboard…",
+      "error_invalid_token_title": "Invalid or expired link",
+      "error_invalid_token": "The confirmation link is invalid or has expired. Request a new one from the verification page.",
+      "error_unknown_title": "Unexpected error",
+      "error_unknown": "An error occurred. Try again or request a new link.",
+      "request_resend_button": "Request a new link"
     },
     "errors": {
       "invalid_credentials": "Invalid credentials",

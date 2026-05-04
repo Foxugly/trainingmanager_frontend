@@ -430,7 +430,59 @@
       "title": "Inloggen",
       "username": "Gebruikersnaam",
       "password": "Wachtwoord",
-      "submit": "Aanmelden"
+      "submit": "Aanmelden",
+      "rate_limit_message": "Te veel pogingen. Probeer het over enkele minuten opnieuw.",
+      "rate_limit_countdown": "Probeer over {{seconds}} seconden opnieuw.",
+      "email_not_verified_banner": "Je e-mail is niet geverifieerd. Vul hieronder je adres in om een nieuwe bevestigingslink te ontvangen.",
+      "email_for_resend_placeholder": "jij@voorbeeld.com",
+      "resend_email_button": "Bevestigingsmail opnieuw versturen",
+      "resend_email_required": "Geef je e-mailadres op om een nieuwe link te ontvangen.",
+      "resend_email_sent": "E-mail verzonden. Controleer je inbox.",
+      "resend_rate_limited": "Te veel verzoeken. Probeer het over enkele minuten opnieuw.",
+      "no_account_yet": "Nog geen account?",
+      "no_account_yet_link": "Maak er een aan"
+    },
+    "register": {
+      "title": "Account aanmaken",
+      "subtitle": "Registreer je gratis om je teams en trainingen te beheren.",
+      "fields": {
+        "username": "Gebruikersnaam",
+        "email": "E-mail",
+        "password": "Wachtwoord",
+        "confirm_password": "Wachtwoord bevestigen",
+        "first_name": "Voornaam",
+        "last_name": "Achternaam",
+        "language": "Interfacetaal"
+      },
+      "password_mismatch": "De wachtwoorden komen niet overeen.",
+      "submit": "Mijn account aanmaken",
+      "signing_up": "Account wordt aangemaakt…",
+      "captcha_required": "Bevestig de captcha voordat je verzendt.",
+      "captcha_failed": "Ongeldige captcha. Probeer het opnieuw.",
+      "rate_limit_message": "Te veel recente registraties. Probeer het later opnieuw.",
+      "rate_limit_countdown": "Probeer over {{seconds}} seconden opnieuw.",
+      "already_have_account": "Heb je al een account?",
+      "already_have_account_link": "Log in"
+    },
+    "check_email": {
+      "title": "Controleer je inbox",
+      "body_with_email": "Een bevestigingsmail is verzonden naar {{email}}. Klik op de link in de e-mail om je account te activeren.",
+      "body_no_email": "Vul het e-mailadres in dat je bij registratie hebt gebruikt om een nieuwe bevestigingslink te ontvangen.",
+      "resend_button": "E-mail opnieuw versturen",
+      "resend_cooldown": "Opnieuw versturen ({{seconds}}s)",
+      "resent_toast": "E-mail verzonden. Controleer je inbox.",
+      "resend_rate_limited": "Te veel verzoeken. Probeer het over enkele minuten opnieuw.",
+      "back_to_login": "← Terug naar inloggen"
+    },
+    "email_confirm": {
+      "loading": "Je e-mail wordt bevestigd…",
+      "success_title": "E-mail bevestigd!",
+      "success_redirect": "Je bent ingelogd. Je wordt doorgestuurd naar het dashboard…",
+      "error_invalid_token_title": "Ongeldige of verlopen link",
+      "error_invalid_token": "De bevestigingslink is ongeldig of verlopen. Vraag een nieuwe link aan op de verificatiepagina.",
+      "error_unknown_title": "Onverwachte fout",
+      "error_unknown": "Er is een fout opgetreden. Probeer het opnieuw of vraag een nieuwe link aan.",
+      "request_resend_button": "Nieuwe link aanvragen"
     },
     "errors": {
       "invalid_credentials": "Ongeldige inloggegevens",

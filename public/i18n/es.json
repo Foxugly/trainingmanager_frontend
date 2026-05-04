@@ -430,7 +430,59 @@
       "title": "Iniciar sesión",
       "username": "Nombre de usuario",
       "password": "Contraseña",
-      "submit": "Iniciar sesión"
+      "submit": "Iniciar sesión",
+      "rate_limit_message": "Demasiados intentos. Inténtalo de nuevo en unos minutos.",
+      "rate_limit_countdown": "Reintenta en {{seconds}} segundos.",
+      "email_not_verified_banner": "Tu correo no está verificado. Indícalo abajo para recibir un nuevo enlace de confirmación.",
+      "email_for_resend_placeholder": "tu@ejemplo.com",
+      "resend_email_button": "Reenviar correo de confirmación",
+      "resend_email_required": "Indica tu correo para recibir un nuevo enlace.",
+      "resend_email_sent": "Correo enviado. Revisa tu bandeja de entrada.",
+      "resend_rate_limited": "Demasiadas solicitudes. Inténtalo de nuevo en unos minutos.",
+      "no_account_yet": "¿Aún no tienes cuenta?",
+      "no_account_yet_link": "Regístrate"
+    },
+    "register": {
+      "title": "Crear una cuenta",
+      "subtitle": "Regístrate gratis para gestionar tus equipos y tus entrenamientos.",
+      "fields": {
+        "username": "Nombre de usuario",
+        "email": "Correo electrónico",
+        "password": "Contraseña",
+        "confirm_password": "Confirmar contraseña",
+        "first_name": "Nombre",
+        "last_name": "Apellido",
+        "language": "Idioma de la interfaz"
+      },
+      "password_mismatch": "Las contraseñas no coinciden.",
+      "submit": "Crear mi cuenta",
+      "signing_up": "Creando la cuenta…",
+      "captcha_required": "Valida el captcha antes de enviar.",
+      "captcha_failed": "Captcha no válido. Vuelve a intentarlo.",
+      "rate_limit_message": "Demasiados registros recientes. Inténtalo más tarde.",
+      "rate_limit_countdown": "Reintenta en {{seconds}} segundos.",
+      "already_have_account": "¿Ya tienes una cuenta?",
+      "already_have_account_link": "Inicia sesión"
+    },
+    "check_email": {
+      "title": "Revisa tu bandeja de entrada",
+      "body_with_email": "Se ha enviado un correo de confirmación a {{email}}. Haz clic en el enlace del correo para activar tu cuenta.",
+      "body_no_email": "Indica el correo usado al registrarte para recibir un nuevo enlace de confirmación.",
+      "resend_button": "Reenviar correo",
+      "resend_cooldown": "Reenviar ({{seconds}}s)",
+      "resent_toast": "Correo enviado. Revisa tu bandeja de entrada.",
+      "resend_rate_limited": "Demasiadas solicitudes. Inténtalo de nuevo en unos minutos.",
+      "back_to_login": "← Volver al inicio de sesión"
+    },
+    "email_confirm": {
+      "loading": "Confirmando tu correo…",
+      "success_title": "¡Correo confirmado!",
+      "success_redirect": "Has iniciado sesión. Redirigiendo al panel…",
+      "error_invalid_token_title": "Enlace no válido o caducado",
+      "error_invalid_token": "El enlace de confirmación no es válido o ha caducado. Solicita uno nuevo desde la página de verificación.",
+      "error_unknown_title": "Error inesperado",
+      "error_unknown": "Se ha producido un error. Vuelve a intentarlo o solicita un nuevo enlace.",
+      "request_resend_button": "Solicitar un nuevo enlace"
     },
     "errors": {
       "invalid_credentials": "Credenciales no válidas",
