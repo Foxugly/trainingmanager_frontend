@@ -16,24 +16,30 @@ interface ProtectedFields {
   form: {
     invalid: boolean;
     valid: boolean;
-    patchValue: (v: { username?: string; password?: string }) => void;
+    patchValue: (v: { username?: string; password?: string; email?: string }) => void;
   };
   loading(): boolean;
   errorMessage(): string | null;
+  emailNotVerified(): boolean;
+  resending(): boolean;
+  resendDone(): boolean;
+  resendError(): string | null;
+  retryCountdown(): number | null;
   submit(): void;
+  resendVerification(): void;
 }
 
 describe('LoginComponent', () => {
   let fixture: ComponentFixture<LoginComponent>;
   let component: LoginComponent;
-  let authMock: { login: ReturnType<typeof vi.fn> };
+  let authMock: { login: ReturnType<typeof vi.fn>; resendEmail: ReturnType<typeof vi.fn> };
   let router: Router;
   let queryParams: Record<string, string>;
 
   const access = (c: LoginComponent) => c as unknown as ProtectedFields;
 
   beforeEach(async () => {
-    authMock = { login: vi.fn() };
+    authMock = { login: vi.fn(), resendEmail: vi.fn() };
     queryParams = {};
 
     await TestBed.configureTestingModule({
@@ -127,5 +133,49 @@ describe('LoginComponent', () => {
     access(component).submit();
 
     expect(access(component).errorMessage()).toBe('auth.errors.unknown');
+  });
+
+  it('flips emailNotVerified=true when the backend returns 400 + code=email_not_verified', () => {
+    authMock.login.mockReturnValue(
+      throwError(() => ({ status: 400, error: { code: 'email_not_verified' } })),
+    );
+
+    access(component).form.patchValue({ username: 'alice', password: 'pw' });
+    access(component).submit();
+
+    expect(access(component).emailNotVerified()).toBe(true);
+    expect(access(component).errorMessage()).toBeNull();
+  });
+
+  it('resendVerification(): requires email and surfaces a guidance message when missing', () => {
+    access(component).resendVerification();
+    expect(access(component).resendError()).toBe('auth.login.resend_email_required');
+    expect(authMock.resendEmail).not.toHaveBeenCalled();
+  });
+
+  it('resendVerification(): success → resendDone=true', () => {
+    authMock.resendEmail.mockReturnValue(of({ detail: 'ok' }));
+    access(component).form.patchValue({ email: 'a@b.c' });
+    access(component).resendVerification();
+    expect(authMock.resendEmail).toHaveBeenCalledWith('a@b.c');
+    expect(access(component).resendDone()).toBe(true);
+  });
+
+  it('resendVerification(): 429 → resendError=resend_rate_limited', () => {
+    authMock.resendEmail.mockReturnValue(throwError(() => ({ status: 429 })));
+    access(component).form.patchValue({ email: 'a@b.c' });
+    access(component).resendVerification();
+    expect(access(component).resendError()).toBe('auth.login.resend_rate_limited');
+  });
+
+  it('login 429 → rate_limit_message + retryCountdown set from Retry-After header', () => {
+    const mockHeaders = { get: (name: string) => (name.toLowerCase() === 'retry-after' ? '42' : null) };
+    authMock.login.mockReturnValue(throwError(() => ({ status: 429, headers: mockHeaders })));
+
+    access(component).form.patchValue({ username: 'alice', password: 'pw' });
+    access(component).submit();
+
+    expect(access(component).errorMessage()).toBe('auth.login.rate_limit_message');
+    expect(access(component).retryCountdown()).toBe(42);
   });
 });

@@ -2,46 +2,98 @@
   <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-md border border-gray-200">
     <h1 class="text-2xl font-bold mb-6 text-center">{{ 'auth.login.title' | transloco }}</h1>
 
-  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
-    <div class="flex flex-col gap-2">
-      <label for="username" class="text-sm font-medium text-gray-700">
-        {{ 'auth.login.username' | transloco }}
-      </label>
-      <input
-        pInputText
-        id="username"
-        formControlName="username"
-        autocomplete="username"
-        class="w-full"
-      />
-    </div>
-
-    <div class="flex flex-col gap-2">
-      <label for="password" class="text-sm font-medium text-gray-700">
-        {{ 'auth.login.password' | transloco }}
-      </label>
-      <p-password
-        formControlName="password"
-        [feedback]="false"
-        [toggleMask]="true"
-        inputId="password"
-        autocomplete="current-password"
-        styleClass="w-full"
-        [inputStyle]="{ width: '100%' }"
-      />
-    </div>
-
-    @if (errorMessage(); as msg) {
-      <p-message severity="error" [text]="msg" />
+    @if (emailNotVerified()) {
+      <div class="mb-6 rounded border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 flex flex-col gap-3">
+        <div>
+          <i class="pi pi-exclamation-triangle mr-1" aria-hidden="true"></i>
+          {{ 'auth.login.email_not_verified_banner' | transloco }}
+        </div>
+        <div class="flex flex-col gap-2">
+          <input
+            pInputText
+            type="email"
+            formControlName="email"
+            [formGroup]="form"
+            [placeholder]="'auth.login.email_for_resend_placeholder' | transloco"
+            autocomplete="email"
+          />
+          @if (resendError(); as msg) {
+            <small class="text-xs text-red-700">{{ msg | transloco }}</small>
+          }
+          @if (resendDone()) {
+            <small class="text-xs text-emerald-700">
+              <i class="pi pi-check mr-1" aria-hidden="true"></i>
+              {{ 'auth.login.resend_email_sent' | transloco }}
+            </small>
+          }
+          <p-button
+            type="button"
+            [label]="'auth.login.resend_email_button' | transloco"
+            icon="pi pi-refresh"
+            severity="secondary"
+            [outlined]="true"
+            size="small"
+            [loading]="resending()"
+            [disabled]="resending() || resendDone()"
+            (onClick)="resendVerification()"
+          />
+        </div>
+      </div>
     }
 
-    <p-button
+    <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+      <div class="flex flex-col gap-2">
+        <label for="username" class="text-sm font-medium text-gray-700">
+          {{ 'auth.login.username' | transloco }}
+        </label>
+        <input
+          pInputText
+          id="username"
+          formControlName="username"
+          autocomplete="username"
+          class="w-full"
+        />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="password" class="text-sm font-medium text-gray-700">
+          {{ 'auth.login.password' | transloco }}
+        </label>
+        <p-password
+          formControlName="password"
+          [feedback]="false"
+          [toggleMask]="true"
+          inputId="password"
+          autocomplete="current-password"
+          styleClass="w-full"
+          [inputStyle]="{ width: '100%' }"
+        />
+      </div>
+
+      @if (errorMessage(); as msg) {
+        <p-message severity="error" [text]="msg" />
+      }
+      @if (retryCountdown(); as seconds) {
+        <p-message
+          severity="warn"
+          [text]="'auth.login.rate_limit_countdown' | transloco: { seconds: seconds }"
+        />
+      }
+
+      <p-button
         type="submit"
         [label]="'auth.login.submit' | transloco"
         [loading]="loading()"
-        [disabled]="form.invalid"
+        [disabled]="submitDisabled()"
         styleClass="w-full"
       />
+
+      <p class="text-center text-sm text-gray-600 mt-2">
+        {{ 'auth.login.no_account_yet' | transloco }}
+        <a [routerLink]="['/register']" class="text-indigo-600 hover:underline font-medium">
+          {{ 'auth.login.no_account_yet_link' | transloco }}
+        </a>
+      </p>
     </form>
   </div>
 </section>
