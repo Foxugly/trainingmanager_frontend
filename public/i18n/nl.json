@@ -395,8 +395,8 @@
     },
     "financial": {
       "title": "Financiële steun",
-      "description": "Als Training Manager je helpt en je de ontwikkeling wil steunen, worden donatiekanalen hier binnenkort aangekondigd.",
-      "placeholder": "Meer kanalen binnenkort."
+      "description": "Als Training Manager je helpt, houdt jouw steun op GitHub Sponsors het project levend en geeft het ruimte om aan de volgende functies te werken. Bedankt.",
+      "cta_sponsors": "Steun op GitHub Sponsors"
     },
     "thanks": "Dank aan iedereen die dit project vooruit helpt — code, ideeën, feedback, aanmoedigingen. Elke bijdrage telt."
   },

@@ -12,4 +12,5 @@ export class ContributePageComponent {
   protected readonly frontendRepoUrl = 'https://github.com/Foxugly/trainingmanager_frontend';
   protected readonly backendRepoUrl = 'https://github.com/Foxugly/trainingmanager';
   protected readonly issuesUrl = 'https://github.com/Foxugly/trainingmanager/issues';
+  protected readonly sponsorsUrl = 'https://github.com/sponsors/Foxugly';
 }

@@ -48,4 +48,14 @@ describe('ContributePageComponent', () => {
     expect(html).toContain('target="_blank"');
     expect(html).toContain('rel="noopener noreferrer"');
   });
+
+  it('exposes the GitHub Sponsors CTA with target=_blank + rel=noopener', () => {
+    const sponsorsLink = fixture.nativeElement.querySelector(
+      'a[href="https://github.com/sponsors/Foxugly"]',
+    ) as HTMLAnchorElement | null;
+    expect(sponsorsLink).not.toBeNull();
+    expect(sponsorsLink?.getAttribute('target')).toBe('_blank');
+    expect(sponsorsLink?.getAttribute('rel')).toBe('noopener noreferrer');
+    expect(sponsorsLink?.textContent).toContain('contribute_page.financial.cta_sponsors');
+  });
 });
