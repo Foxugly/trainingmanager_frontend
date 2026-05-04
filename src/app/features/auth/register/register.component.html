@@ -1,0 +1,154 @@
+<section class="flex min-h-[60vh] items-center justify-center px-4 py-12 md:py-16">
+  <div class="w-full max-w-lg p-8 bg-white rounded-lg shadow-md border border-gray-200">
+    <h1 class="text-2xl font-bold mb-2 text-center">{{ 'auth.register.title' | transloco }}</h1>
+    <p class="text-sm text-gray-600 mb-6 text-center">{{ 'auth.register.subtitle' | transloco }}</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="flex flex-col gap-2">
+          <label for="first_name" class="text-sm font-medium text-gray-700">
+            {{ 'auth.register.fields.first_name' | transloco }}
+          </label>
+          <input
+            pInputText
+            id="first_name"
+            formControlName="first_name"
+            autocomplete="given-name"
+            maxlength="150"
+          />
+          @if (fieldErrors()?.['first_name']; as msgs) {
+            <small class="text-xs text-red-700">{{ msgs.join(' · ') }}</small>
+          }
+        </div>
+        <div class="flex flex-col gap-2">
+          <label for="last_name" class="text-sm font-medium text-gray-700">
+            {{ 'auth.register.fields.last_name' | transloco }}
+          </label>
+          <input
+            pInputText
+            id="last_name"
+            formControlName="last_name"
+            autocomplete="family-name"
+            maxlength="150"
+          />
+          @if (fieldErrors()?.['last_name']; as msgs) {
+            <small class="text-xs text-red-700">{{ msgs.join(' · ') }}</small>
+          }
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="username" class="text-sm font-medium text-gray-700">
+          {{ 'auth.register.fields.username' | transloco }}
+        </label>
+        <input
+          pInputText
+          id="username"
+          formControlName="username"
+          autocomplete="username"
+          maxlength="150"
+        />
+        @if (fieldErrors()?.['username']; as msgs) {
+          <small class="text-xs text-red-700">{{ msgs.join(' · ') }}</small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="email" class="text-sm font-medium text-gray-700">
+          {{ 'auth.register.fields.email' | transloco }}
+        </label>
+        <input
+          pInputText
+          id="email"
+          type="email"
+          formControlName="email"
+          autocomplete="email"
+        />
+        @if (fieldErrors()?.['email']; as msgs) {
+          <small class="text-xs text-red-700">{{ msgs.join(' · ') }}</small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="password" class="text-sm font-medium text-gray-700">
+          {{ 'auth.register.fields.password' | transloco }}
+        </label>
+        <p-password
+          formControlName="password"
+          [feedback]="true"
+          [toggleMask]="true"
+          inputId="password"
+          autocomplete="new-password"
+          styleClass="w-full"
+          [inputStyle]="{ width: '100%' }"
+        />
+        @if (fieldErrors()?.['password']; as msgs) {
+          <small class="text-xs text-red-700">{{ msgs.join(' · ') }}</small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="confirm_password" class="text-sm font-medium text-gray-700">
+          {{ 'auth.register.fields.confirm_password' | transloco }}
+        </label>
+        <p-password
+          formControlName="confirm_password"
+          [feedback]="false"
+          [toggleMask]="true"
+          inputId="confirm_password"
+          autocomplete="new-password"
+          styleClass="w-full"
+          [inputStyle]="{ width: '100%' }"
+        />
+        @if (form.errors?.['password_mismatch'] && form.controls.confirm_password.touched) {
+          <small class="text-xs text-red-700">
+            {{ 'auth.register.password_mismatch' | transloco }}
+          </small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="language" class="text-sm font-medium text-gray-700">
+          {{ 'auth.register.fields.language' | transloco }}
+        </label>
+        <p-select
+          inputId="language"
+          formControlName="language"
+          [options]="availableLanguages"
+          optionLabel="nativeName"
+          optionValue="code"
+          styleClass="w-full"
+        />
+      </div>
+
+      <div class="flex justify-center my-2">
+        <div #turnstile class="cf-turnstile" [attr.data-sitekey]="turnstileSiteKey"></div>
+      </div>
+
+      @if (errorMessage(); as msg) {
+        <p-message severity="error" [text]="msg | transloco" />
+      }
+      @if (retryCountdown(); as seconds) {
+        <p-message
+          severity="warn"
+          [text]="'auth.register.rate_limit_countdown' | transloco: { seconds: seconds }"
+        />
+      }
+
+      <p-button
+        type="submit"
+        [label]="loading() ? ('auth.register.signing_up' | transloco) : ('auth.register.submit' | transloco)"
+        [loading]="loading()"
+        [disabled]="submitDisabled()"
+        styleClass="w-full"
+      />
+
+      <p class="text-center text-sm text-gray-600 mt-2">
+        {{ 'auth.register.already_have_account' | transloco }}
+        <a [routerLink]="['/login']" class="text-indigo-600 hover:underline font-medium">
+          {{ 'auth.register.already_have_account_link' | transloco }}
+        </a>
+      </p>
+    </form>
+  </div>
+</section>

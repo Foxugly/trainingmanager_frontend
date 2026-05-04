@@ -52,6 +52,25 @@ export const routes: Routes = [
           import('./features/auth/login/login.component').then((m) => m.LoginComponent),
       },
       {
+        path: 'register',
+        loadComponent: () =>
+          import('./features/auth/register/register.component').then((m) => m.RegisterComponent),
+      },
+      {
+        path: 'check-your-email',
+        loadComponent: () =>
+          import('./features/auth/check-your-email/check-your-email.component').then(
+            (m) => m.CheckYourEmailComponent,
+          ),
+      },
+      {
+        path: 'auth/confirm-email/:key',
+        loadComponent: () =>
+          import('./features/auth/email-confirm/email-confirm.component').then(
+            (m) => m.EmailConfirmComponent,
+          ),
+      },
+      {
         path: 'invitation/:token',
         loadComponent: () =>
           import('./features/auth/invitation-accept/invitation-accept.component').then(
