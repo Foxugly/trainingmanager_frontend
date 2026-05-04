@@ -23,6 +23,8 @@ import { EmailResend } from '../model/email-resend';
 // @ts-ignore
 import { Register } from '../model/register';
 // @ts-ignore
+import { TokenObtainPairResponse } from '../model/token-obtain-pair-response';
+// @ts-ignore
 import { TokenRefresh } from '../model/token-refresh';
 // @ts-ignore
 import { VerifiedTokenObtainPair } from '../model/verified-token-obtain-pair';
@@ -248,16 +250,16 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     }
 
     /**
-     * Drop-in replacement for SimpleJWT\&#39;s TokenObtainPairView that refuses login when the user\&#39;s primary email is unverified.  Rate-limited to 10 requests per minute per IP (anti-bruteforce).
+     * Drop-in replacement for SimpleJWT\&#39;s TokenObtainPairView that refuses login when the user\&#39;s primary email is unverified.  Rate-limited to 10 requests per minute per IP (anti-bruteforce).  The @extend_schema(responses&#x3D;...) above is required because SimpleJWT\&#39;s TokenObtainPairSerializer describes the *input* shape ({username, password}) and drf-spectacular would otherwise reuse it for the response — leading to a wrong codegen on the frontend (Observable&lt;{username, password}&gt; instead of Observable&lt;{access, refresh}&gt;).
      * @endpoint post /api/v1/auth/token/
      * @param verifiedTokenObtainPair 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public authTokenCreate(verifiedTokenObtainPair: VerifiedTokenObtainPair, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<VerifiedTokenObtainPair>;
-    public authTokenCreate(verifiedTokenObtainPair: VerifiedTokenObtainPair, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<VerifiedTokenObtainPair>>;
-    public authTokenCreate(verifiedTokenObtainPair: VerifiedTokenObtainPair, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<VerifiedTokenObtainPair>>;
+    public authTokenCreate(verifiedTokenObtainPair: VerifiedTokenObtainPair, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TokenObtainPairResponse>;
+    public authTokenCreate(verifiedTokenObtainPair: VerifiedTokenObtainPair, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TokenObtainPairResponse>>;
+    public authTokenCreate(verifiedTokenObtainPair: VerifiedTokenObtainPair, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TokenObtainPairResponse>>;
     public authTokenCreate(verifiedTokenObtainPair: VerifiedTokenObtainPair, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (verifiedTokenObtainPair === null || verifiedTokenObtainPair === undefined) {
             throw new Error('Required parameter verifiedTokenObtainPair was null or undefined when calling authTokenCreate.');
@@ -301,7 +303,7 @@ export class AuthService extends BaseService implements AuthServiceInterface {
 
         let localVarPath = `/api/v1/auth/token/`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<VerifiedTokenObtainPair>('post', `${basePath}${localVarPath}`,
+        return this.httpClient.request<TokenObtainPairResponse>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 body: verifiedTokenObtainPair,

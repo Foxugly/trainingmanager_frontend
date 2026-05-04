@@ -123,6 +123,7 @@ model/team-join-request.ts
 model/team-membership.ts
 model/team-minimal.ts
 model/team.ts
+model/token-obtain-pair-response.ts
 model/token-refresh.ts
 model/validate-invitation.ts
 model/verified-token-obtain-pair.ts

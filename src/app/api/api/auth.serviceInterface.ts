@@ -14,6 +14,7 @@ import { Observable }                                        from 'rxjs';
 import { EmailConfirm } from '../model/models';
 import { EmailResend } from '../model/models';
 import { Register } from '../model/models';
+import { TokenObtainPairResponse } from '../model/models';
 import { TokenRefresh } from '../model/models';
 import { VerifiedTokenObtainPair } from '../model/models';
 
@@ -52,11 +53,11 @@ export interface AuthServiceInterface {
 
     /**
      * 
-     * Drop-in replacement for SimpleJWT\&#39;s TokenObtainPairView that refuses login when the user\&#39;s primary email is unverified.  Rate-limited to 10 requests per minute per IP (anti-bruteforce).
+     * Drop-in replacement for SimpleJWT\&#39;s TokenObtainPairView that refuses login when the user\&#39;s primary email is unverified.  Rate-limited to 10 requests per minute per IP (anti-bruteforce).  The @extend_schema(responses&#x3D;...) above is required because SimpleJWT\&#39;s TokenObtainPairSerializer describes the *input* shape ({username, password}) and drf-spectacular would otherwise reuse it for the response — leading to a wrong codegen on the frontend (Observable&lt;{username, password}&gt; instead of Observable&lt;{access, refresh}&gt;).
      * @endpoint post /api/v1/auth/token/
      * @param verifiedTokenObtainPair 
      */
-    authTokenCreate(verifiedTokenObtainPair: VerifiedTokenObtainPair, extraHttpRequestParams?: any): Observable<VerifiedTokenObtainPair>;
+    authTokenCreate(verifiedTokenObtainPair: VerifiedTokenObtainPair, extraHttpRequestParams?: any): Observable<TokenObtainPairResponse>;
 
     /**
      * 

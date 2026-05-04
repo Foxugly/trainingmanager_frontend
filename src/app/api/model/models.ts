@@ -83,6 +83,7 @@ export * from './team-invitation';
 export * from './team-join-request';
 export * from './team-membership';
 export * from './team-minimal';
+export * from './token-obtain-pair-response';
 export * from './token-refresh';
 export * from './validate-invitation';
 export * from './verified-token-obtain-pair';

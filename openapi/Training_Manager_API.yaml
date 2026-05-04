@@ -360,6 +360,12 @@ paths:
         login when the user's primary email is unverified.
 
         Rate-limited to 10 requests per minute per IP (anti-bruteforce).
+
+        The @extend_schema(responses=...) above is required because SimpleJWT's
+        TokenObtainPairSerializer describes the *input* shape ({username, password})
+        and drf-spectacular would otherwise reuse it for the response — leading
+        to a wrong codegen on the frontend (Observable<{username, password}>
+        instead of Observable<{access, refresh}>).
       tags:
       - auth
       requestBody:
@@ -379,8 +385,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/VerifiedTokenObtainPair'
-          description: ''
+                $ref: '#/components/schemas/TokenObtainPairResponse'
+          description: JWT pair. Use `access` as a Bearer token; obtain a fresh `access`
+            via /auth/token/refresh/ when it expires.
+        '400':
+          description: Email not verified (code=email_not_verified) — the frontend
+            should expose a 'Resend confirmation email' affordance — or any other
+            validation error normalized by the custom exception handler.
+        '401':
+          description: Invalid username/email or password.
   /api/v1/auth/token/refresh/:
     post:
       operationId: auth_token_refresh_create
@@ -6832,6 +6845,16 @@ components:
       - id
       - language
       - name
+    TokenObtainPairResponse:
+      type: object
+      properties:
+        access:
+          type: string
+        refresh:
+          type: string
+      required:
+      - access
+      - refresh
     TokenRefresh:
       type: object
       properties:
