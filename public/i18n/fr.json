@@ -295,16 +295,34 @@
     "quick_actions": {
       "new_team": "Nouvelle équipe",
       "new_program": "Nouveau programme",
-      "new_event": "Nouvelle séance"
+      "new_event": "Nouvelle séance",
+      "profile": "Voir mon profil"
+    },
+    "member_teams": {
+      "title": "Mes équipes (membre)",
+      "badge": "Membre",
+      "members": "Membres"
+    },
+    "upcoming_events_athlete": {
+      "title": "Mes prochains entraînements (14 jours)"
+    },
+    "attendance_history": {
+      "title": "Mon historique de présence",
+      "empty": "Pas encore de présence enregistrée.",
+      "partial_audit": "Historique partiel — basé sur les 30 séances les plus récentes."
     },
     "empty": {
       "no_managed_team": "Aucune équipe sous votre responsabilité.",
+      "no_member_team": "Vous n'êtes membre d'aucune équipe.",
+      "no_team": "Vous n'êtes rattaché à aucune équipe.",
       "no_upcoming_events": "Aucune séance prévue dans les 14 prochains jours."
     },
     "errors": {
       "teams": "Impossible de charger vos équipes.",
+      "member_teams": "Impossible de charger vos équipes membre.",
       "upcoming": "Impossible de charger les prochaines séances.",
-      "pending": "Impossible de vérifier les présences en attente."
+      "pending": "Impossible de vérifier les présences en attente.",
+      "history": "Impossible de charger votre historique de présence."
     }
   },
   "public": {

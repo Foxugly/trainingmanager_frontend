@@ -295,16 +295,34 @@
     "quick_actions": {
       "new_team": "New team",
       "new_program": "New program",
-      "new_event": "New session"
+      "new_event": "New session",
+      "profile": "View my profile"
+    },
+    "member_teams": {
+      "title": "My teams (member)",
+      "badge": "Member",
+      "members": "Members"
+    },
+    "upcoming_events_athlete": {
+      "title": "My upcoming sessions (14 days)"
+    },
+    "attendance_history": {
+      "title": "My attendance history",
+      "empty": "No attendance recorded yet.",
+      "partial_audit": "Partial history — based on the 30 most recent sessions."
     },
     "empty": {
       "no_managed_team": "No team under your management.",
+      "no_member_team": "You are not a member of any team.",
+      "no_team": "You're not attached to any team yet.",
       "no_upcoming_events": "No session planned in the next 14 days."
     },
     "errors": {
       "teams": "Could not load your teams.",
+      "member_teams": "Could not load your member teams.",
       "upcoming": "Could not load upcoming sessions.",
-      "pending": "Could not check pending attendance."
+      "pending": "Could not check pending attendance.",
+      "history": "Could not load your attendance history."
     }
   },
   "public": {

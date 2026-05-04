@@ -295,16 +295,34 @@
     "quick_actions": {
       "new_team": "Nieuw team",
       "new_program": "Nieuw programma",
-      "new_event": "Nieuwe sessie"
+      "new_event": "Nieuwe sessie",
+      "profile": "Bekijk mijn profiel"
+    },
+    "member_teams": {
+      "title": "Mijn teams (lid)",
+      "badge": "Lid",
+      "members": "Leden"
+    },
+    "upcoming_events_athlete": {
+      "title": "Mijn komende sessies (14 dagen)"
+    },
+    "attendance_history": {
+      "title": "Mijn aanwezigheidsgeschiedenis",
+      "empty": "Nog geen aanwezigheid geregistreerd.",
+      "partial_audit": "Gedeeltelijke geschiedenis — gebaseerd op de 30 meest recente sessies."
     },
     "empty": {
       "no_managed_team": "Geen team onder jouw beheer.",
+      "no_member_team": "Je bent geen lid van een team.",
+      "no_team": "Je bent nog niet aan een team gekoppeld.",
       "no_upcoming_events": "Geen sessie gepland in de komende 14 dagen."
     },
     "errors": {
       "teams": "Je teams konden niet worden geladen.",
+      "member_teams": "Je lidmaatschapsteams konden niet worden geladen.",
       "upcoming": "Komende sessies konden niet worden geladen.",
-      "pending": "Aanwezigheden in afwachting konden niet worden gecontroleerd."
+      "pending": "Aanwezigheden in afwachting konden niet worden gecontroleerd.",
+      "history": "Je aanwezigheidsgeschiedenis kon niet worden geladen."
     }
   },
   "public": {

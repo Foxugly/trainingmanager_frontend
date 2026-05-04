@@ -295,16 +295,34 @@
     "quick_actions": {
       "new_team": "Nuevo equipo",
       "new_program": "Nuevo programa",
-      "new_event": "Nueva sesión"
+      "new_event": "Nueva sesión",
+      "profile": "Ver mi perfil"
+    },
+    "member_teams": {
+      "title": "Mis equipos (miembro)",
+      "badge": "Miembro",
+      "members": "Miembros"
+    },
+    "upcoming_events_athlete": {
+      "title": "Mis próximas sesiones (14 días)"
+    },
+    "attendance_history": {
+      "title": "Mi historial de asistencias",
+      "empty": "Sin asistencias registradas aún.",
+      "partial_audit": "Historial parcial — basado en las 30 sesiones más recientes."
     },
     "empty": {
       "no_managed_team": "Ningún equipo bajo tu responsabilidad.",
+      "no_member_team": "No eres miembro de ningún equipo.",
+      "no_team": "Aún no estás asociado a ningún equipo.",
       "no_upcoming_events": "Ninguna sesión prevista en los próximos 14 días."
     },
     "errors": {
       "teams": "No se han podido cargar tus equipos.",
+      "member_teams": "No se han podido cargar tus equipos como miembro.",
       "upcoming": "No se han podido cargar las próximas sesiones.",
-      "pending": "No se ha podido verificar las asistencias pendientes."
+      "pending": "No se ha podido verificar las asistencias pendientes.",
+      "history": "No se ha podido cargar tu historial de asistencias."
     }
   },
   "public": {
