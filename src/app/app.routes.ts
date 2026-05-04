@@ -4,7 +4,6 @@ import { authGuard } from './core/auth/auth.guard';
 import { staffGuard } from './core/auth/staff.guard';
 import { AuthService } from './core/auth/auth.service';
 import { AdminLayoutComponent } from './core/layout/admin-layout/admin-layout.component';
-import { AuthLayoutComponent } from './core/layout/auth-layout/auth-layout.component';
 import { MainLayoutComponent } from './core/layout/main-layout/main-layout.component';
 import { PublicLayoutComponent } from './core/layout/public-layout/public-layout.component';
 
@@ -33,25 +32,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/home/home.component').then((m) => m.HomeComponent),
       },
-    ],
-  },
-  {
-    path: 'login',
-    component: AuthLayoutComponent,
-    children: [
       {
-        path: '',
+        path: 'login',
         loadComponent: () =>
           import('./features/auth/login/login.component').then((m) => m.LoginComponent),
       },
-    ],
-  },
-  {
-    path: 'invitation/:token',
-    component: AuthLayoutComponent,
-    children: [
       {
-        path: '',
+        path: 'invitation/:token',
         loadComponent: () =>
           import('./features/auth/invitation-accept/invitation-accept.component').then(
             (m) => m.InvitationAcceptComponent,

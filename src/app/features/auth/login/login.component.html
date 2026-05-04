@@ -1,5 +1,6 @@
-<div class="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
-  <h1 class="text-2xl font-bold mb-6 text-center">{{ 'auth.login.title' | transloco }}</h1>
+<section class="flex min-h-[60vh] items-center justify-center px-4 py-12 md:py-16">
+  <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-md border border-gray-200">
+    <h1 class="text-2xl font-bold mb-6 text-center">{{ 'auth.login.title' | transloco }}</h1>
 
   <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
     <div class="flex flex-col gap-2">
@@ -35,11 +36,12 @@
     }
 
     <p-button
-      type="submit"
-      [label]="'auth.login.submit' | transloco"
-      [loading]="loading()"
-      [disabled]="form.invalid"
-      styleClass="w-full"
-    />
-  </form>
-</div>
+        type="submit"
+        [label]="'auth.login.submit' | transloco"
+        [loading]="loading()"
+        [disabled]="form.invalid"
+        styleClass="w-full"
+      />
+    </form>
+  </div>
+</section>
