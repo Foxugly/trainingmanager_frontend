@@ -29,8 +29,8 @@ interface ProtectedFields {
   form: {
     invalid: boolean;
     valid: boolean;
-    value: { email: string; first_name: string; last_name: string; language: string };
-    patchValue: (v: Partial<{ email: string; first_name: string; last_name: string; language: string }>) => void;
+    value: { first_name: string; last_name: string; language: string };
+    patchValue: (v: Partial<{ first_name: string; last_name: string; language: string }>) => void;
   };
   loading(): boolean;
   successMessage(): string | null;
@@ -90,9 +90,8 @@ describe('ProfileComponent', () => {
     await setup();
   });
 
-  it('hydrates the form with the current user values', () => {
+  it('hydrates the form with the current user values (email is read-only and not in the form)', () => {
     expect(access(component).form.value).toEqual({
-      email: 'alice@example.com',
       first_name: 'Alice',
       last_name: 'Anderson',
       language: 'fr',
@@ -106,14 +105,13 @@ describe('ProfileComponent', () => {
     expect(access(component).user()).toEqual(baseUser);
   });
 
-  it('submit() calls mePartialUpdate with the form payload', () => {
+  it('submit() calls mePartialUpdate with the form payload (no email field sent)', () => {
     meMock.mePartialUpdate.mockReturnValue(of({ ...baseUser, first_name: 'Alicia' }));
     access(component).form.patchValue({ first_name: 'Alicia' });
 
     access(component).submit();
 
     expect(meMock.mePartialUpdate).toHaveBeenCalledWith({
-      email: 'alice@example.com',
       first_name: 'Alicia',
       last_name: 'Anderson',
       language: 'fr',
@@ -134,17 +132,13 @@ describe('ProfileComponent', () => {
 
   it('submit() surfaces field-level validation errors from DRF', () => {
     meMock.mePartialUpdate.mockReturnValue(
-      throwError(() => ({ status: 400, error: { email: ['Enter a valid email address.'] } })),
+      throwError(() => ({ status: 400, error: { first_name: ['This field is required.'] } })),
     );
 
-    access(component).form.patchValue({ email: 'not-an-email' });
-    // form is now invalid due to Validators.email; force valid by patching back
-    access(component).form.patchValue({ email: 'still@bad.invalid' });
-    // ↑ keeps form valid client-side, server replies with 400
     access(component).submit();
 
-    expect(access(component).errorMessage()).toContain('email');
-    expect(access(component).errorMessage()).toContain('Enter a valid email address.');
+    expect(access(component).errorMessage()).toContain('first_name');
+    expect(access(component).errorMessage()).toContain('This field is required.');
     expect(access(component).loading()).toBe(false);
   });
 

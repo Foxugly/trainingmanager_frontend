@@ -441,6 +441,7 @@
     "title": "Mon profil",
     "username": "Nom d'utilisateur",
     "email": "Email",
+    "email_readonly_help": "L'adresse email ne peut être changée que par un administrateur.",
     "first_name": "Prénom",
     "last_name": "Nom",
     "language": "Langue",

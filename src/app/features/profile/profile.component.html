@@ -11,11 +11,12 @@
           <span class="text-gray-900">{{ me.username }}</span>
         </div>
 
-        <div class="flex flex-col gap-2">
-          <label for="email" class="text-sm font-medium text-gray-700">
+        <div class="flex flex-col gap-1">
+          <span class="text-sm font-medium text-gray-700">
             {{ 'profile.email' | transloco }}
-          </label>
-          <input pInputText id="email" type="email" formControlName="email" autocomplete="email" />
+          </span>
+          <span class="text-gray-900">{{ me.email }}</span>
+          <small class="text-xs text-gray-500">{{ 'profile.email_readonly_help' | transloco }}</small>
         </div>
 
         <div class="flex flex-col gap-2">

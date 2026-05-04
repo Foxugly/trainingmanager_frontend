@@ -441,6 +441,7 @@
     "title": "Il mio profilo",
     "username": "Nome utente",
     "email": "Email",
+    "email_readonly_help": "L'indirizzo email può essere modificato solo da un amministratore.",
     "first_name": "Nome",
     "last_name": "Cognome",
     "language": "Lingua",

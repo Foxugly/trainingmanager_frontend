@@ -16,7 +16,6 @@ import { AVAILABLE_LANGUAGES, LanguageCode } from '../../core/i18n/available-lan
 import { LanguageService } from '../../core/i18n/language.service';
 
 interface ProfileFormValue {
-  email: string;
   first_name: string;
   last_name: string;
   language: LanguageCode;
@@ -44,7 +43,6 @@ export class ProfileComponent implements OnInit {
   protected readonly errorMessage = signal<string | null>(null);
 
   protected readonly form = this.fb.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
     first_name: ['', Validators.required],
     last_name: ['', Validators.required],
     language: ['fr' as LanguageCode, Validators.required],
@@ -64,7 +62,6 @@ export class ProfileComponent implements OnInit {
   private hydrate(me: Me): void {
     this.user.set(me);
     this.form.reset({
-      email: me.email ?? '',
       first_name: me.first_name ?? '',
       last_name: me.last_name ?? '',
       language: (me.language ?? 'fr') as LanguageCode,
@@ -81,7 +78,6 @@ export class ProfileComponent implements OnInit {
 
     const value = this.form.getRawValue() as ProfileFormValue;
     const payload: PatchedMe = {
-      email: value.email,
       first_name: value.first_name,
       last_name: value.last_name,
       language: value.language as LanguageEnum,
