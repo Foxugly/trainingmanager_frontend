@@ -1,10 +1,19 @@
-import { Routes } from '@angular/router';
+import { CanActivateFn, Router, Routes } from '@angular/router';
+import { inject } from '@angular/core';
 import { authGuard } from './core/auth/auth.guard';
 import { staffGuard } from './core/auth/staff.guard';
+import { AuthService } from './core/auth/auth.service';
 import { AdminLayoutComponent } from './core/layout/admin-layout/admin-layout.component';
 import { AuthLayoutComponent } from './core/layout/auth-layout/auth-layout.component';
 import { MainLayoutComponent } from './core/layout/main-layout/main-layout.component';
 import { PublicLayoutComponent } from './core/layout/public-layout/public-layout.component';
+
+const redirectAuthenticatedToDashboard: CanActivateFn = () => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+  if (authService.currentUser() === null) return true;
+  return router.createUrlTree(['/dashboard']);
+};
 
 export const routes: Routes = [
   {
@@ -14,13 +23,15 @@ export const routes: Routes = [
       {
         path: '',
         pathMatch: 'full',
+        canActivate: [redirectAuthenticatedToDashboard],
         loadComponent: () =>
           import('./features/home/home.component').then((m) => m.HomeComponent),
       },
       {
         path: 'home',
         pathMatch: 'full',
-        redirectTo: '',
+        loadComponent: () =>
+          import('./features/home/home.component').then((m) => m.HomeComponent),
       },
     ],
   },
