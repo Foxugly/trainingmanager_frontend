@@ -15,12 +15,16 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { Message } from 'primeng/message';
 import { firstValueFrom } from 'rxjs';
+import { AttendanceStatusesService } from '../../api/api/attendance-statuses.service';
 import { EventsService } from '../../api/api/events.service';
 import { ProgramsService } from '../../api/api/programs.service';
 import { TeamsService } from '../../api/api/teams.service';
+import { Attendance } from '../../api/model/attendance';
+import { AttendanceStatus } from '../../api/model/attendance-status';
 import { Event } from '../../api/model/event';
 import { Program } from '../../api/model/program';
 import { Team } from '../../api/model/team';
+import { TeamMembership } from '../../api/model/team-membership';
 import { AuthService } from '../../core/auth/auth.service';
 import { computeTeamRole } from '../teams/teams-list/teams-list.component';
 
@@ -28,6 +32,11 @@ interface TeamCard {
   team: Team;
   programsActive: number;
   eventsNext7d: number;
+  membersCount: number;
+}
+
+interface MemberTeamCard {
+  team: Team;
   membersCount: number;
 }
 
@@ -43,10 +52,20 @@ interface AttendancePending {
   programName: string;
 }
 
+interface AttendanceHistoryItem {
+  attendance: Attendance;
+  event: Event;
+  teamName: string;
+  programName: string;
+  status: AttendanceStatus | null;
+}
+
 const UPCOMING_DAYS = 14;
 const NEXT_7D = 7;
 const UPCOMING_MAX_DISPLAYED = 20;
 const PENDING_AUDIT_CAP = 30;
+const HISTORY_AUDIT_CAP = 30;
+const HISTORY_DISPLAY_LIMIT = 20;
 
 function startOfDay(d: Date): Date {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
@@ -77,6 +96,7 @@ export class DashboardComponent implements OnInit {
   private readonly teamsService = inject(TeamsService);
   private readonly programsService = inject(ProgramsService);
   private readonly eventsService = inject(EventsService);
+  private readonly statusesService = inject(AttendanceStatusesService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -86,7 +106,12 @@ export class DashboardComponent implements OnInit {
   });
 
   protected readonly managedTeams = signal<Team[]>([]);
+  protected readonly memberTeams = signal<Team[]>([]);
+  protected readonly hasManagedTeams = computed(() => this.managedTeams().length > 0);
+  protected readonly hasMemberTeams = computed(() => this.memberTeams().length > 0);
+  protected readonly isHybrid = computed(() => this.hasManagedTeams() && this.hasMemberTeams());
 
+  // Coach sections (P17)
   protected readonly teamCards = signal<TeamCard[]>([]);
   protected readonly upcomingEvents = signal<UpcomingEvent[]>([]);
   protected readonly upcomingTotal = signal(0);
@@ -96,35 +121,56 @@ export class DashboardComponent implements OnInit {
   protected readonly loadingTeams = signal(true);
   protected readonly loadingUpcoming = signal(true);
   protected readonly loadingPending = signal(true);
-
   protected readonly errorTeams = signal(false);
   protected readonly errorUpcoming = signal(false);
   protected readonly errorPending = signal(false);
 
-  protected readonly redirected = signal(false);
+  // Athlete sections
+  protected readonly memberTeamCards = signal<MemberTeamCard[]>([]);
+  protected readonly memberUpcomingEvents = signal<UpcomingEvent[]>([]);
+  protected readonly memberUpcomingTotal = signal(0);
+  protected readonly attendanceHistory = signal<AttendanceHistoryItem[]>([]);
+  protected readonly historyAuditTruncated = signal(false);
+
+  protected readonly loadingMemberTeams = signal(true);
+  protected readonly loadingMemberUpcoming = signal(true);
+  protected readonly loadingHistory = signal(true);
+  protected readonly errorMemberTeams = signal(false);
+  protected readonly errorMemberUpcoming = signal(false);
+  protected readonly errorHistory = signal(false);
+
+  protected readonly bootstrapped = signal(false);
 
   protected readonly upcomingDisplayed = computed(() =>
     this.upcomingEvents().slice(0, UPCOMING_MAX_DISPLAYED),
   );
-
   protected readonly upcomingOverflow = computed(() =>
     Math.max(0, this.upcomingTotal() - UPCOMING_MAX_DISPLAYED),
+  );
+  protected readonly memberUpcomingDisplayed = computed(() =>
+    this.memberUpcomingEvents().slice(0, UPCOMING_MAX_DISPLAYED),
+  );
+  protected readonly memberUpcomingOverflow = computed(() =>
+    Math.max(0, this.memberUpcomingTotal() - UPCOMING_MAX_DISPLAYED),
   );
 
   constructor() {
     effect(() => {
-      if (this.redirected() && this.managedTeams().length === 0 && !this.loadingTeams()) {
+      if (
+        this.bootstrapped() &&
+        !this.hasManagedTeams() &&
+        !this.hasMemberTeams()
+      ) {
         this.router.navigate(['/home']);
       }
     });
   }
 
   ngOnInit(): void {
-    this.bootstrapManagedTeams();
+    this.bootstrap();
   }
 
-  private bootstrapManagedTeams(): void {
-    this.loadingTeams.set(true);
+  private bootstrap(): void {
     this.teamsService
       .teamsList(true)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -132,38 +178,62 @@ export class DashboardComponent implements OnInit {
         next: (res) => {
           const userId = this.authService.currentUser()?.id;
           const teams = res.results ?? [];
-          const managed = userId == null
-            ? []
-            : teams.filter((t) => {
-                const role = computeTeamRole(t, userId);
-                return role === 'owner' || role === 'manager';
-              });
+          if (userId == null) {
+            this.bootstrapped.set(true);
+            return;
+          }
+          const managed: Team[] = [];
+          const member: Team[] = [];
+          for (const t of teams) {
+            const role = computeTeamRole(t, userId);
+            if (role === 'owner' || role === 'manager') managed.push(t);
+            else if (role === 'member') member.push(t);
+          }
           this.managedTeams.set(managed);
+          this.memberTeams.set(member);
+          this.bootstrapped.set(true);
+
           if (managed.length === 0) {
-            this.redirected.set(true);
             this.loadingTeams.set(false);
             this.loadingUpcoming.set(false);
             this.loadingPending.set(false);
-            return;
+          } else {
+            void this.buildCoachSections(managed);
           }
-          this.buildSections(managed);
+
+          if (member.length === 0) {
+            this.loadingMemberTeams.set(false);
+            this.loadingMemberUpcoming.set(false);
+            this.loadingHistory.set(false);
+          } else {
+            void this.buildAthleteSections(member);
+          }
         },
         error: () => {
           this.errorTeams.set(true);
+          this.errorUpcoming.set(true);
+          this.errorPending.set(true);
+          this.errorMemberTeams.set(true);
+          this.errorMemberUpcoming.set(true);
+          this.errorHistory.set(true);
           this.loadingTeams.set(false);
           this.loadingUpcoming.set(false);
           this.loadingPending.set(false);
+          this.loadingMemberTeams.set(false);
+          this.loadingMemberUpcoming.set(false);
+          this.loadingHistory.set(false);
+          this.bootstrapped.set(true);
         },
       });
   }
 
-  private async buildSections(managed: Team[]): Promise<void> {
+  private async buildCoachSections(managed: Team[]): Promise<void> {
     const today = startOfDay(new Date());
     const next7 = addDays(today, NEXT_7D);
     const next14 = addDays(today, UPCOMING_DAYS);
 
-    let allPrograms: Array<{ program: Program; team: Team }> = [];
-    let allEvents: Array<{ event: Event; team: Team; program: Program }> = [];
+    const allPrograms: Array<{ program: Program; team: Team }> = [];
+    const allEvents: Array<{ event: Event; team: Team; program: Program }> = [];
 
     try {
       const programsByTeam = await Promise.all(
@@ -177,11 +247,8 @@ export class DashboardComponent implements OnInit {
           return { team, programs: res.results ?? [] };
         }),
       );
-
       for (const { team, programs } of programsByTeam) {
-        for (const program of programs) {
-          allPrograms.push({ program, team });
-        }
+        for (const program of programs) allPrograms.push({ program, team });
       }
     } catch {
       this.errorTeams.set(true);
@@ -205,9 +272,7 @@ export class DashboardComponent implements OnInit {
         }),
       );
       for (const { events, team, program } of eventsByProgram) {
-        for (const event of events) {
-          allEvents.push({ event, team, program });
-        }
+        for (const event of events) allEvents.push({ event, team, program });
       }
     } catch {
       this.errorUpcoming.set(true);
@@ -241,7 +306,7 @@ export class DashboardComponent implements OnInit {
     this.teamCards.set(cards);
     this.loadingTeams.set(false);
 
-    Promise.all(
+    void Promise.all(
       teams.map(async (team) => {
         try {
           const memberships = await firstValueFrom(this.teamsService.teamsMembershipsList(team.id));
@@ -306,9 +371,7 @@ export class DashboardComponent implements OnInit {
     try {
       const audits = await Promise.all(
         audited.map(async ({ event, team, program }) => {
-          const res = await firstValueFrom(
-            this.eventsService.eventsAttendanceList(event.id),
-          );
+          const res = await firstValueFrom(this.eventsService.eventsAttendanceList(event.id));
           const count = (res.results ?? []).length;
           return { event, team, program, count };
         }),
@@ -325,6 +388,182 @@ export class DashboardComponent implements OnInit {
     } catch {
       this.errorPending.set(true);
       this.loadingPending.set(false);
+    }
+  }
+
+  private async buildAthleteSections(memberTeams: Team[]): Promise<void> {
+    const today = startOfDay(new Date());
+    const next14 = addDays(today, UPCOMING_DAYS);
+    const myUsername = this.authService.currentUser()?.username;
+
+    let membershipsByTeam: Array<{ team: Team; memberships: TeamMembership[] }> = [];
+    let myMemberId: number | null = null;
+
+    try {
+      membershipsByTeam = await Promise.all(
+        memberTeams.map(async (team) => {
+          const memberships = await firstValueFrom(this.teamsService.teamsMembershipsList(team.id));
+          return { team, memberships: memberships ?? [] };
+        }),
+      );
+      for (const { memberships } of membershipsByTeam) {
+        const found = memberships.find((m) => m.member_username === myUsername);
+        if (found) {
+          myMemberId = found.member;
+          break;
+        }
+      }
+      const cards: MemberTeamCard[] = membershipsByTeam.map(({ team, memberships }) => ({
+        team,
+        membersCount: memberships.length,
+      }));
+      this.memberTeamCards.set(cards);
+      this.loadingMemberTeams.set(false);
+    } catch {
+      this.errorMemberTeams.set(true);
+      this.errorMemberUpcoming.set(true);
+      this.errorHistory.set(true);
+      this.loadingMemberTeams.set(false);
+      this.loadingMemberUpcoming.set(false);
+      this.loadingHistory.set(false);
+      return;
+    }
+
+    const allMemberPrograms: Array<{ program: Program; team: Team }> = [];
+    try {
+      const programsByTeam = await Promise.all(
+        memberTeams.map(async (team) => {
+          const res = await firstValueFrom(
+            this.programsService.programsList(
+              undefined, undefined, undefined, true, undefined,
+              undefined, undefined, undefined, team.id,
+            ),
+          );
+          return { team, programs: res.results ?? [] };
+        }),
+      );
+      for (const { team, programs } of programsByTeam) {
+        for (const program of programs) allMemberPrograms.push({ program, team });
+      }
+    } catch {
+      this.errorMemberUpcoming.set(true);
+      this.errorHistory.set(true);
+      this.loadingMemberUpcoming.set(false);
+      this.loadingHistory.set(false);
+      return;
+    }
+
+    const allMemberEvents: Array<{ event: Event; team: Team; program: Program }> = [];
+    try {
+      const eventsByProgram = await Promise.all(
+        allMemberPrograms.map(async ({ program, team }) => {
+          const res = await firstValueFrom(
+            this.eventsService.eventsList(
+              undefined, undefined, '-date', 1, program.id, undefined,
+            ),
+          );
+          return { events: res.results ?? [], team, program };
+        }),
+      );
+      for (const { events, team, program } of eventsByProgram) {
+        for (const event of events) allMemberEvents.push({ event, team, program });
+      }
+    } catch {
+      this.errorMemberUpcoming.set(true);
+      this.errorHistory.set(true);
+      this.loadingMemberUpcoming.set(false);
+      this.loadingHistory.set(false);
+      return;
+    }
+
+    this.buildMemberUpcoming(allMemberEvents, today, next14);
+    void this.buildAttendanceHistory(allMemberEvents, today, myMemberId);
+  }
+
+  private buildMemberUpcoming(
+    allMemberEvents: Array<{ event: Event; team: Team; program: Program }>,
+    today: Date,
+    next14: Date,
+  ): void {
+    const upcoming = allMemberEvents
+      .filter(({ event }) => {
+        const d = eventDateAsDate(event);
+        return d !== null && d >= today && d < next14;
+      })
+      .sort((a, b) => {
+        const da = eventDateAsDate(a.event)!.getTime();
+        const db = eventDateAsDate(b.event)!.getTime();
+        if (da !== db) return da - db;
+        return (a.event.hour_start ?? '').localeCompare(b.event.hour_start ?? '');
+      })
+      .map(({ event, team, program }) => ({
+        event,
+        teamName: team.name,
+        programName: program.name,
+      }));
+    this.memberUpcomingEvents.set(upcoming);
+    this.memberUpcomingTotal.set(upcoming.length);
+    this.loadingMemberUpcoming.set(false);
+  }
+
+  private async buildAttendanceHistory(
+    allMemberEvents: Array<{ event: Event; team: Team; program: Program }>,
+    today: Date,
+    myMemberId: number | null,
+  ): Promise<void> {
+    if (myMemberId === null) {
+      this.attendanceHistory.set([]);
+      this.loadingHistory.set(false);
+      return;
+    }
+
+    const pastEvents = allMemberEvents
+      .filter(({ event }) => {
+        const d = eventDateAsDate(event);
+        return d !== null && d < today;
+      })
+      .sort((a, b) => {
+        const da = eventDateAsDate(a.event)!.getTime();
+        const db = eventDateAsDate(b.event)!.getTime();
+        return db - da;
+      });
+
+    const truncated = pastEvents.length > HISTORY_AUDIT_CAP;
+    this.historyAuditTruncated.set(truncated);
+    const audited = pastEvents.slice(0, HISTORY_AUDIT_CAP);
+
+    let statuses: AttendanceStatus[] = [];
+    try {
+      const statusRes = await firstValueFrom(this.statusesService.attendanceStatusesList());
+      statuses = statusRes.results ?? [];
+    } catch {
+      // status decoration is non-critical, fall back to empty list (badges show code only)
+    }
+    const statusByCode = new Map(statuses.map((s) => [s.code, s]));
+
+    try {
+      const audits = await Promise.all(
+        audited.map(async ({ event, team, program }) => {
+          const res = await firstValueFrom(this.eventsService.eventsAttendanceList(event.id));
+          const mine = (res.results ?? []).find((a) => a.member === myMemberId);
+          return mine ? { attendance: mine, event, team, program } : null;
+        }),
+      );
+      const items: AttendanceHistoryItem[] = audits
+        .filter((x): x is { attendance: Attendance; event: Event; team: Team; program: Program } => x !== null)
+        .slice(0, HISTORY_DISPLAY_LIMIT)
+        .map(({ attendance, event, team, program }) => ({
+          attendance,
+          event,
+          teamName: team.name,
+          programName: program.name,
+          status: statusByCode.get(attendance.status_code) ?? null,
+        }));
+      this.attendanceHistory.set(items);
+      this.loadingHistory.set(false);
+    } catch {
+      this.errorHistory.set(true);
+      this.loadingHistory.set(false);
     }
   }
 }

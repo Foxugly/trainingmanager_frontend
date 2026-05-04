@@ -5,9 +5,12 @@ import { Router, provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { AttendanceStatusesService } from '../../api/api/attendance-statuses.service';
 import { EventsService } from '../../api/api/events.service';
 import { ProgramsService } from '../../api/api/programs.service';
 import { TeamsService } from '../../api/api/teams.service';
+import { Attendance } from '../../api/model/attendance';
+import { AttendanceStatus } from '../../api/model/attendance-status';
 import { CustomUserPublic } from '../../api/model/custom-user-public';
 import { Event } from '../../api/model/event';
 import { LanguageEnum } from '../../api/model/language-enum';
@@ -19,7 +22,7 @@ import { AuthService } from '../../core/auth/auth.service';
 import { DashboardComponent } from './dashboard.component';
 
 const ownerUser = { id: 17, username: 'coach' } as CustomUserPublic;
-const memberOnlyUser = { id: 88, username: 'athlete' } as CustomUserPublic;
+const athleteUser = { id: 88, username: 'athlete' } as CustomUserPublic;
 
 const sport: Sport = {
   id: 1, name: 'Natation', slug: 'natation', is_active: true, energy_systems: [],
@@ -27,21 +30,27 @@ const sport: Sport = {
 };
 
 const ownedTeam: Team = {
-  id: 4, name: 'RBP WP Senior', sport, sport_id: 1, owner: ownerUser, managers: [],
+  id: 4, name: 'Coach Team', sport, sport_id: 1, owner: ownerUser, managers: [],
   language: LanguageEnum.Fr, is_active: true, is_public: false, attendance_statuses: [],
   created_at: '', updated_at: '',
 };
 
-const memberTeam: Team = {
-  ...ownedTeam, id: 9, owner: { id: 999 } as CustomUserPublic, managers: [],
+const externalTeam: Team = {
+  ...ownedTeam, id: 9, name: 'External Team',
+  owner: { id: 999 } as CustomUserPublic, managers: [],
 };
 
 const program1: Program = {
   id: 100, name: 'Cycle aérobie', date_start: null, date_end: null,
-  team: { id: 4, name: 'RBP WP Senior', language: LanguageEnum.Fr },
+  team: { id: 4, name: 'Coach Team', language: LanguageEnum.Fr },
   team_id: 4, events: [], description: '',
   generated_by_ai: false, ai_response: '', ai_generated_at: null, is_active: true,
   created_at: '', updated_at: '',
+};
+
+const program9: Program = {
+  ...program1, id: 109, name: 'Member Team Plan',
+  team: { id: 9, name: 'External Team', language: LanguageEnum.Fr }, team_id: 9,
 };
 
 const today = new Date();
@@ -79,24 +88,70 @@ const pastEventWithAttendance: Event = {
   date: ymd(addDays(today, -2)), members: [11],
 };
 
-const memberships: TeamMembership[] = [
+const memberTeamUpcomingEvent: Event = {
+  ...upcomingEvent, id: 300, name: 'Séance membre',
+  date: ymd(addDays(today, 2)),
+  refer_program: { id: 109, name: 'Member Team Plan' }, refer_program_id: 109,
+};
+
+const memberTeamPastEvent: Event = {
+  ...memberTeamUpcomingEvent, id: 301, date: ymd(addDays(today, -3)),
+};
+
+const coachTeamMemberships: TeamMembership[] = [
   { id: 50, team: 4, member: 11, member_username: 'a', member_fullname: 'A', joined_at: '', left_at: null, created_at: '', updated_at: '' },
   { id: 51, team: 4, member: 12, member_username: 'b', member_fullname: 'B', joined_at: '', left_at: null, created_at: '', updated_at: '' },
 ];
 
+const externalTeamMemberships: TeamMembership[] = [
+  { id: 60, team: 9, member: 77, member_username: 'athlete', member_fullname: 'Athlete F.', joined_at: '', left_at: null, created_at: '', updated_at: '' },
+  { id: 61, team: 9, member: 78, member_username: 'someone-else', member_fullname: 'Someone E.', joined_at: '', left_at: null, created_at: '', updated_at: '' },
+];
+
+const presentStatus: AttendanceStatus = {
+  id: 1, code: 'present', label: 'Présent', is_default: true, order: 1, color: '#22C55E', is_active: true,
+};
+
+const myAttendance301: Attendance = {
+  id: 901, event: 301, member: 77, member_fullname: 'Athlete F.',
+  status: 1, status_code: 'present', created_at: '', updated_at: '',
+};
+
 interface ProtectedFields {
   managedTeams(): Team[];
+  memberTeams(): Team[];
+  hasManagedTeams(): boolean;
+  hasMemberTeams(): boolean;
+  isHybrid(): boolean;
   teamCards(): { team: Team; programsActive: number; eventsNext7d: number; membersCount: number }[];
   upcomingDisplayed(): { event: Event; teamName: string; programName: string }[];
   upcomingTotal(): number;
   upcomingOverflow(): number;
   attendancePending(): { event: Event; teamName: string; programName: string }[];
+  memberTeamCards(): { team: Team; membersCount: number }[];
+  memberUpcomingDisplayed(): { event: Event; teamName: string; programName: string }[];
+  attendanceHistory(): { attendance: Attendance; event: Event; teamName: string; programName: string; status: AttendanceStatus | null }[];
+  historyAuditTruncated(): boolean;
   loadingTeams(): boolean;
   loadingUpcoming(): boolean;
   loadingPending(): boolean;
+  loadingMemberTeams(): boolean;
+  loadingMemberUpcoming(): boolean;
+  loadingHistory(): boolean;
   errorTeams(): boolean;
   errorUpcoming(): boolean;
   errorPending(): boolean;
+}
+
+interface SetupOpts {
+  teams?: Team[];
+  user?: CustomUserPublic;
+  programs?: Program[];
+  events?: Event[];
+  membershipsByTeam?: Map<number, TeamMembership[]>;
+  attendancesByEvent?: Map<number, Attendance[]>;
+  statuses?: AttendanceStatus[];
+  programsListThrows?: boolean;
 }
 
 describe('DashboardComponent', () => {
@@ -111,44 +166,50 @@ describe('DashboardComponent', () => {
     eventsList: ReturnType<typeof vi.fn>;
     eventsAttendanceList: ReturnType<typeof vi.fn>;
   };
+  let statusesMock: { attendanceStatusesList: ReturnType<typeof vi.fn> };
   let userSig: ReturnType<typeof signal<CustomUserPublic | null>>;
   let router: Router;
 
   const access = (c: DashboardComponent) => c as unknown as ProtectedFields;
 
-  async function setup(opts?: {
-    teams?: Team[];
-    user?: CustomUserPublic;
-    programs?: Program[];
-    events?: Event[];
-    pastEventsHavingAttendance?: number[];
-    teamsListThrows?: boolean;
-    eventsListThrows?: boolean;
-  }) {
+  async function setup(opts?: SetupOpts) {
     TestBed.resetTestingModule();
     const teams = opts?.teams ?? [ownedTeam];
     const programs = opts?.programs ?? [program1];
     const events = opts?.events ?? [upcomingEvent, farFutureEvent];
-    const havingAttendance = new Set(opts?.pastEventsHavingAttendance ?? []);
+    const membershipsByTeam = opts?.membershipsByTeam ?? new Map([[4, coachTeamMemberships]]);
+    const attendancesByEvent = opts?.attendancesByEvent ?? new Map<number, Attendance[]>();
+    const statuses = opts?.statuses ?? [presentStatus];
 
     teamsMock = {
-      teamsList: opts?.teamsListThrows
-        ? vi.fn().mockReturnValue(throwError(() => new Error('500')))
-        : vi.fn().mockReturnValue(of({ count: teams.length, results: teams })),
-      teamsMembershipsList: vi.fn().mockReturnValue(of(memberships)),
+      teamsList: vi.fn().mockReturnValue(of({ count: teams.length, results: teams })),
+      teamsMembershipsList: vi.fn().mockImplementation((teamPk: number) =>
+        of(membershipsByTeam.get(teamPk) ?? []),
+      ),
     };
     programsMock = {
-      programsList: vi.fn().mockReturnValue(of({ count: programs.length, results: programs })),
+      programsList: opts?.programsListThrows
+        ? vi.fn().mockReturnValue(throwError(() => new Error('500')))
+        : vi.fn().mockImplementation((..._args: unknown[]) => {
+            const teamId = _args[8] as number | undefined;
+            const filtered = teamId ? programs.filter((p) => p.team_id === teamId) : programs;
+            return of({ count: filtered.length, results: filtered });
+          }),
     };
     eventsMock = {
-      eventsList: opts?.eventsListThrows
-        ? vi.fn().mockReturnValue(throwError(() => new Error('500')))
-        : vi.fn().mockReturnValue(of({ count: events.length, results: events })),
+      eventsList: vi.fn().mockImplementation((..._args: unknown[]) => {
+        const programId = _args[4] as number | undefined;
+        const filtered = programId ? events.filter((e) => e.refer_program_id === programId) : events;
+        return of({ count: filtered.length, results: filtered });
+      }),
       eventsAttendanceList: vi.fn().mockImplementation((eventPk: number) =>
-        havingAttendance.has(eventPk)
-          ? of({ count: 1, results: [{ id: 1 }] })
-          : of({ count: 0, results: [] }),
+        of({ count: 0, results: attendancesByEvent.get(eventPk) ?? [] }),
       ),
+    };
+    statusesMock = {
+      attendanceStatusesList: vi
+        .fn()
+        .mockReturnValue(of({ count: statuses.length, results: statuses })),
     };
     userSig = signal<CustomUserPublic | null>(opts?.user ?? ownerUser);
 
@@ -166,6 +227,7 @@ describe('DashboardComponent', () => {
         { provide: TeamsService, useValue: teamsMock },
         { provide: ProgramsService, useValue: programsMock },
         { provide: EventsService, useValue: eventsMock },
+        { provide: AttendanceStatusesService, useValue: statusesMock },
         { provide: AuthService, useValue: { currentUser: userSig.asReadonly() } },
       ],
     })
@@ -176,6 +238,8 @@ describe('DashboardComponent', () => {
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
     vi.spyOn(router, 'navigate').mockReturnValue(Promise.resolve(true));
+    fixture.detectChanges();
+    await new Promise((r) => setTimeout(r, 0));
     fixture.detectChanges();
     await new Promise((r) => setTimeout(r, 0));
     fixture.detectChanges();
@@ -183,111 +247,153 @@ describe('DashboardComponent', () => {
     fixture.detectChanges();
   }
 
-  beforeEach(async () => {
-    await setup();
+  describe('coach pure (managed only)', () => {
+    beforeEach(async () => {
+      await setup();
+    });
+
+    it('builds managedTeams + no memberTeams + no redirect', () => {
+      expect(access(component).hasManagedTeams()).toBe(true);
+      expect(access(component).hasMemberTeams()).toBe(false);
+      expect(access(component).isHybrid()).toBe(false);
+      expect(router.navigate).not.toHaveBeenCalledWith(['/home']);
+    });
+
+    it('renders coach team cards with correct counts', () => {
+      const cards = access(component).teamCards();
+      expect(cards).toHaveLength(1);
+      expect(cards[0].team.id).toBe(4);
+      expect(cards[0].programsActive).toBe(1);
+      expect(cards[0].eventsNext7d).toBe(1);
+      expect(cards[0].membersCount).toBe(2);
+    });
+
+    it('athlete sections are not built (memberTeamCards empty)', () => {
+      expect(access(component).memberTeamCards()).toEqual([]);
+      expect(access(component).attendanceHistory()).toEqual([]);
+      expect(access(component).loadingMemberTeams()).toBe(false);
+      expect(access(component).loadingHistory()).toBe(false);
+    });
   });
 
-  it('manager: loads managedTeams, programs, events without redirecting', () => {
-    expect(access(component).managedTeams()).toHaveLength(1);
-    expect(access(component).managedTeams()[0].id).toBe(4);
-    expect(router.navigate).not.toHaveBeenCalledWith(['/home']);
+  describe('athlete pure (member only)', () => {
+    beforeEach(async () => {
+      await setup({
+        teams: [externalTeam],
+        user: athleteUser,
+        programs: [program9],
+        events: [memberTeamUpcomingEvent, memberTeamPastEvent],
+        membershipsByTeam: new Map([[9, externalTeamMemberships]]),
+        attendancesByEvent: new Map([[301, [myAttendance301]]]),
+      });
+    });
+
+    it('does NOT redirect — athlete view replaces the redirect-to-home behavior', () => {
+      expect(router.navigate).not.toHaveBeenCalledWith(['/home']);
+      expect(access(component).hasManagedTeams()).toBe(false);
+      expect(access(component).hasMemberTeams()).toBe(true);
+    });
+
+    it('builds memberTeamCards from teamsMembershipsList', () => {
+      const cards = access(component).memberTeamCards();
+      expect(cards).toHaveLength(1);
+      expect(cards[0].team.id).toBe(9);
+      expect(cards[0].membersCount).toBe(2);
+    });
+
+    it('builds attendance history filtered by myMemberId via member_username match', () => {
+      const items = access(component).attendanceHistory();
+      expect(items).toHaveLength(1);
+      expect(items[0].attendance.id).toBe(901);
+      expect(items[0].status?.code).toBe('present');
+    });
+
+    it('coach sections are not built', () => {
+      expect(access(component).teamCards()).toEqual([]);
+      expect(access(component).attendancePending()).toEqual([]);
+      expect(access(component).loadingTeams()).toBe(false);
+    });
   });
 
-  it('member-only user: redirects to /home and never builds team cards', async () => {
-    await setup({ teams: [memberTeam], user: memberOnlyUser });
-    expect(access(component).managedTeams()).toEqual([]);
-    expect(router.navigate).toHaveBeenCalledWith(['/home']);
-    expect(access(component).teamCards()).toEqual([]);
+  describe('hybrid (manager of A, member of B)', () => {
+    beforeEach(async () => {
+      await setup({
+        teams: [ownedTeam, externalTeam],
+        user: ownerUser,
+        programs: [program1, program9],
+        events: [upcomingEvent, memberTeamUpcomingEvent],
+        membershipsByTeam: new Map([
+          [4, coachTeamMemberships],
+          [9, externalTeamMemberships],
+        ]),
+      });
+    });
+
+    it('exposes both hasManagedTeams and hasMemberTeams (isHybrid true)', () => {
+      expect(access(component).hasManagedTeams()).toBe(true);
+      expect(access(component).hasMemberTeams()).toBe(true);
+      expect(access(component).isHybrid()).toBe(true);
+    });
+
+    it('coach upcoming holds only managed-team events; athlete upcoming holds only member-team events', () => {
+      const coachIds = access(component).upcomingDisplayed().map((e) => e.event.id);
+      const athleteIds = access(component).memberUpcomingDisplayed().map((e) => e.event.id);
+      expect(coachIds).toEqual([200]);
+      expect(athleteIds).toEqual([300]);
+    });
   });
 
-  it('section 1 — team card has correct programs/events/members counts', () => {
-    const cards = access(component).teamCards();
-    expect(cards).toHaveLength(1);
-    expect(cards[0].team.id).toBe(4);
-    expect(cards[0].programsActive).toBe(1);
-    expect(cards[0].eventsNext7d).toBe(1);
-    expect(cards[0].membersCount).toBe(2);
+  describe('0 team (no managed, no member)', () => {
+    beforeEach(async () => {
+      await setup({ teams: [], user: athleteUser });
+    });
+
+    it('redirects to /home', () => {
+      expect(access(component).hasManagedTeams()).toBe(false);
+      expect(access(component).hasMemberTeams()).toBe(false);
+      expect(router.navigate).toHaveBeenCalledWith(['/home']);
+    });
   });
 
-  it('section 2 — upcoming events filtered to 14d window and sorted by date asc', async () => {
-    const events = [
-      { ...upcomingEvent, id: 300, date: ymd(addDays(today, 5)) },
-      { ...upcomingEvent, id: 301, date: ymd(addDays(today, 1)) },
-      { ...upcomingEvent, id: 302, date: ymd(addDays(today, 30)) },
-    ];
-    await setup({ events });
-    const upcoming = access(component).upcomingDisplayed();
-    expect(upcoming.map((u) => u.event.id)).toEqual([301, 300]);
-  });
+  describe('coach upcoming filtering + cap (P17 regressions)', () => {
+    it('upcoming events filtered to 14d window and sorted by date asc', async () => {
+      const events = [
+        { ...upcomingEvent, id: 300, date: ymd(addDays(today, 5)) },
+        { ...upcomingEvent, id: 301, date: ymd(addDays(today, 1)) },
+        { ...upcomingEvent, id: 302, date: ymd(addDays(today, 30)) },
+      ];
+      await setup({ events });
+      const upcoming = access(component).upcomingDisplayed();
+      expect(upcoming.map((u) => u.event.id)).toEqual([301, 300]);
+    });
 
-  it('section 3 — past events without attendance flagged as pending', async () => {
-    await setup({ events: [pastEventNoAttendance, pastEventWithAttendance], pastEventsHavingAttendance: [203] });
-    const pending = access(component).attendancePending();
-    expect(pending.map((p) => p.event.id)).toEqual([202]);
-  });
+    it('attendancePending detects past events without attendance', async () => {
+      await setup({
+        events: [pastEventNoAttendance, pastEventWithAttendance],
+        attendancesByEvent: new Map([[203, [{ id: 1 } as Attendance]]]),
+      });
+      const pending = access(component).attendancePending();
+      expect(pending.map((p) => p.event.id)).toEqual([202]);
+    });
 
-  it('section 3 — empty list when no past event needs attention', async () => {
-    await setup({ events: [upcomingEvent] });
-    expect(access(component).attendancePending()).toEqual([]);
-  });
+    it('upcomingOverflow exposes count beyond cap of 20', async () => {
+      const many: Event[] = Array.from({ length: 25 }, (_, i) => ({
+        ...upcomingEvent,
+        id: 1000 + i,
+        date: ymd(addDays(today, 1 + (i % 13))),
+      }));
+      await setup({ events: many });
+      expect(access(component).upcomingTotal()).toBe(25);
+      expect(access(component).upcomingDisplayed()).toHaveLength(20);
+      expect(access(component).upcomingOverflow()).toBe(5);
+    });
 
-  it('section 1 fails (programsList throws) does not stop page from rendering', async () => {
-    programsMock = {
-      programsList: vi.fn().mockReturnValue(throwError(() => new Error('500'))),
-    };
-    TestBed.resetTestingModule();
-    userSig = signal<CustomUserPublic | null>(ownerUser);
-    teamsMock = {
-      teamsList: vi.fn().mockReturnValue(of({ count: 1, results: [ownedTeam] })),
-      teamsMembershipsList: vi.fn().mockReturnValue(of(memberships)),
-    };
-    eventsMock = {
-      eventsList: vi.fn().mockReturnValue(of({ count: 0, results: [] })),
-      eventsAttendanceList: vi.fn().mockReturnValue(of({ count: 0, results: [] })),
-    };
-
-    await TestBed.configureTestingModule({
-      imports: [
-        DashboardComponent,
-        TranslocoTestingModule.forRoot({
-          langs: { fr: {} },
-          translocoConfig: { availableLangs: ['fr'], defaultLang: 'fr' },
-        }),
-      ],
-      providers: [
-        provideNoopAnimations(),
-        provideRouter([]),
-        { provide: TeamsService, useValue: teamsMock },
-        { provide: ProgramsService, useValue: programsMock },
-        { provide: EventsService, useValue: eventsMock },
-        { provide: AuthService, useValue: { currentUser: userSig.asReadonly() } },
-      ],
-    })
-      .overrideComponent(DashboardComponent, { set: { template: '', imports: [] } })
-      .compileComponents();
-    fixture = TestBed.createComponent(DashboardComponent);
-    component = fixture.componentInstance;
-    router = TestBed.inject(Router);
-    vi.spyOn(router, 'navigate').mockReturnValue(Promise.resolve(true));
-    fixture.detectChanges();
-    await new Promise((r) => setTimeout(r, 0));
-    fixture.detectChanges();
-
-    expect(access(component).errorTeams()).toBe(true);
-    expect(access(component).loadingTeams()).toBe(false);
-    expect(access(component).loadingUpcoming()).toBe(false);
-    expect(access(component).loadingPending()).toBe(false);
-  });
-
-  it('upcomingOverflow exposes the count of events not displayed (cap 20)', async () => {
-    const many: Event[] = Array.from({ length: 25 }, (_, i) => ({
-      ...upcomingEvent,
-      id: 1000 + i,
-      date: ymd(addDays(today, 1 + (i % 13))),
-    }));
-    await setup({ events: many });
-    expect(access(component).upcomingTotal()).toBe(25);
-    expect(access(component).upcomingDisplayed()).toHaveLength(20);
-    expect(access(component).upcomingOverflow()).toBe(5);
+    it('section 1 fails (programsList throws) does not stop bootstrap from completing', async () => {
+      await setup({ programsListThrows: true });
+      expect(access(component).errorTeams()).toBe(true);
+      expect(access(component).loadingTeams()).toBe(false);
+      expect(access(component).loadingUpcoming()).toBe(false);
+      expect(access(component).loadingPending()).toBe(false);
+    });
   });
 });

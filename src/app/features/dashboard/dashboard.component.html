@@ -8,176 +8,319 @@
         {{ 'dashboard.subtitle' | transloco }}
       </p>
     </div>
-    <div class="flex items-center gap-2 flex-wrap">
-      <a [routerLink]="['/teams', 'new']">
-        <p-button
-          [label]="'dashboard.quick_actions.new_team' | transloco"
-          icon="pi pi-plus"
-          severity="secondary"
-          [outlined]="true"
-          size="small"
-        />
-      </a>
-      <a [routerLink]="['/programs', 'new']">
-        <p-button
-          [label]="'dashboard.quick_actions.new_program' | transloco"
-          icon="pi pi-plus"
-          severity="secondary"
-          [outlined]="true"
-          size="small"
-        />
-      </a>
-      <a [routerLink]="['/events', 'new']">
-        <p-button
-          [label]="'dashboard.quick_actions.new_event' | transloco"
-          icon="pi pi-plus"
-          size="small"
-        />
-      </a>
-    </div>
-  </header>
-
-  <!-- Section 1 — Mes équipes -->
-  <section class="mb-10">
-    <h2 class="text-lg font-semibold mb-3">{{ 'dashboard.teams.title' | transloco }}</h2>
-    @if (loadingTeams()) {
-      <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
-    } @else if (errorTeams()) {
-      <p-message severity="error" [text]="'dashboard.errors.teams' | transloco" />
-    } @else if (teamCards().length === 0) {
-      <p class="text-gray-500">{{ 'dashboard.empty.no_managed_team' | transloco }}</p>
-    } @else {
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        @for (card of teamCards(); track card.team.id) {
-          <a
-            [routerLink]="['/teams', card.team.id]"
-            class="block p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md hover:border-blue-300 transition"
-          >
-            <h3 class="font-semibold text-base text-gray-900 mb-1">{{ card.team.name }}</h3>
-            <p class="text-xs text-gray-500 mb-3">{{ card.team.sport?.name ?? '—' }}</p>
-            <dl class="grid grid-cols-3 gap-2 text-center">
-              <div>
-                <dt class="text-xs text-gray-500">
-                  {{ 'dashboard.teams.programs_active' | transloco }}
-                </dt>
-                <dd class="text-lg font-semibold text-blue-600">{{ card.programsActive }}</dd>
-              </div>
-              <div>
-                <dt class="text-xs text-gray-500">
-                  {{ 'dashboard.teams.events_next_7d' | transloco }}
-                </dt>
-                <dd class="text-lg font-semibold text-blue-600">{{ card.eventsNext7d }}</dd>
-              </div>
-              <div>
-                <dt class="text-xs text-gray-500">
-                  {{ 'dashboard.teams.members' | transloco }}
-                </dt>
-                <dd class="text-lg font-semibold text-blue-600">{{ card.membersCount }}</dd>
-              </div>
-            </dl>
-          </a>
-        }
+    @if (hasManagedTeams()) {
+      <div class="flex items-center gap-2 flex-wrap">
+        <a [routerLink]="['/teams', 'new']">
+          <p-button
+            [label]="'dashboard.quick_actions.new_team' | transloco"
+            icon="pi pi-plus"
+            severity="secondary"
+            [outlined]="true"
+            size="small"
+          />
+        </a>
+        <a [routerLink]="['/programs', 'new']">
+          <p-button
+            [label]="'dashboard.quick_actions.new_program' | transloco"
+            icon="pi pi-plus"
+            severity="secondary"
+            [outlined]="true"
+            size="small"
+          />
+        </a>
+        <a [routerLink]="['/events', 'new']">
+          <p-button
+            [label]="'dashboard.quick_actions.new_event' | transloco"
+            icon="pi pi-plus"
+            size="small"
+          />
+        </a>
       </div>
     }
-  </section>
+  </header>
 
-  <!-- Section 2 — Prochains entraînements -->
-  <section class="mb-10">
-    <div class="flex items-center justify-between mb-3 gap-2 flex-wrap">
-      <h2 class="text-lg font-semibold">{{ 'dashboard.upcoming_events.title' | transloco }}</h2>
-      <a [routerLink]="['/events']">
-        <p-button
-          [label]="'dashboard.upcoming_events.view_calendar' | transloco"
-          icon="pi pi-calendar"
-          severity="secondary"
-          [text]="true"
-          size="small"
-        />
-      </a>
-    </div>
-    @if (loadingUpcoming()) {
-      <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
-    } @else if (errorUpcoming()) {
-      <p-message severity="error" [text]="'dashboard.errors.upcoming' | transloco" />
-    } @else if (upcomingDisplayed().length === 0) {
-      <p class="text-gray-500">{{ 'dashboard.empty.no_upcoming_events' | transloco }}</p>
-    } @else {
-      <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
-        @for (item of upcomingDisplayed(); track item.event.id) {
-          <li class="p-3">
+  @if (hasManagedTeams()) {
+    <!-- Section 1 — Mes équipes (managées) -->
+    <section class="mb-10">
+      <h2 class="text-lg font-semibold mb-3">{{ 'dashboard.teams.title' | transloco }}</h2>
+      @if (loadingTeams()) {
+        <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+      } @else if (errorTeams()) {
+        <p-message severity="error" [text]="'dashboard.errors.teams' | transloco" />
+      } @else if (teamCards().length === 0) {
+        <p class="text-gray-500">{{ 'dashboard.empty.no_managed_team' | transloco }}</p>
+      } @else {
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          @for (card of teamCards(); track card.team.id) {
             <a
-              [routerLink]="['/events', item.event.id]"
-              class="flex items-center justify-between gap-3 hover:underline"
+              [routerLink]="['/teams', card.team.id]"
+              class="block p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md hover:border-blue-300 transition"
             >
+              <h3 class="font-semibold text-base text-gray-900 mb-1">{{ card.team.name }}</h3>
+              <p class="text-xs text-gray-500 mb-3">{{ card.team.sport?.name ?? '—' }}</p>
+              <dl class="grid grid-cols-3 gap-2 text-center">
+                <div>
+                  <dt class="text-xs text-gray-500">
+                    {{ 'dashboard.teams.programs_active' | transloco }}
+                  </dt>
+                  <dd class="text-lg font-semibold text-blue-600">{{ card.programsActive }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs text-gray-500">
+                    {{ 'dashboard.teams.events_next_7d' | transloco }}
+                  </dt>
+                  <dd class="text-lg font-semibold text-blue-600">{{ card.eventsNext7d }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs text-gray-500">
+                    {{ 'dashboard.teams.members' | transloco }}
+                  </dt>
+                  <dd class="text-lg font-semibold text-blue-600">{{ card.membersCount }}</dd>
+                </div>
+              </dl>
+            </a>
+          }
+        </div>
+      }
+    </section>
+
+    <!-- Section 2 — Prochains entraînements gérés -->
+    <section class="mb-10">
+      <div class="flex items-center justify-between mb-3 gap-2 flex-wrap">
+        <h2 class="text-lg font-semibold">{{ 'dashboard.upcoming_events.title' | transloco }}</h2>
+        <a [routerLink]="['/events']">
+          <p-button
+            [label]="'dashboard.upcoming_events.view_calendar' | transloco"
+            icon="pi pi-calendar"
+            severity="secondary"
+            [text]="true"
+            size="small"
+          />
+        </a>
+      </div>
+      @if (loadingUpcoming()) {
+        <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+      } @else if (errorUpcoming()) {
+        <p-message severity="error" [text]="'dashboard.errors.upcoming' | transloco" />
+      } @else if (upcomingDisplayed().length === 0) {
+        <p class="text-gray-500">{{ 'dashboard.empty.no_upcoming_events' | transloco }}</p>
+      } @else {
+        <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
+          @for (item of upcomingDisplayed(); track item.event.id) {
+            <li class="p-3">
+              <a
+                [routerLink]="['/events', item.event.id]"
+                class="flex items-center justify-between gap-3 hover:underline"
+              >
+                <div class="min-w-0">
+                  <span class="font-medium text-gray-900">{{ item.event.name }}</span>
+                  <span class="text-xs text-gray-500 ml-2">
+                    {{ item.teamName }} · {{ item.programName }}
+                  </span>
+                </div>
+                <div class="text-sm text-gray-700 shrink-0">
+                  @if (item.event.date) {
+                    {{ item.event.date | date: 'EEE d MMM' }}
+                  }
+                  @if (item.event.hour_start) {
+                    · {{ item.event.hour_start.slice(0, 5) }}
+                  }
+                </div>
+              </a>
+            </li>
+          }
+        </ul>
+        @if (upcomingOverflow() > 0) {
+          <p class="text-xs text-gray-500 mt-2">
+            {{ 'dashboard.upcoming_events.overflow' | transloco: { count: upcomingOverflow() } }}
+          </p>
+        }
+      }
+    </section>
+
+    <!-- Section 3 — Présences à enregistrer -->
+    <section class="mb-10">
+      <h2 class="text-lg font-semibold mb-3">
+        {{ 'dashboard.attendances_pending.title' | transloco }}
+      </h2>
+      @if (loadingPending()) {
+        <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+      } @else if (errorPending()) {
+        <p-message severity="error" [text]="'dashboard.errors.pending' | transloco" />
+      } @else if (attendancePending().length === 0) {
+        <div class="flex items-center gap-2 text-emerald-700">
+          <i class="pi pi-check-circle"></i>
+          <span>{{ 'dashboard.attendances_pending.up_to_date' | transloco }}</span>
+        </div>
+      } @else {
+        <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
+          @for (item of attendancePending(); track item.event.id) {
+            <li class="p-3 flex items-center justify-between gap-3 flex-wrap">
               <div class="min-w-0">
                 <span class="font-medium text-gray-900">{{ item.event.name }}</span>
                 <span class="text-xs text-gray-500 ml-2">
                   {{ item.teamName }} · {{ item.programName }}
+                  @if (item.event.date) {
+                    · {{ item.event.date | date: 'mediumDate' }}
+                  }
                 </span>
               </div>
-              <div class="text-sm text-gray-700 shrink-0">
-                @if (item.event.date) {
-                  {{ item.event.date | date: 'EEE d MMM' }}
-                }
-                @if (item.event.hour_start) {
-                  · {{ item.event.hour_start.slice(0, 5) }}
-                }
-              </div>
-            </a>
-          </li>
+              <a [routerLink]="['/events', item.event.id, 'attendance']">
+                <p-button
+                  [label]="'dashboard.attendances_pending.action' | transloco"
+                  icon="pi pi-list-check"
+                  size="small"
+                  [outlined]="true"
+                />
+              </a>
+            </li>
+          }
+        </ul>
+        @if (auditTruncated()) {
+          <p class="text-xs text-gray-500 mt-2">
+            {{ 'dashboard.attendances_pending.audit_truncated' | transloco }}
+          </p>
         }
-      </ul>
-      @if (upcomingOverflow() > 0) {
-        <p class="text-xs text-gray-500 mt-2">
-          {{ 'dashboard.upcoming_events.overflow' | transloco: { count: upcomingOverflow() } }}
-        </p>
       }
-    }
-  </section>
+    </section>
+  }
 
-  <!-- Section 3 — Présences à enregistrer -->
-  <section class="mb-10">
-    <h2 class="text-lg font-semibold mb-3">
-      {{ 'dashboard.attendances_pending.title' | transloco }}
-    </h2>
-    @if (loadingPending()) {
-      <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
-    } @else if (errorPending()) {
-      <p-message severity="error" [text]="'dashboard.errors.pending' | transloco" />
-    } @else if (attendancePending().length === 0) {
-      <div class="flex items-center gap-2 text-emerald-700">
-        <i class="pi pi-check-circle"></i>
-        <span>{{ 'dashboard.attendances_pending.up_to_date' | transloco }}</span>
-      </div>
-    } @else {
-      <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
-        @for (item of attendancePending(); track item.event.id) {
-          <li class="p-3 flex items-center justify-between gap-3 flex-wrap">
-            <div class="min-w-0">
-              <span class="font-medium text-gray-900">{{ item.event.name }}</span>
-              <span class="text-xs text-gray-500 ml-2">
-                {{ item.teamName }} · {{ item.programName }}
-                @if (item.event.date) {
-                  · {{ item.event.date | date: 'mediumDate' }}
-                }
-              </span>
-            </div>
-            <a [routerLink]="['/events', item.event.id, 'attendance']">
-              <p-button
-                [label]="'dashboard.attendances_pending.action' | transloco"
-                icon="pi pi-list-check"
-                size="small"
-                [outlined]="true"
-              />
+  @if (hasMemberTeams()) {
+    <!-- Section 4 — Mes équipes (membre) -->
+    <section class="mb-10">
+      <h2 class="text-lg font-semibold mb-3">{{ 'dashboard.member_teams.title' | transloco }}</h2>
+      @if (loadingMemberTeams()) {
+        <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+      } @else if (errorMemberTeams()) {
+        <p-message severity="error" [text]="'dashboard.errors.member_teams' | transloco" />
+      } @else if (memberTeamCards().length === 0) {
+        <p class="text-gray-500">{{ 'dashboard.empty.no_member_team' | transloco }}</p>
+      } @else {
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          @for (card of memberTeamCards(); track card.team.id) {
+            <a
+              [routerLink]="['/teams', card.team.id]"
+              class="block p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md hover:border-blue-300 transition"
+            >
+              <div class="flex items-start justify-between gap-2 mb-1">
+                <h3 class="font-semibold text-base text-gray-900">{{ card.team.name }}</h3>
+                <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded shrink-0">
+                  {{ 'dashboard.member_teams.badge' | transloco }}
+                </span>
+              </div>
+              <p class="text-xs text-gray-500 mb-3">{{ card.team.sport?.name ?? '—' }}</p>
+              <dl class="text-center">
+                <dt class="text-xs text-gray-500">
+                  {{ 'dashboard.member_teams.members' | transloco }}
+                </dt>
+                <dd class="text-lg font-semibold text-blue-600">{{ card.membersCount }}</dd>
+              </dl>
             </a>
-          </li>
-        }
-      </ul>
-      @if (auditTruncated()) {
-        <p class="text-xs text-gray-500 mt-2">
-          {{ 'dashboard.attendances_pending.audit_truncated' | transloco }}
-        </p>
+          }
+        </div>
       }
+    </section>
+
+    <!-- Section 5 — Mes prochains entraînements -->
+    <section class="mb-10">
+      <h2 class="text-lg font-semibold mb-3">
+        {{ 'dashboard.upcoming_events_athlete.title' | transloco }}
+      </h2>
+      @if (loadingMemberUpcoming()) {
+        <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+      } @else if (errorMemberUpcoming()) {
+        <p-message severity="error" [text]="'dashboard.errors.upcoming' | transloco" />
+      } @else if (memberUpcomingDisplayed().length === 0) {
+        <p class="text-gray-500">{{ 'dashboard.empty.no_upcoming_events' | transloco }}</p>
+      } @else {
+        <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
+          @for (item of memberUpcomingDisplayed(); track item.event.id) {
+            <li class="p-3">
+              <a
+                [routerLink]="['/events', item.event.id]"
+                class="flex items-center justify-between gap-3 hover:underline"
+              >
+                <div class="min-w-0">
+                  <span class="font-medium text-gray-900">{{ item.event.name }}</span>
+                  <span class="text-xs text-gray-500 ml-2">
+                    {{ item.teamName }} · {{ item.programName }}
+                  </span>
+                </div>
+                <div class="text-sm text-gray-700 shrink-0">
+                  @if (item.event.date) {
+                    {{ item.event.date | date: 'EEE d MMM' }}
+                  }
+                  @if (item.event.hour_start) {
+                    · {{ item.event.hour_start.slice(0, 5) }}
+                  }
+                </div>
+              </a>
+            </li>
+          }
+        </ul>
+        @if (memberUpcomingOverflow() > 0) {
+          <p class="text-xs text-gray-500 mt-2">
+            {{ 'dashboard.upcoming_events.overflow' | transloco: { count: memberUpcomingOverflow() } }}
+          </p>
+        }
+      }
+    </section>
+
+    <!-- Section 6 — Mon historique de présence -->
+    <section class="mb-10">
+      <h2 class="text-lg font-semibold mb-3">
+        {{ 'dashboard.attendance_history.title' | transloco }}
+      </h2>
+      @if (loadingHistory()) {
+        <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+      } @else if (errorHistory()) {
+        <p-message severity="error" [text]="'dashboard.errors.history' | transloco" />
+      } @else if (attendanceHistory().length === 0) {
+        <p class="text-gray-500">{{ 'dashboard.attendance_history.empty' | transloco }}</p>
+      } @else {
+        <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
+          @for (item of attendanceHistory(); track item.attendance.id) {
+            <li class="p-3 flex items-center justify-between gap-3 flex-wrap">
+              <div class="min-w-0">
+                <span class="font-medium text-gray-900">{{ item.event.name }}</span>
+                <span class="text-xs text-gray-500 ml-2">
+                  {{ item.teamName }} · {{ item.programName }}
+                  @if (item.event.date) {
+                    · {{ item.event.date | date: 'mediumDate' }}
+                  }
+                </span>
+              </div>
+              <span
+                class="text-xs font-semibold px-2 py-1 rounded"
+                [style.background-color]="item.status?.color ? item.status!.color + '20' : '#E5E7EB'"
+                [style.color]="item.status?.color || '#374151'"
+              >
+                {{ item.status?.label ?? item.attendance.status_code }}
+              </span>
+            </li>
+          }
+        </ul>
+        @if (historyAuditTruncated()) {
+          <p class="text-xs text-gray-500 mt-2">
+            {{ 'dashboard.attendance_history.partial_audit' | transloco }}
+          </p>
+        }
+      }
+    </section>
+
+    @if (!hasManagedTeams()) {
+      <!-- Section 7 — Quick actions athlete (uniquement si pas de quick actions coach) -->
+      <section class="mb-10">
+        <a [routerLink]="['/profile']">
+          <p-button
+            [label]="'dashboard.quick_actions.profile' | transloco"
+            icon="pi pi-user"
+            severity="secondary"
+            [outlined]="true"
+            size="small"
+          />
+        </a>
+      </section>
     }
-  </section>
+  }
 </div>
