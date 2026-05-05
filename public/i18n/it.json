@@ -553,6 +553,8 @@
   "auth": {
     "login": {
       "title": "Accedi",
+      "remember_me_label": "Ricordami",
+      "forgot_password_link": "Password dimenticata?",
       "username": "Nome utente",
       "password": "Password",
       "submit": "Accedi",
@@ -609,6 +611,45 @@
       "error_unknown_title": "Errore inatteso",
       "error_unknown": "Si è verificato un errore. Riprova o richiedi un nuovo link.",
       "request_resend_button": "Richiedi un nuovo link"
+    },
+    "forgot_password": {
+      "title": "Password dimenticata?",
+      "subtitle": "Inserisci la tua email — se esiste un account, ti invieremo un link per reimpostare la password.",
+      "fields": {
+        "email": "Indirizzo email",
+        "email_placeholder": "tu@esempio.com"
+      },
+      "captcha_required": "Completa il captcha prima di continuare.",
+      "captcha_failed": "Il captcha non è andato a buon fine. Riprova.",
+      "submit": "Invia il link",
+      "requesting": "Invio in corso…",
+      "rate_limit_message": "Troppi tentativi. Riprova più tardi.",
+      "rate_limit_countdown": "Troppi tentativi. Riprova tra {{seconds}}s.",
+      "back_to_login": "← Torna ad accedere"
+    },
+    "forgot_password_sent": {
+      "title": "Controlla la tua casella",
+      "body_with_email": "Se esiste un account corrispondente a {{email}}, è appena stato inviato un link di reset.",
+      "body_no_email": "Se esiste un account corrispondente al tuo indirizzo, è appena stato inviato un link di reset.",
+      "check_spam_hint": "Ricordati di controllare la cartella spam se non lo trovi entro qualche minuto.",
+      "back_to_login": "Torna ad accedere"
+    },
+    "reset_password": {
+      "title": "Scegli una nuova password",
+      "subtitle": "Scegli una password sicura (almeno 8 caratteri).",
+      "fields": {
+        "new_password": "Nuova password",
+        "confirm_password": "Conferma"
+      },
+      "password_mismatch": "Le due password non corrispondono.",
+      "submit": "Reimposta la password",
+      "resetting": "Reimpostazione…",
+      "success_redirect": "Password aggiornata. Reindirizzamento…",
+      "error_invalid_token_title": "Link non valido o scaduto",
+      "error_invalid_token": "Questo link di reset non è valido o è scaduto. Richiedine uno nuovo.",
+      "request_new_link_button": "Richiedi un nuovo link",
+      "error_no_key_title": "Link incompleto",
+      "error_no_key": "Questo link di reset è incompleto. Richiedine uno nuovo."
     },
     "errors": {
       "invalid_credentials": "Credenziali non valide",

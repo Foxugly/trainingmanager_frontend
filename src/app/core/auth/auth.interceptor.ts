@@ -11,6 +11,8 @@ const AUTH_PATHS = [
   '/auth/register/',
   '/auth/email/confirm/',
   '/auth/email/resend/',
+  '/auth/password/reset/',
+  '/auth/password/reset/confirm/',
 ];
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {

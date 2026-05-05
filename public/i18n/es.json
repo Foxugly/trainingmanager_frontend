@@ -553,6 +553,8 @@
   "auth": {
     "login": {
       "title": "Iniciar sesión",
+      "remember_me_label": "Recuérdame",
+      "forgot_password_link": "¿Contraseña olvidada?",
       "username": "Nombre de usuario",
       "password": "Contraseña",
       "submit": "Iniciar sesión",
@@ -609,6 +611,45 @@
       "error_unknown_title": "Error inesperado",
       "error_unknown": "Se ha producido un error. Vuelve a intentarlo o solicita un nuevo enlace.",
       "request_resend_button": "Solicitar un nuevo enlace"
+    },
+    "forgot_password": {
+      "title": "¿Contraseña olvidada?",
+      "subtitle": "Introduce tu correo — si existe una cuenta, te enviaremos un enlace para restablecer la contraseña.",
+      "fields": {
+        "email": "Correo electrónico",
+        "email_placeholder": "tu@ejemplo.com"
+      },
+      "captcha_required": "Completa el captcha antes de continuar.",
+      "captcha_failed": "El captcha ha fallado. Inténtalo de nuevo.",
+      "submit": "Enviar el enlace",
+      "requesting": "Enviando…",
+      "rate_limit_message": "Demasiados intentos. Inténtalo más tarde.",
+      "rate_limit_countdown": "Demasiados intentos. Inténtalo de nuevo en {{seconds}}s.",
+      "back_to_login": "← Volver al inicio de sesión"
+    },
+    "forgot_password_sent": {
+      "title": "Revisa tu bandeja de entrada",
+      "body_with_email": "Si una cuenta coincide con {{email}}, se acaba de enviar un enlace de restablecimiento.",
+      "body_no_email": "Si una cuenta coincide con tu dirección, se acaba de enviar un enlace de restablecimiento.",
+      "check_spam_hint": "Recuerda revisar tu carpeta de spam si no lo encuentras en unos minutos.",
+      "back_to_login": "Volver al inicio de sesión"
+    },
+    "reset_password": {
+      "title": "Elige una nueva contraseña",
+      "subtitle": "Elige una contraseña fuerte (al menos 8 caracteres).",
+      "fields": {
+        "new_password": "Nueva contraseña",
+        "confirm_password": "Confirmación"
+      },
+      "password_mismatch": "Las dos contraseñas no coinciden.",
+      "submit": "Restablecer la contraseña",
+      "resetting": "Restableciendo…",
+      "success_redirect": "Contraseña actualizada. Redirigiendo…",
+      "error_invalid_token_title": "Enlace no válido o caducado",
+      "error_invalid_token": "Este enlace de restablecimiento no es válido o ha caducado. Solicita uno nuevo.",
+      "request_new_link_button": "Solicitar un nuevo enlace",
+      "error_no_key_title": "Enlace incompleto",
+      "error_no_key": "Este enlace de restablecimiento está incompleto. Solicita uno nuevo."
     },
     "errors": {
       "invalid_credentials": "Credenciales no válidas",

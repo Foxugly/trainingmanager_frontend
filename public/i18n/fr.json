@@ -528,6 +528,8 @@
   "auth": {
     "login": {
       "title": "Connexion",
+      "remember_me_label": "Se souvenir de moi",
+      "forgot_password_link": "Mot de passe oublié ?",
       "username": "Nom d'utilisateur",
       "password": "Mot de passe",
       "submit": "Se connecter",
@@ -584,6 +586,45 @@
       "error_unknown_title": "Erreur inattendue",
       "error_unknown": "Une erreur est survenue. Réessayez ou demandez un nouveau lien.",
       "request_resend_button": "Demander un nouveau lien"
+    },
+    "forgot_password": {
+      "title": "Mot de passe oublié ?",
+      "subtitle": "Entrez votre adresse email — si un compte existe, un lien de réinitialisation vous sera envoyé.",
+      "fields": {
+        "email": "Adresse email",
+        "email_placeholder": "vous@exemple.com"
+      },
+      "captcha_required": "Veuillez compléter le captcha avant de continuer.",
+      "captcha_failed": "Le captcha a échoué. Réessayez.",
+      "submit": "Envoyer le lien",
+      "requesting": "Envoi en cours…",
+      "rate_limit_message": "Trop de tentatives. Réessayez plus tard.",
+      "rate_limit_countdown": "Trop de tentatives. Réessayez dans {{seconds}}s.",
+      "back_to_login": "← Retour à la connexion"
+    },
+    "forgot_password_sent": {
+      "title": "Vérifiez vos emails",
+      "body_with_email": "Si un compte correspond à {{email}}, un lien de réinitialisation vient d'être envoyé.",
+      "body_no_email": "Si un compte correspond à votre adresse, un lien de réinitialisation vient d'être envoyé.",
+      "check_spam_hint": "Pensez à vérifier vos spams si vous ne le trouvez pas dans les prochaines minutes.",
+      "back_to_login": "Retour à la connexion"
+    },
+    "reset_password": {
+      "title": "Choisir un nouveau mot de passe",
+      "subtitle": "Choisissez un mot de passe robuste (au moins 8 caractères).",
+      "fields": {
+        "new_password": "Nouveau mot de passe",
+        "confirm_password": "Confirmation"
+      },
+      "password_mismatch": "Les deux mots de passe ne correspondent pas.",
+      "submit": "Réinitialiser le mot de passe",
+      "resetting": "Réinitialisation…",
+      "success_redirect": "Mot de passe mis à jour. Redirection…",
+      "error_invalid_token_title": "Lien invalide ou expiré",
+      "error_invalid_token": "Ce lien de réinitialisation est invalide ou a expiré. Demandez-en un nouveau.",
+      "request_new_link_button": "Demander un nouveau lien",
+      "error_no_key_title": "Lien incomplet",
+      "error_no_key": "Ce lien de réinitialisation est incomplet. Demandez-en un nouveau."
     },
     "errors": {
       "invalid_credentials": "Identifiants invalides",

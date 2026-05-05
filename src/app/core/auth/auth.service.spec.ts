@@ -29,13 +29,20 @@ describe('AuthService', () => {
   let apiAuth: {
     authTokenCreate: ReturnType<typeof vi.fn>;
     authTokenRefreshCreate: ReturnType<typeof vi.fn>;
+    authPasswordResetCreate: ReturnType<typeof vi.fn>;
+    authPasswordResetConfirmCreate: ReturnType<typeof vi.fn>;
   };
   let meService: { meRetrieve: ReturnType<typeof vi.fn> };
   let router: { navigate: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
     localStorage.clear();
-    apiAuth = { authTokenCreate: vi.fn(), authTokenRefreshCreate: vi.fn() };
+    apiAuth = {
+      authTokenCreate: vi.fn(),
+      authTokenRefreshCreate: vi.fn(),
+      authPasswordResetCreate: vi.fn(),
+      authPasswordResetConfirmCreate: vi.fn(),
+    };
     meService = { meRetrieve: vi.fn() };
     router = { navigate: vi.fn() };
 
@@ -58,7 +65,11 @@ describe('AuthService', () => {
 
     const emitted = await new Promise<Me>((resolve) => service.login('alice', 'pw').subscribe(resolve));
 
-    expect(apiAuth.authTokenCreate).toHaveBeenCalledWith({ username: 'alice', password: 'pw' });
+    expect(apiAuth.authTokenCreate).toHaveBeenCalledWith({
+      username: 'alice',
+      password: 'pw',
+      remember: false,
+    });
     expect(tokenStorage.getAccess()).toBe('a1');
     expect(tokenStorage.getRefresh()).toBe('r1');
     expect(service.currentUser()).toEqual(fakeUser);
@@ -148,5 +159,58 @@ describe('AuthService', () => {
     expect(tokenStorage.getRefresh()).toBeNull();
     expect(tokenStorage.getAccess()).toBeNull();
     expect(service.currentUser()).toBeNull();
+  });
+
+  it('login(remember=true) propagates remember to authTokenCreate payload', async () => {
+    apiAuth.authTokenCreate.mockReturnValue(of({ access: 'a', refresh: 'r' }));
+    meService.meRetrieve.mockReturnValue(of(fakeUser));
+
+    await new Promise((resolve) =>
+      service.login('alice', 'pw', true).subscribe(resolve),
+    );
+
+    expect(apiAuth.authTokenCreate).toHaveBeenCalledWith({
+      username: 'alice',
+      password: 'pw',
+      remember: true,
+    });
+  });
+
+  it('requestPasswordReset() forwards the body to authPasswordResetCreate', async () => {
+    apiAuth.authPasswordResetCreate.mockReturnValue(
+      of({ detail: 'ok', code: 'password_reset_processed' }),
+    );
+
+    const res = await new Promise((resolve) =>
+      service
+        .requestPasswordReset({ email: 'a@b.com', turnstile_token: 'tok' })
+        .subscribe(resolve),
+    );
+
+    expect(apiAuth.authPasswordResetCreate).toHaveBeenCalledWith({
+      email: 'a@b.com',
+      turnstile_token: 'tok',
+    });
+    expect(res).toEqual({ detail: 'ok', code: 'password_reset_processed' });
+  });
+
+  it('confirmPasswordReset() chains tokens onto loginWithTokens and exposes Me', async () => {
+    apiAuth.authPasswordResetConfirmCreate.mockReturnValue(
+      of({ access: 'a-new', refresh: 'r-new', user: fakeUser }),
+    );
+    meService.meRetrieve.mockReturnValue(of(fakeUser));
+
+    const me = await new Promise<Me>((resolve) =>
+      service.confirmPasswordReset('7-tok', 'longenough').subscribe(resolve),
+    );
+
+    expect(apiAuth.authPasswordResetConfirmCreate).toHaveBeenCalledWith({
+      key: '7-tok',
+      new_password: 'longenough',
+    });
+    expect(tokenStorage.getAccess()).toBe('a-new');
+    expect(tokenStorage.getRefresh()).toBe('r-new');
+    expect(me).toEqual(fakeUser);
+    expect(service.currentUser()).toEqual(fakeUser);
   });
 });

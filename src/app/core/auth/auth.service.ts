@@ -7,6 +7,8 @@ import { MeService } from '../../api/api/me.service';
 import { EmailConfirm } from '../../api/model/email-confirm';
 import { EmailResend } from '../../api/model/email-resend';
 import { Me } from '../../api/model/me';
+import { PasswordResetConfirm } from '../../api/model/password-reset-confirm';
+import { PasswordResetRequest } from '../../api/model/password-reset-request';
 import { Register } from '../../api/model/register';
 import { TokenRefresh } from '../../api/model/token-refresh';
 import { VerifiedTokenObtainPair } from '../../api/model/verified-token-obtain-pair';
@@ -27,6 +29,17 @@ export interface EmailConfirmResponse {
 export interface EmailResendResponse {
   readonly detail: string;
   readonly code?: string;
+}
+
+export interface PasswordResetRequestResponse {
+  readonly detail: string;
+  readonly code: 'password_reset_processed';
+}
+
+export interface PasswordResetConfirmResponse {
+  readonly access: string;
+  readonly refresh: string;
+  readonly user: Me;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -55,8 +68,8 @@ export class AuthService {
     );
   }
 
-  login(username: string, password: string): Observable<Me> {
-    const payload: VerifiedTokenObtainPair = { username, password };
+  login(username: string, password: string, remember = false): Observable<Me> {
+    const payload: VerifiedTokenObtainPair = { username, password, remember };
     return this.apiAuth.authTokenCreate(payload).pipe(
       tap((tokens) => this.tokenStorage.setTokens(tokens.access, tokens.refresh)),
       switchMap(() => this.fetchMe()),
@@ -124,5 +137,20 @@ export class AuthService {
   resendEmail(email: string): Observable<EmailResendResponse> {
     const payload: EmailResend = { email };
     return this.apiAuth.authEmailResendCreate(payload) as unknown as Observable<EmailResendResponse>;
+  }
+
+  requestPasswordReset(payload: PasswordResetRequest): Observable<PasswordResetRequestResponse> {
+    return this.apiAuth.authPasswordResetCreate(
+      payload,
+    ) as unknown as Observable<PasswordResetRequestResponse>;
+  }
+
+  confirmPasswordReset(key: string, newPassword: string): Observable<Me> {
+    const payload: PasswordResetConfirm = { key, new_password: newPassword };
+    return (
+      this.apiAuth.authPasswordResetConfirmCreate(
+        payload,
+      ) as unknown as Observable<PasswordResetConfirmResponse>
+    ).pipe(switchMap((res) => this.loginWithTokens(res.access, res.refresh)));
   }
 }

@@ -16,7 +16,12 @@ interface ProtectedFields {
   form: {
     invalid: boolean;
     valid: boolean;
-    patchValue: (v: { username?: string; password?: string; email?: string }) => void;
+    patchValue: (v: {
+      username?: string;
+      password?: string;
+      email?: string;
+      remember?: boolean;
+    }) => void;
   };
   loading(): boolean;
   errorMessage(): string | null;
@@ -88,8 +93,22 @@ describe('LoginComponent', () => {
     access(component).form.patchValue({ username: 'alice', password: 'pw' });
     access(component).submit();
 
-    expect(authMock.login).toHaveBeenCalledWith('alice', 'pw');
+    expect(authMock.login).toHaveBeenCalledWith('alice', 'pw', false);
     expect(navigate).toHaveBeenCalledWith('/');
+  });
+
+  it('passes remember=true to authService.login when the checkbox is ticked', () => {
+    authMock.login.mockReturnValue(of({ id: 1 }));
+    vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
+
+    access(component).form.patchValue({
+      username: 'alice',
+      password: 'pw',
+      remember: true,
+    });
+    access(component).submit();
+
+    expect(authMock.login).toHaveBeenCalledWith('alice', 'pw', true);
   });
 
   it('navigates to returnUrl when present in query params', () => {

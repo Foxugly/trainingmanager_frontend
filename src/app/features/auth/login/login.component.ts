@@ -5,6 +5,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
+import { Checkbox } from 'primeng/checkbox';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { Password } from 'primeng/password';
@@ -13,7 +14,16 @@ import { parseRetryAfterSeconds } from '../shared/retry-after';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, RouterLink, InputText, Password, Button, Message, TranslocoPipe],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    InputText,
+    Password,
+    Checkbox,
+    Button,
+    Message,
+    TranslocoPipe,
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,6 +40,7 @@ export class LoginComponent {
     username: ['', Validators.required],
     password: ['', Validators.required],
     email: [''],
+    remember: [false],
   });
 
   protected readonly loading = signal(false);
@@ -56,10 +67,10 @@ export class LoginComponent {
     this.resendDone.set(false);
     this.resendError.set(null);
 
-    const { username, password } = this.form.getRawValue();
+    const { username, password, remember } = this.form.getRawValue();
 
     this.authService
-      .login(username, password)
+      .login(username, password, remember)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

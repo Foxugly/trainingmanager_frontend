@@ -528,6 +528,8 @@
   "auth": {
     "login": {
       "title": "Sign in",
+      "remember_me_label": "Remember me",
+      "forgot_password_link": "Forgot password?",
       "username": "Username",
       "password": "Password",
       "submit": "Sign in",
@@ -584,6 +586,45 @@
       "error_unknown_title": "Unexpected error",
       "error_unknown": "An error occurred. Try again or request a new link.",
       "request_resend_button": "Request a new link"
+    },
+    "forgot_password": {
+      "title": "Forgot your password?",
+      "subtitle": "Enter your email — if an account exists, a reset link will be sent to you.",
+      "fields": {
+        "email": "Email address",
+        "email_placeholder": "you@example.com"
+      },
+      "captcha_required": "Please complete the captcha before continuing.",
+      "captcha_failed": "Captcha failed. Please try again.",
+      "submit": "Send the link",
+      "requesting": "Sending…",
+      "rate_limit_message": "Too many attempts. Please try again later.",
+      "rate_limit_countdown": "Too many attempts. Try again in {{seconds}}s.",
+      "back_to_login": "← Back to sign in"
+    },
+    "forgot_password_sent": {
+      "title": "Check your inbox",
+      "body_with_email": "If an account matches {{email}}, a reset link has just been sent.",
+      "body_no_email": "If an account matches your address, a reset link has just been sent.",
+      "check_spam_hint": "Don't forget to check your spam folder if you don't see it within a few minutes.",
+      "back_to_login": "Back to sign in"
+    },
+    "reset_password": {
+      "title": "Choose a new password",
+      "subtitle": "Pick a strong password (at least 8 characters).",
+      "fields": {
+        "new_password": "New password",
+        "confirm_password": "Confirm"
+      },
+      "password_mismatch": "The two passwords don't match.",
+      "submit": "Reset password",
+      "resetting": "Resetting…",
+      "success_redirect": "Password updated. Redirecting…",
+      "error_invalid_token_title": "Invalid or expired link",
+      "error_invalid_token": "This reset link is invalid or has expired. Request a new one.",
+      "request_new_link_button": "Request a new link",
+      "error_no_key_title": "Incomplete link",
+      "error_no_key": "This reset link is incomplete. Request a new one."
     },
     "errors": {
       "invalid_credentials": "Invalid credentials",

@@ -56,9 +56,17 @@
       </div>
 
       <div class="flex flex-col gap-2">
-        <label for="password" class="text-sm font-medium text-gray-700">
-          {{ 'auth.login.password' | transloco }}
-        </label>
+        <div class="flex items-center justify-between gap-2">
+          <label for="password" class="text-sm font-medium text-gray-700">
+            {{ 'auth.login.password' | transloco }}
+          </label>
+          <a
+            [routerLink]="['/auth/forgot-password']"
+            class="text-xs text-indigo-700 hover:underline"
+          >
+            {{ 'auth.login.forgot_password_link' | transloco }}
+          </a>
+        </div>
         <p-password
           formControlName="password"
           [feedback]="false"
@@ -68,6 +76,13 @@
           styleClass="w-full"
           [inputStyle]="{ width: '100%' }"
         />
+      </div>
+
+      <div class="flex items-center gap-2">
+        <p-checkbox formControlName="remember" [binary]="true" inputId="remember" />
+        <label for="remember" class="text-sm text-gray-700 cursor-pointer">
+          {{ 'auth.login.remember_me_label' | transloco }}
+        </label>
       </div>
 
       @if (errorMessage(); as msg) {

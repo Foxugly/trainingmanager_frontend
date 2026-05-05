@@ -77,6 +77,28 @@ export const routes: Routes = [
             (m) => m.InvitationAcceptComponent,
           ),
       },
+      {
+        path: 'auth/forgot-password',
+        pathMatch: 'full',
+        loadComponent: () =>
+          import('./features/auth/forgot-password/forgot-password.component').then(
+            (m) => m.ForgotPasswordComponent,
+          ),
+      },
+      {
+        path: 'auth/forgot-password/sent',
+        loadComponent: () =>
+          import(
+            './features/auth/forgot-password-sent/forgot-password-sent.component'
+          ).then((m) => m.ForgotPasswordSentComponent),
+      },
+      {
+        path: 'auth/reset-password/:key',
+        loadComponent: () =>
+          import('./features/auth/reset-password/reset-password.component').then(
+            (m) => m.ResetPasswordComponent,
+          ),
+      },
     ],
   },
   {

@@ -553,6 +553,8 @@
   "auth": {
     "login": {
       "title": "Inloggen",
+      "remember_me_label": "Mij onthouden",
+      "forgot_password_link": "Wachtwoord vergeten?",
       "username": "Gebruikersnaam",
       "password": "Wachtwoord",
       "submit": "Aanmelden",
@@ -609,6 +611,45 @@
       "error_unknown_title": "Onverwachte fout",
       "error_unknown": "Er is een fout opgetreden. Probeer het opnieuw of vraag een nieuwe link aan.",
       "request_resend_button": "Nieuwe link aanvragen"
+    },
+    "forgot_password": {
+      "title": "Wachtwoord vergeten?",
+      "subtitle": "Voer je e-mail in — als er een account bestaat, sturen we je een link om je wachtwoord opnieuw in te stellen.",
+      "fields": {
+        "email": "E-mailadres",
+        "email_placeholder": "jij@voorbeeld.com"
+      },
+      "captcha_required": "Voltooi de captcha voor je verdergaat.",
+      "captcha_failed": "De captcha is mislukt. Probeer het opnieuw.",
+      "submit": "Stuur de link",
+      "requesting": "Bezig met verzenden…",
+      "rate_limit_message": "Te veel pogingen. Probeer het later opnieuw.",
+      "rate_limit_countdown": "Te veel pogingen. Probeer over {{seconds}}s opnieuw.",
+      "back_to_login": "← Terug naar inloggen"
+    },
+    "forgot_password_sent": {
+      "title": "Controleer je inbox",
+      "body_with_email": "Als er een account is dat overeenkomt met {{email}}, is er net een resetlink verstuurd.",
+      "body_no_email": "Als er een account is dat overeenkomt met je adres, is er net een resetlink verstuurd.",
+      "check_spam_hint": "Vergeet niet je spam te controleren als je hem binnen enkele minuten niet vindt.",
+      "back_to_login": "Terug naar inloggen"
+    },
+    "reset_password": {
+      "title": "Kies een nieuw wachtwoord",
+      "subtitle": "Kies een sterk wachtwoord (minstens 8 tekens).",
+      "fields": {
+        "new_password": "Nieuw wachtwoord",
+        "confirm_password": "Bevestiging"
+      },
+      "password_mismatch": "De twee wachtwoorden komen niet overeen.",
+      "submit": "Wachtwoord resetten",
+      "resetting": "Bezig met resetten…",
+      "success_redirect": "Wachtwoord bijgewerkt. Doorsturen…",
+      "error_invalid_token_title": "Ongeldige of verlopen link",
+      "error_invalid_token": "Deze resetlink is ongeldig of verlopen. Vraag een nieuwe aan.",
+      "request_new_link_button": "Nieuwe link aanvragen",
+      "error_no_key_title": "Onvolledige link",
+      "error_no_key": "Deze resetlink is onvolledig. Vraag een nieuwe aan."
     },
     "errors": {
       "invalid_credentials": "Ongeldige inloggegevens",
