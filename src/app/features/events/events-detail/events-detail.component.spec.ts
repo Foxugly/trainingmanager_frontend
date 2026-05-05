@@ -135,6 +135,11 @@ interface ProtectedFields {
   rounds(): Round[];
   exercisesByRound(): Map<number, Exercise[]>;
   loadingRounds(): boolean;
+  activeTab(): string;
+  exerciseDistance(ex: Exercise): number;
+  roundTotalDistance(round: Round): number;
+  eventTotalDistance(): number;
+  formatDistance(meters: number): string;
 }
 
 describe('EventsDetailComponent', () => {
@@ -330,5 +335,61 @@ describe('EventsDetailComponent', () => {
   it('confirmDelete is hidden for member-only users via canManage()', async () => {
     await setup('7', eventNoRounds, otherUser);
     expect(access(component).canManage()).toBe(false);
+  });
+
+  it('default active tab on mount is "training"', () => {
+    expect(access(component).activeTab()).toBe('training');
+  });
+
+  it('activeTab can switch to "attendance"', () => {
+    const tab = (component as unknown as { activeTab: { set(v: string): void } }).activeTab;
+    tab.set('attendance');
+    expect(access(component).activeTab()).toBe('attendance');
+  });
+
+  it('exerciseDistance returns repetition × distance', () => {
+    const ex = { repetition: 4, distance: 50 } as unknown as Exercise;
+    expect(access(component).exerciseDistance(ex)).toBe(200);
+  });
+
+  it('exerciseDistance treats missing repetition as 1 and missing distance as 0', () => {
+    const noRep = { distance: 100 } as unknown as Exercise;
+    const noDist = { repetition: 5 } as unknown as Exercise;
+    expect(access(component).exerciseDistance(noRep)).toBe(100);
+    expect(access(component).exerciseDistance(noDist)).toBe(0);
+  });
+
+  it('roundTotalDistance multiplies count by the sum of exercise distances', async () => {
+    await setup('7', eventWithRounds);
+    await new Promise((r) => setTimeout(r, 0));
+    await new Promise((r) => setTimeout(r, 0));
+    const rounds = access(component).rounds();
+    expect(rounds.length).toBe(3);
+    // each round has count=2, exercises [201 (4×50=200) + 202 (4×100=400)] = 600 per iteration
+    // round total = 2 × 600 = 1200
+    expect(access(component).roundTotalDistance(rounds[0])).toBe(1200);
+  });
+
+  it('eventTotalDistance sums each round.count × Σ(rep × dist) across all rounds', async () => {
+    await setup('7', eventWithRounds);
+    await new Promise((r) => setTimeout(r, 0));
+    await new Promise((r) => setTimeout(r, 0));
+    // 3 rounds × 1200 m = 3600 m
+    expect(access(component).eventTotalDistance()).toBe(3600);
+  });
+
+  it('eventTotalDistance is 0 when the event has no rounds loaded', () => {
+    expect(access(component).eventTotalDistance()).toBe(0);
+  });
+
+  it('formatDistance formats meters as plain "N m" and ≥1000 m as km (no trailing zero)', () => {
+    const fd = (n: number) => access(component).formatDistance(n);
+    expect(fd(0)).toBe('0 m');
+    expect(fd(200)).toBe('200 m');
+    expect(fd(999)).toBe('999 m');
+    expect(fd(1000)).toBe('1 km');
+    expect(fd(1500)).toBe('1.5 km');
+    expect(fd(2000)).toBe('2 km');
+    expect(fd(2500)).toBe('2.5 km');
   });
 });

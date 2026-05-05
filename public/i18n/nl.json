@@ -42,14 +42,24 @@
       "break": "Rust",
       "no_exercises": "Geen oefening in dit blok",
       "rounds_partial_warn": "{{count}} blok(ken) konden niet worden geladen.",
-      "rounds_load_failed": "Trainingsblokken konden niet worden geladen."
+      "rounds_load_failed": "Trainingsblokken konden niet worden geladen.",
+      "round_total_distance": "Totale afstand van het blok:",
+      "event_total_distance": "Totale afstand van de sessie:",
+      "attendance_summary_title": "Aanwezigheden",
+      "attendance_member_count": "{{count}} lid/leden betrokken bij deze sessie.",
+      "attendance_manager_only": "Alleen managers kunnen aanwezigheden invoeren of bewerken.",
+      "tabs": {
+        "training": "Training",
+        "attendance": "Aanwezigheden"
+      }
     },
     "fields": {
       "date": "Datum",
       "program": "Programma",
       "goal": "Doel",
       "total": "Volume",
-      "rounds_count": "Aantal blokken"
+      "rounds_count": "Aantal blokken",
+      "hour_start": "Tijdstip"
     },
     "regenerate": {
       "confirm_title": "Deze sessie opnieuw genereren?",

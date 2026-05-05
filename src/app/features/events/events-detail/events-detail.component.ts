@@ -16,6 +16,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Message } from 'primeng/message';
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { firstValueFrom } from 'rxjs';
 import { EventsService } from '../../../api/api/events.service';
 import { ExercisesService } from '../../../api/api/exercises.service';
@@ -40,6 +41,11 @@ import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-h
     Button,
     ConfirmDialog,
     Message,
+    Tab,
+    TabList,
+    TabPanel,
+    TabPanels,
+    Tabs,
     TranslocoPipe,
     DetailHeaderComponent,
   ],
@@ -79,6 +85,8 @@ export class EventsDetailComponent implements OnInit {
     null,
   );
 
+  protected readonly activeTab = signal<string>('training');
+
   protected readonly currentUserRole = computed<TeamRole | null>(() => {
     const t = this.team();
     const userId = this.authService.currentUser()?.id;
@@ -92,6 +100,34 @@ export class EventsDetailComponent implements OnInit {
   });
 
   protected readonly canRegenerate = this.canManage;
+
+  protected readonly eventTotalDistance = computed<number>(() => {
+    let total = 0;
+    for (const round of this.rounds()) {
+      total += this.roundTotalDistance(round);
+    }
+    return total;
+  });
+
+  protected exerciseDistance(ex: Exercise): number {
+    const rep = ex.repetition ?? 1;
+    const dist = ex.distance ?? 0;
+    return rep * dist;
+  }
+
+  protected roundTotalDistance(round: Round): number {
+    const exercises = this.exercisesByRound().get(round.id) ?? [];
+    const perIteration = exercises.reduce((sum, ex) => sum + this.exerciseDistance(ex), 0);
+    return (round.count ?? 1) * perIteration;
+  }
+
+  protected formatDistance(meters: number): string {
+    if (meters >= 1000) {
+      const km = meters / 1000;
+      return `${km % 1 === 0 ? km.toFixed(0) : km.toFixed(1)} km`;
+    }
+    return `${meters} m`;
+  }
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');

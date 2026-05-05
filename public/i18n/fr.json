@@ -42,14 +42,24 @@
       "break": "Récup",
       "no_exercises": "Aucun exercice dans ce bloc",
       "rounds_partial_warn": "{{count}} bloc(s) n'ont pas pu être chargés.",
-      "rounds_load_failed": "Impossible de charger les blocs d'entraînement."
+      "rounds_load_failed": "Impossible de charger les blocs d'entraînement.",
+      "round_total_distance": "Distance totale du bloc :",
+      "event_total_distance": "Distance totale de la séance :",
+      "attendance_summary_title": "Présences",
+      "attendance_member_count": "{{count}} membre(s) concerné(s) par cette séance.",
+      "attendance_manager_only": "Seuls les managers peuvent saisir ou éditer les présences.",
+      "tabs": {
+        "training": "Entraînement",
+        "attendance": "Présences"
+      }
     },
     "fields": {
       "date": "Date",
       "program": "Programme",
       "goal": "Objectif",
       "total": "Volume",
-      "rounds_count": "Nombre de blocs"
+      "rounds_count": "Nombre de blocs",
+      "hour_start": "Horaire"
     },
     "regenerate": {
       "confirm_title": "Régénérer cette séance ?",

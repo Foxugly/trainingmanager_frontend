@@ -42,14 +42,24 @@
       "break": "Rest",
       "no_exercises": "No exercise in this block",
       "rounds_partial_warn": "{{count}} block(s) could not be loaded.",
-      "rounds_load_failed": "Could not load training blocks."
+      "rounds_load_failed": "Could not load training blocks.",
+      "round_total_distance": "Block total distance:",
+      "event_total_distance": "Session total distance:",
+      "attendance_summary_title": "Attendance",
+      "attendance_member_count": "{{count}} member(s) involved in this session.",
+      "attendance_manager_only": "Only managers can record or edit attendance.",
+      "tabs": {
+        "training": "Training",
+        "attendance": "Attendance"
+      }
     },
     "fields": {
       "date": "Date",
       "program": "Program",
       "goal": "Goal",
       "total": "Volume",
-      "rounds_count": "Number of blocks"
+      "rounds_count": "Number of blocks",
+      "hour_start": "Time"
     },
     "regenerate": {
       "confirm_title": "Regenerate this session?",

@@ -42,14 +42,24 @@
       "break": "Descanso",
       "no_exercises": "Ningún ejercicio en este bloque",
       "rounds_partial_warn": "{{count}} bloque(s) no se han podido cargar.",
-      "rounds_load_failed": "No se pudieron cargar los bloques de entrenamiento."
+      "rounds_load_failed": "No se pudieron cargar los bloques de entrenamiento.",
+      "round_total_distance": "Distancia total del bloque:",
+      "event_total_distance": "Distancia total de la sesión:",
+      "attendance_summary_title": "Asistencias",
+      "attendance_member_count": "{{count}} miembro(s) implicados en esta sesión.",
+      "attendance_manager_only": "Solo los managers pueden registrar o editar las asistencias.",
+      "tabs": {
+        "training": "Entrenamiento",
+        "attendance": "Asistencias"
+      }
     },
     "fields": {
       "date": "Fecha",
       "program": "Programa",
       "goal": "Objetivo",
       "total": "Volumen",
-      "rounds_count": "Número de bloques"
+      "rounds_count": "Número de bloques",
+      "hour_start": "Horario"
     },
     "regenerate": {
       "confirm_title": "¿Regenerar esta sesión?",
