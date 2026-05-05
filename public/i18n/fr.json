@@ -212,7 +212,14 @@
       "deactivate_confirm_title": "Désactiver cette équipe ?",
       "deactivate_confirm_message": "L'équipe sera désactivée. Vous pourrez la réactiver plus tard.",
       "deactivated": "Équipe désactivée.",
-      "programs_section": "Programmes"
+      "programs_section": "Programmes",
+      "archived_banner": "Cette équipe est archivée.",
+      "member_since": "Membre depuis le {{date}}",
+      "tabs": {
+        "management": "Gestion",
+        "members": "Membres",
+        "requests_invitations": "Demandes & invitations"
+      }
     },
     "form": {
       "new_title": "Nouvelle équipe",

@@ -212,7 +212,14 @@
       "deactivate_confirm_title": "Dit team deactiveren?",
       "deactivate_confirm_message": "Het team wordt gedeactiveerd. Je kan het later opnieuw activeren.",
       "deactivated": "Team gedeactiveerd.",
-      "programs_section": "Programma's"
+      "programs_section": "Programma's",
+      "archived_banner": "Dit team is gearchiveerd.",
+      "member_since": "Lid sinds {{date}}",
+      "tabs": {
+        "management": "Beheer",
+        "members": "Leden",
+        "requests_invitations": "Aanvragen & uitnodigingen"
+      }
     },
     "form": {
       "new_title": "Nieuw team",

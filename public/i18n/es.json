@@ -212,7 +212,14 @@
       "deactivate_confirm_title": "¿Desactivar este equipo?",
       "deactivate_confirm_message": "El equipo será desactivado. Podrás reactivarlo más tarde.",
       "deactivated": "Equipo desactivado.",
-      "programs_section": "Programas"
+      "programs_section": "Programas",
+      "archived_banner": "Este equipo está archivado.",
+      "member_since": "Miembro desde {{date}}",
+      "tabs": {
+        "management": "Gestión",
+        "members": "Miembros",
+        "requests_invitations": "Solicitudes e invitaciones"
+      }
     },
     "form": {
       "new_title": "Nuevo equipo",

@@ -212,7 +212,14 @@
       "deactivate_confirm_title": "Disattivare questa squadra?",
       "deactivate_confirm_message": "La squadra sarà disattivata. Potrai riattivarla più tardi.",
       "deactivated": "Squadra disattivata.",
-      "programs_section": "Programmi"
+      "programs_section": "Programmi",
+      "archived_banner": "Questa squadra è archiviata.",
+      "member_since": "Membro dal {{date}}",
+      "tabs": {
+        "management": "Gestione",
+        "members": "Membri",
+        "requests_invitations": "Richieste e inviti"
+      }
     },
     "form": {
       "new_title": "Nuova squadra",

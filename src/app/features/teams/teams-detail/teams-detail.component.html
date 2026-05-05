@@ -9,6 +9,7 @@
       [title]="t.name"
       [backLink]="['/teams']"
       icon="pi-users"
+      [centered]="true"
     >
       @if (currentUserRole(); as role) {
         <span detailHeaderBadges [class]="roleClasses[role]">
@@ -27,36 +28,7 @@
         </a>
       }
 
-      @if (canRequestJoin()) {
-        <p-button
-          detailHeaderActions
-          [label]="'teams.join_request.cta' | transloco"
-          icon="pi pi-user-plus"
-          (onClick)="openJoinDialog()"
-        />
-      }
-      @if (myPendingRequest()) {
-        <span
-          detailHeaderActions
-          class="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1.5 text-sm font-medium text-amber-800"
-        >
-          <i class="pi pi-clock text-xs" aria-hidden="true"></i>
-          {{ 'teams.join_request.pending_chip' | transloco }}
-        </span>
-      }
-      @if (myPendingRequest()) {
-        <p-button
-          detailHeaderActions
-          [label]="'teams.join_request.cancel_cta' | transloco"
-          icon="pi pi-times"
-          severity="secondary"
-          [text]="true"
-          [loading]="cancellingMyRequest()"
-          (onClick)="confirmCancelMyRequest()"
-        />
-      }
-
-      <dl detailHeaderMeta class="flex flex-wrap gap-x-8 gap-y-3 text-sm">
+      <dl detailHeaderMeta class="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm">
         @if (t.sport.name) {
           <div class="flex items-center gap-2">
             <i class="pi pi-tag text-gray-400" aria-hidden="true"></i>
@@ -81,211 +53,284 @@
       </dl>
     </app-detail-header>
 
-    <section class="mb-8">
-      <h2 class="text-lg font-semibold mb-2">
-        {{ 'teams.fields.managers' | transloco }} ({{ t.managers.length || 0 }})
-      </h2>
-      @if (t.managers && t.managers.length > 0) {
-        <ul class="list-disc pl-5 text-gray-700">
-          @for (m of t.managers; track m.id) {
-            <li>
-              {{ m.first_name || m.username }}
-              @if (m.first_name && m.username) {
-                <span class="text-gray-500 text-sm">(&#64;{{ m.username }})</span>
-              }
-            </li>
-          }
-        </ul>
-      } @else {
-        <p class="text-gray-500">{{ 'teams.detail.no_managers' | transloco }}</p>
-      }
-    </section>
-
-    <section class="mb-8">
-      <div class="flex items-center justify-between mb-2 gap-2 flex-wrap">
-        <h2 class="text-lg font-semibold">
-          {{ 'teams.fields.members' | transloco }} ({{ memberships().length }})
-        </h2>
-        @if (canManage()) {
-          <p-button
-            [label]="'teams.detail.add_member' | transloco"
-            icon="pi pi-user-plus"
-            severity="secondary"
-            [outlined]="true"
-            size="small"
-            (onClick)="openAddMember()"
-          />
-        }
+    @if (!t.is_active) {
+      <div class="mb-6 rounded border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <i class="pi pi-exclamation-triangle mr-1.5" aria-hidden="true"></i>
+        {{ 'teams.detail.archived_banner' | transloco }}
       </div>
-      @if (memberships().length === 0) {
-        <p class="text-gray-500">{{ 'teams.detail.no_members' | transloco }}</p>
-      } @else {
-        <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
-          @for (mb of memberships(); track mb.id) {
-            <li class="p-3 flex justify-between items-center gap-2">
-              <div>
-                <span class="font-medium">{{ mb.member_fullname || mb.member_username }}</span>
-                @if (mb.member_fullname && mb.member_username) {
-                  <span class="text-gray-500 text-sm ml-2">{{ mb.member_username }}</span>
+    }
+
+    <p-tabs [value]="activeTab()" (valueChange)="activeTab.set($any($event))">
+      <p-tablist>
+        <p-tab value="management">
+          <i class="pi pi-cog mr-2" aria-hidden="true"></i>
+          {{ 'teams.detail.tabs.management' | transloco }}
+        </p-tab>
+        <p-tab value="members">
+          <i class="pi pi-users mr-2" aria-hidden="true"></i>
+          {{ 'teams.detail.tabs.members' | transloco }}
+        </p-tab>
+        @if (canManage()) {
+          <p-tab value="requests">
+            <i class="pi pi-inbox mr-2" aria-hidden="true"></i>
+            {{ 'teams.detail.tabs.requests_invitations' | transloco }}
+            @if (requestsInvitationsCount() > 0) {
+              <p-badge
+                [value]="requestsInvitationsCount().toString()"
+                severity="info"
+                styleClass="ml-2"
+              />
+            }
+          </p-tab>
+        }
+      </p-tablist>
+
+      <p-tabpanels>
+        <!-- TAB 1: GESTION -->
+        <p-tabpanel value="management">
+          <section class="mb-6">
+            <h2 class="text-lg font-semibold mb-2">
+              {{ 'teams.fields.managers' | transloco }} ({{ t.managers.length || 0 }})
+            </h2>
+            @if (t.managers && t.managers.length > 0) {
+              <ul class="list-disc pl-5 text-gray-700">
+                @for (m of t.managers; track m.id) {
+                  <li>
+                    {{ m.first_name || m.username }}
+                    @if (m.first_name && m.username) {
+                      <span class="text-gray-500 text-sm">(&#64;{{ m.username }})</span>
+                    }
+                  </li>
                 }
-              </div>
-              <div class="flex items-center gap-3">
-                <span class="text-xs text-gray-500">
-                  {{ 'teams.detail.joined_at' | transloco }}
-                  {{ mb.joined_at | date: 'mediumDate' }}
-                </span>
-                @if (canManage()) {
-                  <p-button
-                    icon="pi pi-trash"
-                    severity="danger"
-                    [text]="true"
-                    [rounded]="true"
-                    [ariaLabel]="'teams.detail.remove_member' | transloco"
-                    (onClick)="confirmRemoveMember(mb)"
-                  />
-                }
-              </div>
-            </li>
+              </ul>
+            } @else {
+              <p class="text-gray-500">{{ 'teams.detail.no_managers' | transloco }}</p>
+            }
+          </section>
+
+          <section class="mb-6">
+            <h2 class="text-lg font-semibold mb-2">
+              {{ 'teams.detail.programs_section' | transloco }}
+            </h2>
+            <app-programs-list [teamFilter]="teamId()" />
+          </section>
+
+          @if (isOwner()) {
+            <section class="mt-8 border border-red-200 bg-red-50/40 rounded p-5">
+              <h2 class="text-base font-semibold text-red-800 mb-1">
+                {{ 'teams.detail.danger_zone' | transloco }}
+              </h2>
+              <p class="text-sm text-red-700/80 mb-3">
+                {{ 'teams.detail.deactivate_confirm_message' | transloco }}
+              </p>
+              <p-button
+                severity="danger"
+                icon="pi pi-trash"
+                [outlined]="true"
+                [label]="'teams.detail.deactivate' | transloco"
+                (onClick)="confirmDeactivate()"
+              />
+            </section>
           }
-        </ul>
-      }
-    </section>
+        </p-tabpanel>
 
-    <section class="mb-8">
-      <h2 class="text-lg font-semibold mb-2">
-        {{ 'teams.detail.programs_section' | transloco }}
-      </h2>
-      <app-programs-list [teamFilter]="teamId()" />
-    </section>
+        <!-- TAB 2: MEMBRES -->
+        <p-tabpanel value="members">
+          @if (myMembership(); as mb) {
+            <div class="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-xs text-emerald-800">
+              <i class="pi pi-check-circle" aria-hidden="true"></i>
+              {{ 'teams.detail.member_since' | transloco: { date: (mb.joined_at | date: 'mediumDate') } }}
+            </div>
+          } @else if (myPendingRequest()) {
+            <div class="mb-4 flex flex-wrap items-center gap-3">
+              <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1.5 text-sm font-medium text-amber-800">
+                <i class="pi pi-clock text-xs" aria-hidden="true"></i>
+                {{ 'teams.join_request.pending_chip' | transloco }}
+              </span>
+              <p-button
+                [label]="'teams.join_request.cancel_cta' | transloco"
+                icon="pi pi-times"
+                severity="secondary"
+                [text]="true"
+                size="small"
+                [loading]="cancellingMyRequest()"
+                (onClick)="confirmCancelMyRequest()"
+              />
+            </div>
+          } @else if (canRequestJoin()) {
+            <div class="mb-4">
+              <p-button
+                [label]="'teams.join_request.cta' | transloco"
+                icon="pi pi-user-plus"
+                (onClick)="openJoinDialog()"
+              />
+            </div>
+          }
 
-    @if (canManage()) {
-      <section class="mb-8">
-        <h2 class="text-lg font-semibold mb-2">
-          {{ 'teams.join_requests.title' | transloco }} ({{ joinRequests().length }})
-        </h2>
-        @if (loadingJoinRequests()) {
-          <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
-        } @else if (joinRequests().length === 0) {
-          <p class="text-gray-500">{{ 'teams.join_requests.empty' | transloco }}</p>
-        } @else {
-          <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
-            @for (req of joinRequests(); track req.id) {
-              <li class="p-3 flex flex-col gap-2">
-                <div class="flex items-start justify-between gap-3 flex-wrap">
-                  <div class="min-w-0 flex-1">
-                    <div class="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-sm">
-                      <i class="pi pi-user text-gray-400 self-center" aria-hidden="true"></i>
-                      <span class="font-medium text-gray-900">
-                        {{ req.user_fullname || req.user_username }}
-                      </span>
-                      @if (req.user_fullname && req.user_username) {
-                        <span class="text-xs text-gray-500">&#64;{{ req.user_username }}</span>
-                      }
-                      <span class="text-xs text-gray-500">
-                        · {{ req.requested_at | date: 'medium' }}
-                      </span>
-                    </div>
-                    @if (req.message) {
-                      <p class="mt-1 text-sm text-gray-700 whitespace-pre-line">
-                        {{ req.message }}
-                      </p>
-                    } @else {
-                      <p class="mt-1 text-xs italic text-gray-400">
-                        {{ 'teams.join_requests.no_message' | transloco }}
-                      </p>
-                    }
-                  </div>
-                  <div class="flex items-center gap-2 shrink-0">
-                    <p-button
-                      [label]="'teams.join_requests.reject' | transloco"
-                      icon="pi pi-times"
-                      severity="secondary"
-                      [outlined]="true"
-                      size="small"
-                      [loading]="processingRequestId() === req.id"
-                      (onClick)="openRejectDialog(req)"
-                    />
-                    <p-button
-                      [label]="'teams.join_requests.accept' | transloco"
-                      icon="pi pi-check"
-                      size="small"
-                      [loading]="processingRequestId() === req.id"
-                      (onClick)="confirmAcceptJoinRequest(req)"
-                    />
-                  </div>
-                </div>
-              </li>
+          <div class="flex items-center justify-between mb-2 gap-2 flex-wrap">
+            <h2 class="text-lg font-semibold">
+              {{ 'teams.fields.members' | transloco }} ({{ memberships().length }})
+            </h2>
+            @if (canManage()) {
+              <p-button
+                [label]="'teams.detail.add_member' | transloco"
+                icon="pi pi-user-plus"
+                severity="secondary"
+                [outlined]="true"
+                size="small"
+                (onClick)="openAddMember()"
+              />
             }
-          </ul>
-        }
-      </section>
-
-      <section class="mb-8">
-        <div class="flex items-center justify-between mb-2 gap-2 flex-wrap">
-          <h2 class="text-lg font-semibold">
-            {{ 'teams.invitations.title' | transloco }} ({{ invitations().length }})
-          </h2>
-          <p-button
-            [label]="'teams.invitations.invite' | transloco"
-            icon="pi pi-envelope"
-            severity="secondary"
-            [outlined]="true"
-            size="small"
-            (onClick)="openInviteDialog()"
-          />
-        </div>
-        @if (loadingInvitations()) {
-          <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
-        } @else if (invitations().length === 0) {
-          <p class="text-gray-500">{{ 'teams.invitations.empty' | transloco }}</p>
-        } @else {
-          <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
-            @for (inv of invitations(); track inv.id) {
-              <li class="p-3 flex justify-between items-center gap-2">
-                <div>
-                  <div class="font-medium">{{ inv.email }}</div>
-                  <div class="text-xs text-gray-500">
-                    {{ 'teams.invitations.sent_at' | transloco }}
-                    {{ inv.created_at | date: 'mediumDate' }}
-                    @if (inv.expires_at) {
-                      ·
-                      {{ 'teams.invitations.expires_at' | transloco }}
-                      {{ inv.expires_at | date: 'mediumDate' }}
+          </div>
+          @if (memberships().length === 0) {
+            <p class="text-gray-500">{{ 'teams.detail.no_members' | transloco }}</p>
+          } @else {
+            <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
+              @for (mb of memberships(); track mb.id) {
+                <li class="p-3 flex justify-between items-center gap-2">
+                  <div>
+                    <span class="font-medium">{{ mb.member_fullname || mb.member_username }}</span>
+                    @if (mb.member_fullname && mb.member_username) {
+                      <span class="text-gray-500 text-sm ml-2">{{ mb.member_username }}</span>
                     }
                   </div>
-                </div>
+                  <div class="flex items-center gap-3">
+                    <span class="text-xs text-gray-500">
+                      {{ 'teams.detail.joined_at' | transloco }}
+                      {{ mb.joined_at | date: 'mediumDate' }}
+                    </span>
+                    @if (canManage()) {
+                      <p-button
+                        icon="pi pi-trash"
+                        severity="danger"
+                        [text]="true"
+                        [rounded]="true"
+                        [ariaLabel]="'teams.detail.remove_member' | transloco"
+                        (onClick)="confirmRemoveMember(mb)"
+                      />
+                    }
+                  </div>
+                </li>
+              }
+            </ul>
+          }
+        </p-tabpanel>
+
+        <!-- TAB 3: DEMANDES & INVITATIONS (manager-only) -->
+        @if (canManage()) {
+          <p-tabpanel value="requests">
+            <section class="mb-8">
+              <h3 class="text-base font-semibold mb-2">
+                {{ 'teams.join_requests.title' | transloco }} ({{ joinRequests().length }})
+              </h3>
+              @if (loadingJoinRequests()) {
+                <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+              } @else if (joinRequests().length === 0) {
+                <p class="text-gray-500">{{ 'teams.join_requests.empty' | transloco }}</p>
+              } @else {
+                <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
+                  @for (req of joinRequests(); track req.id) {
+                    <li class="p-3 flex flex-col gap-2">
+                      <div class="flex items-start justify-between gap-3 flex-wrap">
+                        <div class="min-w-0 flex-1">
+                          <div class="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-sm">
+                            <i class="pi pi-user text-gray-400 self-center" aria-hidden="true"></i>
+                            <span class="font-medium text-gray-900">
+                              {{ req.user_fullname || req.user_username }}
+                            </span>
+                            @if (req.user_fullname && req.user_username) {
+                              <span class="text-xs text-gray-500">&#64;{{ req.user_username }}</span>
+                            }
+                            <span class="text-xs text-gray-500">
+                              · {{ req.requested_at | date: 'medium' }}
+                            </span>
+                          </div>
+                          @if (req.message) {
+                            <p class="mt-1 text-sm text-gray-700 whitespace-pre-line">
+                              {{ req.message }}
+                            </p>
+                          } @else {
+                            <p class="mt-1 text-xs italic text-gray-400">
+                              {{ 'teams.join_requests.no_message' | transloco }}
+                            </p>
+                          }
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                          <p-button
+                            [label]="'teams.join_requests.reject' | transloco"
+                            icon="pi pi-times"
+                            severity="secondary"
+                            [outlined]="true"
+                            size="small"
+                            [loading]="processingRequestId() === req.id"
+                            (onClick)="openRejectDialog(req)"
+                          />
+                          <p-button
+                            [label]="'teams.join_requests.accept' | transloco"
+                            icon="pi pi-check"
+                            size="small"
+                            [loading]="processingRequestId() === req.id"
+                            (onClick)="confirmAcceptJoinRequest(req)"
+                          />
+                        </div>
+                      </div>
+                    </li>
+                  }
+                </ul>
+              }
+            </section>
+
+            <section>
+              <div class="flex items-center justify-between mb-2 gap-2 flex-wrap">
+                <h3 class="text-base font-semibold">
+                  {{ 'teams.invitations.title' | transloco }} ({{ invitations().length }})
+                </h3>
                 <p-button
-                  icon="pi pi-times"
-                  severity="danger"
-                  [text]="true"
-                  [rounded]="true"
-                  [ariaLabel]="'teams.invitations.cancel' | transloco"
-                  (onClick)="confirmCancelInvitation(inv)"
+                  [label]="'teams.invitations.invite' | transloco"
+                  icon="pi pi-envelope"
+                  severity="secondary"
+                  [outlined]="true"
+                  size="small"
+                  (onClick)="openInviteDialog()"
                 />
-              </li>
-            }
-          </ul>
+              </div>
+              @if (loadingInvitations()) {
+                <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+              } @else if (invitations().length === 0) {
+                <p class="text-gray-500">{{ 'teams.invitations.empty' | transloco }}</p>
+              } @else {
+                <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
+                  @for (inv of invitations(); track inv.id) {
+                    <li class="p-3 flex justify-between items-center gap-2">
+                      <div>
+                        <div class="font-medium">{{ inv.email }}</div>
+                        <div class="text-xs text-gray-500">
+                          {{ 'teams.invitations.sent_at' | transloco }}
+                          {{ inv.created_at | date: 'mediumDate' }}
+                          @if (inv.expires_at) {
+                            ·
+                            {{ 'teams.invitations.expires_at' | transloco }}
+                            {{ inv.expires_at | date: 'mediumDate' }}
+                          }
+                        </div>
+                      </div>
+                      <p-button
+                        icon="pi pi-times"
+                        severity="danger"
+                        [text]="true"
+                        [rounded]="true"
+                        [ariaLabel]="'teams.invitations.cancel' | transloco"
+                        (onClick)="confirmCancelInvitation(inv)"
+                      />
+                    </li>
+                  }
+                </ul>
+              }
+            </section>
+          </p-tabpanel>
         }
-      </section>
-    }
-
-    @if (isOwner()) {
-      <section class="mt-12 border border-red-200 bg-red-50/40 rounded p-5">
-        <h2 class="text-base font-semibold text-red-800 mb-1">
-          {{ 'teams.detail.danger_zone' | transloco }}
-        </h2>
-        <p class="text-sm text-red-700/80 mb-3">
-          {{ 'teams.detail.deactivate_confirm_message' | transloco }}
-        </p>
-        <p-button
-          severity="danger"
-          icon="pi pi-trash"
-          [outlined]="true"
-          [label]="'teams.detail.deactivate' | transloco"
-          (onClick)="confirmDeactivate()"
-        />
-      </section>
-    }
+      </p-tabpanels>
+    </p-tabs>
   }
 </div>
 

@@ -14,11 +14,13 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { Badge } from 'primeng/badge';
 import { Button } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Dialog } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { Textarea } from 'primeng/textarea';
 import { InvitationsService } from '../../../api/api/invitations.service';
 import { JoinRequestsService } from '../../../api/api/join-requests.service';
@@ -48,11 +50,17 @@ interface FieldErrors {
     KeyValuePipe,
     ReactiveFormsModule,
     RouterLink,
+    Badge,
     Button,
     ConfirmDialog,
     Dialog,
     InputText,
     Message,
+    Tab,
+    TabList,
+    TabPanel,
+    TabPanels,
+    Tabs,
     Textarea,
     TranslocoPipe,
     ProgramsListComponent,
@@ -136,6 +144,18 @@ export class TeamsDetailComponent implements OnInit {
   });
 
   protected readonly isOwner = computed(() => this.currentUserRole() === 'owner');
+
+  protected readonly activeTab = signal<string>('management');
+
+  protected readonly requestsInvitationsCount = computed(
+    () => this.joinRequests().length + this.invitations().length,
+  );
+
+  protected readonly myMembership = computed(() => {
+    const me = this.authService.currentUser();
+    if (!me) return null;
+    return this.memberships().find((mb) => mb.member_username === me.username) ?? null;
+  });
 
   protected readonly roleClasses: Record<TeamRole, string> = {
     owner: 'text-xs font-semibold px-2 py-1 rounded bg-blue-100 text-blue-800',

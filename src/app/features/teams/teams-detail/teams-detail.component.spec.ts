@@ -93,6 +93,9 @@ interface ProtectedFields {
   currentUserRole(): TeamRole | null;
   canManage(): boolean;
   isOwner(): boolean;
+  activeTab(): string;
+  requestsInvitationsCount(): number;
+  myMembership(): TeamMembership | null;
   showAddMemberDialog(): boolean;
   openAddMember(): void;
   closeAddMember(): void;
@@ -161,6 +164,7 @@ describe('TeamsDetailComponent', () => {
     overrides: {
       memberships?: TeamMembership[];
       joinRequestsList?: { count: number; results: TeamJoinRequest[] };
+      invitationsList?: { count: number; results: TeamInvitation[] };
     } = {},
   ) {
     TestBed.resetTestingModule();
@@ -174,7 +178,9 @@ describe('TeamsDetailComponent', () => {
       teamsPartialUpdate: vi.fn().mockReturnValue(of(team)),
     };
     invitationsMock = {
-      invitationsList: vi.fn().mockReturnValue(of({ count: 1, results: [inv1] })),
+      invitationsList: vi
+        .fn()
+        .mockReturnValue(of(overrides.invitationsList ?? { count: 1, results: [inv1] })),
       invitationsCreate: vi.fn().mockReturnValue(of(inv1)),
       invitationsDestroy: vi.fn().mockReturnValue(of(null)),
     };
@@ -525,5 +531,47 @@ describe('TeamsDetailComponent', () => {
       joinRequestsList: { count: 0, results: [] },
     });
     expect(access(component).currentUserRole()).toBeNull();
+  });
+
+  it('default active tab on mount is "management"', () => {
+    expect(access(component).activeTab()).toBe('management');
+  });
+
+  it('activeTab can switch to members and requests', () => {
+    const tab = (component as unknown as { activeTab: { set(v: string): void } }).activeTab;
+    tab.set('members');
+    expect(access(component).activeTab()).toBe('members');
+    tab.set('requests');
+    expect(access(component).activeTab()).toBe('requests');
+  });
+
+  it('requestsInvitationsCount sums pending join requests + invitations', () => {
+    // setup() default: 1 pending join request + 1 pending invitation
+    expect(access(component).requestsInvitationsCount()).toBe(2);
+  });
+
+  it('requestsInvitationsCount returns 0 when no pending requests and no invitations', async () => {
+    await setup('4', team, ownerUser, {
+      joinRequestsList: { count: 0, results: [] },
+      invitationsList: { count: 0, results: [] },
+    });
+    expect(access(component).requestsInvitationsCount()).toBe(0);
+  });
+
+  it('myMembership resolves to the current user’s membership entry when present', async () => {
+    const myMb: TeamMembership = { ...mb1, member_username: otherUser.username };
+    await setup('4', { ...team, is_public: true }, otherUser, {
+      memberships: [myMb],
+      joinRequestsList: { count: 0, results: [] },
+    });
+    expect(access(component).myMembership()).toEqual(myMb);
+  });
+
+  it('myMembership is null for a non-member visitor', async () => {
+    await setup('4', { ...team, is_public: true }, otherUser, {
+      memberships: [],
+      joinRequestsList: { count: 0, results: [] },
+    });
+    expect(access(component).myMembership()).toBeNull();
   });
 });
