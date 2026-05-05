@@ -8,7 +8,9 @@ import { EmailConfirm } from '../../api/model/email-confirm';
 import { EmailResend } from '../../api/model/email-resend';
 import { Me } from '../../api/model/me';
 import { PasswordResetConfirm } from '../../api/model/password-reset-confirm';
+import { PasswordResetConfirmResponse } from '../../api/model/password-reset-confirm-response';
 import { PasswordResetRequest } from '../../api/model/password-reset-request';
+import { PasswordResetRequestResponse } from '../../api/model/password-reset-request-response';
 import { Register } from '../../api/model/register';
 import { TokenRefresh } from '../../api/model/token-refresh';
 import { VerifiedTokenObtainPair } from '../../api/model/verified-token-obtain-pair';
@@ -29,17 +31,6 @@ export interface EmailConfirmResponse {
 export interface EmailResendResponse {
   readonly detail: string;
   readonly code?: string;
-}
-
-export interface PasswordResetRequestResponse {
-  readonly detail: string;
-  readonly code: 'password_reset_processed';
-}
-
-export interface PasswordResetConfirmResponse {
-  readonly access: string;
-  readonly refresh: string;
-  readonly user: Me;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -140,17 +131,13 @@ export class AuthService {
   }
 
   requestPasswordReset(payload: PasswordResetRequest): Observable<PasswordResetRequestResponse> {
-    return this.apiAuth.authPasswordResetCreate(
-      payload,
-    ) as unknown as Observable<PasswordResetRequestResponse>;
+    return this.apiAuth.authPasswordResetCreate(payload);
   }
 
   confirmPasswordReset(key: string, newPassword: string): Observable<Me> {
     const payload: PasswordResetConfirm = { key, new_password: newPassword };
-    return (
-      this.apiAuth.authPasswordResetConfirmCreate(
-        payload,
-      ) as unknown as Observable<PasswordResetConfirmResponse>
-    ).pipe(switchMap((res) => this.loginWithTokens(res.access, res.refresh)));
+    return this.apiAuth
+      .authPasswordResetConfirmCreate(payload)
+      .pipe(switchMap((res) => this.loginWithTokens(res.access, res.refresh)));
   }
 }
