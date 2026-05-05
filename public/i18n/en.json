@@ -105,7 +105,8 @@
   "programs": {
     "list": {
       "title": "Programs",
-      "empty": "No program",
+      "empty": "No program yet",
+      "empty_subtitle": "You don't have any program yet. Create one to plan your sessions.",
       "show_archived": "Show archived",
       "archived_badge": "Archived"
     },
@@ -188,7 +189,8 @@
   "teams": {
     "list": {
       "title": "My teams",
-      "empty": "You don't have any team yet.",
+      "empty": "You don't have any team yet",
+      "empty_subtitle": "Create your first team or browse the public ones.",
       "new": "New team",
       "discover_cta": "Discover other teams"
     },
@@ -311,8 +313,10 @@
       "title": "Find a team",
       "subtitle": "Browse public teams. Click a team to view its profile and request to join.",
       "search_placeholder": "Search by name or sport…",
-      "no_results": "No team matches your search.",
-      "empty": "No public team available right now.",
+      "no_results": "No team matches your search",
+      "no_results_subtitle": "Try another keyword or broaden the search.",
+      "empty": "No public team available right now",
+      "empty_subtitle": "Come back later — new teams will show up here.",
       "view_team": "View team"
     },
     "join_request": {
@@ -415,14 +419,18 @@
     },
     "attendance_history": {
       "title": "My attendance history",
-      "empty": "No attendance recorded yet.",
+      "empty": "No attendance recorded yet",
+      "empty_subtitle": "Attendance recorded by your coach will show up here.",
       "partial_audit": "Partial history — based on the 30 most recent sessions."
     },
     "empty": {
-      "no_managed_team": "No team under your management.",
-      "no_member_team": "You are not a member of any team.",
+      "no_managed_team": "No team under your management",
+      "no_managed_team_subtitle": "Create your first team to manage programs and sessions.",
+      "no_member_team": "You are not a member of any team",
+      "no_member_team_subtitle": "Browse public teams or ask your coach for an invitation.",
       "no_team": "You're not attached to any team yet.",
-      "no_upcoming_events": "No session planned in the next 14 days."
+      "no_upcoming_events": "No session planned in the next 14 days",
+      "no_upcoming_events_subtitle": "Your upcoming sessions will appear here."
     },
     "errors": {
       "teams": "Could not load your teams.",

@@ -106,6 +106,7 @@
     "list": {
       "title": "Programmes",
       "empty": "Aucun programme",
+      "empty_subtitle": "Vous n'avez pas encore de programme. Créez-en un pour planifier vos entraînements.",
       "show_archived": "Afficher les archivés",
       "archived_badge": "Archivé"
     },
@@ -188,7 +189,8 @@
   "teams": {
     "list": {
       "title": "Mes équipes",
-      "empty": "Vous n'avez encore aucune équipe.",
+      "empty": "Vous n'avez encore aucune équipe",
+      "empty_subtitle": "Créez votre première équipe ou explorez les équipes publiques.",
       "new": "Nouvelle équipe",
       "discover_cta": "Découvrir d'autres équipes"
     },
@@ -311,8 +313,10 @@
       "title": "Trouver une équipe",
       "subtitle": "Parcourez les équipes publiques. Cliquez sur une équipe pour voir son profil et demander à la rejoindre.",
       "search_placeholder": "Rechercher par nom ou sport…",
-      "no_results": "Aucune équipe ne correspond à votre recherche.",
-      "empty": "Aucune équipe publique disponible pour le moment.",
+      "no_results": "Aucune équipe ne correspond",
+      "no_results_subtitle": "Essayez un autre mot-clé ou élargissez la recherche.",
+      "empty": "Aucune équipe publique pour le moment",
+      "empty_subtitle": "Reviens plus tard, de nouvelles équipes apparaîtront ici.",
       "view_team": "Voir l'équipe"
     },
     "join_request": {
@@ -415,14 +419,18 @@
     },
     "attendance_history": {
       "title": "Mon historique de présence",
-      "empty": "Pas encore de présence enregistrée.",
+      "empty": "Pas encore de présence enregistrée",
+      "empty_subtitle": "Vos présences enregistrées par votre coach apparaîtront ici.",
       "partial_audit": "Historique partiel — basé sur les 30 séances les plus récentes."
     },
     "empty": {
-      "no_managed_team": "Aucune équipe sous votre responsabilité.",
-      "no_member_team": "Vous n'êtes membre d'aucune équipe.",
+      "no_managed_team": "Aucune équipe sous votre responsabilité",
+      "no_managed_team_subtitle": "Créez votre première équipe pour gérer programmes et séances.",
+      "no_member_team": "Vous n'êtes membre d'aucune équipe",
+      "no_member_team_subtitle": "Découvrez les équipes publiques ou demandez une invitation à votre coach.",
       "no_team": "Vous n'êtes rattaché à aucune équipe.",
-      "no_upcoming_events": "Aucune séance prévue dans les 14 prochains jours."
+      "no_upcoming_events": "Aucune séance prévue dans les 14 prochains jours",
+      "no_upcoming_events_subtitle": "Vos prochaines séances apparaîtront ici."
     },
     "errors": {
       "teams": "Impossible de charger vos équipes.",

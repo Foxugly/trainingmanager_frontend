@@ -50,13 +50,20 @@
       }
     </div>
   } @else if (filtered().length === 0) {
-    <p class="text-gray-500">
-      @if (query()) {
-        {{ 'teams.discover.no_results' | transloco }}
-      } @else {
-        {{ 'teams.discover.empty' | transloco }}
-      }
-    </p>
+    @if (query()) {
+      <app-empty-state
+        icon="search"
+        tone="gray"
+        [title]="'teams.discover.no_results' | transloco"
+        [subtitle]="'teams.discover.no_results_subtitle' | transloco"
+      />
+    } @else {
+      <app-empty-state
+        icon="compass"
+        [title]="'teams.discover.empty' | transloco"
+        [subtitle]="'teams.discover.empty_subtitle' | transloco"
+      />
+    }
   } @else {
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       @for (team of filtered(); track team.id) {

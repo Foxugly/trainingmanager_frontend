@@ -14,13 +14,22 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { Skeleton } from 'primeng/skeleton';
+import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { TeamsService } from '../../../api/api/teams.service';
 import { Team } from '../../../api/model/team';
 import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-teams-discover',
-  imports: [CommonModule, RouterLink, Button, InputText, Skeleton, TranslocoPipe],
+  imports: [
+    CommonModule,
+    RouterLink,
+    Button,
+    InputText,
+    Skeleton,
+    EmptyStateComponent,
+    TranslocoPipe,
+  ],
   templateUrl: './teams-discover.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -15,6 +15,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { Message } from 'primeng/message';
 import { Skeleton } from 'primeng/skeleton';
+import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.component';
 import { firstValueFrom } from 'rxjs';
 import { AttendanceStatusesService } from '../../api/api/attendance-statuses.service';
 import { EventsService } from '../../api/api/events.service';
@@ -87,7 +88,7 @@ function eventDateAsDate(e: Event): Date | null {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, RouterLink, Button, Message, Skeleton, TranslocoPipe],
+  imports: [CommonModule, RouterLink, Button, Message, Skeleton, EmptyStateComponent, TranslocoPipe],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -106,6 +106,7 @@
     "list": {
       "title": "Programmi",
       "empty": "Nessun programma",
+      "empty_subtitle": "Non hai ancora nessun programma. Creane uno per pianificare le sessioni.",
       "show_archived": "Mostra archiviati",
       "archived_badge": "Archiviato"
     },
@@ -188,7 +189,8 @@
   "teams": {
     "list": {
       "title": "Le mie squadre",
-      "empty": "Non hai ancora nessuna squadra.",
+      "empty": "Non hai ancora nessuna squadra",
+      "empty_subtitle": "Crea la tua prima squadra o esplora quelle pubbliche.",
       "new": "Nuova squadra",
       "discover_cta": "Scopri altre squadre"
     },
@@ -311,8 +313,10 @@
       "title": "Trova una squadra",
       "subtitle": "Sfoglia le squadre pubbliche. Clicca su una squadra per vedere il profilo e richiedere di unirti.",
       "search_placeholder": "Cerca per nome o sport…",
-      "no_results": "Nessuna squadra corrisponde alla tua ricerca.",
-      "empty": "Nessuna squadra pubblica disponibile al momento.",
+      "no_results": "Nessuna squadra corrisponde",
+      "no_results_subtitle": "Prova un'altra parola chiave o amplia la ricerca.",
+      "empty": "Nessuna squadra pubblica al momento",
+      "empty_subtitle": "Torna più tardi — nuove squadre appariranno qui.",
       "view_team": "Vedi squadra"
     },
     "join_request": {
@@ -415,14 +419,18 @@
     },
     "attendance_history": {
       "title": "Il mio storico presenze",
-      "empty": "Nessuna presenza registrata ancora.",
+      "empty": "Nessuna presenza registrata ancora",
+      "empty_subtitle": "Le presenze registrate dal tuo allenatore appariranno qui.",
       "partial_audit": "Storico parziale — basato sulle 30 sessioni più recenti."
     },
     "empty": {
-      "no_managed_team": "Nessuna squadra sotto la tua gestione.",
-      "no_member_team": "Non sei membro di nessuna squadra.",
+      "no_managed_team": "Nessuna squadra sotto la tua gestione",
+      "no_managed_team_subtitle": "Crea la tua prima squadra per gestire programmi e sessioni.",
+      "no_member_team": "Non sei membro di nessuna squadra",
+      "no_member_team_subtitle": "Sfoglia le squadre pubbliche o chiedi un invito al tuo allenatore.",
       "no_team": "Non sei ancora collegato a nessuna squadra.",
-      "no_upcoming_events": "Nessuna sessione prevista nei prossimi 14 giorni."
+      "no_upcoming_events": "Nessuna sessione prevista nei prossimi 14 giorni",
+      "no_upcoming_events_subtitle": "Le tue prossime sessioni appariranno qui."
     },
     "errors": {
       "teams": "Impossibile caricare le tue squadre.",

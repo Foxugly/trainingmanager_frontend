@@ -50,7 +50,21 @@
       }
     </div>
   } @else if (programs().length === 0) {
-    <p class="text-gray-500">{{ 'programs.list.empty' | transloco }}</p>
+    <app-empty-state
+      icon="list"
+      [title]="'programs.list.empty' | transloco"
+      [subtitle]="'programs.list.empty_subtitle' | transloco"
+    >
+      @if (canCreate()) {
+        <a [routerLink]="newRouterLink()" [queryParams]="newQueryParams()">
+          <p-button
+            [label]="'programs.actions.new' | transloco"
+            icon="pi pi-plus"
+            size="small"
+          />
+        </a>
+      }
+    </app-empty-state>
   } @else {
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       @for (p of programs(); track p.id) {

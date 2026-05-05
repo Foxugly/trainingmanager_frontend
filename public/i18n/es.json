@@ -105,7 +105,8 @@
   "programs": {
     "list": {
       "title": "Programas",
-      "empty": "Ningún programa",
+      "empty": "Aún ningún programa",
+      "empty_subtitle": "Aún no tienes ningún programa. Crea uno para planificar tus sesiones.",
       "show_archived": "Mostrar archivados",
       "archived_badge": "Archivado"
     },
@@ -188,7 +189,8 @@
   "teams": {
     "list": {
       "title": "Mis equipos",
-      "empty": "Aún no tienes ningún equipo.",
+      "empty": "Aún no tienes ningún equipo",
+      "empty_subtitle": "Crea tu primer equipo o explora los equipos públicos.",
       "new": "Nuevo equipo",
       "discover_cta": "Descubrir otros equipos"
     },
@@ -311,8 +313,10 @@
       "title": "Encontrar un equipo",
       "subtitle": "Explora los equipos públicos. Haz clic en un equipo para ver su perfil y solicitar unirte.",
       "search_placeholder": "Buscar por nombre o deporte…",
-      "no_results": "Ningún equipo coincide con tu búsqueda.",
-      "empty": "Ningún equipo público disponible por el momento.",
+      "no_results": "Ningún equipo coincide",
+      "no_results_subtitle": "Prueba otra palabra clave o amplía la búsqueda.",
+      "empty": "Ningún equipo público por ahora",
+      "empty_subtitle": "Vuelve más tarde — nuevos equipos aparecerán aquí.",
       "view_team": "Ver equipo"
     },
     "join_request": {
@@ -415,14 +419,18 @@
     },
     "attendance_history": {
       "title": "Mi historial de asistencias",
-      "empty": "Sin asistencias registradas aún.",
+      "empty": "Sin asistencias registradas aún",
+      "empty_subtitle": "Las asistencias registradas por tu coach aparecerán aquí.",
       "partial_audit": "Historial parcial — basado en las 30 sesiones más recientes."
     },
     "empty": {
-      "no_managed_team": "Ningún equipo bajo tu responsabilidad.",
-      "no_member_team": "No eres miembro de ningún equipo.",
+      "no_managed_team": "Ningún equipo bajo tu responsabilidad",
+      "no_managed_team_subtitle": "Crea tu primer equipo para gestionar programas y sesiones.",
+      "no_member_team": "No eres miembro de ningún equipo",
+      "no_member_team_subtitle": "Explora los equipos públicos o pide una invitación a tu coach.",
       "no_team": "Aún no estás asociado a ningún equipo.",
-      "no_upcoming_events": "Ninguna sesión prevista en los próximos 14 días."
+      "no_upcoming_events": "Ninguna sesión prevista en los próximos 14 días",
+      "no_upcoming_events_subtitle": "Tus próximas sesiones aparecerán aquí."
     },
     "errors": {
       "teams": "No se han podido cargar tus equipos.",

@@ -60,7 +60,19 @@
       } @else if (errorTeams()) {
         <p-message severity="error" [text]="'dashboard.errors.teams' | transloco" />
       } @else if (teamCards().length === 0) {
-        <p class="text-gray-500">{{ 'dashboard.empty.no_managed_team' | transloco }}</p>
+        <app-empty-state
+          icon="users"
+          [title]="'dashboard.empty.no_managed_team' | transloco"
+          [subtitle]="'dashboard.empty.no_managed_team_subtitle' | transloco"
+        >
+          <a [routerLink]="['/teams', 'new']">
+            <p-button
+              [label]="'dashboard.quick_actions.new_team' | transloco"
+              icon="pi pi-plus"
+              size="small"
+            />
+          </a>
+        </app-empty-state>
       } @else {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           @for (card of teamCards(); track card.team.id) {
@@ -125,7 +137,12 @@
       } @else if (errorUpcoming()) {
         <p-message severity="error" [text]="'dashboard.errors.upcoming' | transloco" />
       } @else if (upcomingDisplayed().length === 0) {
-        <p class="text-gray-500">{{ 'dashboard.empty.no_upcoming_events' | transloco }}</p>
+        <app-empty-state
+          icon="calendar"
+          tone="gray"
+          [title]="'dashboard.empty.no_upcoming_events' | transloco"
+          [subtitle]="'dashboard.empty.no_upcoming_events_subtitle' | transloco"
+        />
       } @else {
         <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
           @for (item of upcomingDisplayed(); track item.event.id) {
@@ -237,7 +254,19 @@
       } @else if (errorMemberTeams()) {
         <p-message severity="error" [text]="'dashboard.errors.member_teams' | transloco" />
       } @else if (memberTeamCards().length === 0) {
-        <p class="text-gray-500">{{ 'dashboard.empty.no_member_team' | transloco }}</p>
+        <app-empty-state
+          icon="compass"
+          [title]="'dashboard.empty.no_member_team' | transloco"
+          [subtitle]="'dashboard.empty.no_member_team_subtitle' | transloco"
+        >
+          <a [routerLink]="['/teams', 'discover']">
+            <p-button
+              [label]="'teams.list.discover_cta' | transloco"
+              icon="pi pi-compass"
+              size="small"
+            />
+          </a>
+        </app-empty-state>
       } @else {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           @for (card of memberTeamCards(); track card.team.id) {
@@ -284,7 +313,12 @@
       } @else if (errorMemberUpcoming()) {
         <p-message severity="error" [text]="'dashboard.errors.upcoming' | transloco" />
       } @else if (memberUpcomingDisplayed().length === 0) {
-        <p class="text-gray-500">{{ 'dashboard.empty.no_upcoming_events' | transloco }}</p>
+        <app-empty-state
+          icon="calendar"
+          tone="gray"
+          [title]="'dashboard.empty.no_upcoming_events' | transloco"
+          [subtitle]="'dashboard.empty.no_upcoming_events_subtitle' | transloco"
+        />
       } @else {
         <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
           @for (item of memberUpcomingDisplayed(); track item.event.id) {
@@ -339,7 +373,12 @@
       } @else if (errorHistory()) {
         <p-message severity="error" [text]="'dashboard.errors.history' | transloco" />
       } @else if (attendanceHistory().length === 0) {
-        <p class="text-gray-500">{{ 'dashboard.attendance_history.empty' | transloco }}</p>
+        <app-empty-state
+          icon="history"
+          tone="gray"
+          [title]="'dashboard.attendance_history.empty' | transloco"
+          [subtitle]="'dashboard.attendance_history.empty_subtitle' | transloco"
+        />
       } @else {
         <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
           @for (item of attendanceHistory(); track item.attendance.id) {

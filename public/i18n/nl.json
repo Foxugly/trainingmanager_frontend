@@ -105,7 +105,8 @@
   "programs": {
     "list": {
       "title": "Programma's",
-      "empty": "Geen programma's",
+      "empty": "Nog geen programma",
+      "empty_subtitle": "Je hebt nog geen programma. Maak er een aan om je sessies te plannen.",
       "show_archived": "Gearchiveerde tonen",
       "archived_badge": "Gearchiveerd"
     },
@@ -188,7 +189,8 @@
   "teams": {
     "list": {
       "title": "Mijn teams",
-      "empty": "Je hebt nog geen teams.",
+      "empty": "Je hebt nog geen teams",
+      "empty_subtitle": "Maak je eerste team aan of ontdek de openbare teams.",
       "new": "Nieuw team",
       "discover_cta": "Andere teams ontdekken"
     },
@@ -311,8 +313,10 @@
       "title": "Een team vinden",
       "subtitle": "Bekijk de publieke teams. Klik op een team om het profiel te bekijken en lidmaatschap aan te vragen.",
       "search_placeholder": "Zoek op naam of sport…",
-      "no_results": "Geen team komt overeen met je zoekopdracht.",
-      "empty": "Op dit moment geen publiek team beschikbaar.",
+      "no_results": "Geen team komt overeen",
+      "no_results_subtitle": "Probeer een andere zoekterm of verbreed de zoekopdracht.",
+      "empty": "Geen publiek team op dit moment",
+      "empty_subtitle": "Kom later terug — nieuwe teams zullen hier verschijnen.",
       "view_team": "Bekijk team"
     },
     "join_request": {
@@ -415,14 +419,18 @@
     },
     "attendance_history": {
       "title": "Mijn aanwezigheidsgeschiedenis",
-      "empty": "Nog geen aanwezigheid geregistreerd.",
+      "empty": "Nog geen aanwezigheid geregistreerd",
+      "empty_subtitle": "De aanwezigheid die je coach registreert verschijnt hier.",
       "partial_audit": "Gedeeltelijke geschiedenis — gebaseerd op de 30 meest recente sessies."
     },
     "empty": {
-      "no_managed_team": "Geen team onder jouw beheer.",
-      "no_member_team": "Je bent geen lid van een team.",
+      "no_managed_team": "Geen team onder jouw beheer",
+      "no_managed_team_subtitle": "Maak je eerste team aan om programma's en sessies te beheren.",
+      "no_member_team": "Je bent geen lid van een team",
+      "no_member_team_subtitle": "Bekijk de publieke teams of vraag een uitnodiging aan je coach.",
       "no_team": "Je bent nog niet aan een team gekoppeld.",
-      "no_upcoming_events": "Geen sessie gepland in de komende 14 dagen."
+      "no_upcoming_events": "Geen sessie gepland in de komende 14 dagen",
+      "no_upcoming_events_subtitle": "Je volgende sessies verschijnen hier."
     },
     "errors": {
       "teams": "Je teams konden niet worden geladen.",

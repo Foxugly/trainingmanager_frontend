@@ -17,6 +17,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { ToggleSwitch } from 'primeng/toggleswitch';
+import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { ProgramsService } from '../../../api/api/programs.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { Program } from '../../../api/model/program';
@@ -26,7 +27,16 @@ import { computeTeamRole } from '../../teams/teams-list/teams-list.component';
 
 @Component({
   selector: 'app-programs-list',
-  imports: [CommonModule, FormsModule, RouterLink, Button, Skeleton, ToggleSwitch, TranslocoPipe],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterLink,
+    Button,
+    Skeleton,
+    ToggleSwitch,
+    EmptyStateComponent,
+    TranslocoPipe,
+  ],
   templateUrl: './programs-list.component.html',
   styleUrl: './programs-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
