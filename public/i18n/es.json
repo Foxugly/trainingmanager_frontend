@@ -258,6 +258,22 @@
       "cancel_confirm_message": "La invitación será anulada y no podrá utilizarse más.",
       "cancelled": "Invitación anulada."
     },
+    "join_requests": {
+      "title": "Solicitudes de unión",
+      "empty": "Sin solicitudes pendientes",
+      "user_label": "Usuario #{{id}}",
+      "no_message": "Sin mensaje",
+      "accept": "Aceptar",
+      "reject": "Rechazar",
+      "accept_confirm_title": "¿Aceptar esta solicitud?",
+      "accept_confirm_message": "El usuario pasará a ser miembro del equipo.",
+      "accepted": "Solicitud aceptada.",
+      "rejected": "Solicitud rechazada.",
+      "reject_dialog_title": "Rechazar la solicitud",
+      "reject_dialog_help": "Puedes incluir un mensaje que se enviará al usuario (opcional).",
+      "reject_message_placeholder": "Mensaje (opcional)…",
+      "confirm_reject": "Rechazar"
+    },
     "invite_dialog": {
       "title": "Invitar a un miembro",
       "email": "Correo",

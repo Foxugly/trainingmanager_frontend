@@ -258,6 +258,22 @@
       "cancel_confirm_message": "De uitnodiging wordt geannuleerd en kan niet meer worden gebruikt.",
       "cancelled": "Uitnodiging geannuleerd."
     },
+    "join_requests": {
+      "title": "Aanvragen om lid te worden",
+      "empty": "Geen openstaande aanvragen",
+      "user_label": "Gebruiker #{{id}}",
+      "no_message": "Geen bericht",
+      "accept": "Accepteren",
+      "reject": "Weigeren",
+      "accept_confirm_title": "Deze aanvraag accepteren?",
+      "accept_confirm_message": "De gebruiker wordt lid van het team.",
+      "accepted": "Aanvraag geaccepteerd.",
+      "rejected": "Aanvraag geweigerd.",
+      "reject_dialog_title": "Aanvraag weigeren",
+      "reject_dialog_help": "Je kan een bericht toevoegen dat naar de gebruiker wordt verzonden (optioneel).",
+      "reject_message_placeholder": "Bericht (optioneel)…",
+      "confirm_reject": "Weigeren"
+    },
     "invite_dialog": {
       "title": "Een lid uitnodigen",
       "email": "E-mail",

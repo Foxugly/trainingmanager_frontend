@@ -258,6 +258,22 @@
       "cancel_confirm_message": "L'invitation sera annulée et ne pourra plus être utilisée.",
       "cancelled": "Invitation annulée."
     },
+    "join_requests": {
+      "title": "Demandes de rejoindre",
+      "empty": "Aucune demande en attente",
+      "user_label": "Utilisateur #{{id}}",
+      "no_message": "Aucun message",
+      "accept": "Accepter",
+      "reject": "Refuser",
+      "accept_confirm_title": "Accepter cette demande ?",
+      "accept_confirm_message": "L'utilisateur deviendra membre de l'équipe.",
+      "accepted": "Demande acceptée.",
+      "rejected": "Demande refusée.",
+      "reject_dialog_title": "Refuser la demande",
+      "reject_dialog_help": "Vous pouvez ajouter un message qui sera envoyé à l'utilisateur (facultatif).",
+      "reject_message_placeholder": "Message (facultatif)…",
+      "confirm_reject": "Refuser"
+    },
     "invite_dialog": {
       "title": "Inviter un membre",
       "email": "Email",

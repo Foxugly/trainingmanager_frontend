@@ -7,13 +7,16 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { InvitationsService } from '../../../api/api/invitations.service';
+import { JoinRequestsService } from '../../../api/api/join-requests.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { CustomUserPublic } from '../../../api/model/custom-user-public';
 import { InvitationStatusEnum } from '../../../api/model/invitation-status-enum';
+import { JoinRequestStatusEnum } from '../../../api/model/join-request-status-enum';
 import { LanguageEnum } from '../../../api/model/language-enum';
 import { Sport } from '../../../api/model/sport';
 import { Team } from '../../../api/model/team';
 import { TeamInvitation } from '../../../api/model/team-invitation';
+import { TeamJoinRequest } from '../../../api/model/team-join-request';
 import { TeamMembership } from '../../../api/model/team-membership';
 import { AuthService } from '../../../core/auth/auth.service';
 import { MemberMembershipService } from '../member-membership.service';
@@ -56,6 +59,17 @@ const inv1: TeamInvitation = {
   completed_at: null,
 };
 
+const joinReq1: TeamJoinRequest = {
+  id: 77,
+  user: 42,
+  team: 4,
+  status: JoinRequestStatusEnum.Pending,
+  message: 'Salut, je viens du club voisin.',
+  requested_at: '2026-05-01T00:00:00Z',
+  responded_at: null,
+  responded_by: null,
+};
+
 const mb1: TeamMembership = {
   id: 1,
   team: 4,
@@ -90,6 +104,15 @@ interface ProtectedFields {
   submitInvite(): void;
   confirmCancelInvitation(inv: TeamInvitation): void;
   inviteForm: { patchValue(v: Record<string, unknown>): void; invalid: boolean };
+  joinRequests(): TeamJoinRequest[];
+  loadingJoinRequests(): boolean;
+  processingRequestId(): number | null;
+  rejectingRequest(): TeamJoinRequest | null;
+  rejectMessage(): string;
+  confirmAcceptJoinRequest(req: TeamJoinRequest): void;
+  openRejectDialog(req: TeamJoinRequest): void;
+  closeRejectDialog(): void;
+  submitReject(): void;
 }
 
 describe('TeamsDetailComponent', () => {
@@ -105,6 +128,10 @@ describe('TeamsDetailComponent', () => {
     invitationsList: ReturnType<typeof vi.fn>;
     invitationsCreate: ReturnType<typeof vi.fn>;
     invitationsDestroy: ReturnType<typeof vi.fn>;
+  };
+  let joinRequestsMock: {
+    joinRequestsList: ReturnType<typeof vi.fn>;
+    joinRequestsPartialUpdate: ReturnType<typeof vi.fn>;
   };
   let memberMembershipMock: { createMemberAndAttach: ReturnType<typeof vi.fn> };
   let userSig: ReturnType<typeof signal<CustomUserPublic | null>>;
@@ -133,6 +160,10 @@ describe('TeamsDetailComponent', () => {
       invitationsCreate: vi.fn().mockReturnValue(of(inv1)),
       invitationsDestroy: vi.fn().mockReturnValue(of(null)),
     };
+    joinRequestsMock = {
+      joinRequestsList: vi.fn().mockReturnValue(of({ count: 1, results: [joinReq1] })),
+      joinRequestsPartialUpdate: vi.fn().mockReturnValue(of({ ...joinReq1 })),
+    };
     memberMembershipMock = {
       createMemberAndAttach: vi.fn().mockReturnValue(of({ member: { id: 99 }, membership: mb1 })),
     };
@@ -153,6 +184,7 @@ describe('TeamsDetailComponent', () => {
         MessageService,
         { provide: TeamsService, useValue: serviceMock },
         { provide: InvitationsService, useValue: invitationsMock },
+        { provide: JoinRequestsService, useValue: joinRequestsMock },
         { provide: MemberMembershipService, useValue: memberMembershipMock },
         {
           provide: AuthService,
@@ -329,5 +361,44 @@ describe('TeamsDetailComponent', () => {
     });
     access(component).confirmCancelInvitation(inv1);
     expect(invitationsMock.invitationsDestroy).toHaveBeenCalledWith(11);
+  });
+
+  it('loads pending join requests on init filtered by team', () => {
+    expect(joinRequestsMock.joinRequestsList).toHaveBeenCalledWith(
+      undefined,
+      undefined,
+      undefined,
+      JoinRequestStatusEnum.Pending,
+      4,
+    );
+    expect(access(component).joinRequests()).toHaveLength(1);
+  });
+
+  it('confirmAcceptJoinRequest patches status=accepted and reloads list + memberships', () => {
+    const confirmation = fixture.debugElement.injector.get(ConfirmationService);
+    vi.spyOn(confirmation, 'confirm').mockImplementation((cfg) => {
+      cfg.accept?.();
+      return confirmation;
+    });
+    access(component).confirmAcceptJoinRequest(joinReq1);
+    expect(joinRequestsMock.joinRequestsPartialUpdate).toHaveBeenCalledWith(77, {
+      status: JoinRequestStatusEnum.Accepted,
+    });
+    expect(joinRequestsMock.joinRequestsList).toHaveBeenCalledTimes(2);
+    expect(serviceMock.teamsMembershipsList).toHaveBeenCalledTimes(2);
+  });
+
+  it('submitReject sends status=rejected with response_message and clears the dialog', () => {
+    access(component).openRejectDialog(joinReq1);
+    expect(access(component).rejectingRequest()).toEqual(joinReq1);
+    (access(component) as unknown as { rejectMessage: { set(v: string): void } }).rejectMessage.set(
+      'Sorry, full team',
+    );
+    access(component).submitReject();
+    expect(joinRequestsMock.joinRequestsPartialUpdate).toHaveBeenCalledWith(77, {
+      status: JoinRequestStatusEnum.Rejected,
+      response_message: 'Sorry, full team',
+    });
+    expect(access(component).rejectingRequest()).toBeNull();
   });
 });

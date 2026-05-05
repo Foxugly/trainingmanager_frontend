@@ -131,6 +131,64 @@
 
     @if (canManage()) {
       <section class="mb-8">
+        <h2 class="text-lg font-semibold mb-2">
+          {{ 'teams.join_requests.title' | transloco }} ({{ joinRequests().length }})
+        </h2>
+        @if (loadingJoinRequests()) {
+          <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+        } @else if (joinRequests().length === 0) {
+          <p class="text-gray-500">{{ 'teams.join_requests.empty' | transloco }}</p>
+        } @else {
+          <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
+            @for (req of joinRequests(); track req.id) {
+              <li class="p-3 flex flex-col gap-2">
+                <div class="flex items-start justify-between gap-3 flex-wrap">
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-2 text-sm">
+                      <i class="pi pi-user text-gray-400" aria-hidden="true"></i>
+                      <span class="font-medium text-gray-900">
+                        {{ 'teams.join_requests.user_label' | transloco: { id: req.user } }}
+                      </span>
+                      <span class="text-xs text-gray-500">
+                        · {{ req.requested_at | date: 'medium' }}
+                      </span>
+                    </div>
+                    @if (req.message) {
+                      <p class="mt-1 text-sm text-gray-700 whitespace-pre-line">
+                        {{ req.message }}
+                      </p>
+                    } @else {
+                      <p class="mt-1 text-xs italic text-gray-400">
+                        {{ 'teams.join_requests.no_message' | transloco }}
+                      </p>
+                    }
+                  </div>
+                  <div class="flex items-center gap-2 shrink-0">
+                    <p-button
+                      [label]="'teams.join_requests.reject' | transloco"
+                      icon="pi pi-times"
+                      severity="secondary"
+                      [outlined]="true"
+                      size="small"
+                      [loading]="processingRequestId() === req.id"
+                      (onClick)="openRejectDialog(req)"
+                    />
+                    <p-button
+                      [label]="'teams.join_requests.accept' | transloco"
+                      icon="pi pi-check"
+                      size="small"
+                      [loading]="processingRequestId() === req.id"
+                      (onClick)="confirmAcceptJoinRequest(req)"
+                    />
+                  </div>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+
+      <section class="mb-8">
         <div class="flex items-center justify-between mb-2 gap-2 flex-wrap">
           <h2 class="text-lg font-semibold">
             {{ 'teams.invitations.title' | transloco }} ({{ invitations().length }})
@@ -322,6 +380,47 @@
       />
     </div>
   </form>
+</p-dialog>
+
+<p-dialog
+  [visible]="rejectingRequest() !== null"
+  (visibleChange)="$event ? null : closeRejectDialog()"
+  [modal]="true"
+  [closable]="processingRequestId() === null"
+  [style]="{ width: '32rem' }"
+  [header]="'teams.join_requests.reject_dialog_title' | transloco"
+>
+  <div class="flex flex-col gap-3">
+    <p class="text-sm text-gray-700">
+      {{ 'teams.join_requests.reject_dialog_help' | transloco }}
+    </p>
+    <textarea
+      pTextarea
+      rows="3"
+      class="w-full"
+      [value]="rejectMessage()"
+      (input)="rejectMessage.set($any($event.target).value)"
+      [placeholder]="'teams.join_requests.reject_message_placeholder' | transloco"
+    ></textarea>
+    <div class="flex justify-end gap-2 pt-1">
+      <p-button
+        type="button"
+        severity="secondary"
+        [text]="true"
+        [label]="'common.cancel' | transloco"
+        [disabled]="processingRequestId() !== null"
+        (onClick)="closeRejectDialog()"
+      />
+      <p-button
+        type="button"
+        severity="danger"
+        [label]="'teams.join_requests.confirm_reject' | transloco"
+        icon="pi pi-times"
+        [loading]="processingRequestId() !== null"
+        (onClick)="submitReject()"
+      />
+    </div>
+  </div>
 </p-dialog>
 
 <p-confirmDialog />

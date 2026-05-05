@@ -258,6 +258,22 @@
       "cancel_confirm_message": "The invitation will be cancelled and can no longer be used.",
       "cancelled": "Invitation cancelled."
     },
+    "join_requests": {
+      "title": "Join requests",
+      "empty": "No pending requests",
+      "user_label": "User #{{id}}",
+      "no_message": "No message",
+      "accept": "Accept",
+      "reject": "Reject",
+      "accept_confirm_title": "Accept this request?",
+      "accept_confirm_message": "The user will become a member of the team.",
+      "accepted": "Request accepted.",
+      "rejected": "Request rejected.",
+      "reject_dialog_title": "Reject the request",
+      "reject_dialog_help": "You can include a message that will be sent to the user (optional).",
+      "reject_message_placeholder": "Message (optional)…",
+      "confirm_reject": "Reject"
+    },
     "invite_dialog": {
       "title": "Invite a member",
       "email": "Email",

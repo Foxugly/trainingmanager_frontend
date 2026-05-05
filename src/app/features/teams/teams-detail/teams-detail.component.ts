@@ -19,12 +19,16 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Dialog } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
+import { Textarea } from 'primeng/textarea';
 import { InvitationsService } from '../../../api/api/invitations.service';
+import { JoinRequestsService } from '../../../api/api/join-requests.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { CreateInvitation } from '../../../api/model/create-invitation';
 import { InvitationStatusEnum } from '../../../api/model/invitation-status-enum';
+import { JoinRequestStatusEnum } from '../../../api/model/join-request-status-enum';
 import { Team } from '../../../api/model/team';
 import { TeamInvitation } from '../../../api/model/team-invitation';
+import { TeamJoinRequest } from '../../../api/model/team-join-request';
 import { TeamMembership } from '../../../api/model/team-membership';
 import { AuthService } from '../../../core/auth/auth.service';
 import { MemberMembershipService } from '../member-membership.service';
@@ -48,6 +52,7 @@ interface FieldErrors {
     Dialog,
     InputText,
     Message,
+    Textarea,
     TranslocoPipe,
     ProgramsListComponent,
     DetailHeaderComponent,
@@ -63,6 +68,7 @@ export class TeamsDetailComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly teamsService = inject(TeamsService);
   private readonly invitationsService = inject(InvitationsService);
+  private readonly joinRequestsService = inject(JoinRequestsService);
   private readonly memberMembershipService = inject(MemberMembershipService);
   private readonly authService = inject(AuthService);
   private readonly confirmationService = inject(ConfirmationService);
@@ -87,6 +93,12 @@ export class TeamsDetailComponent implements OnInit {
   protected readonly inviting = signal(false);
   protected readonly inviteError = signal<string | null>(null);
   protected readonly inviteFieldErrors = signal<FieldErrors | null>(null);
+
+  protected readonly joinRequests = signal<TeamJoinRequest[]>([]);
+  protected readonly loadingJoinRequests = signal(false);
+  protected readonly processingRequestId = signal<number | null>(null);
+  protected readonly rejectingRequest = signal<TeamJoinRequest | null>(null);
+  protected readonly rejectMessage = signal('');
 
   protected readonly currentUserRole = computed<TeamRole | null>(() => {
     const t = this.team();
@@ -132,6 +144,7 @@ export class TeamsDetailComponent implements OnInit {
     this.loadTeam(id);
     this.loadMemberships(id);
     this.loadInvitations(id);
+    this.loadJoinRequests(id);
   }
 
   private loadTeam(id: number): void {
@@ -171,6 +184,104 @@ export class TeamsDetailComponent implements OnInit {
           this.loadingInvitations.set(false);
         },
         error: () => this.loadingInvitations.set(false),
+      });
+  }
+
+  private loadJoinRequests(id: number): void {
+    this.loadingJoinRequests.set(true);
+    this.joinRequestsService
+      .joinRequestsList(undefined, undefined, undefined, JoinRequestStatusEnum.Pending, id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          this.joinRequests.set(res.results ?? []);
+          this.loadingJoinRequests.set(false);
+        },
+        error: () => this.loadingJoinRequests.set(false),
+      });
+  }
+
+  protected confirmAcceptJoinRequest(req: TeamJoinRequest): void {
+    this.confirmationService.confirm({
+      header: this.transloco.translate('teams.join_requests.accept_confirm_title'),
+      message: this.transloco.translate('teams.join_requests.accept_confirm_message'),
+      acceptLabel: this.transloco.translate('teams.join_requests.accept'),
+      rejectLabel: this.transloco.translate('common.cancel'),
+      accept: () => this.acceptJoinRequest(req),
+    });
+  }
+
+  private acceptJoinRequest(req: TeamJoinRequest): void {
+    const teamId = this.teamId();
+    if (teamId === null) return;
+    this.processingRequestId.set(req.id);
+    this.joinRequestsService
+      .joinRequestsPartialUpdate(req.id, { status: JoinRequestStatusEnum.Accepted })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.processingRequestId.set(null);
+          this.messageService.add({
+            severity: 'success',
+            summary: this.transloco.translate('common.success'),
+            detail: this.transloco.translate('teams.join_requests.accepted'),
+          });
+          this.loadJoinRequests(teamId);
+          this.loadMemberships(teamId);
+        },
+        error: () => {
+          this.processingRequestId.set(null);
+          this.messageService.add({
+            severity: 'error',
+            summary: this.transloco.translate('common.error'),
+            detail: this.transloco.translate('teams.errors.unknown'),
+          });
+        },
+      });
+  }
+
+  protected openRejectDialog(req: TeamJoinRequest): void {
+    this.rejectMessage.set('');
+    this.rejectingRequest.set(req);
+  }
+
+  protected closeRejectDialog(): void {
+    this.rejectingRequest.set(null);
+    this.rejectMessage.set('');
+  }
+
+  protected submitReject(): void {
+    const req = this.rejectingRequest();
+    const teamId = this.teamId();
+    if (!req || teamId === null) return;
+    const message = this.rejectMessage().trim();
+    this.processingRequestId.set(req.id);
+    this.joinRequestsService
+      .joinRequestsPartialUpdate(req.id, {
+        status: JoinRequestStatusEnum.Rejected,
+        ...(message ? { response_message: message } : {}),
+      })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.processingRequestId.set(null);
+          this.rejectingRequest.set(null);
+          this.rejectMessage.set('');
+          this.messageService.add({
+            severity: 'success',
+            summary: this.transloco.translate('common.success'),
+            detail: this.transloco.translate('teams.join_requests.rejected'),
+          });
+          this.loadJoinRequests(teamId);
+        },
+        error: () => {
+          this.processingRequestId.set(null);
+          this.messageService.add({
+            severity: 'error',
+            summary: this.transloco.translate('common.error'),
+            detail: this.transloco.translate('teams.errors.unknown'),
+          });
+        },
       });
   }
 
