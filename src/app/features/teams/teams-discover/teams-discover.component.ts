@@ -11,7 +11,6 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { Button } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { Skeleton } from 'primeng/skeleton';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
@@ -24,7 +23,6 @@ import { AuthService } from '../../../core/auth/auth.service';
   imports: [
     CommonModule,
     RouterLink,
-    Button,
     InputText,
     Skeleton,
     EmptyStateComponent,

@@ -43,6 +43,8 @@
           <i class="pi pi-clock text-xs" aria-hidden="true"></i>
           {{ 'teams.join_request.pending_chip' | transloco }}
         </span>
+      }
+      @if (myPendingRequest()) {
         <p-button
           detailHeaderActions
           [label]="'teams.join_request.cancel_cta' | transloco"
