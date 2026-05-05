@@ -123,6 +123,7 @@ interface ProtectedFields {
   hasManagedTeams(): boolean;
   hasMemberTeams(): boolean;
   isHybrid(): boolean;
+  showWelcome(): boolean;
   teamCards(): { team: Team; programsActive: number; eventsNext7d: number; membersCount: number }[];
   upcomingDisplayed(): { event: Event; teamName: string; programName: string }[];
   upcomingTotal(): number;
@@ -348,10 +349,11 @@ describe('DashboardComponent', () => {
       await setup({ teams: [], user: athleteUser });
     });
 
-    it('redirects to /home', () => {
+    it('shows the welcome state instead of redirecting to /home', () => {
       expect(access(component).hasManagedTeams()).toBe(false);
       expect(access(component).hasMemberTeams()).toBe(false);
-      expect(router.navigate).toHaveBeenCalledWith(['/home']);
+      expect(access(component).showWelcome()).toBe(true);
+      expect(router.navigate).not.toHaveBeenCalledWith(['/home']);
     });
   });
 

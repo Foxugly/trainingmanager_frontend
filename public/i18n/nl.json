@@ -386,6 +386,16 @@
   "dashboard": {
     "greeting": "Hallo {{name}} 👋",
     "subtitle": "Overzicht van je teams en sessies.",
+    "welcome": {
+      "eyebrow": "Welkom",
+      "title": "Hallo {{name}}, klaar om te starten?",
+      "subtitle": "Training Manager helpt je sessies plannen, aanwezigheden volgen en trainingen op maat van je team genereren.",
+      "cta_create_team": "Mijn team aanmaken",
+      "cta_discover": "Teams ontdekken",
+      "tip_team": "Maak je team aan (of word lid van een publiek team).",
+      "tip_program": "Plan een programma met een duidelijk doel.",
+      "tip_session": "Genereer je sessies in een paar klikken."
+    },
     "teams": {
       "title": "Mijn teams",
       "programs_active": "Actieve programma's",

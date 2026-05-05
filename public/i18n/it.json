@@ -386,6 +386,16 @@
   "dashboard": {
     "greeting": "Ciao {{name}} 👋",
     "subtitle": "Panoramica delle tue squadre e sessioni.",
+    "welcome": {
+      "eyebrow": "Benvenuto",
+      "title": "Ciao {{name}}, pronti a iniziare?",
+      "subtitle": "Training Manager ti aiuta a pianificare sessioni, monitorare le presenze e generare allenamenti su misura per la tua squadra.",
+      "cta_create_team": "Crea la mia squadra",
+      "cta_discover": "Scopri le squadre",
+      "tip_team": "Crea la tua squadra (o unisciti a una pubblica).",
+      "tip_program": "Pianifica un programma con un obiettivo chiaro.",
+      "tip_session": "Genera le tue sessioni in pochi clic."
+    },
     "teams": {
       "title": "Le mie squadre",
       "programs_active": "Programmi attivi",

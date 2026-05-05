@@ -5,12 +5,11 @@ import {
   DestroyRef,
   OnInit,
   computed,
-  effect,
   inject,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { Message } from 'primeng/message';
@@ -99,7 +98,6 @@ export class DashboardComponent implements OnInit {
   private readonly programsService = inject(ProgramsService);
   private readonly eventsService = inject(EventsService);
   private readonly statusesService = inject(AttendanceStatusesService);
-  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly greetingName = computed(() => {
@@ -156,17 +154,9 @@ export class DashboardComponent implements OnInit {
     Math.max(0, this.memberUpcomingTotal() - UPCOMING_MAX_DISPLAYED),
   );
 
-  constructor() {
-    effect(() => {
-      if (
-        this.bootstrapped() &&
-        !this.hasManagedTeams() &&
-        !this.hasMemberTeams()
-      ) {
-        this.router.navigate(['/home']);
-      }
-    });
-  }
+  protected readonly showWelcome = computed(
+    () => this.bootstrapped() && !this.hasManagedTeams() && !this.hasMemberTeams(),
+  );
 
   ngOnInit(): void {
     this.bootstrap();

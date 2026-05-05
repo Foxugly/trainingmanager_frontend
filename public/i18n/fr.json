@@ -386,6 +386,16 @@
   "dashboard": {
     "greeting": "Bonjour {{name}} 👋",
     "subtitle": "Vue d'ensemble de vos équipes et entraînements.",
+    "welcome": {
+      "eyebrow": "Bienvenue",
+      "title": "Bonjour {{name}}, on commence ?",
+      "subtitle": "Training Manager vous aide à planifier vos séances, suivre les présences et générer des entraînements adaptés à votre équipe.",
+      "cta_create_team": "Créer mon équipe",
+      "cta_discover": "Découvrir des équipes",
+      "tip_team": "Créez votre équipe (ou rejoignez-en une publique).",
+      "tip_program": "Planifiez un programme avec un objectif clair.",
+      "tip_session": "Générez vos séances en quelques clics."
+    },
     "teams": {
       "title": "Mes équipes",
       "programs_active": "Programmes actifs",
