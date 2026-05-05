@@ -14,7 +14,9 @@ import { Observable }                                        from 'rxjs';
 import { EmailConfirm } from '../model/models';
 import { EmailResend } from '../model/models';
 import { PasswordResetConfirm } from '../model/models';
+import { PasswordResetConfirmResponse } from '../model/models';
 import { PasswordResetRequest } from '../model/models';
+import { PasswordResetRequestResponse } from '../model/models';
 import { Register } from '../model/models';
 import { TokenObtainPairResponse } from '../model/models';
 import { TokenRefresh } from '../model/models';
@@ -51,7 +53,7 @@ export interface AuthServiceInterface {
      * @endpoint post /api/v1/auth/password/reset/confirm/
      * @param passwordResetConfirm 
      */
-    authPasswordResetConfirmCreate(passwordResetConfirm: PasswordResetConfirm, extraHttpRequestParams?: any): Observable<{}>;
+    authPasswordResetConfirmCreate(passwordResetConfirm: PasswordResetConfirm, extraHttpRequestParams?: any): Observable<PasswordResetConfirmResponse>;
 
     /**
      * 
@@ -59,7 +61,7 @@ export interface AuthServiceInterface {
      * @endpoint post /api/v1/auth/password/reset/
      * @param passwordResetRequest 
      */
-    authPasswordResetCreate(passwordResetRequest: PasswordResetRequest, extraHttpRequestParams?: any): Observable<{}>;
+    authPasswordResetCreate(passwordResetRequest: PasswordResetRequest, extraHttpRequestParams?: any): Observable<PasswordResetRequestResponse>;
 
     /**
      * 

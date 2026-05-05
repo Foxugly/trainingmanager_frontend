@@ -105,7 +105,11 @@ model/paginated-sport-list.ts
 model/paginated-team-invitation-list.ts
 model/paginated-team-join-request-list.ts
 model/paginated-team-list.ts
+model/password-reset-confirm-response.ts
+model/password-reset-confirm-user.ts
 model/password-reset-confirm.ts
+model/password-reset-request-response-code-enum.ts
+model/password-reset-request-response.ts
 model/password-reset-request.ts
 model/patched-attendance-status-admin.ts
 model/patched-attendance.ts

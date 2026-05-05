@@ -347,9 +347,13 @@ paths:
       - {}
       responses:
         '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PasswordResetRequestResponse'
           description: 'Always 200. Returns {detail, code: ''password_reset_processed''}.
             If the email matches a registered account, a reset link has been dispatched;
-            otherwise the response is identical.'
+            otherwise the response is identical (anti-leak).'
         '400':
           description: Body validation error (malformed email, missing token), or
             Turnstile failure (code=captcha_failed).
@@ -382,7 +386,12 @@ paths:
       - {}
       responses:
         '200':
-          description: Password updated. Returns {access, refresh, user}.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PasswordResetConfirmResponse'
+          description: Password updated. Returns the JWT pair (access + refresh) for
+            auto-login plus a minimal user payload.
         '400':
           description: Token invalid / expired (code=invalid_or_expired_token), or
             new_password rejected by validators (fields.new_password).
@@ -5838,6 +5847,42 @@ components:
       required:
       - key
       - new_password
+    PasswordResetConfirmResponse:
+      type: object
+      properties:
+        access:
+          type: string
+        refresh:
+          type: string
+        user:
+          $ref: '#/components/schemas/PasswordResetConfirmUser'
+      required:
+      - access
+      - refresh
+      - user
+    PasswordResetConfirmUser:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        first_name:
+          type: string
+        last_name:
+          type: string
+        language:
+          type: string
+      required:
+      - email
+      - first_name
+      - id
+      - language
+      - last_name
+      - username
     PasswordResetRequest:
       type: object
       description: |-
@@ -5856,6 +5901,21 @@ components:
       required:
       - email
       - turnstile_token
+    PasswordResetRequestResponse:
+      type: object
+      properties:
+        detail:
+          type: string
+        code:
+          $ref: '#/components/schemas/PasswordResetRequestResponseCodeEnum'
+      required:
+      - code
+      - detail
+    PasswordResetRequestResponseCodeEnum:
+      enum:
+      - password_reset_processed
+      type: string
+      description: '* `password_reset_processed` - password_reset_processed'
     PatchedAttendance:
       type: object
       properties:
