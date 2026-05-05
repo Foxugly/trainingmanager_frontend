@@ -247,6 +247,13 @@ export const routes: Routes = [
           },
         ],
       },
+      {
+        path: 'team-join-requests/magic-action/:token',
+        loadComponent: () =>
+          import('./features/teams/magic-action/magic-action.component').then(
+            (m) => m.MagicActionComponent,
+          ),
+      },
       { path: '**', redirectTo: '' },
     ],
   },
