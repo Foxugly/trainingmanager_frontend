@@ -1,5 +1,6 @@
 import { Injectable, effect, inject, signal } from '@angular/core';
 import { TranslocoService } from '@jsverse/transloco';
+import { PrimeNG } from 'primeng/config';
 import { Observable, catchError, tap, throwError } from 'rxjs';
 import { LanguageEnum } from '../../api/model/language-enum';
 import { Me } from '../../api/model/me';
@@ -7,12 +8,14 @@ import { PatchedMe } from '../../api/model/patched-me';
 import { MeService } from '../../api/api/me.service';
 import { AuthService } from '../auth/auth.service';
 import { LanguageCode } from './available-languages';
+import { PRIMENG_TRANSLATIONS } from './primeng-translations';
 
 @Injectable({ providedIn: 'root' })
 export class LanguageService {
   private readonly transloco = inject(TranslocoService);
   private readonly meService = inject(MeService);
   private readonly authService = inject(AuthService);
+  private readonly primeNG = inject(PrimeNG);
 
   private readonly _activeLang = signal<LanguageCode>(
     this.transloco.getActiveLang() as LanguageCode,
@@ -20,6 +23,10 @@ export class LanguageService {
   readonly activeLang = this._activeLang.asReadonly();
 
   constructor() {
+    // Initial sync: PrimeNG ships with English-only translations until we call
+    // setTranslation. Apply the dictionary that matches Transloco's current lang.
+    this.primeNG.setTranslation(PRIMENG_TRANSLATIONS[this._activeLang()]);
+
     // Keep Transloco in sync with the authenticated user's language preference.
     // Fires on bootstrap (after fetchMe), on login (after fetchMe), and after profile save.
     // The `code !== this._activeLang()` guard prevents reapplying when we just set it ourselves.
@@ -57,5 +64,6 @@ export class LanguageService {
   applyToTranslocoOnly(code: LanguageCode): void {
     this.transloco.setActiveLang(code);
     this._activeLang.set(code);
+    this.primeNG.setTranslation(PRIMENG_TRANSLATIONS[code]);
   }
 }

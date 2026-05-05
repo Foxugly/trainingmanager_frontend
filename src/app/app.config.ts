@@ -1,5 +1,6 @@
 import {
   ApplicationConfig,
+  LOCALE_ID,
   inject,
   isDevMode,
   provideAppInitializer,
@@ -48,6 +49,14 @@ export const appConfig: ApplicationConfig = {
       inject(LanguageService);
       return firstValueFrom(authService.bootstrap()).catch(() => false);
     }),
+    {
+      // Resolves once at first injection — we rely on provideAppInitializer above
+      // to have populated LanguageService.activeLang() (from me.language) before
+      // the first DatePipe asks for LOCALE_ID. Mid-session swap won't repropagate
+      // to existing pipe instances (Angular caches LOCALE_ID per injector).
+      provide: LOCALE_ID,
+      useFactory: () => inject(LanguageService).activeLang(),
+    },
     MessageService,
   ],
 };
