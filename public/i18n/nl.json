@@ -261,7 +261,6 @@
     "join_requests": {
       "title": "Aanvragen om lid te worden",
       "empty": "Geen openstaande aanvragen",
-      "user_label": "Gebruiker #{{id}}",
       "no_message": "Geen bericht",
       "accept": "Accepteren",
       "reject": "Weigeren",

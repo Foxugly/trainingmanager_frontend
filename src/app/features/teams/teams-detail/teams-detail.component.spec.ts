@@ -62,12 +62,15 @@ const inv1: TeamInvitation = {
 const joinReq1: TeamJoinRequest = {
   id: 77,
   user: 42,
+  user_username: 'alice42',
+  user_fullname: 'Alice Dupont',
   team: 4,
   status: JoinRequestStatusEnum.Pending,
   message: 'Salut, je viens du club voisin.',
   requested_at: '2026-05-01T00:00:00Z',
   responded_at: null,
   responded_by: null,
+  responded_by_username: null,
 };
 
 const mb1: TeamMembership = {

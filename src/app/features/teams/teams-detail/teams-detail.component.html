@@ -144,11 +144,14 @@
               <li class="p-3 flex flex-col gap-2">
                 <div class="flex items-start justify-between gap-3 flex-wrap">
                   <div class="min-w-0 flex-1">
-                    <div class="flex items-center gap-2 text-sm">
-                      <i class="pi pi-user text-gray-400" aria-hidden="true"></i>
+                    <div class="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-sm">
+                      <i class="pi pi-user text-gray-400 self-center" aria-hidden="true"></i>
                       <span class="font-medium text-gray-900">
-                        {{ 'teams.join_requests.user_label' | transloco: { id: req.user } }}
+                        {{ req.user_fullname || req.user_username }}
                       </span>
+                      @if (req.user_fullname && req.user_username) {
+                        <span class="text-xs text-gray-500">&#64;{{ req.user_username }}</span>
+                      }
                       <span class="text-xs text-gray-500">
                         · {{ req.requested_at | date: 'medium' }}
                       </span>

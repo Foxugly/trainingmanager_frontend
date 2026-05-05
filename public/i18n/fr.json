@@ -261,7 +261,6 @@
     "join_requests": {
       "title": "Demandes de rejoindre",
       "empty": "Aucune demande en attente",
-      "user_label": "Utilisateur #{{id}}",
       "no_message": "Aucun message",
       "accept": "Accepter",
       "reject": "Refuser",

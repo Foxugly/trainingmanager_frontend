@@ -261,7 +261,6 @@
     "join_requests": {
       "title": "Solicitudes de unión",
       "empty": "Sin solicitudes pendientes",
-      "user_label": "Usuario #{{id}}",
       "no_message": "Sin mensaje",
       "accept": "Aceptar",
       "reject": "Rechazar",

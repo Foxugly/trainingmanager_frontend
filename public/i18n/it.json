@@ -261,7 +261,6 @@
     "join_requests": {
       "title": "Richieste di adesione",
       "empty": "Nessuna richiesta in attesa",
-      "user_label": "Utente #{{id}}",
       "no_message": "Nessun messaggio",
       "accept": "Accetta",
       "reject": "Rifiuta",

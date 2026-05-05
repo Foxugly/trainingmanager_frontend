@@ -261,7 +261,6 @@
     "join_requests": {
       "title": "Join requests",
       "empty": "No pending requests",
-      "user_label": "User #{{id}}",
       "no_message": "No message",
       "accept": "Accept",
       "reject": "Reject",
