@@ -124,7 +124,10 @@
         "new_event": "Nueva sesión",
         "month_events_title": "Sesiones de {{month}}",
         "no_events_this_month": "Ninguna sesión este mes."
-      }
+      },
+      "calendar_section_title": "Calendario",
+      "events_list_title": "Sesiones del programa",
+      "no_events_yet": "Ninguna sesión planificada todavía."
     },
     "generate": {
       "dialog_title": "Generación IA de sesiones",

@@ -83,6 +83,7 @@ interface ProtectedFields {
   currentMonth(): Date;
   eventsForMonth(): Event[];
   eventsByDay(): Map<string, Event[]>;
+  eventsByDateAsc(): Event[];
   previousMonth(): void;
   nextMonth(): void;
   goToProgramStart(): void;
@@ -292,5 +293,23 @@ describe('ProgramsDetailComponent', () => {
     expect(map.get('2026-06-05')?.[0].id).toBe(100);
     expect(map.get('2026-06-12')?.[0].id).toBe(101);
     expect(map.get('2026-07-15')).toBeUndefined();
+  });
+
+  it('eventsByDateAsc returns ALL program events sorted ascending by date (not month-bound)', () => {
+    const list = access(component).eventsByDateAsc();
+    expect(list.map((e) => e.id)).toEqual([100, 101, 102]);
+  });
+
+  it('eventsByDateAsc returns an empty array when the program has no events', async () => {
+    await setup('7', program, ownerUser, []);
+    expect(access(component).events()).toEqual([]);
+    expect(access(component).eventsByDateAsc()).toEqual([]);
+  });
+
+  it('eventsByDateAsc breaks date ties using hour_start ascending', async () => {
+    const sameDayEarly: Event = { ...eventA, id: 200, name: 'Early', date: '2026-06-05', hour_start: '06:00:00' };
+    const sameDayLate: Event = { ...eventA, id: 201, name: 'Late', date: '2026-06-05', hour_start: '20:00:00' };
+    await setup('7', program, ownerUser, [sameDayLate, sameDayEarly]);
+    expect(access(component).eventsByDateAsc().map((e) => e.id)).toEqual([200, 201]);
   });
 });

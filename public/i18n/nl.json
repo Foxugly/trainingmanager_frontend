@@ -124,7 +124,10 @@
         "new_event": "Nieuwe sessie",
         "month_events_title": "Sessies van {{month}}",
         "no_events_this_month": "Geen sessie deze maand."
-      }
+      },
+      "calendar_section_title": "Kalender",
+      "events_list_title": "Sessies van het programma",
+      "no_events_yet": "Nog geen sessie gepland."
     },
     "generate": {
       "dialog_title": "AI-generatie van sessies",

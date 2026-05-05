@@ -213,6 +213,18 @@ export class ProgramsDetailComponent implements OnInit {
       });
   });
 
+  protected readonly eventsByDateAsc = computed<Event[]>(() => {
+    return [...this.events()].sort((a, b) => {
+      const da = eventDateAsDate(a);
+      const db = eventDateAsDate(b);
+      if (da === null && db === null) return 0;
+      if (da === null) return 1;
+      if (db === null) return -1;
+      if (da.getTime() !== db.getTime()) return da.getTime() - db.getTime();
+      return (a.hour_start ?? '').localeCompare(b.hour_start ?? '');
+    });
+  });
+
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
     const id = idParam ? Number(idParam) : NaN;
