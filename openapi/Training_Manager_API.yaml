@@ -317,6 +317,75 @@ paths:
             been dispatched; otherwise the response is identical.'
         '400':
           description: Body validation error (e.g. malformed email).
+  /api/v1/auth/password/reset/:
+    post:
+      operationId: auth_password_reset_create
+      description: |-
+        POST /api/v1/auth/password/reset/ — public: request a password reset.
+
+        Anti-leak: ALWAYS returns 200 with the same body, whether the email
+        matches a User or not. If it does, an email with a reset link is
+        dispatched (frontend URL: {FRONTEND_URL}/auth/reset-password/{key},
+        no trailing slash). If it doesn't, the call is a silent no-op.
+
+        Rate-limited to 3 requests per hour per IP. Turnstile required.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordResetRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordResetRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          description: 'Always 200. Returns {detail, code: ''password_reset_processed''}.
+            If the email matches a registered account, a reset link has been dispatched;
+            otherwise the response is identical.'
+        '400':
+          description: Body validation error (malformed email, missing token), or
+            Turnstile failure (code=captcha_failed).
+        '429':
+          description: Too Many Requests (rate limit hit).
+  /api/v1/auth/password/reset/confirm/:
+    post:
+      operationId: auth_password_reset_confirm_create
+      description: |-
+        POST /api/v1/auth/password/reset/confirm/ — public: finalize a reset.
+
+        Body: {key, new_password}. The key is the {uid}-{token} string the
+        user received in their email. Returns the JWT pair on success
+        (auto-login after reset).
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirm'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirm'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirm'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          description: Password updated. Returns {access, refresh, user}.
+        '400':
+          description: Token invalid / expired (code=invalid_or_expired_token), or
+            new_password rejected by validators (fields.new_password).
   /api/v1/auth/register/:
     post:
       operationId: auth_register_create
@@ -386,8 +455,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TokenObtainPairResponse'
-          description: JWT pair. Use `access` as a Bearer token; obtain a fresh `access`
-            via /auth/token/refresh/ when it expires.
+          description: 'JWT pair. Use `access` as a Bearer token; obtain a fresh `access`
+            via /auth/token/refresh/ when it expires. The refresh TTL depends on `remember`:
+            7 days (default) or 30 days when remember=true.'
         '400':
           description: Email not verified (code=email_not_verified) — the frontend
             should expose a 'Resend confirmation email' affordance — or any other
@@ -5752,6 +5822,40 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Team'
+    PasswordResetConfirm:
+      type: object
+      description: |-
+        Body of POST /api/v1/auth/password/reset/confirm/. The view decodes
+        `key` (uid + token) and validates `new_password` against Django's
+        password validators with the matched user as context.
+      properties:
+        key:
+          type: string
+        new_password:
+          type: string
+          writeOnly: true
+          minLength: 8
+      required:
+      - key
+      - new_password
+    PasswordResetRequest:
+      type: object
+      description: |-
+        Body of POST /api/v1/auth/password/reset/.
+
+        Anti-leak by design — the view always returns the same 200 payload
+        regardless of whether `email` matches a User. Validation here only
+        enforces field shapes.
+      properties:
+        email:
+          type: string
+          format: email
+        turnstile_token:
+          type: string
+          writeOnly: true
+      required:
+      - email
+      - turnstile_token
     PatchedAttendance:
       type: object
       properties:
@@ -7186,7 +7290,16 @@ components:
         they are treated as verified to preserve backwards compatibility (no
         data migration). Once an EmailAddress exists for a user, the
         `verified` flag becomes authoritative.
+
+        Optional `remember` flag (default False) extends the refresh token
+        lifetime to settings.SIMPLE_JWT["REFRESH_TOKEN_LIFETIME_REMEMBER"]
+        (30 days) instead of the standard REFRESH_TOKEN_LIFETIME (7 days).
+        The access token TTL is unchanged either way.
       properties:
+        remember:
+          type: boolean
+          writeOnly: true
+          default: false
         username:
           type: string
           writeOnly: true

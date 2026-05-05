@@ -63,6 +63,8 @@ export * from './paginated-sport-list';
 export * from './paginated-team-invitation-list';
 export * from './paginated-team-join-request-list';
 export * from './paginated-team-list';
+export * from './password-reset-confirm';
+export * from './password-reset-request';
 export * from './patched-attendance';
 export * from './patched-attendance-status-admin';
 export * from './patched-energy-segment-admin';

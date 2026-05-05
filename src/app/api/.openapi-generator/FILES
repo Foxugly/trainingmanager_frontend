@@ -105,6 +105,8 @@ model/paginated-sport-list.ts
 model/paginated-team-invitation-list.ts
 model/paginated-team-join-request-list.ts
 model/paginated-team-list.ts
+model/password-reset-confirm.ts
+model/password-reset-request.ts
 model/patched-attendance-status-admin.ts
 model/patched-attendance.ts
 model/patched-energy-segment-admin.ts

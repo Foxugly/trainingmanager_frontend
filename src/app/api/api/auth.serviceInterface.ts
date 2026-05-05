@@ -13,6 +13,8 @@ import { Observable }                                        from 'rxjs';
 
 import { EmailConfirm } from '../model/models';
 import { EmailResend } from '../model/models';
+import { PasswordResetConfirm } from '../model/models';
+import { PasswordResetRequest } from '../model/models';
 import { Register } from '../model/models';
 import { TokenObtainPairResponse } from '../model/models';
 import { TokenRefresh } from '../model/models';
@@ -42,6 +44,22 @@ export interface AuthServiceInterface {
      * @param emailResend 
      */
     authEmailResendCreate(emailResend: EmailResend, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * 
+     * POST /api/v1/auth/password/reset/confirm/ — public: finalize a reset.  Body: {key, new_password}. The key is the {uid}-{token} string the user received in their email. Returns the JWT pair on success (auto-login after reset).
+     * @endpoint post /api/v1/auth/password/reset/confirm/
+     * @param passwordResetConfirm 
+     */
+    authPasswordResetConfirmCreate(passwordResetConfirm: PasswordResetConfirm, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * 
+     * POST /api/v1/auth/password/reset/ — public: request a password reset.  Anti-leak: ALWAYS returns 200 with the same body, whether the email matches a User or not. If it does, an email with a reset link is dispatched (frontend URL: {FRONTEND_URL}/auth/reset-password/{key}, no trailing slash). If it doesn\&#39;t, the call is a silent no-op.  Rate-limited to 3 requests per hour per IP. Turnstile required.
+     * @endpoint post /api/v1/auth/password/reset/
+     * @param passwordResetRequest 
+     */
+    authPasswordResetCreate(passwordResetRequest: PasswordResetRequest, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * 
