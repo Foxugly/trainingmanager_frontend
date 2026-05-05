@@ -5152,6 +5152,10 @@ components:
           title: Superuser status
           description: Designates that this user has all permissions without explicitly
             assigning them.
+        team_quota:
+          allOf:
+          - $ref: '#/components/schemas/TeamQuotaStatus'
+          readOnly: true
       required:
       - date_joined
       - email
@@ -5159,6 +5163,7 @@ components:
       - is_staff
       - is_superuser
       - last_login
+      - team_quota
       - username
     Member:
       type: object
@@ -6078,6 +6083,10 @@ components:
           title: Superuser status
           description: Designates that this user has all permissions without explicitly
             assigning them.
+        team_quota:
+          allOf:
+          - $ref: '#/components/schemas/TeamQuotaStatus'
+          readOnly: true
     PatchedMember:
       type: object
       properties:
@@ -7104,6 +7113,26 @@ components:
       - id
       - language
       - name
+    TeamQuotaStatus:
+      type: object
+      description: |-
+        Computed quota block embedded in /me/. Tells the frontend whether the
+        user can create a new team and how many slots they have used / are
+        entitled to.
+      properties:
+        used:
+          type: integer
+          description: Active teams currently owned by the user.
+        max:
+          type: integer
+          description: Maximum active teams the user can own (CustomUser.team_quota).
+        can_create:
+          type: boolean
+          description: True iff used < max.
+      required:
+      - can_create
+      - max
+      - used
     TokenObtainPairResponse:
       type: object
       properties:

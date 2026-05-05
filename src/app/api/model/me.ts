@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { TeamQuotaStatus } from './team-quota-status';
 import { LanguageEnum } from './language-enum';
 
 
@@ -30,6 +31,7 @@ export interface Me {
      * Designates that this user has all permissions without explicitly assigning them.
      */
     readonly is_superuser: boolean;
+    readonly team_quota: TeamQuotaStatus;
 }
 
 

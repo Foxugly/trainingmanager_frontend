@@ -211,7 +211,7 @@ describe('TeamsDetailComponent', () => {
         { provide: MemberMembershipService, useValue: memberMembershipMock },
         {
           provide: AuthService,
-          useValue: { currentUser: userSig.asReadonly() },
+          useValue: { currentUser: userSig.asReadonly(), refreshMe: vi.fn() },
         },
         {
           provide: ActivatedRoute,

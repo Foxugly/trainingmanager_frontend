@@ -265,6 +265,14 @@
       "cancel_confirm_message": "La invitación será anulada y no podrá utilizarse más.",
       "cancelled": "Invitación anulada."
     },
+    "quota": {
+      "chip_label": "{{used}}/{{max}} equipos",
+      "tooltip_full": "Cuota alcanzada ({{used}}/{{max}}). Archiva un equipo o contacta a un admin para aumentar tu cuota.",
+      "tooltip_legacy": "Gestionas {{used}} equipos, tu cuota es {{max}}. Puedes seguir usándolos pero no crear nuevos.",
+      "exceeded_title": "Cuota de equipos alcanzada",
+      "view_my_teams": "Ver mis equipos",
+      "request_increase": "Solicitar un aumento de cuota"
+    },
     "magic": {
       "eyebrow": "Solicitud de unión",
       "back_to_dashboard": "Volver al panel",

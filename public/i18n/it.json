@@ -265,6 +265,14 @@
       "cancel_confirm_message": "L'invito verrà annullato e non potrà più essere utilizzato.",
       "cancelled": "Invito annullato."
     },
+    "quota": {
+      "chip_label": "{{used}}/{{max}} squadre",
+      "tooltip_full": "Quota raggiunta ({{used}}/{{max}}). Archivia una squadra o contatta un admin per aumentare la tua quota.",
+      "tooltip_legacy": "Gestisci {{used}} squadre, la tua quota è {{max}}. Puoi continuare a usarle ma non puoi crearne di nuove.",
+      "exceeded_title": "Quota di squadre raggiunta",
+      "view_my_teams": "Vedi le mie squadre",
+      "request_increase": "Richiedi un aumento di quota"
+    },
     "magic": {
       "eyebrow": "Richiesta di adesione",
       "back_to_dashboard": "Torna alla dashboard",

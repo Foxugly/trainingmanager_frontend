@@ -8,8 +8,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TeamsService } from '../../../api/api/teams.service';
 import { CustomUserPublic } from '../../../api/model/custom-user-public';
 import { LanguageEnum } from '../../../api/model/language-enum';
+import { Me } from '../../../api/model/me';
 import { Sport } from '../../../api/model/sport';
 import { Team } from '../../../api/model/team';
+import { TeamQuotaStatus } from '../../../api/model/team-quota-status';
 import { AuthService } from '../../../core/auth/auth.service';
 import { TeamsListComponent, TeamRole, computeTeamRole } from './teams-list.component';
 
@@ -55,6 +57,25 @@ interface ProtectedFields {
   teams(): Team[];
   loading(): boolean;
   teamsWithRole(): Array<Team & { role: TeamRole }>;
+  quota(): TeamQuotaStatus | null;
+  canCreate(): boolean;
+  quotaIsLegacy(): boolean;
+}
+
+function makeMe(quota: TeamQuotaStatus): Me {
+  return {
+    id: 17,
+    username: 'testfrontend',
+    email: 'test@example.com',
+    first_name: '',
+    last_name: '',
+    language: LanguageEnum.Fr,
+    last_login: null,
+    date_joined: '2026-01-01T00:00:00Z',
+    is_staff: false,
+    is_superuser: false,
+    team_quota: quota,
+  };
 }
 
 describe('computeTeamRole()', () => {
@@ -73,16 +94,19 @@ describe('TeamsListComponent', () => {
   let fixture: ComponentFixture<TeamsListComponent>;
   let component: TeamsListComponent;
   let serviceMock: { teamsList: ReturnType<typeof vi.fn> };
-  let userSig: ReturnType<typeof signal<CustomUserPublic | null>>;
+  let userSig: ReturnType<typeof signal<Me | CustomUserPublic | null>>;
 
   const access = (c: TeamsListComponent) => c as unknown as ProtectedFields;
 
-  async function setup(results: Team[] = [teamOwner, teamManager, teamMember]) {
+  async function setup(
+    results: Team[] = [teamOwner, teamManager, teamMember],
+    user: Me | CustomUserPublic | null = ownerUser,
+  ) {
     TestBed.resetTestingModule();
     serviceMock = {
       teamsList: vi.fn().mockReturnValue(of({ count: results.length, results })),
     };
-    userSig = signal<CustomUserPublic | null>(ownerUser);
+    userSig = signal<Me | CustomUserPublic | null>(user);
 
     await TestBed.configureTestingModule({
       imports: [
@@ -132,5 +156,29 @@ describe('TeamsListComponent', () => {
     expect(list.find((t) => t.id === 4)?.role).toBe('owner');
     expect(list.find((t) => t.id === 5)?.role).toBe('manager');
     expect(list.find((t) => t.id === 6)?.role).toBe('member');
+  });
+
+  it('quota=null when current user is not a Me (CustomUserPublic mock)', () => {
+    expect(access(component).quota()).toBeNull();
+    expect(access(component).canCreate()).toBe(false);
+  });
+
+  it('canCreate=true when team_quota.can_create is true', async () => {
+    await setup([], makeMe({ used: 1, max: 3, can_create: true }));
+    expect(access(component).quota()).toEqual({ used: 1, max: 3, can_create: true });
+    expect(access(component).canCreate()).toBe(true);
+    expect(access(component).quotaIsLegacy()).toBe(false);
+  });
+
+  it('canCreate=false when quota is reached', async () => {
+    await setup([], makeMe({ used: 3, max: 3, can_create: false }));
+    expect(access(component).canCreate()).toBe(false);
+    expect(access(component).quotaIsLegacy()).toBe(false);
+  });
+
+  it('quotaIsLegacy=true when used > max (legacy user, quota dropped to 0)', async () => {
+    await setup([], makeMe({ used: 3, max: 0, can_create: false }));
+    expect(access(component).quotaIsLegacy()).toBe(true);
+    expect(access(component).canCreate()).toBe(false);
   });
 });

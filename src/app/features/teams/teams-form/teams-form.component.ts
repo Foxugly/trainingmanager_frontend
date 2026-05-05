@@ -78,6 +78,7 @@ export class TeamsFormComponent implements OnInit {
   protected readonly availableManagers = signal<CustomUserPublic[]>([]);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly fieldErrors = signal<FieldErrors | null>(null);
+  protected readonly quotaExceeded = signal<{ used: number; max: number } | null>(null);
 
   protected readonly availableLanguages = AVAILABLE_LANGUAGES;
 
@@ -153,6 +154,7 @@ export class TeamsFormComponent implements OnInit {
     this.saving.set(true);
     this.errorMessage.set(null);
     this.fieldErrors.set(null);
+    this.quotaExceeded.set(null);
 
     const value = this.form.getRawValue();
     const id = this.teamId();
@@ -170,6 +172,7 @@ export class TeamsFormComponent implements OnInit {
         .subscribe({
           next: (created) => {
             this.notifySaved('teams.form.saved_create');
+            this.authService.refreshMe();
             this.saving.set(false);
             this.router.navigate(['/teams', created.id, 'edit']);
           },
@@ -200,6 +203,7 @@ export class TeamsFormComponent implements OnInit {
       .subscribe({
         next: () => {
           this.notifySaved('teams.form.saved_edit');
+          this.authService.refreshMe();
           this.saving.set(false);
           this.router.navigate(['/teams', id]);
         },
@@ -226,6 +230,7 @@ export class TeamsFormComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
+          this.authService.refreshMe();
           this.messageService.add({
             severity: 'success',
             summary: this.transloco.translate('common.success'),
@@ -253,9 +258,25 @@ export class TeamsFormComponent implements OnInit {
 
   private applyServerError(err: HttpErrorResponse): void {
     const body = err?.error as
-      | { code?: string; detail?: string; fields?: FieldErrors }
+      | {
+          code?: string;
+          detail?: string;
+          fields?: FieldErrors;
+          used?: number;
+          max?: number;
+        }
       | null
       | undefined;
+
+    if (err.status === 403 && body?.code === 'team_quota_exceeded') {
+      this.quotaExceeded.set({
+        used: typeof body.used === 'number' ? body.used : 0,
+        max: typeof body.max === 'number' ? body.max : 0,
+      });
+      this.errorMessage.set(body.detail ?? 'teams.errors.team_quota_exceeded');
+      this.authService.refreshMe();
+      return;
+    }
 
     if (body?.fields && Object.keys(body.fields).length > 0) {
       this.fieldErrors.set(body.fields);

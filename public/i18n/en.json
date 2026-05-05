@@ -265,6 +265,14 @@
       "cancel_confirm_message": "The invitation will be cancelled and can no longer be used.",
       "cancelled": "Invitation cancelled."
     },
+    "quota": {
+      "chip_label": "{{used}}/{{max}} teams",
+      "tooltip_full": "Quota reached ({{used}}/{{max}}). Archive one of your teams or contact an admin to raise your quota.",
+      "tooltip_legacy": "You manage {{used}} teams, your quota is {{max}}. You can keep using them but cannot create new ones.",
+      "exceeded_title": "Team quota reached",
+      "view_my_teams": "View my teams",
+      "request_increase": "Request a quota increase"
+    },
     "magic": {
       "eyebrow": "Join request",
       "back_to_dashboard": "Back to dashboard",

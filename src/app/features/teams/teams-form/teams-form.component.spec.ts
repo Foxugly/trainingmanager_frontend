@@ -58,6 +58,7 @@ interface ProtectedFields {
   saving(): boolean;
   errorMessage(): string | null;
   fieldErrors(): { [k: string]: string[] } | null;
+  quotaExceeded(): { used: number; max: number } | null;
   availableSports(): Sport[];
   availableManagers(): CustomUserPublic[];
   form: {
@@ -116,7 +117,7 @@ describe('TeamsFormComponent', () => {
         MessageService,
         { provide: TeamsService, useValue: teamsMock },
         { provide: SportsService, useValue: sportsMock },
-        { provide: AuthService, useValue: { currentUser: userSig.asReadonly() } },
+        { provide: AuthService, useValue: { currentUser: userSig.asReadonly(), refreshMe: vi.fn() } },
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: { get: () => routeIdParam } } },
@@ -230,6 +231,28 @@ describe('TeamsFormComponent', () => {
         notify_managers_on_join_request: false,
       }),
     );
+  });
+
+  it('on create 403 team_quota_exceeded → quotaExceeded set, no navigation, refreshMe called', async () => {
+    teamsMock.teamsCreate.mockReturnValueOnce(
+      throwError(() => ({
+        status: 403,
+        error: {
+          code: 'team_quota_exceeded',
+          detail: 'You have reached your team quota.',
+          used: 3,
+          max: 3,
+          can_create: false,
+        },
+      })),
+    );
+    const authService = TestBed.inject(AuthService) as unknown as { refreshMe: ReturnType<typeof vi.fn> };
+    access(component).form.patchValue({ name: 'X', sport_id: 1, language: 'fr' });
+    access(component).submit();
+    expect(access(component).quotaExceeded()).toEqual({ used: 3, max: 3 });
+    expect(access(component).errorMessage()).toBe('You have reached your team quota.');
+    expect(router.navigate).not.toHaveBeenCalled();
+    expect(authService.refreshMe).toHaveBeenCalled();
   });
 
   it('confirmDeactivate triggers a partialUpdate with is_active=false on accept', async () => {

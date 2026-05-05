@@ -49,6 +49,13 @@ export class TeamsListComponent implements OnInit {
     return this.teams().map((t) => ({ ...t, role: computeTeamRole(t, userId) }));
   });
 
+  protected readonly quota = computed(() => this.authService.currentUser()?.team_quota ?? null);
+  protected readonly canCreate = computed(() => this.quota()?.can_create === true);
+  protected readonly quotaIsLegacy = computed(() => {
+    const q = this.quota();
+    return q !== null && q.used > q.max;
+  });
+
   protected readonly roleClasses: Record<TeamRole, string> = {
     owner: 'text-xs font-semibold px-2 py-1 rounded bg-blue-100 text-blue-800',
     manager: 'text-xs font-semibold px-2 py-1 rounded bg-purple-100 text-purple-800',

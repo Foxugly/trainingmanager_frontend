@@ -1,18 +1,60 @@
 <div>
-  <div class="flex justify-between items-center mb-6 gap-4 flex-wrap">
+  <div class="flex justify-between items-start mb-6 gap-4 flex-wrap">
     <h1 class="text-2xl font-bold">{{ 'teams.list.title' | transloco }}</h1>
-    <div class="flex items-center gap-2 flex-wrap">
-      <a [routerLink]="['/teams', 'discover']">
-        <p-button
-          [label]="'teams.list.discover_cta' | transloco"
-          icon="pi pi-compass"
-          severity="secondary"
-          [outlined]="true"
-        />
-      </a>
-      <a [routerLink]="['/teams', 'new']">
-        <p-button [label]="'teams.list.new' | transloco" icon="pi pi-plus" />
-      </a>
+    <div class="flex flex-col items-end gap-1">
+      <div class="flex items-center gap-2 flex-wrap">
+        <a [routerLink]="['/teams', 'discover']">
+          <p-button
+            [label]="'teams.list.discover_cta' | transloco"
+            icon="pi pi-compass"
+            severity="secondary"
+            [outlined]="true"
+          />
+        </a>
+        @if (quota(); as q) {
+          <span
+            class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium"
+            [class.bg-gray-100]="canCreate()"
+            [class.text-gray-700]="canCreate()"
+            [class.bg-amber-100]="!canCreate() && !quotaIsLegacy()"
+            [class.text-amber-800]="!canCreate() && !quotaIsLegacy()"
+            [class.bg-red-100]="quotaIsLegacy()"
+            [class.text-red-800]="quotaIsLegacy()"
+            [title]="
+              canCreate()
+                ? ('teams.quota.chip_label' | transloco: { used: q.used, max: q.max })
+                : quotaIsLegacy()
+                  ? ('teams.quota.tooltip_legacy' | transloco: { used: q.used, max: q.max })
+                  : ('teams.quota.tooltip_full' | transloco: { used: q.used, max: q.max })
+            "
+          >
+            <i class="pi pi-bookmark text-[10px]" aria-hidden="true"></i>
+            {{ q.used }}/{{ q.max }}
+          </span>
+        }
+        @if (canCreate()) {
+          <a [routerLink]="['/teams', 'new']">
+            <p-button [label]="'teams.list.new' | transloco" icon="pi pi-plus" />
+          </a>
+        } @else {
+          <p-button
+            [label]="'teams.list.new' | transloco"
+            icon="pi pi-plus"
+            [disabled]="true"
+          />
+        }
+      </div>
+      @if (!canCreate()) {
+        @if (quota(); as q) {
+          <small class="text-xs text-gray-500 max-w-md text-right">
+            @if (quotaIsLegacy()) {
+              {{ 'teams.quota.tooltip_legacy' | transloco: { used: q.used, max: q.max } }}
+            } @else {
+              {{ 'teams.quota.tooltip_full' | transloco: { used: q.used, max: q.max } }}
+            }
+          </small>
+        }
+      }
     </div>
   </div>
 

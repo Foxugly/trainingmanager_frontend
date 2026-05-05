@@ -265,6 +265,14 @@
       "cancel_confirm_message": "De uitnodiging wordt geannuleerd en kan niet meer worden gebruikt.",
       "cancelled": "Uitnodiging geannuleerd."
     },
+    "quota": {
+      "chip_label": "{{used}}/{{max}} teams",
+      "tooltip_full": "Quota bereikt ({{used}}/{{max}}). Archiveer een van je teams of vraag een admin om je quota te verhogen.",
+      "tooltip_legacy": "Je beheert {{used}} teams, je quota is {{max}}. Je kan ze blijven gebruiken maar geen nieuwe meer aanmaken.",
+      "exceeded_title": "Teamquota bereikt",
+      "view_my_teams": "Mijn teams bekijken",
+      "request_increase": "Quotaverhoging aanvragen"
+    },
     "magic": {
       "eyebrow": "Aanvraag om lid te worden",
       "back_to_dashboard": "Terug naar dashboard",

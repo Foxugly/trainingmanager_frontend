@@ -561,6 +561,7 @@ export class TeamsDetailComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
+          this.authService.refreshMe();
           this.messageService.add({
             severity: 'success',
             summary: this.transloco.translate('common.success'),

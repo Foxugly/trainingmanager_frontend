@@ -93,6 +93,7 @@ export * from './team-join-request-magic-action-post';
 export * from './team-join-request-magic-action-response';
 export * from './team-membership';
 export * from './team-minimal';
+export * from './team-quota-status';
 export * from './token-obtain-pair-response';
 export * from './token-refresh';
 export * from './validate-invitation';

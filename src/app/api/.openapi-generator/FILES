@@ -134,6 +134,7 @@ model/team-join-request-magic-action-response.ts
 model/team-join-request.ts
 model/team-membership.ts
 model/team-minimal.ts
+model/team-quota-status.ts
 model/team.ts
 model/token-obtain-pair-response.ts
 model/token-refresh.ts

@@ -96,6 +96,16 @@ export class AuthService {
     return this.meService.meRetrieve().pipe(tap((user) => this._currentUser.set(user)));
   }
 
+  /**
+   * Fire-and-forget /me/ resync. Use after actions that change derived
+   * fields like team_quota (team create, archive, restore). Errors are
+   * swallowed — the worst case is a slightly stale UI until the next
+   * navigation triggers a fresh load.
+   */
+  refreshMe(): void {
+    this.fetchMe().subscribe({ error: () => {} });
+  }
+
   setCurrentUser(user: Me): void {
     this._currentUser.set(user);
   }
