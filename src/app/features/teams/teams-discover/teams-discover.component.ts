@@ -13,13 +13,14 @@ import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
+import { Skeleton } from 'primeng/skeleton';
 import { TeamsService } from '../../../api/api/teams.service';
 import { Team } from '../../../api/model/team';
 import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-teams-discover',
-  imports: [CommonModule, RouterLink, Button, InputText, TranslocoPipe],
+  imports: [CommonModule, RouterLink, Button, InputText, Skeleton, TranslocoPipe],
   templateUrl: './teams-discover.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -15,6 +15,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
+import { Skeleton } from 'primeng/skeleton';
 import { ToggleSwitch } from 'primeng/toggleswitch';
 import { ProgramsService } from '../../../api/api/programs.service';
 import { TeamsService } from '../../../api/api/teams.service';
@@ -25,7 +26,7 @@ import { computeTeamRole } from '../../teams/teams-list/teams-list.component';
 
 @Component({
   selector: 'app-programs-list',
-  imports: [CommonModule, FormsModule, RouterLink, Button, ToggleSwitch, TranslocoPipe],
+  imports: [CommonModule, FormsModule, RouterLink, Button, Skeleton, ToggleSwitch, TranslocoPipe],
   templateUrl: './programs-list.component.html',
   styleUrl: './programs-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

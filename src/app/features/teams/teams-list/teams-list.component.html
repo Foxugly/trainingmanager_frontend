@@ -59,7 +59,17 @@
   </div>
 
   @if (loading()) {
-    <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" aria-hidden="true">
+      @for (_ of [1, 2, 3, 4, 5, 6]; track $index) {
+        <div class="p-4 bg-white border border-gray-200 rounded-lg">
+          <div class="flex items-start justify-between gap-2 mb-3">
+            <p-skeleton width="60%" height="1.25rem" />
+            <p-skeleton width="3.5rem" height="1.25rem" borderRadius="999px" />
+          </div>
+          <p-skeleton width="40%" height="0.875rem" />
+        </div>
+      }
+    </div>
   } @else if (teamsWithRole().length === 0) {
     <div class="text-center py-12 text-gray-500">
       <p>{{ 'teams.list.empty' | transloco }}</p>

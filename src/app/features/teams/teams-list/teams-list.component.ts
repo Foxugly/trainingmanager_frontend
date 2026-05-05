@@ -12,6 +12,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
+import { Skeleton } from 'primeng/skeleton';
 import { TeamsService } from '../../../api/api/teams.service';
 import { Team } from '../../../api/model/team';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -30,7 +31,7 @@ export interface TeamWithRole extends Team {
 
 @Component({
   selector: 'app-teams-list',
-  imports: [CommonModule, RouterLink, Button, TranslocoPipe],
+  imports: [CommonModule, RouterLink, Button, Skeleton, TranslocoPipe],
   templateUrl: './teams-list.component.html',
   styleUrl: './teams-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -44,7 +44,19 @@
     <section class="mb-10">
       <h2 class="text-lg font-semibold mb-3">{{ 'dashboard.teams.title' | transloco }}</h2>
       @if (loadingTeams()) {
-        <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" aria-hidden="true">
+          @for (_ of [1, 2, 3]; track $index) {
+            <div class="p-4 bg-white border border-gray-200 rounded-lg">
+              <p-skeleton width="55%" height="1rem" styleClass="mb-1" />
+              <p-skeleton width="35%" height="0.75rem" styleClass="mb-3" />
+              <div class="grid grid-cols-3 gap-2">
+                <p-skeleton height="2rem" />
+                <p-skeleton height="2rem" />
+                <p-skeleton height="2rem" />
+              </div>
+            </div>
+          }
+        </div>
       } @else if (errorTeams()) {
         <p-message severity="error" [text]="'dashboard.errors.teams' | transloco" />
       } @else if (teamCards().length === 0) {
@@ -99,7 +111,17 @@
         </a>
       </div>
       @if (loadingUpcoming()) {
-        <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+        <ul class="divide-y divide-gray-200 border border-gray-200 rounded" aria-hidden="true">
+          @for (_ of [1, 2, 3]; track $index) {
+            <li class="p-3 flex items-center justify-between gap-3">
+              <div class="flex-1">
+                <p-skeleton width="60%" height="0.875rem" styleClass="mb-1" />
+                <p-skeleton width="40%" height="0.75rem" />
+              </div>
+              <p-skeleton width="5rem" height="0.875rem" />
+            </li>
+          }
+        </ul>
       } @else if (errorUpcoming()) {
         <p-message severity="error" [text]="'dashboard.errors.upcoming' | transloco" />
       } @else if (upcomingDisplayed().length === 0) {
@@ -144,7 +166,17 @@
         {{ 'dashboard.attendances_pending.title' | transloco }}
       </h2>
       @if (loadingPending()) {
-        <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+        <ul class="divide-y divide-gray-200 border border-gray-200 rounded" aria-hidden="true">
+          @for (_ of [1, 2]; track $index) {
+            <li class="p-3 flex items-center justify-between gap-3">
+              <div class="flex-1">
+                <p-skeleton width="55%" height="0.875rem" styleClass="mb-1" />
+                <p-skeleton width="45%" height="0.75rem" />
+              </div>
+              <p-skeleton width="6rem" height="2rem" borderRadius="0.5rem" />
+            </li>
+          }
+        </ul>
       } @else if (errorPending()) {
         <p-message severity="error" [text]="'dashboard.errors.pending' | transloco" />
       } @else if (attendancePending().length === 0) {
@@ -190,7 +222,18 @@
     <section class="mb-10">
       <h2 class="text-lg font-semibold mb-3">{{ 'dashboard.member_teams.title' | transloco }}</h2>
       @if (loadingMemberTeams()) {
-        <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" aria-hidden="true">
+          @for (_ of [1, 2, 3]; track $index) {
+            <div class="p-4 bg-white border border-gray-200 rounded-lg">
+              <div class="flex items-start justify-between gap-2 mb-1">
+                <p-skeleton width="55%" height="1rem" />
+                <p-skeleton width="3rem" height="1rem" borderRadius="0.25rem" />
+              </div>
+              <p-skeleton width="35%" height="0.75rem" styleClass="mb-3" />
+              <p-skeleton height="2rem" />
+            </div>
+          }
+        </div>
       } @else if (errorMemberTeams()) {
         <p-message severity="error" [text]="'dashboard.errors.member_teams' | transloco" />
       } @else if (memberTeamCards().length === 0) {
@@ -227,7 +270,17 @@
         {{ 'dashboard.upcoming_events_athlete.title' | transloco }}
       </h2>
       @if (loadingMemberUpcoming()) {
-        <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+        <ul class="divide-y divide-gray-200 border border-gray-200 rounded" aria-hidden="true">
+          @for (_ of [1, 2, 3]; track $index) {
+            <li class="p-3 flex items-center justify-between gap-3">
+              <div class="flex-1">
+                <p-skeleton width="60%" height="0.875rem" styleClass="mb-1" />
+                <p-skeleton width="40%" height="0.75rem" />
+              </div>
+              <p-skeleton width="5rem" height="0.875rem" />
+            </li>
+          }
+        </ul>
       } @else if (errorMemberUpcoming()) {
         <p-message severity="error" [text]="'dashboard.errors.upcoming' | transloco" />
       } @else if (memberUpcomingDisplayed().length === 0) {
@@ -272,7 +325,17 @@
         {{ 'dashboard.attendance_history.title' | transloco }}
       </h2>
       @if (loadingHistory()) {
-        <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+        <ul class="divide-y divide-gray-200 border border-gray-200 rounded" aria-hidden="true">
+          @for (_ of [1, 2, 3]; track $index) {
+            <li class="p-3 flex items-center justify-between gap-3">
+              <div class="flex-1">
+                <p-skeleton width="55%" height="0.875rem" styleClass="mb-1" />
+                <p-skeleton width="45%" height="0.75rem" />
+              </div>
+              <p-skeleton width="4rem" height="1.25rem" borderRadius="0.25rem" />
+            </li>
+          }
+        </ul>
       } @else if (errorHistory()) {
         <p-message severity="error" [text]="'dashboard.errors.history' | transloco" />
       } @else if (attendanceHistory().length === 0) {
