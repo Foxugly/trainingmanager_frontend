@@ -40,7 +40,9 @@
       "training_blocks": "Trainingsblokken",
       "block_label": "Blok",
       "break": "Rust",
-      "no_exercises": "Geen oefening in dit blok"
+      "no_exercises": "Geen oefening in dit blok",
+      "rounds_partial_warn": "{{count}} blok(ken) konden niet worden geladen.",
+      "rounds_load_failed": "Trainingsblokken konden niet worden geladen."
     },
     "fields": {
       "date": "Datum",

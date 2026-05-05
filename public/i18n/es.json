@@ -40,7 +40,9 @@
       "training_blocks": "Bloques de entrenamiento",
       "block_label": "Bloque",
       "break": "Descanso",
-      "no_exercises": "Ningún ejercicio en este bloque"
+      "no_exercises": "Ningún ejercicio en este bloque",
+      "rounds_partial_warn": "{{count}} bloque(s) no se han podido cargar.",
+      "rounds_load_failed": "No se pudieron cargar los bloques de entrenamiento."
     },
     "fields": {
       "date": "Fecha",

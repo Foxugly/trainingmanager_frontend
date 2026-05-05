@@ -40,7 +40,9 @@
       "training_blocks": "Blocchi di allenamento",
       "block_label": "Blocco",
       "break": "Recupero",
-      "no_exercises": "Nessun esercizio in questo blocco"
+      "no_exercises": "Nessun esercizio in questo blocco",
+      "rounds_partial_warn": "{{count}} blocco/blocchi non hanno potuto essere caricati.",
+      "rounds_load_failed": "Impossibile caricare i blocchi di allenamento."
     },
     "fields": {
       "date": "Data",

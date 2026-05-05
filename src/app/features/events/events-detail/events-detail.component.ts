@@ -75,6 +75,9 @@ export class EventsDetailComponent implements OnInit {
   protected readonly rounds = signal<Round[]>([]);
   protected readonly exercisesByRound = signal<Map<number, Exercise[]>>(new Map());
   protected readonly loadingRounds = signal(false);
+  protected readonly roundsLoadError = signal<{ kind: 'partial' | 'full'; count: number } | null>(
+    null,
+  );
 
   protected readonly currentUserRole = computed<TeamRole | null>(() => {
     const t = this.team();
@@ -113,7 +116,9 @@ export class EventsDetailComponent implements OnInit {
           if (e.refer_program?.id != null) {
             this.loadProgramTeam(e.refer_program.id);
           }
-          this.loadRoundsAndExercises(e.rounds ?? []);
+          // Fire-and-forget: loadRoundsAndExercises has its own try/catch + finally
+          // so errors are surfaced via roundsLoadError signal, not thrown.
+          void this.loadRoundsAndExercises(e.rounds ?? []);
         },
         error: () => {
           this.notFound.set(true);
@@ -123,6 +128,7 @@ export class EventsDetailComponent implements OnInit {
   }
 
   private async loadRoundsAndExercises(roundIds: readonly number[]): Promise<void> {
+    this.roundsLoadError.set(null);
     if (roundIds.length === 0) {
       this.rounds.set([]);
       this.exercisesByRound.set(new Map());
@@ -130,9 +136,26 @@ export class EventsDetailComponent implements OnInit {
     }
     this.loadingRounds.set(true);
     try {
-      const fetchedRounds = await Promise.all(
+      const roundResults = await Promise.allSettled(
         roundIds.map((rid) => firstValueFrom(this.roundsService.roundsRetrieve(rid))),
       );
+      const fetchedRounds: Round[] = [];
+      let roundFailures = 0;
+      for (const r of roundResults) {
+        if (r.status === 'fulfilled') {
+          fetchedRounds.push(r.value);
+        } else {
+          roundFailures++;
+          console.warn('roundsRetrieve failed', r.reason);
+        }
+      }
+      if (roundFailures > 0) {
+        this.roundsLoadError.set({
+          kind: fetchedRounds.length === 0 ? 'full' : 'partial',
+          count: roundFailures,
+        });
+      }
+
       const sortedRounds = [...fetchedRounds].sort(
         (a, b) => (a.order ?? 0) - (b.order ?? 0),
       );
@@ -140,10 +163,18 @@ export class EventsDetailComponent implements OnInit {
 
       const exerciseFetches = sortedRounds.map(async (round) => {
         const ids = round.exercises ?? [];
-        const fetched = await Promise.all(
+        const settled = await Promise.allSettled(
           ids.map((eid) => firstValueFrom(this.exercisesService.exercisesRetrieve(eid))),
         );
-        const sorted = [...fetched].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+        const fulfilled: Exercise[] = [];
+        for (const s of settled) {
+          if (s.status === 'fulfilled') {
+            fulfilled.push(s.value);
+          } else {
+            console.warn('exercisesRetrieve failed', s.reason);
+          }
+        }
+        const sorted = [...fulfilled].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
         return [round.id, sorted] as const;
       });
       const entries = await Promise.all(exerciseFetches);
@@ -152,6 +183,9 @@ export class EventsDetailComponent implements OnInit {
         map.set(rid, list);
       }
       this.exercisesByRound.set(map);
+    } catch (err) {
+      console.error('Unexpected error in loadRoundsAndExercises', err);
+      this.roundsLoadError.set({ kind: 'full', count: roundIds.length });
     } finally {
       this.loadingRounds.set(false);
     }

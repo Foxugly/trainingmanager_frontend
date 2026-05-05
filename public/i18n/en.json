@@ -40,7 +40,9 @@
       "training_blocks": "Training blocks",
       "block_label": "Block",
       "break": "Rest",
-      "no_exercises": "No exercise in this block"
+      "no_exercises": "No exercise in this block",
+      "rounds_partial_warn": "{{count}} block(s) could not be loaded.",
+      "rounds_load_failed": "Could not load training blocks."
     },
     "fields": {
       "date": "Date",

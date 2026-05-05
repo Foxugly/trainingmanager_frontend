@@ -101,11 +101,31 @@
       </section>
     }
 
+    @if (roundsLoadError(); as err) {
+      @if (err.kind === 'full') {
+        <section class="mb-8">
+          <p-message
+            severity="error"
+            [text]="'events.detail.rounds_load_failed' | transloco"
+          />
+        </section>
+      }
+    }
+
     @if (rounds().length > 0 || loadingRounds()) {
       <section class="mb-8">
         <h2 class="text-lg font-semibold mb-3">
           {{ 'events.detail.training_blocks' | transloco }}
         </h2>
+        @if (roundsLoadError(); as err) {
+          @if (err.kind === 'partial') {
+            <p-message
+              severity="warn"
+              [text]="'events.detail.rounds_partial_warn' | transloco: { count: err.count }"
+              styleClass="mb-3 block"
+            />
+          }
+        }
         @if (loadingRounds()) {
           <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
         } @else {
