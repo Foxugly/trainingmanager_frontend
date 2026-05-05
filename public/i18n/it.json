@@ -78,7 +78,11 @@
     },
     "actions": {
       "edit": "Modifica",
-      "attendance": "Registra presenze"
+      "attendance": "Registra presenze",
+      "delete": "Elimina",
+      "delete_confirm_title": "Eliminare questa sessione?",
+      "delete_confirm_message": "La sessione « {{name}} » verrà eliminata definitivamente, insieme ai suoi blocchi ed esercizi. L'operazione è irreversibile.",
+      "deleted": "Sessione eliminata."
     },
     "attendance": {
       "title": "Registrazione presenze",

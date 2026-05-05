@@ -78,7 +78,11 @@
     },
     "actions": {
       "edit": "Edit",
-      "attendance": "Set attendance"
+      "attendance": "Set attendance",
+      "delete": "Delete",
+      "delete_confirm_title": "Delete this session?",
+      "delete_confirm_message": "Session \"{{name}}\" will be permanently deleted, along with its blocks and exercises. This cannot be undone.",
+      "deleted": "Session deleted."
     },
     "attendance": {
       "title": "Attendance entry",

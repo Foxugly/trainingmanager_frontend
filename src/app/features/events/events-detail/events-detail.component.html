@@ -44,6 +44,14 @@
                 [outlined]="true"
               />
             </a>
+            <p-button
+              [label]="'events.actions.delete' | transloco"
+              icon="pi pi-trash"
+              severity="danger"
+              [outlined]="true"
+              [loading]="deleting()"
+              (onClick)="confirmDelete()"
+            />
           }
           @if (canRegenerate()) {
             <p-button

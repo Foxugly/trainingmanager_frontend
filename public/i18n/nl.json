@@ -78,7 +78,11 @@
     },
     "actions": {
       "edit": "Bewerken",
-      "attendance": "Aanwezigheden invoeren"
+      "attendance": "Aanwezigheden invoeren",
+      "delete": "Verwijderen",
+      "delete_confirm_title": "Deze sessie verwijderen?",
+      "delete_confirm_message": "Sessie « {{name}} » wordt permanent verwijderd, samen met haar blokken en oefeningen. Dit kan niet ongedaan worden gemaakt.",
+      "deleted": "Sessie verwijderd."
     },
     "attendance": {
       "title": "Aanwezigheden invoeren",

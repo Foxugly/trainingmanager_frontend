@@ -78,7 +78,11 @@
     },
     "actions": {
       "edit": "Editar",
-      "attendance": "Registrar asistencias"
+      "attendance": "Registrar asistencias",
+      "delete": "Eliminar",
+      "delete_confirm_title": "¿Eliminar esta sesión?",
+      "delete_confirm_message": "La sesión « {{name}} » se eliminará de forma permanente, junto con sus bloques y ejercicios. Esta acción es irreversible.",
+      "deleted": "Sesión eliminada."
     },
     "attendance": {
       "title": "Registro de asistencias",

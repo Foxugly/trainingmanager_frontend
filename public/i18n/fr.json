@@ -78,7 +78,11 @@
     },
     "actions": {
       "edit": "Modifier",
-      "attendance": "Saisir présences"
+      "attendance": "Saisir présences",
+      "delete": "Supprimer",
+      "delete_confirm_title": "Supprimer cette séance ?",
+      "delete_confirm_message": "La séance « {{name}} » sera supprimée définitivement, ainsi que ses blocs et exercices. Cette action est irréversible.",
+      "deleted": "Séance supprimée."
     },
     "attendance": {
       "title": "Saisie des présences",

@@ -1,7 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { ActivatedRoute, provideRouter } from '@angular/router';
+import { ActivatedRoute, Router, provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { of, throwError } from 'rxjs';
@@ -130,6 +130,8 @@ interface ProtectedFields {
   canRegenerate(): boolean;
   canManage(): boolean;
   confirmRegenerate(): void;
+  confirmDelete(): void;
+  deleting(): boolean;
   rounds(): Round[];
   exercisesByRound(): Map<number, Exercise[]>;
   loadingRounds(): boolean;
@@ -141,6 +143,7 @@ describe('EventsDetailComponent', () => {
   let eventsMock: {
     eventsRetrieve: ReturnType<typeof vi.fn>;
     eventsGenerateTrainingCreate: ReturnType<typeof vi.fn>;
+    eventsDestroy: ReturnType<typeof vi.fn>;
   };
   let programsMock: { programsRetrieve: ReturnType<typeof vi.fn> };
   let teamsMock: { teamsRetrieve: ReturnType<typeof vi.fn> };
@@ -175,6 +178,7 @@ describe('EventsDetailComponent', () => {
           tokens_used: { input: 0, output: 0, total: 0 },
         }),
       ),
+      eventsDestroy: vi.fn().mockReturnValue(of(null)),
     };
     programsMock = { programsRetrieve: vi.fn().mockReturnValue(of(program)) };
     teamsMock = { teamsRetrieve: vi.fn().mockReturnValue(of(team)) };
@@ -304,6 +308,26 @@ describe('EventsDetailComponent', () => {
 
   it('canManage drives both Edit and Saisir présences buttons visibility (owner sees, member-only does not)', async () => {
     expect(access(component).canManage()).toBe(true);
+    await setup('7', eventNoRounds, otherUser);
+    expect(access(component).canManage()).toBe(false);
+  });
+
+  it('confirmDelete calls eventsDestroy on accept and routes to /programs/<programId>', async () => {
+    const router = fixture.debugElement.injector.get(Router);
+    const navSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    const confirmation = fixture.debugElement.injector.get(ConfirmationService);
+    vi.spyOn(confirmation, 'confirm').mockImplementation((cfg) => {
+      cfg.accept?.();
+      return confirmation;
+    });
+    access(component).confirmDelete();
+    await new Promise((r) => setTimeout(r, 0));
+    expect(eventsMock.eventsDestroy).toHaveBeenCalledWith(7);
+    expect(navSpy).toHaveBeenCalledWith(['/programs', 4]);
+    expect(access(component).deleting()).toBe(false);
+  });
+
+  it('confirmDelete is hidden for member-only users via canManage()', async () => {
     await setup('7', eventNoRounds, otherUser);
     expect(access(component).canManage()).toBe(false);
   });

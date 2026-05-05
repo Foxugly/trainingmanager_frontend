@@ -10,7 +10,7 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
@@ -48,6 +48,7 @@ import { TeamRole, computeTeamRole } from '../../teams/teams-list/teams-list.com
 })
 export class EventsDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly eventsService = inject(EventsService);
   private readonly programsService = inject(ProgramsService);
   private readonly teamsService = inject(TeamsService);
@@ -66,6 +67,7 @@ export class EventsDetailComponent implements OnInit {
   protected readonly loading = signal(false);
   protected readonly notFound = signal(false);
   protected readonly regenerating = signal(false);
+  protected readonly deleting = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly lastResult = signal<GenerateTrainingResponse | null>(null);
   protected readonly rounds = signal<Round[]>([]);
@@ -247,6 +249,52 @@ export class EventsDetailComponent implements OnInit {
       summary: this.transloco.translate('common.success'),
       detail: this.transloco.translate('events.regenerate.success_title'),
     });
+  }
+
+  protected confirmDelete(): void {
+    const event = this.event();
+    if (!event) return;
+    this.confirmationService.confirm({
+      header: this.transloco.translate('events.actions.delete_confirm_title'),
+      message: this.transloco.translate('events.actions.delete_confirm_message', {
+        name: event.name,
+      }),
+      acceptLabel: this.transloco.translate('events.actions.delete'),
+      rejectLabel: this.transloco.translate('common.cancel'),
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => this.deleteEvent(event),
+    });
+  }
+
+  private deleteEvent(event: Event): void {
+    const programId = event.refer_program?.id ?? null;
+    this.deleting.set(true);
+    this.eventsService
+      .eventsDestroy(event.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.deleting.set(false);
+          this.messageService.add({
+            severity: 'success',
+            summary: this.transloco.translate('common.success'),
+            detail: this.transloco.translate('events.actions.deleted'),
+          });
+          if (programId !== null) {
+            this.router.navigate(['/programs', programId]);
+          } else {
+            this.router.navigate(['/events']);
+          }
+        },
+        error: () => {
+          this.deleting.set(false);
+          this.messageService.add({
+            severity: 'error',
+            summary: this.transloco.translate('common.error'),
+            detail: this.transloco.translate('events.errors.unknown'),
+          });
+        },
+      });
   }
 
   private applyError(err: HttpErrorResponse): void {
