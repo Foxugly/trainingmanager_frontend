@@ -170,7 +170,7 @@
           @for (card of teamCards(); track card.team.id) {
             <a
               [routerLink]="['/teams', card.team.id]"
-              class="block p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md hover:border-blue-300 transition"
+              class="block p-4 bg-white border border-gray-200 rounded-lg transition duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-indigo-300"
             >
               <h3 class="font-semibold text-base text-gray-900 mb-1">{{ card.team.name }}</h3>
               <p class="text-xs text-gray-500 mb-3">{{ card.team.sport.name }}</p>
@@ -364,7 +364,7 @@
           @for (card of memberTeamCards(); track card.team.id) {
             <a
               [routerLink]="['/teams', card.team.id]"
-              class="block p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md hover:border-blue-300 transition"
+              class="block p-4 bg-white border border-gray-200 rounded-lg transition duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-indigo-300"
             >
               <div class="flex items-start justify-between gap-2 mb-1">
                 <h3 class="font-semibold text-base text-gray-900">{{ card.team.name }}</h3>

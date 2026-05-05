@@ -69,7 +69,7 @@
       @for (team of filtered(); track team.id) {
         <a
           [routerLink]="['/teams', team.id]"
-          class="block rounded-xl border border-gray-200 bg-white p-5 transition hover:border-indigo-300 hover:shadow-md"
+          class="block rounded-xl border border-gray-200 bg-white p-5 transition duration-200 hover:-translate-y-0.5 hover:border-indigo-300 hover:shadow-md"
         >
           <div class="flex items-start gap-3">
             <div class="shrink-0 size-11 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center">
