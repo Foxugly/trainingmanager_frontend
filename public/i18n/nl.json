@@ -107,10 +107,17 @@
     },
     "detail": {
       "not_found": "Programma niet gevonden",
-      "events_count": "Sessies",
-      "events_label": "geplande sessie(s)",
       "generate": "Sessies genereren",
-      "archived_banner": "Dit programma is gearchiveerd."
+      "archived_banner": "Dit programma is gearchiveerd.",
+      "calendar": {
+        "title": "Kalender",
+        "previous_month": "Vorige maand",
+        "next_month": "Volgende maand",
+        "go_to_start": "Ga naar begin",
+        "new_event": "Nieuwe sessie",
+        "month_events_title": "Sessies van {{month}}",
+        "no_events_this_month": "Geen sessie deze maand."
+      }
     },
     "generate": {
       "dialog_title": "AI-generatie van sessies",

@@ -107,10 +107,17 @@
     },
     "detail": {
       "not_found": "Programme introuvable",
-      "events_count": "Séances",
-      "events_label": "séance(s) planifiée(s)",
       "generate": "Générer des séances",
-      "archived_banner": "Ce programme est archivé."
+      "archived_banner": "Ce programme est archivé.",
+      "calendar": {
+        "title": "Calendrier",
+        "previous_month": "Mois précédent",
+        "next_month": "Mois suivant",
+        "go_to_start": "Aller au début",
+        "new_event": "Nouvelle séance",
+        "month_events_title": "Séances de {{month}}",
+        "no_events_this_month": "Aucune séance ce mois-ci."
+      }
     },
     "generate": {
       "dialog_title": "Génération IA des séances",

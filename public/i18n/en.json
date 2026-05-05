@@ -107,10 +107,17 @@
     },
     "detail": {
       "not_found": "Program not found",
-      "events_count": "Sessions",
-      "events_label": "scheduled session(s)",
       "generate": "Generate sessions",
-      "archived_banner": "This program is archived."
+      "archived_banner": "This program is archived.",
+      "calendar": {
+        "title": "Calendar",
+        "previous_month": "Previous month",
+        "next_month": "Next month",
+        "go_to_start": "Go to start",
+        "new_event": "New session",
+        "month_events_title": "{{month}} sessions",
+        "no_events_this_month": "No session this month."
+      }
     },
     "generate": {
       "dialog_title": "AI session generation",

@@ -107,10 +107,17 @@
     },
     "detail": {
       "not_found": "Programma non trovato",
-      "events_count": "Sessioni",
-      "events_label": "sessione/i pianificata/e",
       "generate": "Genera sessioni",
-      "archived_banner": "Questo programma è archiviato."
+      "archived_banner": "Questo programma è archiviato.",
+      "calendar": {
+        "title": "Calendario",
+        "previous_month": "Mese precedente",
+        "next_month": "Mese successivo",
+        "go_to_start": "Vai all'inizio",
+        "new_event": "Nuova sessione",
+        "month_events_title": "Sessioni di {{month}}",
+        "no_events_this_month": "Nessuna sessione questo mese."
+      }
     },
     "generate": {
       "dialog_title": "Generazione AI delle sessioni",
