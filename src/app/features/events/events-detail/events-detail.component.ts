@@ -30,6 +30,7 @@ import { Team } from '../../../api/model/team';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AiErrorMappingService } from '../../ai/ai-error-mapping.service';
 import { TeamRole, computeTeamRole } from '../../teams/teams-list/teams-list.component';
+import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-header.component';
 
 @Component({
   selector: 'app-events-detail',
@@ -40,6 +41,7 @@ import { TeamRole, computeTeamRole } from '../../teams/teams-list/teams-list.com
     ConfirmDialog,
     Message,
     TranslocoPipe,
+    DetailHeaderComponent,
   ],
   templateUrl: './events-detail.component.html',
   styleUrl: './events-detail.component.scss',

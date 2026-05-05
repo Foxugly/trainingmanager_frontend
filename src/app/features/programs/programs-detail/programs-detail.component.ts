@@ -27,6 +27,7 @@ import {
   GenerateEventsDialogComponent,
   GenerateEventsResult,
 } from '../generate-events-dialog/generate-events-dialog.component';
+import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-header.component';
 
 const HEX_RE = /^#([0-9a-f]{6}|[0-9a-f]{3})$/i;
 
@@ -89,6 +90,7 @@ function eventDateAsDate(e: Event): Date | null {
     ConfirmDialog,
     GenerateEventsDialogComponent,
     TranslocoPipe,
+    DetailHeaderComponent,
   ],
   templateUrl: './programs-detail.component.html',
   styleUrl: './programs-detail.component.scss',

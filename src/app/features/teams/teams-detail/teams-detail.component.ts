@@ -30,6 +30,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { MemberMembershipService } from '../member-membership.service';
 import { TeamRole, computeTeamRole } from '../teams-list/teams-list.component';
 import { ProgramsListComponent } from '../../programs/programs-list/programs-list.component';
+import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-header.component';
 
 interface FieldErrors {
   [field: string]: string[];
@@ -49,6 +50,7 @@ interface FieldErrors {
     Message,
     TranslocoPipe,
     ProgramsListComponent,
+    DetailHeaderComponent,
   ],
   templateUrl: './teams-detail.component.html',
   styleUrl: './teams-detail.component.scss',

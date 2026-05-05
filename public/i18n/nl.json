@@ -281,7 +281,12 @@
     "back": "Terug",
     "loading": "Laden",
     "error": "Fout",
-    "success": "Gelukt"
+    "success": "Gelukt",
+    "entity": {
+      "team": "Team",
+      "program": "Programma",
+      "event": "Sessie"
+    }
   },
   "dashboard": {
     "greeting": "Hallo {{name}} 👋",

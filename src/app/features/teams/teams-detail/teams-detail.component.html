@@ -1,196 +1,201 @@
 <div>
-  <a [routerLink]="['/teams']" class="text-sm text-blue-600 hover:underline">
-    ← {{ 'common.back' | transloco }}
-  </a>
-
   @if (loading()) {
     <p class="mt-4 text-gray-500">{{ 'common.loading' | transloco }}…</p>
   } @else if (notFound()) {
     <p class="mt-4 text-gray-500">{{ 'teams.detail.not_found' | transloco }}</p>
   } @else if (team(); as t) {
-    <div class="mt-2">
-      <div class="flex items-start justify-between gap-4 mb-6 flex-wrap">
-        <div class="flex items-center gap-3">
-          <h1 class="text-2xl font-bold">{{ t.name }}</h1>
-          @if (currentUserRole(); as role) {
-            <span [class]="roleClasses[role]">
-              {{ 'teams.roles.' + role | transloco }}
-            </span>
-          }
-        </div>
-        @if (canManage()) {
-          <a [routerLink]="['/teams', t.id, 'edit']">
-            <p-button
-              [label]="'teams.detail.edit' | transloco"
-              icon="pi pi-pencil"
-              severity="secondary"
-              [outlined]="true"
-            />
-          </a>
-        }
-      </div>
-
-      <dl class="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2 mb-6 max-w-xl">
-        <dt class="font-semibold text-gray-700">{{ 'teams.fields.sport' | transloco }}</dt>
-        <dd>{{ t.sport.name || '—' }}</dd>
-
-        <dt class="font-semibold text-gray-700">{{ 'teams.fields.language' | transloco }}</dt>
-        <dd>{{ (t.language || '') | uppercase }}</dd>
-
-        <dt class="font-semibold text-gray-700">{{ 'teams.fields.owner' | transloco }}</dt>
-        <dd>
-          {{ t.owner.first_name || t.owner.username || '—' }}
-          @if (t.owner.username && t.owner.first_name) {
-            <span class="text-gray-500 text-sm">(&#64;{{ t.owner.username }})</span>
-          }
-        </dd>
-      </dl>
-
-      <section class="mb-6">
-        <h2 class="text-lg font-semibold mb-2">
-          {{ 'teams.fields.managers' | transloco }} ({{ t.managers.length || 0 }})
-        </h2>
-        @if (t.managers && t.managers.length > 0) {
-          <ul class="list-disc pl-5 text-gray-700">
-            @for (m of t.managers; track m.id) {
-              <li>
-                {{ m.first_name || m.username }}
-                @if (m.first_name && m.username) {
-                  <span class="text-gray-500 text-sm">(&#64;{{ m.username }})</span>
-                }
-              </li>
-            }
-          </ul>
-        } @else {
-          <p class="text-gray-500">{{ 'teams.detail.no_managers' | transloco }}</p>
-        }
-      </section>
-
-      <section class="mb-6">
-        <div class="flex items-center justify-between mb-2 gap-2 flex-wrap">
-          <h2 class="text-lg font-semibold">
-            {{ 'teams.fields.members' | transloco }} ({{ memberships().length }})
-          </h2>
-          @if (canManage()) {
-            <p-button
-              [label]="'teams.detail.add_member' | transloco"
-              icon="pi pi-user-plus"
-              severity="secondary"
-              [outlined]="true"
-              size="small"
-              (onClick)="openAddMember()"
-            />
-          }
-        </div>
-        @if (memberships().length === 0) {
-          <p class="text-gray-500">{{ 'teams.detail.no_members' | transloco }}</p>
-        } @else {
-          <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
-            @for (mb of memberships(); track mb.id) {
-              <li class="p-3 flex justify-between items-center gap-2">
-                <div>
-                  <span class="font-medium">{{ mb.member_fullname || mb.member_username }}</span>
-                  @if (mb.member_fullname && mb.member_username) {
-                    <span class="text-gray-500 text-sm ml-2">{{ mb.member_username }}</span>
-                  }
-                </div>
-                <div class="flex items-center gap-3">
-                  <span class="text-xs text-gray-500">
-                    {{ 'teams.detail.joined_at' | transloco }}
-                    {{ mb.joined_at | date: 'mediumDate' }}
-                  </span>
-                  @if (canManage()) {
-                    <p-button
-                      icon="pi pi-trash"
-                      severity="danger"
-                      [text]="true"
-                      [rounded]="true"
-                      [ariaLabel]="'teams.detail.remove_member' | transloco"
-                      (onClick)="confirmRemoveMember(mb)"
-                    />
-                  }
-                </div>
-              </li>
-            }
-          </ul>
-        }
-      </section>
-
-      <section class="mb-6">
-        <h2 class="text-lg font-semibold mb-2">
-          {{ 'teams.detail.programs_section' | transloco }}
-        </h2>
-        <app-programs-list [teamFilter]="teamId()" />
-      </section>
+    <app-detail-header
+      [eyebrow]="'common.entity.team' | transloco"
+      [title]="t.name"
+      [backLink]="['/teams']"
+      icon="pi-users"
+    >
+      @if (currentUserRole(); as role) {
+        <span detailHeaderBadges [class]="roleClasses[role]">
+          {{ 'teams.roles.' + role | transloco }}
+        </span>
+      }
 
       @if (canManage()) {
-        <section class="mb-6">
-          <div class="flex items-center justify-between mb-2 gap-2 flex-wrap">
-            <h2 class="text-lg font-semibold">
-              {{ 'teams.invitations.title' | transloco }} ({{ invitations().length }})
-            </h2>
-            <p-button
-              [label]="'teams.invitations.invite' | transloco"
-              icon="pi pi-envelope"
-              severity="secondary"
-              [outlined]="true"
-              size="small"
-              (onClick)="openInviteDialog()"
-            />
+        <a detailHeaderActions [routerLink]="['/teams', t.id, 'edit']">
+          <p-button
+            [label]="'teams.detail.edit' | transloco"
+            icon="pi pi-pencil"
+            severity="secondary"
+            [outlined]="true"
+          />
+        </a>
+      }
+
+      <dl detailHeaderMeta class="flex flex-wrap gap-x-8 gap-y-3 text-sm">
+        @if (t.sport.name) {
+          <div class="flex items-center gap-2">
+            <i class="pi pi-tag text-gray-400" aria-hidden="true"></i>
+            <dt class="text-gray-500">{{ 'teams.fields.sport' | transloco }}</dt>
+            <dd class="font-medium text-gray-900">{{ t.sport.name }}</dd>
           </div>
-          @if (loadingInvitations()) {
-            <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
-          } @else if (invitations().length === 0) {
-            <p class="text-gray-500">{{ 'teams.invitations.empty' | transloco }}</p>
-          } @else {
-            <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
-              @for (inv of invitations(); track inv.id) {
-                <li class="p-3 flex justify-between items-center gap-2">
-                  <div>
-                    <div class="font-medium">{{ inv.email }}</div>
-                    <div class="text-xs text-gray-500">
-                      {{ 'teams.invitations.sent_at' | transloco }}
-                      {{ inv.created_at | date: 'mediumDate' }}
-                      @if (inv.expires_at) {
-                        ·
-                        {{ 'teams.invitations.expires_at' | transloco }}
-                        {{ inv.expires_at | date: 'mediumDate' }}
-                      }
-                    </div>
-                  </div>
+        }
+        @if (t.language) {
+          <div class="flex items-center gap-2">
+            <i class="pi pi-globe text-gray-400" aria-hidden="true"></i>
+            <dt class="text-gray-500">{{ 'teams.fields.language' | transloco }}</dt>
+            <dd class="font-medium text-gray-900">{{ t.language | uppercase }}</dd>
+          </div>
+        }
+        <div class="flex items-center gap-2">
+          <i class="pi pi-user text-gray-400" aria-hidden="true"></i>
+          <dt class="text-gray-500">{{ 'teams.fields.owner' | transloco }}</dt>
+          <dd class="font-medium text-gray-900">
+            {{ t.owner.first_name || t.owner.username || '—' }}
+          </dd>
+        </div>
+      </dl>
+    </app-detail-header>
+
+    <section class="mb-8">
+      <h2 class="text-lg font-semibold mb-2">
+        {{ 'teams.fields.managers' | transloco }} ({{ t.managers.length || 0 }})
+      </h2>
+      @if (t.managers && t.managers.length > 0) {
+        <ul class="list-disc pl-5 text-gray-700">
+          @for (m of t.managers; track m.id) {
+            <li>
+              {{ m.first_name || m.username }}
+              @if (m.first_name && m.username) {
+                <span class="text-gray-500 text-sm">(&#64;{{ m.username }})</span>
+              }
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="text-gray-500">{{ 'teams.detail.no_managers' | transloco }}</p>
+      }
+    </section>
+
+    <section class="mb-8">
+      <div class="flex items-center justify-between mb-2 gap-2 flex-wrap">
+        <h2 class="text-lg font-semibold">
+          {{ 'teams.fields.members' | transloco }} ({{ memberships().length }})
+        </h2>
+        @if (canManage()) {
+          <p-button
+            [label]="'teams.detail.add_member' | transloco"
+            icon="pi pi-user-plus"
+            severity="secondary"
+            [outlined]="true"
+            size="small"
+            (onClick)="openAddMember()"
+          />
+        }
+      </div>
+      @if (memberships().length === 0) {
+        <p class="text-gray-500">{{ 'teams.detail.no_members' | transloco }}</p>
+      } @else {
+        <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
+          @for (mb of memberships(); track mb.id) {
+            <li class="p-3 flex justify-between items-center gap-2">
+              <div>
+                <span class="font-medium">{{ mb.member_fullname || mb.member_username }}</span>
+                @if (mb.member_fullname && mb.member_username) {
+                  <span class="text-gray-500 text-sm ml-2">{{ mb.member_username }}</span>
+                }
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-xs text-gray-500">
+                  {{ 'teams.detail.joined_at' | transloco }}
+                  {{ mb.joined_at | date: 'mediumDate' }}
+                </span>
+                @if (canManage()) {
                   <p-button
-                    icon="pi pi-times"
+                    icon="pi pi-trash"
                     severity="danger"
                     [text]="true"
                     [rounded]="true"
-                    [ariaLabel]="'teams.invitations.cancel' | transloco"
-                    (onClick)="confirmCancelInvitation(inv)"
+                    [ariaLabel]="'teams.detail.remove_member' | transloco"
+                    (onClick)="confirmRemoveMember(mb)"
                   />
-                </li>
-              }
-            </ul>
+                }
+              </div>
+            </li>
           }
-        </section>
+        </ul>
       }
+    </section>
 
-      @if (isOwner()) {
-        <section class="mt-12 border border-red-200 bg-red-50/40 rounded p-5">
-          <h2 class="text-base font-semibold text-red-800 mb-1">
-            {{ 'teams.detail.danger_zone' | transloco }}
+    <section class="mb-8">
+      <h2 class="text-lg font-semibold mb-2">
+        {{ 'teams.detail.programs_section' | transloco }}
+      </h2>
+      <app-programs-list [teamFilter]="teamId()" />
+    </section>
+
+    @if (canManage()) {
+      <section class="mb-8">
+        <div class="flex items-center justify-between mb-2 gap-2 flex-wrap">
+          <h2 class="text-lg font-semibold">
+            {{ 'teams.invitations.title' | transloco }} ({{ invitations().length }})
           </h2>
-          <p class="text-sm text-red-700/80 mb-3">
-            {{ 'teams.detail.deactivate_confirm_message' | transloco }}
-          </p>
           <p-button
-            severity="danger"
-            icon="pi pi-trash"
+            [label]="'teams.invitations.invite' | transloco"
+            icon="pi pi-envelope"
+            severity="secondary"
             [outlined]="true"
-            [label]="'teams.detail.deactivate' | transloco"
-            (onClick)="confirmDeactivate()"
+            size="small"
+            (onClick)="openInviteDialog()"
           />
-        </section>
-      }
-    </div>
+        </div>
+        @if (loadingInvitations()) {
+          <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+        } @else if (invitations().length === 0) {
+          <p class="text-gray-500">{{ 'teams.invitations.empty' | transloco }}</p>
+        } @else {
+          <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
+            @for (inv of invitations(); track inv.id) {
+              <li class="p-3 flex justify-between items-center gap-2">
+                <div>
+                  <div class="font-medium">{{ inv.email }}</div>
+                  <div class="text-xs text-gray-500">
+                    {{ 'teams.invitations.sent_at' | transloco }}
+                    {{ inv.created_at | date: 'mediumDate' }}
+                    @if (inv.expires_at) {
+                      ·
+                      {{ 'teams.invitations.expires_at' | transloco }}
+                      {{ inv.expires_at | date: 'mediumDate' }}
+                    }
+                  </div>
+                </div>
+                <p-button
+                  icon="pi pi-times"
+                  severity="danger"
+                  [text]="true"
+                  [rounded]="true"
+                  [ariaLabel]="'teams.invitations.cancel' | transloco"
+                  (onClick)="confirmCancelInvitation(inv)"
+                />
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    }
+
+    @if (isOwner()) {
+      <section class="mt-12 border border-red-200 bg-red-50/40 rounded p-5">
+        <h2 class="text-base font-semibold text-red-800 mb-1">
+          {{ 'teams.detail.danger_zone' | transloco }}
+        </h2>
+        <p class="text-sm text-red-700/80 mb-3">
+          {{ 'teams.detail.deactivate_confirm_message' | transloco }}
+        </p>
+        <p-button
+          severity="danger"
+          icon="pi pi-trash"
+          [outlined]="true"
+          [label]="'teams.detail.deactivate' | transloco"
+          (onClick)="confirmDeactivate()"
+        />
+      </section>
+    }
   }
 </div>
 

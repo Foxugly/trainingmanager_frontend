@@ -281,7 +281,12 @@
     "back": "Back",
     "loading": "Loading",
     "error": "Error",
-    "success": "Success"
+    "success": "Success",
+    "entity": {
+      "team": "Team",
+      "program": "Program",
+      "event": "Session"
+    }
   },
   "dashboard": {
     "greeting": "Hello {{name}} 👋",

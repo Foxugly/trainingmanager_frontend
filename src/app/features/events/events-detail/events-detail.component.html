@@ -1,205 +1,200 @@
 <div>
-  @if (event(); as e) {
-    <a
-      [routerLink]="['/programs', e.refer_program.id]"
-      class="text-sm text-blue-600 hover:underline"
-    >
-      ← {{ 'common.back' | transloco }}
-    </a>
-  } @else {
-    <a [routerLink]="['/programs']" class="text-sm text-blue-600 hover:underline">
-      ← {{ 'common.back' | transloco }}
-    </a>
-  }
-
   @if (loading() && !event()) {
     <p class="mt-4 text-gray-500">{{ 'common.loading' | transloco }}…</p>
   } @else if (notFound()) {
     <p class="mt-4 text-gray-500">{{ 'events.detail.not_found' | transloco }}</p>
   } @else if (event(); as e) {
-    <div class="mt-2">
-      <div class="flex items-start gap-3 mb-6 flex-wrap">
-        <div class="flex items-center gap-3 flex-wrap flex-1 min-w-0">
-          <h1 class="text-2xl font-bold">{{ e.name }}</h1>
-          @if (e.generated_by_ai) {
-            <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">
-              {{ 'programs.ai_generated' | transloco }}
-            </span>
-          }
-        </div>
-        <div class="flex items-center gap-2 flex-wrap">
-          @if (canManage()) {
-            <a [routerLink]="['/events', e.id, 'edit']">
-              <p-button
-                [label]="'events.actions.edit' | transloco"
-                icon="pi pi-pencil"
-                severity="secondary"
-                [outlined]="true"
-              />
-            </a>
-            <a [routerLink]="['/events', e.id, 'attendance']">
-              <p-button
-                [label]="'events.actions.attendance' | transloco"
-                icon="pi pi-list-check"
-                [outlined]="true"
-              />
-            </a>
-            <p-button
-              [label]="'events.actions.delete' | transloco"
-              icon="pi pi-trash"
-              severity="danger"
-              [outlined]="true"
-              [loading]="deleting()"
-              (onClick)="confirmDelete()"
-            />
-          }
-          @if (canRegenerate()) {
-            <p-button
-              [label]="'events.detail.regenerate' | transloco"
-              icon="pi pi-sparkles"
-              severity="secondary"
-              [loading]="regenerating()"
-              (onClick)="confirmRegenerate()"
-            />
-          }
-        </div>
-      </div>
+    <app-detail-header
+      [eyebrow]="'common.entity.event' | transloco"
+      [title]="e.name"
+      [backLink]="e.refer_program ? ['/programs', e.refer_program.id] : ['/programs']"
+      icon="pi-bolt"
+    >
+      @if (e.generated_by_ai) {
+        <span detailHeaderBadges class="rounded bg-purple-100 px-2 py-1 text-xs text-purple-800">
+          {{ 'programs.ai_generated' | transloco }}
+        </span>
+      }
 
-      <dl class="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2 mb-6 max-w-xl">
-        <dt class="font-semibold text-gray-700">{{ 'events.fields.date' | transloco }}</dt>
-        <dd>
-          @if (e.date) {
-            {{ e.date | date: 'fullDate' }}
-          } @else {
-            —
-          }
-        </dd>
+      @if (canManage()) {
+        <a detailHeaderActions [routerLink]="['/events', e.id, 'edit']">
+          <p-button
+            [label]="'events.actions.edit' | transloco"
+            icon="pi pi-pencil"
+            severity="secondary"
+            [outlined]="true"
+          />
+        </a>
+      }
+      @if (canManage()) {
+        <a detailHeaderActions [routerLink]="['/events', e.id, 'attendance']">
+          <p-button
+            [label]="'events.actions.attendance' | transloco"
+            icon="pi pi-list-check"
+            [outlined]="true"
+          />
+        </a>
+      }
+      @if (canRegenerate()) {
+        <p-button
+          detailHeaderActions
+          [label]="'events.detail.regenerate' | transloco"
+          icon="pi pi-sparkles"
+          severity="secondary"
+          [loading]="regenerating()"
+          (onClick)="confirmRegenerate()"
+        />
+      }
+      @if (canManage()) {
+        <p-button
+          detailHeaderActions
+          [label]="'events.actions.delete' | transloco"
+          icon="pi pi-trash"
+          severity="danger"
+          [outlined]="true"
+          [loading]="deleting()"
+          (onClick)="confirmDelete()"
+        />
+      }
 
-        <dt class="font-semibold text-gray-700">{{ 'events.fields.program' | transloco }}</dt>
-        <dd>
-          @if (e.refer_program) {
-            <a
-              [routerLink]="['/programs', e.refer_program.id]"
-              class="text-blue-600 hover:underline"
-            >
-              {{ e.refer_program.name }}
-            </a>
-          } @else {
-            <span class="text-gray-500">{{ 'events.unknown_program' | transloco }}</span>
-          }
-        </dd>
-
-        @if (e.goal) {
-          <dt class="font-semibold text-gray-700">{{ 'events.fields.goal' | transloco }}</dt>
-          <dd class="whitespace-pre-line">{{ e.goal }}</dd>
+      <dl detailHeaderMeta class="flex flex-wrap gap-x-8 gap-y-3 text-sm">
+        @if (e.date) {
+          <div class="flex items-center gap-2">
+            <i class="pi pi-calendar text-gray-400" aria-hidden="true"></i>
+            <dt class="text-gray-500">{{ 'events.fields.date' | transloco }}</dt>
+            <dd class="font-medium text-gray-900">{{ e.date | date: 'fullDate' }}</dd>
+          </div>
         }
-
+        @if (e.refer_program) {
+          <div class="flex items-center gap-2">
+            <i class="pi pi-list text-gray-400" aria-hidden="true"></i>
+            <dt class="text-gray-500">{{ 'events.fields.program' | transloco }}</dt>
+            <dd class="font-medium">
+              <a
+                [routerLink]="['/programs', e.refer_program.id]"
+                class="text-indigo-700 hover:underline"
+              >
+                {{ e.refer_program.name }}
+              </a>
+            </dd>
+          </div>
+        }
         @if (e.total != null && e.total > 0) {
-          <dt class="font-semibold text-gray-700">{{ 'events.fields.total' | transloco }}</dt>
-          <dd>{{ e.total }}</dd>
+          <div class="flex items-center gap-2">
+            <i class="pi pi-arrows-h text-gray-400" aria-hidden="true"></i>
+            <dt class="text-gray-500">{{ 'events.fields.total' | transloco }}</dt>
+            <dd class="font-medium text-gray-900">{{ e.total }}</dd>
+          </div>
         }
-
-        <dt class="font-semibold text-gray-700">
-          {{ 'events.fields.rounds_count' | transloco }}
-        </dt>
-        <dd>{{ e.rounds?.length || 0 }}</dd>
+        <div class="flex items-center gap-2">
+          <i class="pi pi-th-large text-gray-400" aria-hidden="true"></i>
+          <dt class="text-gray-500">{{ 'events.fields.rounds_count' | transloco }}</dt>
+          <dd class="font-medium text-gray-900">{{ e.rounds?.length || 0 }}</dd>
+        </div>
       </dl>
+    </app-detail-header>
 
-      @if (rounds().length > 0 || loadingRounds()) {
-        <section class="mb-6">
-          <h2 class="text-lg font-semibold mb-3">
-            {{ 'events.detail.training_blocks' | transloco }}
-          </h2>
-          @if (loadingRounds()) {
-            <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
-          } @else {
-            <div class="space-y-3">
-              @for (round of rounds(); track round.id) {
-                <div class="border border-gray-200 rounded p-3">
-                  <div class="flex items-baseline justify-between gap-2 mb-2 flex-wrap">
-                    <h3 class="font-semibold">
-                      {{ 'events.detail.block_label' | transloco }} {{ round.order ?? 1 }}
-                      @if ((round.count ?? 1) > 1) {
-                        <span class="text-sm text-gray-500 ml-1">
-                          × {{ round.count }}
-                        </span>
-                      }
-                    </h3>
-                    @if (round.t_break) {
-                      <span class="text-xs text-gray-500">
-                        {{ 'events.detail.break' | transloco }} {{ round.t_break }}
+    @if (e.goal) {
+      <section class="mb-8 max-w-2xl">
+        <h2 class="text-lg font-semibold mb-2">{{ 'events.fields.goal' | transloco }}</h2>
+        <p class="text-gray-700 whitespace-pre-line">{{ e.goal }}</p>
+      </section>
+    }
+
+    @if (rounds().length > 0 || loadingRounds()) {
+      <section class="mb-8">
+        <h2 class="text-lg font-semibold mb-3">
+          {{ 'events.detail.training_blocks' | transloco }}
+        </h2>
+        @if (loadingRounds()) {
+          <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+        } @else {
+          <div class="space-y-3">
+            @for (round of rounds(); track round.id) {
+              <div class="border border-gray-200 rounded p-3">
+                <div class="flex items-baseline justify-between gap-2 mb-2 flex-wrap">
+                  <h3 class="font-semibold">
+                    {{ 'events.detail.block_label' | transloco }} {{ round.order ?? 1 }}
+                    @if ((round.count ?? 1) > 1) {
+                      <span class="text-sm text-gray-500 ml-1">
+                        × {{ round.count }}
                       </span>
                     }
-                  </div>
-                  @if ((exercisesByRound().get(round.id) || []).length > 0) {
-                    <ul class="divide-y divide-gray-100 text-sm">
-                      @for (ex of exercisesByRound().get(round.id) || []; track ex.id) {
-                        <li class="py-1.5 flex justify-between gap-3">
-                          <div class="flex-1">
-                            <span class="font-medium">
-                              {{ ex.repetition ?? 1 }} × {{ ex.distance ?? 0 }}m
-                            </span>
-                            @if (ex.modality.name) {
-                              <span class="text-gray-700"> · {{ ex.modality.name }}</span>
-                            }
-                            @if (ex.energysegment.abv) {
-                              <span class="text-gray-500 ml-1">
-                                · {{ ex.energysegment.abv }}
-                              </span>
-                            }
-                            @if (ex.notes) {
-                              <div class="text-xs text-gray-500 mt-0.5">{{ ex.notes }}</div>
-                            }
-                          </div>
-                          @if (ex.t_break) {
-                            <span class="text-xs text-gray-500 shrink-0">
-                              {{ ex.t_break }}
-                            </span>
-                          }
-                        </li>
-                      }
-                    </ul>
-                  } @else {
-                    <p class="text-xs text-gray-500">
-                      {{ 'events.detail.no_exercises' | transloco }}
-                    </p>
+                  </h3>
+                  @if (round.t_break) {
+                    <span class="text-xs text-gray-500">
+                      {{ 'events.detail.break' | transloco }} {{ round.t_break }}
+                    </span>
                   }
                 </div>
-              }
-            </div>
-          }
-        </section>
-      }
-
-      @if (lastResult(); as result) {
-        <div class="mb-6 p-4 bg-purple-50 border border-purple-200 rounded">
-          <h3 class="font-semibold text-purple-900 mb-2 flex items-center gap-2">
-            <i class="pi pi-check-circle"></i>
-            {{ 'events.regenerate.success_title' | transloco }}
-          </h3>
-          <p class="text-sm text-purple-800 mb-2">
-            {{
-              'events.regenerate.success_summary'
-                | transloco
-                  : {
-                      rounds: result.rounds_created,
-                      exercises: result.exercises_created,
-                      reused: result.exercises_reused,
+                @if ((exercisesByRound().get(round.id) || []).length > 0) {
+                  <ul class="divide-y divide-gray-100 text-sm">
+                    @for (ex of exercisesByRound().get(round.id) || []; track ex.id) {
+                      <li class="py-1.5 flex justify-between gap-3">
+                        <div class="flex-1">
+                          <span class="font-medium">
+                            {{ ex.repetition ?? 1 }} × {{ ex.distance ?? 0 }}m
+                          </span>
+                          @if (ex.modality.name) {
+                            <span class="text-gray-700"> · {{ ex.modality.name }}</span>
+                          }
+                          @if (ex.energysegment.abv) {
+                            <span class="text-gray-500 ml-1">
+                              · {{ ex.energysegment.abv }}
+                            </span>
+                          }
+                          @if (ex.notes) {
+                            <div class="text-xs text-gray-500 mt-0.5">{{ ex.notes }}</div>
+                          }
+                        </div>
+                        @if (ex.t_break) {
+                          <span class="text-xs text-gray-500 shrink-0">
+                            {{ ex.t_break }}
+                          </span>
+                        }
+                      </li>
                     }
-            }}
-          </p>
-          @if (result.rationale) {
-            <div class="text-sm text-gray-700 italic whitespace-pre-line">
-              {{ result.rationale }}
-            </div>
-          }
-        </div>
-      }
+                  </ul>
+                } @else {
+                  <p class="text-xs text-gray-500">
+                    {{ 'events.detail.no_exercises' | transloco }}
+                  </p>
+                }
+              </div>
+            }
+          </div>
+        }
+      </section>
+    }
 
-      @if (errorMessage(); as msg) {
-        <p-message severity="error" [text]="msg" />
-      }
-    </div>
+    @if (lastResult(); as result) {
+      <div class="mb-6 p-4 bg-purple-50 border border-purple-200 rounded">
+        <h3 class="font-semibold text-purple-900 mb-2 flex items-center gap-2">
+          <i class="pi pi-check-circle"></i>
+          {{ 'events.regenerate.success_title' | transloco }}
+        </h3>
+        <p class="text-sm text-purple-800 mb-2">
+          {{
+            'events.regenerate.success_summary'
+              | transloco
+                : {
+                    rounds: result.rounds_created,
+                    exercises: result.exercises_created,
+                    reused: result.exercises_reused,
+                  }
+          }}
+        </p>
+        @if (result.rationale) {
+          <div class="text-sm text-gray-700 italic whitespace-pre-line">
+            {{ result.rationale }}
+          </div>
+        }
+      </div>
+    }
+
+    @if (errorMessage(); as msg) {
+      <p-message severity="error" [text]="msg" />
+    }
   }
 </div>
 
