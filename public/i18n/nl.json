@@ -189,7 +189,8 @@
     "list": {
       "title": "Mijn teams",
       "empty": "Je hebt nog geen teams.",
-      "new": "Nieuw team"
+      "new": "Nieuw team",
+      "discover_cta": "Andere teams ontdekken"
     },
     "detail": {
       "no_managers": "Geen managers",
@@ -263,6 +264,15 @@
       "cancel_confirm_title": "Deze uitnodiging annuleren?",
       "cancel_confirm_message": "De uitnodiging wordt geannuleerd en kan niet meer worden gebruikt.",
       "cancelled": "Uitnodiging geannuleerd."
+    },
+    "discover": {
+      "eyebrow": "Ontdek",
+      "title": "Een team vinden",
+      "subtitle": "Bekijk de publieke teams. Klik op een team om het profiel te bekijken en lidmaatschap aan te vragen.",
+      "search_placeholder": "Zoek op naam of sport…",
+      "no_results": "Geen team komt overeen met je zoekopdracht.",
+      "empty": "Op dit moment geen publiek team beschikbaar.",
+      "view_team": "Bekijk team"
     },
     "join_request": {
       "cta": "Aanvraag indienen",

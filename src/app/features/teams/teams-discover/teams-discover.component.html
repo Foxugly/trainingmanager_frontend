@@ -1,0 +1,88 @@
+<div>
+  <a [routerLink]="['/teams']" class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition mb-4">
+    <i class="pi pi-arrow-left text-xs" aria-hidden="true"></i>
+    {{ 'common.back' | transloco }}
+  </a>
+
+  <header class="mb-8">
+    <p class="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-indigo-700">
+      <i class="pi pi-compass text-[11px] mr-1" aria-hidden="true"></i>
+      {{ 'teams.discover.eyebrow' | transloco }}
+    </p>
+    <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight leading-tight text-gray-900">
+      {{ 'teams.discover.title' | transloco }}
+    </h1>
+    <p class="mt-3 max-w-2xl text-gray-600">
+      {{ 'teams.discover.subtitle' | transloco }}
+    </p>
+  </header>
+
+  <div class="max-w-md mb-6">
+    <span class="p-input-icon-left w-full block relative">
+      <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+      <input
+        pInputText
+        type="search"
+        class="w-full pl-10"
+        [value]="query()"
+        (input)="query.set($any($event.target).value)"
+        [placeholder]="'teams.discover.search_placeholder' | transloco"
+      />
+    </span>
+  </div>
+
+  @if (loading()) {
+    <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+  } @else if (filtered().length === 0) {
+    <p class="text-gray-500">
+      @if (query()) {
+        {{ 'teams.discover.no_results' | transloco }}
+      } @else {
+        {{ 'teams.discover.empty' | transloco }}
+      }
+    </p>
+  } @else {
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      @for (team of filtered(); track team.id) {
+        <a
+          [routerLink]="['/teams', team.id]"
+          class="block rounded-xl border border-gray-200 bg-white p-5 transition hover:border-indigo-300 hover:shadow-md"
+        >
+          <div class="flex items-start gap-3">
+            <div class="shrink-0 size-11 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center">
+              <i class="pi pi-users text-lg" aria-hidden="true"></i>
+            </div>
+            <div class="min-w-0 flex-1">
+              <h2 class="text-base font-semibold text-gray-900 truncate">{{ team.name }}</h2>
+              @if (team.sport?.name; as sportName) {
+                <p class="text-xs text-gray-500 truncate">{{ sportName }}</p>
+              }
+            </div>
+          </div>
+          <dl class="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs">
+            @if (team.owner?.first_name || team.owner?.username) {
+              <div class="flex items-center gap-1.5 text-gray-600">
+                <i class="pi pi-user text-gray-400" aria-hidden="true"></i>
+                <dt class="sr-only">{{ 'teams.fields.owner' | transloco }}</dt>
+                <dd>{{ team.owner.first_name || team.owner.username }}</dd>
+              </div>
+            }
+            @if ((team.managers?.length ?? 0) > 0) {
+              <div class="flex items-center gap-1.5 text-gray-600">
+                <i class="pi pi-shield text-gray-400" aria-hidden="true"></i>
+                <dt class="sr-only">{{ 'teams.fields.managers' | transloco }}</dt>
+                <dd>{{ team.managers.length }}</dd>
+              </div>
+            }
+          </dl>
+          <div class="mt-4 flex justify-end">
+            <span class="text-sm font-medium text-indigo-700 inline-flex items-center gap-1">
+              {{ 'teams.discover.view_team' | transloco }}
+              <i class="pi pi-arrow-right text-xs" aria-hidden="true"></i>
+            </span>
+          </div>
+        </a>
+      }
+    </div>
+  }
+</div>

@@ -189,7 +189,8 @@
     "list": {
       "title": "Le mie squadre",
       "empty": "Non hai ancora nessuna squadra.",
-      "new": "Nuova squadra"
+      "new": "Nuova squadra",
+      "discover_cta": "Scopri altre squadre"
     },
     "detail": {
       "no_managers": "Nessun manager",
@@ -263,6 +264,15 @@
       "cancel_confirm_title": "Annullare questo invito?",
       "cancel_confirm_message": "L'invito verrà annullato e non potrà più essere utilizzato.",
       "cancelled": "Invito annullato."
+    },
+    "discover": {
+      "eyebrow": "Scopri",
+      "title": "Trova una squadra",
+      "subtitle": "Sfoglia le squadre pubbliche. Clicca su una squadra per vedere il profilo e richiedere di unirti.",
+      "search_placeholder": "Cerca per nome o sport…",
+      "no_results": "Nessuna squadra corrisponde alla tua ricerca.",
+      "empty": "Nessuna squadra pubblica disponibile al momento.",
+      "view_team": "Vedi squadra"
     },
     "join_request": {
       "cta": "Richiedi di unirti",

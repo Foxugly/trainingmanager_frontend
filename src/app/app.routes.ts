@@ -218,6 +218,13 @@ export const routes: Routes = [
               ),
           },
           {
+            path: 'discover',
+            loadComponent: () =>
+              import('./features/teams/teams-discover/teams-discover.component').then(
+                (m) => m.TeamsDiscoverComponent,
+              ),
+          },
+          {
             path: 'new',
             loadComponent: () =>
               import('./features/teams/teams-form/teams-form.component').then(

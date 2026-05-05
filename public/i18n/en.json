@@ -189,7 +189,8 @@
     "list": {
       "title": "My teams",
       "empty": "You don't have any team yet.",
-      "new": "New team"
+      "new": "New team",
+      "discover_cta": "Discover other teams"
     },
     "detail": {
       "no_managers": "No managers",
@@ -263,6 +264,15 @@
       "cancel_confirm_title": "Cancel this invitation?",
       "cancel_confirm_message": "The invitation will be cancelled and can no longer be used.",
       "cancelled": "Invitation cancelled."
+    },
+    "discover": {
+      "eyebrow": "Discover",
+      "title": "Find a team",
+      "subtitle": "Browse public teams. Click a team to view its profile and request to join.",
+      "search_placeholder": "Search by name or sport…",
+      "no_results": "No team matches your search.",
+      "empty": "No public team available right now.",
+      "view_team": "View team"
     },
     "join_request": {
       "cta": "Request to join",
