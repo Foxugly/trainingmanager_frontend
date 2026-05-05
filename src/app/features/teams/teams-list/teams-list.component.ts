@@ -64,6 +64,12 @@ export class TeamsListComponent implements OnInit {
     member: 'text-xs font-semibold px-2 py-1 rounded bg-gray-100 text-gray-800',
   };
 
+  protected readonly roleIconPillClass: Record<TeamRole, string> = {
+    owner: 'shrink-0 size-11 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center',
+    manager: 'shrink-0 size-11 rounded-xl bg-violet-100 text-violet-700 flex items-center justify-center',
+    member: 'shrink-0 size-11 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center',
+  };
+
   ngOnInit(): void {
     this.loading.set(true);
     this.teamsService
