@@ -11,6 +11,7 @@ import { Sport } from './sport';
 import { CustomUserPublic } from './custom-user-public';
 import { ChatModeEnum } from './chat-mode-enum';
 import { LanguageEnum } from './language-enum';
+import { JoinRequestPolicyEnum } from './join-request-policy-enum';
 
 
 export interface PatchedTeam { 
@@ -36,6 +37,14 @@ export interface PatchedTeam {
      * Statuses available for marking attendance in this team\'s events. Default: present, absent, excused.
      */
     attendance_statuses?: Array<number>;
+    /**
+     * Manual = managers accept/reject each TeamJoinRequest. Auto = every join request is accepted immediately on submission.  * `manual` - Manual — managers accept/reject each request * `auto` - Auto-accept — every join request is accepted immediately
+     */
+    join_request_policy?: JoinRequestPolicyEnum;
+    /**
+     * When join_request_policy=manual, send the owner and managers an email with accept/reject magic links on each new request. Ignored when policy=auto (no manual decision is needed).
+     */
+    notify_managers_on_join_request?: boolean;
     readonly created_at?: string;
     readonly updated_at?: string;
 }

@@ -10,9 +10,14 @@
 import { JoinRequestStatusEnum } from './join-request-status-enum';
 
 
+/**
+ * Standard serializer for /join-requests/. Mirrors TeamMembershipSerializer\'s pattern of exposing username/fullname denorms so the manager dashboard can render the requester without a separate /users/{id}/ fetch.
+ */
 export interface TeamJoinRequest { 
     readonly id: number;
     readonly user: number;
+    readonly user_username: string;
+    readonly user_fullname: string;
     team: number;
     status?: JoinRequestStatusEnum;
     message?: string;
@@ -20,6 +25,7 @@ export interface TeamJoinRequest {
     readonly requested_at: string;
     readonly responded_at: string | null;
     readonly responded_by: number | null;
+    readonly responded_by_username: string | null;
 }
 
 

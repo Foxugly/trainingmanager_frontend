@@ -1677,6 +1677,101 @@ paths:
           description: Invalid token state, username taken, or weak password
         '404':
           description: Token not found
+  /api/v1/join-magic/:
+    post:
+      operationId: join_magic_create
+      description: |-
+        POST /api/v1/join-magic/ {token} — executes the encoded action.
+
+        Reversal support (E-b semantic):
+          - pending  + accept -> accepted (creates TeamMembership)
+          - pending  + reject -> rejected (no membership)
+          - accepted + reject -> rejected (revokes membership: sets left_at)
+          - rejected + accept -> accepted (creates membership again)
+          - cancelled + *    -> 409 conflict (requester withdrew, irreversible)
+        responded_by is updated to the manager who made the latest call.
+        Idempotent when the request is already in the target status.
+      tags:
+      - join-magic
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TeamJoinRequestMagicActionPost'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TeamJoinRequestMagicActionPost'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TeamJoinRequestMagicActionPost'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamJoinRequestMagicActionResponse'
+          description: Action executed (or no-op if already in target status). Returns
+            the same payload shape as the preview, with the join_request reflecting
+            the new status.
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JoinMagicError'
+          description: Invalid or expired token (code=invalid_or_expired_token), or
+            missing token in body (code=token_required).
+        '403':
+          description: Not a manager of this team.
+        '404':
+          description: Join request not found.
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JoinMagicCancelledResponse'
+          description: 'Conflict: the request was cancelled by the requester and cannot
+            be revived (code=request_cancelled). The body still contains the regular
+            response payload alongside code/detail so the frontend can show context.'
+  /api/v1/join-magic/{token}/:
+    get:
+      operationId: join_magic_retrieve
+      description: |-
+        GET /api/v1/join-magic/<token>/ — preview only. No state change.
+
+        Safe for email link previewers (Outlook safe-links, Gmail bots).
+        Returns the join request + action proposed by the token + current
+        status + whether the action would reverse a previous decision +
+        whether the action can still be performed (false if cancelled).
+      parameters:
+      - in: path
+        name: token
+        schema:
+          type: string
+        required: true
+      tags:
+      - join-magic
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamJoinRequestMagicActionResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JoinMagicError'
+          description: Invalid or expired token (code=invalid_or_expired_token).
+        '403':
+          description: Not a manager of this team.
+        '404':
+          description: Join request not found.
   /api/v1/join-requests/:
     get:
       operationId: join_requests_list
@@ -4254,6 +4349,14 @@ components:
       - output_tokens
       - total_tokens
       - username
+    ActionProposedEnum:
+      enum:
+      - accept
+      - reject
+      type: string
+      description: |-
+        * `accept` - accept
+        * `reject` - reject
     Attendance:
       type: object
       properties:
@@ -4913,6 +5016,72 @@ components:
         * `completed` - Completed
         * `expired` - Expired
         * `cancelled` - Cancelled
+    JoinMagicCancelledResponse:
+      type: object
+      description: |-
+        409 body when the requester cancelled the request. Combines the error
+        envelope (code + detail) with the regular response payload so the
+        frontend can show "the user cancelled" + the snapshot of what was
+        being attempted.
+      properties:
+        join_request:
+          $ref: '#/components/schemas/_MagicActionJoinRequest'
+        action_proposed:
+          $ref: '#/components/schemas/ActionProposedEnum'
+        would_change_decision:
+          type: boolean
+          description: True iff the action — if executed — would reverse a previous
+            manager decision (accepted->rejected or rejected->accepted).
+        can_act:
+          type: boolean
+          description: False when the request was cancelled by the requester.
+        code:
+          $ref: '#/components/schemas/JoinMagicCancelledResponseCodeEnum'
+        detail:
+          type: string
+      required:
+      - action_proposed
+      - can_act
+      - code
+      - detail
+      - join_request
+      - would_change_decision
+    JoinMagicCancelledResponseCodeEnum:
+      enum:
+      - request_cancelled
+      type: string
+      description: '* `request_cancelled` - request_cancelled'
+    JoinMagicError:
+      type: object
+      description: |-
+        Common 4xx body for the magic-action endpoints. Shape produced by
+        tools.exceptions.custom_exception_handler.
+      properties:
+        code:
+          $ref: '#/components/schemas/JoinMagicErrorCodeEnum'
+        detail:
+          type: string
+      required:
+      - code
+      - detail
+    JoinMagicErrorCodeEnum:
+      enum:
+      - invalid_or_expired_token
+      - token_required
+      - request_cancelled
+      type: string
+      description: |-
+        * `invalid_or_expired_token` - invalid_or_expired_token
+        * `token_required` - token_required
+        * `request_cancelled` - request_cancelled
+    JoinRequestPolicyEnum:
+      enum:
+      - manual
+      - auto
+      type: string
+      description: |-
+        * `manual` - Manual — managers accept/reject each request
+        * `auto` - Auto-accept — every join request is accepted immediately
     JoinRequestStatusEnum:
       enum:
       - pending
@@ -6276,6 +6445,19 @@ components:
             type: integer
           description: 'Statuses available for marking attendance in this team''s
             events. Default: present, absent, excused.'
+        join_request_policy:
+          allOf:
+          - $ref: '#/components/schemas/JoinRequestPolicyEnum'
+          description: |-
+            Manual = managers accept/reject each TeamJoinRequest. Auto = every join request is accepted immediately on submission.
+
+            * `manual` - Manual — managers accept/reject each request
+            * `auto` - Auto-accept — every join request is accepted immediately
+        notify_managers_on_join_request:
+          type: boolean
+          description: When join_request_policy=manual, send the owner and managers
+            an email with accept/reject magic links on each new request. Ignored when
+            policy=auto (no manual decision is needed).
         created_at:
           type: string
           format: date-time
@@ -6286,12 +6468,22 @@ components:
           readOnly: true
     PatchedTeamJoinRequest:
       type: object
+      description: |-
+        Standard serializer for /join-requests/. Mirrors TeamMembershipSerializer's
+        pattern of exposing username/fullname denorms so the manager dashboard can
+        render the requester without a separate /users/{id}/ fetch.
       properties:
         id:
           type: integer
           readOnly: true
         user:
           type: integer
+          readOnly: true
+        user_username:
+          type: string
+          readOnly: true
+        user_fullname:
+          type: string
           readOnly: true
         team:
           type: integer
@@ -6312,6 +6504,10 @@ components:
           nullable: true
         responded_by:
           type: integer
+          readOnly: true
+          nullable: true
+        responded_by_username:
+          type: string
           readOnly: true
           nullable: true
     PatchedTeamMembership:
@@ -6676,6 +6872,19 @@ components:
             type: integer
           description: 'Statuses available for marking attendance in this team''s
             events. Default: present, absent, excused.'
+        join_request_policy:
+          allOf:
+          - $ref: '#/components/schemas/JoinRequestPolicyEnum'
+          description: |-
+            Manual = managers accept/reject each TeamJoinRequest. Auto = every join request is accepted immediately on submission.
+
+            * `manual` - Manual — managers accept/reject each request
+            * `auto` - Auto-accept — every join request is accepted immediately
+        notify_managers_on_join_request:
+          type: boolean
+          description: When join_request_policy=manual, send the owner and managers
+            an email with accept/reject magic links on each new request. Ignored when
+            policy=auto (no manual decision is needed).
         created_at:
           type: string
           format: date-time
@@ -6742,12 +6951,22 @@ components:
       - team
     TeamJoinRequest:
       type: object
+      description: |-
+        Standard serializer for /join-requests/. Mirrors TeamMembershipSerializer's
+        pattern of exposing username/fullname denorms so the manager dashboard can
+        render the requester without a separate /users/{id}/ fetch.
       properties:
         id:
           type: integer
           readOnly: true
         user:
           type: integer
+          readOnly: true
+        user_username:
+          type: string
+          readOnly: true
+        user_fullname:
+          type: string
           readOnly: true
         team:
           type: integer
@@ -6770,13 +6989,53 @@ components:
           type: integer
           readOnly: true
           nullable: true
+        responded_by_username:
+          type: string
+          readOnly: true
+          nullable: true
       required:
       - id
       - requested_at
       - responded_at
       - responded_by
+      - responded_by_username
       - team
       - user
+      - user_fullname
+      - user_username
+    TeamJoinRequestMagicActionPost:
+      type: object
+      description: |-
+        Body of POST /api/v1/join-magic/. Token is the HMAC-signed link
+        received in the manager email.
+      properties:
+        token:
+          type: string
+      required:
+      - token
+    TeamJoinRequestMagicActionResponse:
+      type: object
+      description: |-
+        200 response for both GET (preview) and POST (execute) on
+        /api/v1/join-magic/. Identical shape — POST just reflects the
+        post-action state in `join_request.status`.
+      properties:
+        join_request:
+          $ref: '#/components/schemas/_MagicActionJoinRequest'
+        action_proposed:
+          $ref: '#/components/schemas/ActionProposedEnum'
+        would_change_decision:
+          type: boolean
+          description: True iff the action — if executed — would reverse a previous
+            manager decision (accepted->rejected or rejected->accepted).
+        can_act:
+          type: boolean
+          description: False when the request was cancelled by the requester.
+      required:
+      - action_proposed
+      - can_act
+      - join_request
+      - would_change_decision
     TeamMembership:
       type: object
       description: |-
@@ -6908,6 +7167,62 @@ components:
       required:
       - password
       - username
+    _MagicActionJoinRequest:
+      type: object
+      description: |-
+        Inline shape of the `join_request` field returned by the magic-action
+        endpoints. Mirrors the dict assembled in
+        TeamJoinRequestMagicActionView._serialize — keep in sync.
+      properties:
+        id:
+          type: integer
+        team_id:
+          type: integer
+        team_name:
+          type: string
+        requester_username:
+          type: string
+        requester_email:
+          type: string
+          format: email
+        message:
+          type: string
+        requested_at:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/_MagicActionJoinRequestStatusEnum'
+        responded_at:
+          type: string
+          format: date-time
+          nullable: true
+        responded_by:
+          type: string
+          nullable: true
+          description: username
+      required:
+      - id
+      - message
+      - requested_at
+      - requester_email
+      - requester_username
+      - responded_at
+      - responded_by
+      - status
+      - team_id
+      - team_name
+    _MagicActionJoinRequestStatusEnum:
+      enum:
+      - pending
+      - accepted
+      - rejected
+      - cancelled
+      type: string
+      description: |-
+        * `pending` - pending
+        * `accepted` - accepted
+        * `rejected` - rejected
+        * `cancelled` - cancelled
   securitySchemes:
     jwtAuth:
       type: http

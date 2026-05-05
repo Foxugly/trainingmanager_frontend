@@ -19,6 +19,8 @@ api/exercises.service.ts
 api/exercises.serviceInterface.ts
 api/invitations.service.ts
 api/invitations.serviceInterface.ts
+api/join-magic.service.ts
+api/join-magic.serviceInterface.ts
 api/join-requests.service.ts
 api/join-requests.serviceInterface.ts
 api/me.service.ts
@@ -37,6 +39,7 @@ configuration.ts
 encoder.ts
 git_push.sh
 index.ts
+model/action-proposed-enum.ts
 model/ai-ping-request.ts
 model/ai-ping-response.ts
 model/ai-usage-aggregate-response.ts
@@ -69,8 +72,15 @@ model/generate-plan-tokens-used.ts
 model/generate-training-response.ts
 model/generate-training-tokens-used.ts
 model/invitation-status-enum.ts
+model/join-magic-cancelled-response-code-enum.ts
+model/join-magic-cancelled-response.ts
+model/join-magic-error-code-enum.ts
+model/join-magic-error.ts
+model/join-request-policy-enum.ts
 model/join-request-status-enum.ts
 model/language-enum.ts
+model/magic-action-join-request-status-enum.ts
+model/magic-action-join-request.ts
 model/me.ts
 model/member.ts
 model/message.ts
@@ -119,6 +129,8 @@ model/round.ts
 model/sport-admin.ts
 model/sport.ts
 model/team-invitation.ts
+model/team-join-request-magic-action-post.ts
+model/team-join-request-magic-action-response.ts
 model/team-join-request.ts
 model/team-membership.ts
 model/team-minimal.ts
