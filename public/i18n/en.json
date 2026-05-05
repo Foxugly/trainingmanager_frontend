@@ -221,6 +221,12 @@
       "managers_placeholder": "Select managers",
       "managers_help": "Adding new managers requires a dedicated backend endpoint (coming soon). You can remove existing managers by deselecting them.",
       "managers_empty": "No managers to display",
+      "join_requests_section": "Join requests",
+      "policy_auto_label": "Auto-accept join requests",
+      "policy_auto_help": "Anyone who requests to join is accepted immediately.",
+      "policy_manual_help": "You (or a manager) must accept or reject each request.",
+      "notify_managers_label": "Notify coaches by email",
+      "notify_managers_help": "An email with accept and reject links is sent to the owner and managers. Links expire after 7 days.",
       "saved_create": "Team created.",
       "saved_edit": "Team saved."
     },

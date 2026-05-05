@@ -221,6 +221,12 @@
       "managers_placeholder": "Selecteer managers",
       "managers_help": "Voor het toevoegen van nieuwe managers is een speciaal backend-endpoint nodig (binnenkort). Bestaande managers kun je verwijderen door ze te deselecteren.",
       "managers_empty": "Geen managers om weer te geven",
+      "join_requests_section": "Aanvragen om lid te worden",
+      "policy_auto_label": "Aanvragen automatisch accepteren",
+      "policy_auto_help": "Iedereen die een aanvraag indient, wordt onmiddellijk geaccepteerd.",
+      "policy_manual_help": "Jij (of een manager) moet elke aanvraag accepteren of weigeren.",
+      "notify_managers_label": "Coaches per e-mail informeren",
+      "notify_managers_help": "Een e-mail met accepteer- en weigerlinks wordt naar de owner en managers gestuurd. De links verlopen na 7 dagen.",
       "saved_create": "Team aangemaakt.",
       "saved_edit": "Team opgeslagen."
     },

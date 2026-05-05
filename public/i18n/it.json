@@ -221,6 +221,12 @@
       "managers_placeholder": "Seleziona i manager",
       "managers_help": "Per aggiungere nuovi manager è necessario un endpoint backend dedicato (in arrivo). Puoi rimuovere i manager esistenti deselezionandoli.",
       "managers_empty": "Nessun manager da mostrare",
+      "join_requests_section": "Richieste di adesione",
+      "policy_auto_label": "Accettazione automatica",
+      "policy_auto_help": "Chiunque richieda di unirsi viene accettato immediatamente.",
+      "policy_manual_help": "Tu (o un manager) devi accettare o rifiutare ogni richiesta.",
+      "notify_managers_label": "Notifica gli allenatori via email",
+      "notify_managers_help": "Un'email con i link per accettare e rifiutare viene inviata al proprietario e ai manager. I link scadono dopo 7 giorni.",
       "saved_create": "Squadra creata.",
       "saved_edit": "Squadra salvata."
     },

@@ -9,7 +9,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -21,9 +21,11 @@ import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { MultiSelect } from 'primeng/multiselect';
 import { Select } from 'primeng/select';
+import { ToggleSwitch } from 'primeng/toggleswitch';
 import { SportsService } from '../../../api/api/sports.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { CustomUserPublic } from '../../../api/model/custom-user-public';
+import { JoinRequestPolicyEnum } from '../../../api/model/join-request-policy-enum';
 import { LanguageEnum } from '../../../api/model/language-enum';
 import { PatchedTeam } from '../../../api/model/patched-team';
 import { Sport } from '../../../api/model/sport';
@@ -45,6 +47,7 @@ interface FieldErrors {
     Select,
     MultiSelect,
     Checkbox,
+    ToggleSwitch,
     Button,
     Message,
     ConfirmDialog,
@@ -92,7 +95,14 @@ export class TeamsFormComponent implements OnInit {
     is_public: [false],
     is_active: [true],
     managers_ids: this.fb.nonNullable.control<number[]>([]),
+    auto_accept_policy: [false],
+    notify_managers_on_join_request: [true],
   });
+
+  private readonly autoAcceptValue = toSignal(this.form.controls.auto_accept_policy.valueChanges, {
+    initialValue: this.form.controls.auto_accept_policy.value,
+  });
+  protected readonly isAutoPolicy = computed(() => this.autoAcceptValue() === true);
 
   ngOnInit(): void {
     this.sportsService
@@ -123,6 +133,8 @@ export class TeamsFormComponent implements OnInit {
               is_public: t.is_public ?? false,
               is_active: t.is_active ?? true,
               managers_ids: (t.managers ?? []).map((m) => m.id),
+              auto_accept_policy: t.join_request_policy === JoinRequestPolicyEnum.Auto,
+              notify_managers_on_join_request: t.notify_managers_on_join_request ?? true,
             });
             this.loading.set(false);
           },
@@ -176,6 +188,10 @@ export class TeamsFormComponent implements OnInit {
       is_public: value.is_public,
       is_active: value.is_active,
       managers_ids: value.managers_ids,
+      join_request_policy: value.auto_accept_policy
+        ? JoinRequestPolicyEnum.Auto
+        : JoinRequestPolicyEnum.Manual,
+      notify_managers_on_join_request: value.notify_managers_on_join_request,
     };
 
     this.teamsService

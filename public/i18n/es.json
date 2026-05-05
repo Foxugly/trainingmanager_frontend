@@ -221,6 +221,12 @@
       "managers_placeholder": "Selecciona los managers",
       "managers_help": "Para añadir nuevos managers se necesita un endpoint backend dedicado (próximamente). Puedes retirar los managers existentes deseleccionándolos.",
       "managers_empty": "Ningún manager para mostrar",
+      "join_requests_section": "Solicitudes de unión",
+      "policy_auto_label": "Aceptación automática",
+      "policy_auto_help": "Cualquier persona que solicite unirse es aceptada inmediatamente.",
+      "policy_manual_help": "Tú (o un manager) debes aceptar o rechazar cada solicitud.",
+      "notify_managers_label": "Notificar a los coaches por correo",
+      "notify_managers_help": "Se envía un correo con los enlaces de aceptar y rechazar al propietario y a los managers. Los enlaces expiran después de 7 días.",
       "saved_create": "Equipo creado.",
       "saved_edit": "Equipo guardado."
     },

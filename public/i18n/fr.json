@@ -222,7 +222,13 @@
       "managers_help": "Pour ajouter de nouveaux managers, un endpoint backend dédié est nécessaire (à venir). Vous pouvez retirer les managers existants en les désélectionnant.",
       "managers_empty": "Aucun manager à afficher",
       "saved_create": "Équipe créée.",
-      "saved_edit": "Équipe enregistrée."
+      "saved_edit": "Équipe enregistrée.",
+      "join_requests_section": "Demandes de rejoindre",
+      "policy_auto_label": "Acceptation automatique",
+      "policy_auto_help": "Toute personne qui demande à rejoindre est acceptée immédiatement.",
+      "policy_manual_help": "Vous (ou un manager) devez accepter ou refuser chaque demande.",
+      "notify_managers_label": "Notifier les coachs par email",
+      "notify_managers_help": "Un email avec les liens d'acceptation et de refus est envoyé à l'owner et aux managers. Les liens expirent après 7 jours."
     },
     "member_dialog": {
       "title": "Ajouter un membre",

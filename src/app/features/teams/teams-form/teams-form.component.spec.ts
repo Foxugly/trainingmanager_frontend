@@ -9,6 +9,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SportsService } from '../../../api/api/sports.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { CustomUserPublic } from '../../../api/model/custom-user-public';
+import { JoinRequestPolicyEnum } from '../../../api/model/join-request-policy-enum';
 import { LanguageEnum } from '../../../api/model/language-enum';
 import { Sport } from '../../../api/model/sport';
 import { Team } from '../../../api/model/team';
@@ -53,6 +54,7 @@ interface ProtectedFields {
   teamId(): number | null;
   isEditMode(): boolean;
   isOwner(): boolean;
+  isAutoPolicy(): boolean;
   saving(): boolean;
   errorMessage(): string | null;
   fieldErrors(): { [k: string]: string[] } | null;
@@ -199,6 +201,35 @@ describe('TeamsFormComponent', () => {
 
     await setup('5', ownerUser);
     expect(access(component).isOwner()).toBe(true);
+  });
+
+  it('pre-fills auto_accept_policy + notify_managers from team policy fields', async () => {
+    await setup('5', ownerUser, {
+      ...team,
+      join_request_policy: JoinRequestPolicyEnum.Auto,
+      notify_managers_on_join_request: false,
+    });
+    expect(access(component).form.getRawValue()).toMatchObject({
+      auto_accept_policy: true,
+      notify_managers_on_join_request: false,
+    });
+    expect(access(component).isAutoPolicy()).toBe(true);
+  });
+
+  it('submit converts auto_accept_policy boolean back to JoinRequestPolicyEnum on PATCH', async () => {
+    await setup('5');
+    access(component).form.patchValue({
+      auto_accept_policy: true,
+      notify_managers_on_join_request: false,
+    });
+    access(component).submit();
+    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(
+      5,
+      expect.objectContaining({
+        join_request_policy: JoinRequestPolicyEnum.Auto,
+        notify_managers_on_join_request: false,
+      }),
+    );
   });
 
   it('confirmDeactivate triggers a partialUpdate with is_active=false on accept', async () => {
