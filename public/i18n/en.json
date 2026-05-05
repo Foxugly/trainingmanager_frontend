@@ -264,6 +264,25 @@
       "cancel_confirm_message": "The invitation will be cancelled and can no longer be used.",
       "cancelled": "Invitation cancelled."
     },
+    "join_request": {
+      "cta": "Request to join",
+      "pending_chip": "Request pending",
+      "cancel_cta": "Cancel my request",
+      "cancel_confirm_title": "Cancel your request?",
+      "cancel_confirm_message": "Your request will be cancelled. You can submit a new one later.",
+      "cancel_accept": "Cancel request",
+      "cancelled": "Request cancelled.",
+      "dialog_title": "Request to join the team",
+      "dialog_help": "You are requesting to join \"{{team}}\". You can add a message for the coach (optional).",
+      "message_placeholder": "Message (optional)…",
+      "submit": "Send request",
+      "sent": "Request sent.",
+      "errors": {
+        "already_member": "You are already a member of this team.",
+        "team_not_active": "This team is not active.",
+        "team_not_public": "This team is no longer accepting new requests."
+      }
+    },
     "join_requests": {
       "title": "Join requests",
       "empty": "No pending requests",

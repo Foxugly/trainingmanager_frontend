@@ -264,6 +264,25 @@
       "cancel_confirm_message": "L'invito verrà annullato e non potrà più essere utilizzato.",
       "cancelled": "Invito annullato."
     },
+    "join_request": {
+      "cta": "Richiedi di unirti",
+      "pending_chip": "Richiesta in attesa",
+      "cancel_cta": "Annulla la mia richiesta",
+      "cancel_confirm_title": "Annullare la tua richiesta?",
+      "cancel_confirm_message": "La tua richiesta verrà annullata. Puoi inviarne una nuova in seguito.",
+      "cancel_accept": "Annulla richiesta",
+      "cancelled": "Richiesta annullata.",
+      "dialog_title": "Richiedi di unirti alla squadra",
+      "dialog_help": "Stai richiedendo di unirti a « {{team}} ». Puoi aggiungere un messaggio per l'allenatore (facoltativo).",
+      "message_placeholder": "Messaggio (facoltativo)…",
+      "submit": "Invia la richiesta",
+      "sent": "Richiesta inviata.",
+      "errors": {
+        "already_member": "Sei già membro di questa squadra.",
+        "team_not_active": "Questa squadra non è attiva.",
+        "team_not_public": "Questa squadra non accetta più nuove richieste."
+      }
+    },
     "join_requests": {
       "title": "Richieste di adesione",
       "empty": "Nessuna richiesta in attesa",

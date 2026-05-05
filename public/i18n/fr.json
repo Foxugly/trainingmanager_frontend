@@ -264,6 +264,25 @@
       "cancel_confirm_message": "L'invitation sera annulée et ne pourra plus être utilisée.",
       "cancelled": "Invitation annulée."
     },
+    "join_request": {
+      "cta": "Demander à rejoindre",
+      "pending_chip": "Demande en attente",
+      "cancel_cta": "Annuler ma demande",
+      "cancel_confirm_title": "Annuler votre demande ?",
+      "cancel_confirm_message": "Votre demande sera annulée. Vous pourrez en faire une nouvelle plus tard.",
+      "cancel_accept": "Annuler la demande",
+      "cancelled": "Demande annulée.",
+      "dialog_title": "Demander à rejoindre l'équipe",
+      "dialog_help": "Vous demandez à rejoindre « {{team}} ». Vous pouvez ajouter un message au coach (facultatif).",
+      "message_placeholder": "Message (facultatif)…",
+      "submit": "Envoyer la demande",
+      "sent": "Demande envoyée.",
+      "errors": {
+        "already_member": "Vous êtes déjà membre de cette équipe.",
+        "team_not_active": "Cette équipe n'est pas active.",
+        "team_not_public": "Cette équipe n'accepte plus de nouvelles demandes."
+      }
+    },
     "join_requests": {
       "title": "Demandes de rejoindre",
       "empty": "Aucune demande en attente",

@@ -24,6 +24,7 @@ import { InvitationsService } from '../../../api/api/invitations.service';
 import { JoinRequestsService } from '../../../api/api/join-requests.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { CreateInvitation } from '../../../api/model/create-invitation';
+import { CreateJoinRequest } from '../../../api/model/create-join-request';
 import { InvitationStatusEnum } from '../../../api/model/invitation-status-enum';
 import { JoinRequestStatusEnum } from '../../../api/model/join-request-status-enum';
 import { Team } from '../../../api/model/team';
@@ -32,7 +33,7 @@ import { TeamJoinRequest } from '../../../api/model/team-join-request';
 import { TeamMembership } from '../../../api/model/team-membership';
 import { AuthService } from '../../../core/auth/auth.service';
 import { MemberMembershipService } from '../member-membership.service';
-import { TeamRole, computeTeamRole } from '../teams-list/teams-list.component';
+import { TeamRole } from '../teams-list/teams-list.component';
 import { ProgramsListComponent } from '../../programs/programs-list/programs-list.component';
 import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-header.component';
 
@@ -100,11 +101,33 @@ export class TeamsDetailComponent implements OnInit {
   protected readonly rejectingRequest = signal<TeamJoinRequest | null>(null);
   protected readonly rejectMessage = signal('');
 
+  protected readonly myPendingRequest = signal<TeamJoinRequest | null>(null);
+  protected readonly loadingMyRequest = signal(false);
+  protected readonly showJoinDialog = signal(false);
+  protected readonly submittingJoinRequest = signal(false);
+  protected readonly cancellingMyRequest = signal(false);
+  protected readonly joinMessage = signal('');
+  protected readonly joinError = signal<string | null>(null);
+
   protected readonly currentUserRole = computed<TeamRole | null>(() => {
     const t = this.team();
-    const userId = this.authService.currentUser()?.id;
-    if (!t || userId == null) return null;
-    return computeTeamRole(t, userId);
+    const me = this.authService.currentUser();
+    if (!t || !me) return null;
+    if (t.owner?.id === me.id) return 'owner';
+    if (t.managers?.some((m) => m.id === me.id)) return 'manager';
+    if (this.memberships().some((mb) => mb.member_username === me.username)) return 'member';
+    return null;
+  });
+
+  protected readonly isMemberOrAbove = computed(() => this.currentUserRole() !== null);
+
+  protected readonly canRequestJoin = computed<boolean>(() => {
+    const t = this.team();
+    if (!t || !t.is_public) return false;
+    if (this.isMemberOrAbove()) return false;
+    if (this.myPendingRequest() !== null) return false;
+    if (this.loadingMyRequest()) return false;
+    return true;
   });
 
   protected readonly canManage = computed(() => {
@@ -156,12 +179,22 @@ export class TeamsDetailComponent implements OnInit {
         next: (t) => {
           this.team.set(t);
           this.loading.set(false);
+          this.maybeLoadMyPendingRequest(t, id);
         },
         error: () => {
           this.notFound.set(true);
           this.loading.set(false);
         },
       });
+  }
+
+  private maybeLoadMyPendingRequest(t: Team, teamId: number): void {
+    const me = this.authService.currentUser();
+    if (!me || !t.is_public) return;
+    const isOwner = t.owner?.id === me.id;
+    const isManager = t.managers?.some((m) => m.id === me.id) ?? false;
+    if (isOwner || isManager) return;
+    this.loadMyPendingRequest(teamId);
   }
 
   private loadMemberships(id: number): void {
@@ -198,6 +231,152 @@ export class TeamsDetailComponent implements OnInit {
           this.loadingJoinRequests.set(false);
         },
         error: () => this.loadingJoinRequests.set(false),
+      });
+  }
+
+  private loadMyPendingRequest(teamId: number): void {
+    const me = this.authService.currentUser();
+    if (!me) return;
+    this.loadingMyRequest.set(true);
+    this.joinRequestsService
+      .joinRequestsList(undefined, undefined, undefined, JoinRequestStatusEnum.Pending, teamId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          const mine = (res.results ?? []).find((r) => r.user === me.id) ?? null;
+          this.myPendingRequest.set(mine);
+          this.loadingMyRequest.set(false);
+        },
+        error: () => {
+          this.myPendingRequest.set(null);
+          this.loadingMyRequest.set(false);
+        },
+      });
+  }
+
+  protected openJoinDialog(): void {
+    this.joinMessage.set('');
+    this.joinError.set(null);
+    this.showJoinDialog.set(true);
+  }
+
+  protected closeJoinDialog(): void {
+    this.showJoinDialog.set(false);
+  }
+
+  protected submitJoinRequest(): void {
+    const teamId = this.teamId();
+    if (teamId === null) return;
+    this.submittingJoinRequest.set(true);
+    this.joinError.set(null);
+    const message = this.joinMessage().trim();
+    const payload: CreateJoinRequest = {
+      id: 0,
+      team: teamId,
+      ...(message ? { message } : {}),
+    };
+    this.joinRequestsService
+      .joinRequestsCreate(payload)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (created) => {
+          this.submittingJoinRequest.set(false);
+          this.showJoinDialog.set(false);
+          // CreateJoinRequest response shape doesn't include status —
+          // re-fetch via list to discover whether the auto-policy
+          // accepted it or not.
+          this.handlePostJoinSubmit(teamId, created.id);
+        },
+        error: (err: HttpErrorResponse) => {
+          this.submittingJoinRequest.set(false);
+          this.applyJoinError(err, teamId);
+        },
+      });
+  }
+
+  private handlePostJoinSubmit(teamId: number, _createdId: number): void {
+    // Re-load my pending request: if it's there, manual policy → show chip.
+    // Re-load memberships: if I'm now in there, auto policy accepted → CTA disappears.
+    this.loadMyPendingRequest(teamId);
+    this.loadMemberships(teamId);
+    this.loadTeam(teamId);
+    this.messageService.add({
+      severity: 'success',
+      summary: this.transloco.translate('common.success'),
+      detail: this.transloco.translate('teams.join_request.sent'),
+    });
+  }
+
+  private applyJoinError(err: HttpErrorResponse, teamId: number): void {
+    const body = err?.error as
+      | { code?: string; detail?: string; fields?: { team?: Array<{ code?: string }> } }
+      | null
+      | undefined;
+    const teamErrCode = body?.fields?.team?.[0]?.code;
+
+    if (teamErrCode === 'pending_request_exists') {
+      // Already have a pending request — load it to render the chip.
+      this.loadMyPendingRequest(teamId);
+      this.showJoinDialog.set(false);
+      return;
+    }
+    if (teamErrCode === 'already_member') {
+      // Already a member — refresh memberships so CTA disappears.
+      this.loadMemberships(teamId);
+      this.showJoinDialog.set(false);
+      this.messageService.add({
+        severity: 'info',
+        summary: this.transloco.translate('common.success'),
+        detail: this.transloco.translate('teams.join_request.errors.already_member'),
+      });
+      return;
+    }
+    if (teamErrCode === 'team_not_active') {
+      this.joinError.set('teams.join_request.errors.team_not_active');
+      return;
+    }
+    if (teamErrCode === 'team_not_public') {
+      this.joinError.set('teams.join_request.errors.team_not_public');
+      return;
+    }
+    this.joinError.set(body?.detail ?? 'teams.errors.unknown');
+  }
+
+  protected confirmCancelMyRequest(): void {
+    this.confirmationService.confirm({
+      header: this.transloco.translate('teams.join_request.cancel_confirm_title'),
+      message: this.transloco.translate('teams.join_request.cancel_confirm_message'),
+      acceptLabel: this.transloco.translate('teams.join_request.cancel_accept'),
+      rejectLabel: this.transloco.translate('common.cancel'),
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => this.cancelMyRequest(),
+    });
+  }
+
+  private cancelMyRequest(): void {
+    const req = this.myPendingRequest();
+    const teamId = this.teamId();
+    if (!req || teamId === null) return;
+    this.cancellingMyRequest.set(true);
+    this.joinRequestsService
+      .joinRequestsPartialUpdate(req.id, { status: JoinRequestStatusEnum.Cancelled })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.cancellingMyRequest.set(false);
+          this.myPendingRequest.set(null);
+          this.messageService.add({
+            severity: 'success',
+            summary: this.transloco.translate('common.success'),
+            detail: this.transloco.translate('teams.join_request.cancelled'),
+          });
+        },
+        error: () => {
+          this.cancellingMyRequest.set(false);
+          // Whatever happened (request_already_handled etc.), re-sync.
+          this.loadMyPendingRequest(teamId);
+          this.loadMemberships(teamId);
+        },
       });
   }
 

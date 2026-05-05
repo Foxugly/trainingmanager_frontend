@@ -116,6 +116,16 @@ interface ProtectedFields {
   openRejectDialog(req: TeamJoinRequest): void;
   closeRejectDialog(): void;
   submitReject(): void;
+  myPendingRequest(): TeamJoinRequest | null;
+  canRequestJoin(): boolean;
+  isMemberOrAbove(): boolean;
+  joinMessage(): string;
+  joinError(): string | null;
+  showJoinDialog(): boolean;
+  openJoinDialog(): void;
+  closeJoinDialog(): void;
+  submitJoinRequest(): void;
+  confirmCancelMyRequest(): void;
 }
 
 describe('TeamsDetailComponent', () => {
@@ -135,6 +145,7 @@ describe('TeamsDetailComponent', () => {
   let joinRequestsMock: {
     joinRequestsList: ReturnType<typeof vi.fn>;
     joinRequestsPartialUpdate: ReturnType<typeof vi.fn>;
+    joinRequestsCreate: ReturnType<typeof vi.fn>;
   };
   let memberMembershipMock: { createMemberAndAttach: ReturnType<typeof vi.fn> };
   let userSig: ReturnType<typeof signal<CustomUserPublic | null>>;
@@ -147,6 +158,10 @@ describe('TeamsDetailComponent', () => {
     idParam: string | null = '4',
     retrieveResult: Team | null = team,
     currentUser: CustomUserPublic = ownerUser,
+    overrides: {
+      memberships?: TeamMembership[];
+      joinRequestsList?: { count: number; results: TeamJoinRequest[] };
+    } = {},
   ) {
     TestBed.resetTestingModule();
     routeIdParam = idParam;
@@ -154,7 +169,7 @@ describe('TeamsDetailComponent', () => {
       teamsRetrieve: vi
         .fn()
         .mockReturnValue(retrieveResult ? of(retrieveResult) : throwError(() => new Error('404'))),
-      teamsMembershipsList: vi.fn().mockReturnValue(of([mb1])),
+      teamsMembershipsList: vi.fn().mockReturnValue(of(overrides.memberships ?? [mb1])),
       teamsMembershipsDestroy: vi.fn().mockReturnValue(of(null)),
       teamsPartialUpdate: vi.fn().mockReturnValue(of(team)),
     };
@@ -164,8 +179,13 @@ describe('TeamsDetailComponent', () => {
       invitationsDestroy: vi.fn().mockReturnValue(of(null)),
     };
     joinRequestsMock = {
-      joinRequestsList: vi.fn().mockReturnValue(of({ count: 1, results: [joinReq1] })),
+      joinRequestsList: vi
+        .fn()
+        .mockReturnValue(of(overrides.joinRequestsList ?? { count: 1, results: [joinReq1] })),
       joinRequestsPartialUpdate: vi.fn().mockReturnValue(of({ ...joinReq1 })),
+      joinRequestsCreate: vi
+        .fn()
+        .mockReturnValue(of({ id: 99, team: 4, message: 'hi' })),
     };
     memberMembershipMock = {
       createMemberAndAttach: vi.fn().mockReturnValue(of({ member: { id: 99 }, membership: mb1 })),
@@ -229,7 +249,11 @@ describe('TeamsDetailComponent', () => {
   });
 
   it('member-only user sees role member but cannot manage', async () => {
-    await setup('4', team, otherUser);
+    // currentUserRole now reads memberships to detect 'member' (instead of
+    // defaulting to 'member' for non-owner/non-manager). Mock the membership
+    // so that otherUser appears as a real member.
+    const memberOther: TeamMembership = { ...mb1, member_username: 'someone' };
+    await setup('4', team, otherUser, { memberships: [memberOther] });
     expect(access(component).currentUserRole()).toBe('member');
     expect(access(component).canManage()).toBe(false);
     expect(access(component).isOwner()).toBe(false);
@@ -403,5 +427,103 @@ describe('TeamsDetailComponent', () => {
       response_message: 'Sorry, full team',
     });
     expect(access(component).rejectingRequest()).toBeNull();
+  });
+
+  it('non-member visitor on a public team sees the join CTA', async () => {
+    await setup('4', { ...team, is_public: true }, otherUser, {
+      memberships: [],
+      joinRequestsList: { count: 0, results: [] },
+    });
+    expect(access(component).isMemberOrAbove()).toBe(false);
+    expect(access(component).canRequestJoin()).toBe(true);
+    expect(access(component).myPendingRequest()).toBeNull();
+  });
+
+  it('non-member with an existing pending request sees the chip, not the CTA', async () => {
+    const myPending: TeamJoinRequest = { ...joinReq1, user: 99 };
+    await setup('4', { ...team, is_public: true }, otherUser, {
+      memberships: [],
+      joinRequestsList: { count: 1, results: [myPending] },
+    });
+    expect(access(component).myPendingRequest()).toEqual(myPending);
+    expect(access(component).canRequestJoin()).toBe(false);
+  });
+
+  it('submitJoinRequest posts {team, message} and re-syncs state on success', async () => {
+    await setup('4', { ...team, is_public: true }, otherUser, {
+      memberships: [],
+      joinRequestsList: { count: 0, results: [] },
+    });
+    access(component).openJoinDialog();
+    (access(component) as unknown as { joinMessage: { set(v: string): void } }).joinMessage.set(
+      'Hi, swimmer here',
+    );
+    access(component).submitJoinRequest();
+    expect(joinRequestsMock.joinRequestsCreate).toHaveBeenCalledWith({
+      id: 0,
+      team: 4,
+      message: 'Hi, swimmer here',
+    });
+    expect(access(component).showJoinDialog()).toBe(false);
+  });
+
+  it('submitJoinRequest maps pending_request_exists error → loads pending + closes dialog', async () => {
+    await setup('4', { ...team, is_public: true }, otherUser, {
+      memberships: [],
+      joinRequestsList: { count: 0, results: [] },
+    });
+    joinRequestsMock.joinRequestsCreate.mockReturnValueOnce(
+      throwError(() => ({
+        error: { fields: { team: [{ code: 'pending_request_exists', detail: 'x' }] } },
+      })),
+    );
+    const initialListCalls = joinRequestsMock.joinRequestsList.mock.calls.length;
+    access(component).openJoinDialog();
+    access(component).submitJoinRequest();
+    expect(access(component).showJoinDialog()).toBe(false);
+    // The error path triggers a refresh of the pending request via joinRequestsList.
+    expect(joinRequestsMock.joinRequestsList.mock.calls.length).toBe(initialListCalls + 1);
+  });
+
+  it('submitJoinRequest maps team_not_public error to inline joinError', async () => {
+    await setup('4', { ...team, is_public: true }, otherUser, {
+      memberships: [],
+      joinRequestsList: { count: 0, results: [] },
+    });
+    joinRequestsMock.joinRequestsCreate.mockReturnValueOnce(
+      throwError(() => ({
+        error: { fields: { team: [{ code: 'team_not_public', detail: 'x' }] } },
+      })),
+    );
+    access(component).openJoinDialog();
+    access(component).submitJoinRequest();
+    expect(access(component).joinError()).toBe('teams.join_request.errors.team_not_public');
+    expect(access(component).showJoinDialog()).toBe(true);
+  });
+
+  it('cancelMyRequest PATCHes status=cancelled and clears the chip on success', async () => {
+    const myPending: TeamJoinRequest = { ...joinReq1, user: 99 };
+    await setup('4', { ...team, is_public: true }, otherUser, {
+      memberships: [],
+      joinRequestsList: { count: 1, results: [myPending] },
+    });
+    const confirmation = fixture.debugElement.injector.get(ConfirmationService);
+    vi.spyOn(confirmation, 'confirm').mockImplementation((cfg) => {
+      cfg.accept?.();
+      return confirmation;
+    });
+    access(component).confirmCancelMyRequest();
+    expect(joinRequestsMock.joinRequestsPartialUpdate).toHaveBeenCalledWith(77, {
+      status: JoinRequestStatusEnum.Cancelled,
+    });
+    expect(access(component).myPendingRequest()).toBeNull();
+  });
+
+  it('currentUserRole returns null for non-member visitor on a public team', async () => {
+    await setup('4', { ...team, is_public: true }, otherUser, {
+      memberships: [],
+      joinRequestsList: { count: 0, results: [] },
+    });
+    expect(access(component).currentUserRole()).toBeNull();
   });
 });

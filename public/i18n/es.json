@@ -264,6 +264,25 @@
       "cancel_confirm_message": "La invitación será anulada y no podrá utilizarse más.",
       "cancelled": "Invitación anulada."
     },
+    "join_request": {
+      "cta": "Solicitar unirse",
+      "pending_chip": "Solicitud pendiente",
+      "cancel_cta": "Cancelar mi solicitud",
+      "cancel_confirm_title": "¿Cancelar tu solicitud?",
+      "cancel_confirm_message": "Tu solicitud será cancelada. Podrás enviar una nueva más tarde.",
+      "cancel_accept": "Cancelar solicitud",
+      "cancelled": "Solicitud cancelada.",
+      "dialog_title": "Solicitar unirse al equipo",
+      "dialog_help": "Estás solicitando unirte a « {{team}} ». Puedes añadir un mensaje para el coach (opcional).",
+      "message_placeholder": "Mensaje (opcional)…",
+      "submit": "Enviar solicitud",
+      "sent": "Solicitud enviada.",
+      "errors": {
+        "already_member": "Ya eres miembro de este equipo.",
+        "team_not_active": "Este equipo no está activo.",
+        "team_not_public": "Este equipo ya no acepta nuevas solicitudes."
+      }
+    },
     "join_requests": {
       "title": "Solicitudes de unión",
       "empty": "Sin solicitudes pendientes",

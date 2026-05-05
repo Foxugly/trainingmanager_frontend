@@ -264,6 +264,25 @@
       "cancel_confirm_message": "De uitnodiging wordt geannuleerd en kan niet meer worden gebruikt.",
       "cancelled": "Uitnodiging geannuleerd."
     },
+    "join_request": {
+      "cta": "Aanvraag indienen",
+      "pending_chip": "Aanvraag in behandeling",
+      "cancel_cta": "Mijn aanvraag annuleren",
+      "cancel_confirm_title": "Je aanvraag annuleren?",
+      "cancel_confirm_message": "Je aanvraag wordt geannuleerd. Je kan later een nieuwe indienen.",
+      "cancel_accept": "Aanvraag annuleren",
+      "cancelled": "Aanvraag geannuleerd.",
+      "dialog_title": "Aanvraag om lid te worden",
+      "dialog_help": "Je vraagt om lid te worden van « {{team}} ». Je kan een bericht voor de coach toevoegen (optioneel).",
+      "message_placeholder": "Bericht (optioneel)…",
+      "submit": "Aanvraag verzenden",
+      "sent": "Aanvraag verzonden.",
+      "errors": {
+        "already_member": "Je bent al lid van dit team.",
+        "team_not_active": "Dit team is niet actief.",
+        "team_not_public": "Dit team accepteert geen nieuwe aanvragen meer."
+      }
+    },
     "join_requests": {
       "title": "Aanvragen om lid te worden",
       "empty": "Geen openstaande aanvragen",
