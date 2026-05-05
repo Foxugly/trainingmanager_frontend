@@ -110,6 +110,7 @@ interface ProtectedFields {
   selectedProgramIdsModel: number[];
   eventBgColor(e: Event): string;
   canCreate(): boolean;
+  skeletonIndices: Set<number>;
 }
 
 describe('EventsCalendarComponent', () => {
@@ -254,5 +255,21 @@ describe('EventsCalendarComponent', () => {
     const stranger = { id: 999, username: 'guest' } as CustomUserPublic;
     await setup(stranger);
     expect(access(component).canCreate()).toBe(false);
+  });
+
+  // Skeleton placeholders during initial load — see I-2 follow-up. The
+  // template renders a <p-skeleton> in any same-month cell whose grid
+  // index is in skeletonIndices and while loading() is true. We verify
+  // the contract here (the Set is sparse-but-non-trivial); the DOM
+  // rendering itself is tested via the build-time strictTemplates check
+  // since this spec strips the template via overrideComponent.
+  it('exposes a non-empty skeletonIndices Set distributed across the grid', () => {
+    const set = access(component).skeletonIndices;
+    expect(set.size).toBeGreaterThanOrEqual(6);
+    // Indices should fall within the 6-week (42-cell) calendar window.
+    for (const i of set) {
+      expect(i).toBeGreaterThanOrEqual(0);
+      expect(i).toBeLessThan(42);
+    }
   });
 });

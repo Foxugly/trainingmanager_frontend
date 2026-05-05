@@ -15,6 +15,7 @@ import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { MultiSelect } from 'primeng/multiselect';
+import { Skeleton } from 'primeng/skeleton';
 import { firstValueFrom } from 'rxjs';
 import { EventsService } from '../../../api/api/events.service';
 import { ProgramsService } from '../../../api/api/programs.service';
@@ -73,7 +74,7 @@ function dayKey(d: Date): string {
 
 @Component({
   selector: 'app-events-calendar',
-  imports: [CommonModule, FormsModule, RouterLink, Button, MultiSelect, TranslocoPipe],
+  imports: [CommonModule, FormsModule, RouterLink, Button, MultiSelect, Skeleton, TranslocoPipe],
   templateUrl: './events-calendar.component.html',
   styleUrl: './events-calendar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -94,6 +95,11 @@ export class EventsCalendarComponent implements OnInit {
   protected readonly availablePrograms = signal<Program[]>([]);
   protected readonly events = signal<Event[]>([]);
   protected readonly loading = signal(false);
+
+  // Sparse set of grid indices that get a single skeleton placeholder
+  // while loading() is true — produces a "calendar with a few sessions
+  // about to appear" feel without overwhelming the grid.
+  protected readonly skeletonIndices = new Set<number>([3, 6, 9, 12, 15, 18, 21, 24, 27, 31]);
 
   protected readonly canCreate = computed(() => {
     const userId = this.authService.currentUser()?.id;
