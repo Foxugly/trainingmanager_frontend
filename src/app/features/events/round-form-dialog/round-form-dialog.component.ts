@@ -22,6 +22,7 @@ import { Message } from 'primeng/message';
 import { RoundsService } from '../../../api/api/rounds.service';
 import { LanguageEnum } from '../../../api/model/language-enum';
 import { Round } from '../../../api/model/round';
+import { timeMmSsValidator } from '../shared/time-validator';
 
 interface FieldErrors {
   [field: string]: string[];
@@ -65,8 +66,8 @@ export class RoundFormDialogComponent {
 
   protected readonly form = this.fb.nonNullable.group({
     count: [1, [Validators.required, Validators.min(1)]],
-    t_start: [''],
-    t_break: [''],
+    t_start: ['', [timeMmSsValidator]],
+    t_break: ['', [timeMmSsValidator]],
   });
 
   constructor() {

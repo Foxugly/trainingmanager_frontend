@@ -4,6 +4,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  OnDestroy,
   OnInit,
   computed,
   inject,
@@ -40,13 +41,15 @@ const STATUS_ICONS: Record<string, string> = {
 
 const FALLBACK_ICON = 'pi-circle';
 
+const SAVE_DEBOUNCE_MS = 300;
+
 @Component({
   selector: 'app-attendance-manager',
   imports: [CommonModule, Button, Tooltip, TranslocoPipe],
   templateUrl: './attendance-manager.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AttendanceManagerComponent implements OnInit {
+export class AttendanceManagerComponent implements OnInit, OnDestroy {
   readonly event = input.required<Event>();
   readonly team = input.required<Team>();
 
@@ -61,6 +64,9 @@ export class AttendanceManagerComponent implements OnInit {
   protected readonly rows = signal<AttendanceRow[]>([]);
   protected readonly loading = signal(false);
   protected readonly noStatuses = signal(false);
+
+  private readonly pendingTimers = new Map<number, ReturnType<typeof setTimeout>>();
+  private readonly originalStatusByMember = new Map<number, string>();
 
   protected readonly orderedStatuses = computed(() =>
     [...this.statuses()]
@@ -80,6 +86,11 @@ export class AttendanceManagerComponent implements OnInit {
 
   ngOnInit(): void {
     this.load();
+  }
+
+  ngOnDestroy(): void {
+    for (const timer of this.pendingTimers.values()) clearTimeout(timer);
+    this.pendingTimers.clear();
   }
 
   private load(): void {
@@ -130,27 +141,48 @@ export class AttendanceManagerComponent implements OnInit {
 
   protected onSelect(memberId: number, code: string): void {
     const current = this.rows().find((r) => r.member_id === memberId);
-    if (!current || current.status_code === code || current.saving) return;
+    if (!current || current.status_code === code) return;
 
-    const previous = current.status_code;
+    if (!this.originalStatusByMember.has(memberId)) {
+      this.originalStatusByMember.set(memberId, current.status_code);
+    }
+
     this.rows.update((rs) =>
       rs.map((r) => (r.member_id === memberId ? { ...r, status_code: code, saving: true } : r)),
     );
 
+    const existing = this.pendingTimers.get(memberId);
+    if (existing) clearTimeout(existing);
+
+    const timer = setTimeout(() => {
+      this.pendingTimers.delete(memberId);
+      const latest = this.rows().find((r) => r.member_id === memberId);
+      if (!latest) return;
+      this.persistAttendance(memberId, latest.status_code);
+    }, SAVE_DEBOUNCE_MS);
+    this.pendingTimers.set(memberId, timer);
+  }
+
+  private persistAttendance(memberId: number, code: string): void {
     firstValueFrom(
       this.eventsService.eventsAttendanceBulkCreate(this.event().id, {
         attendances: [{ member_id: memberId, status_code: code }],
       }),
     )
       .then(() => {
+        this.originalStatusByMember.delete(memberId);
         this.rows.update((rs) =>
           rs.map((r) => (r.member_id === memberId ? { ...r, saving: false } : r)),
         );
       })
       .catch((err: HttpErrorResponse) => {
+        const previous = this.originalStatusByMember.get(memberId);
+        this.originalStatusByMember.delete(memberId);
         this.rows.update((rs) =>
           rs.map((r) =>
-            r.member_id === memberId ? { ...r, status_code: previous, saving: false } : r,
+            r.member_id === memberId
+              ? { ...r, status_code: previous ?? r.status_code, saving: false }
+              : r,
           ),
         );
         const detail = (err?.error as { detail?: string } | null)?.detail;

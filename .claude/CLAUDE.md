@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Common commands
 
 - `npm start` — dev server on http://localhost:4200 (no proxy; calls `environment.apiBase` directly).
-- `npm run build` — production build into `dist/`. Initial-bundle warning is preexisting; don't add to it casually.
+- `npm run build` — production build into `dist/`. Initial-bundle budget set to `1MB` warning / `1.5MB` error in `angular.json` (current size ~930 kB given Angular 21 + PrimeNG 21 + Tailwind 4 + Transloco footprint).
 - `npm run watch` — incremental dev build.
 - `npm test` — Vitest via `@angular/build:unit-test`. Filter a single spec: `npm test -- src/app/core/auth/auth.service.spec.ts`.
 - `npm run api:gen` — regenerates the typed client in `src/app/api/` from `openapi/Training_Manager_API.yaml` (config in `openapitools.json`).
@@ -41,14 +41,16 @@ All providers live in `src/app/app.config.ts`; routes in `src/app/app.routes.ts`
 
 ### Per-feature convention
 
-`src/app/features/{feature}/` with the trio `{feature}-list`, `{feature}-form`, `{feature}-detail`. Some features add `-discover`, `-attendance`, `magic-action`, dialogs (e.g. `generate-events-dialog`). All routes are lazy-loaded via `loadComponent` / `loadChildren`.
+`src/app/features/{feature}/` with the trio `{feature}-list`, `{feature}-form`, `{feature}-detail`. Some features add `-discover`, `magic-action`, dialogs (e.g. `generate-events-dialog`, `regenerate-training-dialog`, `round-form-dialog`, `exercise-form-dialog`), or in-tab managers (e.g. `attendance-manager` embedded inside the events-detail attendance tab — there is no standalone attendance route). All routes are lazy-loaded via `loadComponent` / `loadChildren`.
 
 ### Shared UI (`src/app/shared/ui/`)
 
-- **DetailHeaderComponent** — editorial header (eyebrow + title + back link
-  + 4 ng-content slots: banner / badges / actions / meta) with a
-  sticky condensed bar driven by an IntersectionObserver on a sentinel
-  `<hr>`. Used on teams/programs/events detail.
+- **DetailHeaderComponent** — single-line toolbar header
+  `[← back] [icon + eyebrow + title + suffix + badges centered] [icon-only actions]`
+  with 5 ng-content slots: `banner / titleSuffix / badges / actions / meta`
+  + an optional `subtitle` slot for short descriptive text below the title.
+  Sticky condensed bar at scroll, driven by an IntersectionObserver on a
+  zero-height sentinel div. Used on teams/programs/events detail.
 - **EmptyStateComponent** — icon-pill + title + subtitle + ng-content
   CTAs. 4 tones (indigo/emerald/rose/gray). Used on every list +
   dashboard empty section.
@@ -160,4 +162,5 @@ Prettier: 100-col, single quotes, Angular parser for `*.html`. 2-space indent (`
 - **Windows LF→CRLF** git warnings on every commit are noise, not errors.
 - **Reset password URL**: `/auth/reset-password/:key` (no trailing slash). `:key` is `uid-token` with a dash — treat as opaque.
 - **Magic-link URL**: `/team-join-requests/magic-action/:token` (frontend route) ≠ `/api/v1/join-magic/:token/` (API endpoint). Don't conflate.
-- **Bundle budget**: initial chunk currently exceeds the 500 kB warning by ~400 kB (preexisting). Don't pile on without reason.
+- **Codegen positional params**: `npm run api:gen` produces method signatures with positional query-param args (`eventsList(color, date, dateGte, ...)`). Adding a new query filter on the backend reorders these alphabetically and silently breaks every existing caller. Mitigation : use named-args mode (`useSingleRequestParameter=true`) when migrating, or audit every call site after each `api:gen`.
+- **Accept-Language**: `languageInterceptor` (`src/app/core/i18n/`) attaches `Accept-Language: <activeLang>` on every API call so the backend can localize translatable model fields (modality.name, status.label, etc.).

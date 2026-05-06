@@ -29,6 +29,7 @@ import { EnergySegment } from '../../../api/model/energy-segment';
 import { Exercise } from '../../../api/model/exercise';
 import { LanguageEnum } from '../../../api/model/language-enum';
 import { Modality } from '../../../api/model/modality';
+import { timeMmSsValidator } from '../shared/time-validator';
 
 interface FieldErrors {
   [field: string]: string[];
@@ -82,8 +83,8 @@ export class ExerciseFormDialogComponent {
     energysegment_id: this.fb.nonNullable.control<number | null>(null, [Validators.required]),
     repetition: [1, [Validators.required, Validators.min(1)]],
     distance: [50, [Validators.required, Validators.min(0)]],
-    t_start: [''],
-    t_break: [''],
+    t_start: ['', [timeMmSsValidator]],
+    t_break: ['', [timeMmSsValidator]],
     notes: [''],
   });
 

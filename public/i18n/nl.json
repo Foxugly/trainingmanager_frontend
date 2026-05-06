@@ -28,6 +28,9 @@
     }
   },
   "events": {
+    "shared": {
+      "time_mmss_invalid": "Verwacht formaat: MM:SS (bijv. 1:30)."
+    },
     "calendar": {
       "title": "Kalender",
       "today": "Vandaag",
@@ -243,7 +246,6 @@
     },
     "frequency_per_week": "Frequentie per week",
     "times_per_week": "keer per week",
-    "ai_generated": "AI",
     "unknown_team": "Onbekend team",
     "form": {
       "new_title": "Nieuw programma",

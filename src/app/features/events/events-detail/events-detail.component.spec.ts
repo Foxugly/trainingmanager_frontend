@@ -164,6 +164,7 @@ describe('EventsDetailComponent', () => {
     eventsRetrieve: ReturnType<typeof vi.fn>;
     eventsGenerateTrainingCreate: ReturnType<typeof vi.fn>;
     eventsDestroy: ReturnType<typeof vi.fn>;
+    eventsPartialUpdate: ReturnType<typeof vi.fn>;
   };
   let programsMock: { programsRetrieve: ReturnType<typeof vi.fn> };
   let teamsMock: { teamsRetrieve: ReturnType<typeof vi.fn> };
@@ -202,6 +203,11 @@ describe('EventsDetailComponent', () => {
         }),
       ),
       eventsDestroy: vi.fn().mockReturnValue(of(null)),
+      eventsPartialUpdate: vi
+        .fn()
+        .mockImplementation((_id: number, body: { total?: number }) =>
+          of({ ...(eventResult ?? eventNoRounds), total: body?.total ?? 0 } as Event),
+        ),
     };
     programsMock = { programsRetrieve: vi.fn().mockReturnValue(of(program)) };
     teamsMock = { teamsRetrieve: vi.fn().mockReturnValue(of(team)) };

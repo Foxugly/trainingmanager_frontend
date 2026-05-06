@@ -187,13 +187,6 @@ export const routes: Routes = [
                 (m) => m.EventsFormComponent,
               ),
           },
-          {
-            path: ':id/attendance',
-            loadComponent: () =>
-              import('./features/events/events-attendance/events-attendance.component').then(
-                (m) => m.EventsAttendanceComponent,
-              ),
-          },
         ],
       },
       {

@@ -28,6 +28,9 @@
     }
   },
   "events": {
+    "shared": {
+      "time_mmss_invalid": "Formato esperado: MM:SS (p. ej. 1:30)."
+    },
     "calendar": {
       "title": "Calendario",
       "today": "Hoy",
@@ -243,7 +246,6 @@
     },
     "frequency_per_week": "Frecuencia semanal",
     "times_per_week": "veces por semana",
-    "ai_generated": "IA",
     "unknown_team": "Equipo desconocido",
     "form": {
       "new_title": "Nuevo programa",

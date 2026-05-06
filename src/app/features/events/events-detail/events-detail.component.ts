@@ -13,8 +13,10 @@ import {
   DestroyRef,
   OnInit,
   computed,
+  effect,
   inject,
   signal,
+  untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -172,6 +174,39 @@ export class EventsDetailComponent implements OnInit {
       return `${km % 1 === 0 ? km.toFixed(0) : km.toFixed(1)} km`;
     }
     return `${meters} m`;
+  }
+
+  private patchingTotal = false;
+
+  constructor() {
+    effect(() => {
+      const event = this.event();
+      if (!event) return;
+      if (this.loadingRounds()) return;
+      if (this.roundsLoadError() !== null) return;
+      if ((event.rounds?.length ?? 0) > 0 && this.rounds().length === 0) return;
+      const computed = this.eventTotalDistance();
+      const stored = event.total ?? 0;
+      if (computed === stored) return;
+      if (this.patchingTotal) return;
+      this.patchingTotal = true;
+      untracked(() => this.patchEventTotal(event.id, computed));
+    });
+  }
+
+  private patchEventTotal(eventId: number, total: number): void {
+    this.eventsService
+      .eventsPartialUpdate(eventId, { total })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (updated) => {
+          this.event.update((e) => (e ? { ...e, total: updated.total ?? total } : e));
+          this.patchingTotal = false;
+        },
+        error: () => {
+          this.patchingTotal = false;
+        },
+      });
   }
 
   ngOnInit(): void {
