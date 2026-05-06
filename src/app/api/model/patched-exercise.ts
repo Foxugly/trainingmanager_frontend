@@ -24,6 +24,10 @@ export interface PatchedExercise {
     modality_id?: number | null;
     readonly energysegment?: EnergySegment;
     energysegment_id?: number | null;
+    /**
+     * Optional. If provided on POST, the newly created Exercise is atomically attached to this Round. The request user must manage at least one team of at least one Event linked to this Round (library rounds with no events are accepted as-is). Ignored on PATCH/PUT.
+     */
+    round_id?: number;
     language?: LanguageEnum;
     readonly usage_count?: number;
     readonly created_at?: string;

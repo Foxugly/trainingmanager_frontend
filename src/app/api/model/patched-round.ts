@@ -21,6 +21,10 @@ export interface PatchedRound {
     t_start?: string | null;
     t_break?: string | null;
     exercises?: Array<number>;
+    /**
+     * Optional. If provided on POST, the newly created Round is atomically attached to this Event. The request user must manage the Event\'s team. Ignored on PATCH/PUT.
+     */
+    event_id?: number;
     readonly usage_count?: number;
     readonly created_at?: string;
     readonly updated_at?: string;
