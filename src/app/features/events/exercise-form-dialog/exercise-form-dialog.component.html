@@ -1,0 +1,115 @@
+<p-dialog
+  [visible]="visible()"
+  (visibleChange)="onVisibleChange($event)"
+  [modal]="true"
+  [closable]="!saving()"
+  [style]="{ width: '32rem' }"
+  [header]="(mode() === 'create' ? 'events.exercise_form.title_create' : 'events.exercise_form.title_edit') | transloco"
+>
+  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+    @if (loadingOptions()) {
+      <p class="text-sm text-gray-500">{{ 'common.loading' | transloco }}…</p>
+    } @else if (!hasOptions()) {
+      @if (modalities().length === 0) {
+        <p-message
+          severity="warn"
+          [text]="'events.exercise_form.errors.no_modalities' | transloco"
+        />
+      }
+      @if (energySegments().length === 0) {
+        <p-message
+          severity="warn"
+          [text]="'events.exercise_form.errors.no_segments' | transloco"
+        />
+      }
+    } @else {
+      <div class="flex flex-col gap-2">
+        <label for="ex_modality" class="text-sm font-medium text-gray-700">
+          {{ 'events.exercise_form.fields.modality' | transloco }}
+        </label>
+        <p-select
+          inputId="ex_modality"
+          formControlName="modality_id"
+          [options]="modalities()"
+          optionLabel="name"
+          optionValue="id"
+          [placeholder]="'events.exercise_form.fields.modality_placeholder' | transloco"
+          appendTo="body"
+        />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="ex_segment" class="text-sm font-medium text-gray-700">
+          {{ 'events.exercise_form.fields.energysegment' | transloco }}
+        </label>
+        <p-select
+          inputId="ex_segment"
+          formControlName="energysegment_id"
+          [options]="energySegments()"
+          optionLabel="abv"
+          optionValue="id"
+          [placeholder]="'events.exercise_form.fields.energysegment_placeholder' | transloco"
+          appendTo="body"
+        />
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div class="flex flex-col gap-2">
+          <label for="ex_repetition" class="text-sm font-medium text-gray-700">
+            {{ 'events.exercise_form.fields.repetition' | transloco }}
+          </label>
+          <p-inputNumber
+            inputId="ex_repetition"
+            formControlName="repetition"
+            [min]="1"
+            [showButtons]="true"
+            [useGrouping]="false"
+          />
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="ex_distance" class="text-sm font-medium text-gray-700">
+            {{ 'events.exercise_form.fields.distance' | transloco }}
+          </label>
+          <p-inputNumber
+            inputId="ex_distance"
+            formControlName="distance"
+            [min]="0"
+            [step]="25"
+            [useGrouping]="false"
+            suffix=" m"
+          />
+        </div>
+      </div>
+    }
+
+    @if (errorMessage(); as msg) {
+      <p-message severity="error" [text]="msg | transloco" />
+    }
+
+    @if (fieldErrors(); as errors) {
+      <div class="flex flex-col gap-1">
+        @for (entry of errors | keyvalue; track entry.key) {
+          <p-message severity="warn" [text]="entry.key + ': ' + entry.value.join(', ')" />
+        }
+      </div>
+    }
+
+    <div class="flex justify-end gap-2 pt-2">
+      <p-button
+        type="button"
+        severity="secondary"
+        [text]="true"
+        [label]="'events.exercise_form.cancel' | transloco"
+        [disabled]="saving()"
+        (onClick)="onCancel()"
+      />
+      <p-button
+        type="submit"
+        [label]="'events.exercise_form.save' | transloco"
+        [loading]="saving()"
+        [disabled]="form.invalid || !hasOptions()"
+      />
+    </div>
+  </form>
+</p-dialog>
