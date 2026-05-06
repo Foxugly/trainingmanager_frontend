@@ -13,6 +13,7 @@ import { Observable }                                        from 'rxjs';
 
 import { EmailConfirm } from '../model/models';
 import { EmailResend } from '../model/models';
+import { Logout } from '../model/models';
 import { PasswordResetConfirm } from '../model/models';
 import { PasswordResetConfirmResponse } from '../model/models';
 import { PasswordResetRequest } from '../model/models';
@@ -46,6 +47,14 @@ export interface AuthServiceInterface {
      * @param emailResend 
      */
     authEmailResendCreate(emailResend: EmailResend, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * 
+     * POST /api/v1/auth/logout/ — revoke a refresh token.  The caller authenticates with their access token and posts the refresh they want revoked. On success (204), that refresh — and any rotation descendants produced by /auth/token/refresh/ — can no longer be used. The access token itself is short-lived and not invalidated here; it naturally expires within ACCESS_TOKEN_LIFETIME.  Ownership is verified before blacklisting: a holder of someone else\&#39;s refresh string cannot use this endpoint to revoke it. We respond with a generic invalid_token to avoid signalling whether the token exists or only doesn\&#39;t belong to the caller.
+     * @endpoint post /api/v1/auth/logout/
+     * @param logout 
+     */
+    authLogoutCreate(logout: Logout, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * 

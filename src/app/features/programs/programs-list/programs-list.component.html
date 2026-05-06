@@ -119,14 +119,8 @@
             <div class="flex items-center gap-1.5 flex-wrap">
               @if (p.is_active === false) {
                 <span class="inline-flex items-center gap-1 rounded-full bg-gray-200 px-2 py-0.5 text-[11px] font-medium text-gray-700">
-                  <i class="pi pi-archive text-[9px]" aria-hidden="true"></i>
+                  <i class="pi pi-box text-[9px]" aria-hidden="true"></i>
                   {{ 'programs.list.archived_badge' | transloco }}
-                </span>
-              }
-              @if (p.generated_by_ai) {
-                <span class="inline-flex items-center gap-1 rounded-full bg-purple-100 px-2 py-0.5 text-[11px] font-medium text-purple-800">
-                  <i class="pi pi-sparkles text-[9px]" aria-hidden="true"></i>
-                  {{ 'programs.ai_generated' | transloco }}
                 </span>
               }
               @if (p.frequency_per_week != null) {

@@ -43,6 +43,13 @@ function startOfDay(d: Date): Date {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
 }
 
+function isoDate(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
 function startOfMonth(d: Date): Date {
   return new Date(d.getFullYear(), d.getMonth(), 1);
 }
@@ -253,21 +260,18 @@ export class EventsCalendarComponent implements OnInit {
     }
     this.loading.set(true);
     try {
+      const start = this.gridStart();
+      const end = this.gridEnd();
+      const gte = isoDate(start);
+      const lte = isoDate(end);
       const requests = programIds.map((pid) =>
         firstValueFrom(
-          this.eventsService.eventsList(undefined, undefined, 'date', undefined, pid, undefined),
+          this.eventsService.eventsList(undefined, undefined, gte, lte, 'date', undefined, pid, undefined),
         ),
       );
       const responses = await Promise.all(requests);
       const all: Event[] = responses.flatMap((r) => r.results ?? []);
-      const start = this.gridStart();
-      const end = this.gridEnd();
-      const filtered = all.filter((e) => {
-        if (!e.date) return false;
-        const d = startOfDay(new Date(e.date));
-        return d >= start && d <= end;
-      });
-      this.events.set(filtered);
+      this.events.set(all);
     } catch {
       this.events.set([]);
     } finally {

@@ -5,8 +5,10 @@ import {
   DestroyRef,
   OnInit,
   computed,
+  effect,
   inject,
   signal,
+  untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -14,6 +16,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
+import { Tooltip } from 'primeng/tooltip';
 import { EventsService } from '../../../api/api/events.service';
 import { ProgramsService } from '../../../api/api/programs.service';
 import { TeamsService } from '../../../api/api/teams.service';
@@ -43,6 +46,13 @@ function normalizeHex(value: string | null | undefined): string | null {
 
 function startOfDay(d: Date): Date {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+
+function isoDate(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
 }
 
 function startOfMonth(d: Date): Date {
@@ -89,6 +99,7 @@ function eventDateAsDate(e: Event): Date | null {
     Button,
     ConfirmDialog,
     GenerateEventsDialogComponent,
+    Tooltip,
     TranslocoPipe,
     DetailHeaderComponent,
   ],
@@ -120,6 +131,8 @@ export class ProgramsDetailComponent implements OnInit {
   protected readonly events = signal<Event[]>([]);
   protected readonly loadingEvents = signal(false);
   protected readonly currentMonth = signal<Date>(startOfMonth(new Date()));
+
+  private readonly monthCache = new Map<string, Event[]>();
 
   protected readonly showGenerateDialog = signal(false);
   protected readonly lastGenerationResult = signal<GenerateEventsResult | null>(null);
@@ -225,6 +238,15 @@ export class ProgramsDetailComponent implements OnInit {
     });
   });
 
+  constructor() {
+    effect(() => {
+      const id = this.programId();
+      const month = this.currentMonth();
+      if (id === null) return;
+      untracked(() => this.loadEventsForMonth(id, month));
+    });
+  }
+
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
     const id = idParam ? Number(idParam) : NaN;
@@ -249,7 +271,6 @@ export class ProgramsDetailComponent implements OnInit {
             this.loadTeam(p.team.id);
           }
           this.initCalendarMonth(p);
-          this.loadEvents(id);
         },
         error: () => {
           this.notFound.set(true);
@@ -278,21 +299,43 @@ export class ProgramsDetailComponent implements OnInit {
     this.currentMonth.set(startOfMonth(new Date()));
   }
 
-  private loadEvents(programId: number): void {
+  private loadEventsForMonth(programId: number, month: Date): void {
+    const gridStart = startOfWeekMonday(startOfMonth(month));
+    const gridEnd = endOfWeekMonday(endOfMonth(month));
+    const cacheKey = `${programId}:${month.getFullYear()}-${month.getMonth()}`;
+    const cached = this.monthCache.get(cacheKey);
+    if (cached) {
+      this.events.set(cached);
+      return;
+    }
     this.loadingEvents.set(true);
     this.eventsService
-      .eventsList(undefined, undefined, '-date', 1, programId, undefined)
+      .eventsList(
+        undefined,
+        undefined,
+        isoDate(gridStart),
+        isoDate(gridEnd),
+        'date',
+        undefined,
+        programId,
+        undefined,
+      )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
-          this.events.set(res.results ?? []);
+          const list = res.results ?? [];
+          this.monthCache.set(cacheKey, list);
+          this.events.set(list);
           this.loadingEvents.set(false);
         },
         error: () => {
-          this.events.set([]);
           this.loadingEvents.set(false);
         },
       });
+  }
+
+  private invalidateEventsCache(): void {
+    this.monthCache.clear();
   }
 
   protected previousMonth(): void {
@@ -347,8 +390,9 @@ export class ProgramsDetailComponent implements OnInit {
     this.lastGenerationResult.set(result);
     const id = this.programId();
     if (id != null) {
+      this.invalidateEventsCache();
       this.loadProgram(id);
-      this.loadEvents(id);
+      this.loadEventsForMonth(id, this.currentMonth());
     }
   }
 

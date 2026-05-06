@@ -199,7 +199,8 @@ describe('DashboardComponent', () => {
     };
     eventsMock = {
       eventsList: vi.fn().mockImplementation((..._args: unknown[]) => {
-        const programId = _args[4] as number | undefined;
+        // new signature: color, date, dateGte, dateLte, ordering, page, referProgram, search
+        const programId = _args[6] as number | undefined;
         const filtered = programId ? events.filter((e) => e.refer_program_id === programId) : events;
         return of({ count: filtered.length, results: filtered });
       }),

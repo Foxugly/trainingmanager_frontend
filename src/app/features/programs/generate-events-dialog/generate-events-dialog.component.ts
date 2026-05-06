@@ -19,6 +19,7 @@ import { DatePicker } from 'primeng/datepicker';
 import { Dialog } from 'primeng/dialog';
 import { InputNumber } from 'primeng/inputnumber';
 import { Message } from 'primeng/message';
+import { ProgressSpinner } from 'primeng/progressspinner';
 import { Select } from 'primeng/select';
 import { Textarea } from 'primeng/textarea';
 import { ProgramsService } from '../../../api/api/programs.service';
@@ -59,6 +60,7 @@ function parseDate(value: string | null | undefined): Date | null {
     Select,
     Button,
     Message,
+    ProgressSpinner,
     TranslocoPipe,
   ],
   templateUrl: './generate-events-dialog.component.html',

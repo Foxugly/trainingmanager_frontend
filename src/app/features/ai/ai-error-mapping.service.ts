@@ -41,6 +41,9 @@ export class AiErrorMappingService {
         if (entries.some((f) => f?.code === 'date_range_too_long')) {
           return { i18nKey: 'ai.errors.date_range_too_long', fields };
         }
+        if (entries.some((f) => f?.code === 'additional_prompt_too_long')) {
+          return { i18nKey: 'ai.errors.additional_prompt_too_long', fields };
+        }
       }
       return { i18nKey: 'ai.errors.validation', fields };
     }

@@ -11,10 +11,14 @@
     "admin": "Admin"
   },
   "ai": {
+    "generating_event": "L'IA prépare votre séance…",
+    "generating_events": "L'IA génère votre programme…",
+    "please_wait": "Cela peut prendre une minute, merci de patienter.",
     "errors": {
       "throttled": "Limite atteinte. Réessayez dans {{minutes}} minute(s).",
       "date_range_invalid": "La date de fin doit être postérieure à la date de début.",
       "date_range_too_long": "La période ne peut pas dépasser 365 jours.",
+      "additional_prompt_too_long": "Les instructions supplémentaires ne peuvent pas dépasser 2000 caractères.",
       "validation": "Données invalides. Vérifiez le formulaire.",
       "not_a_manager": "Seuls le propriétaire et les managers peuvent générer.",
       "event_has_rounds": "Cette séance a déjà des exercices. Supprimez-les avant de régénérer.",
@@ -39,12 +43,11 @@
       "not_found": "Séance introuvable",
       "training_blocks": "Blocs d'entraînement",
       "block_label": "Bloc",
+      "start": "Départ",
       "break": "Récup",
       "no_exercises": "Aucun exercice dans ce bloc",
       "rounds_partial_warn": "{{count}} bloc(s) n'ont pas pu être chargés.",
       "rounds_load_failed": "Impossible de charger les blocs d'entraînement.",
-      "round_total_distance": "Distance totale du bloc :",
-      "event_total_distance": "Distance totale de la séance :",
       "attendance_summary_title": "Présences",
       "attendance_member_count": "{{count}} membre(s) concerné(s) par cette séance.",
       "attendance_manager_only": "Seuls les managers peuvent saisir ou éditer les présences.",
@@ -57,8 +60,11 @@
         "add_exercise": "Ajouter un exercice",
         "edit_round": "Modifier le bloc",
         "delete_round": "Supprimer le bloc",
+        "move_round_up": "Déplacer le bloc vers le haut",
+        "move_round_down": "Déplacer le bloc vers le bas",
         "edit_exercise": "Modifier l'exercice",
-        "delete_exercise": "Supprimer l'exercice"
+        "delete_exercise": "Supprimer l'exercice",
+        "reorder_exercise": "Réordonner l'exercice"
       },
       "confirm_delete_round": {
         "title": "Supprimer ce bloc ?",
@@ -80,7 +86,10 @@
       "title_edit": "Modifier le bloc",
       "fields": {
         "count": "Nombre de répétitions",
-        "count_help": "Combien de fois ce bloc est répété dans la séance."
+        "count_help": "Combien de fois ce bloc est répété dans la séance.",
+        "t_start": "Départ",
+        "t_break": "Récup",
+        "time_placeholder": "0:30"
       },
       "save": "Enregistrer",
       "cancel": "Annuler",
@@ -99,7 +108,11 @@
         "energysegment": "Segment énergétique",
         "energysegment_placeholder": "Sélectionner un segment",
         "repetition": "Répétitions",
-        "distance": "Distance"
+        "distance": "Distance",
+        "t_start": "Départ",
+        "t_break": "Récup",
+        "time_placeholder": "0:30",
+        "notes": "Notes"
       },
       "save": "Enregistrer",
       "cancel": "Annuler",
@@ -125,6 +138,10 @@
       "has_rounds_title": "Régénérer cette séance ?",
       "has_rounds_message": "Cette séance a déjà des exercices. Voulez-vous les supprimer et tout régénérer ?",
       "delete_and_regen": "Supprimer et régénérer",
+      "confirm": "Générer",
+      "additional_prompt": "Instructions supplémentaires (optionnel)",
+      "additional_prompt_placeholder": "Ex : focus sur l'endurance, pas de matériel, intensité modérée…",
+      "additional_prompt_help": "Ce texte sera ajouté au prompt envoyé à l'IA pour orienter la génération.",
       "success_title": "Régénération réussie",
       "success_summary": "{{rounds}} bloc(s), {{exercises}} exercice(s) créé(s), {{reused}} exercice(s) réutilisé(s)."
     },
@@ -275,6 +292,9 @@
       "not_found": "Équipe introuvable",
       "edit": "Modifier",
       "add_member": "Ajouter un membre",
+      "add_manager": "Nouveau manager",
+      "filter_members_placeholder": "Filtrer les membres…",
+      "no_members_match": "Aucun membre ne correspond au filtre.",
       "remove_member": "Retirer",
       "remove_confirm_title": "Retirer ce membre ?",
       "remove_confirm_message": "Le membre sera retiré de cette équipe.",
@@ -288,7 +308,8 @@
       "archived_banner": "Cette équipe est archivée.",
       "member_since": "Membre depuis le {{date}}",
       "tabs": {
-        "management": "Gestion",
+        "programs": "Programmes",
+        "managers": "Managers",
         "members": "Membres",
         "requests_invitations": "Demandes & invitations"
       }
@@ -305,6 +326,11 @@
       "managers_placeholder": "Sélectionnez les managers",
       "managers_help": "Pour ajouter de nouveaux managers, un endpoint backend dédié est nécessaire (à venir). Vous pouvez retirer les managers existants en les désélectionnant.",
       "managers_empty": "Aucun manager à afficher",
+      "attendance_statuses": "Statuts de présence disponibles",
+      "attendance_statuses_placeholder": "Sélectionner les statuts",
+      "attendance_statuses_help": "Statuts proposés lors de la saisie des présences (par défaut : présent, absent, excusé).",
+      "attendance_statuses_source": "Disponibles",
+      "attendance_statuses_target": "Sélectionnés",
       "saved_create": "Équipe créée.",
       "saved_edit": "Équipe enregistrée.",
       "join_requests_section": "Demandes de rejoindre",
@@ -323,6 +349,14 @@
       "submit": "Ajouter",
       "cancel": "Annuler",
       "added": "Membre ajouté."
+    },
+    "manager_dialog": {
+      "title": "Nouveau manager",
+      "member": "Membre à promouvoir",
+      "member_placeholder": "Sélectionner un membre",
+      "no_promotable": "Tous les membres sont déjà managers.",
+      "submit": "Promouvoir",
+      "added": "Manager ajouté."
     },
     "roles": {
       "owner": "Propriétaire",
@@ -462,6 +496,9 @@
       "team": "Équipe",
       "program": "Programme",
       "event": "Séance"
+    },
+    "units": {
+      "meters_short": "m"
     }
   },
   "dashboard": {

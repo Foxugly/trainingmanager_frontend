@@ -11,10 +11,14 @@
     "admin": "Admin"
   },
   "ai": {
+    "generating_event": "AI is preparing your session…",
+    "generating_events": "AI is generating your program…",
+    "please_wait": "This may take a minute, please wait.",
     "errors": {
       "throttled": "Rate limit reached. Try again in {{minutes}} minute(s).",
       "date_range_invalid": "End date must be after start date.",
       "date_range_too_long": "The period cannot exceed 365 days.",
+      "additional_prompt_too_long": "Additional instructions cannot exceed 2000 characters.",
       "validation": "Invalid data. Check the form.",
       "not_a_manager": "Only the owner and managers can generate.",
       "event_has_rounds": "This session already has exercises. Remove them before regenerating.",
@@ -39,12 +43,11 @@
       "not_found": "Session not found",
       "training_blocks": "Training blocks",
       "block_label": "Block",
+      "start": "Start",
       "break": "Rest",
       "no_exercises": "No exercise in this block",
       "rounds_partial_warn": "{{count}} block(s) could not be loaded.",
       "rounds_load_failed": "Could not load training blocks.",
-      "round_total_distance": "Block total distance:",
-      "event_total_distance": "Session total distance:",
       "attendance_summary_title": "Attendance",
       "attendance_member_count": "{{count}} member(s) involved in this session.",
       "attendance_manager_only": "Only managers can record or edit attendance.",
@@ -57,8 +60,11 @@
         "add_exercise": "Add an exercise",
         "edit_round": "Edit block",
         "delete_round": "Delete block",
+        "move_round_up": "Move block up",
+        "move_round_down": "Move block down",
         "edit_exercise": "Edit exercise",
-        "delete_exercise": "Delete exercise"
+        "delete_exercise": "Delete exercise",
+        "reorder_exercise": "Reorder exercise"
       },
       "confirm_delete_round": {
         "title": "Delete this block?",
@@ -80,7 +86,10 @@
       "title_edit": "Edit block",
       "fields": {
         "count": "Number of repetitions",
-        "count_help": "How many times this block is repeated in the session."
+        "count_help": "How many times this block is repeated in the session.",
+        "t_start": "Start",
+        "t_break": "Rest",
+        "time_placeholder": "0:30"
       },
       "save": "Save",
       "cancel": "Cancel",
@@ -99,7 +108,11 @@
         "energysegment": "Energy segment",
         "energysegment_placeholder": "Select a segment",
         "repetition": "Repetitions",
-        "distance": "Distance"
+        "distance": "Distance",
+        "t_start": "Start",
+        "t_break": "Rest",
+        "time_placeholder": "0:30",
+        "notes": "Notes"
       },
       "save": "Save",
       "cancel": "Cancel",
@@ -125,6 +138,10 @@
       "has_rounds_title": "Regenerate this session?",
       "has_rounds_message": "This session already has exercises. Do you want to delete them and regenerate everything?",
       "delete_and_regen": "Delete and regenerate",
+      "confirm": "Generate",
+      "additional_prompt": "Additional instructions (optional)",
+      "additional_prompt_placeholder": "e.g. focus on endurance, no equipment, moderate intensity…",
+      "additional_prompt_help": "This text will be appended to the AI prompt to guide the generation.",
       "success_title": "Regeneration successful",
       "success_summary": "{{rounds}} block(s), {{exercises}} exercise(s) created, {{reused}} exercise(s) reused."
     },
@@ -275,6 +292,9 @@
       "not_found": "Team not found",
       "edit": "Edit",
       "add_member": "Add a member",
+      "add_manager": "New manager",
+      "filter_members_placeholder": "Filter members…",
+      "no_members_match": "No member matches the filter.",
       "remove_member": "Remove",
       "remove_confirm_title": "Remove this member?",
       "remove_confirm_message": "The member will be removed from this team.",
@@ -288,7 +308,8 @@
       "archived_banner": "This team is archived.",
       "member_since": "Member since {{date}}",
       "tabs": {
-        "management": "Management",
+        "programs": "Programs",
+        "managers": "Managers",
         "members": "Members",
         "requests_invitations": "Requests & invitations"
       }
@@ -305,6 +326,11 @@
       "managers_placeholder": "Select managers",
       "managers_help": "Adding new managers requires a dedicated backend endpoint (coming soon). You can remove existing managers by deselecting them.",
       "managers_empty": "No managers to display",
+      "attendance_statuses": "Available attendance statuses",
+      "attendance_statuses_placeholder": "Select statuses",
+      "attendance_statuses_help": "Statuses offered when recording attendance (default: present, absent, excused).",
+      "attendance_statuses_source": "Available",
+      "attendance_statuses_target": "Selected",
       "join_requests_section": "Join requests",
       "policy_auto_label": "Auto-accept join requests",
       "policy_auto_help": "Anyone who requests to join is accepted immediately.",
@@ -323,6 +349,14 @@
       "submit": "Add",
       "cancel": "Cancel",
       "added": "Member added."
+    },
+    "manager_dialog": {
+      "title": "New manager",
+      "member": "Member to promote",
+      "member_placeholder": "Select a member",
+      "no_promotable": "All members are already managers.",
+      "submit": "Promote",
+      "added": "Manager added."
     },
     "roles": {
       "owner": "Owner",
@@ -462,6 +496,9 @@
       "team": "Team",
       "program": "Program",
       "event": "Session"
+    },
+    "units": {
+      "meters_short": "m"
     }
   },
   "dashboard": {

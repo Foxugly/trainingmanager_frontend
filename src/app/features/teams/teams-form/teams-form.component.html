@@ -75,6 +75,45 @@
         </small>
       </div>
 
+      <div class="flex flex-col gap-2">
+        <label class="text-sm font-medium text-gray-700">
+          {{ 'teams.form.attendance_statuses' | transloco }}
+        </label>
+        <p-pickList
+          [source]="statusesSource()"
+          [target]="statusesTarget()"
+          [dragdrop]="true"
+          [responsive]="true"
+          [showSourceControls]="false"
+          [showTargetControls]="false"
+          [sourceHeader]="'teams.form.attendance_statuses_source' | transloco"
+          [targetHeader]="'teams.form.attendance_statuses_target' | transloco"
+          [sourceStyle]="{ height: '14rem' }"
+          [targetStyle]="{ height: '14rem' }"
+          breakpoint="960px"
+          (onMoveToTarget)="onStatusesMoveToTarget($event.items)"
+          (onMoveAllToTarget)="onStatusesMoveToTarget($event.items)"
+          (onMoveToSource)="onStatusesMoveToSource($event.items)"
+          (onMoveAllToSource)="onStatusesMoveToSource($event.items)"
+        >
+          <ng-template let-status #item>
+            <div class="flex items-center gap-2">
+              @if (status.color) {
+                <span
+                  class="inline-block w-2 h-2 rounded-full"
+                  [style.background-color]="status.color"
+                  aria-hidden="true"
+                ></span>
+              }
+              <span>{{ status.label }}</span>
+            </div>
+          </ng-template>
+        </p-pickList>
+        <small class="text-xs text-gray-500">
+          {{ 'teams.form.attendance_statuses_help' | transloco }}
+        </small>
+      </div>
+
       <div class="flex items-center gap-2">
         <p-checkbox formControlName="is_active" [binary]="true" inputId="is_active" />
         <label for="is_active" class="text-sm text-gray-700 cursor-pointer">

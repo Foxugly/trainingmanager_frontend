@@ -533,8 +533,8 @@ describe('TeamsDetailComponent', () => {
     expect(access(component).currentUserRole()).toBeNull();
   });
 
-  it('default active tab on mount is "management"', () => {
-    expect(access(component).activeTab()).toBe('management');
+  it('default active tab on mount is "programs"', () => {
+    expect(access(component).activeTab()).toBe('programs');
   });
 
   it('activeTab can switch to members and requests', () => {

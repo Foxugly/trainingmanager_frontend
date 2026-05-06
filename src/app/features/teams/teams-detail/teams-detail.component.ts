@@ -10,7 +10,7 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -20,8 +20,10 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Dialog } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
+import { Select } from 'primeng/select';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { Textarea } from 'primeng/textarea';
+import { Tooltip } from 'primeng/tooltip';
 import { InvitationsService } from '../../../api/api/invitations.service';
 import { JoinRequestsService } from '../../../api/api/join-requests.service';
 import { TeamsService } from '../../../api/api/teams.service';
@@ -48,6 +50,7 @@ interface FieldErrors {
   imports: [
     CommonModule,
     KeyValuePipe,
+    FormsModule,
     ReactiveFormsModule,
     RouterLink,
     Badge,
@@ -56,12 +59,14 @@ interface FieldErrors {
     Dialog,
     InputText,
     Message,
+    Select,
     Tab,
     TabList,
     TabPanel,
     TabPanels,
     Tabs,
     Textarea,
+    Tooltip,
     TranslocoPipe,
     ProgramsListComponent,
     DetailHeaderComponent,
@@ -95,6 +100,13 @@ export class TeamsDetailComponent implements OnInit {
   protected readonly addingMember = signal(false);
   protected readonly addMemberError = signal<string | null>(null);
   protected readonly addMemberFieldErrors = signal<FieldErrors | null>(null);
+
+  protected readonly showAddManagerDialog = signal(false);
+  protected readonly addingManager = signal(false);
+  protected readonly addManagerError = signal<string | null>(null);
+  protected readonly newManagerMemberId = signal<number | null>(null);
+
+  protected readonly memberFilter = signal<string>('');
 
   protected readonly invitations = signal<TeamInvitation[]>([]);
   protected readonly loadingInvitations = signal(false);
@@ -145,7 +157,25 @@ export class TeamsDetailComponent implements OnInit {
 
   protected readonly isOwner = computed(() => this.currentUserRole() === 'owner');
 
-  protected readonly activeTab = signal<string>('management');
+  protected readonly promotableMembers = computed(() => {
+    const t = this.team();
+    if (!t) return [];
+    const managerIds = new Set((t.managers ?? []).map((m) => m.id));
+    return this.memberships().filter((mb) => !managerIds.has(mb.member));
+  });
+
+  protected readonly filteredMemberships = computed(() => {
+    const q = this.memberFilter().trim().toLowerCase();
+    const list = this.memberships();
+    if (q.length === 0) return list;
+    return list.filter(
+      (mb) =>
+        (mb.member_fullname ?? '').toLowerCase().includes(q) ||
+        (mb.member_username ?? '').toLowerCase().includes(q),
+    );
+  });
+
+  protected readonly activeTab = signal<string>('programs');
 
   protected readonly requestsInvitationsCount = computed(
     () => this.joinRequests().length + this.invitations().length,
@@ -528,6 +558,49 @@ export class TeamsDetailComponent implements OnInit {
         error: (err: HttpErrorResponse) => {
           this.applyAddMemberError(err);
           this.addingMember.set(false);
+        },
+      });
+  }
+
+  protected openAddManager(): void {
+    this.newManagerMemberId.set(null);
+    this.addManagerError.set(null);
+    this.showAddManagerDialog.set(true);
+  }
+
+  protected closeAddManager(): void {
+    if (this.addingManager()) return;
+    this.showAddManagerDialog.set(false);
+  }
+
+  protected submitAddManager(): void {
+    const id = this.teamId();
+    const t = this.team();
+    const memberId = this.newManagerMemberId();
+    if (id === null || t === null || memberId === null) return;
+
+    this.addingManager.set(true);
+    this.addManagerError.set(null);
+
+    const newManagerIds = [...(t.managers ?? []).map((m) => m.id), memberId];
+    this.teamsService
+      .teamsPartialUpdate(id, { managers_ids: newManagerIds })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (updated) => {
+          this.team.set(updated);
+          this.messageService.add({
+            severity: 'success',
+            summary: this.transloco.translate('common.success'),
+            detail: this.transloco.translate('teams.manager_dialog.added'),
+          });
+          this.addingManager.set(false);
+          this.showAddManagerDialog.set(false);
+        },
+        error: (err: HttpErrorResponse) => {
+          const detail = (err?.error as { detail?: string } | null)?.detail;
+          this.addManagerError.set(detail ?? 'teams.errors.unknown');
+          this.addingManager.set(false);
         },
       });
   }

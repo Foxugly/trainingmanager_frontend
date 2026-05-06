@@ -1,4 +1,11 @@
 import { CommonModule } from '@angular/common';
+import {
+  CdkDrag,
+  CdkDragDrop,
+  CdkDragHandle,
+  CdkDropList,
+  moveItemInArray,
+} from '@angular/cdk/drag-drop';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -15,8 +22,11 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
+import { Fieldset } from 'primeng/fieldset';
 import { Message } from 'primeng/message';
+import { ProgressSpinner } from 'primeng/progressspinner';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
+import { Tooltip } from 'primeng/tooltip';
 import { firstValueFrom } from 'rxjs';
 import { EventsService } from '../../../api/api/events.service';
 import { ExercisesService } from '../../../api/api/exercises.service';
@@ -34,6 +44,8 @@ import { TeamRole, computeTeamRole } from '../../teams/teams-list/teams-list.com
 import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-header.component';
 import { RoundFormDialogComponent } from '../round-form-dialog/round-form-dialog.component';
 import { ExerciseFormDialogComponent } from '../exercise-form-dialog/exercise-form-dialog.component';
+import { AttendanceManagerComponent } from '../attendance-manager/attendance-manager.component';
+import { RegenerateTrainingDialogComponent } from '../regenerate-training-dialog/regenerate-training-dialog.component';
 
 @Component({
   selector: 'app-events-detail',
@@ -41,17 +53,25 @@ import { ExerciseFormDialogComponent } from '../exercise-form-dialog/exercise-fo
     CommonModule,
     RouterLink,
     Button,
+    CdkDrag,
+    CdkDragHandle,
+    CdkDropList,
     ConfirmDialog,
+    Fieldset,
     Message,
+    ProgressSpinner,
     Tab,
     TabList,
     TabPanel,
     TabPanels,
     Tabs,
+    Tooltip,
     TranslocoPipe,
     DetailHeaderComponent,
     RoundFormDialogComponent,
     ExerciseFormDialogComponent,
+    AttendanceManagerComponent,
+    RegenerateTrainingDialogComponent,
   ],
   templateUrl: './events-detail.component.html',
   styleUrl: './events-detail.component.scss',
@@ -100,6 +120,10 @@ export class EventsDetailComponent implements OnInit {
   protected readonly editingExercise = signal<Exercise | null>(null);
   protected readonly targetRoundId = signal<number | null>(null);
 
+  protected readonly reordering = signal(false);
+
+  protected readonly showRegenerateDialog = signal(false);
+
   protected readonly currentUserRole = computed<TeamRole | null>(() => {
     const t = this.team();
     const userId = this.authService.currentUser()?.id;
@@ -128,10 +152,18 @@ export class EventsDetailComponent implements OnInit {
     return rep * dist;
   }
 
-  protected roundTotalDistance(round: Round): number {
+  protected roundDistancePerIteration(round: Round): number {
     const exercises = this.exercisesByRound().get(round.id) ?? [];
-    const perIteration = exercises.reduce((sum, ex) => sum + this.exerciseDistance(ex), 0);
-    return (round.count ?? 1) * perIteration;
+    return exercises.reduce((sum, ex) => sum + this.exerciseDistance(ex), 0);
+  }
+
+  protected roundTotalDistance(round: Round): number {
+    return (round.count ?? 1) * this.roundDistancePerIteration(round);
+  }
+
+  protected hasNonZeroTime(value: string | null | undefined): boolean {
+    if (!value) return false;
+    return /[1-9]/.test(value);
   }
 
   protected formatDistance(meters: number): string {
@@ -259,31 +291,22 @@ export class EventsDetailComponent implements OnInit {
   }
 
   protected confirmRegenerate(): void {
+    if (!this.event()) return;
+    this.showRegenerateDialog.set(true);
+  }
+
+  protected onRegenerateConfirmed(additionalPrompt: string): void {
     const event = this.event();
     if (!event) return;
     const hasRounds = (event.rounds?.length ?? 0) > 0;
     if (hasRounds) {
-      this.confirmationService.confirm({
-        header: this.transloco.translate('events.regenerate.has_rounds_title'),
-        message: this.transloco.translate('events.regenerate.has_rounds_message'),
-        acceptLabel: this.transloco.translate('events.regenerate.delete_and_regen'),
-        rejectLabel: this.transloco.translate('common.cancel'),
-        accept: () => {
-          this.deleteRoundsAndRegenerate(event);
-        },
-      });
+      this.deleteRoundsAndRegenerate(event, additionalPrompt);
     } else {
-      this.confirmationService.confirm({
-        header: this.transloco.translate('events.regenerate.confirm_title'),
-        message: this.transloco.translate('events.regenerate.confirm_message'),
-        accept: () => {
-          this.regenerate(event);
-        },
-      });
+      this.regenerate(event, additionalPrompt);
     }
   }
 
-  private async deleteRoundsAndRegenerate(event: Event): Promise<void> {
+  private async deleteRoundsAndRegenerate(event: Event, additionalPrompt: string): Promise<void> {
     this.regenerating.set(true);
     this.errorMessage.set(null);
     this.lastResult.set(null);
@@ -292,25 +315,27 @@ export class EventsDetailComponent implements OnInit {
       for (const roundId of ids) {
         await firstValueFrom(this.roundsService.roundsDestroy(roundId));
       }
-      await this.regenerateAsync(event.id);
+      await this.regenerateAsync(event.id, additionalPrompt);
     } catch (err) {
       this.applyError(err as HttpErrorResponse);
     } finally {
       this.regenerating.set(false);
+      this.showRegenerateDialog.set(false);
     }
   }
 
-  private regenerate(event: Event): void {
+  private regenerate(event: Event, additionalPrompt: string): void {
     this.regenerating.set(true);
     this.errorMessage.set(null);
     this.lastResult.set(null);
     this.eventsService
-      .eventsGenerateTrainingCreate(event.id)
+      .eventsGenerateTrainingCreate(event.id, { additional_prompt: additionalPrompt })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
           this.lastResult.set(res);
           this.regenerating.set(false);
+          this.showRegenerateDialog.set(false);
           this.notifyRegenerated();
           this.loadEvent(event.id);
         },
@@ -321,8 +346,12 @@ export class EventsDetailComponent implements OnInit {
       });
   }
 
-  private async regenerateAsync(eventId: number): Promise<void> {
-    const res = await firstValueFrom(this.eventsService.eventsGenerateTrainingCreate(eventId));
+  private async regenerateAsync(eventId: number, additionalPrompt: string): Promise<void> {
+    const res = await firstValueFrom(
+      this.eventsService.eventsGenerateTrainingCreate(eventId, {
+        additional_prompt: additionalPrompt,
+      }),
+    );
     this.lastResult.set(res);
     this.notifyRegenerated();
     this.loadEvent(eventId);
@@ -422,6 +451,60 @@ export class EventsDetailComponent implements OnInit {
       });
       this.reloadEvent();
     }
+  }
+
+  protected moveRound(r: Round, direction: 'up' | 'down'): void {
+    if (this.reordering()) return;
+    const list = this.rounds();
+    const idx = list.findIndex((x) => x.id === r.id);
+    const targetIdx = direction === 'up' ? idx - 1 : idx + 1;
+    if (idx < 0 || targetIdx < 0 || targetIdx >= list.length) return;
+
+    const a = list[idx];
+    const b = list[targetIdx];
+    const aOrder = a.order ?? idx + 1;
+    const bOrder = b.order ?? targetIdx + 1;
+
+    this.reordering.set(true);
+    Promise.all([
+      firstValueFrom(this.roundsService.roundsPartialUpdate(a.id, { order: bOrder })),
+      firstValueFrom(this.roundsService.roundsPartialUpdate(b.id, { order: aOrder })),
+    ])
+      .then(([updatedA, updatedB]) => {
+        const next = list
+          .map((x) => (x.id === updatedA.id ? updatedA : x.id === updatedB.id ? updatedB : x))
+          .sort((x, y) => (x.order ?? 0) - (y.order ?? 0));
+        this.rounds.set(next);
+      })
+      .catch((err: HttpErrorResponse) => this.notifyMutationError(err))
+      .finally(() => this.reordering.set(false));
+  }
+
+  protected onExerciseDrop(round: Round, event: CdkDragDrop<Exercise[]>): void {
+    if (this.reordering()) return;
+    if (event.previousIndex === event.currentIndex) return;
+
+    const original = this.exercisesByRound().get(round.id) ?? [];
+    const reordered = [...original];
+    moveItemInArray(reordered, event.previousIndex, event.currentIndex);
+    const renumbered = reordered.map((ex, i) => ({ ...ex, order: i + 1 }));
+
+    const map = new Map(this.exercisesByRound());
+    map.set(round.id, renumbered);
+    this.exercisesByRound.set(map);
+
+    const originalById = new Map(original.map((ex) => [ex.id, ex.order]));
+    const changed = renumbered.filter((ex) => originalById.get(ex.id) !== ex.order);
+    if (changed.length === 0) return;
+
+    this.reordering.set(true);
+    Promise.all(
+      changed.map((ex) =>
+        firstValueFrom(this.exercisesService.exercisesPartialUpdate(ex.id, { order: ex.order })),
+      ),
+    )
+      .catch((err: HttpErrorResponse) => this.notifyMutationError(err))
+      .finally(() => this.reordering.set(false));
   }
 
   protected confirmDeleteRound(r: Round): void {

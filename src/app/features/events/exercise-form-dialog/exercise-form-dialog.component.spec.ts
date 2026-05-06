@@ -187,6 +187,9 @@ describe('ExerciseFormDialogComponent', () => {
       energysegment_id: 21,
       repetition: 4,
       distance: 100,
+      t_start: null,
+      t_break: null,
+      notes: '',
       language: 'fr',
     });
     expect((emitted as Exercise | null)?.id).toBe(99);

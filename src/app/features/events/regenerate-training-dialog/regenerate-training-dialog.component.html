@@ -1,0 +1,66 @@
+<p-dialog
+  [visible]="visible()"
+  (visibleChange)="onVisibleChange($event)"
+  [modal]="true"
+  [closable]="!loading()"
+  [style]="{ width: '32rem' }"
+  [header]="(hasRounds() ? 'events.regenerate.has_rounds_title' : 'events.regenerate.confirm_title') | transloco"
+>
+  <div class="flex flex-col gap-4">
+    <p class="text-sm text-gray-700">
+      @if (hasRounds()) {
+        {{ 'events.regenerate.has_rounds_message' | transloco }}
+      } @else {
+        {{ 'events.regenerate.confirm_message' | transloco }}
+      }
+    </p>
+
+    <div class="flex flex-col gap-2">
+      <label for="ai_additional_prompt" class="text-sm font-medium text-gray-700">
+        {{ 'events.regenerate.additional_prompt' | transloco }}
+      </label>
+      <textarea
+        pTextarea
+        id="ai_additional_prompt"
+        rows="3"
+        [autoResize]="true"
+        [maxlength]="MAX_PROMPT_LEN"
+        [ngModel]="additionalPrompt()"
+        (ngModelChange)="additionalPrompt.set($event)"
+        [placeholder]="'events.regenerate.additional_prompt_placeholder' | transloco"
+        [disabled]="loading()"
+      ></textarea>
+      <div class="flex items-center justify-between gap-2">
+        <small class="text-xs text-gray-500">
+          {{ 'events.regenerate.additional_prompt_help' | transloco }}
+        </small>
+        <small
+          class="text-xs tabular-nums shrink-0"
+          [class.text-gray-500]="additionalPrompt().length < MAX_PROMPT_LEN"
+          [class.text-amber-700]="additionalPrompt().length === MAX_PROMPT_LEN"
+        >
+          {{ additionalPrompt().length }}/{{ MAX_PROMPT_LEN }}
+        </small>
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-2 pt-1">
+      <p-button
+        type="button"
+        severity="secondary"
+        [text]="true"
+        [label]="'common.cancel' | transloco"
+        [disabled]="loading()"
+        (onClick)="onVisibleChange(false)"
+      />
+      <p-button
+        type="button"
+        icon="pi pi-sparkles"
+        [label]="(hasRounds() ? 'events.regenerate.delete_and_regen' : 'events.regenerate.confirm') | transloco"
+        [severity]="hasRounds() ? 'danger' : 'primary'"
+        [loading]="loading()"
+        (onClick)="onConfirm()"
+      />
+    </div>
+  </div>
+</p-dialog>

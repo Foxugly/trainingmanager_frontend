@@ -257,7 +257,7 @@ export class DashboardComponent implements OnInit {
         allPrograms.map(async ({ program, team }) => {
           const res = await firstValueFrom(
             this.eventsService.eventsList(
-              undefined, undefined, '-date', 1, program.id, undefined,
+              undefined, undefined, undefined, undefined, '-date', 1, program.id, undefined,
             ),
           );
           return { events: res.results ?? [], team, program };
@@ -451,7 +451,7 @@ export class DashboardComponent implements OnInit {
         allMemberPrograms.map(async ({ program, team }) => {
           const res = await firstValueFrom(
             this.eventsService.eventsList(
-              undefined, undefined, '-date', 1, program.id, undefined,
+              undefined, undefined, undefined, undefined, '-date', 1, program.id, undefined,
             ),
           );
           return { events: res.results ?? [], team, program };

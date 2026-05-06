@@ -110,7 +110,7 @@ export class ProgramsListComponent implements OnInit {
         includeArchived || undefined,
         undefined,
         undefined,
-        undefined,
+        '-date_start',
         undefined,
         undefined,
         team,

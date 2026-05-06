@@ -20,6 +20,7 @@ import { provideApi } from './api/provide-api';
 import { routes } from './app.routes';
 import { AuthService } from './core/auth/auth.service';
 import { authInterceptor } from './core/auth/auth.interceptor';
+import { languageInterceptor } from './core/i18n/language.interceptor';
 import { LanguageService } from './core/i18n/language.service';
 import { TranslocoHttpLoader } from './transloco-loader';
 
@@ -31,7 +32,7 @@ export const appConfig: ApplicationConfig = {
     providePrimeNG({
       theme: { preset: Aura, options: { darkModeSelector: '.dark-mode' } },
     }),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, languageInterceptor])),
     provideApi(environment.apiBase),
     provideTransloco({
       config: {

@@ -17,8 +17,10 @@ import { MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { InputNumber } from 'primeng/inputnumber';
+import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { Select } from 'primeng/select';
+import { Textarea } from 'primeng/textarea';
 import { firstValueFrom } from 'rxjs';
 import { EnergySegmentsService } from '../../../api/api/energy-segments.service';
 import { ExercisesService } from '../../../api/api/exercises.service';
@@ -41,8 +43,10 @@ interface FieldErrors {
     Button,
     Dialog,
     InputNumber,
+    InputText,
     Message,
     Select,
+    Textarea,
     TranslocoPipe,
   ],
   templateUrl: './exercise-form-dialog.component.html',
@@ -78,6 +82,9 @@ export class ExerciseFormDialogComponent {
     energysegment_id: this.fb.nonNullable.control<number | null>(null, [Validators.required]),
     repetition: [1, [Validators.required, Validators.min(1)]],
     distance: [50, [Validators.required, Validators.min(0)]],
+    t_start: [''],
+    t_break: [''],
+    notes: [''],
   });
 
   constructor() {
@@ -89,6 +96,9 @@ export class ExerciseFormDialogComponent {
           energysegment_id: ex?.energysegment_id ?? ex?.energysegment?.id ?? null,
           repetition: ex?.repetition ?? 1,
           distance: ex?.distance ?? 50,
+          t_start: ex?.t_start ?? '',
+          t_break: ex?.t_break ?? '',
+          notes: ex?.notes ?? '',
         });
         this.errorMessage.set(null);
         this.fieldErrors.set(null);
@@ -151,6 +161,9 @@ export class ExerciseFormDialogComponent {
         energysegment_id: value.energysegment_id,
         repetition: value.repetition,
         distance: value.distance,
+        t_start: value.t_start || null,
+        t_break: value.t_break || null,
+        notes: value.notes ?? '',
         language: this.language() as LanguageEnum,
       };
       this.exercisesService
@@ -179,6 +192,9 @@ export class ExerciseFormDialogComponent {
           energysegment_id: value.energysegment_id,
           repetition: value.repetition,
           distance: value.distance,
+          t_start: value.t_start || null,
+          t_break: value.t_break || null,
+          notes: value.notes ?? '',
         })
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({

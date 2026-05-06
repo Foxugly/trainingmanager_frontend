@@ -54,7 +54,7 @@ export class LoginComponent {
   protected readonly submitDisabled = computed(() => {
     if (this.loading()) return true;
     if (this.retryCountdown() !== null && this.retryCountdown()! > 0) return true;
-    return this.form.controls.username.invalid || this.form.controls.password.invalid;
+    return false;
   });
 
   private countdownTimer: ReturnType<typeof setInterval> | null = null;

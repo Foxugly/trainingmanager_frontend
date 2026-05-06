@@ -27,8 +27,6 @@ export class DetailHeaderComponent implements AfterViewInit, OnDestroy {
   readonly backLink = input<readonly (string | number)[] | string | null>(null);
   readonly backLabelKey = input<string>('common.back');
   readonly icon = input<string | null>(null);
-  // Centered mode: title + meta horizontally centered, actions float top-right.
-  readonly centered = input<boolean>(false);
 
   private readonly platformId = inject(PLATFORM_ID);
   protected readonly condensed = signal(false);

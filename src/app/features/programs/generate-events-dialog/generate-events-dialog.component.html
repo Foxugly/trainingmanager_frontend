@@ -5,7 +5,22 @@
   [closable]="!loading()"
   [header]="'programs.generate.dialog_title' | transloco"
 >
-  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+  @if (loading()) {
+    <div class="flex flex-col items-center justify-center gap-4 py-10">
+      <p-progressSpinner styleClass="w-12 h-12" strokeWidth="3" />
+      <p class="text-sm font-medium text-indigo-900">
+        <i class="pi pi-sparkles mr-2" aria-hidden="true"></i>
+        {{ 'ai.generating_events' | transloco }}
+      </p>
+      <p class="text-xs text-gray-500">{{ 'ai.please_wait' | transloco }}</p>
+    </div>
+  }
+  <form
+    [formGroup]="form"
+    (ngSubmit)="submit()"
+    class="flex flex-col gap-4"
+    [class.hidden]="loading()"
+  >
     <div class="grid grid-cols-2 gap-4">
       <div class="flex flex-col gap-1">
         <label for="date_start" class="text-sm font-medium text-gray-700">

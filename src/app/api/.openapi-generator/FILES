@@ -17,6 +17,8 @@ api/events.service.ts
 api/events.serviceInterface.ts
 api/exercises.service.ts
 api/exercises.serviceInterface.ts
+api/health.service.ts
+api/health.serviceInterface.ts
 api/invitations.service.ts
 api/invitations.serviceInterface.ts
 api/join-magic.service.ts
@@ -69,8 +71,10 @@ model/exercise.ts
 model/generate-plan-request.ts
 model/generate-plan-response.ts
 model/generate-plan-tokens-used.ts
+model/generate-training-request.ts
 model/generate-training-response.ts
 model/generate-training-tokens-used.ts
+model/health-check.ts
 model/invitation-status-enum.ts
 model/join-magic-cancelled-response-code-enum.ts
 model/join-magic-cancelled-response.ts
@@ -79,6 +83,7 @@ model/join-magic-error.ts
 model/join-request-policy-enum.ts
 model/join-request-status-enum.ts
 model/language-enum.ts
+model/logout.ts
 model/magic-action-join-request-status-enum.ts
 model/magic-action-join-request.ts
 model/me.ts

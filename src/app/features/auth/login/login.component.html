@@ -99,7 +99,7 @@
         type="submit"
         [label]="'auth.login.submit' | transloco"
         [loading]="loading()"
-        [disabled]="submitDisabled()"
+        [disabled]="submitDisabled() || form.invalid"
         styleClass="w-full"
       />
 

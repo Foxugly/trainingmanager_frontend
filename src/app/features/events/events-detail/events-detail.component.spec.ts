@@ -274,29 +274,27 @@ describe('EventsDetailComponent', () => {
     expect(access(component).canRegenerate()).toBe(false);
   });
 
-  it('confirmRegenerate without rounds calls eventsGenerateTrainingCreate on accept', () => {
-    const confirmation = fixture.debugElement.injector.get(ConfirmationService);
-    vi.spyOn(confirmation, 'confirm').mockImplementation((cfg) => {
-      cfg.accept?.();
-      return confirmation;
+  it('onRegenerateConfirmed without rounds calls eventsGenerateTrainingCreate with the additional prompt', () => {
+    (component as unknown as { onRegenerateConfirmed: (s: string) => void }).onRegenerateConfirmed(
+      'focus on endurance',
+    );
+    expect(eventsMock.eventsGenerateTrainingCreate).toHaveBeenCalledWith(7, {
+      additional_prompt: 'focus on endurance',
     });
-    access(component).confirmRegenerate();
-    expect(eventsMock.eventsGenerateTrainingCreate).toHaveBeenCalledWith(7);
     expect(roundsMock.roundsDestroy).not.toHaveBeenCalled();
   });
 
-  it('confirmRegenerate with existing rounds deletes them then regenerates', async () => {
+  it('onRegenerateConfirmed with existing rounds deletes them then regenerates with the prompt', async () => {
     await setup('7', eventWithRounds);
-    const confirmation = fixture.debugElement.injector.get(ConfirmationService);
-    vi.spyOn(confirmation, 'confirm').mockImplementation((cfg) => {
-      cfg.accept?.();
-      return confirmation;
-    });
-    access(component).confirmRegenerate();
+    (component as unknown as { onRegenerateConfirmed: (s: string) => void }).onRegenerateConfirmed(
+      'with kickboard',
+    );
     await new Promise((r) => setTimeout(r, 0));
     expect(roundsMock.roundsDestroy).toHaveBeenCalledTimes(3);
     expect(roundsMock.roundsDestroy).toHaveBeenNthCalledWith(1, 11);
-    expect(eventsMock.eventsGenerateTrainingCreate).toHaveBeenCalledWith(7);
+    expect(eventsMock.eventsGenerateTrainingCreate).toHaveBeenCalledWith(7, {
+      additional_prompt: 'with kickboard',
+    });
   });
 
   it('skips roundsRetrieve when event has no rounds', () => {

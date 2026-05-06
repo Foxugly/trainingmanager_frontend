@@ -141,7 +141,8 @@ describe('EventsCalendarComponent', () => {
     };
     eventsMock = {
       eventsList: vi.fn().mockImplementation((...args: unknown[]) => {
-        const referProgram = args[4] as number;
+        // new signature: color, date, dateGte, dateLte, ordering, page, referProgram, search
+        const referProgram = args[6] as number;
         if (referProgram === 4) return of({ count: 2, results: [event1, event2] });
         return of({ count: 0, results: [] });
       }),

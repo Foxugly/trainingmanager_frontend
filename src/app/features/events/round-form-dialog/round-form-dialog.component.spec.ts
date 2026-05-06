@@ -124,16 +124,22 @@ describe('RoundFormDialogComponent', () => {
       sport_id: 1,
       language: 'fr',
       count: 1,
+      t_start: null,
+      t_break: null,
     });
     expect((emitted as Round | null)?.id).toBe(99);
   });
 
-  it('submit edit: calls roundsPartialUpdate with {count} only and emits closed', async () => {
+  it('submit edit: calls roundsPartialUpdate with {count, t_start, t_break} and emits closed', async () => {
     await setup({ mode: 'edit', round: seedRound });
     let emitted: Round | null = null;
     component.closed.subscribe((r) => (emitted = r));
     access(component).submit();
-    expect(roundsMock.roundsPartialUpdate).toHaveBeenCalledWith(11, { count: 3 });
+    expect(roundsMock.roundsPartialUpdate).toHaveBeenCalledWith(11, {
+      count: 3,
+      t_start: null,
+      t_break: null,
+    });
     expect((emitted as Round | null)?.count).toBe(5);
   });
 

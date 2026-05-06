@@ -14,6 +14,7 @@ import { Observable }                                        from 'rxjs';
 import { Attendance } from '../model/models';
 import { AttendanceBulk } from '../model/models';
 import { Event } from '../model/models';
+import { GenerateTrainingRequest } from '../model/models';
 import { GenerateTrainingResponse } from '../model/models';
 import { PaginatedAttendanceList } from '../model/models';
 import { PaginatedEventList } from '../model/models';
@@ -114,11 +115,12 @@ export interface EventsServiceInterface {
 
     /**
      * 
-     * Generate detailed Rounds and Exercises with AI for an Event.
+     * Generate detailed Rounds and Exercises with AI for an Event. Optionally accepts an &#x60;additional_prompt&#x60; (max 2000 chars) appended to the LLM user prompt after the structured context.
      * @endpoint post /api/v1/events/{id}/generate-training/
      * @param id A unique integer value identifying this event.
+     * @param generateTrainingRequest 
      */
-    eventsGenerateTrainingCreate(id: number, extraHttpRequestParams?: any): Observable<GenerateTrainingResponse>;
+    eventsGenerateTrainingCreate(id: number, generateTrainingRequest?: GenerateTrainingRequest, extraHttpRequestParams?: any): Observable<GenerateTrainingResponse>;
 
     /**
      * 
@@ -126,12 +128,14 @@ export interface EventsServiceInterface {
      * @endpoint get /api/v1/events/
      * @param color 
      * @param date 
+     * @param dateGte 
+     * @param dateLte 
      * @param ordering Which field to use when ordering the results.
      * @param page A page number within the paginated result set.
      * @param referProgram 
      * @param search A search term.
      */
-    eventsList(color?: string, date?: string, ordering?: string, page?: number, referProgram?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedEventList>;
+    eventsList(color?: string, date?: string, dateGte?: string, dateLte?: string, ordering?: string, page?: number, referProgram?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedEventList>;
 
     /**
      * 

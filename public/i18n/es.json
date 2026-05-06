@@ -11,10 +11,14 @@
     "admin": "Administración"
   },
   "ai": {
+    "generating_event": "La IA está preparando tu sesión…",
+    "generating_events": "La IA está generando tu programa…",
+    "please_wait": "Esto puede tardar un minuto, por favor espera.",
     "errors": {
       "throttled": "Límite alcanzado. Vuelve a intentarlo en {{minutes}} minuto(s).",
       "date_range_invalid": "La fecha de fin debe ser posterior a la fecha de inicio.",
       "date_range_too_long": "El período no puede superar los 365 días.",
+      "additional_prompt_too_long": "Las instrucciones adicionales no pueden superar los 2000 caracteres.",
       "validation": "Datos no válidos. Revisa el formulario.",
       "not_a_manager": "Solo el propietario y los managers pueden generar.",
       "event_has_rounds": "Esta sesión ya tiene ejercicios. Elimínalos antes de regenerar.",
@@ -39,12 +43,11 @@
       "not_found": "Sesión no encontrada",
       "training_blocks": "Bloques de entrenamiento",
       "block_label": "Bloque",
+      "start": "Salida",
       "break": "Descanso",
       "no_exercises": "Ningún ejercicio en este bloque",
       "rounds_partial_warn": "{{count}} bloque(s) no se han podido cargar.",
       "rounds_load_failed": "No se pudieron cargar los bloques de entrenamiento.",
-      "round_total_distance": "Distancia total del bloque:",
-      "event_total_distance": "Distancia total de la sesión:",
       "attendance_summary_title": "Asistencias",
       "attendance_member_count": "{{count}} miembro(s) implicados en esta sesión.",
       "attendance_manager_only": "Solo los managers pueden registrar o editar las asistencias.",
@@ -57,8 +60,11 @@
         "add_exercise": "Añadir un ejercicio",
         "edit_round": "Modificar el bloque",
         "delete_round": "Eliminar el bloque",
+        "move_round_up": "Mover el bloque hacia arriba",
+        "move_round_down": "Mover el bloque hacia abajo",
         "edit_exercise": "Modificar el ejercicio",
-        "delete_exercise": "Eliminar el ejercicio"
+        "delete_exercise": "Eliminar el ejercicio",
+        "reorder_exercise": "Reordenar el ejercicio"
       },
       "confirm_delete_round": {
         "title": "¿Eliminar este bloque?",
@@ -80,7 +86,10 @@
       "title_edit": "Modificar el bloque",
       "fields": {
         "count": "Número de repeticiones",
-        "count_help": "Cuántas veces se repite este bloque en la sesión."
+        "count_help": "Cuántas veces se repite este bloque en la sesión.",
+        "t_start": "Salida",
+        "t_break": "Descanso",
+        "time_placeholder": "0:30"
       },
       "save": "Guardar",
       "cancel": "Cancelar",
@@ -99,7 +108,11 @@
         "energysegment": "Segmento energético",
         "energysegment_placeholder": "Selecciona un segmento",
         "repetition": "Repeticiones",
-        "distance": "Distancia"
+        "distance": "Distancia",
+        "t_start": "Salida",
+        "t_break": "Descanso",
+        "time_placeholder": "0:30",
+        "notes": "Notas"
       },
       "save": "Guardar",
       "cancel": "Cancelar",
@@ -125,6 +138,10 @@
       "has_rounds_title": "¿Regenerar esta sesión?",
       "has_rounds_message": "Esta sesión ya tiene ejercicios. ¿Quieres eliminarlos y regenerar todo?",
       "delete_and_regen": "Eliminar y regenerar",
+      "confirm": "Generar",
+      "additional_prompt": "Instrucciones adicionales (opcional)",
+      "additional_prompt_placeholder": "Ej. enfoque en resistencia, sin material, intensidad moderada…",
+      "additional_prompt_help": "Este texto se añadirá al prompt de la IA para guiar la generación.",
       "success_title": "Regeneración con éxito",
       "success_summary": "{{rounds}} bloque(s), {{exercises}} ejercicio(s) creado(s), {{reused}} ejercicio(s) reutilizado(s)."
     },
@@ -275,6 +292,9 @@
       "not_found": "Equipo no encontrado",
       "edit": "Modificar",
       "add_member": "Añadir un miembro",
+      "add_manager": "Nuevo manager",
+      "filter_members_placeholder": "Filtrar miembros…",
+      "no_members_match": "Ningún miembro coincide con el filtro.",
       "remove_member": "Retirar",
       "remove_confirm_title": "¿Retirar este miembro?",
       "remove_confirm_message": "El miembro será retirado de este equipo.",
@@ -288,7 +308,8 @@
       "archived_banner": "Este equipo está archivado.",
       "member_since": "Miembro desde {{date}}",
       "tabs": {
-        "management": "Gestión",
+        "programs": "Programas",
+        "managers": "Managers",
         "members": "Miembros",
         "requests_invitations": "Solicitudes e invitaciones"
       }
@@ -305,6 +326,11 @@
       "managers_placeholder": "Selecciona los managers",
       "managers_help": "Para añadir nuevos managers se necesita un endpoint backend dedicado (próximamente). Puedes retirar los managers existentes deseleccionándolos.",
       "managers_empty": "Ningún manager para mostrar",
+      "attendance_statuses": "Estados de asistencia disponibles",
+      "attendance_statuses_placeholder": "Seleccionar estados",
+      "attendance_statuses_help": "Estados propuestos al registrar la asistencia (por defecto: presente, ausente, justificado).",
+      "attendance_statuses_source": "Disponibles",
+      "attendance_statuses_target": "Seleccionados",
       "join_requests_section": "Solicitudes de unión",
       "policy_auto_label": "Aceptación automática",
       "policy_auto_help": "Cualquier persona que solicite unirse es aceptada inmediatamente.",
@@ -323,6 +349,14 @@
       "submit": "Añadir",
       "cancel": "Cancelar",
       "added": "Miembro añadido."
+    },
+    "manager_dialog": {
+      "title": "Nuevo manager",
+      "member": "Miembro a promover",
+      "member_placeholder": "Seleccionar un miembro",
+      "no_promotable": "Todos los miembros ya son managers.",
+      "submit": "Promover",
+      "added": "Manager añadido."
     },
     "roles": {
       "owner": "Propietario",
@@ -462,6 +496,9 @@
       "team": "Equipo",
       "program": "Programa",
       "event": "Sesión"
+    },
+    "units": {
+      "meters_short": "m"
     }
   },
   "dashboard": {

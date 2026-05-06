@@ -253,9 +253,14 @@ describe('ProgramsDetailComponent', () => {
     expect(access(component).isArchived()).toBe(true);
   });
 
-  it('loads events for the program via eventsList(refer_program=id)', () => {
+  it('loads events for the program via eventsList(refer_program=id) with month bounds', () => {
     expect(eventsMock.eventsList).toHaveBeenCalledTimes(1);
-    expect(eventsMock.eventsList.mock.calls[0][4]).toBe(7);
+    const call = eventsMock.eventsList.mock.calls[0];
+    // signature: color, date, dateGte, dateLte, ordering, page, referProgram, search
+    expect(call[2]).toMatch(/^\d{4}-\d{2}-\d{2}$/); // dateGte
+    expect(call[3]).toMatch(/^\d{4}-\d{2}-\d{2}$/); // dateLte
+    expect(call[4]).toBe('date'); // ordering ASC for calendar
+    expect(call[6]).toBe(7); // referProgram
     expect(access(component).events()).toHaveLength(3);
   });
 

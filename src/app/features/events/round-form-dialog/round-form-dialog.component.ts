@@ -17,6 +17,7 @@ import { MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { InputNumber } from 'primeng/inputnumber';
+import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { RoundsService } from '../../../api/api/rounds.service';
 import { LanguageEnum } from '../../../api/model/language-enum';
@@ -35,6 +36,7 @@ interface FieldErrors {
     Button,
     Dialog,
     InputNumber,
+    InputText,
     Message,
     TranslocoPipe,
   ],
@@ -63,13 +65,19 @@ export class RoundFormDialogComponent {
 
   protected readonly form = this.fb.nonNullable.group({
     count: [1, [Validators.required, Validators.min(1)]],
+    t_start: [''],
+    t_break: [''],
   });
 
   constructor() {
     effect(() => {
       if (this.visible()) {
         const r = this.round();
-        this.form.reset({ count: r?.count ?? 1 });
+        this.form.reset({
+          count: r?.count ?? 1,
+          t_start: r?.t_start ?? '',
+          t_break: r?.t_break ?? '',
+        });
         this.errorMessage.set(null);
         this.fieldErrors.set(null);
       }
@@ -107,6 +115,8 @@ export class RoundFormDialogComponent {
         sport_id: sportId,
         language: this.teamLanguage() as LanguageEnum,
         count: value.count,
+        t_start: value.t_start || null,
+        t_break: value.t_break || null,
       };
       this.roundsService
         .roundsCreate(payload as unknown as Round)
@@ -129,7 +139,11 @@ export class RoundFormDialogComponent {
         return;
       }
       this.roundsService
-        .roundsPartialUpdate(r.id, { count: value.count })
+        .roundsPartialUpdate(r.id, {
+          count: value.count,
+          t_start: value.t_start || null,
+          t_break: value.t_break || null,
+        })
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (updated) => {

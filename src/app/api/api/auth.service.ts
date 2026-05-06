@@ -21,6 +21,8 @@ import { EmailConfirm } from '../model/email-confirm';
 // @ts-ignore
 import { EmailResend } from '../model/email-resend';
 // @ts-ignore
+import { Logout } from '../model/logout';
+// @ts-ignore
 import { PasswordResetConfirm } from '../model/password-reset-confirm';
 // @ts-ignore
 import { PasswordResetConfirmResponse } from '../model/password-reset-confirm-response';
@@ -180,6 +182,76 @@ export class AuthService extends BaseService implements AuthServiceInterface {
             {
                 context: localVarHttpContext,
                 body: emailResend,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * POST /api/v1/auth/logout/ — revoke a refresh token.  The caller authenticates with their access token and posts the refresh they want revoked. On success (204), that refresh — and any rotation descendants produced by /auth/token/refresh/ — can no longer be used. The access token itself is short-lived and not invalidated here; it naturally expires within ACCESS_TOKEN_LIFETIME.  Ownership is verified before blacklisting: a holder of someone else\&#39;s refresh string cannot use this endpoint to revoke it. We respond with a generic invalid_token to avoid signalling whether the token exists or only doesn\&#39;t belong to the caller.
+     * @endpoint post /api/v1/auth/logout/
+     * @param logout 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public authLogoutCreate(logout: Logout, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public authLogoutCreate(logout: Logout, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public authLogoutCreate(logout: Logout, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public authLogoutCreate(logout: Logout, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (logout === null || logout === undefined) {
+            throw new Error('Required parameter logout was null or undefined when calling authLogoutCreate.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (jwtAuth) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'application/x-www-form-urlencoded',
+            'multipart/form-data'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/auth/logout/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<any>('post', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: logout,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

@@ -9,10 +9,9 @@
       [title]="t.name"
       [backLink]="['/teams']"
       icon="pi-users"
-      [centered]="true"
     >
       @if (currentUserRole(); as role) {
-        <span detailHeaderBadges [class]="roleClasses[role]">
+        <span detailHeaderTitleSuffix [class]="roleClasses[role] + ' text-sm'">
           {{ 'teams.roles.' + role | transloco }}
         </span>
       }
@@ -20,10 +19,13 @@
       @if (canManage()) {
         <a detailHeaderActions [routerLink]="['/teams', t.id, 'edit']">
           <p-button
-            [label]="'teams.detail.edit' | transloco"
             icon="pi pi-pencil"
             severity="secondary"
-            [outlined]="true"
+            [text]="true"
+            [rounded]="true"
+            [pTooltip]="'teams.detail.edit' | transloco"
+            tooltipPosition="bottom"
+            [ariaLabel]="'teams.detail.edit' | transloco"
           />
         </a>
       }
@@ -62,13 +64,31 @@
 
     <p-tabs [value]="activeTab()" (valueChange)="activeTab.set($any($event))">
       <p-tablist>
-        <p-tab value="management">
-          <i class="pi pi-cog mr-2" aria-hidden="true"></i>
-          {{ 'teams.detail.tabs.management' | transloco }}
+        <p-tab value="programs">
+          <i class="pi pi-list mr-2" aria-hidden="true"></i>
+          {{ 'teams.detail.tabs.programs' | transloco }}
+        </p-tab>
+        <p-tab value="managers">
+          <i class="pi pi-id-card mr-2" aria-hidden="true"></i>
+          {{ 'teams.detail.tabs.managers' | transloco }}
+          @if (t.managers.length > 0) {
+            <p-badge
+              [value]="t.managers.length.toString()"
+              severity="info"
+              styleClass="ml-2"
+            />
+          }
         </p-tab>
         <p-tab value="members">
           <i class="pi pi-users mr-2" aria-hidden="true"></i>
           {{ 'teams.detail.tabs.members' | transloco }}
+          @if (memberships().length > 0) {
+            <p-badge
+              [value]="memberships().length.toString()"
+              severity="info"
+              styleClass="ml-2"
+            />
+          }
         </p-tab>
         @if (canManage()) {
           <p-tab value="requests">
@@ -86,55 +106,44 @@
       </p-tablist>
 
       <p-tabpanels>
-        <!-- TAB 1: GESTION -->
-        <p-tabpanel value="management">
-          <section class="mb-6">
-            <h2 class="text-lg font-semibold mb-2">
-              {{ 'teams.fields.managers' | transloco }} ({{ t.managers.length || 0 }})
-            </h2>
-            @if (t.managers && t.managers.length > 0) {
-              <ul class="list-disc pl-5 text-gray-700">
-                @for (m of t.managers; track m.id) {
-                  <li>
-                    {{ m.first_name || m.username }}
-                    @if (m.first_name && m.username) {
-                      <span class="text-gray-500 text-sm">(&#64;{{ m.username }})</span>
-                    }
-                  </li>
-                }
-              </ul>
-            } @else {
-              <p class="text-gray-500">{{ 'teams.detail.no_managers' | transloco }}</p>
-            }
-          </section>
+        <!-- TAB 1: PROGRAMS -->
+        <p-tabpanel value="programs">
+          <app-programs-list [teamFilter]="teamId()" />
+        </p-tabpanel>
 
-          <section class="mb-6">
-            <h2 class="text-lg font-semibold mb-2">
-              {{ 'teams.detail.programs_section' | transloco }}
-            </h2>
-            <app-programs-list [teamFilter]="teamId()" />
-          </section>
-
+        <!-- TAB 2: MANAGERS -->
+        <p-tabpanel value="managers">
           @if (isOwner()) {
-            <section class="mt-8 border border-red-200 bg-red-50/40 rounded p-5">
-              <h2 class="text-base font-semibold text-red-800 mb-1">
-                {{ 'teams.detail.danger_zone' | transloco }}
-              </h2>
-              <p class="text-sm text-red-700/80 mb-3">
-                {{ 'teams.detail.deactivate_confirm_message' | transloco }}
-              </p>
+            <div class="flex justify-end mb-3">
               <p-button
-                severity="danger"
-                icon="pi pi-trash"
+                [label]="'teams.detail.add_manager' | transloco"
+                icon="pi pi-plus"
+                severity="secondary"
                 [outlined]="true"
-                [label]="'teams.detail.deactivate' | transloco"
-                (onClick)="confirmDeactivate()"
+                size="small"
+                [disabled]="promotableMembers().length === 0"
+                (onClick)="openAddManager()"
               />
-            </section>
+            </div>
+          }
+          @if (t.managers && t.managers.length > 0) {
+            <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
+              @for (m of t.managers; track m.id) {
+                <li class="px-3 py-1.5 flex items-center gap-2 text-sm">
+                  <i class="pi pi-user text-gray-400" aria-hidden="true"></i>
+                  <span class="font-medium">{{ m.first_name || m.username }}</span>
+                  @if (m.first_name && m.username) {
+                    <span class="text-gray-500 text-xs">&#64;{{ m.username }}</span>
+                  }
+                </li>
+              }
+            </ul>
+          } @else {
+            <p class="text-gray-500">{{ 'teams.detail.no_managers' | transloco }}</p>
           }
         </p-tabpanel>
 
-        <!-- TAB 2: MEMBRES -->
+        <!-- TAB 3: MEMBRES -->
         <p-tabpanel value="members">
           @if (myMembership(); as mb) {
             <div class="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-xs text-emerald-800">
@@ -168,9 +177,18 @@
           }
 
           <div class="flex items-center justify-between mb-2 gap-2 flex-wrap">
-            <h2 class="text-lg font-semibold">
-              {{ 'teams.fields.members' | transloco }} ({{ memberships().length }})
-            </h2>
+            <div class="flex items-center gap-2 flex-1 min-w-0">
+              <span class="p-input-icon-left flex-1 max-w-xs">
+                <input
+                  pInputText
+                  type="search"
+                  [value]="memberFilter()"
+                  (input)="memberFilter.set($any($event.target).value)"
+                  [placeholder]="'teams.detail.filter_members_placeholder' | transloco"
+                  class="w-full"
+                />
+              </span>
+            </div>
             @if (canManage()) {
               <p-button
                 [label]="'teams.detail.add_member' | transloco"
@@ -184,32 +202,32 @@
           </div>
           @if (memberships().length === 0) {
             <p class="text-gray-500">{{ 'teams.detail.no_members' | transloco }}</p>
+          } @else if (filteredMemberships().length === 0) {
+            <p class="text-gray-500 text-sm">{{ 'teams.detail.no_members_match' | transloco }}</p>
           } @else {
             <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
-              @for (mb of memberships(); track mb.id) {
-                <li class="p-3 flex justify-between items-center gap-2">
-                  <div>
-                    <span class="font-medium">{{ mb.member_fullname || mb.member_username }}</span>
-                    @if (mb.member_fullname && mb.member_username) {
-                      <span class="text-gray-500 text-sm ml-2">{{ mb.member_username }}</span>
-                    }
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <span class="text-xs text-gray-500">
-                      {{ 'teams.detail.joined_at' | transloco }}
-                      {{ mb.joined_at | date: 'mediumDate' }}
-                    </span>
-                    @if (canManage()) {
-                      <p-button
-                        icon="pi pi-trash"
-                        severity="danger"
-                        [text]="true"
-                        [rounded]="true"
-                        [ariaLabel]="'teams.detail.remove_member' | transloco"
-                        (onClick)="confirmRemoveMember(mb)"
-                      />
-                    }
-                  </div>
+              @for (mb of filteredMemberships(); track mb.id) {
+                <li class="px-3 py-1.5 flex items-center gap-2 text-sm">
+                  <span class="font-medium truncate">
+                    {{ mb.member_fullname || mb.member_username }}
+                  </span>
+                  @if (mb.member_fullname && mb.member_username) {
+                    <span class="text-gray-500 text-xs truncate">&#64;{{ mb.member_username }}</span>
+                  }
+                  <span class="ml-auto text-xs text-gray-500 shrink-0">
+                    {{ mb.joined_at | date: 'mediumDate' }}
+                  </span>
+                  @if (canManage()) {
+                    <p-button
+                      icon="pi pi-trash"
+                      severity="danger"
+                      [text]="true"
+                      [rounded]="true"
+                      size="small"
+                      [ariaLabel]="'teams.detail.remove_member' | transloco"
+                      (onClick)="confirmRemoveMember(mb)"
+                    />
+                  }
                 </li>
               }
             </ul>
@@ -543,6 +561,61 @@
       />
     </div>
   </div>
+</p-dialog>
+
+<p-dialog
+  [visible]="showAddManagerDialog()"
+  (visibleChange)="$event ? null : closeAddManager()"
+  [modal]="true"
+  [closable]="!addingManager()"
+  [style]="{ width: '28rem' }"
+  [header]="'teams.manager_dialog.title' | transloco"
+>
+  <form (ngSubmit)="submitAddManager()" class="flex flex-col gap-4">
+    <div class="flex flex-col gap-2">
+      <label for="new_manager" class="text-sm font-medium text-gray-700">
+        {{ 'teams.manager_dialog.member' | transloco }}
+      </label>
+      @if (promotableMembers().length === 0) {
+        <p-message severity="info" [text]="'teams.manager_dialog.no_promotable' | transloco" />
+      } @else {
+        <p-select
+          inputId="new_manager"
+          [options]="promotableMembers()"
+          [ngModel]="newManagerMemberId()"
+          (ngModelChange)="newManagerMemberId.set($event)"
+          [ngModelOptions]="{ standalone: true }"
+          optionLabel="member_fullname"
+          optionValue="member"
+          [filter]="true"
+          [placeholder]="'teams.manager_dialog.member_placeholder' | transloco"
+          appendTo="body"
+          styleClass="w-full"
+        />
+      }
+    </div>
+
+    @if (addManagerError(); as msg) {
+      <p-message severity="error" [text]="msg | transloco" />
+    }
+
+    <div class="flex justify-end gap-2 pt-2">
+      <p-button
+        type="button"
+        severity="secondary"
+        [text]="true"
+        [label]="'common.cancel' | transloco"
+        [disabled]="addingManager()"
+        (onClick)="closeAddManager()"
+      />
+      <p-button
+        type="submit"
+        [label]="'teams.manager_dialog.submit' | transloco"
+        [loading]="addingManager()"
+        [disabled]="newManagerMemberId() === null"
+      />
+    </div>
+  </form>
 </p-dialog>
 
 <p-confirmDialog />

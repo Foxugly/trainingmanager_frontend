@@ -26,6 +26,31 @@
       />
     </div>
 
+    <div class="grid grid-cols-2 gap-3">
+      <div class="flex flex-col gap-2">
+        <label for="round_t_start" class="text-sm font-medium text-gray-700">
+          {{ 'events.round_form.fields.t_start' | transloco }}
+        </label>
+        <input
+          pInputText
+          id="round_t_start"
+          formControlName="t_start"
+          [placeholder]="'events.round_form.fields.time_placeholder' | transloco"
+        />
+      </div>
+      <div class="flex flex-col gap-2">
+        <label for="round_t_break" class="text-sm font-medium text-gray-700">
+          {{ 'events.round_form.fields.t_break' | transloco }}
+        </label>
+        <input
+          pInputText
+          id="round_t_break"
+          formControlName="t_break"
+          [placeholder]="'events.round_form.fields.time_placeholder' | transloco"
+        />
+      </div>
+    </div>
+
     @if (errorMessage(); as msg) {
       <p-message severity="error" [text]="msg | transloco" />
     }

@@ -1,3 +1,37 @@
 :host {
   display: block;
 }
+
+:host ::ng-deep .condensed-fieldset {
+  padding: 0;
+
+  .p-fieldset-legend {
+    padding: 0.125rem 0.5rem;
+    font-size: 0.875rem;
+  }
+  .p-fieldset-content-container {
+    padding: 0;
+  }
+  .p-fieldset-content {
+    padding: 0.25rem 0.625rem;
+  }
+}
+
+:host ::ng-deep .cdk-drag-preview {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  padding: 0.25rem 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+:host ::ng-deep .cdk-drag-placeholder {
+  opacity: 0.4;
+}
+
+:host ::ng-deep .cdk-drop-list-dragging .cdk-drag {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}

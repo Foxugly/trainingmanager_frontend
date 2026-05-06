@@ -20,10 +20,13 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { MultiSelect } from 'primeng/multiselect';
+import { PickList } from 'primeng/picklist';
 import { Select } from 'primeng/select';
 import { ToggleSwitch } from 'primeng/toggleswitch';
+import { AttendanceStatusesService } from '../../../api/api/attendance-statuses.service';
 import { SportsService } from '../../../api/api/sports.service';
 import { TeamsService } from '../../../api/api/teams.service';
+import { AttendanceStatus } from '../../../api/model/attendance-status';
 import { CustomUserPublic } from '../../../api/model/custom-user-public';
 import { JoinRequestPolicyEnum } from '../../../api/model/join-request-policy-enum';
 import { LanguageEnum } from '../../../api/model/language-enum';
@@ -46,6 +49,7 @@ interface FieldErrors {
     InputText,
     Select,
     MultiSelect,
+    PickList,
     Checkbox,
     ToggleSwitch,
     Button,
@@ -64,6 +68,7 @@ export class TeamsFormComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly teamsService = inject(TeamsService);
   private readonly sportsService = inject(SportsService);
+  private readonly statusesService = inject(AttendanceStatusesService);
   private readonly authService = inject(AuthService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
@@ -76,6 +81,9 @@ export class TeamsFormComponent implements OnInit {
   protected readonly saving = signal(false);
   protected readonly availableSports = signal<Sport[]>([]);
   protected readonly availableManagers = signal<CustomUserPublic[]>([]);
+  protected readonly availableStatuses = signal<AttendanceStatus[]>([]);
+  protected readonly statusesSource = signal<AttendanceStatus[]>([]);
+  protected readonly statusesTarget = signal<AttendanceStatus[]>([]);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly fieldErrors = signal<FieldErrors | null>(null);
   protected readonly quotaExceeded = signal<{ used: number; max: number } | null>(null);
@@ -111,6 +119,15 @@ export class TeamsFormComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((res) => this.availableSports.set(res.results ?? []));
 
+    this.statusesService
+      .attendanceStatusesList()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((res) => {
+        const list = (res.results ?? []).filter((s) => s.is_active);
+        this.availableStatuses.set(list);
+        this.partitionStatuses(list, this.team()?.attendance_statuses ?? null);
+      });
+
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       const id = Number(idParam);
@@ -127,6 +144,7 @@ export class TeamsFormComponent implements OnInit {
           next: (t) => {
             this.team.set(t);
             this.availableManagers.set(t.managers ?? []);
+            this.partitionStatuses(this.availableStatuses(), t.attendance_statuses ?? null);
             this.form.reset({
               name: t.name,
               sport_id: t.sport?.id ?? null,
@@ -191,6 +209,7 @@ export class TeamsFormComponent implements OnInit {
       is_public: value.is_public,
       is_active: value.is_active,
       managers_ids: value.managers_ids,
+      attendance_statuses: this.statusesTarget().map((s) => s.id),
       join_request_policy: value.auto_accept_policy
         ? JoinRequestPolicyEnum.Auto
         : JoinRequestPolicyEnum.Manual,
@@ -246,6 +265,31 @@ export class TeamsFormComponent implements OnInit {
           });
         },
       });
+  }
+
+  private partitionStatuses(all: AttendanceStatus[], selectedIds: number[] | null): void {
+    if (selectedIds === null || all.length === 0) {
+      this.statusesTarget.set([]);
+      this.statusesSource.set(all);
+      return;
+    }
+    const selected = new Set(selectedIds);
+    const target = all.filter((s) => selected.has(s.id));
+    const source = all.filter((s) => !selected.has(s.id));
+    this.statusesTarget.set(target);
+    this.statusesSource.set(source);
+  }
+
+  protected onStatusesMoveToTarget(items: AttendanceStatus[]): void {
+    const ids = new Set(items.map((s) => s.id));
+    this.statusesTarget.update((cur) => [...cur, ...items.filter((i) => !cur.some((c) => c.id === i.id))]);
+    this.statusesSource.update((cur) => cur.filter((s) => !ids.has(s.id)));
+  }
+
+  protected onStatusesMoveToSource(items: AttendanceStatus[]): void {
+    const ids = new Set(items.map((s) => s.id));
+    this.statusesSource.update((cur) => [...cur, ...items.filter((i) => !cur.some((c) => c.id === i.id))]);
+    this.statusesTarget.update((cur) => cur.filter((s) => !ids.has(s.id)));
   }
 
   private notifySaved(detailKey: string): void {

@@ -23,6 +23,8 @@ import { AttendanceBulk } from '../model/attendance-bulk';
 // @ts-ignore
 import { Event } from '../model/event';
 // @ts-ignore
+import { GenerateTrainingRequest } from '../model/generate-training-request';
+// @ts-ignore
 import { GenerateTrainingResponse } from '../model/generate-training-response';
 // @ts-ignore
 import { PaginatedAttendanceList } from '../model/paginated-attendance-list';
@@ -711,17 +713,18 @@ export class EventsService extends BaseService implements EventsServiceInterface
     }
 
     /**
-     * Generate detailed Rounds and Exercises with AI for an Event.
+     * Generate detailed Rounds and Exercises with AI for an Event. Optionally accepts an &#x60;additional_prompt&#x60; (max 2000 chars) appended to the LLM user prompt after the structured context.
      * @endpoint post /api/v1/events/{id}/generate-training/
      * @param id A unique integer value identifying this event.
+     * @param generateTrainingRequest 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public eventsGenerateTrainingCreate(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<GenerateTrainingResponse>;
-    public eventsGenerateTrainingCreate(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<GenerateTrainingResponse>>;
-    public eventsGenerateTrainingCreate(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<GenerateTrainingResponse>>;
-    public eventsGenerateTrainingCreate(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public eventsGenerateTrainingCreate(id: number, generateTrainingRequest?: GenerateTrainingRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<GenerateTrainingResponse>;
+    public eventsGenerateTrainingCreate(id: number, generateTrainingRequest?: GenerateTrainingRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<GenerateTrainingResponse>>;
+    public eventsGenerateTrainingCreate(id: number, generateTrainingRequest?: GenerateTrainingRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<GenerateTrainingResponse>>;
+    public eventsGenerateTrainingCreate(id: number, generateTrainingRequest?: GenerateTrainingRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling eventsGenerateTrainingCreate.');
         }
@@ -743,6 +746,17 @@ export class EventsService extends BaseService implements EventsServiceInterface
         const localVarTransferCache: boolean = options?.transferCache ?? true;
 
 
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'application/x-www-form-urlencoded',
+            'multipart/form-data'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
         let responseType_: 'text' | 'json' | 'blob' = 'json';
         if (localVarHttpHeaderAcceptSelected) {
             if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
@@ -759,6 +773,7 @@ export class EventsService extends BaseService implements EventsServiceInterface
         return this.httpClient.request<GenerateTrainingResponse>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                body: generateTrainingRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -774,6 +789,8 @@ export class EventsService extends BaseService implements EventsServiceInterface
      * @endpoint get /api/v1/events/
      * @param color 
      * @param date 
+     * @param dateGte 
+     * @param dateLte 
      * @param ordering Which field to use when ordering the results.
      * @param page A page number within the paginated result set.
      * @param referProgram 
@@ -782,10 +799,10 @@ export class EventsService extends BaseService implements EventsServiceInterface
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public eventsList(color?: string, date?: string, ordering?: string, page?: number, referProgram?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedEventList>;
-    public eventsList(color?: string, date?: string, ordering?: string, page?: number, referProgram?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedEventList>>;
-    public eventsList(color?: string, date?: string, ordering?: string, page?: number, referProgram?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedEventList>>;
-    public eventsList(color?: string, date?: string, ordering?: string, page?: number, referProgram?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public eventsList(color?: string, date?: string, dateGte?: string, dateLte?: string, ordering?: string, page?: number, referProgram?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedEventList>;
+    public eventsList(color?: string, date?: string, dateGte?: string, dateLte?: string, ordering?: string, page?: number, referProgram?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedEventList>>;
+    public eventsList(color?: string, date?: string, dateGte?: string, dateLte?: string, ordering?: string, page?: number, referProgram?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedEventList>>;
+    public eventsList(color?: string, date?: string, dateGte?: string, dateLte?: string, ordering?: string, page?: number, referProgram?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -802,6 +819,24 @@ export class EventsService extends BaseService implements EventsServiceInterface
             localVarQueryParameters,
             'date',
             <any>date,
+            QueryParamStyle.Form,
+            true,
+        );
+
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'date__gte',
+            <any>dateGte,
+            QueryParamStyle.Form,
+            true,
+        );
+
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'date__lte',
+            <any>dateLte,
             QueryParamStyle.Form,
             true,
         );

@@ -11,10 +11,14 @@
     "admin": "Beheer"
   },
   "ai": {
+    "generating_event": "De AI bereidt je sessie voor…",
+    "generating_events": "De AI genereert je programma…",
+    "please_wait": "Dit kan een minuut duren, even geduld.",
     "errors": {
       "throttled": "Limiet bereikt. Probeer het over {{minutes}} minuut(en) opnieuw.",
       "date_range_invalid": "Einddatum moet na de startdatum liggen.",
       "date_range_too_long": "De periode mag niet langer zijn dan 365 dagen.",
+      "additional_prompt_too_long": "Aanvullende instructies mogen niet langer zijn dan 2000 tekens.",
       "validation": "Ongeldige gegevens. Controleer het formulier.",
       "not_a_manager": "Alleen de eigenaar en managers kunnen genereren.",
       "event_has_rounds": "Deze sessie heeft al oefeningen. Verwijder ze voordat je opnieuw genereert.",
@@ -39,12 +43,11 @@
       "not_found": "Sessie niet gevonden",
       "training_blocks": "Trainingsblokken",
       "block_label": "Blok",
+      "start": "Start",
       "break": "Rust",
       "no_exercises": "Geen oefening in dit blok",
       "rounds_partial_warn": "{{count}} blok(ken) konden niet worden geladen.",
       "rounds_load_failed": "Trainingsblokken konden niet worden geladen.",
-      "round_total_distance": "Totale afstand van het blok:",
-      "event_total_distance": "Totale afstand van de sessie:",
       "attendance_summary_title": "Aanwezigheden",
       "attendance_member_count": "{{count}} lid/leden betrokken bij deze sessie.",
       "attendance_manager_only": "Alleen managers kunnen aanwezigheden invoeren of bewerken.",
@@ -57,8 +60,11 @@
         "add_exercise": "Oefening toevoegen",
         "edit_round": "Blok bewerken",
         "delete_round": "Blok verwijderen",
+        "move_round_up": "Blok naar boven verplaatsen",
+        "move_round_down": "Blok naar beneden verplaatsen",
         "edit_exercise": "Oefening bewerken",
-        "delete_exercise": "Oefening verwijderen"
+        "delete_exercise": "Oefening verwijderen",
+        "reorder_exercise": "Oefening herschikken"
       },
       "confirm_delete_round": {
         "title": "Dit blok verwijderen?",
@@ -80,7 +86,10 @@
       "title_edit": "Blok bewerken",
       "fields": {
         "count": "Aantal herhalingen",
-        "count_help": "Hoe vaak dit blok in de sessie wordt herhaald."
+        "count_help": "Hoe vaak dit blok in de sessie wordt herhaald.",
+        "t_start": "Start",
+        "t_break": "Rust",
+        "time_placeholder": "0:30"
       },
       "save": "Opslaan",
       "cancel": "Annuleren",
@@ -99,7 +108,11 @@
         "energysegment": "Energiesegment",
         "energysegment_placeholder": "Selecteer een segment",
         "repetition": "Herhalingen",
-        "distance": "Afstand"
+        "distance": "Afstand",
+        "t_start": "Start",
+        "t_break": "Rust",
+        "time_placeholder": "0:30",
+        "notes": "Notities"
       },
       "save": "Opslaan",
       "cancel": "Annuleren",
@@ -125,6 +138,10 @@
       "has_rounds_title": "Deze sessie opnieuw genereren?",
       "has_rounds_message": "Deze sessie heeft al oefeningen. Wil je ze verwijderen en alles opnieuw genereren?",
       "delete_and_regen": "Verwijderen en opnieuw genereren",
+      "confirm": "Genereren",
+      "additional_prompt": "Aanvullende instructies (optioneel)",
+      "additional_prompt_placeholder": "Bijv. focus op uithouding, geen materiaal, gematigde intensiteit…",
+      "additional_prompt_help": "Deze tekst wordt toegevoegd aan de AI-prompt om de generatie te sturen.",
       "success_title": "Generatie geslaagd",
       "success_summary": "{{rounds}} blok(ken), {{exercises}} oefening(en) aangemaakt, {{reused}} oefening(en) hergebruikt."
     },
@@ -275,6 +292,9 @@
       "not_found": "Team niet gevonden",
       "edit": "Bewerken",
       "add_member": "Lid toevoegen",
+      "add_manager": "Nieuwe manager",
+      "filter_members_placeholder": "Leden filteren…",
+      "no_members_match": "Geen lid komt overeen met het filter.",
       "remove_member": "Verwijderen",
       "remove_confirm_title": "Dit lid verwijderen?",
       "remove_confirm_message": "Het lid wordt uit dit team verwijderd.",
@@ -288,7 +308,8 @@
       "archived_banner": "Dit team is gearchiveerd.",
       "member_since": "Lid sinds {{date}}",
       "tabs": {
-        "management": "Beheer",
+        "programs": "Programma's",
+        "managers": "Managers",
         "members": "Leden",
         "requests_invitations": "Aanvragen & uitnodigingen"
       }
@@ -305,6 +326,11 @@
       "managers_placeholder": "Selecteer managers",
       "managers_help": "Voor het toevoegen van nieuwe managers is een speciaal backend-endpoint nodig (binnenkort). Bestaande managers kun je verwijderen door ze te deselecteren.",
       "managers_empty": "Geen managers om weer te geven",
+      "attendance_statuses": "Beschikbare aanwezigheidsstatussen",
+      "attendance_statuses_placeholder": "Selecteer statussen",
+      "attendance_statuses_help": "Statussen die worden voorgesteld bij het registreren van aanwezigheid (standaard: aanwezig, afwezig, verontschuldigd).",
+      "attendance_statuses_source": "Beschikbaar",
+      "attendance_statuses_target": "Geselecteerd",
       "join_requests_section": "Aanvragen om lid te worden",
       "policy_auto_label": "Aanvragen automatisch accepteren",
       "policy_auto_help": "Iedereen die een aanvraag indient, wordt onmiddellijk geaccepteerd.",
@@ -323,6 +349,14 @@
       "submit": "Toevoegen",
       "cancel": "Annuleren",
       "added": "Lid toegevoegd."
+    },
+    "manager_dialog": {
+      "title": "Nieuwe manager",
+      "member": "Lid om te promoveren",
+      "member_placeholder": "Selecteer een lid",
+      "no_promotable": "Alle leden zijn al manager.",
+      "submit": "Promoveren",
+      "added": "Manager toegevoegd."
     },
     "roles": {
       "owner": "Eigenaar",
@@ -462,6 +496,9 @@
       "team": "Team",
       "program": "Programma",
       "event": "Sessie"
+    },
+    "units": {
+      "meters_short": "m"
     }
   },
   "dashboard": {

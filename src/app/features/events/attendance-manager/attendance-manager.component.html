@@ -1,0 +1,36 @@
+@if (loading()) {
+  <p class="text-sm text-gray-500">{{ 'common.loading' | transloco }}…</p>
+} @else if (noStatuses()) {
+  <p class="text-sm text-amber-700">
+    {{ 'events.attendance.no_statuses' | transloco }}
+  </p>
+} @else if (rows().length === 0) {
+  <p class="text-sm text-gray-500">
+    {{ 'events.attendance.no_members' | transloco }}
+  </p>
+} @else {
+  <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
+    @for (row of rows(); track row.member_id) {
+      <li class="flex items-center justify-between gap-3 px-3 py-2">
+        <span class="font-medium text-gray-900 truncate">{{ row.fullname }}</span>
+        <div class="inline-flex items-center gap-1 shrink-0">
+          @for (status of orderedStatuses(); track status.code) {
+            <p-button
+              [icon]="'pi ' + statusIcon(status.code)"
+              [severity]="row.status_code === status.code ? 'primary' : 'secondary'"
+              [text]="row.status_code !== status.code"
+              [rounded]="true"
+              size="small"
+              [disabled]="row.saving"
+              [pTooltip]="status.label"
+              tooltipPosition="bottom"
+              [ariaLabel]="status.label"
+              [ariaPressed]="row.status_code === status.code"
+              (onClick)="onSelect(row.member_id, status.code)"
+            />
+          }
+        </div>
+      </li>
+    }
+  </ul>
+}
