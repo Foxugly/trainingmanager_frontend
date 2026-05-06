@@ -51,6 +51,64 @@
       "tabs": {
         "training": "Training",
         "attendance": "Attendance"
+      },
+      "actions": {
+        "add_round": "Add a block",
+        "add_exercise": "Add an exercise",
+        "edit_round": "Edit block",
+        "delete_round": "Delete block",
+        "edit_exercise": "Edit exercise",
+        "delete_exercise": "Delete exercise"
+      },
+      "confirm_delete_round": {
+        "title": "Delete this block?",
+        "message": "The block will be deleted along with all its exercises. This action cannot be undone.",
+        "accept": "Delete",
+        "reject": "Cancel",
+        "deleted": "Block deleted."
+      },
+      "confirm_delete_exercise": {
+        "title": "Delete this exercise?",
+        "message": "The exercise will be removed from this block. This action cannot be undone.",
+        "accept": "Delete",
+        "reject": "Cancel",
+        "deleted": "Exercise deleted."
+      }
+    },
+    "round_form": {
+      "title_create": "New block",
+      "title_edit": "Edit block",
+      "fields": {
+        "count": "Number of repetitions",
+        "count_help": "How many times this block is repeated in the session."
+      },
+      "save": "Save",
+      "cancel": "Cancel",
+      "created": "Block created.",
+      "updated": "Block saved.",
+      "errors": {
+        "not_authorized_event": "You are not authorized to modify this session."
+      }
+    },
+    "exercise_form": {
+      "title_create": "New exercise",
+      "title_edit": "Edit exercise",
+      "fields": {
+        "modality": "Modality",
+        "modality_placeholder": "Select a modality",
+        "energysegment": "Energy segment",
+        "energysegment_placeholder": "Select a segment",
+        "repetition": "Repetitions",
+        "distance": "Distance"
+      },
+      "save": "Save",
+      "cancel": "Cancel",
+      "created": "Exercise created.",
+      "updated": "Exercise saved.",
+      "errors": {
+        "not_authorized_round": "You are not authorized to modify this block.",
+        "no_modalities": "No modality available for this sport. Ask an admin to add one.",
+        "no_segments": "No energy segment available. Ask an admin to add one."
       }
     },
     "fields": {
@@ -111,7 +169,8 @@
       }
     },
     "errors": {
-      "unknown": "An error occurred."
+      "unknown": "An error occurred.",
+      "forbidden": "Action not allowed."
     }
   },
   "programs": {

@@ -51,6 +51,64 @@
       "tabs": {
         "training": "Entraînement",
         "attendance": "Présences"
+      },
+      "actions": {
+        "add_round": "Ajouter un bloc",
+        "add_exercise": "Ajouter un exercice",
+        "edit_round": "Modifier le bloc",
+        "delete_round": "Supprimer le bloc",
+        "edit_exercise": "Modifier l'exercice",
+        "delete_exercise": "Supprimer l'exercice"
+      },
+      "confirm_delete_round": {
+        "title": "Supprimer ce bloc ?",
+        "message": "Le bloc sera supprimé ainsi que tous ses exercices. Cette action est irréversible.",
+        "accept": "Supprimer",
+        "reject": "Annuler",
+        "deleted": "Bloc supprimé."
+      },
+      "confirm_delete_exercise": {
+        "title": "Supprimer cet exercice ?",
+        "message": "L'exercice sera retiré de ce bloc. Cette action est irréversible.",
+        "accept": "Supprimer",
+        "reject": "Annuler",
+        "deleted": "Exercice supprimé."
+      }
+    },
+    "round_form": {
+      "title_create": "Nouveau bloc",
+      "title_edit": "Modifier le bloc",
+      "fields": {
+        "count": "Nombre de répétitions",
+        "count_help": "Combien de fois ce bloc est répété dans la séance."
+      },
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "created": "Bloc créé.",
+      "updated": "Bloc enregistré.",
+      "errors": {
+        "not_authorized_event": "Vous n'êtes pas autorisé à modifier cette séance."
+      }
+    },
+    "exercise_form": {
+      "title_create": "Nouvel exercice",
+      "title_edit": "Modifier l'exercice",
+      "fields": {
+        "modality": "Modalité",
+        "modality_placeholder": "Sélectionner une modalité",
+        "energysegment": "Segment énergétique",
+        "energysegment_placeholder": "Sélectionner un segment",
+        "repetition": "Répétitions",
+        "distance": "Distance"
+      },
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "created": "Exercice créé.",
+      "updated": "Exercice enregistré.",
+      "errors": {
+        "not_authorized_round": "Vous n'êtes pas autorisé à modifier ce bloc.",
+        "no_modalities": "Aucune modalité disponible pour ce sport. Demandez à un admin d'en ajouter.",
+        "no_segments": "Aucun segment énergétique disponible. Demandez à un admin d'en ajouter."
       }
     },
     "fields": {
@@ -111,7 +169,8 @@
       }
     },
     "errors": {
-      "unknown": "Une erreur est survenue."
+      "unknown": "Une erreur est survenue.",
+      "forbidden": "Action non autorisée."
     }
   },
   "programs": {

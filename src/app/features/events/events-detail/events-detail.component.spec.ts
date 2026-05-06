@@ -140,6 +140,21 @@ interface ProtectedFields {
   roundTotalDistance(round: Round): number;
   eventTotalDistance(): number;
   formatDistance(meters: number): string;
+  showRoundDialog(): boolean;
+  roundDialogMode(): 'create' | 'edit';
+  editingRound(): Round | null;
+  showExerciseDialog(): boolean;
+  exerciseDialogMode(): 'create' | 'edit';
+  editingExercise(): Exercise | null;
+  targetRoundId(): number | null;
+  openCreateRound(): void;
+  openEditRound(r: Round): void;
+  onRoundDialogClosed(r: Round | null): void;
+  confirmDeleteRound(r: Round): void;
+  openCreateExercise(roundId: number): void;
+  openEditExercise(ex: Exercise): void;
+  onExerciseDialogClosed(ex: Exercise | null): void;
+  confirmDeleteExercise(ex: Exercise): void;
 }
 
 describe('EventsDetailComponent', () => {
@@ -156,7 +171,10 @@ describe('EventsDetailComponent', () => {
     roundsDestroy: ReturnType<typeof vi.fn>;
     roundsRetrieve: ReturnType<typeof vi.fn>;
   };
-  let exercisesMock: { exercisesRetrieve: ReturnType<typeof vi.fn> };
+  let exercisesMock: {
+    exercisesRetrieve: ReturnType<typeof vi.fn>;
+    exercisesDestroy: ReturnType<typeof vi.fn>;
+  };
   let userSig: ReturnType<typeof signal<CustomUserPublic | null>>;
   let routeIdParam: string | null;
 
@@ -195,6 +213,7 @@ describe('EventsDetailComponent', () => {
       exercisesRetrieve: vi.fn().mockImplementation((id: number) =>
         of(id === 201 ? exercise1 : exercise2),
       ),
+      exercisesDestroy: vi.fn().mockReturnValue(of(null)),
     };
     userSig = signal<CustomUserPublic | null>(currentUser);
 
@@ -391,5 +410,80 @@ describe('EventsDetailComponent', () => {
     expect(fd(1500)).toBe('1.5 km');
     expect(fd(2000)).toBe('2 km');
     expect(fd(2500)).toBe('2.5 km');
+  });
+
+  it('openCreateRound opens the dialog in create mode with no editing round', () => {
+    access(component).openCreateRound();
+    expect(access(component).showRoundDialog()).toBe(true);
+    expect(access(component).roundDialogMode()).toBe('create');
+    expect(access(component).editingRound()).toBeNull();
+  });
+
+  it('openEditRound opens the dialog in edit mode with the target round', async () => {
+    await setup('7', eventWithRounds);
+    await new Promise((r) => setTimeout(r, 0));
+    await new Promise((r) => setTimeout(r, 0));
+    const round = access(component).rounds()[0];
+    access(component).openEditRound(round);
+    expect(access(component).showRoundDialog()).toBe(true);
+    expect(access(component).roundDialogMode()).toBe('edit');
+    expect(access(component).editingRound()).toEqual(round);
+  });
+
+  it('confirmDeleteRound triggers ConfirmDialog and on accept calls roundsDestroy + reloads', async () => {
+    await setup('7', eventWithRounds);
+    await new Promise((r) => setTimeout(r, 0));
+    await new Promise((r) => setTimeout(r, 0));
+    const round = access(component).rounds()[0];
+    const confirmation = fixture.debugElement.injector.get(ConfirmationService);
+    vi.spyOn(confirmation, 'confirm').mockImplementation((cfg) => {
+      cfg.accept?.();
+      return confirmation;
+    });
+    eventsMock.eventsRetrieve.mockClear();
+    access(component).confirmDeleteRound(round);
+    expect(roundsMock.roundsDestroy).toHaveBeenCalledWith(round.id);
+    // reload triggers eventsRetrieve a second time
+    expect(eventsMock.eventsRetrieve).toHaveBeenCalledWith(7);
+  });
+
+  it('onRoundDialogClosed with a truthy round closes the dialog and reloads the event', async () => {
+    await setup('7', eventWithRounds);
+    await new Promise((r) => setTimeout(r, 0));
+    eventsMock.eventsRetrieve.mockClear();
+    access(component).openCreateRound();
+    expect(access(component).showRoundDialog()).toBe(true);
+    access(component).onRoundDialogClosed({
+      ...exercise1,
+      id: 999,
+    } as unknown as Round);
+    expect(access(component).showRoundDialog()).toBe(false);
+    expect(access(component).editingRound()).toBeNull();
+    expect(eventsMock.eventsRetrieve).toHaveBeenCalledWith(7);
+  });
+
+  it('onRoundDialogClosed(null) closes without reloading', async () => {
+    await setup('7', eventNoRounds);
+    eventsMock.eventsRetrieve.mockClear();
+    access(component).openCreateRound();
+    access(component).onRoundDialogClosed(null);
+    expect(access(component).showRoundDialog()).toBe(false);
+    expect(eventsMock.eventsRetrieve).not.toHaveBeenCalled();
+  });
+
+  it('confirmDeleteExercise triggers ConfirmDialog and on accept calls exercisesDestroy + reloads', async () => {
+    await setup('7', eventWithRounds);
+    await new Promise((r) => setTimeout(r, 0));
+    await new Promise((r) => setTimeout(r, 0));
+    const ex = exercise1;
+    const confirmation = fixture.debugElement.injector.get(ConfirmationService);
+    vi.spyOn(confirmation, 'confirm').mockImplementation((cfg) => {
+      cfg.accept?.();
+      return confirmation;
+    });
+    eventsMock.eventsRetrieve.mockClear();
+    access(component).confirmDeleteExercise(ex);
+    expect(exercisesMock.exercisesDestroy).toHaveBeenCalledWith(ex.id);
+    expect(eventsMock.eventsRetrieve).toHaveBeenCalledWith(7);
   });
 });

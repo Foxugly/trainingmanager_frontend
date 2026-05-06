@@ -51,6 +51,64 @@
       "tabs": {
         "training": "Training",
         "attendance": "Aanwezigheden"
+      },
+      "actions": {
+        "add_round": "Blok toevoegen",
+        "add_exercise": "Oefening toevoegen",
+        "edit_round": "Blok bewerken",
+        "delete_round": "Blok verwijderen",
+        "edit_exercise": "Oefening bewerken",
+        "delete_exercise": "Oefening verwijderen"
+      },
+      "confirm_delete_round": {
+        "title": "Dit blok verwijderen?",
+        "message": "Het blok wordt verwijderd, samen met al zijn oefeningen. Deze actie is onomkeerbaar.",
+        "accept": "Verwijderen",
+        "reject": "Annuleren",
+        "deleted": "Blok verwijderd."
+      },
+      "confirm_delete_exercise": {
+        "title": "Deze oefening verwijderen?",
+        "message": "De oefening wordt uit dit blok verwijderd. Deze actie is onomkeerbaar.",
+        "accept": "Verwijderen",
+        "reject": "Annuleren",
+        "deleted": "Oefening verwijderd."
+      }
+    },
+    "round_form": {
+      "title_create": "Nieuw blok",
+      "title_edit": "Blok bewerken",
+      "fields": {
+        "count": "Aantal herhalingen",
+        "count_help": "Hoe vaak dit blok in de sessie wordt herhaald."
+      },
+      "save": "Opslaan",
+      "cancel": "Annuleren",
+      "created": "Blok aangemaakt.",
+      "updated": "Blok opgeslagen.",
+      "errors": {
+        "not_authorized_event": "Je bent niet bevoegd om deze sessie te wijzigen."
+      }
+    },
+    "exercise_form": {
+      "title_create": "Nieuwe oefening",
+      "title_edit": "Oefening bewerken",
+      "fields": {
+        "modality": "Modaliteit",
+        "modality_placeholder": "Selecteer een modaliteit",
+        "energysegment": "Energiesegment",
+        "energysegment_placeholder": "Selecteer een segment",
+        "repetition": "Herhalingen",
+        "distance": "Afstand"
+      },
+      "save": "Opslaan",
+      "cancel": "Annuleren",
+      "created": "Oefening aangemaakt.",
+      "updated": "Oefening opgeslagen.",
+      "errors": {
+        "not_authorized_round": "Je bent niet bevoegd om dit blok te wijzigen.",
+        "no_modalities": "Geen modaliteit beschikbaar voor deze sport. Vraag een admin om er toe te voegen.",
+        "no_segments": "Geen energiesegment beschikbaar. Vraag een admin om er toe te voegen."
       }
     },
     "fields": {
@@ -111,7 +169,8 @@
       }
     },
     "errors": {
-      "unknown": "Er is een fout opgetreden."
+      "unknown": "Er is een fout opgetreden.",
+      "forbidden": "Actie niet toegestaan."
     }
   },
   "programs": {

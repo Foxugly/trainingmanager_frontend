@@ -32,6 +32,8 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { AiErrorMappingService } from '../../ai/ai-error-mapping.service';
 import { TeamRole, computeTeamRole } from '../../teams/teams-list/teams-list.component';
 import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-header.component';
+import { RoundFormDialogComponent } from '../round-form-dialog/round-form-dialog.component';
+import { ExerciseFormDialogComponent } from '../exercise-form-dialog/exercise-form-dialog.component';
 
 @Component({
   selector: 'app-events-detail',
@@ -48,6 +50,8 @@ import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-h
     Tabs,
     TranslocoPipe,
     DetailHeaderComponent,
+    RoundFormDialogComponent,
+    ExerciseFormDialogComponent,
   ],
   templateUrl: './events-detail.component.html',
   styleUrl: './events-detail.component.scss',
@@ -86,6 +90,15 @@ export class EventsDetailComponent implements OnInit {
   );
 
   protected readonly activeTab = signal<string>('training');
+
+  protected readonly showRoundDialog = signal(false);
+  protected readonly roundDialogMode = signal<'create' | 'edit'>('create');
+  protected readonly editingRound = signal<Round | null>(null);
+
+  protected readonly showExerciseDialog = signal(false);
+  protected readonly exerciseDialogMode = signal<'create' | 'edit'>('create');
+  protected readonly editingExercise = signal<Exercise | null>(null);
+  protected readonly targetRoundId = signal<number | null>(null);
 
   protected readonly currentUserRole = computed<TeamRole | null>(() => {
     const t = this.team();
@@ -380,5 +393,137 @@ export class EventsDetailComponent implements OnInit {
     } else {
       this.errorMessage.set(this.transloco.translate(info.i18nKey));
     }
+  }
+
+  protected openCreateRound(): void {
+    this.editingRound.set(null);
+    this.roundDialogMode.set('create');
+    this.showRoundDialog.set(true);
+  }
+
+  protected openEditRound(r: Round): void {
+    this.editingRound.set(r);
+    this.roundDialogMode.set('edit');
+    this.showRoundDialog.set(true);
+  }
+
+  protected onRoundDialogClosed(round: Round | null): void {
+    this.showRoundDialog.set(false);
+    this.editingRound.set(null);
+    if (round) {
+      this.messageService.add({
+        severity: 'success',
+        summary: this.transloco.translate('common.success'),
+        detail: this.transloco.translate(
+          this.roundDialogMode() === 'create'
+            ? 'events.round_form.created'
+            : 'events.round_form.updated',
+        ),
+      });
+      this.reloadEvent();
+    }
+  }
+
+  protected confirmDeleteRound(r: Round): void {
+    this.confirmationService.confirm({
+      header: this.transloco.translate('events.detail.confirm_delete_round.title'),
+      message: this.transloco.translate('events.detail.confirm_delete_round.message'),
+      acceptLabel: this.transloco.translate('events.detail.confirm_delete_round.accept'),
+      rejectLabel: this.transloco.translate('events.detail.confirm_delete_round.reject'),
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => this.deleteRound(r),
+    });
+  }
+
+  private deleteRound(r: Round): void {
+    this.roundsService
+      .roundsDestroy(r.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: this.transloco.translate('common.success'),
+            detail: this.transloco.translate('events.detail.confirm_delete_round.deleted'),
+          });
+          this.reloadEvent();
+        },
+        error: (err: HttpErrorResponse) => this.notifyMutationError(err),
+      });
+  }
+
+  protected openCreateExercise(roundId: number): void {
+    this.editingExercise.set(null);
+    this.targetRoundId.set(roundId);
+    this.exerciseDialogMode.set('create');
+    this.showExerciseDialog.set(true);
+  }
+
+  protected openEditExercise(ex: Exercise): void {
+    this.editingExercise.set(ex);
+    this.targetRoundId.set(null);
+    this.exerciseDialogMode.set('edit');
+    this.showExerciseDialog.set(true);
+  }
+
+  protected onExerciseDialogClosed(ex: Exercise | null): void {
+    this.showExerciseDialog.set(false);
+    this.editingExercise.set(null);
+    this.targetRoundId.set(null);
+    if (ex) {
+      this.messageService.add({
+        severity: 'success',
+        summary: this.transloco.translate('common.success'),
+        detail: this.transloco.translate(
+          this.exerciseDialogMode() === 'create'
+            ? 'events.exercise_form.created'
+            : 'events.exercise_form.updated',
+        ),
+      });
+      this.reloadEvent();
+    }
+  }
+
+  protected confirmDeleteExercise(ex: Exercise): void {
+    this.confirmationService.confirm({
+      header: this.transloco.translate('events.detail.confirm_delete_exercise.title'),
+      message: this.transloco.translate('events.detail.confirm_delete_exercise.message'),
+      acceptLabel: this.transloco.translate('events.detail.confirm_delete_exercise.accept'),
+      rejectLabel: this.transloco.translate('events.detail.confirm_delete_exercise.reject'),
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => this.deleteExercise(ex),
+    });
+  }
+
+  private deleteExercise(ex: Exercise): void {
+    this.exercisesService
+      .exercisesDestroy(ex.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: this.transloco.translate('common.success'),
+            detail: this.transloco.translate('events.detail.confirm_delete_exercise.deleted'),
+          });
+          this.reloadEvent();
+        },
+        error: (err: HttpErrorResponse) => this.notifyMutationError(err),
+      });
+  }
+
+  private reloadEvent(): void {
+    const id = this.eventId();
+    if (id != null) this.loadEvent(id);
+  }
+
+  private notifyMutationError(err: HttpErrorResponse): void {
+    const detailKey =
+      err?.status === 403 ? 'events.errors.forbidden' : 'events.errors.unknown';
+    this.messageService.add({
+      severity: 'error',
+      summary: this.transloco.translate('common.error'),
+      detail: this.transloco.translate(detailKey),
+    });
   }
 }

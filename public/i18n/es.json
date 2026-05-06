@@ -51,6 +51,64 @@
       "tabs": {
         "training": "Entrenamiento",
         "attendance": "Asistencias"
+      },
+      "actions": {
+        "add_round": "Añadir un bloque",
+        "add_exercise": "Añadir un ejercicio",
+        "edit_round": "Modificar el bloque",
+        "delete_round": "Eliminar el bloque",
+        "edit_exercise": "Modificar el ejercicio",
+        "delete_exercise": "Eliminar el ejercicio"
+      },
+      "confirm_delete_round": {
+        "title": "¿Eliminar este bloque?",
+        "message": "El bloque se eliminará junto con todos sus ejercicios. Esta acción es irreversible.",
+        "accept": "Eliminar",
+        "reject": "Cancelar",
+        "deleted": "Bloque eliminado."
+      },
+      "confirm_delete_exercise": {
+        "title": "¿Eliminar este ejercicio?",
+        "message": "El ejercicio se eliminará de este bloque. Esta acción es irreversible.",
+        "accept": "Eliminar",
+        "reject": "Cancelar",
+        "deleted": "Ejercicio eliminado."
+      }
+    },
+    "round_form": {
+      "title_create": "Nuevo bloque",
+      "title_edit": "Modificar el bloque",
+      "fields": {
+        "count": "Número de repeticiones",
+        "count_help": "Cuántas veces se repite este bloque en la sesión."
+      },
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "created": "Bloque creado.",
+      "updated": "Bloque guardado.",
+      "errors": {
+        "not_authorized_event": "No estás autorizado a modificar esta sesión."
+      }
+    },
+    "exercise_form": {
+      "title_create": "Nuevo ejercicio",
+      "title_edit": "Modificar el ejercicio",
+      "fields": {
+        "modality": "Modalidad",
+        "modality_placeholder": "Selecciona una modalidad",
+        "energysegment": "Segmento energético",
+        "energysegment_placeholder": "Selecciona un segmento",
+        "repetition": "Repeticiones",
+        "distance": "Distancia"
+      },
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "created": "Ejercicio creado.",
+      "updated": "Ejercicio guardado.",
+      "errors": {
+        "not_authorized_round": "No estás autorizado a modificar este bloque.",
+        "no_modalities": "Ninguna modalidad disponible para este deporte. Pide a un admin que añada.",
+        "no_segments": "Ningún segmento energético disponible. Pide a un admin que añada."
       }
     },
     "fields": {
@@ -111,7 +169,8 @@
       }
     },
     "errors": {
-      "unknown": "Se ha producido un error."
+      "unknown": "Se ha producido un error.",
+      "forbidden": "Acción no autorizada."
     }
   },
   "programs": {

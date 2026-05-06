@@ -125,6 +125,19 @@
             }
           }
 
+          @if (canManage() && team()) {
+            <div class="mb-4 flex justify-end">
+              <p-button
+                [label]="'events.detail.actions.add_round' | transloco"
+                icon="pi pi-plus"
+                severity="secondary"
+                [outlined]="true"
+                size="small"
+                (onClick)="openCreateRound()"
+              />
+            </div>
+          }
+
           @if (rounds().length > 0 || loadingRounds()) {
             <section class="mb-6">
               <div class="flex items-baseline justify-between gap-3 flex-wrap mb-3">
@@ -164,16 +177,38 @@
                             </span>
                           }
                         </h3>
-                        @if (round.t_break) {
-                          <span class="text-xs text-gray-500">
-                            {{ 'events.detail.break' | transloco }} {{ round.t_break }}
-                          </span>
-                        }
+                        <div class="flex items-center gap-1">
+                          @if (round.t_break) {
+                            <span class="text-xs text-gray-500 mr-2">
+                              {{ 'events.detail.break' | transloco }} {{ round.t_break }}
+                            </span>
+                          }
+                          @if (canManage()) {
+                            <p-button
+                              icon="pi pi-pencil"
+                              severity="secondary"
+                              [text]="true"
+                              [rounded]="true"
+                              size="small"
+                              [ariaLabel]="'events.detail.actions.edit_round' | transloco"
+                              (onClick)="openEditRound(round)"
+                            />
+                            <p-button
+                              icon="pi pi-trash"
+                              severity="danger"
+                              [text]="true"
+                              [rounded]="true"
+                              size="small"
+                              [ariaLabel]="'events.detail.actions.delete_round' | transloco"
+                              (onClick)="confirmDeleteRound(round)"
+                            />
+                          }
+                        </div>
                       </div>
                       @if ((exercisesByRound().get(round.id) || []).length > 0) {
                         <ul class="divide-y divide-gray-100 text-sm">
                           @for (ex of exercisesByRound().get(round.id) || []; track ex.id) {
-                            <li class="py-1.5 flex justify-between gap-3">
+                            <li class="py-1.5 flex items-center justify-between gap-3">
                               <div class="flex-1">
                                 <span class="font-medium">
                                   {{ ex.repetition ?? 1 }} × {{ ex.distance ?? 0 }}m
@@ -195,11 +230,33 @@
                                   <div class="text-xs text-gray-500 mt-0.5">{{ ex.notes }}</div>
                                 }
                               </div>
-                              @if (ex.t_break) {
-                                <span class="text-xs text-gray-500 shrink-0">
-                                  {{ ex.t_break }}
-                                </span>
-                              }
+                              <div class="flex items-center gap-1 shrink-0">
+                                @if (ex.t_break) {
+                                  <span class="text-xs text-gray-500 mr-1">
+                                    {{ ex.t_break }}
+                                  </span>
+                                }
+                                @if (canManage()) {
+                                  <p-button
+                                    icon="pi pi-pencil"
+                                    severity="secondary"
+                                    [text]="true"
+                                    [rounded]="true"
+                                    size="small"
+                                    [ariaLabel]="'events.detail.actions.edit_exercise' | transloco"
+                                    (onClick)="openEditExercise(ex)"
+                                  />
+                                  <p-button
+                                    icon="pi pi-trash"
+                                    severity="danger"
+                                    [text]="true"
+                                    [rounded]="true"
+                                    size="small"
+                                    [ariaLabel]="'events.detail.actions.delete_exercise' | transloco"
+                                    (onClick)="confirmDeleteExercise(ex)"
+                                  />
+                                }
+                              </div>
                             </li>
                           }
                         </ul>
@@ -215,6 +272,18 @@
                         <p class="text-xs text-gray-500">
                           {{ 'events.detail.no_exercises' | transloco }}
                         </p>
+                      }
+                      @if (canManage() && team()) {
+                        <div class="mt-2 flex justify-end">
+                          <p-button
+                            [label]="'events.detail.actions.add_exercise' | transloco"
+                            icon="pi pi-plus"
+                            severity="secondary"
+                            [text]="true"
+                            size="small"
+                            (onClick)="openCreateExercise(round.id)"
+                          />
+                        </div>
                       }
                     </div>
                   }
@@ -292,3 +361,25 @@
 </div>
 
 <p-confirmDialog />
+
+@if (event(); as e) {
+  <app-round-form-dialog
+    [visible]="showRoundDialog()"
+    [mode]="roundDialogMode()"
+    [round]="editingRound()"
+    [eventId]="e.id"
+    [teamSportId]="team()?.sport?.id ?? null"
+    [teamLanguage]="team()?.language ?? 'fr'"
+    (closed)="onRoundDialogClosed($event)"
+  />
+
+  <app-exercise-form-dialog
+    [visible]="showExerciseDialog()"
+    [mode]="exerciseDialogMode()"
+    [exercise]="editingExercise()"
+    [roundId]="targetRoundId()"
+    [sportId]="team()?.sport?.id ?? null"
+    [language]="team()?.language ?? 'fr'"
+    (closed)="onExerciseDialogClosed($event)"
+  />
+}
