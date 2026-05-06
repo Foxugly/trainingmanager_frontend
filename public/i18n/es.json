@@ -51,6 +51,15 @@
       "no_exercises": "Ningún ejercicio en este bloque",
       "rounds_partial_warn": "{{count}} bloque(s) no se han podido cargar.",
       "rounds_load_failed": "No se pudieron cargar los bloques de entrenamiento.",
+      "reorder_errors": {
+        "empty_list": "Lista vacía.",
+        "duplicate_id": "Elemento duplicado en la lista.",
+        "scope_mismatch": "Elemento fuera de ámbito.",
+        "incomplete_reorder": "La lista está incompleta, faltan algunos elementos.",
+        "not_authorized_event": "Debes gestionar el equipo de esta sesión para reordenar.",
+        "not_authorized_round": "No estás autorizado a reordenar este bloque.",
+        "unknown": "Error al reordenar. Inténtalo de nuevo."
+      },
       "attendance_summary_title": "Asistencias",
       "attendance_member_count": "{{count}} miembro(s) implicados en esta sesión.",
       "attendance_manager_only": "Solo los managers pueden registrar o editar las asistencias.",

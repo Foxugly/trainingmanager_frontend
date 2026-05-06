@@ -51,6 +51,15 @@
       "no_exercises": "No exercise in this block",
       "rounds_partial_warn": "{{count}} block(s) could not be loaded.",
       "rounds_load_failed": "Could not load training blocks.",
+      "reorder_errors": {
+        "empty_list": "Empty list.",
+        "duplicate_id": "Duplicate item in the list.",
+        "scope_mismatch": "Item out of scope.",
+        "incomplete_reorder": "List is incomplete, some items are missing.",
+        "not_authorized_event": "You must manage this session's team to reorder.",
+        "not_authorized_round": "You are not authorized to reorder this block.",
+        "unknown": "Reorder failed. Please try again."
+      },
       "attendance_summary_title": "Attendance",
       "attendance_member_count": "{{count}} member(s) involved in this session.",
       "attendance_manager_only": "Only managers can record or edit attendance.",

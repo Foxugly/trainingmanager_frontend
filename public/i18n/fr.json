@@ -51,6 +51,15 @@
       "no_exercises": "Aucun exercice dans ce bloc",
       "rounds_partial_warn": "{{count}} bloc(s) n'ont pas pu être chargés.",
       "rounds_load_failed": "Impossible de charger les blocs d'entraînement.",
+      "reorder_errors": {
+        "empty_list": "Liste vide.",
+        "duplicate_id": "Doublon dans la liste.",
+        "scope_mismatch": "Élément hors périmètre.",
+        "incomplete_reorder": "La liste est incomplète, certains éléments sont absents.",
+        "not_authorized_event": "Vous devez gérer l'équipe de cette séance pour réordonner.",
+        "not_authorized_round": "Vous n'êtes pas autorisé à réordonner ce bloc.",
+        "unknown": "Réordonnancement échoué. Réessayez."
+      },
       "attendance_summary_title": "Présences",
       "attendance_member_count": "{{count}} membre(s) concerné(s) par cette séance.",
       "attendance_manager_only": "Seuls les managers peuvent saisir ou éditer les présences.",

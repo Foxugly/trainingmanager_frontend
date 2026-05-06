@@ -92,6 +92,8 @@ export * from './patched-team-membership';
 export * from './program';
 export * from './program-minimal';
 export * from './register';
+export * from './reorder-exercises-request';
+export * from './reorder-rounds-request';
 export * from './round';
 export * from './sport';
 export * from './sport-admin';

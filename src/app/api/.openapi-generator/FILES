@@ -136,6 +136,8 @@ model/patched-team.ts
 model/program-minimal.ts
 model/program.ts
 model/register.ts
+model/reorder-exercises-request.ts
+model/reorder-rounds-request.ts
 model/round.ts
 model/sport-admin.ts
 model/sport.ts

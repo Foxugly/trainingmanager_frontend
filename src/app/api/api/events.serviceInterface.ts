@@ -20,6 +20,7 @@ import { PaginatedAttendanceList } from '../model/models';
 import { PaginatedEventList } from '../model/models';
 import { PatchedAttendance } from '../model/models';
 import { PatchedEvent } from '../model/models';
+import { ReorderRoundsRequest } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
@@ -155,6 +156,15 @@ export interface EventsServiceInterface {
      * @param id A unique integer value identifying this event.
      */
     eventsRetrieve(id: number, extraHttpRequestParams?: any): Observable<Event>;
+
+    /**
+     * 
+     * Atomically reorder the Rounds attached to this Event. &#x60;round_ids&#x60; must contain exactly the IDs of the Rounds currently attached, in the desired final order. Round.order is set to 1..N matching list position, in a single transaction.
+     * @endpoint post /api/v1/events/{id}/rounds/reorder/
+     * @param id A unique integer value identifying this event.
+     * @param reorderRoundsRequest 
+     */
+    eventsRoundsReorderCreate(id: number, reorderRoundsRequest: ReorderRoundsRequest, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * 

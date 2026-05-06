@@ -490,28 +490,29 @@ export class EventsDetailComponent implements OnInit {
 
   protected moveRound(r: Round, direction: 'up' | 'down'): void {
     if (this.reordering()) return;
+    const eventId = this.eventId();
+    if (eventId === null) return;
+
     const list = this.rounds();
     const idx = list.findIndex((x) => x.id === r.id);
     const targetIdx = direction === 'up' ? idx - 1 : idx + 1;
     if (idx < 0 || targetIdx < 0 || targetIdx >= list.length) return;
 
-    const a = list[idx];
-    const b = list[targetIdx];
-    const aOrder = a.order ?? idx + 1;
-    const bOrder = b.order ?? targetIdx + 1;
+    const reordered = [...list];
+    [reordered[idx], reordered[targetIdx]] = [reordered[targetIdx], reordered[idx]];
+    const renumbered = reordered.map((round, i) => ({ ...round, order: i + 1 }));
+    this.rounds.set(renumbered);
 
     this.reordering.set(true);
-    Promise.all([
-      firstValueFrom(this.roundsService.roundsPartialUpdate(a.id, { order: bOrder })),
-      firstValueFrom(this.roundsService.roundsPartialUpdate(b.id, { order: aOrder })),
-    ])
-      .then(([updatedA, updatedB]) => {
-        const next = list
-          .map((x) => (x.id === updatedA.id ? updatedA : x.id === updatedB.id ? updatedB : x))
-          .sort((x, y) => (x.order ?? 0) - (y.order ?? 0));
-        this.rounds.set(next);
+    firstValueFrom(
+      this.eventsService.eventsRoundsReorderCreate(eventId, {
+        round_ids: renumbered.map((x) => x.id),
+      }),
+    )
+      .catch((err: HttpErrorResponse) => {
+        this.rounds.set(list);
+        this.notifyReorderError(err);
       })
-      .catch((err: HttpErrorResponse) => this.notifyMutationError(err))
       .finally(() => this.reordering.set(false));
   }
 
@@ -528,18 +529,40 @@ export class EventsDetailComponent implements OnInit {
     map.set(round.id, renumbered);
     this.exercisesByRound.set(map);
 
-    const originalById = new Map(original.map((ex) => [ex.id, ex.order]));
-    const changed = renumbered.filter((ex) => originalById.get(ex.id) !== ex.order);
-    if (changed.length === 0) return;
-
     this.reordering.set(true);
-    Promise.all(
-      changed.map((ex) =>
-        firstValueFrom(this.exercisesService.exercisesPartialUpdate(ex.id, { order: ex.order })),
-      ),
+    firstValueFrom(
+      this.roundsService.roundsExercisesReorderCreate(round.id, {
+        exercise_ids: renumbered.map((ex) => ex.id),
+      }),
     )
-      .catch((err: HttpErrorResponse) => this.notifyMutationError(err))
+      .catch((err: HttpErrorResponse) => {
+        const rollback = new Map(this.exercisesByRound());
+        rollback.set(round.id, original);
+        this.exercisesByRound.set(rollback);
+        this.notifyReorderError(err);
+      })
       .finally(() => this.reordering.set(false));
+  }
+
+  private notifyReorderError(err: HttpErrorResponse): void {
+    const body = err?.error as { code?: string; detail?: string } | null | undefined;
+    const REORDER_CODES = new Set([
+      'empty_list',
+      'duplicate_id',
+      'scope_mismatch',
+      'incomplete_reorder',
+      'not_authorized_event',
+      'not_authorized_round',
+    ]);
+    const i18nKey =
+      body?.code && REORDER_CODES.has(body.code)
+        ? `events.detail.reorder_errors.${body.code}`
+        : 'events.detail.reorder_errors.unknown';
+    this.messageService.add({
+      severity: 'error',
+      summary: this.transloco.translate('common.error'),
+      detail: this.transloco.translate(i18nKey),
+    });
   }
 
   protected confirmDeleteRound(r: Round): void {

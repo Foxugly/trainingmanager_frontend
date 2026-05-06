@@ -51,6 +51,15 @@
       "no_exercises": "Geen oefening in dit blok",
       "rounds_partial_warn": "{{count}} blok(ken) konden niet worden geladen.",
       "rounds_load_failed": "Trainingsblokken konden niet worden geladen.",
+      "reorder_errors": {
+        "empty_list": "Lege lijst.",
+        "duplicate_id": "Dubbele invoer in de lijst.",
+        "scope_mismatch": "Element buiten bereik.",
+        "incomplete_reorder": "De lijst is onvolledig, sommige elementen ontbreken.",
+        "not_authorized_event": "Je moet het team van deze sessie beheren om te herschikken.",
+        "not_authorized_round": "Je bent niet bevoegd om dit blok te herschikken.",
+        "unknown": "Herschikken mislukt. Probeer opnieuw."
+      },
       "attendance_summary_title": "Aanwezigheden",
       "attendance_member_count": "{{count}} lid/leden betrokken bij deze sessie.",
       "attendance_manager_only": "Alleen managers kunnen aanwezigheden invoeren of bewerken.",

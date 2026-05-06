@@ -1456,6 +1456,44 @@ paths:
           description: AI configuration error
         '502':
           description: AI service error
+  /api/v1/events/{id}/rounds/reorder/:
+    post:
+      operationId: events_rounds_reorder_create
+      description: Atomically reorder the Rounds attached to this Event. `round_ids`
+        must contain exactly the IDs of the Rounds currently attached, in the desired
+        final order. Round.order is set to 1..N matching list position, in a single
+        transaction.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this event.
+        required: true
+      tags:
+      - events
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReorderRoundsRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReorderRoundsRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReorderRoundsRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: Rounds reordered
+        '400':
+          description: 'Validation error. `body.code` is one of: `empty_list`, `duplicate_id`,
+            `scope_mismatch`, `incomplete_reorder`.'
+        '403':
+          description: Not a manager of this event team
   /api/v1/exercises/:
     get:
       operationId: exercises_list
@@ -2945,6 +2983,44 @@ paths:
           description: No response body
         '404':
           description: No response body
+  /api/v1/rounds/{id}/exercises/reorder/:
+    post:
+      operationId: rounds_exercises_reorder_create
+      description: Atomically reorder the Exercises attached to this Round. `exercise_ids`
+        must contain exactly the IDs of the Exercises currently attached, in the desired
+        final order. Exercise.order is set to 1..N matching list position, in a single
+        transaction.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Round.
+        required: true
+      tags:
+      - rounds
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReorderExercisesRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReorderExercisesRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReorderExercisesRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: Exercises reordered
+        '400':
+          description: 'Validation error. `body.code` is one of: `empty_list`, `duplicate_id`,
+            `scope_mismatch`, `incomplete_reorder`.'
+        '403':
+          description: Not authorized to mutate this round
   /api/v1/sports/:
     get:
       operationId: sports_list
@@ -7094,6 +7170,38 @@ components:
       - password
       - turnstile_token
       - username
+    ReorderExercisesRequest:
+      type: object
+      description: |-
+        Body for POST /rounds/{id}/exercises/reorder/.
+
+        `exercise_ids` must contain exactly the IDs of the Exercises currently
+        attached to the Round in the desired final order. The view enforces
+        scope/completeness in addition to this serializer's syntactic check.
+      properties:
+        exercise_ids:
+          type: array
+          items:
+            type: integer
+            minimum: 1
+      required:
+      - exercise_ids
+    ReorderRoundsRequest:
+      type: object
+      description: |-
+        Body for POST /events/{id}/rounds/reorder/.
+
+        `round_ids` must contain exactly the IDs of the Rounds attached to the
+        Event in the desired final order. The view enforces scope/completeness
+        in addition to this serializer's syntactic validation.
+      properties:
+        round_ids:
+          type: array
+          items:
+            type: integer
+            minimum: 1
+      required:
+      - round_ids
     Round:
       type: object
       properties:

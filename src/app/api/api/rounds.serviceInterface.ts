@@ -15,6 +15,7 @@ import { CloneExerciseRequest } from '../model/models';
 import { Exercise } from '../model/models';
 import { PaginatedRoundList } from '../model/models';
 import { PatchedRound } from '../model/models';
+import { ReorderExercisesRequest } from '../model/models';
 import { Round } from '../model/models';
 
 
@@ -58,6 +59,15 @@ export interface RoundsServiceInterface {
      * @param id A unique integer value identifying this Round.
      */
     roundsDestroy(id: number, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * 
+     * Atomically reorder the Exercises attached to this Round. &#x60;exercise_ids&#x60; must contain exactly the IDs of the Exercises currently attached, in the desired final order. Exercise.order is set to 1..N matching list position, in a single transaction.
+     * @endpoint post /api/v1/rounds/{id}/exercises/reorder/
+     * @param id A unique integer value identifying this Round.
+     * @param reorderExercisesRequest 
+     */
+    roundsExercisesReorderCreate(id: number, reorderExercisesRequest: ReorderExercisesRequest, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * 
