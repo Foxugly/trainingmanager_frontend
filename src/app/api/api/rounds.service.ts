@@ -315,16 +315,17 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
      * @param language * &#x60;fr&#x60; - Français * &#x60;nl&#x60; - Nederlands * &#x60;en&#x60; - English * &#x60;it&#x60; - Italiano * &#x60;es&#x60; - Español
      * @param ordering Which field to use when ordering the results.
      * @param page A page number within the paginated result set.
+     * @param pageSize Number of results to return per page.
      * @param search A search term.
      * @param sport 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public roundsList(language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, search?: string, sport?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedRoundList>;
-    public roundsList(language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, search?: string, sport?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedRoundList>>;
-    public roundsList(language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, search?: string, sport?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedRoundList>>;
-    public roundsList(language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, search?: string, sport?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public roundsList(language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, pageSize?: number, search?: string, sport?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedRoundList>;
+    public roundsList(language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, pageSize?: number, search?: string, sport?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedRoundList>>;
+    public roundsList(language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, pageSize?: number, search?: string, sport?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedRoundList>>;
+    public roundsList(language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, pageSize?: number, search?: string, sport?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -350,6 +351,15 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
             localVarQueryParameters,
             'page',
             <any>page,
+            QueryParamStyle.Form,
+            true,
+        );
+
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'page_size',
+            <any>pageSize,
             QueryParamStyle.Form,
             true,
         );

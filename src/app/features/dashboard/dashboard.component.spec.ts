@@ -192,15 +192,16 @@ describe('DashboardComponent', () => {
       programsList: opts?.programsListThrows
         ? vi.fn().mockReturnValue(throwError(() => new Error('500')))
         : vi.fn().mockImplementation((..._args: unknown[]) => {
-            const teamId = _args[8] as number | undefined;
+            // signature: dateEnd, dateStart, includeInactive, isActive, name, ordering, page, pageSize, search, team
+            const teamId = _args[9] as number | undefined;
             const filtered = teamId ? programs.filter((p) => p.team_id === teamId) : programs;
             return of({ count: filtered.length, results: filtered });
           }),
     };
     eventsMock = {
       eventsList: vi.fn().mockImplementation((..._args: unknown[]) => {
-        // new signature: color, date, dateGte, dateLte, ordering, page, referProgram, search
-        const programId = _args[6] as number | undefined;
+        // signature: color, date, dateGte, dateLte, ordering, page, pageSize, referProgram, search
+        const programId = _args[7] as number | undefined;
         const filtered = programId ? events.filter((e) => e.refer_program_id === programId) : events;
         return of({ count: filtered.length, results: filtered });
       }),

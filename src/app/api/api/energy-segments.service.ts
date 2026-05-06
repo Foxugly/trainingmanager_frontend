@@ -182,15 +182,16 @@ export class EnergySegmentsService extends BaseService implements EnergySegments
      * @param isActive 
      * @param ordering Which field to use when ordering the results.
      * @param page A page number within the paginated result set.
+     * @param pageSize Number of results to return per page.
      * @param search A search term.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public energySegmentsList(energysystem?: number, includeInactive?: boolean, isActive?: boolean, ordering?: string, page?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedEnergySegmentList>;
-    public energySegmentsList(energysystem?: number, includeInactive?: boolean, isActive?: boolean, ordering?: string, page?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedEnergySegmentList>>;
-    public energySegmentsList(energysystem?: number, includeInactive?: boolean, isActive?: boolean, ordering?: string, page?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedEnergySegmentList>>;
-    public energySegmentsList(energysystem?: number, includeInactive?: boolean, isActive?: boolean, ordering?: string, page?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public energySegmentsList(energysystem?: number, includeInactive?: boolean, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedEnergySegmentList>;
+    public energySegmentsList(energysystem?: number, includeInactive?: boolean, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedEnergySegmentList>>;
+    public energySegmentsList(energysystem?: number, includeInactive?: boolean, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedEnergySegmentList>>;
+    public energySegmentsList(energysystem?: number, includeInactive?: boolean, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -234,6 +235,15 @@ export class EnergySegmentsService extends BaseService implements EnergySegments
             localVarQueryParameters,
             'page',
             <any>page,
+            QueryParamStyle.Form,
+            true,
+        );
+
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'page_size',
+            <any>pageSize,
             QueryParamStyle.Form,
             true,
         );

@@ -68,16 +68,17 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
      * @param endpoint 
      * @param ordering Which field to use when ordering the results.
      * @param page A page number within the paginated result set.
+     * @param pageSize Number of results to return per page.
      * @param search A search term.
      * @param since 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsAiUsageDetailsList(teamId: number, endpoint?: string, ordering?: string, page?: number, search?: string, since?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedAIUsageDetailList>;
-    public teamsAiUsageDetailsList(teamId: number, endpoint?: string, ordering?: string, page?: number, search?: string, since?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedAIUsageDetailList>>;
-    public teamsAiUsageDetailsList(teamId: number, endpoint?: string, ordering?: string, page?: number, search?: string, since?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedAIUsageDetailList>>;
-    public teamsAiUsageDetailsList(teamId: number, endpoint?: string, ordering?: string, page?: number, search?: string, since?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsAiUsageDetailsList(teamId: number, endpoint?: string, ordering?: string, page?: number, pageSize?: number, search?: string, since?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedAIUsageDetailList>;
+    public teamsAiUsageDetailsList(teamId: number, endpoint?: string, ordering?: string, page?: number, pageSize?: number, search?: string, since?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedAIUsageDetailList>>;
+    public teamsAiUsageDetailsList(teamId: number, endpoint?: string, ordering?: string, page?: number, pageSize?: number, search?: string, since?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedAIUsageDetailList>>;
+    public teamsAiUsageDetailsList(teamId: number, endpoint?: string, ordering?: string, page?: number, pageSize?: number, search?: string, since?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (teamId === null || teamId === undefined) {
             throw new Error('Required parameter teamId was null or undefined when calling teamsAiUsageDetailsList.');
         }
@@ -106,6 +107,15 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
             localVarQueryParameters,
             'page',
             <any>page,
+            QueryParamStyle.Form,
+            true,
+        );
+
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'page_size',
+            <any>pageSize,
             QueryParamStyle.Form,
             true,
         );
@@ -413,15 +423,16 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
      * @param language * &#x60;fr&#x60; - Français * &#x60;nl&#x60; - Nederlands * &#x60;en&#x60; - English * &#x60;it&#x60; - Italiano * &#x60;es&#x60; - Español
      * @param ordering Which field to use when ordering the results.
      * @param page A page number within the paginated result set.
+     * @param pageSize Number of results to return per page.
      * @param search A search term.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsList(isActive?: boolean, isPublic?: boolean, language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedTeamList>;
-    public teamsList(isActive?: boolean, isPublic?: boolean, language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedTeamList>>;
-    public teamsList(isActive?: boolean, isPublic?: boolean, language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedTeamList>>;
-    public teamsList(isActive?: boolean, isPublic?: boolean, language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsList(isActive?: boolean, isPublic?: boolean, language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedTeamList>;
+    public teamsList(isActive?: boolean, isPublic?: boolean, language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedTeamList>>;
+    public teamsList(isActive?: boolean, isPublic?: boolean, language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedTeamList>>;
+    public teamsList(isActive?: boolean, isPublic?: boolean, language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, pageSize?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -465,6 +476,15 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
             localVarQueryParameters,
             'page',
             <any>page,
+            QueryParamStyle.Form,
+            true,
+        );
+
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'page_size',
+            <any>pageSize,
             QueryParamStyle.Form,
             true,
         );
@@ -677,15 +697,16 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
      * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      * @param ordering Which field to use when ordering the results.
      * @param page A page number within the paginated result set.
+     * @param pageSize Number of results to return per page.
      * @param search A search term.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsMembersNotesList(memberPk: number, teamPk: number, includeInactive?: boolean, ordering?: string, page?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedNoteList>;
-    public teamsMembersNotesList(memberPk: number, teamPk: number, includeInactive?: boolean, ordering?: string, page?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedNoteList>>;
-    public teamsMembersNotesList(memberPk: number, teamPk: number, includeInactive?: boolean, ordering?: string, page?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedNoteList>>;
-    public teamsMembersNotesList(memberPk: number, teamPk: number, includeInactive?: boolean, ordering?: string, page?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsMembersNotesList(memberPk: number, teamPk: number, includeInactive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedNoteList>;
+    public teamsMembersNotesList(memberPk: number, teamPk: number, includeInactive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedNoteList>>;
+    public teamsMembersNotesList(memberPk: number, teamPk: number, includeInactive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedNoteList>>;
+    public teamsMembersNotesList(memberPk: number, teamPk: number, includeInactive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (memberPk === null || memberPk === undefined) {
             throw new Error('Required parameter memberPk was null or undefined when calling teamsMembersNotesList.');
         }
@@ -717,6 +738,15 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
             localVarQueryParameters,
             'page',
             <any>page,
+            QueryParamStyle.Form,
+            true,
+        );
+
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'page_size',
+            <any>pageSize,
             QueryParamStyle.Form,
             true,
         );

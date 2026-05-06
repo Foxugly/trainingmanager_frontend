@@ -132,7 +132,8 @@ describe('EventsCalendarComponent', () => {
     programsMock = {
       programsList: vi.fn().mockImplementation(
         (...args: unknown[]) => {
-          const teamId = args[8] as number;
+          // signature: dateEnd, dateStart, includeInactive, isActive, name, ordering, page, pageSize, search, team
+          const teamId = args[9] as number;
           if (teamId === 4) return of({ count: 1, results: [program] });
           if (teamId === 5) return of({ count: 1, results: [program2] });
           return of({ count: 0, results: [] });
@@ -141,8 +142,8 @@ describe('EventsCalendarComponent', () => {
     };
     eventsMock = {
       eventsList: vi.fn().mockImplementation((...args: unknown[]) => {
-        // new signature: color, date, dateGte, dateLte, ordering, page, referProgram, search
-        const referProgram = args[6] as number;
+        // signature: color, date, dateGte, dateLte, ordering, page, pageSize, referProgram, search
+        const referProgram = args[7] as number;
         if (referProgram === 4) return of({ count: 2, results: [event1, event2] });
         return of({ count: 0, results: [] });
       }),

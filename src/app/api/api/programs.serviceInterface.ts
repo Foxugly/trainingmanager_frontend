@@ -62,10 +62,11 @@ export interface ProgramsServiceInterface {
      * @param name 
      * @param ordering Which field to use when ordering the results.
      * @param page A page number within the paginated result set.
+     * @param pageSize Number of results to return per page.
      * @param search A search term.
      * @param team 
      */
-    programsList(dateEnd?: string, dateStart?: string, includeInactive?: boolean, isActive?: boolean, name?: string, ordering?: string, page?: number, search?: string, team?: number, extraHttpRequestParams?: any): Observable<PaginatedProgramList>;
+    programsList(dateEnd?: string, dateStart?: string, includeInactive?: boolean, isActive?: boolean, name?: string, ordering?: string, page?: number, pageSize?: number, search?: string, team?: number, extraHttpRequestParams?: any): Observable<PaginatedProgramList>;
 
     /**
      * 

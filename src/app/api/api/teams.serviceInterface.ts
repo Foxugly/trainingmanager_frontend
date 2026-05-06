@@ -41,10 +41,11 @@ export interface TeamsServiceInterface {
      * @param endpoint 
      * @param ordering Which field to use when ordering the results.
      * @param page A page number within the paginated result set.
+     * @param pageSize Number of results to return per page.
      * @param search A search term.
      * @param since 
      */
-    teamsAiUsageDetailsList(teamId: number, endpoint?: string, ordering?: string, page?: number, search?: string, since?: string, extraHttpRequestParams?: any): Observable<PaginatedAIUsageDetailList>;
+    teamsAiUsageDetailsList(teamId: number, endpoint?: string, ordering?: string, page?: number, pageSize?: number, search?: string, since?: string, extraHttpRequestParams?: any): Observable<PaginatedAIUsageDetailList>;
 
     /**
      * AI usage aggregated by period for a team
@@ -83,9 +84,10 @@ export interface TeamsServiceInterface {
      * @param language * &#x60;fr&#x60; - Français * &#x60;nl&#x60; - Nederlands * &#x60;en&#x60; - English * &#x60;it&#x60; - Italiano * &#x60;es&#x60; - Español
      * @param ordering Which field to use when ordering the results.
      * @param page A page number within the paginated result set.
+     * @param pageSize Number of results to return per page.
      * @param search A search term.
      */
-    teamsList(isActive?: boolean, isPublic?: boolean, language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedTeamList>;
+    teamsList(isActive?: boolean, isPublic?: boolean, language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, pageSize?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedTeamList>;
 
     /**
      * 
@@ -116,9 +118,10 @@ export interface TeamsServiceInterface {
      * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      * @param ordering Which field to use when ordering the results.
      * @param page A page number within the paginated result set.
+     * @param pageSize Number of results to return per page.
      * @param search A search term.
      */
-    teamsMembersNotesList(memberPk: number, teamPk: number, includeInactive?: boolean, ordering?: string, page?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedNoteList>;
+    teamsMembersNotesList(memberPk: number, teamPk: number, includeInactive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedNoteList>;
 
     /**
      * 

@@ -276,15 +276,16 @@ export class EventsService extends BaseService implements EventsServiceInterface
      * @param eventPk 
      * @param ordering Which field to use when ordering the results.
      * @param page A page number within the paginated result set.
+     * @param pageSize Number of results to return per page.
      * @param search A search term.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public eventsAttendanceList(eventPk: number, ordering?: string, page?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedAttendanceList>;
-    public eventsAttendanceList(eventPk: number, ordering?: string, page?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedAttendanceList>>;
-    public eventsAttendanceList(eventPk: number, ordering?: string, page?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedAttendanceList>>;
-    public eventsAttendanceList(eventPk: number, ordering?: string, page?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public eventsAttendanceList(eventPk: number, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedAttendanceList>;
+    public eventsAttendanceList(eventPk: number, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedAttendanceList>>;
+    public eventsAttendanceList(eventPk: number, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedAttendanceList>>;
+    public eventsAttendanceList(eventPk: number, ordering?: string, page?: number, pageSize?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (eventPk === null || eventPk === undefined) {
             throw new Error('Required parameter eventPk was null or undefined when calling eventsAttendanceList.');
         }
@@ -304,6 +305,15 @@ export class EventsService extends BaseService implements EventsServiceInterface
             localVarQueryParameters,
             'page',
             <any>page,
+            QueryParamStyle.Form,
+            true,
+        );
+
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'page_size',
+            <any>pageSize,
             QueryParamStyle.Form,
             true,
         );
@@ -793,16 +803,17 @@ export class EventsService extends BaseService implements EventsServiceInterface
      * @param dateLte 
      * @param ordering Which field to use when ordering the results.
      * @param page A page number within the paginated result set.
+     * @param pageSize Number of results to return per page.
      * @param referProgram 
      * @param search A search term.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public eventsList(color?: string, date?: string, dateGte?: string, dateLte?: string, ordering?: string, page?: number, referProgram?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedEventList>;
-    public eventsList(color?: string, date?: string, dateGte?: string, dateLte?: string, ordering?: string, page?: number, referProgram?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedEventList>>;
-    public eventsList(color?: string, date?: string, dateGte?: string, dateLte?: string, ordering?: string, page?: number, referProgram?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedEventList>>;
-    public eventsList(color?: string, date?: string, dateGte?: string, dateLte?: string, ordering?: string, page?: number, referProgram?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public eventsList(color?: string, date?: string, dateGte?: string, dateLte?: string, ordering?: string, page?: number, pageSize?: number, referProgram?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedEventList>;
+    public eventsList(color?: string, date?: string, dateGte?: string, dateLte?: string, ordering?: string, page?: number, pageSize?: number, referProgram?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedEventList>>;
+    public eventsList(color?: string, date?: string, dateGte?: string, dateLte?: string, ordering?: string, page?: number, pageSize?: number, referProgram?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedEventList>>;
+    public eventsList(color?: string, date?: string, dateGte?: string, dateLte?: string, ordering?: string, page?: number, pageSize?: number, referProgram?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -855,6 +866,15 @@ export class EventsService extends BaseService implements EventsServiceInterface
             localVarQueryParameters,
             'page',
             <any>page,
+            QueryParamStyle.Form,
+            true,
+        );
+
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'page_size',
+            <any>pageSize,
             QueryParamStyle.Form,
             true,
         );

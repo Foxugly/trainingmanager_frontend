@@ -18,7 +18,13 @@ export interface Round {
     language: LanguageEnum;
     order?: number;
     count?: number;
+    /**
+     * MM:SS format, e.g. 1:30.
+     */
     t_start?: string | null;
+    /**
+     * MM:SS format, e.g. 1:30.
+     */
     t_break?: string | null;
     exercises?: Array<number>;
     /**

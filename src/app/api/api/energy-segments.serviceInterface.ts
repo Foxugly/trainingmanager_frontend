@@ -49,9 +49,10 @@ export interface EnergySegmentsServiceInterface {
      * @param isActive 
      * @param ordering Which field to use when ordering the results.
      * @param page A page number within the paginated result set.
+     * @param pageSize Number of results to return per page.
      * @param search A search term.
      */
-    energySegmentsList(energysystem?: number, includeInactive?: boolean, isActive?: boolean, ordering?: string, page?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedEnergySegmentList>;
+    energySegmentsList(energysystem?: number, includeInactive?: boolean, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedEnergySegmentList>;
 
     /**
      * 

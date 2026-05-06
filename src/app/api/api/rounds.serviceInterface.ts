@@ -66,10 +66,11 @@ export interface RoundsServiceInterface {
      * @param language * &#x60;fr&#x60; - Français * &#x60;nl&#x60; - Nederlands * &#x60;en&#x60; - English * &#x60;it&#x60; - Italiano * &#x60;es&#x60; - Español
      * @param ordering Which field to use when ordering the results.
      * @param page A page number within the paginated result set.
+     * @param pageSize Number of results to return per page.
      * @param search A search term.
      * @param sport 
      */
-    roundsList(language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, search?: string, sport?: number, extraHttpRequestParams?: any): Observable<PaginatedRoundList>;
+    roundsList(language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, pageSize?: number, search?: string, sport?: number, extraHttpRequestParams?: any): Observable<PaginatedRoundList>;
 
     /**
      * 

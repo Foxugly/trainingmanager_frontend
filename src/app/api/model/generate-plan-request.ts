@@ -15,6 +15,7 @@ export interface GeneratePlanRequest {
     date_end: string;
     frequency_per_week: number;
     description?: string;
+    additional_prompt?: string;
     overlap_strategy?: OverlapStrategyEnum;
 }
 

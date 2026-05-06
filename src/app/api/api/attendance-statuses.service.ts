@@ -182,15 +182,16 @@ export class AttendanceStatusesService extends BaseService implements Attendance
      * @param isDefault 
      * @param ordering Which field to use when ordering the results.
      * @param page A page number within the paginated result set.
+     * @param pageSize Number of results to return per page.
      * @param search A search term.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public attendanceStatusesList(includeInactive?: boolean, isActive?: boolean, isDefault?: boolean, ordering?: string, page?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedAttendanceStatusList>;
-    public attendanceStatusesList(includeInactive?: boolean, isActive?: boolean, isDefault?: boolean, ordering?: string, page?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedAttendanceStatusList>>;
-    public attendanceStatusesList(includeInactive?: boolean, isActive?: boolean, isDefault?: boolean, ordering?: string, page?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedAttendanceStatusList>>;
-    public attendanceStatusesList(includeInactive?: boolean, isActive?: boolean, isDefault?: boolean, ordering?: string, page?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public attendanceStatusesList(includeInactive?: boolean, isActive?: boolean, isDefault?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedAttendanceStatusList>;
+    public attendanceStatusesList(includeInactive?: boolean, isActive?: boolean, isDefault?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedAttendanceStatusList>>;
+    public attendanceStatusesList(includeInactive?: boolean, isActive?: boolean, isDefault?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedAttendanceStatusList>>;
+    public attendanceStatusesList(includeInactive?: boolean, isActive?: boolean, isDefault?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -234,6 +235,15 @@ export class AttendanceStatusesService extends BaseService implements Attendance
             localVarQueryParameters,
             'page',
             <any>page,
+            QueryParamStyle.Form,
+            true,
+        );
+
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'page_size',
+            <any>pageSize,
             QueryParamStyle.Form,
             true,
         );

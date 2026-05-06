@@ -233,7 +233,7 @@ export class DashboardComponent implements OnInit {
           const res = await firstValueFrom(
             this.programsService.programsList(
               undefined, undefined, undefined, true, undefined,
-              undefined, undefined, undefined, team.id,
+              undefined, undefined, undefined, undefined, team.id,
             ),
           );
           return { team, programs: res.results ?? [] };
@@ -257,7 +257,7 @@ export class DashboardComponent implements OnInit {
         allPrograms.map(async ({ program, team }) => {
           const res = await firstValueFrom(
             this.eventsService.eventsList(
-              undefined, undefined, undefined, undefined, '-date', 1, program.id, undefined,
+              undefined, undefined, undefined, undefined, '-date', 1, undefined, program.id, undefined,
             ),
           );
           return { events: res.results ?? [], team, program };
@@ -428,7 +428,7 @@ export class DashboardComponent implements OnInit {
           const res = await firstValueFrom(
             this.programsService.programsList(
               undefined, undefined, undefined, true, undefined,
-              undefined, undefined, undefined, team.id,
+              undefined, undefined, undefined, undefined, team.id,
             ),
           );
           return { team, programs: res.results ?? [] };
@@ -451,7 +451,7 @@ export class DashboardComponent implements OnInit {
         allMemberPrograms.map(async ({ program, team }) => {
           const res = await firstValueFrom(
             this.eventsService.eventsList(
-              undefined, undefined, undefined, undefined, '-date', 1, program.id, undefined,
+              undefined, undefined, undefined, undefined, '-date', 1, undefined, program.id, undefined,
             ),
           );
           return { events: res.results ?? [], team, program };

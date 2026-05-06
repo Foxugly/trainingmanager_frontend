@@ -57,9 +57,10 @@ export interface ExercisesServiceInterface {
      * @param modality 
      * @param ordering Which field to use when ordering the results.
      * @param page A page number within the paginated result set.
+     * @param pageSize Number of results to return per page.
      * @param search A search term.
      */
-    exercisesList(energysegment?: number, language?: 'en' | 'es' | 'fr' | 'it' | 'nl', modality?: number, ordering?: string, page?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedExerciseList>;
+    exercisesList(energysegment?: number, language?: 'en' | 'es' | 'fr' | 'it' | 'nl', modality?: number, ordering?: string, page?: number, pageSize?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedExerciseList>;
 
     /**
      * 

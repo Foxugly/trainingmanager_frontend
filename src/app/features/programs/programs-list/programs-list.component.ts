@@ -113,6 +113,7 @@ export class ProgramsListComponent implements OnInit {
         '-date_start',
         undefined,
         undefined,
+        undefined,
         team,
       )
       .pipe(takeUntilDestroyed(this.destroyRef))

@@ -320,6 +320,7 @@ describe('TeamsDetailComponent', () => {
       undefined,
       undefined,
       undefined,
+      undefined,
       InvitationStatusEnum.Pending,
       4,
     );
@@ -398,6 +399,7 @@ describe('TeamsDetailComponent', () => {
 
   it('loads pending join requests on init filtered by team', () => {
     expect(joinRequestsMock.joinRequestsList).toHaveBeenCalledWith(
+      undefined,
       undefined,
       undefined,
       undefined,

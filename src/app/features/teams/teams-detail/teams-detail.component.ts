@@ -259,7 +259,7 @@ export class TeamsDetailComponent implements OnInit {
   private loadInvitations(id: number): void {
     this.loadingInvitations.set(true);
     this.invitationsService
-      .invitationsList(undefined, undefined, undefined, InvitationStatusEnum.Pending, id)
+      .invitationsList(undefined, undefined, undefined, undefined, InvitationStatusEnum.Pending, id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
@@ -273,7 +273,7 @@ export class TeamsDetailComponent implements OnInit {
   private loadJoinRequests(id: number): void {
     this.loadingJoinRequests.set(true);
     this.joinRequestsService
-      .joinRequestsList(undefined, undefined, undefined, JoinRequestStatusEnum.Pending, id)
+      .joinRequestsList(undefined, undefined, undefined, undefined, JoinRequestStatusEnum.Pending, id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
@@ -289,7 +289,7 @@ export class TeamsDetailComponent implements OnInit {
     if (!me) return;
     this.loadingMyRequest.set(true);
     this.joinRequestsService
-      .joinRequestsList(undefined, undefined, undefined, JoinRequestStatusEnum.Pending, teamId)
+      .joinRequestsList(undefined, undefined, undefined, undefined, JoinRequestStatusEnum.Pending, teamId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {

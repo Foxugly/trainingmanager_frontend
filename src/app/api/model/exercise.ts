@@ -18,7 +18,13 @@ export interface Exercise {
     repetition?: number;
     distance?: number;
     notes?: string;
+    /**
+     * MM:SS format, e.g. 1:30.
+     */
     t_start?: string | null;
+    /**
+     * MM:SS format, e.g. 1:30.
+     */
     t_break?: string | null;
     readonly modality: Modality;
     modality_id?: number | null;

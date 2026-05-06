@@ -239,6 +239,7 @@ export class EventsCalendarComponent implements OnInit {
           undefined,
           undefined,
           undefined,
+          undefined,
           teamId,
         ),
       ),
@@ -266,7 +267,9 @@ export class EventsCalendarComponent implements OnInit {
       const lte = isoDate(end);
       const requests = programIds.map((pid) =>
         firstValueFrom(
-          this.eventsService.eventsList(undefined, undefined, gte, lte, 'date', undefined, pid, undefined),
+          this.eventsService.eventsList(
+            undefined, undefined, gte, lte, 'date', undefined, undefined, pid, undefined,
+          ),
         ),
       );
       const responses = await Promise.all(requests);

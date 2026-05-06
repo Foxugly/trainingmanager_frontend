@@ -64,9 +64,10 @@ export interface EventsServiceInterface {
      * @param eventPk 
      * @param ordering Which field to use when ordering the results.
      * @param page A page number within the paginated result set.
+     * @param pageSize Number of results to return per page.
      * @param search A search term.
      */
-    eventsAttendanceList(eventPk: number, ordering?: string, page?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedAttendanceList>;
+    eventsAttendanceList(eventPk: number, ordering?: string, page?: number, pageSize?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedAttendanceList>;
 
     /**
      * Update attendance status (coach only)
@@ -132,10 +133,11 @@ export interface EventsServiceInterface {
      * @param dateLte 
      * @param ordering Which field to use when ordering the results.
      * @param page A page number within the paginated result set.
+     * @param pageSize Number of results to return per page.
      * @param referProgram 
      * @param search A search term.
      */
-    eventsList(color?: string, date?: string, dateGte?: string, dateLte?: string, ordering?: string, page?: number, referProgram?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedEventList>;
+    eventsList(color?: string, date?: string, dateGte?: string, dateLte?: string, ordering?: string, page?: number, pageSize?: number, referProgram?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedEventList>;
 
     /**
      * 

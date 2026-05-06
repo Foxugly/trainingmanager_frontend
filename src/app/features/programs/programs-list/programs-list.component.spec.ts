@@ -159,7 +159,7 @@ describe('ProgramsListComponent', () => {
 
   it('loads programs without team filter when teamFilter is null', () => {
     expect(serviceMock.programsList).toHaveBeenCalledWith(
-      undefined, undefined, undefined, undefined, undefined, '-date_start', undefined, undefined, undefined,
+      undefined, undefined, undefined, undefined, undefined, '-date_start', undefined, undefined, undefined, undefined,
     );
     expect(access(component).programs()).toHaveLength(2);
   });
@@ -167,7 +167,7 @@ describe('ProgramsListComponent', () => {
   it('passes the team filter to the API when teamFilter input is set', async () => {
     await setup({ teamFilter: 4 });
     expect(serviceMock.programsList).toHaveBeenCalledWith(
-      undefined, undefined, undefined, undefined, undefined, '-date_start', undefined, undefined, 4,
+      undefined, undefined, undefined, undefined, undefined, '-date_start', undefined, undefined, undefined, 4,
     );
   });
 
@@ -176,7 +176,7 @@ describe('ProgramsListComponent', () => {
     (component as unknown as { showArchived: { set: (v: boolean) => void } }).showArchived.set(true);
     fixture.detectChanges();
     expect(serviceMock.programsList).toHaveBeenLastCalledWith(
-      undefined, undefined, true, undefined, undefined, '-date_start', undefined, undefined, undefined,
+      undefined, undefined, true, undefined, undefined, '-date_start', undefined, undefined, undefined, undefined,
     );
   });
 

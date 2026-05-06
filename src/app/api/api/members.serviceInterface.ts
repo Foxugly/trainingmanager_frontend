@@ -48,9 +48,10 @@ export interface MembersServiceInterface {
      * @param lastname 
      * @param ordering Which field to use when ordering the results.
      * @param page A page number within the paginated result set.
+     * @param pageSize Number of results to return per page.
      * @param search A search term.
      */
-    membersList(firstname?: string, lastname?: string, ordering?: string, page?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedMemberList>;
+    membersList(firstname?: string, lastname?: string, ordering?: string, page?: number, pageSize?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedMemberList>;
 
     /**
      * 
