@@ -1,0 +1,106 @@
+<article class="about-page">
+  <section class="about-section" data-slug="intro">
+    <div class="about-section-inner">
+      <h1>{{ ui().intro.title }}</h1>
+      <p class="lead">{{ ui().intro.lead }}</p>
+      <a [href]="frontendRepoUrl" target="_blank" rel="noopener noreferrer" class="about-repo">
+        <i class="pi pi-github" aria-hidden="true"></i>
+        {{ ui().intro.view_repo }}
+        <i class="pi pi-external-link" aria-hidden="true"></i>
+      </a>
+    </div>
+  </section>
+
+  <section class="about-section" data-slug="content">
+    <div class="about-section-inner">
+      <p-tabs [(value)]="activeTab">
+        <p-tablist>
+          <p-tab value="company">
+            <i class="pi pi-building" aria-hidden="true"></i>
+            <span>{{ ui().tabs.company }}</span>
+          </p-tab>
+          <p-tab value="legal">
+            <i class="pi pi-shield" aria-hidden="true"></i>
+            <span>{{ ui().tabs.legal }}</span>
+          </p-tab>
+          <p-tab value="technical">
+            <i class="pi pi-code" aria-hidden="true"></i>
+            <span>{{ ui().tabs.technical }}</span>
+          </p-tab>
+        </p-tablist>
+
+        <p-tabpanels>
+          <p-tabpanel value="company">
+            <article class="tab-content">
+              <h2>{{ ui().company.title }}</h2>
+              <p class="lead">{{ ui().company.lead }}</p>
+              <dl class="about-dl">
+                @for (row of ui().company.rows; track row.key) {
+                  <dt>{{ row.label }}</dt>
+                  <dd>
+                    @switch (row.kind) {
+                      @case ('text') { <span>{{ row.value }}</span> }
+                      @case ('multiline') {
+                        @for (line of row.lines; track $index) {
+                          <span class="dd-line">{{ line }}</span>
+                        }
+                      }
+                      @case ('email') {
+                        <span class="email-display">{{ emailDisplay() }}</span>
+                        <button type="button" class="email-cta" (click)="onEmailClick()">
+                          <i class="pi pi-envelope" aria-hidden="true"></i>
+                          <span>{{ ui().company.email_cta }}</span>
+                        </button>
+                      }
+                      @case ('phone') { <span>{{ phoneDisplay() }}</span> }
+                      @case ('website') {
+                        <a [href]="websiteUrl" target="_blank" rel="noopener noreferrer">
+                          {{ websiteDisplay }}
+                        </a>
+                      }
+                    }
+                  </dd>
+                }
+              </dl>
+            </article>
+          </p-tabpanel>
+
+          <p-tabpanel value="legal">
+            <article class="tab-content">
+              <h2>{{ ui().legal.title }}</h2>
+              <p class="lead">{{ ui().legal.lead }}</p>
+              @for (sec of ui().legal.sections; track sec.slug) {
+                <section class="sub-section">
+                  <h3>{{ sec.title }}</h3>
+                  <ul>
+                    @for (item of sec.items; track $index) {
+                      <li>{{ item }}</li>
+                    }
+                  </ul>
+                </section>
+              }
+            </article>
+          </p-tabpanel>
+
+          <p-tabpanel value="technical">
+            <article class="tab-content">
+              <h2>{{ ui().technical.title }}</h2>
+              <p class="lead">{{ ui().technical.lead }}</p>
+              @for (sec of ui().technical.sections; track sec.slug) {
+                <section class="sub-section">
+                  <h3>{{ sec.title }}</h3>
+                  <p>{{ sec.intro }}</p>
+                  <ul>
+                    @for (item of sec.items; track $index) {
+                      <li>{{ item }}</li>
+                    }
+                  </ul>
+                </section>
+              }
+            </article>
+          </p-tabpanel>
+        </p-tabpanels>
+      </p-tabs>
+    </div>
+  </section>
+</article>

@@ -40,6 +40,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'about',
+        loadComponent: () =>
+          import('./features/about-page/about-page.component').then(
+            (m) => m.AboutPageComponent,
+          ),
+      },
+      {
         path: 'contribute',
         loadComponent: () =>
           import('./features/contribute-page/contribute-page.component').then(
