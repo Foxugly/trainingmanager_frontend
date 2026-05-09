@@ -1,3 +1,109 @@
 :host {
   display: block;
 }
+
+.contribute-page {
+  margin: -1.5rem;
+}
+
+.contribute-section {
+  padding: 3rem 1.5rem;
+
+  &:nth-of-type(odd) { background: #ffffff; }
+  &:nth-of-type(even) { background: #f8fafc; }
+}
+
+.contribute-section-inner {
+  max-width: 64rem;
+  margin: 0 auto;
+
+  &--center {
+    text-align: center;
+    max-width: 36rem;
+  }
+}
+
+.contribute-section[data-slug='intro'] h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #0f172a;
+}
+
+.contribute-section h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #0f172a;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.lead {
+  color: #475569;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-top: 0.75rem;
+}
+
+.contribute-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+  gap: 1rem;
+}
+
+.contribute-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 1rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+
+  h3 { font-size: 1rem; font-weight: 600; color: #0f172a; margin: 0; }
+  p { font-size: 0.85rem; color: #475569; line-height: 1.5; margin: 0; }
+}
+
+.contribute-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+}
+
+.contribute-card[data-slug='oss'] .contribute-icon { background: #e0f2fe; color: #0369a1; }
+.contribute-card[data-slug='hosting'] .contribute-icon { background: #d1fae5; color: #047857; }
+.contribute-card[data-slug='maintenance'] .contribute-icon { background: #fef3c7; color: #b45309; }
+.contribute-card[data-slug='features'] .contribute-icon { background: #ffe4e6; color: #be123c; }
+
+.donate-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  margin-top: 1.5rem;
+  background: linear-gradient(to right, #f43f5e, #ec4899);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.1);
+  transition: opacity 0.15s ease;
+
+  &:hover { opacity: 0.92; }
+  &:focus-visible {
+    outline: 2px solid #f43f5e;
+    outline-offset: 2px;
+  }
+}
+
+.donate-redirect-note {
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  color: #64748b;
+  font-style: italic;
+}

@@ -1,92 +1,45 @@
-<section class="py-12 md:py-20">
-  <div class="container mx-auto px-6">
-    <div class="mx-auto max-w-2xl text-center">
-      <h1 class="text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">
-        {{ 'contribute_page.title' | transloco }}
-      </h1>
-      <p class="mt-4 text-base text-gray-600 md:text-lg">
-        {{ 'contribute_page.intro' | transloco }}
-      </p>
+<article class="contribute-page">
+  <section class="contribute-section" data-slug="intro">
+    <div class="contribute-section-inner">
+      <h1>{{ ui().intro.title }}</h1>
+      <p class="lead">{{ ui().intro.lead }}</p>
     </div>
+  </section>
 
-    <div class="mt-12 grid gap-6 md:grid-cols-2 max-w-4xl mx-auto">
-      <article class="flex flex-col rounded-2xl border border-gray-200 bg-white p-7 shadow-sm">
-        <div
-          class="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gray-900 text-white"
-          aria-hidden="true"
-        >
-          <i class="pi pi-github text-xl"></i>
-        </div>
-        <h2 class="text-lg font-semibold text-gray-900">
-          {{ 'contribute_page.oss.title' | transloco }}
-        </h2>
-        <p class="mt-3 text-sm leading-relaxed text-gray-600">
-          {{ 'contribute_page.oss.description' | transloco }}
-        </p>
-        <div class="mt-6 flex flex-col gap-2">
-          <a
-            [href]="frontendRepoUrl"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 text-sm font-medium text-indigo-700 hover:underline"
-          >
-            <i class="pi pi-github text-xs" aria-hidden="true"></i>
-            {{ 'contribute_page.oss.cta_repo_frontend' | transloco }}
-            <i class="pi pi-external-link text-xs" aria-hidden="true"></i>
-          </a>
-          <a
-            [href]="backendRepoUrl"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 text-sm font-medium text-indigo-700 hover:underline"
-          >
-            <i class="pi pi-github text-xs" aria-hidden="true"></i>
-            {{ 'contribute_page.oss.cta_repo_backend' | transloco }}
-            <i class="pi pi-external-link text-xs" aria-hidden="true"></i>
-          </a>
-          <a
-            [href]="issuesUrl"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 text-sm font-medium text-indigo-700 hover:underline"
-          >
-            <i class="pi pi-flag text-xs" aria-hidden="true"></i>
-            {{ 'contribute_page.oss.cta_issues' | transloco }}
-            <i class="pi pi-external-link text-xs" aria-hidden="true"></i>
-          </a>
-        </div>
-      </article>
-
-      <article class="flex flex-col rounded-2xl border border-gray-200 bg-white p-7 shadow-sm">
-        <div
-          class="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-rose-100 text-rose-700"
-          aria-hidden="true"
-        >
-          <i class="pi pi-heart-fill text-xl"></i>
-        </div>
-        <h2 class="text-lg font-semibold text-gray-900">
-          {{ 'contribute_page.financial.title' | transloco }}
-        </h2>
-        <p class="mt-3 text-sm leading-relaxed text-gray-600">
-          {{ 'contribute_page.financial.description' | transloco }}
-        </p>
-        <div class="mt-6">
-          <a
-            [href]="sponsorsUrl"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-rose-500 to-pink-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:from-rose-400 hover:to-pink-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:ring-offset-2"
-          >
-            <i class="pi pi-heart-fill text-xs" aria-hidden="true"></i>
-            {{ 'contribute_page.financial.cta_sponsors' | transloco }}
-            <i class="pi pi-external-link text-xs" aria-hidden="true"></i>
-          </a>
-        </div>
-      </article>
+  <section class="contribute-section" data-slug="reasons">
+    <div class="contribute-section-inner">
+      <h2>{{ ui().reasons.title }}</h2>
+      <div class="contribute-grid">
+        @for (reason of ui().reasons.items; track reason.slug) {
+          <article class="contribute-card" [attr.data-slug]="reason.slug">
+            <div class="contribute-icon" aria-hidden="true">
+              <i class="pi" [class]="reason.icon"></i>
+            </div>
+            <h3>{{ reason.title }}</h3>
+            <p>{{ reason.body }}</p>
+          </article>
+        }
+      </div>
     </div>
+  </section>
 
-    <p class="mt-12 text-center text-sm text-gray-600 italic">
-      {{ 'contribute_page.thanks' | transloco }}
-    </p>
-  </div>
-</section>
+  <section class="contribute-section" data-slug="donate">
+    <div class="contribute-section-inner contribute-section-inner--center">
+      <h2>{{ ui().donate.title }}</h2>
+      <p class="lead">{{ ui().donate.intro }}</p>
+      <a [href]="sponsorsUrl" target="_blank" rel="noopener noreferrer" class="donate-cta">
+        <i class="pi pi-heart-fill" aria-hidden="true"></i>
+        {{ ui().donate.cta }}
+        <i class="pi pi-external-link" aria-hidden="true"></i>
+      </a>
+      <p class="donate-redirect-note">{{ ui().donate.redirect_note }}</p>
+    </div>
+  </section>
+
+  <section class="contribute-section" data-slug="thanks">
+    <div class="contribute-section-inner contribute-section-inner--center">
+      <h2>{{ ui().thanks.title }}</h2>
+      <p>{{ ui().thanks.body }}</p>
+    </div>
+  </section>
+</article>

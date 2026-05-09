@@ -649,23 +649,6 @@
       }
     }
   },
-  "contribute_page": {
-    "title": "Contribute to Training Manager",
-    "intro": "Training Manager is an open source project. Your contributions, bug reports and ideas push the project forward.",
-    "oss": {
-      "title": "Open source code",
-      "description": "The source code is available on GitHub. Angular frontend and Django backend, both under an open source licence.",
-      "cta_repo_frontend": "Frontend repo (Angular)",
-      "cta_repo_backend": "Backend repo (Django)",
-      "cta_issues": "Report a bug or suggest an improvement"
-    },
-    "financial": {
-      "title": "Financial support",
-      "description": "If Training Manager helps you, your support on GitHub Sponsors keeps the project alive and frees up time for the next features. Thank you.",
-      "cta_sponsors": "Support on GitHub Sponsors"
-    },
-    "thanks": "Thanks to everyone who pushes this project forward — code, ideas, feedback, encouragements. Every contribution counts."
-  },
   "auth": {
     "login": {
       "title": "Sign in",
