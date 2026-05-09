@@ -1,8 +1,35 @@
-<p-select
-  [options]="languages"
-  optionLabel="nativeName"
-  optionValue="code"
-  [ngModel]="current()"
-  (ngModelChange)="onChange($event)"
-  styleClass="w-40"
-/>
+<div class="ls-root">
+  <button
+    type="button"
+    class="ls-trigger"
+    [attr.aria-label]="'common.language_switcher.aria' | transloco"
+    [attr.aria-haspopup]="'menu'"
+    [attr.aria-expanded]="open()"
+    (click)="toggle()"
+  >
+    <i class="pi pi-globe" aria-hidden="true"></i>
+    <span class="ls-code">{{ current() | uppercase }}</span>
+    <i class="pi pi-chevron-down ls-caret" aria-hidden="true"></i>
+  </button>
+
+  @if (open()) {
+    <div role="menu" class="ls-menu">
+      @for (lang of languages; track lang.code) {
+        <button
+          type="button"
+          role="menuitem"
+          class="ls-item"
+          [class.is-active]="lang.code === current()"
+          [attr.aria-current]="lang.code === current() ? 'true' : null"
+          (click)="select(lang.code)"
+        >
+          <span class="ls-chip">{{ lang.code }}</span>
+          <span class="ls-name">{{ lang.nativeName }}</span>
+          @if (lang.code === current()) {
+            <i class="pi pi-check ls-check" aria-hidden="true"></i>
+          }
+        </button>
+      }
+    </div>
+  }
+</div>

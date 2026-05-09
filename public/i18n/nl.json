@@ -515,6 +515,9 @@
     },
     "units": {
       "meters_short": "m"
+    },
+    "language_switcher": {
+      "aria": "Taal kiezen"
     }
   },
   "dashboard": {
