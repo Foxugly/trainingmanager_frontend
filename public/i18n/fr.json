@@ -1,7 +1,8 @@
 {
   "app": {
     "title": "Training Manager",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "tagline": "Gestion d'équipes, programmes et entraînements pour coachs."
   },
   "nav": {
     "dashboard": "Tableau de bord",
@@ -578,6 +579,10 @@
       "pending": "Impossible de vérifier les présences en attente.",
       "history": "Impossible de charger votre historique de présence."
     }
+  },
+  "footer": {
+    "author": "Foxugly",
+    "version_label": "Version"
   },
   "public": {
     "nav": {

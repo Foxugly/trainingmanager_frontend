@@ -1,7 +1,8 @@
 {
   "app": {
     "title": "Training Manager",
-    "logout": "Sign out"
+    "logout": "Sign out",
+    "tagline": "Team, program and training session management for coaches."
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -578,6 +579,10 @@
       "pending": "Could not check pending attendance.",
       "history": "Could not load your attendance history."
     }
+  },
+  "footer": {
+    "author": "Foxugly",
+    "version_label": "Version"
   },
   "public": {
     "nav": {

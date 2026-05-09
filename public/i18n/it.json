@@ -1,7 +1,8 @@
 {
   "app": {
     "title": "Gestore Allenamenti",
-    "logout": "Disconnetti"
+    "logout": "Disconnetti",
+    "tagline": "Gestione di squadre, programmi e sessioni di allenamento per coach."
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -578,6 +579,10 @@
       "pending": "Impossibile verificare le presenze in attesa.",
       "history": "Impossibile caricare il tuo storico presenze."
     }
+  },
+  "footer": {
+    "author": "Foxugly",
+    "version_label": "Versione"
   },
   "public": {
     "nav": {

@@ -1,0 +1,42 @@
+:host {
+  display: block;
+}
+
+.footer {
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+}
+
+.footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+.footer-brand {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.footer-tagline {
+  color: #475569;
+}
+
+.footer-meta {
+  color: #94a3b8;
+  font-variant-numeric: tabular-nums;
+}
+
+.footer-sep {
+  color: #cbd5e1;
+  user-select: none;
+}
+
+.footer-fill {
+  flex: 1 1 auto;
+}

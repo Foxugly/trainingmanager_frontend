@@ -1,7 +1,8 @@
 {
   "app": {
     "title": "Trainingsbeheerder",
-    "logout": "Afmelden"
+    "logout": "Afmelden",
+    "tagline": "Beheer van teams, programma's en trainingen voor coaches."
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -578,6 +579,10 @@
       "pending": "Aanwezigheden in afwachting konden niet worden gecontroleerd.",
       "history": "Je aanwezigheidsgeschiedenis kon niet worden geladen."
     }
+  },
+  "footer": {
+    "author": "Foxugly",
+    "version_label": "Versie"
   },
   "public": {
     "nav": {

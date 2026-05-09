@@ -1,7 +1,8 @@
 {
   "app": {
     "title": "Gestor de Entrenamientos",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "tagline": "Gestión de equipos, programas y sesiones de entrenamiento para coaches."
   },
   "nav": {
     "dashboard": "Panel",
@@ -578,6 +579,10 @@
       "pending": "No se ha podido verificar las asistencias pendientes.",
       "history": "No se ha podido cargar tu historial de asistencias."
     }
+  },
+  "footer": {
+    "author": "Foxugly",
+    "version_label": "Versión"
   },
   "public": {
     "nav": {
