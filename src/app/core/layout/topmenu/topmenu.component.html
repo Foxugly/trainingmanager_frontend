@@ -1,0 +1,101 @@
+<header class="topbar">
+  <a [routerLink]="['/']" class="brand" (click)="closeMobile()">
+    <span class="brand-mark" aria-hidden="true">
+      <i class="pi pi-bolt"></i>
+    </span>
+    <span class="brand-label">{{ 'app.title' | transloco }}</span>
+  </a>
+
+  <nav class="nav nav--desktop" [attr.aria-label]="'app.title' | transloco">
+    @if (mode() === 'public') {
+      <a [routerLink]="['/']" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        {{ 'public.nav.home' | transloco }}
+      </a>
+      <a [routerLink]="['/features']" routerLinkActive="active">
+        {{ 'public.nav.features' | transloco }}
+      </a>
+      <a [routerLink]="['/about']" routerLinkActive="active">
+        {{ 'public.nav.about' | transloco }}
+      </a>
+      <a [routerLink]="['/contribute']" routerLinkActive="active">
+        {{ 'public.nav.contribute' | transloco }}
+      </a>
+    } @else {
+      <a [routerLink]="['/dashboard']" routerLinkActive="active">
+        {{ 'nav.dashboard' | transloco }}
+      </a>
+      <a [routerLink]="['/teams']" routerLinkActive="active">
+        {{ 'nav.teams' | transloco }}
+      </a>
+      <a [routerLink]="['/programs']" routerLinkActive="active">
+        {{ 'nav.programs' | transloco }}
+      </a>
+      <a [routerLink]="['/events']" routerLinkActive="active">
+        {{ 'nav.calendar' | transloco }}
+      </a>
+      @if (isStaff()) {
+        <a [routerLink]="['/admin']" routerLinkActive="active">
+          {{ 'nav.admin' | transloco }}
+        </a>
+      }
+    }
+  </nav>
+
+  <div class="actions actions--desktop">
+    <app-language-switcher />
+    <app-user-menu />
+  </div>
+
+  <button
+    type="button"
+    class="hamburger"
+    [attr.aria-expanded]="mobileMenuOpen()"
+    [attr.aria-label]="(mobileMenuOpen() ? 'topmenu.close' : 'topmenu.open') | transloco"
+    (click)="toggleMobile()"
+  >
+    <i class="pi" [class.pi-bars]="!mobileMenuOpen()" [class.pi-times]="mobileMenuOpen()" aria-hidden="true"></i>
+  </button>
+
+  @if (mobileMenuOpen()) {
+    <div class="drawer">
+      <nav class="nav nav--mobile" [attr.aria-label]="'app.title' | transloco">
+        @if (mode() === 'public') {
+          <a [routerLink]="['/']" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMobile()">
+            {{ 'public.nav.home' | transloco }}
+          </a>
+          <a [routerLink]="['/features']" routerLinkActive="active" (click)="closeMobile()">
+            {{ 'public.nav.features' | transloco }}
+          </a>
+          <a [routerLink]="['/about']" routerLinkActive="active" (click)="closeMobile()">
+            {{ 'public.nav.about' | transloco }}
+          </a>
+          <a [routerLink]="['/contribute']" routerLinkActive="active" (click)="closeMobile()">
+            {{ 'public.nav.contribute' | transloco }}
+          </a>
+        } @else {
+          <a [routerLink]="['/dashboard']" routerLinkActive="active" (click)="closeMobile()">
+            {{ 'nav.dashboard' | transloco }}
+          </a>
+          <a [routerLink]="['/teams']" routerLinkActive="active" (click)="closeMobile()">
+            {{ 'nav.teams' | transloco }}
+          </a>
+          <a [routerLink]="['/programs']" routerLinkActive="active" (click)="closeMobile()">
+            {{ 'nav.programs' | transloco }}
+          </a>
+          <a [routerLink]="['/events']" routerLinkActive="active" (click)="closeMobile()">
+            {{ 'nav.calendar' | transloco }}
+          </a>
+          @if (isStaff()) {
+            <a [routerLink]="['/admin']" routerLinkActive="active" (click)="closeMobile()">
+              {{ 'nav.admin' | transloco }}
+            </a>
+          }
+        }
+      </nav>
+      <div class="actions actions--mobile">
+        <app-language-switcher />
+        <app-user-menu />
+      </div>
+    </div>
+  }
+</header>

@@ -1,26 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 import { Toast } from 'primeng/toast';
-import { AuthService } from '../../auth/auth.service';
-import { LanguageSwitcherComponent } from '../../i18n/language-switcher/language-switcher.component';
-import { UserMenuComponent } from '../../../shared/ui/user-menu/user-menu.component';
+import { TopmenuComponent } from '../topmenu/topmenu.component';
 
 @Component({
   selector: 'app-main-layout',
-  imports: [
-    RouterOutlet,
-    RouterLink,
-    RouterLinkActive,
-    Toast,
-    TranslocoPipe,
-    LanguageSwitcherComponent,
-    UserMenuComponent,
-  ],
+  imports: [RouterOutlet, Toast, TopmenuComponent],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MainLayoutComponent {
-  protected readonly authService = inject(AuthService);
-}
+export class MainLayoutComponent {}

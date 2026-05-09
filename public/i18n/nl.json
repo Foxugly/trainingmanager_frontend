@@ -11,6 +11,10 @@
     "calendar": "Kalender",
     "admin": "Beheer"
   },
+  "topmenu": {
+    "open": "Menu openen",
+    "close": "Menu sluiten"
+  },
   "ai": {
     "generating_event": "De AI bereidt je sessie voor…",
     "generating_events": "De AI genereert je programma…",

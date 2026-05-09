@@ -11,6 +11,10 @@
     "calendar": "Calendario",
     "admin": "Administración"
   },
+  "topmenu": {
+    "open": "Abrir menú",
+    "close": "Cerrar menú"
+  },
   "ai": {
     "generating_event": "La IA está preparando tu sesión…",
     "generating_events": "La IA está generando tu programa…",
