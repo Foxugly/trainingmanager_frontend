@@ -147,3 +147,43 @@
     line-height: 1.6;
   }
 }
+
+:host-context(.dark-mode) {
+  .about-section {
+    &:nth-of-type(odd) { background: #0f172a; }
+    &:nth-of-type(even) { background: #1e293b; }
+  }
+
+  .about-section[data-slug='intro'] h1 { color: #f8fafc; }
+  .about-section h2 { color: #f8fafc; }
+
+  .lead { color: #cbd5e1; }
+
+  .about-repo {
+    background: #0f172a;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+
+    &:hover { border-color: #818cf8; color: #c7d2fe; }
+  }
+
+  .about-dl {
+    dt { color: #94a3b8; }
+    dd { color: #e2e8f0; }
+  }
+
+  .email-cta {
+    background: #f8fafc;
+    color: #0f172a;
+
+    &:hover { background: #e2e8f0; }
+
+    &:focus-visible { outline-color: #f8fafc; }
+  }
+
+  .sub-section {
+    h3 { color: #f8fafc; }
+    p { color: #cbd5e1; }
+    ul { color: #cbd5e1; }
+  }
+}

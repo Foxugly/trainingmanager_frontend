@@ -107,3 +107,26 @@
   color: #64748b;
   font-style: italic;
 }
+
+:host-context(.dark-mode) {
+  .contribute-section {
+    &:nth-of-type(odd) { background: #0f172a; }
+    &:nth-of-type(even) { background: #1e293b; }
+  }
+
+  .contribute-section[data-slug='intro'] h1 { color: #f8fafc; }
+  .contribute-section h2 { color: #f8fafc; }
+
+  .lead { color: #cbd5e1; }
+
+  .contribute-card {
+    background: #1e293b;
+    border-color: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+
+    h3 { color: #f8fafc; }
+    p { color: #cbd5e1; }
+  }
+
+  .donate-redirect-note { color: #94a3b8; }
+}
