@@ -59,6 +59,10 @@
   padding: 1.25rem 0.25rem;
 }
 
+:host ::ng-deep .tab-icon {
+  margin-right: 0.5rem;
+}
+
 .about-dl {
   display: grid;
   grid-template-columns: 1fr;
