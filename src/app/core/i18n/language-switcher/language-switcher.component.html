@@ -7,9 +7,7 @@
     [attr.aria-expanded]="open()"
     (click)="toggle()"
   >
-    <i class="pi pi-globe" aria-hidden="true"></i>
     <span class="ls-code">{{ current() | uppercase }}</span>
-    <i class="pi pi-chevron-down ls-caret" aria-hidden="true"></i>
   </button>
 
   @if (open()) {

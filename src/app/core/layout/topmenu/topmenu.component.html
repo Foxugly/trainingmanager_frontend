@@ -1,8 +1,6 @@
 <header class="topbar">
   <a [routerLink]="['/']" class="brand" (click)="closeMobile()">
-    <span class="brand-mark" aria-hidden="true">
-      <i class="pi pi-bolt"></i>
-    </span>
+    <img class="brand-mark" src="favicon.ico" alt="" aria-hidden="true" />
     <span class="brand-label">{{ 'app.title' | transloco }}</span>
   </a>
 
@@ -17,7 +15,7 @@
       <a [routerLink]="['/about']" routerLinkActive="active">
         {{ 'public.nav.about' | transloco }}
       </a>
-      <a [routerLink]="['/contribute']" routerLinkActive="active">
+      <a [routerLink]="['/contribute']" routerLinkActive="active" class="nav-cta">
         {{ 'public.nav.contribute' | transloco }}
       </a>
     } @else {
@@ -69,7 +67,7 @@
           <a [routerLink]="['/about']" routerLinkActive="active" (click)="closeMobile()">
             {{ 'public.nav.about' | transloco }}
           </a>
-          <a [routerLink]="['/contribute']" routerLinkActive="active" (click)="closeMobile()">
+          <a [routerLink]="['/contribute']" routerLinkActive="active" class="nav-cta" (click)="closeMobile()">
             {{ 'public.nav.contribute' | transloco }}
           </a>
         } @else {
