@@ -37,9 +37,11 @@ describe('LanguageSwitcherComponent', () => {
       languages: typeof AVAILABLE_LANGUAGES;
       current(): string;
       open(): boolean;
+      focusedIndex(): number | null;
       toggle(): void;
       close(): void;
       select(code: 'fr' | 'nl' | 'en' | 'it' | 'es'): void;
+      moveFocus(direction: 'up' | 'down'): void;
     };
     return { fixture, component: protectedAccess };
   }
@@ -105,5 +107,66 @@ describe('LanguageSwitcherComponent', () => {
     component.select('nl');
     expect(messageSpy).toHaveBeenCalledTimes(1);
     expect(messageSpy.mock.calls[0][0]).toMatchObject({ severity: 'error' });
+  });
+
+  it('opens with arrow keys focusing the active language index', () => {
+    const { component } = build('en');
+    component.toggle();
+    // 'en' is at index 2 in AVAILABLE_LANGUAGES (fr, nl, en, it, es)
+    expect(component.focusedIndex()).toBe(2);
+  });
+
+  it('toggle opens with the active code at index 0 when active is fr', () => {
+    const { component } = build('fr');
+    component.toggle();
+    expect(component.focusedIndex()).toBe(0);
+  });
+
+  it('moveFocus("down") wraps at the end back to index 0', () => {
+    const { component } = build('es'); // es = index 4 (last)
+    component.toggle();
+    expect(component.focusedIndex()).toBe(4);
+    component.moveFocus('down');
+    expect(component.focusedIndex()).toBe(0);
+  });
+
+  it('moveFocus("up") wraps at the start back to the last index', () => {
+    const { component } = build('fr'); // fr = index 0
+    component.toggle();
+    expect(component.focusedIndex()).toBe(0);
+    component.moveFocus('up');
+    expect(component.focusedIndex()).toBe(4);
+  });
+
+  it('moveFocus advances within the range', () => {
+    const { component } = build('fr');
+    component.toggle();
+    component.moveFocus('down');
+    expect(component.focusedIndex()).toBe(1);
+    component.moveFocus('down');
+    expect(component.focusedIndex()).toBe(2);
+    component.moveFocus('up');
+    expect(component.focusedIndex()).toBe(1);
+  });
+
+  it('Enter on a focused item calls switchLanguage(code)', () => {
+    const { fixture, component } = build('fr');
+    switchSpy.mockReturnValue(of({}));
+    component.toggle();
+    component.moveFocus('down'); // focus index 1 = 'nl'
+    expect(component.focusedIndex()).toBe(1);
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    // Dispatch on host element since the host listener is bound there.
+    fixture.nativeElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    fixture.detectChanges();
+    expect(switchSpy).toHaveBeenCalledWith('nl');
+  });
+
+  it('close() resets focusedIndex to null', () => {
+    const { component } = build('fr');
+    component.toggle();
+    expect(component.focusedIndex()).toBe(0);
+    component.close();
+    expect(component.focusedIndex()).toBeNull();
   });
 });

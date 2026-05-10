@@ -14,11 +14,13 @@
     <div role="menu" class="ls-menu">
       @for (lang of languages; track lang.code) {
         <button
+          #menuitem
           type="button"
           role="menuitem"
           class="ls-item"
           [class.is-active]="lang.code === current()"
           [attr.aria-current]="lang.code === current() ? 'true' : null"
+          [attr.tabindex]="lang.code === current() ? 0 : -1"
           (click)="select(lang.code)"
         >
           <span class="ls-chip">{{ lang.code }}</span>

@@ -5,6 +5,7 @@ import {
   ElementRef,
   inject,
   signal,
+  viewChildren,
 } from '@angular/core';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { MessageService } from 'primeng/api';
@@ -20,6 +21,11 @@ import { LanguageService } from '../language.service';
   host: {
     '(document:click)': 'onDocumentClick($event)',
     '(document:keydown.escape)': 'close()',
+    '(keydown.arrowdown)': 'onArrowDown($event)',
+    '(keydown.arrowup)': 'onArrowUp($event)',
+    '(keydown.home)': 'onHome($event)',
+    '(keydown.end)': 'onEnd($event)',
+    '(keydown.enter)': 'onEnter($event)',
   },
 })
 export class LanguageSwitcherComponent {
@@ -31,9 +37,27 @@ export class LanguageSwitcherComponent {
   protected readonly languages = AVAILABLE_LANGUAGES;
   protected readonly current = this.languageService.activeLang;
   protected readonly open = signal(false);
+  protected readonly focusedIndex = signal<number | null>(null);
 
-  protected toggle(): void { this.open.update((v) => !v); }
-  protected close(): void { this.open.set(false); }
+  private readonly menuItems = viewChildren<ElementRef<HTMLButtonElement>>('menuitem');
+
+  protected toggle(): void {
+    const willOpen = !this.open();
+    this.open.set(willOpen);
+    if (willOpen) {
+      // Default focus to active language's index (or 0).
+      const idx = this.languages.findIndex((l) => l.code === this.current());
+      this.focusedIndex.set(idx >= 0 ? idx : 0);
+      queueMicrotask(() => this.focusCurrent());
+    } else {
+      this.focusedIndex.set(null);
+    }
+  }
+
+  protected close(): void {
+    this.open.set(false);
+    this.focusedIndex.set(null);
+  }
 
   protected onDocumentClick(event: MouseEvent): void {
     if (!this.open()) return;
@@ -55,5 +79,54 @@ export class LanguageSwitcherComponent {
         });
       },
     });
+  }
+
+  protected onArrowDown(event: Event): void {
+    if (!this.open()) return;
+    event.preventDefault();
+    this.moveFocus('down');
+  }
+
+  protected onArrowUp(event: Event): void {
+    if (!this.open()) return;
+    event.preventDefault();
+    this.moveFocus('up');
+  }
+
+  protected onHome(event: Event): void {
+    if (!this.open()) return;
+    event.preventDefault();
+    this.focusedIndex.set(0);
+    this.focusCurrent();
+  }
+
+  protected onEnd(event: Event): void {
+    if (!this.open()) return;
+    event.preventDefault();
+    this.focusedIndex.set(this.languages.length - 1);
+    this.focusCurrent();
+  }
+
+  protected onEnter(event: Event): void {
+    if (!this.open()) return;
+    const idx = this.focusedIndex();
+    if (idx === null) return;
+    event.preventDefault();
+    this.select(this.languages[idx].code);
+  }
+
+  protected moveFocus(direction: 'up' | 'down'): void {
+    const len = this.languages.length;
+    const current = this.focusedIndex() ?? 0;
+    const next = direction === 'down' ? (current + 1) % len : (current - 1 + len) % len;
+    this.focusedIndex.set(next);
+    this.focusCurrent();
+  }
+
+  private focusCurrent(): void {
+    const idx = this.focusedIndex();
+    if (idx === null) return;
+    const items = this.menuItems();
+    items[idx]?.nativeElement.focus();
   }
 }
