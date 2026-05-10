@@ -2,13 +2,12 @@ import { LanguageCode } from '../../core/i18n/available-languages';
 
 export type AboutTab = 'company' | 'legal' | 'technical';
 
-export interface CompanyRowText {
-  key: 'company' | 'vat' | 'address' | 'email' | 'phone' | 'website';
-  label: string;
-  kind: 'text' | 'multiline' | 'email' | 'phone' | 'website';
-  value?: string;
-  lines?: string[];
-}
+export type CompanyRowText =
+  | { key: 'company' | 'vat'; label: string; kind: 'text'; value: string }
+  | { key: 'address'; label: string; kind: 'multiline'; lines: string[] }
+  | { key: 'email'; label: string; kind: 'email' }
+  | { key: 'phone'; label: string; kind: 'phone' }
+  | { key: 'website'; label: string; kind: 'website' };
 
 export interface AboutPageUiText {
   intro: { title: string; lead: string; view_repo: string };

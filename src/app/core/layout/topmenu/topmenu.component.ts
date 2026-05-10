@@ -1,3 +1,4 @@
+import { NgOptimizedImage } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -22,7 +23,14 @@ export type TopmenuMode = 'public' | 'authenticated';
 
 @Component({
   selector: 'app-topmenu',
-  imports: [RouterLink, RouterLinkActive, TranslocoPipe, LanguageSwitcherComponent, UserMenuComponent],
+  imports: [
+    NgOptimizedImage,
+    RouterLink,
+    RouterLinkActive,
+    TranslocoPipe,
+    LanguageSwitcherComponent,
+    UserMenuComponent,
+  ],
   templateUrl: './topmenu.component.html',
   styleUrl: './topmenu.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

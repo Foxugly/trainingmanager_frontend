@@ -9,6 +9,7 @@ import {
   phoneDisplay,
   openContactEmail,
 } from '../../shared/contact';
+import { FRONTEND_REPO_URL } from '../../shared/repo';
 import { AboutTab, getAboutPageUiText } from './about-page.text';
 
 @Component({
@@ -21,7 +22,7 @@ import { AboutTab, getAboutPageUiText } from './about-page.text';
 export class AboutPageComponent {
   private readonly languageService = inject(LanguageService);
 
-  protected readonly frontendRepoUrl = 'https://github.com/Foxugly/trainingmanager_frontend';
+  protected readonly frontendRepoUrl = FRONTEND_REPO_URL;
   protected readonly websiteUrl = WEBSITE_URL;
   protected readonly websiteDisplay = WEBSITE_DISPLAY;
   protected readonly emailDisplay = emailDisplay;
