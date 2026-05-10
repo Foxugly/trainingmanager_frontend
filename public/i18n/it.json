@@ -508,6 +508,7 @@
     "loading": "Caricamento",
     "error": "Errore",
     "success": "Successo",
+    "opens_new_tab": "Apre in una nuova scheda",
     "entity": {
       "team": "Squadra",
       "program": "Programma",

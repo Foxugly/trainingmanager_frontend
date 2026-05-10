@@ -508,6 +508,7 @@
     "loading": "Laden",
     "error": "Fout",
     "success": "Gelukt",
+    "opens_new_tab": "Opent in een nieuw tabblad",
     "entity": {
       "team": "Team",
       "program": "Programma",

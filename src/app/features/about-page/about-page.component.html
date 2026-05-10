@@ -3,7 +3,13 @@
     <div class="about-section-inner">
       <h1>{{ ui().intro.title }}</h1>
       <p class="lead">{{ ui().intro.lead }}</p>
-      <a [href]="frontendRepoUrl" target="_blank" rel="noopener noreferrer" class="about-repo">
+      <a
+        [href]="frontendRepoUrl"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="about-repo"
+        [attr.aria-label]="ui().intro.view_repo + ' — ' + ('common.opens_new_tab' | transloco)"
+      >
         <i class="pi pi-github" aria-hidden="true"></i>
         {{ ui().intro.view_repo }}
         <i class="pi pi-external-link" aria-hidden="true"></i>
@@ -54,7 +60,12 @@
                       }
                       @case ('phone') { <span>{{ phoneDisplay() }}</span> }
                       @case ('website') {
-                        <a [href]="websiteUrl" target="_blank" rel="noopener noreferrer">
+                        <a
+                          [href]="websiteUrl"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          [attr.aria-label]="websiteDisplay + ' — ' + ('common.opens_new_tab' | transloco)"
+                        >
                           {{ websiteDisplay }}
                         </a>
                       }

@@ -508,6 +508,7 @@
     "loading": "Loading",
     "error": "Error",
     "success": "Success",
+    "opens_new_tab": "Opens in a new tab",
     "entity": {
       "team": "Team",
       "program": "Program",

@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
+import { TranslocoTestingModule } from '@jsverse/transloco';
 import { describe, expect, it } from 'vitest';
 import { LanguageService } from '../../core/i18n/language.service';
 import { AboutPageComponent } from './about-page.component';
@@ -22,7 +23,13 @@ describe('AboutPageComponent', () => {
   async function setup(initialLang: 'fr' | 'en' | 'nl' | 'it' | 'es' = 'fr') {
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
-      imports: [AboutPageComponent],
+      imports: [
+        AboutPageComponent,
+        TranslocoTestingModule.forRoot({
+          langs: { fr: {} },
+          translocoConfig: { availableLangs: ['fr'], defaultLang: 'fr' },
+        }),
+      ],
       providers: [
         provideNoopAnimations(),
         provideRouter([]),

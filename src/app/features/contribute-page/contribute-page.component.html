@@ -27,7 +27,13 @@
     <div class="contribute-section-inner contribute-section-inner--center">
       <h2>{{ ui().donate.title }}</h2>
       <p class="lead">{{ ui().donate.intro }}</p>
-      <a [href]="sponsorsUrl" target="_blank" rel="noopener noreferrer" class="donate-cta">
+      <a
+        [href]="sponsorsUrl"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="donate-cta"
+        [attr.aria-label]="ui().donate.cta + ' — ' + ('common.opens_new_tab' | transloco)"
+      >
         <i class="pi pi-heart-fill" aria-hidden="true"></i>
         {{ ui().donate.cta }}
         <i class="pi pi-external-link" aria-hidden="true"></i>

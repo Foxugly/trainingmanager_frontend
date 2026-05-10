@@ -508,6 +508,7 @@
     "loading": "Cargando",
     "error": "Error",
     "success": "Éxito",
+    "opens_new_tab": "Abre en una nueva pestaña",
     "entity": {
       "team": "Equipo",
       "program": "Programa",

@@ -508,6 +508,7 @@
     "loading": "Chargement",
     "error": "Erreur",
     "success": "Succès",
+    "opens_new_tab": "Ouvre dans un nouvel onglet",
     "entity": {
       "team": "Équipe",
       "program": "Programme",

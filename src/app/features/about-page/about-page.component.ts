@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { LanguageService } from '../../core/i18n/language.service';
 import {
@@ -12,7 +13,7 @@ import { AboutTab, getAboutPageUiText } from './about-page.text';
 
 @Component({
   selector: 'app-about-page',
-  imports: [Tabs, TabList, Tab, TabPanels, TabPanel],
+  imports: [Tabs, TabList, Tab, TabPanels, TabPanel, TranslocoPipe],
   templateUrl: './about-page.component.html',
   styleUrl: './about-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

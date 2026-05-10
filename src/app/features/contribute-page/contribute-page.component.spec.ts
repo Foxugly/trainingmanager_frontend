@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
+import { TranslocoTestingModule } from '@jsverse/transloco';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { LanguageService } from '../../core/i18n/language.service';
 import { ContributePageComponent } from './contribute-page.component';
@@ -14,7 +15,13 @@ describe('ContributePageComponent', () => {
     TestBed.resetTestingModule();
     langSig = signal(initialLang);
     await TestBed.configureTestingModule({
-      imports: [ContributePageComponent],
+      imports: [
+        ContributePageComponent,
+        TranslocoTestingModule.forRoot({
+          langs: { fr: {} },
+          translocoConfig: { availableLangs: ['fr'], defaultLang: 'fr' },
+        }),
+      ],
       providers: [
         provideNoopAnimations(),
         provideRouter([]),
