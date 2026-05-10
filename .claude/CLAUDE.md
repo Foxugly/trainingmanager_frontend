@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm start` — dev server on http://localhost:4200 (no proxy; calls `environment.apiBase` directly).
 - `npm run build` — production build into `dist/`. Initial-bundle budget set to `1MB` warning / `1.5MB` error in `angular.json` (current size ~930 kB given Angular 21 + PrimeNG 21 + Tailwind 4 + Transloco footprint).
 - `npm run watch` — incremental dev build.
-- `npm test` — Vitest via `@angular/build:unit-test`. Filter a single spec: `npm test -- src/app/core/auth/auth.service.spec.ts`.
+- `npm test` — Vitest via `@angular/build:unit-test`. Filter a single spec: `npm test -- --include "src/app/core/auth/auth.service.spec.ts"` (the bare path is interpreted as a project name by `ng test` and fails).
 - `npm run api:gen` — regenerates the typed client in `src/app/api/` from `openapi/Training_Manager_API.yaml` (config in `openapitools.json`).
 
 Backend runs separately at `http://localhost:8000` (set in `src/environments/environment.ts`). Spec is still in flux — re-fetch + regen after backend changes.
@@ -45,6 +45,8 @@ All providers live in `src/app/app.config.ts`; routes in `src/app/app.routes.ts`
 
 ### Shared UI (`src/app/shared/ui/`)
 
+- **TopmenuComponent** (`src/app/core/layout/topmenu/`) — sticky top bar (`position: sticky` on `:host`), `mode = input<'public'|'authenticated'>()`, embeds `app-language-switcher` + `app-user-menu`. Hamburger drawer ≤ 960 px via CSS media query (NOT Tailwind `md:`). Owns `mobileMenuOpen` signal; closes on `NavigationEnd`, click-outside, Escape. `aria-controls` linkage + focus trap + focus restoration in the drawer.
+- **FooterComponent** (`src/app/core/layout/footer/`) — single-line ~35 px footer used only by `PublicLayoutComponent`. Renders `app.title · app.tagline · Version X.Y.Z · author · ©year`.
 - **DetailHeaderComponent** — single-line toolbar header
   `[← back] [icon + eyebrow + title + suffix + badges centered] [icon-only actions]`
   with 5 ng-content slots: `banner / titleSuffix / badges / actions / meta`
@@ -101,6 +103,8 @@ Transloco, `LanguageService` is the single source of truth. `switchLanguage(code
 
 Catalogs in `public/i18n/*.json`. Namespace by `feature.section.key`. New keys ALWAYS go to all 5 languages (CI doesn't enforce — discipline).
 
+**Marketing pages exception**: `/contribute` and `/about` use **TS-factorized i18n** (`contribute-page.text.ts`, `about-page.text.ts`) with `SECTION_DEFS` + per-language `XX_CONTENT` const + `getXxxUiText(lang)` getter that falls back to EN. The component does `protected readonly ui = computed(() => getXxxUiText(this.languageService.activeLang()))`. Use this pattern for complex multi-section "marketing" pages (sections + items); use Transloco JSON elsewhere.
+
 ## Code conventions
 
 ### TypeScript
@@ -135,6 +139,9 @@ Catalogs in `public/i18n/*.json`. Namespace by `feature.section.key`. New keys A
 
 ### Shared patterns
 
+- `shared/contact.ts` — anti-spam contact util. Email split into `EMAIL_USER`/`EMAIL_HOST`/`EMAIL_TLD`; `emailDisplay()` returns `user [at] host [dot] tld` (never `@` in DOM); `openContactEmail(subject)` reconstructs `mailto:` at click via `URLSearchParams`; `phoneDisplay()` for phone. Consumed by `/about` Company tab.
+- `shared/repo.ts` — `FRONTEND_REPO_URL`, `BACKEND_REPO_URL`, `SPONSORS_URL` constants. Use these everywhere instead of inline literals.
+- `shared/app-version.ts` — `APP_VERSION` derived from `package.json` at build time (`resolveJsonModule + esModuleInterop` in `tsconfig.json`). Bumping `package.json` propagates automatically.
 - `parseRetryAfterSeconds(headers)` (`features/auth/shared/`) — RFC 7231 parser used by login / register / forgot-password countdowns.
 - `applyServerError` + `FieldErrors {[k]: string[]}` — every form maps DRF validation errors with this idiom. Recognised top-level codes (e.g. `team_quota_exceeded`, `pending_request_exists`) get dedicated branches; everything else falls through to `fields` flattening.
 - `history.state` for ephemeral PII between routes (e.g. email after register/forgot) — avoids leaking via querystring/referrer.
@@ -154,6 +161,10 @@ Prettier: 100-col, single quotes, Angular parser for `*.html`. 2-space indent (`
 - ngOnInit fires API calls — set mocks BEFORE `fixture.detectChanges()`. The common pattern is a `setup({ ...overrides })` helper that recreates the TestBed per test for isolation.
 - AuthService mocks need `refreshMe: vi.fn()` (used after team mutations).
 - `Me` fixtures must include `team_quota: { used, max, can_create }` (required field in the codegen).
+- **`vi.fn()` with setter usage** (e.g. `Object.defineProperty(window, 'location', {value: { set href(v){ spy(v) } }})`) needs an explicit generic under TS strict: `vi.fn<(v: string) => void>()`. Bare `vi.fn()` resolves to `Mock<Procedure|Constructable>` and TS rejects the call site.
+- **Router stub**: use `provideRouter([])` AND patch `events` via `Object.defineProperty(router, 'events', { value: subject.asObservable() })`. Fully replacing the `Router` token (`{ provide: Router, useValue: ... }`) breaks `RouterLink`/`RouterLinkActive` directives at DI resolution.
+- **`vi.mock` / `vi.spyOn` are blocked** for relative-import ESM bindings under the Angular unit-test runner. Stub `window.location` (with try/finally restore) to observe `mailto:` side effects instead.
+- **PrimeNG `<p-tabs>` under jsdom** requires a `ResizeObserver` polyfill at the top of the spec file. Copy the pattern from `about-page.component.spec.ts:9-17`.
 
 ## Gotchas
 
@@ -164,3 +175,6 @@ Prettier: 100-col, single quotes, Angular parser for `*.html`. 2-space indent (`
 - **Magic-link URL**: `/team-join-requests/magic-action/:token` (frontend route) ≠ `/api/v1/join-magic/:token/` (API endpoint). Don't conflate.
 - **Codegen positional params**: `npm run api:gen` produces method signatures with positional query-param args (`eventsList(color, date, dateGte, ...)`). Adding a new query filter on the backend reorders these alphabetically and silently breaks every existing caller. Mitigation : use named-args mode (`useSingleRequestParameter=true`) when migrating, or audit every call site after each `api:gen`.
 - **Accept-Language**: `languageInterceptor` (`src/app/core/i18n/`) attaches `Accept-Language: <activeLang>` on every API call so the backend can localize translatable model fields (modality.name, status.label, etc.).
+- **Hamburger breakpoint = 960 px** (not Tailwind's `md:` 768 px) — convention from QuizOnline-style layout. Use CSS `@media (max-width: 960px)`, not Tailwind utilities, for the topmenu hamburger toggle.
+- **Dark-mode parity**: PrimeNG dark mode is `.dark-mode` on `<html>`. New surfaces must include `:host-context(.dark-mode) { ... }` overrides — see `footer.component.scss`, `contribute-page.component.scss`, `about-page.component.scss` for the pattern.
+- **`role="menu"` contract**: any element with `role="menu"` MUST support arrow-key navigation (ArrowUp/Down/Home/End) + roving tabindex. See `language-switcher.component.ts` for the reference implementation.
