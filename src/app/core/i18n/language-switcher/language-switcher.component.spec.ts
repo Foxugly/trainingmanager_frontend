@@ -169,4 +169,14 @@ describe('LanguageSwitcherComponent', () => {
     component.close();
     expect(component.focusedIndex()).toBeNull();
   });
+
+  it('Escape closes the menu while open', () => {
+    const { fixture, component } = build('fr');
+    component.toggle();
+    fixture.detectChanges();
+    expect(component.open()).toBe(true);
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    fixture.detectChanges();
+    expect(component.open()).toBe(false);
+  });
 });

@@ -76,6 +76,11 @@ describe('AboutPageComponent', () => {
     expect(text).not.toMatch(/info@foxugly\.com/);
   });
 
+  it('Company tab: renders exactly 6 dt elements (anti-regression for 7->6 drop)', async () => {
+    await setup();
+    expect(fixture.nativeElement.querySelectorAll('dt').length).toBe(6);
+  });
+
   it('Company tab: clicking the email CTA invokes openContactEmail("Training Manager")', async () => {
     // ESM bindings are read-only so we can't `vi.spyOn(contact, 'openContactEmail')`,
     // and the Angular unit-test runner blocks `vi.mock` for relative imports.

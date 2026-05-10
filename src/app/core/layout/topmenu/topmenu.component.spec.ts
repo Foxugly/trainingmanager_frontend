@@ -153,4 +153,35 @@ describe('TopmenuComponent', () => {
     expect(drawer).toBeTruthy();
     expect(drawer!.id).toBe('topmenu-drawer');
   });
+
+  it('Escape keydown on document closes the mobile menu', async () => {
+    await setup();
+    const c = access(fixture.componentInstance);
+    c.toggleMobile();
+    expect(c.mobileMenuOpen()).toBe(true);
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    fixture.detectChanges();
+    expect(c.mobileMenuOpen()).toBe(false);
+  });
+
+  it('hamburger aria-expanded reflects mobileMenuOpen()', async () => {
+    await setup();
+    const hamburger = fixture.nativeElement.querySelector('button.hamburger') as HTMLButtonElement;
+    expect(hamburger.getAttribute('aria-expanded')).toBe('false');
+    const c = access(fixture.componentInstance);
+    c.toggleMobile();
+    fixture.detectChanges();
+    expect(hamburger.getAttribute('aria-expanded')).toBe('true');
+    c.closeMobile();
+    fixture.detectChanges();
+    expect(hamburger.getAttribute('aria-expanded')).toBe('false');
+  });
+
+  it('does NOT render legacy anchor hrefs (#hero, #features, #contribute)', async () => {
+    await setup({ mode: 'public' });
+    const html = fixture.nativeElement.innerHTML as string;
+    expect(html).not.toContain('href="#hero"');
+    expect(html).not.toContain('href="#features"');
+    expect(html).not.toContain('href="#contribute"');
+  });
 });
