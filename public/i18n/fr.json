@@ -594,20 +594,15 @@
   "public": {
     "nav": {
       "home": "Accueil",
-      "dashboard": "Tableau de bord",
       "features": "Fonctionnalités",
       "about": "À propos",
-      "contribute": "Contribuer",
-      "toggle": "Ouvrir le menu"
+      "contribute": "Contribuer"
     },
     "user_menu": {
       "login": "Connexion",
       "profile": "Profil",
       "admin": "Admin",
       "logout": "Déconnexion"
-    },
-    "footer": {
-      "rights": "© 2026 Training Manager. Tous droits réservés."
     }
   },
   "home": {

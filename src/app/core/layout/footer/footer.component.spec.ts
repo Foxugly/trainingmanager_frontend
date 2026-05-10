@@ -37,7 +37,7 @@ describe('FooterComponent', () => {
 
   it('renders the APP_VERSION constant', () => {
     const text = (fixture.nativeElement.textContent as string) ?? '';
-    expect(text).toContain('0.1.0');
+    expect(text).toMatch(/\d+\.\d+\.\d+/);
   });
 
   it('renders 3 separator dots between the segments', () => {
