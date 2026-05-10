@@ -136,4 +136,21 @@ describe('TopmenuComponent', () => {
     routerEvents.next(new NavigationEnd(1, '/foo', '/foo'));
     expect(c.mobileMenuOpen()).toBe(false);
   });
+
+  it('sets aria-controls on the hamburger linking to the drawer id', async () => {
+    await setup();
+    const hamburger = fixture.nativeElement.querySelector('button.hamburger') as HTMLButtonElement;
+    expect(hamburger).toBeTruthy();
+    expect(hamburger.getAttribute('aria-controls')).toBe('topmenu-drawer');
+  });
+
+  it('the drawer has id=topmenu-drawer when open', async () => {
+    await setup();
+    const c = access(fixture.componentInstance);
+    c.toggleMobile();
+    fixture.detectChanges();
+    const drawer = fixture.nativeElement.querySelector('.drawer') as HTMLElement | null;
+    expect(drawer).toBeTruthy();
+    expect(drawer!.id).toBe('topmenu-drawer');
+  });
 });

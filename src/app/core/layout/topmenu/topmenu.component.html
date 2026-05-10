@@ -45,9 +45,11 @@
   </div>
 
   <button
+    #hamburgerBtn
     type="button"
     class="hamburger"
     [attr.aria-expanded]="mobileMenuOpen()"
+    [attr.aria-controls]="'topmenu-drawer'"
     [attr.aria-label]="(mobileMenuOpen() ? 'topmenu.close' : 'topmenu.open') | transloco"
     (click)="toggleMobile()"
   >
@@ -55,7 +57,7 @@
   </button>
 
   @if (mobileMenuOpen()) {
-    <div class="drawer">
+    <div #drawerEl id="topmenu-drawer" class="drawer">
       <nav class="nav nav--mobile" [attr.aria-label]="'app.title' | transloco">
         @if (mode() === 'public') {
           <a [routerLink]="['/']" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMobile()">
