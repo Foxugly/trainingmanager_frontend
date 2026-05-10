@@ -1,4 +1,4 @@
-export const EMAIL_USER = 'rvilain';
+export const EMAIL_USER = 'info';
 export const EMAIL_HOST = 'foxugly';
 export const EMAIL_TLD = 'com';
 

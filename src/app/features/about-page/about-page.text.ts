@@ -3,7 +3,7 @@ import { LanguageCode } from '../../core/i18n/available-languages';
 export type AboutTab = 'company' | 'legal' | 'technical';
 
 export interface CompanyRowText {
-  key: 'contact' | 'company' | 'vat' | 'address' | 'email' | 'phone' | 'website';
+  key: 'company' | 'vat' | 'address' | 'email' | 'phone' | 'website';
   label: string;
   kind: 'text' | 'multiline' | 'email' | 'phone' | 'website';
   value?: string;
@@ -25,7 +25,6 @@ export interface AboutPageUiText {
 }
 
 interface CompanyRowContent {
-  contact: { label: string; value: string };
   company: { label: string; value: string };
   vat: { label: string; value: string };
   address: { label: string; lines: string[] };
@@ -65,7 +64,6 @@ function build(c: AboutContent): AboutPageUiText {
       lead: c.company.lead,
       email_cta: c.company.email_cta,
       rows: [
-        { key: 'contact', label: c.company.rows.contact.label, kind: 'text', value: c.company.rows.contact.value },
         { key: 'company', label: c.company.rows.company.label, kind: 'text', value: c.company.rows.company.value },
         { key: 'vat', label: c.company.rows.vat.label, kind: 'text', value: c.company.rows.vat.value },
         { key: 'address', label: c.company.rows.address.label, kind: 'multiline', lines: c.company.rows.address.lines },
@@ -111,7 +109,6 @@ const FR_CONTENT: AboutContent = {
     lead: 'Informations légales et coordonnées de la société qui édite Training Manager.',
     email_cta: 'Envoyez-moi un email',
     rows: {
-      contact: { label: 'Contact', value: 'Renaud Vilain' },
       company: { label: 'Société', value: 'Foxugly SRL' },
       vat: { label: 'TVA / BCE', value: 'BE 1004.770.045' },
       address: { label: 'Adresse', lines: ['rue Nicolas Defrêcheux 22', '1030 Schaerbeek', 'Belgique'] },
@@ -214,7 +211,6 @@ const EN_CONTENT: AboutContent = {
     lead: 'Legal information and contact details of the company that operates Training Manager.',
     email_cta: 'Send me an email',
     rows: {
-      contact: { label: 'Contact', value: 'Renaud Vilain' },
       company: { label: 'Company', value: 'Foxugly SRL' },
       vat: { label: 'VAT / BCE', value: 'BE 1004.770.045' },
       address: { label: 'Address', lines: ['rue Nicolas Defrêcheux 22', '1030 Schaerbeek', 'Belgium'] },
@@ -317,7 +313,6 @@ const NL_CONTENT: AboutContent = {
     lead: 'Juridische informatie en contactgegevens van het bedrijf dat Training Manager beheert.',
     email_cta: 'Stuur me een e-mail',
     rows: {
-      contact: { label: 'Contact', value: 'Renaud Vilain' },
       company: { label: 'Bedrijf', value: 'Foxugly SRL' },
       vat: { label: 'BTW / KBO', value: 'BE 1004.770.045' },
       address: { label: 'Adres', lines: ['rue Nicolas Defrêcheux 22', '1030 Schaarbeek', 'België'] },
@@ -420,7 +415,6 @@ const IT_CONTENT: AboutContent = {
     lead: 'Informazioni legali e dati di contatto della società che gestisce Training Manager.',
     email_cta: 'Inviami un email',
     rows: {
-      contact: { label: 'Contatto', value: 'Renaud Vilain' },
       company: { label: 'Società', value: 'Foxugly SRL' },
       vat: { label: 'P.IVA / BCE', value: 'BE 1004.770.045' },
       address: { label: 'Indirizzo', lines: ['rue Nicolas Defrêcheux 22', '1030 Schaerbeek', 'Belgio'] },
@@ -523,7 +517,6 @@ const ES_CONTENT: AboutContent = {
     lead: 'Información legal y datos de contacto de la empresa que gestiona Training Manager.',
     email_cta: 'Enviarme un correo',
     rows: {
-      contact: { label: 'Contacto', value: 'Renaud Vilain' },
       company: { label: 'Empresa', value: 'Foxugly SRL' },
       vat: { label: 'IVA / BCE', value: 'BE 1004.770.045' },
       address: { label: 'Dirección', lines: ['rue Nicolas Defrêcheux 22', '1030 Schaerbeek', 'Bélgica'] },

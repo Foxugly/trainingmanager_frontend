@@ -14,7 +14,7 @@ import {
 
 describe('contact util', () => {
   it('exposes the email parts as separate constants (no full email string at rest)', () => {
-    expect(EMAIL_USER).toBe('rvilain');
+    expect(EMAIL_USER).toBe('info');
     expect(EMAIL_HOST).toBe('foxugly');
     expect(EMAIL_TLD).toBe('com');
   });
@@ -28,9 +28,9 @@ describe('contact util', () => {
 
   it('emailDisplay() obfuscates the @ and . to defeat naive crawlers', () => {
     const out = emailDisplay();
-    expect(out).toBe('rvilain [at] foxugly [dot] com');
+    expect(out).toBe('info [at] foxugly [dot] com');
     expect(out).not.toContain('@');
-    expect(out).not.toMatch(/rvilain\.foxugly/);
+    expect(out).not.toMatch(/info\.foxugly/);
   });
 
   it('phoneDisplay() returns parts joined by spaces with country prefix', () => {
@@ -58,7 +58,7 @@ describe('contact util', () => {
       openContactEmail('Training Manager');
       expect(assignSpy).toHaveBeenCalledTimes(1);
       const url = assignSpy.mock.calls[0][0] as string;
-      expect(url).toMatch(/^mailto:rvilain@foxugly\.com\?/);
+      expect(url).toMatch(/^mailto:info@foxugly\.com\?/);
       expect(url).toContain('subject=Training+Manager');
     });
 

@@ -65,8 +65,8 @@ describe('AboutPageComponent', () => {
   it('Company tab: displays the email obfuscated and never as raw "@"', async () => {
     await setup();
     const text = fixture.nativeElement.textContent as string;
-    expect(text).toContain('rvilain [at] foxugly [dot] com');
-    expect(text).not.toMatch(/rvilain@foxugly\.com/);
+    expect(text).toContain('info [at] foxugly [dot] com');
+    expect(text).not.toMatch(/info@foxugly\.com/);
   });
 
   it('Company tab: clicking the email CTA invokes openContactEmail("Training Manager")', async () => {
