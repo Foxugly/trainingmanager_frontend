@@ -1,0 +1,7 @@
+# Deploy artifacts run on Linux — force LF regardless of the committer's OS.
+deploy/**/*.sh        text eol=lf
+deploy/**/*.service   text eol=lf
+deploy/**/*.conf      text eol=lf
+.github/workflows/*   text eol=lf
+scripts/*.mjs         text eol=lf
+deploy/*.ps1          text eol=crlf
