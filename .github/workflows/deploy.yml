@@ -62,9 +62,11 @@ jobs:
           role-session-name: gh-actions-${{ github.run_id }}
 
       - name: Upload bundle to S3
+        # Namespaced under builds/tm-frontend/ so this app can share an existing
+        # fleet deploy bucket (foxugly-deploy) without colliding with its builds.
         run: |
           aws s3 cp frontend-build.tar.gz \
-            "s3://${{ secrets.S3_DEPLOY_BUCKET }}/builds/${{ steps.pkg.outputs.sha }}.tar.gz"
+            "s3://${{ secrets.S3_DEPLOY_BUCKET }}/builds/tm-frontend/${{ steps.pkg.outputs.sha }}.tar.gz"
 
       - name: Deploy on EC2 via SSM
         id: ssm
@@ -92,7 +94,7 @@ jobs:
             "$GB:deploy/fetch-frontend-runtime-from-ssm.sh > /usr/local/sbin/tm-frontend-runtime-fetch.sh && chmod 0755 /usr/local/sbin/tm-frontend-runtime-fetch.sh && chown root:root /usr/local/sbin/tm-frontend-runtime-fetch.sh",
             "$GB:deploy/nginx/tm-frontend.conf > /etc/nginx/sites-available/tm-frontend.conf && ln -sf /etc/nginx/sites-available/tm-frontend.conf /etc/nginx/sites-enabled/tm-frontend.conf",
             "systemctl daemon-reload && systemctl enable --quiet tm-frontend-runtime-fetch",
-            "env AWS_SHARED_CREDENTIALS_FILE=/dev/null AWS_CONFIG_FILE=/dev/null aws s3 cp s3://$BUCKET/builds/$SHA.tar.gz /tmp/tmfe.tar.gz --region eu-west-1",
+            "env AWS_SHARED_CREDENTIALS_FILE=/dev/null AWS_CONFIG_FILE=/dev/null aws s3 cp s3://$BUCKET/builds/tm-frontend/$SHA.tar.gz /tmp/tmfe.tar.gz --region eu-west-1",
             "rm -rf /tmp/tmfe && mkdir -p /tmp/tmfe && tar -xzf /tmp/tmfe.tar.gz -C /tmp/tmfe && mkdir -p $DOC && rsync -a --delete /tmp/tmfe/ $DOC/ && rm -rf /tmp/tmfe /tmp/tmfe.tar.gz",
             "systemctl restart tm-frontend-runtime-fetch",
             "chown -R django:www-data $APP && chmod -R g-w,o-rwx $APP"
