@@ -15,7 +15,7 @@ import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeuix/themes/aura';
 import { firstValueFrom } from 'rxjs';
 
-import { environment } from '../environments/environment';
+import { getRuntimeConfig } from './core/runtime-config';
 import { provideApi } from './api/provide-api';
 import { routes } from './app.routes';
 import { AuthService } from './core/auth/auth.service';
@@ -33,7 +33,10 @@ export const appConfig: ApplicationConfig = {
       theme: { preset: Aura, options: { darkModeSelector: '.dark-mode' } },
     }),
     provideHttpClient(withInterceptors([authInterceptor, languageInterceptor])),
-    provideApi(environment.apiBase),
+    // Prod: apiBase comes from the runtime config (window.__TM_API_BASE_URL,
+    // injected by nginx from SSM → https://tm-api.foxugly.com). Dev: falls back
+    // to environment.apiBase (the local backend). See core/runtime-config.ts.
+    provideApi(getRuntimeConfig().apiBaseUrl),
     provideTransloco({
       config: {
         availableLangs: ['fr', 'nl', 'en', 'it', 'es'],
