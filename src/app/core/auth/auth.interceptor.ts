@@ -1,7 +1,7 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, switchMap, throwError } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { getRuntimeConfig } from '../runtime-config';
 import { AuthService } from './auth.service';
 import { TokenStorage } from './token.storage';
 
@@ -20,7 +20,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
 
   const isAuthEndpoint = AUTH_PATHS.some((path) => req.url.includes(path));
-  const isApiCall = req.url.startsWith(environment.apiBase);
+  const isApiCall = req.url.startsWith(getRuntimeConfig().apiBaseUrl);
 
   if (!isApiCall || isAuthEndpoint) {
     return next(req);
