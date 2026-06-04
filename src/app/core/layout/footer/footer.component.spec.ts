@@ -40,8 +40,16 @@ describe('FooterComponent', () => {
     expect(text).toMatch(/\d+\.\d+\.\d+/);
   });
 
-  it('renders 3 separator dots between the segments', () => {
+  it('renders 2 separator dots between the segments', () => {
+    // brand · tagline [fill] version · copyright(© year + author + rights)
     const seps = fixture.nativeElement.querySelectorAll('.footer-sep');
-    expect(seps.length).toBe(3);
+    expect(seps.length).toBe(2);
+  });
+
+  it('renders the Foxugly author link with logo + rights', () => {
+    const html = fixture.nativeElement.innerHTML as string;
+    expect(html).toContain('footer.author');
+    expect(html).toContain('footer.rights');
+    expect(fixture.nativeElement.querySelector('.footer-author-logo')).toBeTruthy();
   });
 });
