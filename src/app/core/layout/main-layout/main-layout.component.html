@@ -1,7 +1,11 @@
-<app-topmenu mode="authenticated" />
+<div class="app-shell">
+  <app-topmenu mode="authenticated" />
 
-<main class="main-container">
-  <router-outlet />
-</main>
+  <main class="main-container">
+    <router-outlet />
+  </main>
+
+  <app-footer />
+</div>
 
 <p-toast />
