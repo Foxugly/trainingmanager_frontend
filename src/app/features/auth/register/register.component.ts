@@ -27,7 +27,7 @@ import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { Password } from 'primeng/password';
 import { Select } from 'primeng/select';
-import { environment } from '../../../../environments/environment';
+import { getRuntimeConfig } from '../../../core/runtime-config';
 import { LanguageEnum } from '../../../api/model/language-enum';
 import { Register } from '../../../api/model/register';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -89,7 +89,7 @@ export class RegisterComponent implements AfterViewInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
-  protected readonly turnstileSiteKey = environment.turnstileSiteKey;
+  protected readonly turnstileSiteKey = getRuntimeConfig().turnstileSiteKey;
   protected readonly availableLanguages = AVAILABLE_LANGUAGES;
 
   protected readonly loading = signal(false);

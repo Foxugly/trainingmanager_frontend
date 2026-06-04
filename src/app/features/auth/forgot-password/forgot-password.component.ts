@@ -19,7 +19,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
-import { environment } from '../../../../environments/environment';
+import { getRuntimeConfig } from '../../../core/runtime-config';
 import { AuthService } from '../../../core/auth/auth.service';
 import { parseRetryAfterSeconds } from '../shared/retry-after';
 
@@ -51,7 +51,7 @@ export class ForgotPasswordComponent implements AfterViewInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
-  protected readonly turnstileSiteKey = environment.turnstileSiteKey;
+  protected readonly turnstileSiteKey = getRuntimeConfig().turnstileSiteKey;
 
   protected readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],

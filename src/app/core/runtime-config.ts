@@ -19,6 +19,7 @@ export interface RuntimeSentryConfig {
 export interface RuntimeConfig {
   apiBaseUrl: string;
   version: string;
+  turnstileSiteKey: string;
   sentry: RuntimeSentryConfig;
   features: Record<string, boolean>;
 }
@@ -26,6 +27,7 @@ export interface RuntimeConfig {
 interface RuntimeGlobals {
   __TM_API_BASE_URL?: string;
   __TM_VERSION?: string;
+  __TM_TURNSTILE_SITE_KEY?: string;
   __TM_SENTRY_DSN?: string;
   __TM_SENTRY_ENV?: string;
   __TM_SENTRY_RELEASE?: string;
@@ -61,6 +63,9 @@ export function getRuntimeConfig(): RuntimeConfig {
     // Prod: injected from SSM /tm-frontend/prod/VERSION (like quizonline). Dev /
     // unseeded: fall back to the build-time package.json version.
     version: trimmedOr(globals.__TM_VERSION, APP_VERSION),
+    // Cloudflare Turnstile public site key (captcha on register / forgot-password).
+    // Prod: SSM /tm-frontend/prod/TURNSTILE_SITE_KEY (rotate without a rebuild).
+    turnstileSiteKey: trimmedOr(globals.__TM_TURNSTILE_SITE_KEY, environment.turnstileSiteKey),
     sentry: {
       dsn: (globals.__TM_SENTRY_DSN ?? '').trim(),
       environment: trimmedOr(globals.__TM_SENTRY_ENV, DEFAULT_SENTRY_ENV),
