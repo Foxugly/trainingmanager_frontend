@@ -12,11 +12,11 @@
       <a [routerLink]="['/features']" routerLinkActive="active">
         <i class="pi pi-sparkles" aria-hidden="true"></i> {{ 'public.nav.features' | transloco }}
       </a>
-      <a [routerLink]="['/about']" routerLinkActive="active">
-        <i class="pi pi-info-circle" aria-hidden="true"></i> {{ 'public.nav.about' | transloco }}
-      </a>
       <a [routerLink]="['/contribute']" routerLinkActive="active" class="nav-cta">
         <i class="pi pi-heart" aria-hidden="true"></i> {{ 'public.nav.contribute' | transloco }}
+      </a>
+      <a [routerLink]="['/about']" routerLinkActive="active">
+        <i class="pi pi-info-circle" aria-hidden="true"></i> {{ 'public.nav.about' | transloco }}
       </a>
     } @else {
       <a [routerLink]="['/dashboard']" routerLinkActive="active">
@@ -66,11 +66,11 @@
           <a [routerLink]="['/features']" routerLinkActive="active" (click)="closeMobile()">
             <i class="pi pi-sparkles" aria-hidden="true"></i> {{ 'public.nav.features' | transloco }}
           </a>
-          <a [routerLink]="['/about']" routerLinkActive="active" (click)="closeMobile()">
-            <i class="pi pi-info-circle" aria-hidden="true"></i> {{ 'public.nav.about' | transloco }}
-          </a>
           <a [routerLink]="['/contribute']" routerLinkActive="active" class="nav-cta" (click)="closeMobile()">
             <i class="pi pi-heart" aria-hidden="true"></i> {{ 'public.nav.contribute' | transloco }}
+          </a>
+          <a [routerLink]="['/about']" routerLinkActive="active" (click)="closeMobile()">
+            <i class="pi pi-info-circle" aria-hidden="true"></i> {{ 'public.nav.about' | transloco }}
           </a>
         } @else {
           <a [routerLink]="['/dashboard']" routerLinkActive="active" (click)="closeMobile()">
