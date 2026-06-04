@@ -6,8 +6,11 @@
     <span class="footer-fill"></span>
     <span class="footer-meta">{{ 'footer.version_label' | transloco }}&nbsp;{{ version }}</span>
     <span class="footer-sep">·</span>
-    <span class="footer-meta">{{ 'footer.author' | transloco }}</span>
-    <span class="footer-sep">·</span>
-    <span class="footer-meta">© {{ year }}</span>
+    <span class="footer-meta footer-copyright">
+      © {{ year }}
+      <a href="https://www.foxugly.com" target="_blank" rel="noopener noreferrer" class="footer-author-link">
+        <img src="/foxugly-logo.svg" alt="" class="footer-author-logo" aria-hidden="true" />
+        {{ 'footer.author' | transloco }}</a>{{ 'footer.rights' | transloco }}
+    </span>
   </div>
 </footer>

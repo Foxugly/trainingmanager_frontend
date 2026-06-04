@@ -7,33 +7,33 @@
   <nav class="nav nav--desktop" [attr.aria-label]="'app.title' | transloco">
     @if (mode() === 'public') {
       <a [routerLink]="['/']" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-        {{ 'public.nav.home' | transloco }}
+        <i class="pi pi-home" aria-hidden="true"></i> {{ 'public.nav.home' | transloco }}
       </a>
       <a [routerLink]="['/features']" routerLinkActive="active">
-        {{ 'public.nav.features' | transloco }}
+        <i class="pi pi-sparkles" aria-hidden="true"></i> {{ 'public.nav.features' | transloco }}
       </a>
       <a [routerLink]="['/about']" routerLinkActive="active">
-        {{ 'public.nav.about' | transloco }}
+        <i class="pi pi-info-circle" aria-hidden="true"></i> {{ 'public.nav.about' | transloco }}
       </a>
       <a [routerLink]="['/contribute']" routerLinkActive="active" class="nav-cta">
-        {{ 'public.nav.contribute' | transloco }}
+        <i class="pi pi-heart" aria-hidden="true"></i> {{ 'public.nav.contribute' | transloco }}
       </a>
     } @else {
       <a [routerLink]="['/dashboard']" routerLinkActive="active">
-        {{ 'nav.dashboard' | transloco }}
+        <i class="pi pi-th-large" aria-hidden="true"></i> {{ 'nav.dashboard' | transloco }}
       </a>
       <a [routerLink]="['/teams']" routerLinkActive="active">
-        {{ 'nav.teams' | transloco }}
+        <i class="pi pi-users" aria-hidden="true"></i> {{ 'nav.teams' | transloco }}
       </a>
       <a [routerLink]="['/programs']" routerLinkActive="active">
-        {{ 'nav.programs' | transloco }}
+        <i class="pi pi-book" aria-hidden="true"></i> {{ 'nav.programs' | transloco }}
       </a>
       <a [routerLink]="['/events']" routerLinkActive="active">
-        {{ 'nav.calendar' | transloco }}
+        <i class="pi pi-calendar" aria-hidden="true"></i> {{ 'nav.calendar' | transloco }}
       </a>
       @if (isStaff()) {
         <a [routerLink]="['/admin']" routerLinkActive="active">
-          {{ 'nav.admin' | transloco }}
+          <i class="pi pi-cog" aria-hidden="true"></i> {{ 'nav.admin' | transloco }}
         </a>
       }
     }
@@ -61,33 +61,33 @@
       <nav class="nav nav--mobile" [attr.aria-label]="'app.title' | transloco">
         @if (mode() === 'public') {
           <a [routerLink]="['/']" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMobile()">
-            {{ 'public.nav.home' | transloco }}
+            <i class="pi pi-home" aria-hidden="true"></i> {{ 'public.nav.home' | transloco }}
           </a>
           <a [routerLink]="['/features']" routerLinkActive="active" (click)="closeMobile()">
-            {{ 'public.nav.features' | transloco }}
+            <i class="pi pi-sparkles" aria-hidden="true"></i> {{ 'public.nav.features' | transloco }}
           </a>
           <a [routerLink]="['/about']" routerLinkActive="active" (click)="closeMobile()">
-            {{ 'public.nav.about' | transloco }}
+            <i class="pi pi-info-circle" aria-hidden="true"></i> {{ 'public.nav.about' | transloco }}
           </a>
           <a [routerLink]="['/contribute']" routerLinkActive="active" class="nav-cta" (click)="closeMobile()">
-            {{ 'public.nav.contribute' | transloco }}
+            <i class="pi pi-heart" aria-hidden="true"></i> {{ 'public.nav.contribute' | transloco }}
           </a>
         } @else {
           <a [routerLink]="['/dashboard']" routerLinkActive="active" (click)="closeMobile()">
-            {{ 'nav.dashboard' | transloco }}
+            <i class="pi pi-th-large" aria-hidden="true"></i> {{ 'nav.dashboard' | transloco }}
           </a>
           <a [routerLink]="['/teams']" routerLinkActive="active" (click)="closeMobile()">
-            {{ 'nav.teams' | transloco }}
+            <i class="pi pi-users" aria-hidden="true"></i> {{ 'nav.teams' | transloco }}
           </a>
           <a [routerLink]="['/programs']" routerLinkActive="active" (click)="closeMobile()">
-            {{ 'nav.programs' | transloco }}
+            <i class="pi pi-book" aria-hidden="true"></i> {{ 'nav.programs' | transloco }}
           </a>
           <a [routerLink]="['/events']" routerLinkActive="active" (click)="closeMobile()">
-            {{ 'nav.calendar' | transloco }}
+            <i class="pi pi-calendar" aria-hidden="true"></i> {{ 'nav.calendar' | transloco }}
           </a>
           @if (isStaff()) {
             <a [routerLink]="['/admin']" routerLinkActive="active" (click)="closeMobile()">
-              {{ 'nav.admin' | transloco }}
+              <i class="pi pi-cog" aria-hidden="true"></i> {{ 'nav.admin' | transloco }}
             </a>
           }
         }

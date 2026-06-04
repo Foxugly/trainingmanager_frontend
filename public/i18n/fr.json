@@ -590,7 +590,8 @@
   },
   "footer": {
     "author": "Foxugly",
-    "version_label": "Version"
+    "version_label": "Version",
+    "rights": ". Tous droits réservés."
   },
   "public": {
     "nav": {

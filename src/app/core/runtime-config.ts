@@ -8,6 +8,7 @@
  * are public by nature (API URL, Sentry DSN, feature flags). Never a secret.
  */
 import { environment } from '../../environments/environment';
+import { APP_VERSION } from '../shared/app-version';
 
 export interface RuntimeSentryConfig {
   dsn: string;
@@ -17,12 +18,14 @@ export interface RuntimeSentryConfig {
 
 export interface RuntimeConfig {
   apiBaseUrl: string;
+  version: string;
   sentry: RuntimeSentryConfig;
   features: Record<string, boolean>;
 }
 
 interface RuntimeGlobals {
   __TM_API_BASE_URL?: string;
+  __TM_VERSION?: string;
   __TM_SENTRY_DSN?: string;
   __TM_SENTRY_ENV?: string;
   __TM_SENTRY_RELEASE?: string;
@@ -55,6 +58,9 @@ export function getRuntimeConfig(): RuntimeConfig {
     // Prod: injected by nginx (window.__TM_API_BASE_URL = https://tm-api.foxugly.com).
     // Dev / ng serve: no global → fall back to environment.apiBase (local backend).
     apiBaseUrl: trimmedOr(globals.__TM_API_BASE_URL, environment.apiBase),
+    // Prod: injected from SSM /tm-frontend/prod/VERSION (like quizonline). Dev /
+    // unseeded: fall back to the build-time package.json version.
+    version: trimmedOr(globals.__TM_VERSION, APP_VERSION),
     sentry: {
       dsn: (globals.__TM_SENTRY_DSN ?? '').trim(),
       environment: trimmedOr(globals.__TM_SENTRY_ENV, DEFAULT_SENTRY_ENV),

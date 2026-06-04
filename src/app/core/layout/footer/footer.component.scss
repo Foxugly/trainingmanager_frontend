@@ -41,6 +41,30 @@
   flex: 1 1 auto;
 }
 
+.footer-copyright {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.footer-author-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.footer-author-link:hover {
+  text-decoration: underline;
+}
+
+.footer-author-logo {
+  height: 0.9rem;
+  width: auto;
+  vertical-align: middle;
+}
+
 :host-context(.dark-mode) {
   .footer {
     background: #0f172a;

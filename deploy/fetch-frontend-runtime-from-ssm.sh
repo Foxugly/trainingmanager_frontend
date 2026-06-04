@@ -45,6 +45,7 @@ with open(raw_path) as fh:
 
 values = {
     "API_BASE_URL": "",
+    "VERSION": "",
     "SENTRY_DSN": "",
     "SENTRY_ENV": "production",
     "SENTRY_RELEASE": "",
@@ -78,6 +79,7 @@ lines = [
     f"# Source of truth: AWS SSM {prefix}/* . Manual edits are overwritten on the",
     "# next service restart / deploy.",
     f'set $tm_api_base       "{values["API_BASE_URL"]}";',
+    f'set $tm_version        "{values["VERSION"]}";',
     f'set $tm_sentry_dsn     "{values["SENTRY_DSN"]}";',
     f'set $tm_sentry_env     "{values["SENTRY_ENV"]}";',
     f'set $tm_sentry_release "{values["SENTRY_RELEASE"]}";',

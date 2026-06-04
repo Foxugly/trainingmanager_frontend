@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { APP_VERSION } from '../../../shared/app-version';
+import { getRuntimeConfig } from '../../runtime-config';
 
 @Component({
   selector: 'app-footer',
@@ -10,6 +10,8 @@ import { APP_VERSION } from '../../../shared/app-version';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FooterComponent {
-  protected readonly version = APP_VERSION;
+  // Runtime version (SSM-injected window.__TM_VERSION), build-time package.json
+  // as fallback. Mirrors quizonline's runtime-sourced footer version.
+  protected readonly version = getRuntimeConfig().version;
   protected readonly year = new Date().getFullYear();
 }
