@@ -24,7 +24,6 @@ const staffUser: Me = { ...baseUser, id: 1, username: 'admin', is_staff: true };
 interface ProtectedFields {
   isAuthenticated(): boolean;
   isStaff(): boolean;
-  initials(): string;
   displayName(): string;
   menuItems(): MenuItem[];
   logout(): void;
@@ -92,10 +91,6 @@ describe('UserMenuComponent', () => {
       expect(access(component).isStaff()).toBe(false);
     });
 
-    it('initials are built from first_name + last_name', () => {
-      expect(access(component).initials()).toBe('RV');
-    });
-
     it('displayName uses "first last" when both are present', () => {
       expect(access(component).displayName()).toBe('Renaud Vilain');
     });
@@ -132,9 +127,8 @@ describe('UserMenuComponent', () => {
       expect(labels).toContain('public.user_menu.admin');
     });
 
-    it('initials fallback to first letter of username when first/last names are empty', async () => {
+    it('displayName falls back to username when first/last names are empty', async () => {
       await setup({ ...staffUser, first_name: '', last_name: '' } as Me);
-      expect(access(component).initials()).toBe('A');
       expect(access(component).displayName()).toBe('admin');
     });
   });

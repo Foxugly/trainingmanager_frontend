@@ -82,7 +82,8 @@ describe('LanguageSwitcherComponent', () => {
     expect(items.length).toBe(5);
     const active = fixture.nativeElement.querySelector('[role="menuitem"][aria-current="true"]') as HTMLElement;
     expect(active).not.toBeNull();
-    expect(active.textContent).toContain('English');
+    expect(active.textContent).toContain('en');
+    expect(active.textContent).not.toContain('English');
   });
 
   it('select() calls switchLanguage and closes', () => {

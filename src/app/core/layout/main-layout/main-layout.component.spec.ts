@@ -72,10 +72,12 @@ describe('MainLayoutComponent', () => {
     expect(html).not.toContain('nav.admin');
   });
 
-  it('exposes the admin nav link only when current user is staff', async () => {
+  it('does not render an admin link in the center nav even for staff (admin lives in the user menu)', async () => {
     await setup(staffUser);
     const html = fixture.nativeElement.innerHTML as string;
-    expect(html).toContain('nav.admin');
+    expect(html).not.toContain('nav.admin');
+    // The Soutenir CTA is the last center nav item in authenticated mode.
+    expect(html).toContain('public.nav.support');
   });
 
   it('does not expose admin link when current user is null', async () => {

@@ -31,11 +31,9 @@
       <a [routerLink]="['/events']" routerLinkActive="active">
         <i class="pi pi-calendar" aria-hidden="true"></i> {{ 'nav.calendar' | transloco }}
       </a>
-      @if (isStaff()) {
-        <a [routerLink]="['/admin']" routerLinkActive="active">
-          <i class="pi pi-cog" aria-hidden="true"></i> {{ 'nav.admin' | transloco }}
-        </a>
-      }
+      <a [routerLink]="['/contribute']" routerLinkActive="active" class="nav-cta">
+        <i class="pi pi-heart" aria-hidden="true"></i> {{ 'public.nav.support' | transloco }}
+      </a>
     }
   </nav>
 
@@ -85,11 +83,9 @@
           <a [routerLink]="['/events']" routerLinkActive="active" (click)="closeMobile()">
             <i class="pi pi-calendar" aria-hidden="true"></i> {{ 'nav.calendar' | transloco }}
           </a>
-          @if (isStaff()) {
-            <a [routerLink]="['/admin']" routerLinkActive="active" (click)="closeMobile()">
-              <i class="pi pi-cog" aria-hidden="true"></i> {{ 'nav.admin' | transloco }}
-            </a>
-          }
+          <a [routerLink]="['/contribute']" routerLinkActive="active" class="nav-cta" (click)="closeMobile()">
+            <i class="pi pi-heart" aria-hidden="true"></i> {{ 'public.nav.support' | transloco }}
+          </a>
         }
       </nav>
       <div class="actions actions--mobile">

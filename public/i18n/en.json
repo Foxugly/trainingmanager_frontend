@@ -613,7 +613,8 @@
       "home": "Home",
       "features": "Features",
       "about": "About",
-      "contribute": "Contribute"
+      "contribute": "Contribute",
+      "support": "Support"
     },
     "user_menu": {
       "login": "Sign in",

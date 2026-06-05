@@ -11,16 +11,13 @@
 } @else {
   <button
     type="button"
-    class="inline-flex h-9 min-w-9 items-center justify-center gap-2 rounded-full border border-gray-200 bg-white px-2 text-sm font-semibold text-gray-700 shadow-sm transition hover:border-emerald-300 hover:text-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
+    class="um-trigger"
     [attr.aria-label]="displayName()"
     [attr.aria-haspopup]="'menu'"
     (click)="menu.toggle($event)"
   >
-    <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 text-xs font-bold text-white">
-      {{ initials() }}
-    </span>
-    <span class="hidden md:inline">{{ displayName() }}</span>
-    <i class="pi pi-chevron-down text-[10px]" aria-hidden="true"></i>
+    <i class="pi pi-user" aria-hidden="true"></i>
+    <span>{{ displayName() }}</span>
   </button>
   <p-menu #menu [model]="menuItems()" [popup]="true" appendTo="body" />
 }

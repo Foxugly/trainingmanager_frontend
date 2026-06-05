@@ -21,19 +21,6 @@ export class UserMenuComponent {
   protected readonly isAuthenticated = computed(() => this.currentUser() !== null);
   protected readonly isStaff = computed(() => this.currentUser()?.is_staff === true);
 
-  protected readonly initials = computed<string>(() => {
-    const u = this.currentUser();
-    if (!u) return '';
-    const f = u.first_name?.trim() ?? '';
-    const l = u.last_name?.trim() ?? '';
-    if (f || l) {
-      const a = f ? f.charAt(0).toUpperCase() : '';
-      const b = l ? l.charAt(0).toUpperCase() : '';
-      return `${a}${b}`.trim() || u.username.charAt(0).toUpperCase();
-    }
-    return (u.username || '?').charAt(0).toUpperCase();
-  });
-
   protected readonly displayName = computed<string>(() => {
     const u = this.currentUser();
     if (!u) return '';

@@ -84,15 +84,23 @@ describe('TopmenuComponent', () => {
     expect(html).toContain('nav.teams');
     expect(html).toContain('nav.programs');
     expect(html).toContain('nav.calendar');
-    expect(html).not.toContain('public.nav.contribute');
+    expect(html).toContain('public.nav.support');
   });
 
-  it('authenticated mode shows Admin link only to staff', async () => {
+  it('authenticated mode does NOT render an Admin link in the center nav (even for staff)', async () => {
     await setup({ mode: 'authenticated', user: baseUser });
     expect(fixture.nativeElement.innerHTML).not.toContain('nav.admin');
 
     await setup({ mode: 'authenticated', user: staffUser });
-    expect(fixture.nativeElement.innerHTML).toContain('nav.admin');
+    expect(fixture.nativeElement.innerHTML).not.toContain('nav.admin');
+  });
+
+  it('authenticated mode renders the Soutenir CTA as a nav-cta link to /contribute', async () => {
+    await setup({ mode: 'authenticated', user: baseUser });
+    const cta = fixture.nativeElement.querySelector('a.nav-cta') as HTMLAnchorElement | null;
+    expect(cta).toBeTruthy();
+    expect(cta!.getAttribute('href')).toBe('/contribute');
+    expect(cta!.innerHTML).toContain('public.nav.support');
   });
 
   it('mobile menu starts closed; toggle/close mutate the signal', async () => {

@@ -24,7 +24,6 @@
           (click)="select(lang.code)"
         >
           <span class="ls-chip">{{ lang.code }}</span>
-          <span class="ls-name">{{ lang.nativeName }}</span>
           @if (lang.code === current()) {
             <i class="pi pi-check ls-check" aria-hidden="true"></i>
           }
