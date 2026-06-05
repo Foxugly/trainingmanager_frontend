@@ -1,10 +1,10 @@
-import { KeyValuePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
   OnInit,
+  computed,
   inject,
   signal,
 } from '@angular/core';
@@ -12,41 +12,51 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
-import { Checkbox } from 'primeng/checkbox';
+import { ConfirmDialog } from 'primeng/confirmdialog';
 import { InputText } from 'primeng/inputtext';
-import { Message } from 'primeng/message';
 import { MultiSelect } from 'primeng/multiselect';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
+import { Tooltip } from 'primeng/tooltip';
 import { EnergySystemsService } from '../../../../api/api/energy-systems.service';
 import { SportsService } from '../../../../api/api/sports.service';
 import { EnergySystem } from '../../../../api/model/energy-system';
 import { PatchedSportAdmin } from '../../../../api/model/patched-sport-admin';
 import { SportAdmin } from '../../../../api/model/sport-admin';
-
-interface FieldErrors {
-  [field: string]: string[];
-}
+import { type FieldErrors, extractServerError } from '../../../../shared/forms/notify-error';
+import {
+  ActiveToggleComponent,
+  type ActiveToggleLabels,
+} from '../../../../shared/ui/active-toggle/active-toggle.component';
+import { FormFooterComponent } from '../../../../shared/ui/form-footer/form-footer.component';
+import { MetaFieldComponent } from '../../../../shared/ui/meta-field/meta-field.component';
+import { PageHeaderComponent } from '../../../../shared/ui/page-header/page-header.component';
+import { StatusBadgeComponent } from '../../../../shared/ui/status-badge/status-badge.component';
 
 @Component({
   selector: 'app-sports-form',
   imports: [
-    KeyValuePipe,
     ReactiveFormsModule,
     RouterLink,
     InputText,
     MultiSelect,
-    Checkbox,
     Button,
-    Message,
+    ConfirmDialog,
     Tabs,
     TabList,
     Tab,
     TabPanels,
     TabPanel,
+    Tooltip,
+    PageHeaderComponent,
+    StatusBadgeComponent,
+    ActiveToggleComponent,
+    MetaFieldComponent,
+    FormFooterComponent,
     TranslocoPipe,
   ],
+  providers: [ConfirmationService],
   templateUrl: './sports-form.component.html',
   styleUrl: './sports-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -65,8 +75,19 @@ export class SportsFormComponent implements OnInit {
   protected readonly loading = signal(false);
   protected readonly saving = signal(false);
   protected readonly availableEnergySystems = signal<EnergySystem[]>([]);
-  protected readonly errorMessage = signal<string | null>(null);
   protected readonly fieldErrors = signal<FieldErrors | null>(null);
+  protected readonly activeValue = signal(true);
+
+  protected readonly patchActive = (id: number, value: boolean) =>
+    this.sportsService.sportsPartialUpdate(id, undefined, { is_active: value } as PatchedSportAdmin);
+
+  protected readonly activeLabels = computed<ActiveToggleLabels>(() => ({
+    active: this.transloco.translate('common.active'),
+    inactive: this.transloco.translate('common.inactive'),
+    confirm: this.transloco.translate('common.confirm_deactivate'),
+    errorSummary: this.transloco.translate('common.error'),
+    errorDetail: this.transloco.translate('common.update_failed'),
+  }));
 
   protected readonly form = this.fb.nonNullable.group({
     name_fr: [''],
@@ -76,7 +97,6 @@ export class SportsFormComponent implements OnInit {
     name_es: [''],
     slug: ['', Validators.required],
     energy_systems: [[] as number[]],
-    is_active: [true],
   });
 
   ngOnInit(): void {
@@ -96,6 +116,7 @@ export class SportsFormComponent implements OnInit {
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (sport) => {
+            this.activeValue.set(sport.is_active ?? true);
             this.form.reset({
               name_fr: sport.name_fr ?? '',
               name_nl: sport.name_nl ?? '',
@@ -104,16 +125,23 @@ export class SportsFormComponent implements OnInit {
               name_es: sport.name_es ?? '',
               slug: sport.slug,
               energy_systems: sport.energy_systems ?? [],
-              is_active: sport.is_active ?? true,
             });
             this.loading.set(false);
           },
           error: () => {
-            this.errorMessage.set('admin.sports.errors.unknown');
+            this.notifyLoadError();
             this.loading.set(false);
           },
         });
     }
+  }
+
+  protected fieldError(name: string): string | null {
+    return this.fieldErrors()?.[name]?.join(', ') ?? null;
+  }
+
+  protected cancel(): void {
+    this.router.navigate(['/admin/sports']);
   }
 
   protected submit(): void {
@@ -121,7 +149,6 @@ export class SportsFormComponent implements OnInit {
       return;
     }
     this.saving.set(true);
-    this.errorMessage.set(null);
     this.fieldErrors.set(null);
 
     const value = this.form.getRawValue();
@@ -135,11 +162,10 @@ export class SportsFormComponent implements OnInit {
       name_es: value.name_es || null,
       slug: value.slug,
       energy_systems: value.energy_systems,
-      is_active: value.is_active,
     };
 
     const request$ = id
-      ? this.sportsService.sportsPartialUpdate(id, true, payload as PatchedSportAdmin)
+      ? this.sportsService.sportsPartialUpdate(id, undefined, payload as PatchedSportAdmin)
       : this.sportsService.sportsCreate(payload as unknown as SportAdmin);
 
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
@@ -159,31 +185,25 @@ export class SportsFormComponent implements OnInit {
     });
   }
 
+  private notifyLoadError(): void {
+    this.messageService.add({
+      severity: 'error',
+      summary: this.transloco.translate('common.error'),
+      detail: this.transloco.translate('admin.sports.errors.unknown'),
+    });
+  }
+
   private applyServerError(err: HttpErrorResponse): void {
-    const body = err?.error as
-      | { code?: string; detail?: string; fields?: FieldErrors }
-      | null
-      | undefined;
-
-    if (body?.fields && Object.keys(body.fields).length > 0) {
-      this.fieldErrors.set(body.fields);
-      return;
+    const { fields, detail } = extractServerError(err);
+    this.fieldErrors.set(fields);
+    if (!fields) {
+      this.messageService.add({
+        severity: 'error',
+        summary: this.transloco.translate('common.error'),
+        detail: detail
+          ? this.transloco.translate(detail)
+          : this.transloco.translate('admin.sports.errors.unknown'),
+      });
     }
-
-    if (body && typeof body === 'object') {
-      const fieldEntries: FieldErrors = {};
-      for (const [key, value] of Object.entries(body)) {
-        if (key === 'code' || key === 'detail' || key === 'fields') continue;
-        if (Array.isArray(value)) {
-          fieldEntries[key] = value.filter((m): m is string => typeof m === 'string');
-        }
-      }
-      if (Object.keys(fieldEntries).length > 0) {
-        this.fieldErrors.set(fieldEntries);
-        return;
-      }
-    }
-
-    this.errorMessage.set(body?.detail ?? 'admin.sports.errors.unknown');
   }
 }

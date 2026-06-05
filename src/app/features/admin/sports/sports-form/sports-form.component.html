@@ -1,142 +1,88 @@
-<div class="max-w-3xl">
-  <a [routerLink]="['/admin/sports']" class="text-sm text-blue-600 hover:underline">
-    ← {{ 'common.back' | transloco }}
-  </a>
-
-  <h1 class="text-2xl font-bold mb-6 mt-2">
+<div class="page page--narrow">
+  <app-page-header [title]="(sportId() ? 'admin.sports.form.edit_title' : 'admin.sports.form.new_title') | transloco">
+    <p-button
+      slot="left"
+      type="button"
+      severity="secondary"
+      [outlined]="true"
+      icon="pi pi-arrow-left"
+      [label]="'common.back' | transloco"
+      [routerLink]="['/admin/sports']"
+    />
     @if (sportId()) {
-      {{ 'admin.sports.form.edit_title' | transloco }}
-    } @else {
-      {{ 'admin.sports.form.new_title' | transloco }}
-    }
-  </h1>
-
-  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-5">
-    <div class="flex flex-col gap-2">
-      <label for="slug" class="text-sm font-medium text-gray-700">
-        {{ 'admin.sports.form.slug' | transloco }}
-      </label>
-      <input pInputText id="slug" formControlName="slug" class="w-full" />
-    </div>
-
-    <div class="flex flex-col gap-2">
-      <span class="text-sm font-medium text-gray-700">
-        {{ 'admin.sports.fields.name' | transloco }}
-      </span>
-      <p-tabs value="fr">
-        <p-tablist>
-          <p-tab value="fr">FR</p-tab>
-          <p-tab value="nl">NL</p-tab>
-          <p-tab value="en">EN</p-tab>
-          <p-tab value="it">IT</p-tab>
-          <p-tab value="es">ES</p-tab>
-        </p-tablist>
-        <p-tabpanels>
-          <p-tabpanel value="fr">
-            <input
-              pInputText
-              formControlName="name_fr"
-              placeholder="Français"
-              class="w-full"
-            />
-          </p-tabpanel>
-          <p-tabpanel value="nl">
-            <input
-              pInputText
-              formControlName="name_nl"
-              placeholder="Nederlands"
-              class="w-full"
-            />
-          </p-tabpanel>
-          <p-tabpanel value="en">
-            <input
-              pInputText
-              formControlName="name_en"
-              placeholder="English"
-              class="w-full"
-            />
-          </p-tabpanel>
-          <p-tabpanel value="it">
-            <input
-              pInputText
-              formControlName="name_it"
-              placeholder="Italiano"
-              class="w-full"
-            />
-          </p-tabpanel>
-          <p-tabpanel value="es">
-            <input
-              pInputText
-              formControlName="name_es"
-              placeholder="Español"
-              class="w-full"
-            />
-          </p-tabpanel>
-        </p-tabpanels>
-      </p-tabs>
-    </div>
-
-    <div class="flex flex-col gap-2">
-      <label class="text-sm font-medium text-gray-700">
-        {{ 'admin.sports.form.energy_systems' | transloco }}
-      </label>
-      <p-multiSelect
-        [options]="availableEnergySystems()"
-        formControlName="energy_systems"
-        optionLabel="name"
-        optionValue="id"
-        [placeholder]="'admin.sports.form.energy_systems_placeholder' | transloco"
-        [filter]="true"
-        styleClass="w-full"
+      <app-status-badge
+        slot="title-after"
+        [kind]="activeValue() ? 'active' : 'inactive'"
+        [label]="(activeValue() ? 'common.active' : 'common.inactive') | transloco"
       />
-    </div>
-
-    @if (sportId()) {
-      <div class="flex items-center gap-2">
-        <p-checkbox formControlName="is_active" [binary]="true" inputId="is_active" />
-        <label for="is_active" class="text-sm text-gray-700 cursor-pointer">
-          {{ 'admin.sports.form.is_active' | transloco }}
-        </label>
-      </div>
-
-      <div class="border-t border-gray-200 pt-4 mt-2">
-        <a
-          [routerLink]="['/admin/sports', sportId(), 'modalities']"
-          class="inline-flex items-center gap-2 text-blue-600 hover:underline"
-        >
-          <i class="pi pi-tags"></i>
-          {{ 'admin.sports.form.manage_modalities' | transloco }} →
-        </a>
-      </div>
-    }
-
-    @if (errorMessage(); as msg) {
-      <p-message severity="error" [text]="msg | transloco" />
-    }
-
-    @if (fieldErrors(); as errors) {
-      <div class="flex flex-col gap-1">
-        @for (entry of errors | keyvalue; track entry.key) {
-          <p-message severity="warn" [text]="entry.key + ': ' + entry.value.join(', ')" />
-        }
-      </div>
-    }
-
-    <div class="flex justify-end gap-2 mt-2">
-      <a [routerLink]="['/admin/sports']">
-        <p-button
-          type="button"
-          severity="secondary"
-          [text]="true"
-          [label]="'common.cancel' | transloco"
-        />
-      </a>
+      <app-active-toggle
+        slot="right"
+        [entityId]="sportId()!"
+        [value]="activeValue()"
+        [patch]="patchActive"
+        [labels]="activeLabels()"
+        (valueChange)="activeValue.set($event)"
+      />
       <p-button
-        type="submit"
-        [label]="'common.save' | transloco"
-        [loading]="saving()"
-        [disabled]="form.invalid"
+        slot="right"
+        type="button"
+        severity="secondary"
+        [outlined]="true"
+        icon="pi pi-tags"
+        [pTooltip]="'admin.sports.form.manage_modalities' | transloco"
+        tooltipPosition="bottom"
+        [attr.aria-label]="'admin.sports.form.manage_modalities' | transloco"
+        [routerLink]="['/admin/sports', sportId(), 'modalities']"
       />
-    </div>
-  </form>
+    }
+  </app-page-header>
+
+  <div class="card form-card">
+    <form [formGroup]="form">
+      <div class="meta-grid">
+        <app-meta-field [label]="'admin.sports.form.slug' | transloco" for="slug" [error]="fieldError('slug')">
+          <input pInputText id="slug" formControlName="slug" />
+        </app-meta-field>
+        <app-meta-field [label]="'admin.sports.form.energy_systems' | transloco">
+          <p-multiSelect
+            [options]="availableEnergySystems()"
+            formControlName="energy_systems"
+            optionLabel="name"
+            optionValue="id"
+            [filter]="true"
+            [placeholder]="'admin.sports.form.energy_systems_placeholder' | transloco"
+          />
+        </app-meta-field>
+        <app-meta-field [full]="true" [label]="'admin.sports.fields.name' | transloco">
+          <p-tabs value="fr" class="builder-tabs">
+            <p-tablist>
+              <p-tab value="fr">FR</p-tab>
+              <p-tab value="nl">NL</p-tab>
+              <p-tab value="en">EN</p-tab>
+              <p-tab value="it">IT</p-tab>
+              <p-tab value="es">ES</p-tab>
+            </p-tablist>
+            <p-tabpanels>
+              <p-tabpanel value="fr"><input pInputText formControlName="name_fr" placeholder="Français" class="w-full" /></p-tabpanel>
+              <p-tabpanel value="nl"><input pInputText formControlName="name_nl" placeholder="Nederlands" class="w-full" /></p-tabpanel>
+              <p-tabpanel value="en"><input pInputText formControlName="name_en" placeholder="English" class="w-full" /></p-tabpanel>
+              <p-tabpanel value="it"><input pInputText formControlName="name_it" placeholder="Italiano" class="w-full" /></p-tabpanel>
+              <p-tabpanel value="es"><input pInputText formControlName="name_es" placeholder="Español" class="w-full" /></p-tabpanel>
+            </p-tabpanels>
+          </p-tabs>
+        </app-meta-field>
+      </div>
+    </form>
+
+    <app-form-footer
+      [saving]="saving()"
+      [disabled]="form.invalid"
+      [cancelLabel]="'common.cancel' | transloco"
+      [saveLabel]="'common.save' | transloco"
+      (cancel)="cancel()"
+      (save)="submit()"
+    />
+  </div>
+
+  <p-confirmDialog />
 </div>
