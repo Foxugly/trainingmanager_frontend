@@ -7,18 +7,21 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
  */
 @Component({
   selector: 'app-meta-field',
+  // The host element IS the `.meta-item` grid cell, so `meta-item--full`
+  // (grid-column: 1 / -1) lands on the actual grid item — wrapping the
+  // markup in an inner div would put the span class on a non-grid child
+  // and silently no-op.
+  host: { class: 'meta-item', '[class.meta-item--full]': 'full()' },
   template: `
-    <div class="meta-item" [class.meta-item--full]="full()">
-      <label class="meta-label" [attr.for]="for()">{{ label() }}</label>
-      <div class="meta-value">
-        <ng-content />
-      </div>
-      @if (error()) {
-        <div class="meta-hint meta-hint--error">{{ error() }}</div>
-      } @else if (hint()) {
-        <div class="meta-hint">{{ hint() }}</div>
-      }
+    <label class="meta-label" [attr.for]="for()">{{ label() }}</label>
+    <div class="meta-value">
+      <ng-content />
     </div>
+    @if (error()) {
+      <div class="meta-hint meta-hint--error">{{ error() }}</div>
+    } @else if (hint()) {
+      <div class="meta-hint">{{ hint() }}</div>
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
