@@ -11,9 +11,9 @@ import {
   untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Tooltip } from 'primeng/tooltip';
@@ -21,6 +21,7 @@ import { EventsService } from '../../../api/api/events.service';
 import { ProgramsService } from '../../../api/api/programs.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { Event } from '../../../api/model/event';
+import { PatchedProgram } from '../../../api/model/patched-program';
 import { Program } from '../../../api/model/program';
 import { Team } from '../../../api/model/team';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -31,6 +32,10 @@ import {
   GenerateEventsResult,
 } from '../generate-events-dialog/generate-events-dialog.component';
 import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-header.component';
+import {
+  ActiveToggleComponent,
+  ActiveToggleLabels,
+} from '../../../shared/ui/active-toggle/active-toggle.component';
 
 const HEX_RE = /^#([0-9a-f]{6}|[0-9a-f]{3})$/i;
 
@@ -102,6 +107,7 @@ function eventDateAsDate(e: Event): Date | null {
     Tooltip,
     TranslocoPipe,
     DetailHeaderComponent,
+    ActiveToggleComponent,
   ],
   templateUrl: './programs-detail.component.html',
   styleUrl: './programs-detail.component.scss',
@@ -110,14 +116,11 @@ function eventDateAsDate(e: Event): Date | null {
 })
 export class ProgramsDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
   private readonly programsService = inject(ProgramsService);
   private readonly teamsService = inject(TeamsService);
   private readonly eventsService = inject(EventsService);
   private readonly authService = inject(AuthService);
   private readonly languageService = inject(LanguageService);
-  private readonly confirmationService = inject(ConfirmationService);
-  private readonly messageService = inject(MessageService);
   private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -126,7 +129,17 @@ export class ProgramsDetailComponent implements OnInit {
   protected readonly team = signal<Team | null>(null);
   protected readonly loading = signal(false);
   protected readonly notFound = signal(false);
-  protected readonly archiving = signal(false);
+
+  protected readonly activeValue = signal(false);
+  protected readonly patchActive = (id: number, value: boolean) =>
+    this.programsService.programsPartialUpdate(id, undefined, { is_active: value } as PatchedProgram);
+  protected readonly activeLabels = computed<ActiveToggleLabels>(() => ({
+    active: this.transloco.translate('common.active'),
+    inactive: this.transloco.translate('common.inactive'),
+    confirm: this.transloco.translate('common.confirm_deactivate'),
+    errorSummary: this.transloco.translate('common.error'),
+    errorDetail: this.transloco.translate('common.update_failed'),
+  }));
 
   protected readonly events = signal<Event[]>([]);
   protected readonly loadingEvents = signal(false);
@@ -266,6 +279,7 @@ export class ProgramsDetailComponent implements OnInit {
       .subscribe({
         next: (p) => {
           this.program.set(p);
+          this.activeValue.set(p.is_active ?? true);
           this.loading.set(false);
           if (p.team?.id != null) {
             this.loadTeam(p.team.id);
@@ -396,71 +410,4 @@ export class ProgramsDetailComponent implements OnInit {
     }
   }
 
-  protected confirmArchive(): void {
-    const id = this.programId();
-    if (id === null) return;
-    this.confirmationService.confirm({
-      header: this.transloco.translate('programs.actions.archive_confirm_title'),
-      message: this.transloco.translate('programs.actions.archive_confirm_message'),
-      acceptLabel: this.transloco.translate('programs.actions.archive'),
-      rejectLabel: this.transloco.translate('common.cancel'),
-      acceptButtonStyleClass: 'p-button-danger',
-      accept: () => this.archive(id),
-    });
-  }
-
-  private archive(id: number): void {
-    this.archiving.set(true);
-    this.programsService
-      .programsPartialUpdate(id, undefined, { is_active: false })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (updated) => {
-          this.program.set(updated);
-          this.archiving.set(false);
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('programs.actions.archived'),
-          });
-          this.router.navigate(['/programs']);
-        },
-        error: () => {
-          this.archiving.set(false);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('programs.errors.unknown'),
-          });
-        },
-      });
-  }
-
-  protected restore(): void {
-    const id = this.programId();
-    if (id === null) return;
-    this.archiving.set(true);
-    this.programsService
-      .programsPartialUpdate(id, true, { is_active: true })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (updated) => {
-          this.program.set(updated);
-          this.archiving.set(false);
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('programs.actions.restored'),
-          });
-        },
-        error: () => {
-          this.archiving.set(false);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('programs.errors.unknown'),
-          });
-        },
-      });
-  }
 }

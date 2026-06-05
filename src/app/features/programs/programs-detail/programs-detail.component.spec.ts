@@ -73,7 +73,8 @@ interface ProtectedFields {
   program(): Program | null;
   loading(): boolean;
   notFound(): boolean;
-  archiving(): boolean;
+  activeValue(): boolean;
+  patchActive(id: number, value: boolean): unknown;
   canManage(): boolean;
   canGenerate(): boolean;
   isArchived(): boolean;
@@ -89,8 +90,6 @@ interface ProtectedFields {
   goToProgramStart(): void;
   openGenerateDialog(): void;
   onGenerated(r: { created: number; deleted: number; rationale: string }): void;
-  confirmArchive(): void;
-  restore(): void;
 }
 
 const eventA: Event = {
@@ -229,23 +228,19 @@ describe('ProgramsDetailComponent', () => {
     expect(serviceMock.programsRetrieve).toHaveBeenCalled();
   });
 
-  it('confirmArchive triggers a partialUpdate with is_active=false on accept and routes to /programs', () => {
-    const confirmation = fixture.debugElement.injector.get(ConfirmationService);
-    vi.spyOn(confirmation, 'confirm').mockImplementation((cfg) => {
-      cfg.accept?.();
-      return confirmation;
-    });
-    access(component).confirmArchive();
-    expect(serviceMock.programsPartialUpdate).toHaveBeenCalledWith(7, undefined, { is_active: false });
-    expect(router.navigate).toHaveBeenCalledWith(['/programs']);
+  it('seeds activeValue from program.is_active on load', () => {
+    expect(access(component).activeValue()).toBe(true);
   });
 
-  it('restore() patches with is_active=true and includeInactive=true to retrieve archived', async () => {
+  it('seeds activeValue=false for an archived program', async () => {
     await setup('7', archivedProgram);
-    serviceMock.programsPartialUpdate.mockReturnValueOnce(of({ ...archivedProgram, is_active: true }));
-    expect(access(component).isArchived()).toBe(true);
-    access(component).restore();
-    expect(serviceMock.programsPartialUpdate).toHaveBeenCalledWith(7, true, { is_active: true });
+    expect(access(component).activeValue()).toBe(false);
+  });
+
+  it('patchActive calls programsPartialUpdate with is_active as the 3rd arg (undefined 2nd)', () => {
+    serviceMock.programsPartialUpdate.mockClear();
+    access(component).patchActive(7, false);
+    expect(serviceMock.programsPartialUpdate).toHaveBeenCalledWith(7, undefined, { is_active: false });
   });
 
   it('isArchived reflects is_active=false', async () => {

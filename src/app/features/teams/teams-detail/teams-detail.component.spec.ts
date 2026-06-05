@@ -102,6 +102,8 @@ interface ProtectedFields {
   submitAddMember(): void;
   confirmRemoveMember(mb: TeamMembership): void;
   confirmDeactivate(): void;
+  activeValue(): boolean;
+  patchActive(id: number, value: boolean): unknown;
   addMemberForm: { patchValue(v: Record<string, unknown>): void; invalid: boolean };
   invitations(): TeamInvitation[];
   showInviteDialog(): boolean;
@@ -313,6 +315,16 @@ describe('TeamsDetailComponent', () => {
     access(component).confirmDeactivate();
     expect(serviceMock.teamsPartialUpdate).toHaveBeenCalledWith(4, { is_active: false });
     expect(router.navigate).toHaveBeenCalledWith(['/teams']);
+  });
+
+  it('seeds activeValue from team.is_active on load', () => {
+    expect(access(component).activeValue()).toBe(true);
+  });
+
+  it('patchActive calls teamsPartialUpdate with is_active as the 2nd arg', () => {
+    serviceMock.teamsPartialUpdate.mockClear();
+    access(component).patchActive(4, false);
+    expect(serviceMock.teamsPartialUpdate).toHaveBeenCalledWith(4, { is_active: false });
   });
 
   it('loads invitations on init filtered by team and pending status', () => {

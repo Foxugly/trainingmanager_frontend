@@ -19,16 +19,6 @@
             <i class="pi pi-box" aria-hidden="true"></i>
             <span class="font-medium">{{ 'programs.detail.archived_banner' | transloco }}</span>
           </div>
-          @if (canManage()) {
-            <p-button
-              [label]="'programs.actions.restore' | transloco"
-              icon="pi pi-replay"
-              severity="warn"
-              [outlined]="true"
-              [loading]="archiving()"
-              (onClick)="restore()"
-            />
-          }
         </div>
       }
 
@@ -39,11 +29,16 @@
       }
 
       @if (canManage()) {
+        <app-active-toggle detailHeaderActions
+          [entityId]="p.id" [value]="activeValue()" [patch]="patchActive"
+          [labels]="activeLabels()" (valueChange)="activeValue.set($event)" />
+      }
+      @if (canManage()) {
         <a detailHeaderActions [routerLink]="['/programs', p.id, 'edit']">
           <p-button
             icon="pi pi-pencil"
-            severity="secondary"
-            [text]="true"
+            severity="info"
+            [outlined]="true"
             [rounded]="true"
             [pTooltip]="'programs.actions.edit' | transloco"
             tooltipPosition="bottom"
@@ -55,27 +50,13 @@
         <p-button
           detailHeaderActions
           icon="pi pi-sparkles"
-          severity="secondary"
-          [text]="true"
+          severity="warn"
+          [outlined]="true"
           [rounded]="true"
           [pTooltip]="'programs.detail.generate' | transloco"
           tooltipPosition="bottom"
           [ariaLabel]="'programs.detail.generate' | transloco"
           (onClick)="openGenerateDialog()"
-        />
-      }
-      @if (canManage() && !isArchived()) {
-        <p-button
-          detailHeaderActions
-          icon="pi pi-box"
-          severity="danger"
-          [text]="true"
-          [rounded]="true"
-          [loading]="archiving()"
-          [pTooltip]="'programs.actions.archive' | transloco"
-          tooltipPosition="bottom"
-          [ariaLabel]="'programs.actions.archive' | transloco"
-          (onClick)="confirmArchive()"
         />
       }
 

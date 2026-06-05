@@ -31,8 +31,8 @@
         <a detailHeaderActions [routerLink]="['/events', e.id, 'edit']">
           <p-button
             icon="pi pi-pencil"
-            severity="secondary"
-            [text]="true"
+            severity="info"
+            [outlined]="true"
             [rounded]="true"
             [pTooltip]="'events.actions.edit' | transloco"
             tooltipPosition="bottom"
@@ -44,8 +44,8 @@
         <p-button
           detailHeaderActions
           icon="pi pi-sparkles"
-          severity="secondary"
-          [text]="true"
+          severity="warn"
+          [outlined]="true"
           [rounded]="true"
           [loading]="regenerating()"
           [pTooltip]="'events.detail.regenerate' | transloco"
@@ -59,7 +59,7 @@
           detailHeaderActions
           icon="pi pi-trash"
           severity="danger"
-          [text]="true"
+          [outlined]="true"
           [rounded]="true"
           [loading]="deleting()"
           [pTooltip]="'events.actions.delete' | transloco"

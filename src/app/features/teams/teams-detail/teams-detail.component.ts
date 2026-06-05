@@ -31,6 +31,7 @@ import { CreateInvitation } from '../../../api/model/create-invitation';
 import { CreateJoinRequest } from '../../../api/model/create-join-request';
 import { InvitationStatusEnum } from '../../../api/model/invitation-status-enum';
 import { JoinRequestStatusEnum } from '../../../api/model/join-request-status-enum';
+import { PatchedTeam } from '../../../api/model/patched-team';
 import { Team } from '../../../api/model/team';
 import { TeamInvitation } from '../../../api/model/team-invitation';
 import { TeamJoinRequest } from '../../../api/model/team-join-request';
@@ -40,6 +41,10 @@ import { MemberMembershipService } from '../member-membership.service';
 import { TeamRole } from '../teams-list/teams-list.component';
 import { ProgramsListComponent } from '../../programs/programs-list/programs-list.component';
 import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-header.component';
+import {
+  ActiveToggleComponent,
+  ActiveToggleLabels,
+} from '../../../shared/ui/active-toggle/active-toggle.component';
 
 interface FieldErrors {
   [field: string]: string[];
@@ -70,6 +75,7 @@ interface FieldErrors {
     TranslocoPipe,
     ProgramsListComponent,
     DetailHeaderComponent,
+    ActiveToggleComponent,
   ],
   templateUrl: './teams-detail.component.html',
   styleUrl: './teams-detail.component.scss',
@@ -95,6 +101,17 @@ export class TeamsDetailComponent implements OnInit {
   protected readonly memberships = signal<TeamMembership[]>([]);
   protected readonly loading = signal(false);
   protected readonly notFound = signal(false);
+
+  protected readonly activeValue = signal(false);
+  protected readonly patchActive = (id: number, value: boolean) =>
+    this.teamsService.teamsPartialUpdate(id, { is_active: value } as PatchedTeam);
+  protected readonly activeLabels = computed<ActiveToggleLabels>(() => ({
+    active: this.transloco.translate('common.active'),
+    inactive: this.transloco.translate('common.inactive'),
+    confirm: this.transloco.translate('common.confirm_deactivate'),
+    errorSummary: this.transloco.translate('common.error'),
+    errorDetail: this.transloco.translate('common.update_failed'),
+  }));
 
   protected readonly showAddMemberDialog = signal(false);
   protected readonly addingMember = signal(false);
@@ -228,6 +245,7 @@ export class TeamsDetailComponent implements OnInit {
       .subscribe({
         next: (t) => {
           this.team.set(t);
+          this.activeValue.set(t.is_active ?? true);
           this.loading.set(false);
           this.maybeLoadMyPendingRequest(t, id);
         },

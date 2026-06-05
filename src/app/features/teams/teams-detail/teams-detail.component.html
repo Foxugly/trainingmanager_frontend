@@ -17,11 +17,16 @@
       }
 
       @if (canManage()) {
+        <app-active-toggle detailHeaderActions
+          [entityId]="t.id" [value]="activeValue()" [patch]="patchActive"
+          [labels]="activeLabels()" (valueChange)="activeValue.set($event)" />
+      }
+      @if (canManage()) {
         <a detailHeaderActions [routerLink]="['/teams', t.id, 'edit']">
           <p-button
             icon="pi pi-pencil"
-            severity="secondary"
-            [text]="true"
+            severity="info"
+            [outlined]="true"
             [rounded]="true"
             [pTooltip]="'teams.detail.edit' | transloco"
             tooltipPosition="bottom"
