@@ -81,7 +81,9 @@
         "move_round_down": "Blok naar beneden verplaatsen",
         "edit_exercise": "Oefening bewerken",
         "delete_exercise": "Oefening verwijderen",
-        "reorder_exercise": "Oefening herschikken"
+        "reorder_exercise": "Oefening herschikken",
+        "save_exercise": "Oefening opslaan",
+        "cancel_exercise": "Annuleren"
       },
       "confirm_delete_round": {
         "title": "Dit blok verwijderen?",

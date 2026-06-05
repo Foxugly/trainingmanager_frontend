@@ -81,7 +81,9 @@
         "move_round_down": "Mover el bloque hacia abajo",
         "edit_exercise": "Modificar el ejercicio",
         "delete_exercise": "Eliminar el ejercicio",
-        "reorder_exercise": "Reordenar el ejercicio"
+        "reorder_exercise": "Reordenar el ejercicio",
+        "save_exercise": "Guardar el ejercicio",
+        "cancel_exercise": "Cancelar"
       },
       "confirm_delete_round": {
         "title": "¿Eliminar este bloque?",

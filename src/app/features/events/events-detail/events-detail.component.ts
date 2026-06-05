@@ -19,40 +19,69 @@ import {
   untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Fieldset } from 'primeng/fieldset';
+import { InputNumber } from 'primeng/inputnumber';
+import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { ProgressSpinner } from 'primeng/progressspinner';
+import { Select } from 'primeng/select';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { Tooltip } from 'primeng/tooltip';
 import { firstValueFrom } from 'rxjs';
+import { EnergySegmentsService } from '../../../api/api/energy-segments.service';
 import { EventsService } from '../../../api/api/events.service';
 import { ExercisesService } from '../../../api/api/exercises.service';
 import { ProgramsService } from '../../../api/api/programs.service';
 import { RoundsService } from '../../../api/api/rounds.service';
+import { SportsService } from '../../../api/api/sports.service';
 import { TeamsService } from '../../../api/api/teams.service';
+import { EnergySegment } from '../../../api/model/energy-segment';
 import { Event } from '../../../api/model/event';
 import { Exercise } from '../../../api/model/exercise';
 import { GenerateTrainingResponse } from '../../../api/model/generate-training-response';
+import { LanguageEnum } from '../../../api/model/language-enum';
+import { Modality } from '../../../api/model/modality';
 import { Round } from '../../../api/model/round';
 import { Team } from '../../../api/model/team';
 import { AuthService } from '../../../core/auth/auth.service';
+import { type FieldErrors, extractServerError } from '../../../shared/forms/notify-error';
 import { AiErrorMappingService } from '../../ai/ai-error-mapping.service';
 import { TeamRole, computeTeamRole } from '../../teams/teams-list/teams-list.component';
 import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-header.component';
 import { RoundFormDialogComponent } from '../round-form-dialog/round-form-dialog.component';
-import { ExerciseFormDialogComponent } from '../exercise-form-dialog/exercise-form-dialog.component';
 import { AttendanceManagerComponent } from '../attendance-manager/attendance-manager.component';
 import { RegenerateTrainingDialogComponent } from '../regenerate-training-dialog/regenerate-training-dialog.component';
+import { timeMmSsValidator } from '../shared/time-validator';
+
+/** Reactive form for an inline exercise row (create or edit). */
+type ExerciseRowForm = FormGroup<{
+  modality_id: import('@angular/forms').FormControl<number | null>;
+  energysegment_id: import('@angular/forms').FormControl<number | null>;
+  repetition: import('@angular/forms').FormControl<number>;
+  distance: import('@angular/forms').FormControl<number>;
+  t_start: import('@angular/forms').FormControl<string>;
+  t_break: import('@angular/forms').FormControl<string>;
+  notes: import('@angular/forms').FormControl<string>;
+}>;
+
+/** A freshly-added (not yet persisted) exercise row pinned to a round. */
+interface NewExerciseRow {
+  /** stable client-side key for tracking + form lookup */
+  key: string;
+  roundId: number;
+}
 
 @Component({
   selector: 'app-events-detail',
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     RouterLink,
     Button,
     CdkDrag,
@@ -60,8 +89,11 @@ import { RegenerateTrainingDialogComponent } from '../regenerate-training-dialog
     CdkDropList,
     ConfirmDialog,
     Fieldset,
+    InputNumber,
+    InputText,
     Message,
     ProgressSpinner,
+    Select,
     Tab,
     TabList,
     TabPanel,
@@ -71,7 +103,6 @@ import { RegenerateTrainingDialogComponent } from '../regenerate-training-dialog
     TranslocoPipe,
     DetailHeaderComponent,
     RoundFormDialogComponent,
-    ExerciseFormDialogComponent,
     AttendanceManagerComponent,
     RegenerateTrainingDialogComponent,
   ],
@@ -88,6 +119,9 @@ export class EventsDetailComponent implements OnInit {
   private readonly teamsService = inject(TeamsService);
   private readonly roundsService = inject(RoundsService);
   private readonly exercisesService = inject(ExercisesService);
+  private readonly sportsService = inject(SportsService);
+  private readonly energySegmentsService = inject(EnergySegmentsService);
+  private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly aiErrorMapping = inject(AiErrorMappingService);
   private readonly confirmationService = inject(ConfirmationService);
@@ -117,10 +151,22 @@ export class EventsDetailComponent implements OnInit {
   protected readonly roundDialogMode = signal<'create' | 'edit'>('create');
   protected readonly editingRound = signal<Round | null>(null);
 
-  protected readonly showExerciseDialog = signal(false);
-  protected readonly exerciseDialogMode = signal<'create' | 'edit'>('create');
-  protected readonly editingExercise = signal<Exercise | null>(null);
-  protected readonly targetRoundId = signal<number | null>(null);
+  // --- Inline exercise editing state ---
+  /** Id of the existing exercise currently in inline-edit mode (null = none). */
+  protected readonly editingExerciseId = signal<number | null>(null);
+  /** Freshly-added rows (not yet persisted), one possible per round, keyed by client key. */
+  protected readonly newRows = signal<NewExerciseRow[]>([]);
+  /** Exercise option lists, loaded once the team's sport is known. */
+  protected readonly modalities = signal<Modality[]>([]);
+  protected readonly energySegments = signal<EnergySegment[]>([]);
+  protected readonly loadingOptions = signal(false);
+  /** Per-row save-in-flight flag, keyed by row key (ex-<id> or the new-row key). */
+  protected readonly savingRows = signal<Set<string>>(new Set());
+  /** Per-row server field errors, keyed by row key. */
+  protected readonly rowFieldErrors = signal<Map<string, FieldErrors>>(new Map());
+  /** Active reactive form groups, keyed by row key. */
+  private readonly rowForms = new Map<string, ExerciseRowForm>();
+  private newRowSeq = 0;
 
   protected readonly reordering = signal(false);
 
@@ -178,7 +224,19 @@ export class EventsDetailComponent implements OnInit {
 
   private patchingTotal = false;
 
+  private optionsSportId: number | null = null;
+
   constructor() {
+    // Load modality + energy-segment option lists once the team's sport is known,
+    // so inline edit/add rows have their selects ready without a per-row fetch.
+    effect(() => {
+      const sportId = this.team()?.sport?.id ?? null;
+      if (sportId == null) return;
+      if (this.optionsSportId === sportId) return;
+      this.optionsSportId = sportId;
+      untracked(() => void this.loadOptions(sportId));
+    });
+
     effect(() => {
       const event = this.event();
       if (!event) return;
@@ -593,36 +651,275 @@ export class EventsDetailComponent implements OnInit {
       });
   }
 
-  protected openCreateExercise(roundId: number): void {
-    this.editingExercise.set(null);
-    this.targetRoundId.set(roundId);
-    this.exerciseDialogMode.set('create');
-    this.showExerciseDialog.set(true);
-  }
+  // ---------------------------------------------------------------------------
+  // Inline exercise editing
+  // ---------------------------------------------------------------------------
 
-  protected openEditExercise(ex: Exercise): void {
-    this.editingExercise.set(ex);
-    this.targetRoundId.set(null);
-    this.exerciseDialogMode.set('edit');
-    this.showExerciseDialog.set(true);
-  }
-
-  protected onExerciseDialogClosed(ex: Exercise | null): void {
-    this.showExerciseDialog.set(false);
-    this.editingExercise.set(null);
-    this.targetRoundId.set(null);
-    if (ex) {
-      this.messageService.add({
-        severity: 'success',
-        summary: this.transloco.translate('common.success'),
-        detail: this.transloco.translate(
-          this.exerciseDialogMode() === 'create'
-            ? 'events.exercise_form.created'
-            : 'events.exercise_form.updated',
-        ),
-      });
-      this.reloadEvent();
+  private async loadOptions(sportId: number): Promise<void> {
+    this.loadingOptions.set(true);
+    try {
+      const [modList, segList] = await Promise.all([
+        firstValueFrom(this.sportsService.sportsModalitiesList(sportId)),
+        firstValueFrom(this.energySegmentsService.energySegmentsList()),
+      ]);
+      this.modalities.set((modList.results ?? []).filter((m) => m.is_active));
+      this.energySegments.set((segList.results ?? []).filter((s) => s.is_active));
+    } catch {
+      this.modalities.set([]);
+      this.energySegments.set([]);
+    } finally {
+      this.loadingOptions.set(false);
     }
+  }
+
+  protected hasOptions(): boolean {
+    return this.modalities().length > 0 && this.energySegments().length > 0;
+  }
+
+  /** Option label for an energy segment: "abv — description" when present, else "abv". */
+  protected segmentLabel(seg: EnergySegment): string {
+    return seg.description ? `${seg.abv} — ${seg.description}` : seg.abv;
+  }
+
+  private buildRowForm(ex: Exercise | null, prefill?: Partial<Exercise>): ExerciseRowForm {
+    const src = ex ?? prefill ?? {};
+    return this.fb.nonNullable.group({
+      modality_id: this.fb.nonNullable.control<number | null>(
+        src.modality_id ?? src.modality?.id ?? null,
+        [Validators.required],
+      ),
+      energysegment_id: this.fb.nonNullable.control<number | null>(
+        src.energysegment_id ?? src.energysegment?.id ?? null,
+        [Validators.required],
+      ),
+      repetition: this.fb.nonNullable.control<number>(src.repetition ?? 1, [
+        Validators.required,
+        Validators.min(1),
+      ]),
+      distance: this.fb.nonNullable.control<number>(src.distance ?? 50, [
+        Validators.required,
+        Validators.min(0),
+      ]),
+      t_start: this.fb.nonNullable.control<string>(src.t_start ?? '', [timeMmSsValidator]),
+      t_break: this.fb.nonNullable.control<string>(src.t_break ?? '', [timeMmSsValidator]),
+      notes: this.fb.nonNullable.control<string>(src.notes ?? ''),
+    });
+  }
+
+  protected rowKeyForExercise(ex: Exercise): string {
+    return `ex-${ex.id}`;
+  }
+
+  protected formFor(key: string): ExerciseRowForm | null {
+    return this.rowForms.get(key) ?? null;
+  }
+
+  protected isEditingExercise(ex: Exercise): boolean {
+    return this.editingExerciseId() === ex.id;
+  }
+
+  protected isSaving(key: string): boolean {
+    return this.savingRows().has(key);
+  }
+
+  protected rowFieldError(key: string, name: string): string | null {
+    return this.rowFieldErrors().get(key)?.[name]?.join(', ') ?? null;
+  }
+
+  protected newRowsFor(roundId: number): NewExerciseRow[] {
+    return this.newRows().filter((r) => r.roundId === roundId);
+  }
+
+  /** Start editing an existing exercise inline. */
+  protected startEditExercise(ex: Exercise): void {
+    if (!this.canManage()) return;
+    const key = this.rowKeyForExercise(ex);
+    this.rowForms.set(key, this.buildRowForm(ex));
+    this.clearRowError(key);
+    this.editingExerciseId.set(ex.id);
+  }
+
+  /** Append a new inline row to a round, pre-filled from its last exercise. */
+  protected startAddExercise(roundId: number): void {
+    if (!this.canManage()) return;
+    const existing = this.exercisesByRound().get(roundId) ?? [];
+    const last = existing.length > 0 ? existing[existing.length - 1] : null;
+    const prefill: Partial<Exercise> | undefined = last
+      ? {
+          modality_id: last.modality_id ?? last.modality?.id ?? null,
+          energysegment_id: last.energysegment_id ?? last.energysegment?.id ?? null,
+          distance: last.distance,
+          t_start: last.t_start,
+          t_break: last.t_break,
+          repetition: 1,
+          notes: '',
+        }
+      : undefined;
+    const key = `new-${this.newRowSeq++}`;
+    this.rowForms.set(key, this.buildRowForm(null, prefill));
+    this.clearRowError(key);
+    this.newRows.update((rows) => [...rows, { key, roundId }]);
+  }
+
+  /** Cancel an existing-exercise edit: revert to display. */
+  protected cancelEditExercise(ex: Exercise): void {
+    const key = this.rowKeyForExercise(ex);
+    this.rowForms.delete(key);
+    this.clearRowError(key);
+    this.editingExerciseId.set(null);
+  }
+
+  /** Cancel a freshly-added row: remove it entirely. */
+  protected cancelNewRow(key: string): void {
+    this.rowForms.delete(key);
+    this.clearRowError(key);
+    this.newRows.update((rows) => rows.filter((r) => r.key !== key));
+  }
+
+  /** Persist an existing-exercise edit via PATCH. */
+  protected saveEditExercise(ex: Exercise): void {
+    const key = this.rowKeyForExercise(ex);
+    const form = this.rowForms.get(key);
+    if (!form || form.invalid || this.isSaving(key) || !this.hasOptions()) return;
+    this.setSaving(key, true);
+    this.clearRowError(key);
+
+    const value = form.getRawValue();
+    this.exercisesService
+      .exercisesPartialUpdate(ex.id, {
+        modality_id: value.modality_id,
+        energysegment_id: value.energysegment_id,
+        repetition: value.repetition,
+        distance: value.distance,
+        t_start: value.t_start || null,
+        t_break: value.t_break || null,
+        notes: value.notes ?? '',
+      })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (updated) => {
+          this.setSaving(key, false);
+          this.rowForms.delete(key);
+          this.editingExerciseId.set(null);
+          this.replaceExerciseInRound(updated);
+          this.notifyExerciseSaved('events.exercise_form.updated');
+        },
+        error: (err: HttpErrorResponse) => {
+          this.setSaving(key, false);
+          this.applyRowError(key, err);
+        },
+      });
+  }
+
+  /** Persist a freshly-added row via POST (linked to its round via round_id). */
+  protected saveNewRow(row: NewExerciseRow): void {
+    const key = row.key;
+    const form = this.rowForms.get(key);
+    if (!form || form.invalid || this.isSaving(key) || !this.hasOptions()) return;
+    this.setSaving(key, true);
+    this.clearRowError(key);
+
+    const value = form.getRawValue();
+    const payload = {
+      round_id: row.roundId,
+      modality_id: value.modality_id,
+      energysegment_id: value.energysegment_id,
+      repetition: value.repetition,
+      distance: value.distance,
+      t_start: value.t_start || null,
+      t_break: value.t_break || null,
+      notes: value.notes ?? '',
+      language: (this.team()?.language ?? 'fr') as LanguageEnum,
+    };
+    this.exercisesService
+      .exercisesCreate(payload as unknown as Exercise)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (created) => {
+          this.setSaving(key, false);
+          this.rowForms.delete(key);
+          this.newRows.update((rows) => rows.filter((r) => r.key !== key));
+          this.appendExerciseToRound(row.roundId, created);
+          this.notifyExerciseSaved('events.exercise_form.created');
+        },
+        error: (err: HttpErrorResponse) => {
+          this.setSaving(key, false);
+          this.applyRowError(key, err);
+        },
+      });
+  }
+
+  private appendExerciseToRound(roundId: number, ex: Exercise): void {
+    const map = new Map(this.exercisesByRound());
+    const list = [...(map.get(roundId) ?? []), ex];
+    map.set(roundId, list);
+    this.exercisesByRound.set(map);
+  }
+
+  private replaceExerciseInRound(ex: Exercise): void {
+    const map = new Map(this.exercisesByRound());
+    for (const [rid, list] of map) {
+      const idx = list.findIndex((e) => e.id === ex.id);
+      if (idx >= 0) {
+        const next = [...list];
+        next[idx] = ex;
+        map.set(rid, next);
+        break;
+      }
+    }
+    this.exercisesByRound.set(map);
+  }
+
+  private notifyExerciseSaved(detailKey: string): void {
+    this.messageService.add({
+      severity: 'success',
+      summary: this.transloco.translate('common.success'),
+      detail: this.transloco.translate(detailKey),
+    });
+  }
+
+  private setSaving(key: string, on: boolean): void {
+    this.savingRows.update((set) => {
+      const next = new Set(set);
+      if (on) next.add(key);
+      else next.delete(key);
+      return next;
+    });
+  }
+
+  private clearRowError(key: string): void {
+    this.rowFieldErrors.update((map) => {
+      if (!map.has(key)) return map;
+      const next = new Map(map);
+      next.delete(key);
+      return next;
+    });
+  }
+
+  private applyRowError(key: string, err: HttpErrorResponse): void {
+    const code = (err?.error as { code?: string } | null | undefined)?.code;
+    if (code === 'not_authorized_round') {
+      this.notifyGlobalError('events.exercise_form.errors.not_authorized_round');
+      return;
+    }
+    const { fields, detail } = extractServerError(err);
+    if (fields) {
+      this.rowFieldErrors.update((map) => {
+        const next = new Map(map);
+        next.set(key, fields);
+        return next;
+      });
+    } else {
+      this.notifyGlobalError(detail ?? 'events.errors.unknown');
+    }
+  }
+
+  private notifyGlobalError(detailKey: string): void {
+    this.messageService.add({
+      severity: 'error',
+      summary: this.transloco.translate('common.error'),
+      detail: this.transloco.translate(detailKey),
+    });
   }
 
   protected confirmDeleteExercise(ex: Exercise): void {

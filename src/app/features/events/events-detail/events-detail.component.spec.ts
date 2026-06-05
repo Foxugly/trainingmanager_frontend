@@ -1,4 +1,5 @@
 import { signal } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router, provideRouter } from '@angular/router';
@@ -6,15 +7,19 @@ import { TranslocoTestingModule } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { EnergySegmentsService } from '../../../api/api/energy-segments.service';
 import { EventsService } from '../../../api/api/events.service';
 import { ExercisesService } from '../../../api/api/exercises.service';
 import { ProgramsService } from '../../../api/api/programs.service';
 import { RoundsService } from '../../../api/api/rounds.service';
+import { SportsService } from '../../../api/api/sports.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { CustomUserPublic } from '../../../api/model/custom-user-public';
+import { EnergySegment } from '../../../api/model/energy-segment';
 import { Event } from '../../../api/model/event';
 import { Exercise } from '../../../api/model/exercise';
 import { LanguageEnum } from '../../../api/model/language-enum';
+import { Modality } from '../../../api/model/modality';
 import { Program } from '../../../api/model/program';
 import { Round } from '../../../api/model/round';
 import { Sport } from '../../../api/model/sport';
@@ -143,19 +148,37 @@ interface ProtectedFields {
   showRoundDialog(): boolean;
   roundDialogMode(): 'create' | 'edit';
   editingRound(): Round | null;
-  showExerciseDialog(): boolean;
-  exerciseDialogMode(): 'create' | 'edit';
-  editingExercise(): Exercise | null;
-  targetRoundId(): number | null;
   openCreateRound(): void;
   openEditRound(r: Round): void;
   onRoundDialogClosed(r: Round | null): void;
   confirmDeleteRound(r: Round): void;
-  openCreateExercise(roundId: number): void;
-  openEditExercise(ex: Exercise): void;
-  onExerciseDialogClosed(ex: Exercise | null): void;
   confirmDeleteExercise(ex: Exercise): void;
+  // Inline exercise editing
+  editingExerciseId(): number | null;
+  newRows(): { key: string; roundId: number }[];
+  modalities(): Modality[];
+  energySegments(): EnergySegment[];
+  rowKeyForExercise(ex: Exercise): string;
+  formFor(key: string): ExerciseRowForm | null;
+  isEditingExercise(ex: Exercise): boolean;
+  newRowsFor(roundId: number): { key: string; roundId: number }[];
+  startEditExercise(ex: Exercise): void;
+  startAddExercise(roundId: number): void;
+  cancelEditExercise(ex: Exercise): void;
+  cancelNewRow(key: string): void;
+  saveEditExercise(ex: Exercise): void;
+  saveNewRow(row: { key: string; roundId: number }): void;
 }
+
+type ExerciseRowForm = FormGroup<{
+  modality_id: FormControl<number | null>;
+  energysegment_id: FormControl<number | null>;
+  repetition: FormControl<number>;
+  distance: FormControl<number>;
+  t_start: FormControl<string>;
+  t_break: FormControl<string>;
+  notes: FormControl<string>;
+}>;
 
 describe('EventsDetailComponent', () => {
   let fixture: ComponentFixture<EventsDetailComponent>;
@@ -175,7 +198,11 @@ describe('EventsDetailComponent', () => {
   let exercisesMock: {
     exercisesRetrieve: ReturnType<typeof vi.fn>;
     exercisesDestroy: ReturnType<typeof vi.fn>;
+    exercisesCreate: ReturnType<typeof vi.fn>;
+    exercisesPartialUpdate: ReturnType<typeof vi.fn>;
   };
+  let sportsMock: { sportsModalitiesList: ReturnType<typeof vi.fn> };
+  let energySegmentsMock: { energySegmentsList: ReturnType<typeof vi.fn> };
   let userSig: ReturnType<typeof signal<CustomUserPublic | null>>;
   let routeIdParam: string | null;
 
@@ -220,6 +247,38 @@ describe('EventsDetailComponent', () => {
         of(id === 201 ? exercise1 : exercise2),
       ),
       exercisesDestroy: vi.fn().mockReturnValue(of(null)),
+      exercisesCreate: vi
+        .fn()
+        .mockImplementation((body: Partial<Exercise>) =>
+          of({ ...exercise1, id: 999, ...body } as unknown as Exercise),
+        ),
+      exercisesPartialUpdate: vi
+        .fn()
+        .mockImplementation((id: number, body: Partial<Exercise>) =>
+          of({ ...exercise1, id, ...body } as unknown as Exercise),
+        ),
+    };
+    sportsMock = {
+      sportsModalitiesList: vi.fn().mockReturnValue(
+        of({
+          results: [{ id: 1, name: 'Crawl', sport, is_active: true } as unknown as Modality],
+        }),
+      ),
+    };
+    energySegmentsMock = {
+      energySegmentsList: vi.fn().mockReturnValue(
+        of({
+          results: [
+            {
+              id: 1,
+              abv: 'Z2',
+              description: 'Aérobie léger',
+              energy_system: { id: 1, name: 'Aérobie', abbreviation: 'AE' },
+              is_active: true,
+            } as unknown as EnergySegment,
+          ],
+        }),
+      ),
     };
     userSig = signal<CustomUserPublic | null>(currentUser);
 
@@ -241,6 +300,8 @@ describe('EventsDetailComponent', () => {
         { provide: TeamsService, useValue: teamsMock },
         { provide: RoundsService, useValue: roundsMock },
         { provide: ExercisesService, useValue: exercisesMock },
+        { provide: SportsService, useValue: sportsMock },
+        { provide: EnergySegmentsService, useValue: energySegmentsMock },
         { provide: AuthService, useValue: { currentUser: userSig.asReadonly() } },
         {
           provide: ActivatedRoute,
@@ -489,5 +550,116 @@ describe('EventsDetailComponent', () => {
     access(component).confirmDeleteExercise(ex);
     expect(exercisesMock.exercisesDestroy).toHaveBeenCalledWith(ex.id);
     expect(eventsMock.eventsRetrieve).toHaveBeenCalledWith(7);
+  });
+
+  // --- Inline exercise editing ---
+
+  it('loads modality + energy-segment options once the team sport is known', async () => {
+    await new Promise((r) => setTimeout(r, 0));
+    expect(sportsMock.sportsModalitiesList).toHaveBeenCalledWith(1);
+    expect(energySegmentsMock.energySegmentsList).toHaveBeenCalled();
+    expect(access(component).modalities().length).toBe(1);
+    expect(access(component).energySegments().length).toBe(1);
+  });
+
+  it('startAddExercise appends a new row pre-filled from the last exercise of the round', async () => {
+    await setup('7', eventWithRounds);
+    await new Promise((r) => setTimeout(r, 0));
+    await new Promise((r) => setTimeout(r, 0));
+    // round 11 has exercise1 (201) + exercise2 (202, distance 100, t_break 00:30)
+    access(component).startAddExercise(11);
+    const rows = access(component).newRowsFor(11);
+    expect(rows.length).toBe(1);
+    const form = access(component).formFor(rows[0].key);
+    expect(form).not.toBeNull();
+    const v = form!.getRawValue();
+    // pre-fill from last exercise (202): modality 1, segment 1, distance 100, t_break 00:30
+    expect(v.modality_id).toBe(1);
+    expect(v.energysegment_id).toBe(1);
+    expect(v.distance).toBe(100);
+    expect(v.t_break).toBe('00:30');
+    // repetition resets to 1, notes empties
+    expect(v.repetition).toBe(1);
+    expect(v.notes).toBe('');
+  });
+
+  it('startAddExercise on an empty round seeds defaults (rep 1, distance 50)', async () => {
+    access(component).startAddExercise(11);
+    const rows = access(component).newRowsFor(11);
+    const v = access(component).formFor(rows[0].key)!.getRawValue();
+    expect(v.repetition).toBe(1);
+    expect(v.distance).toBe(50);
+    expect(v.modality_id).toBeNull();
+  });
+
+  it('saveNewRow calls exercisesCreate with round linkage + payload and clears the row', async () => {
+    await setup('7', eventWithRounds);
+    await new Promise((r) => setTimeout(r, 0));
+    await new Promise((r) => setTimeout(r, 0));
+    access(component).startAddExercise(11);
+    const row = access(component).newRowsFor(11)[0];
+    const form = access(component).formFor(row.key)!;
+    form.controls.modality_id.setValue(1);
+    form.controls.energysegment_id.setValue(1);
+    form.controls.repetition.setValue(6);
+    form.controls.distance.setValue(75);
+    access(component).saveNewRow(row);
+    await new Promise((r) => setTimeout(r, 0));
+    expect(exercisesMock.exercisesCreate).toHaveBeenCalledTimes(1);
+    const payload = exercisesMock.exercisesCreate.mock.calls[0][0];
+    expect(payload.round_id).toBe(11);
+    expect(payload.modality_id).toBe(1);
+    expect(payload.energysegment_id).toBe(1);
+    expect(payload.repetition).toBe(6);
+    expect(payload.distance).toBe(75);
+    // row removed after success, new exercise appended to the round
+    expect(access(component).newRowsFor(11).length).toBe(0);
+    const list = access(component).exercisesByRound().get(11) ?? [];
+    expect(list.some((e) => e.id === 999)).toBe(true);
+  });
+
+  it('startEditExercise then saveEditExercise calls exercisesPartialUpdate and exits edit mode', async () => {
+    await setup('7', eventWithRounds);
+    await new Promise((r) => setTimeout(r, 0));
+    await new Promise((r) => setTimeout(r, 0));
+    access(component).startEditExercise(exercise1);
+    expect(access(component).isEditingExercise(exercise1)).toBe(true);
+    const form = access(component).formFor(access(component).rowKeyForExercise(exercise1))!;
+    form.controls.repetition.setValue(8);
+    access(component).saveEditExercise(exercise1);
+    await new Promise((r) => setTimeout(r, 0));
+    expect(exercisesMock.exercisesPartialUpdate).toHaveBeenCalledTimes(1);
+    expect(exercisesMock.exercisesPartialUpdate.mock.calls[0][0]).toBe(exercise1.id);
+    expect(exercisesMock.exercisesPartialUpdate.mock.calls[0][1].repetition).toBe(8);
+    expect(access(component).editingExerciseId()).toBeNull();
+    // updated row reflected in the round's exercise list
+    const updated = (access(component).exercisesByRound().get(11) ?? []).find(
+      (e) => e.id === exercise1.id,
+    );
+    expect(updated?.repetition).toBe(8);
+  });
+
+  it('cancelNewRow removes a freshly-added row without any API call', async () => {
+    await setup('7', eventWithRounds);
+    await new Promise((r) => setTimeout(r, 0));
+    await new Promise((r) => setTimeout(r, 0));
+    access(component).startAddExercise(11);
+    const row = access(component).newRowsFor(11)[0];
+    access(component).cancelNewRow(row.key);
+    expect(access(component).newRowsFor(11).length).toBe(0);
+    expect(access(component).formFor(row.key)).toBeNull();
+    expect(exercisesMock.exercisesCreate).not.toHaveBeenCalled();
+  });
+
+  it('cancelEditExercise reverts an existing-exercise edit to display mode', async () => {
+    await setup('7', eventWithRounds);
+    await new Promise((r) => setTimeout(r, 0));
+    await new Promise((r) => setTimeout(r, 0));
+    access(component).startEditExercise(exercise1);
+    expect(access(component).isEditingExercise(exercise1)).toBe(true);
+    access(component).cancelEditExercise(exercise1);
+    expect(access(component).editingExerciseId()).toBeNull();
+    expect(access(component).formFor(access(component).rowKeyForExercise(exercise1))).toBeNull();
+    expect(exercisesMock.exercisesPartialUpdate).not.toHaveBeenCalled();
   });
 });

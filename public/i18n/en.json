@@ -81,7 +81,9 @@
         "move_round_down": "Move block down",
         "edit_exercise": "Edit exercise",
         "delete_exercise": "Delete exercise",
-        "reorder_exercise": "Reorder exercise"
+        "reorder_exercise": "Reorder exercise",
+        "save_exercise": "Save exercise",
+        "cancel_exercise": "Cancel"
       },
       "confirm_delete_round": {
         "title": "Delete this block?",
