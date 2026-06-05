@@ -59,6 +59,23 @@
                       [filter]="true"
                     />
                   </app-meta-field>
+                  <app-meta-field
+                    [label]="'teams.form.level' | transloco"
+                    for="level_id"
+                    [tooltip]="'teams.form.level_help' | transloco"
+                    [error]="fieldError('level_id')"
+                  >
+                    <p-select
+                      inputId="level_id"
+                      [options]="availableLevels()"
+                      formControlName="level_id"
+                      optionLabel="name"
+                      optionValue="id"
+                      [filter]="true"
+                      [showClear]="true"
+                      [placeholder]="'teams.form.level_placeholder' | transloco"
+                    />
+                  </app-meta-field>
                   <app-meta-field [label]="'teams.form.language' | transloco" for="language">
                     <p-select
                       inputId="language"

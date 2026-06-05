@@ -22,12 +22,14 @@ import { Select } from 'primeng/select';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { ToggleSwitch } from 'primeng/toggleswitch';
 import { AttendanceStatusesService } from '../../../api/api/attendance-statuses.service';
+import { LevelsService } from '../../../api/api/levels.service';
 import { SportsService } from '../../../api/api/sports.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { AttendanceStatus } from '../../../api/model/attendance-status';
 import { CustomUserPublic } from '../../../api/model/custom-user-public';
 import { JoinRequestPolicyEnum } from '../../../api/model/join-request-policy-enum';
 import { LanguageEnum } from '../../../api/model/language-enum';
+import { Level } from '../../../api/model/level';
 import { PatchedTeam } from '../../../api/model/patched-team';
 import { Sport } from '../../../api/model/sport';
 import { Team } from '../../../api/model/team';
@@ -78,6 +80,7 @@ export class TeamsFormComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly teamsService = inject(TeamsService);
   private readonly sportsService = inject(SportsService);
+  private readonly levelsService = inject(LevelsService);
   private readonly statusesService = inject(AttendanceStatusesService);
   private readonly authService = inject(AuthService);
   private readonly messageService = inject(MessageService);
@@ -89,6 +92,7 @@ export class TeamsFormComponent implements OnInit {
   protected readonly loading = signal(false);
   protected readonly saving = signal(false);
   protected readonly availableSports = signal<Sport[]>([]);
+  protected readonly availableLevels = signal<Level[]>([]);
   protected readonly availableManagers = signal<CustomUserPublic[]>([]);
   protected readonly availableStatuses = signal<AttendanceStatus[]>([]);
   protected readonly statusesSource = signal<AttendanceStatus[]>([]);
@@ -116,6 +120,7 @@ export class TeamsFormComponent implements OnInit {
   protected readonly form = this.fb.nonNullable.group({
     name: ['', [Validators.required]],
     sport_id: this.fb.nonNullable.control<number | null>(null, [Validators.required]),
+    level_id: this.fb.nonNullable.control<number | null>(null),
     language: this.fb.nonNullable.control<LanguageCode>('fr', [Validators.required]),
     is_public: [false],
     managers_ids: this.fb.nonNullable.control<number[]>([]),
@@ -133,6 +138,11 @@ export class TeamsFormComponent implements OnInit {
       .sportsList(undefined)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((res) => this.availableSports.set(res.results ?? []));
+
+    this.levelsService
+      .levelsList()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((res) => this.availableLevels.set(res.results ?? []));
 
     this.statusesService
       .attendanceStatusesList()
@@ -164,6 +174,7 @@ export class TeamsFormComponent implements OnInit {
             this.form.reset({
               name: t.name,
               sport_id: t.sport?.id ?? null,
+              level_id: t.level?.id ?? null,
               language: (t.language as LanguageCode) ?? 'fr',
               is_public: t.is_public ?? false,
               managers_ids: (t.managers ?? []).map((m) => m.id),
@@ -205,6 +216,7 @@ export class TeamsFormComponent implements OnInit {
       const createPayload = {
         name: value.name,
         sport_id: value.sport_id,
+        level_id: value.level_id,
         language: value.language as LanguageEnum,
         is_public: value.is_public,
       };
@@ -229,6 +241,7 @@ export class TeamsFormComponent implements OnInit {
     const updatePayload: PatchedTeam = {
       name: value.name,
       sport_id: value.sport_id ?? undefined,
+      level_id: value.level_id ?? null,
       language: value.language as LanguageEnum,
       is_public: value.is_public,
       managers_ids: value.managers_ids,

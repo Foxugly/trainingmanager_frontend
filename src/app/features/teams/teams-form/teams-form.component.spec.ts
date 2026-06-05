@@ -6,11 +6,13 @@ import { TranslocoTestingModule } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { LevelsService } from '../../../api/api/levels.service';
 import { SportsService } from '../../../api/api/sports.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { CustomUserPublic } from '../../../api/model/custom-user-public';
 import { JoinRequestPolicyEnum } from '../../../api/model/join-request-policy-enum';
 import { LanguageEnum } from '../../../api/model/language-enum';
+import { Level } from '../../../api/model/level';
 import { Sport } from '../../../api/model/sport';
 import { Team } from '../../../api/model/team';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -33,11 +35,21 @@ const sport: Sport = {
   created_at: '2026-04-01T00:00:00Z',
 };
 
+const level: Level = {
+  id: 3,
+  code: 'regional',
+  name: 'Régional',
+  description: 'Niveau régional',
+  order: 2,
+  is_active: true,
+};
+
 const team: Team = {
   id: 5,
   name: 'Team P9',
   sport,
   sport_id: 1,
+  level,
   owner: ownerUser,
   managers: [managerUser],
   language: LanguageEnum.Fr,
@@ -58,6 +70,7 @@ interface ProtectedFields {
   fieldErrors(): { [k: string]: string[] } | null;
   quotaExceeded(): { used: number; max: number } | null;
   availableSports(): Sport[];
+  availableLevels(): Level[];
   availableManagers(): CustomUserPublic[];
   activeValue(): boolean;
   patchActive: (id: number, value: boolean) => unknown;
@@ -81,6 +94,7 @@ describe('TeamsFormComponent', () => {
     teamsPartialUpdate: ReturnType<typeof vi.fn>;
   };
   let sportsMock: { sportsList: ReturnType<typeof vi.fn> };
+  let levelsMock: { levelsList: ReturnType<typeof vi.fn> };
   let userSig: ReturnType<typeof signal<CustomUserPublic | null>>;
   let routeIdParam: string | null;
   let router: Router;
@@ -100,6 +114,9 @@ describe('TeamsFormComponent', () => {
     sportsMock = {
       sportsList: vi.fn().mockReturnValue(of({ count: 1, results: [sport] })),
     };
+    levelsMock = {
+      levelsList: vi.fn().mockReturnValue(of({ count: 1, results: [level] })),
+    };
     userSig = signal<CustomUserPublic | null>(currentUser);
 
     await TestBed.configureTestingModule({
@@ -117,6 +134,7 @@ describe('TeamsFormComponent', () => {
         MessageService,
         { provide: TeamsService, useValue: teamsMock },
         { provide: SportsService, useValue: sportsMock },
+        { provide: LevelsService, useValue: levelsMock },
         { provide: AuthService, useValue: { currentUser: userSig.asReadonly(), refreshMe: vi.fn() } },
         {
           provide: ActivatedRoute,
@@ -143,9 +161,11 @@ describe('TeamsFormComponent', () => {
     expect(access(component).form.getRawValue()).toMatchObject({
       name: '',
       sport_id: null,
+      level_id: null,
       language: 'fr',
       is_public: false,
     });
+    expect(access(component).availableLevels()).toEqual([level]);
     expect(teamsMock.teamsRetrieve).not.toHaveBeenCalled();
   });
 
@@ -163,16 +183,23 @@ describe('TeamsFormComponent', () => {
     expect(access(component).form.getRawValue()).toMatchObject({
       name: 'Team P9',
       sport_id: 1,
+      level_id: 3,
       language: 'fr',
       is_public: false,
       managers_ids: [99],
     });
   });
 
+  it('seeds level_id to null when the loaded team has no level', async () => {
+    await setup('5', ownerUser, { ...team, level: undefined });
+    expect(access(component).form.getRawValue()).toMatchObject({ level_id: null });
+  });
+
   it('on create success, navigates to /teams/:id/edit with the new id', async () => {
-    access(component).form.patchValue({ name: 'New', sport_id: 1, language: 'fr' });
+    access(component).form.patchValue({ name: 'New', sport_id: 1, level_id: 3, language: 'fr' });
     access(component).submit();
     expect(teamsMock.teamsCreate).toHaveBeenCalledTimes(1);
+    expect(teamsMock.teamsCreate).toHaveBeenCalledWith(expect.objectContaining({ level_id: 3 }));
     expect(router.navigate).toHaveBeenCalledWith(['/teams', 42, 'edit']);
   });
 
@@ -181,7 +208,21 @@ describe('TeamsFormComponent', () => {
     access(component).form.patchValue({ name: 'Renamed' });
     access(component).submit();
     expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledTimes(1);
+    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(
+      5,
+      expect.objectContaining({ level_id: 3 }),
+    );
     expect(router.navigate).toHaveBeenCalledWith(['/teams', 5]);
+  });
+
+  it('on edit, sends level_id: null to clear the level when cleared in the form', async () => {
+    await setup('5');
+    access(component).form.patchValue({ level_id: null });
+    access(component).submit();
+    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(
+      5,
+      expect.objectContaining({ level_id: null }),
+    );
   });
 
   it('maps server field errors into fieldErrors signal', () => {
