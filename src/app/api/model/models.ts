@@ -66,6 +66,8 @@ export * from './paginated-sport-list';
 export * from './paginated-team-invitation-list';
 export * from './paginated-team-join-request-list';
 export * from './paginated-team-list';
+export * from './password-change';
+export * from './password-change-response';
 export * from './password-reset-confirm';
 export * from './password-reset-confirm-response';
 export * from './password-reset-confirm-user';

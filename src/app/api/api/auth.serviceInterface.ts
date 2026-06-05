@@ -14,6 +14,8 @@ import { Observable }                                        from 'rxjs';
 import { EmailConfirm } from '../model/models';
 import { EmailResend } from '../model/models';
 import { Logout } from '../model/models';
+import { PasswordChange } from '../model/models';
+import { PasswordChangeResponse } from '../model/models';
 import { PasswordResetConfirm } from '../model/models';
 import { PasswordResetConfirmResponse } from '../model/models';
 import { PasswordResetRequest } from '../model/models';
@@ -55,6 +57,14 @@ export interface AuthServiceInterface {
      * @param logout 
      */
     authLogoutCreate(logout: Logout, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * 
+     * POST /api/v1/auth/password/change/ — authenticated: change own password.  Body: {current_password, new_password}. The caller must prove they still know &#x60;current_password&#x60;; &#x60;new_password&#x60; is validated against Django\&#39;s configured password validators (with the user as context) and must differ from the current one. On success the password is updated and a localized {detail} body is returned — NO tokens are issued.
+     * @endpoint post /api/v1/auth/password/change/
+     * @param passwordChange 
+     */
+    authPasswordChangeCreate(passwordChange: PasswordChange, extraHttpRequestParams?: any): Observable<PasswordChangeResponse>;
 
     /**
      * 

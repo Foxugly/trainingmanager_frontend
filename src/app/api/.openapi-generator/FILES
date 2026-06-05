@@ -110,6 +110,8 @@ model/paginated-sport-list.ts
 model/paginated-team-invitation-list.ts
 model/paginated-team-join-request-list.ts
 model/paginated-team-list.ts
+model/password-change-response.ts
+model/password-change.ts
 model/password-reset-confirm-response.ts
 model/password-reset-confirm-user.ts
 model/password-reset-confirm.ts

@@ -23,6 +23,10 @@ import { EmailResend } from '../model/email-resend';
 // @ts-ignore
 import { Logout } from '../model/logout';
 // @ts-ignore
+import { PasswordChange } from '../model/password-change';
+// @ts-ignore
+import { PasswordChangeResponse } from '../model/password-change-response';
+// @ts-ignore
 import { PasswordResetConfirm } from '../model/password-reset-confirm';
 // @ts-ignore
 import { PasswordResetConfirmResponse } from '../model/password-reset-confirm-response';
@@ -252,6 +256,75 @@ export class AuthService extends BaseService implements AuthServiceInterface {
             {
                 context: localVarHttpContext,
                 body: logout,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * POST /api/v1/auth/password/change/ — authenticated: change own password.  Body: {current_password, new_password}. The caller must prove they still know &#x60;current_password&#x60;; &#x60;new_password&#x60; is validated against Django\&#39;s configured password validators (with the user as context) and must differ from the current one. On success the password is updated and a localized {detail} body is returned — NO tokens are issued.
+     * @endpoint post /api/v1/auth/password/change/
+     * @param passwordChange 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public authPasswordChangeCreate(passwordChange: PasswordChange, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PasswordChangeResponse>;
+    public authPasswordChangeCreate(passwordChange: PasswordChange, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PasswordChangeResponse>>;
+    public authPasswordChangeCreate(passwordChange: PasswordChange, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PasswordChangeResponse>>;
+    public authPasswordChangeCreate(passwordChange: PasswordChange, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (passwordChange === null || passwordChange === undefined) {
+            throw new Error('Required parameter passwordChange was null or undefined when calling authPasswordChangeCreate.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (jwtAuth) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/auth/password/change/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<PasswordChangeResponse>('post', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: passwordChange,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
