@@ -1,0 +1,28 @@
+.builder-stack {
+  display: grid;
+  gap: 1.25rem;
+
+  & > * {
+    min-width: 0;
+  }
+}
+
+.builder-pane {
+  display: grid;
+  gap: 1rem;
+  padding: 0.25rem 0;
+}
+
+.builder-tabs {
+  ::ng-deep .p-tabpanels,
+  ::ng-deep .p-tabpanel {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    padding: 0;
+  }
+}
+
+.tab-icon {
+  margin-right: 0.4rem;
+}
