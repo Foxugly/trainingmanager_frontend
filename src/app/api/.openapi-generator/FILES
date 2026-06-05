@@ -25,6 +25,8 @@ api/join-magic.service.ts
 api/join-magic.serviceInterface.ts
 api/join-requests.service.ts
 api/join-requests.serviceInterface.ts
+api/levels.service.ts
+api/levels.serviceInterface.ts
 api/me.service.ts
 api/me.serviceInterface.ts
 api/members.service.ts
@@ -84,6 +86,8 @@ model/join-magic-error.ts
 model/join-request-policy-enum.ts
 model/join-request-status-enum.ts
 model/language-enum.ts
+model/level-admin.ts
+model/level.ts
 model/logout.ts
 model/magic-action-join-request-status-enum.ts
 model/magic-action-join-request.ts
@@ -102,6 +106,7 @@ model/paginated-energy-segment-list.ts
 model/paginated-energy-system-list.ts
 model/paginated-event-list.ts
 model/paginated-exercise-list.ts
+model/paginated-level-list.ts
 model/paginated-member-list.ts
 model/paginated-modality-list.ts
 model/paginated-note-list.ts
@@ -125,6 +130,7 @@ model/patched-energy-segment-admin.ts
 model/patched-energy-system-admin.ts
 model/patched-event.ts
 model/patched-exercise.ts
+model/patched-level-admin.ts
 model/patched-me.ts
 model/patched-member.ts
 model/patched-message.ts

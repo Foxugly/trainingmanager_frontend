@@ -9,6 +9,7 @@
  */
 import { Sport } from './sport';
 import { CustomUserPublic } from './custom-user-public';
+import { Level } from './level';
 import { ChatModeEnum } from './chat-mode-enum';
 import { LanguageEnum } from './language-enum';
 import { JoinRequestPolicyEnum } from './join-request-policy-enum';
@@ -19,6 +20,8 @@ export interface Team {
     name: string;
     readonly sport: Sport;
     sport_id: number;
+    readonly level?: Level;
+    level_id?: number | null;
     readonly owner: CustomUserPublic;
     readonly managers: Array<CustomUserPublic>;
     managers_ids?: Array<number>;
