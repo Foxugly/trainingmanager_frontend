@@ -1,4 +1,3 @@
-import { KeyValuePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -25,8 +24,8 @@ import { ColorPicker } from 'primeng/colorpicker';
 import { DatePicker } from 'primeng/datepicker';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
-import { Message } from 'primeng/message';
 import { Select } from 'primeng/select';
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { firstValueFrom } from 'rxjs';
 import { EventsService } from '../../../api/api/events.service';
 import { ProgramsService } from '../../../api/api/programs.service';
@@ -34,10 +33,10 @@ import { TeamsService } from '../../../api/api/teams.service';
 import { Event } from '../../../api/model/event';
 import { PatchedEvent } from '../../../api/model/patched-event';
 import { Program } from '../../../api/model/program';
-
-interface FieldErrors {
-  [field: string]: string[];
-}
+import { type FieldErrors, extractServerError } from '../../../shared/forms/notify-error';
+import { FormFooterComponent } from '../../../shared/ui/form-footer/form-footer.component';
+import { MetaFieldComponent } from '../../../shared/ui/meta-field/meta-field.component';
+import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
 
 function toIsoDate(d: Date | null | undefined): string | null {
   if (!d) return null;
@@ -81,7 +80,6 @@ function timeRangeValidator(group: AbstractControl): ValidationErrors | null {
 @Component({
   selector: 'app-events-form',
   imports: [
-    KeyValuePipe,
     ReactiveFormsModule,
     RouterLink,
     InputText,
@@ -90,7 +88,14 @@ function timeRangeValidator(group: AbstractControl): ValidationErrors | null {
     DatePicker,
     ColorPicker,
     Button,
-    Message,
+    Tabs,
+    TabList,
+    Tab,
+    TabPanels,
+    TabPanel,
+    PageHeaderComponent,
+    MetaFieldComponent,
+    FormFooterComponent,
     TranslocoPipe,
   ],
   templateUrl: './events-form.component.html',
@@ -112,7 +117,6 @@ export class EventsFormComponent implements OnInit {
   protected readonly loading = signal(false);
   protected readonly saving = signal(false);
   protected readonly availablePrograms = signal<Program[]>([]);
-  protected readonly errorMessage = signal<string | null>(null);
   protected readonly fieldErrors = signal<FieldErrors | null>(null);
 
   protected readonly isEditMode = computed(() => this.eventId() !== null);
@@ -138,7 +142,7 @@ export class EventsFormComponent implements OnInit {
     if (idParam) {
       const id = Number(idParam);
       if (!Number.isFinite(id)) {
-        this.errorMessage.set('events.errors.unknown');
+        this.notifyLoadError();
         return;
       }
       this.eventId.set(id);
@@ -216,16 +220,32 @@ export class EventsFormComponent implements OnInit {
           this.loading.set(false);
         },
         error: () => {
-          this.errorMessage.set('events.errors.unknown');
+          this.notifyLoadError();
           this.loading.set(false);
         },
       });
   }
 
+  private notifyLoadError(): void {
+    this.messageService.add({
+      severity: 'error',
+      summary: this.transloco.translate('common.error'),
+      detail: this.transloco.translate('events.errors.unknown'),
+    });
+  }
+
+  protected fieldError(name: string): string | null {
+    return this.fieldErrors()?.[name]?.join(', ') ?? null;
+  }
+
+  protected cancel(): void {
+    const id = this.eventId();
+    this.router.navigate(id ? ['/events', id] : ['/events']);
+  }
+
   protected submit(): void {
     if (this.form.invalid) return;
     this.saving.set(true);
-    this.errorMessage.set(null);
     this.fieldErrors.set(null);
 
     const value = this.form.getRawValue();
@@ -295,30 +315,14 @@ export class EventsFormComponent implements OnInit {
   }
 
   private applyServerError(err: HttpErrorResponse): void {
-    const body = err?.error as
-      | { code?: string; detail?: string; fields?: FieldErrors }
-      | null
-      | undefined;
-
-    if (body?.fields && Object.keys(body.fields).length > 0) {
-      this.fieldErrors.set(body.fields);
-      return;
+    const { fields, detail } = extractServerError(err);
+    this.fieldErrors.set(fields);
+    if (!fields) {
+      this.messageService.add({
+        severity: 'error',
+        summary: this.transloco.translate('common.error'),
+        detail: detail ? this.transloco.translate(detail) : this.transloco.translate('events.errors.unknown'),
+      });
     }
-
-    if (body && typeof body === 'object') {
-      const fieldEntries: FieldErrors = {};
-      for (const [key, value] of Object.entries(body)) {
-        if (key === 'code' || key === 'detail' || key === 'fields') continue;
-        if (Array.isArray(value)) {
-          fieldEntries[key] = value.filter((m): m is string => typeof m === 'string');
-        }
-      }
-      if (Object.keys(fieldEntries).length > 0) {
-        this.fieldErrors.set(fieldEntries);
-        return;
-      }
-    }
-
-    this.errorMessage.set(body?.detail ?? 'events.errors.unknown');
   }
 }

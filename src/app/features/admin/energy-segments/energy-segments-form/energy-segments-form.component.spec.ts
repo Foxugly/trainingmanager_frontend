@@ -37,7 +37,8 @@ interface ProtectedFields {
   };
   segmentId(): number | null;
   saving(): boolean;
-  errorMessage(): string | null;
+  activeValue(): boolean;
+  patchActive: (id: number, value: boolean) => unknown;
   fieldErrors(): Record<string, string[]> | null;
   availableEnergySystems(): EnergySystem[];
   submit(): void;
@@ -113,6 +114,10 @@ describe('EnergySegmentsFormComponent', () => {
     expect(access(component).form.valid).toBe(true);
   });
 
+  it('defaults activeValue to true in create mode', () => {
+    expect(access(component).activeValue()).toBe(true);
+  });
+
   it('loads the energy systems list for the parent select', () => {
     expect(energySystemsMock.energySystemsList).toHaveBeenCalled();
     expect(access(component).availableEnergySystems()).toEqual(parents);
@@ -123,12 +128,27 @@ describe('EnergySegmentsFormComponent', () => {
 
     expect(access(component).segmentId()).toBe(3);
     expect(segmentsServiceMock.energySegmentsRetrieve).toHaveBeenCalledWith(3, true);
+    expect(access(component).activeValue()).toBe(true);
     expect(access(component).form.value).toMatchObject({
       abv: 'Z3',
       energy_system_id: 2,
       description_fr: 'vo2max',
       description_nl: '',
-      is_active: true,
+    });
+  });
+
+  it('seeds activeValue from energySegment.is_active in edit mode', async () => {
+    fakeAdmin.is_active = false;
+    await setup('3');
+    expect(access(component).activeValue()).toBe(false);
+    fakeAdmin.is_active = true;
+  });
+
+  it('patchActive calls energySegmentsPartialUpdate with undefined 2nd arg and is_active body', async () => {
+    await setup('3');
+    access(component).patchActive(3, false);
+    expect(segmentsServiceMock.energySegmentsPartialUpdate).toHaveBeenCalledWith(3, undefined, {
+      is_active: false,
     });
   });
 
@@ -152,7 +172,7 @@ describe('EnergySegmentsFormComponent', () => {
     expect(navigate).toHaveBeenCalledWith(['/admin/energy-segments']);
   });
 
-  it('submit() in edit mode calls energySegmentsPartialUpdate(id, true, payload)', async () => {
+  it('submit() in edit mode calls energySegmentsPartialUpdate(id, undefined, payload)', async () => {
     await setup('3');
     const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
     access(component).form.patchValue({ description_nl: 'beschrijving' });
@@ -163,7 +183,7 @@ describe('EnergySegmentsFormComponent', () => {
     const [id, includeInactive, payload] =
       segmentsServiceMock.energySegmentsPartialUpdate.mock.calls[0];
     expect(id).toBe(3);
-    expect(includeInactive).toBe(true);
+    expect(includeInactive).toBeUndefined();
     expect(payload).toMatchObject({ description_nl: 'beschrijving' });
     expect(navigate).toHaveBeenCalledWith(['/admin/energy-segments']);
   });
@@ -182,13 +202,16 @@ describe('EnergySegmentsFormComponent', () => {
     expect(access(component).saving()).toBe(false);
   });
 
-  it('maps detail when no fields are returned', () => {
+  it('toasts the detail when no fields are returned', () => {
     segmentsServiceMock.energySegmentsCreate.mockReturnValue(
       throwError(() => ({ status: 500, error: { detail: 'Server unhappy' } })),
     );
     access(component).form.patchValue({ abv: 'ZX', energy_system_id: 1 });
     access(component).submit();
 
-    expect(access(component).errorMessage()).toBe('Server unhappy');
+    expect(access(component).fieldErrors()).toBeNull();
+    expect(messageMock.add).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'error', detail: 'Server unhappy' }),
+    );
   });
 });

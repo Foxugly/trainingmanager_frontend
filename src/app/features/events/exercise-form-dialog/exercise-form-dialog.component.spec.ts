@@ -59,7 +59,6 @@ interface Protected {
   loadingOptions(): boolean;
   modalities(): Modality[];
   energySegments(): EnergySegment[];
-  errorMessage(): string | null;
   fieldErrors(): Record<string, string[]> | null;
   hasOptions(): boolean;
   submit(): void;

@@ -34,7 +34,6 @@ const seedRound: Round = {
 interface Protected {
   form: { value: { count: number }; invalid: boolean };
   saving(): boolean;
-  errorMessage(): string | null;
   fieldErrors(): Record<string, string[]> | null;
   submit(): void;
   onCancel(): void;

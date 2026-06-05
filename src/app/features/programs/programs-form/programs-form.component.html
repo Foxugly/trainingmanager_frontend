@@ -1,158 +1,128 @@
-<div class="max-w-3xl">
-  <a
-    [routerLink]="programId() ? ['/programs', programId()] : ['/programs']"
-    class="text-sm text-blue-600 hover:underline"
-  >
-    ← {{ 'common.back' | transloco }}
-  </a>
-
-  <h1 class="text-2xl font-bold mb-6 mt-2">
+<div class="page page--narrow">
+  <app-page-header [title]="(isEditMode() ? 'programs.form.edit_title' : 'programs.form.new_title') | transloco">
+    <p-button
+      slot="left"
+      type="button"
+      severity="secondary"
+      [outlined]="true"
+      icon="pi pi-arrow-left"
+      [label]="'common.back' | transloco"
+      [routerLink]="programId() ? ['/programs', programId()] : ['/programs']"
+    />
     @if (isEditMode()) {
-      {{ 'programs.form.edit_title' | transloco }}
-    } @else {
-      {{ 'programs.form.new_title' | transloco }}
+      <app-status-badge
+        slot="title-after"
+        [kind]="activeValue() ? 'active' : 'inactive'"
+        [label]="(activeValue() ? 'common.active' : 'common.inactive') | transloco"
+      />
     }
-  </h1>
+    @if (isEditMode()) {
+      <app-active-toggle
+        slot="right"
+        [entityId]="programId()!"
+        [value]="activeValue()"
+        [patch]="patchActive"
+        [labels]="activeLabels()"
+        (valueChange)="activeValue.set($event)"
+      />
+    }
+  </app-page-header>
 
   @if (loading()) {
-    <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+    <div class="card"><p class="meta-hint">{{ 'common.loading' | transloco }}…</p></div>
   } @else {
-    <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-5">
-      <div class="flex flex-col gap-2">
-        <label for="name" class="text-sm font-medium text-gray-700">
-          {{ 'programs.form.name' | transloco }}
-        </label>
-        <input
-          pInputText
-          id="name"
-          formControlName="name"
-          class="w-full"
-          [placeholder]="'programs.form.name_placeholder' | transloco"
-        />
-      </div>
+    <div class="card form-card builder-stack">
+      <form [formGroup]="form">
+        <p-tabs value="info" class="builder-tabs">
+          <p-tablist>
+            <p-tab value="info"><i class="pi pi-info-circle tab-icon"></i>{{ 'programs.form.tab_info' | transloco }}</p-tab>
+            <p-tab value="planning"><i class="pi pi-calendar tab-icon"></i>{{ 'programs.form.tab_planning' | transloco }}</p-tab>
+            <p-tab value="description"><i class="pi pi-align-left tab-icon"></i>{{ 'programs.form.tab_description' | transloco }}</p-tab>
+          </p-tablist>
+          <p-tabpanels>
+            <p-tabpanel value="info">
+              <div class="builder-pane">
+                <div class="meta-grid">
+                  <app-meta-field [full]="true" [label]="'programs.form.name' | transloco" for="name" [error]="fieldError('name')">
+                    <input pInputText id="name" formControlName="name" [placeholder]="'programs.form.name_placeholder' | transloco" />
+                  </app-meta-field>
+                  <app-meta-field
+                    [full]="true"
+                    [label]="'programs.form.team' | transloco"
+                    for="team_id"
+                    [hint]="isEditMode() ? ('programs.form.team_locked_help' | transloco) : null"
+                    [error]="!isEditMode() && availableTeams().length === 0 ? ('programs.form.no_manager_team' | transloco) : fieldError('team_id')"
+                  >
+                    @if (isEditMode()) {
+                      <input pInputText id="team_id" type="text" [value]="program()?.team?.name ?? ''" disabled />
+                    } @else {
+                      <p-select
+                        inputId="team_id"
+                        [options]="availableTeams()"
+                        formControlName="team_id"
+                        optionLabel="name"
+                        optionValue="id"
+                        [filter]="true"
+                        [placeholder]="'programs.form.team_placeholder' | transloco"
+                      />
+                    }
+                  </app-meta-field>
+                </div>
+              </div>
+            </p-tabpanel>
+            <p-tabpanel value="planning">
+              <div class="builder-pane">
+                <div class="meta-grid">
+                  <app-meta-field [label]="'programs.form.date_start' | transloco" for="date_start" [error]="fieldError('date_start')">
+                    <p-datepicker inputId="date_start" formControlName="date_start" dateFormat="dd/mm/yy" [showIcon]="true" appendTo="body" />
+                  </app-meta-field>
+                  <app-meta-field [label]="'programs.form.date_end' | transloco" for="date_end" [error]="fieldError('date_end')">
+                    <p-datepicker inputId="date_end" formControlName="date_end" dateFormat="dd/mm/yy" [showIcon]="true" appendTo="body" />
+                  </app-meta-field>
+                  <app-meta-field
+                    [label]="'programs.form.frequency' | transloco"
+                    for="frequency_per_week"
+                    [hint]="'programs.form.frequency_help' | transloco"
+                    [error]="fieldError('frequency_per_week')"
+                  >
+                    <p-inputnumber
+                      inputId="frequency_per_week"
+                      formControlName="frequency_per_week"
+                      [min]="0"
+                      [max]="14"
+                      [showButtons]="true"
+                      buttonLayout="horizontal"
+                      spinnerMode="horizontal"
+                      decrementButtonIcon="pi pi-minus"
+                      incrementButtonIcon="pi pi-plus"
+                    />
+                  </app-meta-field>
+                </div>
+              </div>
+            </p-tabpanel>
+            <p-tabpanel value="description">
+              <div class="builder-pane">
+                <div class="meta-grid">
+                  <app-meta-field [full]="true" [label]="'programs.form.description' | transloco" [error]="fieldError('description')">
+                    <p-editor formControlName="description" [style]="{ height: '12rem' }" />
+                  </app-meta-field>
+                </div>
+              </div>
+            </p-tabpanel>
+          </p-tabpanels>
+        </p-tabs>
+      </form>
 
-      <div class="flex flex-col gap-2">
-        <label for="team_id" class="text-sm font-medium text-gray-700">
-          {{ 'programs.form.team' | transloco }}
-        </label>
-        @if (isEditMode()) {
-          <input
-            pInputText
-            id="team_id"
-            type="text"
-            [value]="program()?.team?.name ?? ''"
-            disabled
-            class="w-full"
-          />
-          <small class="text-xs text-gray-500">
-            {{ 'programs.form.team_locked_help' | transloco }}
-          </small>
-        } @else {
-          <p-select
-            inputId="team_id"
-            [options]="availableTeams()"
-            formControlName="team_id"
-            optionLabel="name"
-            optionValue="id"
-            [filter]="true"
-            [placeholder]="'programs.form.team_placeholder' | transloco"
-            styleClass="w-full"
-          />
-          @if (availableTeams().length === 0) {
-            <small class="text-xs text-orange-600">
-              {{ 'programs.form.no_manager_team' | transloco }}
-            </small>
-          }
-        }
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div class="flex flex-col gap-2">
-          <label for="date_start" class="text-sm font-medium text-gray-700">
-            {{ 'programs.form.date_start' | transloco }}
-          </label>
-          <p-datepicker
-            inputId="date_start"
-            formControlName="date_start"
-            dateFormat="dd/mm/yy"
-            [showIcon]="true"
-            styleClass="w-full"
-          />
-        </div>
-
-        <div class="flex flex-col gap-2">
-          <label for="date_end" class="text-sm font-medium text-gray-700">
-            {{ 'programs.form.date_end' | transloco }}
-          </label>
-          <p-datepicker
-            inputId="date_end"
-            formControlName="date_end"
-            dateFormat="dd/mm/yy"
-            [showIcon]="true"
-            styleClass="w-full"
-          />
-        </div>
-      </div>
-
-      <div class="flex flex-col gap-2">
-        <label for="frequency_per_week" class="text-sm font-medium text-gray-700">
-          {{ 'programs.form.frequency' | transloco }}
-        </label>
-        <p-inputNumber
-          inputId="frequency_per_week"
-          formControlName="frequency_per_week"
-          [min]="0"
-          [max]="14"
-          [showButtons]="true"
-          styleClass="w-full"
-        />
-        <small class="text-xs text-gray-500">
-          {{ 'programs.form.frequency_help' | transloco }}
-        </small>
-      </div>
-
-      <div class="flex flex-col gap-2">
-        <label for="description" class="text-sm font-medium text-gray-700">
-          {{ 'programs.form.description' | transloco }}
-        </label>
-        <textarea
-          pTextarea
-          id="description"
-          formControlName="description"
-          rows="4"
-          [placeholder]="'programs.form.description_placeholder' | transloco"
-          class="w-full"
-        ></textarea>
-      </div>
-
-      @if (errorMessage(); as msg) {
-        <p-message severity="error" [text]="msg | transloco" />
-      }
-
-      @if (fieldErrors(); as errors) {
-        <div class="flex flex-col gap-1">
-          @for (entry of errors | keyvalue; track entry.key) {
-            <p-message severity="warn" [text]="entry.key + ': ' + entry.value.join(', ')" />
-          }
-        </div>
-      }
-
-      <div class="flex justify-end gap-2 mt-2">
-        <a [routerLink]="programId() ? ['/programs', programId()] : ['/programs']">
-          <p-button
-            type="button"
-            severity="secondary"
-            [text]="true"
-            [label]="'common.cancel' | transloco"
-          />
-        </a>
-        <p-button
-          type="submit"
-          [label]="'common.save' | transloco"
-          [loading]="saving()"
-          [disabled]="form.invalid"
-        />
-      </div>
-    </form>
+      <app-form-footer
+        [saving]="saving()"
+        [disabled]="form.invalid"
+        [cancelLabel]="'common.cancel' | transloco"
+        [saveLabel]="'common.save' | transloco"
+        (cancel)="cancel()"
+        (save)="submit()"
+      />
+    </div>
   }
+
+  <p-confirmDialog />
 </div>

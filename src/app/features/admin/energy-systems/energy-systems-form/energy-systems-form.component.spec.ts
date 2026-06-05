@@ -28,7 +28,8 @@ interface ProtectedFields {
   };
   esId(): number | null;
   saving(): boolean;
-  errorMessage(): string | null;
+  activeValue(): boolean;
+  patchActive: (id: number, value: boolean) => unknown;
   fieldErrors(): Record<string, string[]> | null;
   submit(): void;
 }
@@ -97,16 +98,35 @@ describe('EnergySystemsFormComponent', () => {
     expect(access(component).form.valid).toBe(true);
   });
 
+  it('defaults activeValue to true in create mode', () => {
+    expect(access(component).activeValue()).toBe(true);
+  });
+
   it('hydrates the form from energySystemsRetrieve(id, true) in edit mode', async () => {
     await setup('10');
 
     expect(access(component).esId()).toBe(10);
     expect(serviceMock.energySystemsRetrieve).toHaveBeenCalledWith(10, true);
+    expect(access(component).activeValue()).toBe(true);
     expect(access(component).form.value).toMatchObject({
       name_fr: 'Endurance',
       name_nl: '',
       name_en: 'Endurance',
-      is_active: true,
+    });
+  });
+
+  it('seeds activeValue from energySystem.is_active in edit mode', async () => {
+    fakeAdmin.is_active = false;
+    await setup('10');
+    expect(access(component).activeValue()).toBe(false);
+    fakeAdmin.is_active = true;
+  });
+
+  it('patchActive calls energySystemsPartialUpdate with undefined 2nd arg and is_active body', async () => {
+    await setup('10');
+    access(component).patchActive(10, false);
+    expect(serviceMock.energySystemsPartialUpdate).toHaveBeenCalledWith(10, undefined, {
+      is_active: false,
     });
   });
 
@@ -124,7 +144,7 @@ describe('EnergySystemsFormComponent', () => {
     expect(navigate).toHaveBeenCalledWith(['/admin/energy-systems']);
   });
 
-  it('submit() in edit mode calls energySystemsPartialUpdate(id, true, payload)', async () => {
+  it('submit() in edit mode calls energySystemsPartialUpdate(id, undefined, payload)', async () => {
     await setup('10');
     const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
     access(component).form.patchValue({ name_nl: 'Endurance NL' });
@@ -134,7 +154,7 @@ describe('EnergySystemsFormComponent', () => {
     expect(serviceMock.energySystemsPartialUpdate).toHaveBeenCalledTimes(1);
     const [id, includeInactive, payload] = serviceMock.energySystemsPartialUpdate.mock.calls[0];
     expect(id).toBe(10);
-    expect(includeInactive).toBe(true);
+    expect(includeInactive).toBeUndefined();
     expect(payload).toMatchObject({ name_nl: 'Endurance NL' });
     expect(navigate).toHaveBeenCalledWith(['/admin/energy-systems']);
   });
@@ -152,12 +172,15 @@ describe('EnergySystemsFormComponent', () => {
     expect(access(component).saving()).toBe(false);
   });
 
-  it('maps detail when no fields are returned', () => {
+  it('toasts the detail when no fields are returned', () => {
     serviceMock.energySystemsCreate.mockReturnValue(
       throwError(() => ({ status: 500, error: { detail: 'Server unhappy' } })),
     );
     access(component).submit();
 
-    expect(access(component).errorMessage()).toBe('Server unhappy');
+    expect(access(component).fieldErrors()).toBeNull();
+    expect(messageMock.add).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'error', detail: 'Server unhappy' }),
+    );
   });
 });

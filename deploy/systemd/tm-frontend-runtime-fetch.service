@@ -12,7 +12,7 @@ Type=oneshot
 RemainAfterExit=yes
 User=root
 
-# Force auth via the EC2 instance role (quizonline-ec2) over IMDS by blanking the
+# Force auth via the EC2 instance role (foxugly-fleet-ec2) over IMDS by blanking the
 # credentials/config files — otherwise root's static certbot-route53 keys in
 # /root/.aws would shadow the role. The frontend config is public String, so no
 # kms:Decrypt is needed.

@@ -1,4 +1,3 @@
-import { CommonModule, KeyValuePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -14,11 +13,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { MessageService } from 'primeng/api';
-import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
-import { Message } from 'primeng/message';
 import { Select } from 'primeng/select';
 import { Textarea } from 'primeng/textarea';
 import { firstValueFrom } from 'rxjs';
@@ -29,25 +26,22 @@ import { EnergySegment } from '../../../api/model/energy-segment';
 import { Exercise } from '../../../api/model/exercise';
 import { LanguageEnum } from '../../../api/model/language-enum';
 import { Modality } from '../../../api/model/modality';
+import { type FieldErrors, extractServerError } from '../../../shared/forms/notify-error';
+import { FormFooterComponent } from '../../../shared/ui/form-footer/form-footer.component';
+import { MetaFieldComponent } from '../../../shared/ui/meta-field/meta-field.component';
 import { timeMmSsValidator } from '../shared/time-validator';
-
-interface FieldErrors {
-  [field: string]: string[];
-}
 
 @Component({
   selector: 'app-exercise-form-dialog',
   imports: [
-    CommonModule,
-    KeyValuePipe,
     ReactiveFormsModule,
-    Button,
     Dialog,
     InputNumber,
     InputText,
-    Message,
     Select,
     Textarea,
+    MetaFieldComponent,
+    FormFooterComponent,
     TranslocoPipe,
   ],
   templateUrl: './exercise-form-dialog.component.html',
@@ -75,7 +69,6 @@ export class ExerciseFormDialogComponent {
   protected readonly loadingOptions = signal(false);
   protected readonly modalities = signal<Modality[]>([]);
   protected readonly energySegments = signal<EnergySegment[]>([]);
-  protected readonly errorMessage = signal<string | null>(null);
   protected readonly fieldErrors = signal<FieldErrors | null>(null);
 
   protected readonly form = this.fb.nonNullable.group({
@@ -101,7 +94,6 @@ export class ExerciseFormDialogComponent {
           t_break: ex?.t_break ?? '',
           notes: ex?.notes ?? '',
         });
-        this.errorMessage.set(null);
         this.fieldErrors.set(null);
         void this.loadOptions();
       }
@@ -127,6 +119,10 @@ export class ExerciseFormDialogComponent {
     }
   }
 
+  protected fieldError(name: string): string | null {
+    return this.fieldErrors()?.[name]?.join(', ') ?? null;
+  }
+
   protected onCancel(): void {
     if (this.saving()) return;
     this.closed.emit(null);
@@ -145,14 +141,13 @@ export class ExerciseFormDialogComponent {
   protected submit(): void {
     if (this.form.invalid || this.saving() || !this.hasOptions()) return;
     this.saving.set(true);
-    this.errorMessage.set(null);
     this.fieldErrors.set(null);
 
     const value = this.form.getRawValue();
     if (this.mode() === 'create') {
       const round = this.roundId();
       if (round == null) {
-        this.errorMessage.set('events.errors.unknown');
+        this.notifyGlobalError('events.errors.unknown');
         this.saving.set(false);
         return;
       }
@@ -183,7 +178,7 @@ export class ExerciseFormDialogComponent {
     } else {
       const ex = this.exercise();
       if (!ex) {
-        this.errorMessage.set('events.errors.unknown');
+        this.notifyGlobalError('events.errors.unknown');
         this.saving.set(false);
         return;
       }
@@ -212,39 +207,24 @@ export class ExerciseFormDialogComponent {
   }
 
   private applyServerError(err: HttpErrorResponse): void {
-    const body = err?.error as
-      | { code?: string; detail?: string; fields?: FieldErrors }
-      | null
-      | undefined;
-
-    if (body?.code === 'not_authorized_round') {
-      this.messageService.add({
-        severity: 'error',
-        summary: this.transloco.translate('common.error'),
-        detail: this.transloco.translate('events.exercise_form.errors.not_authorized_round'),
-      });
+    const code = (err?.error as { code?: string } | null | undefined)?.code;
+    if (code === 'not_authorized_round') {
+      this.notifyGlobalError('events.exercise_form.errors.not_authorized_round');
       return;
     }
 
-    if (body?.fields && Object.keys(body.fields).length > 0) {
-      this.fieldErrors.set(body.fields);
-      return;
+    const { fields, detail } = extractServerError(err);
+    this.fieldErrors.set(fields);
+    if (!fields) {
+      this.notifyGlobalError(detail ?? 'events.errors.unknown');
     }
+  }
 
-    if (body && typeof body === 'object') {
-      const fieldEntries: FieldErrors = {};
-      for (const [key, value] of Object.entries(body)) {
-        if (key === 'code' || key === 'detail' || key === 'fields') continue;
-        if (Array.isArray(value)) {
-          fieldEntries[key] = value.filter((m): m is string => typeof m === 'string');
-        }
-      }
-      if (Object.keys(fieldEntries).length > 0) {
-        this.fieldErrors.set(fieldEntries);
-        return;
-      }
-    }
-
-    this.errorMessage.set(body?.detail ?? 'events.errors.unknown');
+  private notifyGlobalError(detailKey: string): void {
+    this.messageService.add({
+      severity: 'error',
+      summary: this.transloco.translate('common.error'),
+      detail: this.transloco.translate(detailKey),
+    });
   }
 }

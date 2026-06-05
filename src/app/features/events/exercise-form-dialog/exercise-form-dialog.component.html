@@ -6,27 +6,19 @@
   [style]="{ width: '32rem' }"
   [header]="(mode() === 'create' ? 'events.exercise_form.title_create' : 'events.exercise_form.title_edit') | transloco"
 >
-  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
-    @if (loadingOptions()) {
-      <p class="text-sm text-gray-500">{{ 'common.loading' | transloco }}…</p>
-    } @else if (!hasOptions()) {
-      @if (modalities().length === 0) {
-        <p-message
-          severity="warn"
-          [text]="'events.exercise_form.errors.no_modalities' | transloco"
-        />
-      }
-      @if (energySegments().length === 0) {
-        <p-message
-          severity="warn"
-          [text]="'events.exercise_form.errors.no_segments' | transloco"
-        />
-      }
-    } @else {
-      <div class="flex flex-col gap-2">
-        <label for="ex_modality" class="text-sm font-medium text-gray-700">
-          {{ 'events.exercise_form.fields.modality' | transloco }}
-        </label>
+  <form [formGroup]="form">
+    <div class="meta-grid">
+      <app-meta-field
+        [full]="true"
+        [label]="'events.exercise_form.fields.modality' | transloco"
+        for="ex_modality"
+        [hint]="
+          modalities().length === 0 && !loadingOptions()
+            ? ('events.exercise_form.errors.no_modalities' | transloco)
+            : null
+        "
+        [error]="fieldError('modality_id')"
+      >
         <p-select
           inputId="ex_modality"
           formControlName="modality_id"
@@ -36,12 +28,19 @@
           [placeholder]="'events.exercise_form.fields.modality_placeholder' | transloco"
           appendTo="body"
         />
-      </div>
+      </app-meta-field>
 
-      <div class="flex flex-col gap-2">
-        <label for="ex_segment" class="text-sm font-medium text-gray-700">
-          {{ 'events.exercise_form.fields.energysegment' | transloco }}
-        </label>
+      <app-meta-field
+        [full]="true"
+        [label]="'events.exercise_form.fields.energysegment' | transloco"
+        for="ex_segment"
+        [hint]="
+          energySegments().length === 0 && !loadingOptions()
+            ? ('events.exercise_form.errors.no_segments' | transloco)
+            : null
+        "
+        [error]="fieldError('energysegment_id')"
+      >
         <p-select
           inputId="ex_segment"
           formControlName="energysegment_id"
@@ -51,82 +50,92 @@
           [placeholder]="'events.exercise_form.fields.energysegment_placeholder' | transloco"
           appendTo="body"
         />
-      </div>
+      </app-meta-field>
 
-      <div class="grid grid-cols-2 gap-4">
-        <div class="flex flex-col gap-2">
-          <label for="ex_repetition" class="text-sm font-medium text-gray-700">
-            {{ 'events.exercise_form.fields.repetition' | transloco }}
-          </label>
-          <p-inputNumber
-            inputId="ex_repetition"
-            formControlName="repetition"
-            [min]="1"
-            [showButtons]="true"
-            [useGrouping]="false"
-          />
-        </div>
+      <app-meta-field
+        [label]="'events.exercise_form.fields.repetition' | transloco"
+        for="ex_repetition"
+        [error]="fieldError('repetition')"
+      >
+        <p-inputNumber
+          inputId="ex_repetition"
+          formControlName="repetition"
+          [min]="1"
+          [showButtons]="true"
+          buttonLayout="horizontal"
+          spinnerMode="horizontal"
+          [useGrouping]="false"
+          decrementButtonIcon="pi pi-minus"
+          incrementButtonIcon="pi pi-plus"
+        />
+      </app-meta-field>
 
-        <div class="flex flex-col gap-2">
-          <label for="ex_distance" class="text-sm font-medium text-gray-700">
-            {{ 'events.exercise_form.fields.distance' | transloco }}
-          </label>
-          <p-inputNumber
-            inputId="ex_distance"
-            formControlName="distance"
-            [min]="0"
-            [step]="25"
-            [useGrouping]="false"
-            suffix=" m"
-          />
-        </div>
-      </div>
+      <app-meta-field
+        [label]="'events.exercise_form.fields.distance' | transloco"
+        for="ex_distance"
+        [error]="fieldError('distance')"
+      >
+        <p-inputNumber
+          inputId="ex_distance"
+          formControlName="distance"
+          [min]="0"
+          [step]="25"
+          [showButtons]="true"
+          buttonLayout="horizontal"
+          spinnerMode="horizontal"
+          [useGrouping]="false"
+          suffix=" m"
+          decrementButtonIcon="pi pi-minus"
+          incrementButtonIcon="pi pi-plus"
+        />
+      </app-meta-field>
 
-      <div class="grid grid-cols-2 gap-4">
-        <div class="flex flex-col gap-1">
-          <label for="ex_t_start" class="text-sm font-medium text-gray-700">
-            {{ 'events.exercise_form.fields.t_start' | transloco }}
-          </label>
-          <input
-            pInputText
-            id="ex_t_start"
-            formControlName="t_start"
-            inputmode="numeric"
-            pattern="\d{1,3}:[0-5]\d"
-            maxlength="6"
-            [placeholder]="'events.exercise_form.fields.time_placeholder' | transloco"
-          />
-          @if (form.controls.t_start.invalid && form.controls.t_start.dirty) {
-            <small class="text-xs text-red-700">
-              {{ 'events.shared.time_mmss_invalid' | transloco }}
-            </small>
-          }
-        </div>
-        <div class="flex flex-col gap-1">
-          <label for="ex_t_break" class="text-sm font-medium text-gray-700">
-            {{ 'events.exercise_form.fields.t_break' | transloco }}
-          </label>
-          <input
-            pInputText
-            id="ex_t_break"
-            formControlName="t_break"
-            inputmode="numeric"
-            pattern="\d{1,3}:[0-5]\d"
-            maxlength="6"
-            [placeholder]="'events.exercise_form.fields.time_placeholder' | transloco"
-          />
-          @if (form.controls.t_break.invalid && form.controls.t_break.dirty) {
-            <small class="text-xs text-red-700">
-              {{ 'events.shared.time_mmss_invalid' | transloco }}
-            </small>
-          }
-        </div>
-      </div>
+      <app-meta-field
+        [label]="'events.exercise_form.fields.t_start' | transloco"
+        for="ex_t_start"
+        [error]="
+          form.controls.t_start.invalid && form.controls.t_start.dirty
+            ? ('events.shared.time_mmss_invalid' | transloco)
+            : fieldError('t_start')
+        "
+      >
+        <input
+          pInputText
+          id="ex_t_start"
+          formControlName="t_start"
+          inputmode="numeric"
+          pattern="\d{1,3}:[0-5]\d"
+          maxlength="6"
+          [placeholder]="'events.exercise_form.fields.time_placeholder' | transloco"
+        />
+      </app-meta-field>
 
-      <div class="flex flex-col gap-2">
-        <label for="ex_notes" class="text-sm font-medium text-gray-700">
-          {{ 'events.exercise_form.fields.notes' | transloco }}
-        </label>
+      <app-meta-field
+        [label]="'events.exercise_form.fields.t_break' | transloco"
+        for="ex_t_break"
+        [error]="
+          form.controls.t_break.invalid && form.controls.t_break.dirty
+            ? ('events.shared.time_mmss_invalid' | transloco)
+            : fieldError('t_break')
+        "
+      >
+        <input
+          pInputText
+          id="ex_t_break"
+          formControlName="t_break"
+          inputmode="numeric"
+          pattern="\d{1,3}:[0-5]\d"
+          maxlength="6"
+          [placeholder]="'events.exercise_form.fields.time_placeholder' | transloco"
+        />
+      </app-meta-field>
+
+      <app-meta-field
+        [full]="true"
+        [label]="'events.exercise_form.fields.notes' | transloco"
+        for="ex_notes"
+        [error]="fieldError('notes')"
+      >
         <textarea
           pTextarea
           id="ex_notes"
@@ -134,36 +143,15 @@
           rows="2"
           [autoResize]="true"
         ></textarea>
-      </div>
-    }
-
-    @if (errorMessage(); as msg) {
-      <p-message severity="error" [text]="msg | transloco" />
-    }
-
-    @if (fieldErrors(); as errors) {
-      <div class="flex flex-col gap-1">
-        @for (entry of errors | keyvalue; track entry.key) {
-          <p-message severity="warn" [text]="entry.key + ': ' + entry.value.join(', ')" />
-        }
-      </div>
-    }
-
-    <div class="flex justify-end gap-2 pt-2">
-      <p-button
-        type="button"
-        severity="secondary"
-        [text]="true"
-        [label]="'events.exercise_form.cancel' | transloco"
-        [disabled]="saving()"
-        (onClick)="onCancel()"
-      />
-      <p-button
-        type="submit"
-        [label]="'events.exercise_form.save' | transloco"
-        [loading]="saving()"
-        [disabled]="form.invalid || !hasOptions()"
-      />
+      </app-meta-field>
     </div>
   </form>
+  <app-form-footer
+    [saving]="saving()"
+    [disabled]="form.invalid || !hasOptions()"
+    [cancelLabel]="'events.exercise_form.cancel' | transloco"
+    [saveLabel]="'events.exercise_form.save' | transloco"
+    (cancel)="onCancel()"
+    (save)="submit()"
+  />
 </p-dialog>

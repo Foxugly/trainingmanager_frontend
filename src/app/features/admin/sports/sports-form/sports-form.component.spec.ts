@@ -32,7 +32,8 @@ interface ProtectedFields {
   };
   sportId(): number | null;
   saving(): boolean;
-  errorMessage(): string | null;
+  activeValue(): boolean;
+  patchActive: (id: number, value: boolean) => unknown;
   fieldErrors(): Record<string, string[]> | null;
   submit(): void;
 }
@@ -105,18 +106,37 @@ describe('SportsFormComponent', () => {
     expect(access(component).form.valid).toBe(true);
   });
 
+  it('defaults activeValue to true in create mode', () => {
+    expect(access(component).activeValue()).toBe(true);
+  });
+
   it('hydrates the form from sportsRetrieve in edit mode', async () => {
     await setup('7');
 
     expect(access(component).sportId()).toBe(7);
     expect(sportsServiceMock.sportsRetrieve).toHaveBeenCalledWith(7, true);
+    expect(access(component).activeValue()).toBe(true);
     expect(access(component).form.value).toMatchObject({
       name_fr: 'Course',
       name_nl: '',
       name_en: 'Running',
       slug: 'course',
-      is_active: true,
       energy_systems: [10],
+    });
+  });
+
+  it('seeds activeValue from sport.is_active in edit mode', async () => {
+    sportAdmin.is_active = false;
+    await setup('7');
+    expect(access(component).activeValue()).toBe(false);
+    sportAdmin.is_active = true;
+  });
+
+  it('patchActive calls sportsPartialUpdate with undefined 2nd arg and is_active body', async () => {
+    await setup('7');
+    access(component).patchActive(7, false);
+    expect(sportsServiceMock.sportsPartialUpdate).toHaveBeenCalledWith(7, undefined, {
+      is_active: false,
     });
   });
 
@@ -132,7 +152,7 @@ describe('SportsFormComponent', () => {
     expect(navigate).toHaveBeenCalledWith(['/admin/sports']);
   });
 
-  it('submit() in edit mode calls sportsPartialUpdate', async () => {
+  it('submit() in edit mode calls sportsPartialUpdate with undefined 2nd arg', async () => {
     await setup('7');
     const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
     access(component).form.patchValue({ name_nl: 'Hardlopen' });
@@ -143,7 +163,7 @@ describe('SportsFormComponent', () => {
     const [id, includeInactive, payload] =
       sportsServiceMock.sportsPartialUpdate.mock.calls[0];
     expect(id).toBe(7);
-    expect(includeInactive).toBe(true);
+    expect(includeInactive).toBeUndefined();
     expect(payload).toMatchObject({ name_nl: 'Hardlopen' });
     expect(navigate).toHaveBeenCalledWith(['/admin/sports']);
   });
@@ -162,13 +182,16 @@ describe('SportsFormComponent', () => {
     expect(access(component).saving()).toBe(false);
   });
 
-  it('maps detail when no fields are returned', () => {
+  it('toasts the detail when no fields are returned', () => {
     sportsServiceMock.sportsCreate.mockReturnValue(
       throwError(() => ({ status: 500, error: { detail: 'Server unhappy' } })),
     );
     access(component).form.patchValue({ slug: 'whatever' });
     access(component).submit();
 
-    expect(access(component).errorMessage()).toBe('Server unhappy');
+    expect(access(component).fieldErrors()).toBeNull();
+    expect(messageMock.add).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'error', detail: 'Server unhappy' }),
+    );
   });
 });

@@ -67,9 +67,11 @@ interface ProtectedFields {
   program(): Program | null;
   isEditMode(): boolean;
   saving(): boolean;
-  errorMessage(): string | null;
+  activeValue(): boolean;
   fieldErrors(): { [k: string]: string[] } | null;
+  fieldError(name: string): string | null;
   availableTeams(): Team[];
+  patchActive: (id: number, value: boolean) => unknown;
   form: {
     getRawValue(): Record<string, unknown>;
     patchValue(v: Record<string, unknown>): void;
@@ -77,6 +79,7 @@ interface ProtectedFields {
     valid: boolean;
     controls: { team_id: { disabled: boolean } };
   };
+  cancel(): void;
   submit(): void;
 }
 
@@ -93,6 +96,7 @@ describe('ProgramsFormComponent', () => {
   let routeIdParam: string | null;
   let routeQueryTeam: string | null;
   let router: Router;
+  let messageService: MessageService;
 
   const access = (c: ProgramsFormComponent) => c as unknown as ProtectedFields;
 
@@ -149,6 +153,8 @@ describe('ProgramsFormComponent', () => {
     fixture = TestBed.createComponent(ProgramsFormComponent);
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
+    messageService = TestBed.inject(MessageService);
+    vi.spyOn(messageService, 'add');
     vi.spyOn(router, 'navigate').mockReturnValue(Promise.resolve(true));
     fixture.detectChanges();
   }
@@ -196,6 +202,24 @@ describe('ProgramsFormComponent', () => {
     expect(access(component).form.controls.team_id.disabled).toBe(true);
   });
 
+  it('on edit mode, seeds activeValue from the loaded program', async () => {
+    await setup('7');
+    expect(access(component).activeValue()).toBe(true);
+  });
+
+  it('on edit mode with inactive program, activeValue is false', async () => {
+    await setup('7', { ...program, is_active: false });
+    expect(access(component).activeValue()).toBe(false);
+  });
+
+  it('patchActive calls programsPartialUpdate with the is_active body as 3rd arg', async () => {
+    await setup('7');
+    access(component).patchActive(7, false);
+    expect(programsMock.programsPartialUpdate).toHaveBeenCalledWith(7, undefined, {
+      is_active: false,
+    });
+  });
+
   it('on create success, navigates to /programs/:id with the new id', () => {
     access(component).form.patchValue({ name: 'New', team_id: 4 });
     access(component).submit();
@@ -223,5 +247,45 @@ describe('ProgramsFormComponent', () => {
     access(component).submit();
     expect(access(component).fieldErrors()).not.toBeNull();
     expect(access(component).fieldErrors()?.['name']).toEqual(['required']);
+  });
+
+  it('exposes field errors via fieldError() helper', () => {
+    programsMock.programsCreate.mockReturnValueOnce(
+      throwError(() => ({ error: { fields: { name: ['required', 'too short'] } } })),
+    );
+    access(component).form.patchValue({ name: 'X', team_id: 4 });
+    access(component).submit();
+    expect(access(component).fieldError('name')).toBe('required, too short');
+    expect(access(component).fieldError('description')).toBeNull();
+  });
+
+  it('toasts a global error (no field errors) instead of inline display', () => {
+    programsMock.programsCreate.mockReturnValueOnce(
+      throwError(() => ({ error: { detail: 'programs.errors.unknown' } })),
+    );
+    access(component).form.patchValue({ name: 'X', team_id: 4 });
+    access(component).submit();
+    expect(access(component).fieldErrors()).toBeNull();
+    expect(messageService.add).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'error' }),
+    );
+  });
+
+  it('toasts an error when a program fails to load in edit mode', async () => {
+    await setup('7', null);
+    expect(messageService.add).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'error' }),
+    );
+  });
+
+  it('cancel() navigates back to /programs in create mode', () => {
+    access(component).cancel();
+    expect(router.navigate).toHaveBeenCalledWith(['/programs']);
+  });
+
+  it('cancel() navigates back to /programs/:id in edit mode', async () => {
+    await setup('7');
+    access(component).cancel();
+    expect(router.navigate).toHaveBeenCalledWith(['/programs', 7]);
   });
 });

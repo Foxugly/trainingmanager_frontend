@@ -1,0 +1,55 @@
+.meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem 1rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-soft);
+
+  &--full {
+    grid-column: 1 / -1;
+  }
+}
+
+.meta-label {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.meta-value {
+  width: 100%;
+  font-size: 0.95rem;
+  color: var(--text-strong);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  ::ng-deep .p-inputtext,
+  ::ng-deep .p-select,
+  ::ng-deep .p-multiselect,
+  ::ng-deep .p-datepicker,
+  ::ng-deep .p-inputnumber,
+  ::ng-deep .p-editor-container {
+    width: 100%;
+  }
+}
+
+.meta-hint {
+  font-size: 0.8rem;
+  color: var(--muted);
+
+  &--error {
+    color: #d14343;
+  }
+}

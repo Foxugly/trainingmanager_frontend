@@ -81,7 +81,6 @@ interface ProtectedFields {
   eventId(): number | null;
   isEditMode(): boolean;
   saving(): boolean;
-  errorMessage(): string | null;
   fieldErrors(): { [k: string]: string[] } | null;
   availablePrograms(): Program[];
   form: {
@@ -91,6 +90,8 @@ interface ProtectedFields {
     errors: Record<string, unknown> | null;
     controls: { refer_program_id: { disabled: boolean } };
   };
+  fieldError(name: string): string | null;
+  cancel(): void;
   submit(): void;
 }
 
@@ -107,6 +108,7 @@ describe('EventsFormComponent', () => {
   let routeIdParam: string | null;
   let routeQueryProgram: string | null;
   let router: Router;
+  let messageService: MessageService;
 
   const access = (c: EventsFormComponent) => c as unknown as ProtectedFields;
 
@@ -164,6 +166,8 @@ describe('EventsFormComponent', () => {
     fixture = TestBed.createComponent(EventsFormComponent);
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
+    messageService = TestBed.inject(MessageService);
+    vi.spyOn(messageService, 'add');
     vi.spyOn(router, 'navigate').mockReturnValue(Promise.resolve(true));
     fixture.detectChanges();
     await new Promise((r) => setTimeout(r, 0));
@@ -266,5 +270,53 @@ describe('EventsFormComponent', () => {
     });
     access(component).submit();
     expect(access(component).fieldErrors()?.['name']).toEqual(['this field is required.']);
+  });
+
+  it('toasts a global error (no field errors) instead of inline display', () => {
+    eventsMock.eventsCreate.mockReturnValueOnce(
+      throwError(() => ({ error: { detail: 'boom' } })),
+    );
+    access(component).form.patchValue({
+      name: 'X',
+      refer_program_id: 4,
+      date: new Date(2026, 4, 5),
+    });
+    access(component).submit();
+    expect(access(component).fieldErrors()).toBeNull();
+    expect(messageService.add).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'error' }),
+    );
+  });
+
+  it('exposes field errors via fieldError() helper', () => {
+    eventsMock.eventsCreate.mockReturnValueOnce(
+      throwError(() => ({ error: { fields: { name: ['required', 'too short'] } } })),
+    );
+    access(component).form.patchValue({
+      name: 'X',
+      refer_program_id: 4,
+      date: new Date(2026, 4, 5),
+    });
+    access(component).submit();
+    expect(access(component).fieldError('name')).toBe('required, too short');
+    expect(access(component).fieldError('goal')).toBeNull();
+  });
+
+  it('cancel() navigates back to /events in create mode', () => {
+    access(component).cancel();
+    expect(router.navigate).toHaveBeenCalledWith(['/events']);
+  });
+
+  it('cancel() navigates back to /events/:id in edit mode', async () => {
+    await setup('7');
+    access(component).cancel();
+    expect(router.navigate).toHaveBeenCalledWith(['/events', 7]);
+  });
+
+  it('toasts an error when an event fails to load in edit mode', async () => {
+    await setup('7', null);
+    expect(messageService.add).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'error' }),
+    );
   });
 });

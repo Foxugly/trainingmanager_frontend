@@ -1,4 +1,3 @@
-import { KeyValuePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -13,25 +12,31 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
+import { ConfirmDialog } from 'primeng/confirmdialog';
 import { DatePicker } from 'primeng/datepicker';
+import { Editor } from 'primeng/editor';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
-import { Message } from 'primeng/message';
 import { Select } from 'primeng/select';
-import { Textarea } from 'primeng/textarea';
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { ProgramsService } from '../../../api/api/programs.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { PatchedProgram } from '../../../api/model/patched-program';
 import { Program } from '../../../api/model/program';
 import { Team } from '../../../api/model/team';
 import { AuthService } from '../../../core/auth/auth.service';
+import { type FieldErrors, extractServerError } from '../../../shared/forms/notify-error';
+import {
+  ActiveToggleComponent,
+  type ActiveToggleLabels,
+} from '../../../shared/ui/active-toggle/active-toggle.component';
+import { FormFooterComponent } from '../../../shared/ui/form-footer/form-footer.component';
+import { MetaFieldComponent } from '../../../shared/ui/meta-field/meta-field.component';
+import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
+import { StatusBadgeComponent } from '../../../shared/ui/status-badge/status-badge.component';
 import { TeamRole, computeTeamRole } from '../../teams/teams-list/teams-list.component';
-
-interface FieldErrors {
-  [field: string]: string[];
-}
 
 function toIsoDate(d: Date | null | undefined): string | null {
   if (!d) return null;
@@ -51,18 +56,28 @@ function fromIsoDate(s: string | null | undefined): Date | null {
 @Component({
   selector: 'app-programs-form',
   imports: [
-    KeyValuePipe,
     ReactiveFormsModule,
     RouterLink,
     InputText,
-    Textarea,
     InputNumber,
     DatePicker,
     Select,
     Button,
-    Message,
+    Editor,
+    ConfirmDialog,
+    Tabs,
+    TabList,
+    Tab,
+    TabPanels,
+    TabPanel,
+    PageHeaderComponent,
+    StatusBadgeComponent,
+    ActiveToggleComponent,
+    MetaFieldComponent,
+    FormFooterComponent,
     TranslocoPipe,
   ],
+  providers: [ConfirmationService],
   templateUrl: './programs-form.component.html',
   styleUrl: './programs-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -83,10 +98,21 @@ export class ProgramsFormComponent implements OnInit {
   protected readonly loading = signal(false);
   protected readonly saving = signal(false);
   protected readonly availableTeams = signal<Team[]>([]);
-  protected readonly errorMessage = signal<string | null>(null);
   protected readonly fieldErrors = signal<FieldErrors | null>(null);
+  protected readonly activeValue = signal(true);
 
   protected readonly isEditMode = computed(() => this.programId() !== null);
+
+  protected readonly patchActive = (id: number, value: boolean) =>
+    this.programsService.programsPartialUpdate(id, undefined, { is_active: value } as PatchedProgram);
+
+  protected readonly activeLabels = computed<ActiveToggleLabels>(() => ({
+    active: this.transloco.translate('common.active'),
+    inactive: this.transloco.translate('common.inactive'),
+    confirm: this.transloco.translate('common.confirm_deactivate'),
+    errorSummary: this.transloco.translate('common.error'),
+    errorDetail: this.transloco.translate('common.update_failed'),
+  }));
 
   protected readonly form = this.fb.nonNullable.group({
     name: ['', [Validators.required]],
@@ -102,7 +128,7 @@ export class ProgramsFormComponent implements OnInit {
     if (idParam) {
       const id = Number(idParam);
       if (!Number.isFinite(id)) {
-        this.errorMessage.set('programs.errors.unknown');
+        this.notifyLoadError();
         return;
       }
       this.programId.set(id);
@@ -129,6 +155,7 @@ export class ProgramsFormComponent implements OnInit {
       .subscribe({
         next: (p) => {
           this.program.set(p);
+          this.activeValue.set(p.is_active ?? true);
           this.form.reset({
             name: p.name,
             team_id: p.team?.id ?? null,
@@ -141,7 +168,7 @@ export class ProgramsFormComponent implements OnInit {
           this.loading.set(false);
         },
         error: () => {
-          this.errorMessage.set('programs.errors.unknown');
+          this.notifyLoadError();
           this.loading.set(false);
         },
       });
@@ -164,10 +191,18 @@ export class ProgramsFormComponent implements OnInit {
       });
   }
 
+  protected fieldError(name: string): string | null {
+    return this.fieldErrors()?.[name]?.join(', ') ?? null;
+  }
+
+  protected cancel(): void {
+    const id = this.programId();
+    this.router.navigate(id ? ['/programs', id] : ['/programs']);
+  }
+
   protected submit(): void {
     if (this.form.invalid) return;
     this.saving.set(true);
-    this.errorMessage.set(null);
     this.fieldErrors.set(null);
 
     const value = this.form.getRawValue();
@@ -230,31 +265,25 @@ export class ProgramsFormComponent implements OnInit {
     });
   }
 
+  private notifyLoadError(): void {
+    this.messageService.add({
+      severity: 'error',
+      summary: this.transloco.translate('common.error'),
+      detail: this.transloco.translate('programs.errors.unknown'),
+    });
+  }
+
   private applyServerError(err: HttpErrorResponse): void {
-    const body = err?.error as
-      | { code?: string; detail?: string; fields?: FieldErrors }
-      | null
-      | undefined;
-
-    if (body?.fields && Object.keys(body.fields).length > 0) {
-      this.fieldErrors.set(body.fields);
-      return;
+    const { fields, detail } = extractServerError(err);
+    this.fieldErrors.set(fields);
+    if (!fields) {
+      this.messageService.add({
+        severity: 'error',
+        summary: this.transloco.translate('common.error'),
+        detail: detail
+          ? this.transloco.translate(detail)
+          : this.transloco.translate('programs.errors.unknown'),
+      });
     }
-
-    if (body && typeof body === 'object') {
-      const fieldEntries: FieldErrors = {};
-      for (const [key, value] of Object.entries(body)) {
-        if (key === 'code' || key === 'detail' || key === 'fields') continue;
-        if (Array.isArray(value)) {
-          fieldEntries[key] = value.filter((m): m is string => typeof m === 'string');
-        }
-      }
-      if (Object.keys(fieldEntries).length > 0) {
-        this.fieldErrors.set(fieldEntries);
-        return;
-      }
-    }
-
-    this.errorMessage.set(body?.detail ?? 'programs.errors.unknown');
   }
 }

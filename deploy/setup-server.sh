@@ -10,7 +10,7 @@
 # Run as 'ubuntu' (needs sudo), AFTER:
 #   - DNS A record  tm.foxugly.com → EC2 public IP
 #   - SSM /tm-frontend/prod/* seeded (deploy/seed-parameter-store.sh)
-#   - instance role quizonline-ec2 granted ssm:GetParametersByPath on BOTH
+#   - instance role foxugly-fleet-ec2 granted ssm:GetParametersByPath on BOTH
 #     /tm-frontend/prod and /tm-frontend/prod/*  (no kms: config is public String)
 #
 #   bash /var/www/django_websites/trainingmanager_frontend/deploy/setup-server.sh

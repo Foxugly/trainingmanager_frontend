@@ -1,10 +1,10 @@
-import { KeyValuePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
   OnInit,
+  computed,
   inject,
   signal,
 } from '@angular/core';
@@ -12,37 +12,45 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
-import { Checkbox } from 'primeng/checkbox';
+import { ConfirmDialog } from 'primeng/confirmdialog';
 import { InputText } from 'primeng/inputtext';
-import { Message } from 'primeng/message';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { EnergySystemsService } from '../../../../api/api/energy-systems.service';
 import { EnergySystemAdmin } from '../../../../api/model/energy-system-admin';
 import { PatchedEnergySystemAdmin } from '../../../../api/model/patched-energy-system-admin';
-
-interface FieldErrors {
-  [field: string]: string[];
-}
+import { type FieldErrors, extractServerError } from '../../../../shared/forms/notify-error';
+import {
+  ActiveToggleComponent,
+  type ActiveToggleLabels,
+} from '../../../../shared/ui/active-toggle/active-toggle.component';
+import { FormFooterComponent } from '../../../../shared/ui/form-footer/form-footer.component';
+import { MetaFieldComponent } from '../../../../shared/ui/meta-field/meta-field.component';
+import { PageHeaderComponent } from '../../../../shared/ui/page-header/page-header.component';
+import { StatusBadgeComponent } from '../../../../shared/ui/status-badge/status-badge.component';
 
 @Component({
   selector: 'app-energy-systems-form',
   imports: [
-    KeyValuePipe,
     ReactiveFormsModule,
     RouterLink,
     InputText,
-    Checkbox,
     Button,
-    Message,
+    ConfirmDialog,
     Tabs,
     TabList,
     Tab,
     TabPanels,
     TabPanel,
+    PageHeaderComponent,
+    StatusBadgeComponent,
+    ActiveToggleComponent,
+    MetaFieldComponent,
+    FormFooterComponent,
     TranslocoPipe,
   ],
+  providers: [ConfirmationService],
   templateUrl: './energy-systems-form.component.html',
   styleUrl: './energy-systems-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -59,8 +67,21 @@ export class EnergySystemsFormComponent implements OnInit {
   protected readonly esId = signal<number | null>(null);
   protected readonly loading = signal(false);
   protected readonly saving = signal(false);
-  protected readonly errorMessage = signal<string | null>(null);
   protected readonly fieldErrors = signal<FieldErrors | null>(null);
+  protected readonly activeValue = signal(true);
+
+  protected readonly patchActive = (id: number, value: boolean) =>
+    this.energySystemsService.energySystemsPartialUpdate(id, undefined, {
+      is_active: value,
+    } as PatchedEnergySystemAdmin);
+
+  protected readonly activeLabels = computed<ActiveToggleLabels>(() => ({
+    active: this.transloco.translate('common.active'),
+    inactive: this.transloco.translate('common.inactive'),
+    confirm: this.transloco.translate('common.confirm_deactivate'),
+    errorSummary: this.transloco.translate('common.error'),
+    errorDetail: this.transloco.translate('common.update_failed'),
+  }));
 
   protected readonly form = this.fb.nonNullable.group({
     name_fr: [''],
@@ -68,7 +89,6 @@ export class EnergySystemsFormComponent implements OnInit {
     name_en: [''],
     name_it: [''],
     name_es: [''],
-    is_active: [true],
   });
 
   ngOnInit(): void {
@@ -82,22 +102,30 @@ export class EnergySystemsFormComponent implements OnInit {
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (es) => {
+            this.activeValue.set(es.is_active ?? true);
             this.form.reset({
               name_fr: es.name_fr ?? '',
               name_nl: es.name_nl ?? '',
               name_en: es.name_en ?? '',
               name_it: es.name_it ?? '',
               name_es: es.name_es ?? '',
-              is_active: es.is_active ?? true,
             });
             this.loading.set(false);
           },
           error: () => {
-            this.errorMessage.set('admin.energy_systems.errors.unknown');
+            this.notifyLoadError();
             this.loading.set(false);
           },
         });
     }
+  }
+
+  protected fieldError(name: string): string | null {
+    return this.fieldErrors()?.[name]?.join(', ') ?? null;
+  }
+
+  protected cancel(): void {
+    this.router.navigate(['/admin/energy-systems']);
   }
 
   protected submit(): void {
@@ -105,7 +133,6 @@ export class EnergySystemsFormComponent implements OnInit {
       return;
     }
     this.saving.set(true);
-    this.errorMessage.set(null);
     this.fieldErrors.set(null);
 
     const value = this.form.getRawValue();
@@ -117,13 +144,12 @@ export class EnergySystemsFormComponent implements OnInit {
       name_en: value.name_en || null,
       name_it: value.name_it || null,
       name_es: value.name_es || null,
-      is_active: value.is_active,
     };
 
     const request$ = id
       ? this.energySystemsService.energySystemsPartialUpdate(
           id,
-          true,
+          undefined,
           payload as PatchedEnergySystemAdmin,
         )
       : this.energySystemsService.energySystemsCreate(payload as EnergySystemAdmin);
@@ -145,31 +171,25 @@ export class EnergySystemsFormComponent implements OnInit {
     });
   }
 
+  private notifyLoadError(): void {
+    this.messageService.add({
+      severity: 'error',
+      summary: this.transloco.translate('common.error'),
+      detail: this.transloco.translate('admin.energy_systems.errors.unknown'),
+    });
+  }
+
   private applyServerError(err: HttpErrorResponse): void {
-    const body = err?.error as
-      | { code?: string; detail?: string; fields?: FieldErrors }
-      | null
-      | undefined;
-
-    if (body?.fields && Object.keys(body.fields).length > 0) {
-      this.fieldErrors.set(body.fields);
-      return;
+    const { fields, detail } = extractServerError(err);
+    this.fieldErrors.set(fields);
+    if (!fields) {
+      this.messageService.add({
+        severity: 'error',
+        summary: this.transloco.translate('common.error'),
+        detail: detail
+          ? this.transloco.translate(detail)
+          : this.transloco.translate('admin.energy_systems.errors.unknown'),
+      });
     }
-
-    if (body && typeof body === 'object') {
-      const fieldEntries: FieldErrors = {};
-      for (const [key, value] of Object.entries(body)) {
-        if (key === 'code' || key === 'detail' || key === 'fields') continue;
-        if (Array.isArray(value)) {
-          fieldEntries[key] = value.filter((m): m is string => typeof m === 'string');
-        }
-      }
-      if (Object.keys(fieldEntries).length > 0) {
-        this.fieldErrors.set(fieldEntries);
-        return;
-      }
-    }
-
-    this.errorMessage.set(body?.detail ?? 'admin.energy_systems.errors.unknown');
   }
 }

@@ -3,6 +3,7 @@ import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { TranslocoTestingModule } from '@jsverse/transloco';
+import { MessageService } from 'primeng/api';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MeService } from '../../api/api/me.service';
@@ -34,8 +35,8 @@ interface ProtectedFields {
     patchValue: (v: Partial<{ first_name: string; last_name: string; language: string }>) => void;
   };
   loading(): boolean;
-  successMessage(): string | null;
-  errorMessage(): string | null;
+  fieldErrors(): { [k: string]: string[] } | null;
+  fieldError(name: string): string | null;
   user(): Me | null;
   submit(): void;
   cancel(): void;
@@ -51,6 +52,7 @@ describe('ProfileComponent', () => {
     setCurrentUser: ReturnType<typeof vi.fn>;
   };
   let langMock: { applyToTranslocoOnly: ReturnType<typeof vi.fn> };
+  let messageService: MessageService;
 
   const access = (c: ProfileComponent) => c as unknown as ProtectedFields;
 
@@ -76,14 +78,19 @@ describe('ProfileComponent', () => {
       providers: [
         provideHttpClient(),
         provideNoopAnimations(),
+        MessageService,
         { provide: MeService, useValue: meMock },
         { provide: AuthService, useValue: authMock },
         { provide: LanguageService, useValue: langMock },
       ],
-    }).compileComponents();
+    })
+      .overrideComponent(ProfileComponent, { set: { template: '', imports: [] } })
+      .compileComponents();
 
     fixture = TestBed.createComponent(ProfileComponent);
     component = fixture.componentInstance;
+    messageService = TestBed.inject(MessageService);
+    vi.spyOn(messageService, 'add');
     fixture.detectChanges();
   }
 
@@ -118,7 +125,9 @@ describe('ProfileComponent', () => {
       language: 'fr',
     });
     expect(authMock.setCurrentUser).toHaveBeenCalled();
-    expect(access(component).successMessage()).toBe('profile.saved');
+    expect(messageService.add).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'success' }),
+    );
     expect(langMock.applyToTranslocoOnly).not.toHaveBeenCalled();
   });
 
@@ -131,26 +140,29 @@ describe('ProfileComponent', () => {
     expect(langMock.applyToTranslocoOnly).toHaveBeenCalledWith('it');
   });
 
-  it('submit() surfaces field-level validation errors from DRF', () => {
+  it('submit() maps field-level validation errors from DRF into fieldErrors', () => {
     meMock.mePartialUpdate.mockReturnValue(
       throwError(() => ({ status: 400, error: { first_name: ['This field is required.'] } })),
     );
 
     access(component).submit();
 
-    expect(access(component).errorMessage()).toContain('first_name');
-    expect(access(component).errorMessage()).toContain('This field is required.');
+    expect(access(component).fieldErrors()?.['first_name']).toEqual(['This field is required.']);
+    expect(access(component).fieldError('first_name')).toBe('This field is required.');
     expect(access(component).loading()).toBe(false);
   });
 
-  it('submit() falls back to detail when server returns one', () => {
+  it('submit() toasts the global detail when the server returns one (no field errors)', () => {
     meMock.mePartialUpdate.mockReturnValue(
       throwError(() => ({ status: 400, error: { detail: 'Account locked' } })),
     );
 
     access(component).submit();
 
-    expect(access(component).errorMessage()).toBe('Account locked');
+    expect(access(component).fieldErrors()).toBeNull();
+    expect(messageService.add).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'error', detail: 'Account locked' }),
+    );
   });
 
   it('cancel() resets the form to the user values', () => {
