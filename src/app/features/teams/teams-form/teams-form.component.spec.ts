@@ -17,7 +17,6 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { TeamsFormComponent } from './teams-form.component';
 
 const ownerUser = { id: 17, username: 'testfrontend' } as CustomUserPublic;
-const otherUser = { id: 20, username: 'coach2' } as CustomUserPublic;
 const managerUser = {
   id: 99,
   username: 'mgr',
@@ -53,7 +52,6 @@ interface ProtectedFields {
   team(): Team | null;
   teamId(): number | null;
   isEditMode(): boolean;
-  isOwner(): boolean;
   isAutoPolicy(): boolean;
   saving(): boolean;
   errorMessage(): string | null;
@@ -61,6 +59,8 @@ interface ProtectedFields {
   quotaExceeded(): { used: number; max: number } | null;
   availableSports(): Sport[];
   availableManagers(): CustomUserPublic[];
+  activeValue(): boolean;
+  patchActive: (id: number, value: boolean) => unknown;
   form: {
     getRawValue(): Record<string, unknown>;
     patchValue(v: Record<string, unknown>): void;
@@ -69,7 +69,7 @@ interface ProtectedFields {
     valid: boolean;
   };
   submit(): void;
-  confirmDeactivate(): void;
+  cancel(): void;
 }
 
 describe('TeamsFormComponent', () => {
@@ -165,7 +165,6 @@ describe('TeamsFormComponent', () => {
       sport_id: 1,
       language: 'fr',
       is_public: false,
-      is_active: true,
       managers_ids: [99],
     });
   });
@@ -196,12 +195,18 @@ describe('TeamsFormComponent', () => {
     expect(access(component).fieldErrors()).not.toBeNull();
   });
 
-  it('isOwner is true only when current user matches team owner', async () => {
-    await setup('5', otherUser);
-    expect(access(component).isOwner()).toBe(false);
+  it('seeds activeValue from the loaded team is_active', async () => {
+    await setup('5', ownerUser, { ...team, is_active: true });
+    expect(access(component).activeValue()).toBe(true);
 
-    await setup('5', ownerUser);
-    expect(access(component).isOwner()).toBe(true);
+    await setup('5', ownerUser, { ...team, is_active: false });
+    expect(access(component).activeValue()).toBe(false);
+  });
+
+  it('patchActive calls teamsPartialUpdate with the is_active body as 2nd arg', async () => {
+    await setup('5');
+    access(component).patchActive(5, false);
+    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(5, { is_active: false });
   });
 
   it('pre-fills auto_accept_policy + notify_managers from team policy fields', async () => {
@@ -255,15 +260,14 @@ describe('TeamsFormComponent', () => {
     expect(authService.refreshMe).toHaveBeenCalled();
   });
 
-  it('confirmDeactivate triggers a partialUpdate with is_active=false on accept', async () => {
-    await setup('5');
-    const confirmation = fixture.debugElement.injector.get(ConfirmationService);
-    vi.spyOn(confirmation, 'confirm').mockImplementation((cfg) => {
-      cfg.accept?.();
-      return confirmation;
-    });
-    access(component).confirmDeactivate();
-    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(5, { is_active: false });
+  it('cancel() navigates back to /teams in create mode', () => {
+    access(component).cancel();
     expect(router.navigate).toHaveBeenCalledWith(['/teams']);
+  });
+
+  it('cancel() navigates back to /teams/:id in edit mode', async () => {
+    await setup('5');
+    access(component).cancel();
+    expect(router.navigate).toHaveBeenCalledWith(['/teams', 5]);
   });
 });

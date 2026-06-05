@@ -1,4 +1,3 @@
-import { KeyValuePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -15,13 +14,12 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
-import { Checkbox } from 'primeng/checkbox';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { InputText } from 'primeng/inputtext';
-import { Message } from 'primeng/message';
 import { MultiSelect } from 'primeng/multiselect';
 import { PickList } from 'primeng/picklist';
 import { Select } from 'primeng/select';
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { ToggleSwitch } from 'primeng/toggleswitch';
 import { AttendanceStatusesService } from '../../../api/api/attendance-statuses.service';
 import { SportsService } from '../../../api/api/sports.service';
@@ -35,26 +33,38 @@ import { Sport } from '../../../api/model/sport';
 import { Team } from '../../../api/model/team';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AVAILABLE_LANGUAGES, LanguageCode } from '../../../core/i18n/available-languages';
-
-interface FieldErrors {
-  [field: string]: string[];
-}
+import { type FieldErrors, extractServerError } from '../../../shared/forms/notify-error';
+import {
+  ActiveToggleComponent,
+  type ActiveToggleLabels,
+} from '../../../shared/ui/active-toggle/active-toggle.component';
+import { FormFooterComponent } from '../../../shared/ui/form-footer/form-footer.component';
+import { MetaFieldComponent } from '../../../shared/ui/meta-field/meta-field.component';
+import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
+import { StatusBadgeComponent } from '../../../shared/ui/status-badge/status-badge.component';
 
 @Component({
   selector: 'app-teams-form',
   imports: [
-    KeyValuePipe,
     ReactiveFormsModule,
     RouterLink,
     InputText,
     Select,
     MultiSelect,
     PickList,
-    Checkbox,
     ToggleSwitch,
     Button,
-    Message,
     ConfirmDialog,
+    Tabs,
+    TabList,
+    Tab,
+    TabPanels,
+    TabPanel,
+    PageHeaderComponent,
+    StatusBadgeComponent,
+    ActiveToggleComponent,
+    MetaFieldComponent,
+    FormFooterComponent,
     TranslocoPipe,
   ],
   templateUrl: './teams-form.component.html',
@@ -70,7 +80,6 @@ export class TeamsFormComponent implements OnInit {
   private readonly sportsService = inject(SportsService);
   private readonly statusesService = inject(AttendanceStatusesService);
   private readonly authService = inject(AuthService);
-  private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
   private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
@@ -87,22 +96,28 @@ export class TeamsFormComponent implements OnInit {
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly fieldErrors = signal<FieldErrors | null>(null);
   protected readonly quotaExceeded = signal<{ used: number; max: number } | null>(null);
+  protected readonly activeValue = signal(true);
 
   protected readonly availableLanguages = AVAILABLE_LANGUAGES;
 
   protected readonly isEditMode = computed(() => this.teamId() !== null);
-  protected readonly isOwner = computed(() => {
-    const t = this.team();
-    const userId = this.authService.currentUser()?.id;
-    return t != null && userId != null && t.owner?.id === userId;
-  });
+
+  protected readonly patchActive = (id: number, value: boolean) =>
+    this.teamsService.teamsPartialUpdate(id, { is_active: value } as PatchedTeam);
+
+  protected readonly activeLabels = computed<ActiveToggleLabels>(() => ({
+    active: this.transloco.translate('common.active'),
+    inactive: this.transloco.translate('common.inactive'),
+    confirm: this.transloco.translate('common.confirm_deactivate'),
+    errorSummary: this.transloco.translate('common.error'),
+    errorDetail: this.transloco.translate('common.update_failed'),
+  }));
 
   protected readonly form = this.fb.nonNullable.group({
     name: ['', [Validators.required]],
     sport_id: this.fb.nonNullable.control<number | null>(null, [Validators.required]),
     language: this.fb.nonNullable.control<LanguageCode>('fr', [Validators.required]),
     is_public: [false],
-    is_active: [true],
     managers_ids: this.fb.nonNullable.control<number[]>([]),
     auto_accept_policy: [false],
     notify_managers_on_join_request: [true],
@@ -143,6 +158,7 @@ export class TeamsFormComponent implements OnInit {
         .subscribe({
           next: (t) => {
             this.team.set(t);
+            this.activeValue.set(t.is_active ?? true);
             this.availableManagers.set(t.managers ?? []);
             this.partitionStatuses(this.availableStatuses(), t.attendance_statuses ?? null);
             this.form.reset({
@@ -150,7 +166,6 @@ export class TeamsFormComponent implements OnInit {
               sport_id: t.sport?.id ?? null,
               language: (t.language as LanguageCode) ?? 'fr',
               is_public: t.is_public ?? false,
-              is_active: t.is_active ?? true,
               managers_ids: (t.managers ?? []).map((m) => m.id),
               auto_accept_policy: t.join_request_policy === JoinRequestPolicyEnum.Auto,
               notify_managers_on_join_request: t.notify_managers_on_join_request ?? true,
@@ -163,6 +178,15 @@ export class TeamsFormComponent implements OnInit {
           },
         });
     }
+  }
+
+  protected fieldError(name: string): string | null {
+    return this.fieldErrors()?.[name]?.join(', ') ?? null;
+  }
+
+  protected cancel(): void {
+    const id = this.teamId();
+    this.router.navigate(id ? ['/teams', id] : ['/teams']);
   }
 
   protected submit(): void {
@@ -207,7 +231,6 @@ export class TeamsFormComponent implements OnInit {
       sport_id: value.sport_id ?? undefined,
       language: value.language as LanguageEnum,
       is_public: value.is_public,
-      is_active: value.is_active,
       managers_ids: value.managers_ids,
       attendance_statuses: this.statusesTarget().map((s) => s.id),
       join_request_policy: value.auto_accept_policy
@@ -229,40 +252,6 @@ export class TeamsFormComponent implements OnInit {
         error: (err: HttpErrorResponse) => {
           this.applyServerError(err);
           this.saving.set(false);
-        },
-      });
-  }
-
-  protected confirmDeactivate(): void {
-    const id = this.teamId();
-    if (id === null) return;
-    this.confirmationService.confirm({
-      header: this.transloco.translate('teams.detail.deactivate_confirm_title'),
-      message: this.transloco.translate('teams.detail.deactivate_confirm_message'),
-      accept: () => this.deactivate(id),
-    });
-  }
-
-  private deactivate(id: number): void {
-    this.teamsService
-      .teamsPartialUpdate(id, { is_active: false })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.authService.refreshMe();
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('teams.detail.deactivated'),
-          });
-          this.router.navigate(['/teams']);
-        },
-        error: () => {
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('teams.errors.unknown'),
-          });
         },
       });
   }
@@ -305,7 +294,6 @@ export class TeamsFormComponent implements OnInit {
       | {
           code?: string;
           detail?: string;
-          fields?: FieldErrors;
           used?: number;
           max?: number;
         }
@@ -322,25 +310,16 @@ export class TeamsFormComponent implements OnInit {
       return;
     }
 
-    if (body?.fields && Object.keys(body.fields).length > 0) {
-      this.fieldErrors.set(body.fields);
-      return;
+    const { fields, detail } = extractServerError(err);
+    this.fieldErrors.set(fields);
+    if (!fields) {
+      this.messageService.add({
+        severity: 'error',
+        summary: this.transloco.translate('common.error'),
+        detail: detail
+          ? this.transloco.translate(detail)
+          : this.transloco.translate('teams.errors.unknown'),
+      });
     }
-
-    if (body && typeof body === 'object') {
-      const fieldEntries: FieldErrors = {};
-      for (const [key, value] of Object.entries(body)) {
-        if (key === 'code' || key === 'detail' || key === 'fields') continue;
-        if (Array.isArray(value)) {
-          fieldEntries[key] = value.filter((m): m is string => typeof m === 'string');
-        }
-      }
-      if (Object.keys(fieldEntries).length > 0) {
-        this.fieldErrors.set(fieldEntries);
-        return;
-      }
-    }
-
-    this.errorMessage.set(body?.detail ?? 'teams.errors.unknown');
   }
 }
