@@ -1,4 +1,3 @@
-import { CommonModule, KeyValuePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -14,31 +13,26 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { MessageService } from 'primeng/api';
-import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
-import { Message } from 'primeng/message';
 import { RoundsService } from '../../../api/api/rounds.service';
 import { LanguageEnum } from '../../../api/model/language-enum';
 import { Round } from '../../../api/model/round';
+import { type FieldErrors, extractServerError } from '../../../shared/forms/notify-error';
+import { FormFooterComponent } from '../../../shared/ui/form-footer/form-footer.component';
+import { MetaFieldComponent } from '../../../shared/ui/meta-field/meta-field.component';
 import { timeMmSsValidator } from '../shared/time-validator';
-
-interface FieldErrors {
-  [field: string]: string[];
-}
 
 @Component({
   selector: 'app-round-form-dialog',
   imports: [
-    CommonModule,
-    KeyValuePipe,
     ReactiveFormsModule,
-    Button,
     Dialog,
     InputNumber,
     InputText,
-    Message,
+    MetaFieldComponent,
+    FormFooterComponent,
     TranslocoPipe,
   ],
   templateUrl: './round-form-dialog.component.html',
@@ -61,7 +55,6 @@ export class RoundFormDialogComponent {
   readonly closed = output<Round | null>();
 
   protected readonly saving = signal(false);
-  protected readonly errorMessage = signal<string | null>(null);
   protected readonly fieldErrors = signal<FieldErrors | null>(null);
 
   protected readonly form = this.fb.nonNullable.group({
@@ -79,10 +72,13 @@ export class RoundFormDialogComponent {
           t_start: r?.t_start ?? '',
           t_break: r?.t_break ?? '',
         });
-        this.errorMessage.set(null);
         this.fieldErrors.set(null);
       }
     });
+  }
+
+  protected fieldError(name: string): string | null {
+    return this.fieldErrors()?.[name]?.join(', ') ?? null;
   }
 
   protected onCancel(): void {
@@ -99,7 +95,6 @@ export class RoundFormDialogComponent {
   protected submit(): void {
     if (this.form.invalid || this.saving()) return;
     this.saving.set(true);
-    this.errorMessage.set(null);
     this.fieldErrors.set(null);
 
     const value = this.form.getRawValue();
@@ -107,7 +102,7 @@ export class RoundFormDialogComponent {
       const sportId = this.teamSportId();
       const eventId = this.eventId();
       if (sportId == null || eventId == null) {
-        this.errorMessage.set('events.errors.unknown');
+        this.notifyGlobalError('events.errors.unknown');
         this.saving.set(false);
         return;
       }
@@ -135,7 +130,7 @@ export class RoundFormDialogComponent {
     } else {
       const r = this.round();
       if (!r) {
-        this.errorMessage.set('events.errors.unknown');
+        this.notifyGlobalError('events.errors.unknown');
         this.saving.set(false);
         return;
       }
@@ -160,39 +155,24 @@ export class RoundFormDialogComponent {
   }
 
   private applyServerError(err: HttpErrorResponse): void {
-    const body = err?.error as
-      | { code?: string; detail?: string; fields?: FieldErrors }
-      | null
-      | undefined;
-
-    if (body?.code === 'not_authorized_event') {
-      this.messageService.add({
-        severity: 'error',
-        summary: this.transloco.translate('common.error'),
-        detail: this.transloco.translate('events.round_form.errors.not_authorized_event'),
-      });
+    const code = (err?.error as { code?: string } | null | undefined)?.code;
+    if (code === 'not_authorized_event') {
+      this.notifyGlobalError('events.round_form.errors.not_authorized_event');
       return;
     }
 
-    if (body?.fields && Object.keys(body.fields).length > 0) {
-      this.fieldErrors.set(body.fields);
-      return;
+    const { fields, detail } = extractServerError(err);
+    this.fieldErrors.set(fields);
+    if (!fields) {
+      this.notifyGlobalError(detail ?? 'events.errors.unknown');
     }
+  }
 
-    if (body && typeof body === 'object') {
-      const fieldEntries: FieldErrors = {};
-      for (const [key, value] of Object.entries(body)) {
-        if (key === 'code' || key === 'detail' || key === 'fields') continue;
-        if (Array.isArray(value)) {
-          fieldEntries[key] = value.filter((m): m is string => typeof m === 'string');
-        }
-      }
-      if (Object.keys(fieldEntries).length > 0) {
-        this.fieldErrors.set(fieldEntries);
-        return;
-      }
-    }
-
-    this.errorMessage.set(body?.detail ?? 'events.errors.unknown');
+  private notifyGlobalError(detailKey: string): void {
+    this.messageService.add({
+      severity: 'error',
+      summary: this.transloco.translate('common.error'),
+      detail: this.transloco.translate(detailKey),
+    });
   }
 }

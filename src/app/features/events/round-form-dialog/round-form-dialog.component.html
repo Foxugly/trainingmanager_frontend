@@ -6,31 +6,36 @@
   [style]="{ width: '28rem' }"
   [header]="(mode() === 'create' ? 'events.round_form.title_create' : 'events.round_form.title_edit') | transloco"
 >
-  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
-    <div class="flex flex-col gap-2">
-      <label for="round_count" class="text-sm font-medium text-gray-700">
-        {{ 'events.round_form.fields.count' | transloco }}
-      </label>
-      <p-inputNumber
-        inputId="round_count"
-        formControlName="count"
-        [min]="1"
-        [showButtons]="true"
-        [useGrouping]="false"
-      />
-      <p-message
-        severity="info"
-        size="small"
-        [text]="'events.round_form.fields.count_help' | transloco"
-        styleClass="text-xs"
-      />
-    </div>
-
-    <div class="grid grid-cols-2 gap-3">
-      <div class="flex flex-col gap-1">
-        <label for="round_t_start" class="text-sm font-medium text-gray-700">
-          {{ 'events.round_form.fields.t_start' | transloco }}
-        </label>
+  <form [formGroup]="form">
+    <div class="meta-grid">
+      <app-meta-field
+        [full]="true"
+        [label]="'events.round_form.fields.count' | transloco"
+        for="round_count"
+        [hint]="'events.round_form.fields.count_help' | transloco"
+        [error]="fieldError('count')"
+      >
+        <p-inputNumber
+          inputId="round_count"
+          formControlName="count"
+          [min]="1"
+          [showButtons]="true"
+          buttonLayout="horizontal"
+          spinnerMode="horizontal"
+          [useGrouping]="false"
+          decrementButtonIcon="pi pi-minus"
+          incrementButtonIcon="pi pi-plus"
+        />
+      </app-meta-field>
+      <app-meta-field
+        [label]="'events.round_form.fields.t_start' | transloco"
+        for="round_t_start"
+        [error]="
+          form.controls.t_start.invalid && form.controls.t_start.dirty
+            ? ('events.shared.time_mmss_invalid' | transloco)
+            : fieldError('t_start')
+        "
+      >
         <input
           pInputText
           id="round_t_start"
@@ -40,16 +45,16 @@
           maxlength="6"
           [placeholder]="'events.round_form.fields.time_placeholder' | transloco"
         />
-        @if (form.controls.t_start.invalid && form.controls.t_start.dirty) {
-          <small class="text-xs text-red-700">
-            {{ 'events.shared.time_mmss_invalid' | transloco }}
-          </small>
-        }
-      </div>
-      <div class="flex flex-col gap-1">
-        <label for="round_t_break" class="text-sm font-medium text-gray-700">
-          {{ 'events.round_form.fields.t_break' | transloco }}
-        </label>
+      </app-meta-field>
+      <app-meta-field
+        [label]="'events.round_form.fields.t_break' | transloco"
+        for="round_t_break"
+        [error]="
+          form.controls.t_break.invalid && form.controls.t_break.dirty
+            ? ('events.shared.time_mmss_invalid' | transloco)
+            : fieldError('t_break')
+        "
+      >
         <input
           pInputText
           id="round_t_break"
@@ -59,41 +64,15 @@
           maxlength="6"
           [placeholder]="'events.round_form.fields.time_placeholder' | transloco"
         />
-        @if (form.controls.t_break.invalid && form.controls.t_break.dirty) {
-          <small class="text-xs text-red-700">
-            {{ 'events.shared.time_mmss_invalid' | transloco }}
-          </small>
-        }
-      </div>
-    </div>
-
-    @if (errorMessage(); as msg) {
-      <p-message severity="error" [text]="msg | transloco" />
-    }
-
-    @if (fieldErrors(); as errors) {
-      <div class="flex flex-col gap-1">
-        @for (entry of errors | keyvalue; track entry.key) {
-          <p-message severity="warn" [text]="entry.key + ': ' + entry.value.join(', ')" />
-        }
-      </div>
-    }
-
-    <div class="flex justify-end gap-2 pt-2">
-      <p-button
-        type="button"
-        severity="secondary"
-        [text]="true"
-        [label]="'events.round_form.cancel' | transloco"
-        [disabled]="saving()"
-        (onClick)="onCancel()"
-      />
-      <p-button
-        type="submit"
-        [label]="'events.round_form.save' | transloco"
-        [loading]="saving()"
-        [disabled]="form.invalid"
-      />
+      </app-meta-field>
     </div>
   </form>
+  <app-form-footer
+    [saving]="saving()"
+    [disabled]="form.invalid"
+    [cancelLabel]="'events.round_form.cancel' | transloco"
+    [saveLabel]="'events.round_form.save' | transloco"
+    (cancel)="onCancel()"
+    (save)="submit()"
+  />
 </p-dialog>
