@@ -1,138 +1,104 @@
-<div class="max-w-3xl">
-  <a [routerLink]="['/admin/energy-segments']" class="text-sm text-blue-600 hover:underline">
-    ← {{ 'common.back' | transloco }}
-  </a>
-
-  <h1 class="text-2xl font-bold mb-6 mt-2">
+<div class="page page--narrow">
+  <app-page-header [title]="(segmentId() ? 'admin.energy_segments.form.edit_title' : 'admin.energy_segments.form.new_title') | transloco">
+    <p-button
+      slot="left"
+      type="button"
+      severity="secondary"
+      [outlined]="true"
+      icon="pi pi-arrow-left"
+      [label]="'common.back' | transloco"
+      [routerLink]="['/admin/energy-segments']"
+    />
     @if (segmentId()) {
-      {{ 'admin.energy_segments.form.edit_title' | transloco }}
-    } @else {
-      {{ 'admin.energy_segments.form.new_title' | transloco }}
-    }
-  </h1>
-
-  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-5">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="flex flex-col gap-2">
-        <label for="abv" class="text-sm font-medium text-gray-700">
-          {{ 'admin.energy_segments.form.abv' | transloco }}
-        </label>
-        <input pInputText id="abv" formControlName="abv" placeholder="Z1" class="w-full" />
-      </div>
-      <div class="flex flex-col gap-2">
-        <label for="energy_system_id" class="text-sm font-medium text-gray-700">
-          {{ 'admin.energy_segments.form.energy_system' | transloco }}
-        </label>
-        <p-select
-          inputId="energy_system_id"
-          [options]="availableEnergySystems()"
-          formControlName="energy_system_id"
-          optionLabel="name"
-          optionValue="id"
-          [placeholder]="'admin.energy_segments.form.energy_system_placeholder' | transloco"
-          styleClass="w-full"
-        />
-      </div>
-    </div>
-
-    <div class="flex flex-col gap-2">
-      <span class="text-sm font-medium text-gray-700">
-        {{ 'admin.energy_segments.form.description' | transloco }}
-      </span>
-      <p-tabs value="fr">
-        <p-tablist>
-          <p-tab value="fr">FR</p-tab>
-          <p-tab value="nl">NL</p-tab>
-          <p-tab value="en">EN</p-tab>
-          <p-tab value="it">IT</p-tab>
-          <p-tab value="es">ES</p-tab>
-        </p-tablist>
-        <p-tabpanels>
-          <p-tabpanel value="fr">
-            <textarea
-              pTextarea
-              formControlName="description_fr"
-              rows="3"
-              placeholder="Français"
-              class="w-full"
-            ></textarea>
-          </p-tabpanel>
-          <p-tabpanel value="nl">
-            <textarea
-              pTextarea
-              formControlName="description_nl"
-              rows="3"
-              placeholder="Nederlands"
-              class="w-full"
-            ></textarea>
-          </p-tabpanel>
-          <p-tabpanel value="en">
-            <textarea
-              pTextarea
-              formControlName="description_en"
-              rows="3"
-              placeholder="English"
-              class="w-full"
-            ></textarea>
-          </p-tabpanel>
-          <p-tabpanel value="it">
-            <textarea
-              pTextarea
-              formControlName="description_it"
-              rows="3"
-              placeholder="Italiano"
-              class="w-full"
-            ></textarea>
-          </p-tabpanel>
-          <p-tabpanel value="es">
-            <textarea
-              pTextarea
-              formControlName="description_es"
-              rows="3"
-              placeholder="Español"
-              class="w-full"
-            ></textarea>
-          </p-tabpanel>
-        </p-tabpanels>
-      </p-tabs>
-    </div>
-
-    @if (segmentId()) {
-      <div class="flex items-center gap-2">
-        <p-checkbox formControlName="is_active" [binary]="true" inputId="seg_is_active" />
-        <label for="seg_is_active" class="text-sm text-gray-700 cursor-pointer">
-          {{ 'admin.energy_segments.form.is_active' | transloco }}
-        </label>
-      </div>
-    }
-
-    @if (errorMessage(); as msg) {
-      <p-message severity="error" [text]="msg | transloco" />
-    }
-
-    @if (fieldErrors(); as errors) {
-      <div class="flex flex-col gap-1">
-        @for (entry of errors | keyvalue; track entry.key) {
-          <p-message severity="warn" [text]="entry.key + ': ' + entry.value.join(', ')" />
-        }
-      </div>
-    }
-
-    <div class="flex justify-end gap-2 mt-2">
-      <a [routerLink]="['/admin/energy-segments']">
-        <p-button
-          type="button"
-          severity="secondary"
-          [text]="true"
-          [label]="'common.cancel' | transloco"
-        />
-      </a>
-      <p-button
-        type="submit"
-        [label]="'common.save' | transloco"
-        [loading]="saving()"
-        [disabled]="form.invalid"
+      <app-status-badge
+        slot="title-after"
+        [kind]="activeValue() ? 'active' : 'inactive'"
+        [label]="(activeValue() ? 'common.active' : 'common.inactive') | transloco"
       />
-    </div>
-  </form>
+    }
+    @if (segmentId()) {
+      <app-active-toggle
+        slot="right"
+        [entityId]="segmentId()!"
+        [value]="activeValue()"
+        [patch]="patchActive"
+        [labels]="activeLabels()"
+        (valueChange)="activeValue.set($event)"
+      />
+    }
+  </app-page-header>
+
+  <div class="card form-card">
+    <form [formGroup]="form">
+      <div class="meta-grid">
+        <app-meta-field
+          [label]="'admin.energy_segments.form.abv' | transloco"
+          [for]="'abv'"
+          [error]="fieldError('abv')"
+        >
+          <input pInputText id="abv" formControlName="abv" placeholder="Z1" class="w-full" />
+        </app-meta-field>
+
+        <app-meta-field
+          [label]="'admin.energy_segments.form.energy_system' | transloco"
+          [for]="'energy_system_id'"
+          [error]="fieldError('energy_system_id')"
+        >
+          <p-select
+            inputId="energy_system_id"
+            [options]="availableEnergySystems()"
+            formControlName="energy_system_id"
+            optionLabel="name"
+            optionValue="id"
+            [placeholder]="'admin.energy_segments.form.energy_system_placeholder' | transloco"
+            styleClass="w-full"
+          />
+        </app-meta-field>
+
+        <app-meta-field
+          [full]="true"
+          [label]="'admin.energy_segments.form.description' | transloco"
+          [error]="fieldError('description')"
+        >
+          <p-tabs value="fr" class="builder-tabs">
+            <p-tablist>
+              <p-tab value="fr">FR</p-tab>
+              <p-tab value="nl">NL</p-tab>
+              <p-tab value="en">EN</p-tab>
+              <p-tab value="it">IT</p-tab>
+              <p-tab value="es">ES</p-tab>
+            </p-tablist>
+            <p-tabpanels>
+              <p-tabpanel value="fr">
+                <textarea pTextarea formControlName="description_fr" rows="3" placeholder="Français" class="w-full"></textarea>
+              </p-tabpanel>
+              <p-tabpanel value="nl">
+                <textarea pTextarea formControlName="description_nl" rows="3" placeholder="Nederlands" class="w-full"></textarea>
+              </p-tabpanel>
+              <p-tabpanel value="en">
+                <textarea pTextarea formControlName="description_en" rows="3" placeholder="English" class="w-full"></textarea>
+              </p-tabpanel>
+              <p-tabpanel value="it">
+                <textarea pTextarea formControlName="description_it" rows="3" placeholder="Italiano" class="w-full"></textarea>
+              </p-tabpanel>
+              <p-tabpanel value="es">
+                <textarea pTextarea formControlName="description_es" rows="3" placeholder="Español" class="w-full"></textarea>
+              </p-tabpanel>
+            </p-tabpanels>
+          </p-tabs>
+        </app-meta-field>
+      </div>
+    </form>
+
+    <app-form-footer
+      [saving]="saving()"
+      [disabled]="form.invalid"
+      [cancelLabel]="'common.cancel' | transloco"
+      [saveLabel]="'common.save' | transloco"
+      (cancel)="cancel()"
+      (save)="submit()"
+    />
+  </div>
+
+  <p-confirmDialog />
 </div>
