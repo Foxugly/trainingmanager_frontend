@@ -1,16 +1,16 @@
 <div class="max-w-6xl">
   @if (showWelcome()) {
     <section
-      class="relative overflow-hidden rounded-3xl border border-indigo-100 bg-gradient-to-br from-indigo-50 via-white to-violet-50 p-6 sm:p-10 mb-10"
+      class="relative overflow-hidden rounded-3xl border border-emerald-100 bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-6 sm:p-10 mb-10"
       aria-labelledby="dashboard-welcome-title"
     >
       <div
-        class="pointer-events-none absolute -top-24 -right-16 size-72 rounded-full bg-gradient-to-br from-indigo-200/40 to-violet-200/30 blur-3xl"
+        class="pointer-events-none absolute -top-24 -right-16 size-72 rounded-full bg-gradient-to-br from-emerald-200/40 to-teal-200/30 blur-3xl"
         aria-hidden="true"
       ></div>
       <div class="relative grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
         <div>
-          <p class="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-indigo-700">
+          <p class="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">
             <i class="pi pi-sparkles text-[10px] mr-1" aria-hidden="true"></i>
             {{ 'dashboard.welcome.eyebrow' | transloco }}
           </p>
@@ -41,7 +41,7 @@
           </div>
         </div>
         <svg
-          class="hidden md:block h-40 w-auto text-indigo-500/80"
+          class="hidden md:block h-40 w-auto text-emerald-500/80"
           viewBox="0 0 200 160"
           fill="none"
           aria-hidden="true"
@@ -76,15 +76,15 @@
       </div>
       <ul class="relative mt-8 grid gap-3 sm:grid-cols-3 text-sm">
         <li class="flex items-start gap-2">
-          <i class="pi pi-users mt-0.5 text-indigo-600" aria-hidden="true"></i>
+          <i class="pi pi-users mt-0.5 text-emerald-600" aria-hidden="true"></i>
           <span class="text-gray-700">{{ 'dashboard.welcome.tip_team' | transloco }}</span>
         </li>
         <li class="flex items-start gap-2">
-          <i class="pi pi-calendar mt-0.5 text-indigo-600" aria-hidden="true"></i>
+          <i class="pi pi-calendar mt-0.5 text-emerald-600" aria-hidden="true"></i>
           <span class="text-gray-700">{{ 'dashboard.welcome.tip_program' | transloco }}</span>
         </li>
         <li class="flex items-start gap-2">
-          <i class="pi pi-bolt mt-0.5 text-indigo-600" aria-hidden="true"></i>
+          <i class="pi pi-bolt mt-0.5 text-emerald-600" aria-hidden="true"></i>
           <span class="text-gray-700">{{ 'dashboard.welcome.tip_session' | transloco }}</span>
         </li>
       </ul>
@@ -170,7 +170,7 @@
           @for (card of teamCards(); track card.team.id) {
             <a
               [routerLink]="['/teams', card.team.id]"
-              class="block p-4 bg-white border border-gray-200 rounded-lg transition duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-indigo-300"
+              class="block p-4 bg-white border border-gray-200 rounded-lg transition duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-emerald-300"
             >
               <h3 class="font-semibold text-base text-gray-900 mb-1">{{ card.team.name }}</h3>
               <p class="text-xs text-gray-500 mb-3">{{ card.team.sport.name }}</p>
@@ -364,7 +364,7 @@
           @for (card of memberTeamCards(); track card.team.id) {
             <a
               [routerLink]="['/teams', card.team.id]"
-              class="block p-4 bg-white border border-gray-200 rounded-lg transition duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-indigo-300"
+              class="block p-4 bg-white border border-gray-200 rounded-lg transition duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-emerald-300"
             >
               <div class="flex items-start justify-between gap-2 mb-1">
                 <h3 class="font-semibold text-base text-gray-900">{{ card.team.name }}</h3>

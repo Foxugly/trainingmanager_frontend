@@ -1,10 +1,10 @@
 <section id="hero" class="relative overflow-hidden">
   <div
-    class="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-indigo-50 via-white to-violet-50"
+    class="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-emerald-50 via-white to-teal-50"
     aria-hidden="true"
   ></div>
   <div
-    class="pointer-events-none absolute -top-32 right-0 -z-10 h-[28rem] w-[28rem] rounded-full bg-gradient-to-br from-indigo-200/60 to-violet-200/40 blur-3xl"
+    class="pointer-events-none absolute -top-32 right-0 -z-10 h-[28rem] w-[28rem] rounded-full bg-gradient-to-br from-emerald-200/60 to-teal-200/40 blur-3xl"
     aria-hidden="true"
   ></div>
   <div
@@ -14,7 +14,7 @@
 
   <div class="container mx-auto px-6 py-16 md:py-24">
     <div class="mx-auto max-w-3xl text-center">
-      <span class="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-white/70 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-indigo-700 shadow-sm">
+      <span class="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white/70 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-emerald-700 shadow-sm">
         <i class="pi pi-sparkles text-[10px]" aria-hidden="true"></i>
         {{ 'home.hero.tagline' | transloco }}
       </span>
@@ -27,14 +27,14 @@
       <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
         <a
           [routerLink]="['/login']"
-          class="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 px-7 py-3 text-base font-semibold text-white shadow-lg shadow-indigo-500/20 transition hover:from-indigo-500 hover:to-violet-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+          class="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 px-7 py-3 text-base font-semibold text-white shadow-lg shadow-emerald-500/20 transition hover:from-emerald-500 hover:to-teal-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
         >
           {{ 'home.hero.cta_primary' | transloco }}
           <i class="pi pi-arrow-right text-sm" aria-hidden="true"></i>
         </a>
         <a
           [routerLink]="['/features']"
-          class="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-7 py-3 text-base font-semibold text-gray-800 transition hover:border-indigo-300 hover:text-indigo-700"
+          class="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-7 py-3 text-base font-semibold text-gray-800 transition hover:border-emerald-300 hover:text-emerald-700"
         >
           {{ 'home.hero.cta_secondary' | transloco }}
           <i class="pi pi-arrow-right text-sm" aria-hidden="true"></i>

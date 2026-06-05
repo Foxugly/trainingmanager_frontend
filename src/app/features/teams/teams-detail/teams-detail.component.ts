@@ -189,7 +189,7 @@ export class TeamsDetailComponent implements OnInit {
 
   protected readonly roleClasses: Record<TeamRole, string> = {
     owner: 'text-xs font-semibold px-2 py-1 rounded bg-blue-100 text-blue-800',
-    manager: 'text-xs font-semibold px-2 py-1 rounded bg-purple-100 text-purple-800',
+    manager: 'text-xs font-semibold px-2 py-1 rounded bg-emerald-100 text-emerald-800',
     member: 'text-xs font-semibold px-2 py-1 rounded bg-gray-100 text-gray-800',
   };
 

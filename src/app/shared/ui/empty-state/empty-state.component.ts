@@ -10,11 +10,11 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 export class EmptyStateComponent {
   /**
    * PrimeIcons class without the leading `pi-` prefix. e.g. "users", "list".
-   * Rendered inside a soft indigo pill above the title.
+   * Rendered inside a soft emerald pill above the title.
    */
   readonly icon = input<string>('inbox');
   readonly title = input.required<string>();
   readonly subtitle = input<string>('');
   /** Tone affects the icon-pill background. */
-  readonly tone = input<'indigo' | 'emerald' | 'rose' | 'gray'>('indigo');
+  readonly tone = input<'emerald' | 'rose' | 'gray'>('emerald');
 }
