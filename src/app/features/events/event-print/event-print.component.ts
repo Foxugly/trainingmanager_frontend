@@ -47,9 +47,6 @@ export class EventPrintComponent implements OnInit {
   /** PNG data-URL of the QR code rendered into <img>. */
   protected readonly qrDataUrl = signal<string | null>(null);
 
-  /** Guards the optional auto-print so it fires at most once. */
-  private autoPrinted = false;
-
   protected readonly eventTotalDistance = computed<number>(() => {
     let total = 0;
     for (const round of this.rounds()) {
@@ -104,7 +101,6 @@ export class EventPrintComponent implements OnInit {
     try {
       const dataUrl = await QRCode.toDataURL(this.publicUrl(), { width: 240, margin: 1 });
       this.qrDataUrl.set(dataUrl);
-      this.maybeAutoPrint();
     } catch {
       // A failed QR render must not block the printable sheet.
       this.qrDataUrl.set(null);
@@ -113,14 +109,6 @@ export class EventPrintComponent implements OnInit {
 
   protected print(): void {
     window.print();
-  }
-
-  private maybeAutoPrint(): void {
-    if (this.autoPrinted) return;
-    // Auto-print only once both the data and the QR have resolved.
-    if (this.loading() || this.qrDataUrl() === null) return;
-    this.autoPrinted = true;
-    setTimeout(() => window.print(), 300);
   }
 
   private loadEvent(id: number): void {
@@ -132,7 +120,7 @@ export class EventPrintComponent implements OnInit {
         next: (e) => {
           this.event.set(e);
           this.loading.set(false);
-          void this.loadRoundsAndExercises(e.rounds ?? []).then(() => this.maybeAutoPrint());
+          void this.loadRoundsAndExercises(e.rounds ?? []);
         },
         error: () => {
           this.notFound.set(true);
