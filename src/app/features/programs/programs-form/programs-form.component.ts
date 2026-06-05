@@ -99,7 +99,7 @@ export class ProgramsFormComponent implements OnInit {
   protected readonly saving = signal(false);
   protected readonly availableTeams = signal<Team[]>([]);
   protected readonly fieldErrors = signal<FieldErrors | null>(null);
-  protected readonly activeValue = signal(false);
+  protected readonly activeValue = signal(true);
 
   protected readonly isEditMode = computed(() => this.programId() !== null);
 
