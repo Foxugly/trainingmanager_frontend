@@ -10,6 +10,16 @@
       [backLink]="['/teams']"
       icon="pi-users"
     >
+      @if (t.logo) {
+        <div detailHeaderBanner class="flex justify-center mb-3">
+          <img
+            [src]="t.logo"
+            [alt]="t.name"
+            class="size-16 rounded-lg object-cover border border-gray-200 shadow-sm"
+          />
+        </div>
+      }
+
       @if (currentUserRole(); as role) {
         <span detailHeaderTitleSuffix [class]="roleClasses[role] + ' text-sm'">
           {{ 'teams.roles.' + role | transloco }}

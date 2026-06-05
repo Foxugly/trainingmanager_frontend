@@ -48,6 +48,7 @@ import { GenerateTrainingResponse } from '../../../api/model/generate-training-r
 import { LanguageEnum } from '../../../api/model/language-enum';
 import { Modality } from '../../../api/model/modality';
 import { Round } from '../../../api/model/round';
+import { RotiSummary } from '../../../api/model/roti-summary';
 import { Team } from '../../../api/model/team';
 import { AuthService } from '../../../core/auth/auth.service';
 import { type FieldErrors, extractServerError } from '../../../shared/forms/notify-error';
@@ -186,6 +187,27 @@ export class EventsDetailComponent implements OnInit {
 
   protected readonly canRegenerate = this.canManage;
 
+  // --- ROTI (session difficulty rating) ---
+  protected readonly rotiEnabled = computed(() => this.team()?.roti_enabled === true);
+  /** Athlete = a team member who is neither owner nor manager. */
+  protected readonly isAthlete = computed(() => this.currentUserRole() === 'member');
+  protected readonly rotiSummary = signal<RotiSummary | null>(null);
+  protected readonly rotiSubmitting = signal(false);
+  protected readonly rotiScores: readonly number[] = [1, 2, 3, 4, 5];
+
+  protected readonly rotiDistribution = computed<{ score: number; count: number }[]>(() => {
+    const dist = this.rotiSummary()?.distribution ?? {};
+    return this.rotiScores.map((score) => ({
+      score,
+      count: Number(dist[String(score)] ?? 0),
+    }));
+  });
+
+  protected readonly rotiMaxCount = computed<number>(() => {
+    const counts = this.rotiDistribution().map((d) => d.count);
+    return counts.length ? Math.max(1, ...counts) : 1;
+  });
+
   protected readonly eventTotalDistance = computed<number>(() => {
     let total = 0;
     for (const round of this.rounds()) {
@@ -237,6 +259,13 @@ export class EventsDetailComponent implements OnInit {
       untracked(() => void this.loadOptions(sportId));
     });
 
+    // Load the ROTI summary once the team (hence roti_enabled) is resolved.
+    effect(() => {
+      this.team();
+      this.eventId();
+      untracked(() => this.maybeLoadRoti());
+    });
+
     effect(() => {
       const event = this.event();
       if (!event) return;
@@ -250,6 +279,66 @@ export class EventsDetailComponent implements OnInit {
       this.patchingTotal = true;
       untracked(() => this.patchEventTotal(event.id, computed));
     });
+  }
+
+  private rotiLoadedForEventId: number | null = null;
+
+  /** Load the ROTI summary once the team is known and ROTI is enabled. */
+  private maybeLoadRoti(): void {
+    const eventId = this.eventId();
+    if (eventId == null || !this.rotiEnabled()) {
+      this.rotiSummary.set(null);
+      this.rotiLoadedForEventId = null;
+      return;
+    }
+    if (this.rotiLoadedForEventId === eventId) return;
+    this.rotiLoadedForEventId = eventId;
+    this.loadRoti(eventId);
+  }
+
+  private loadRoti(eventId: number): void {
+    this.eventsService
+      .eventsRotiRetrieve(eventId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        // The endpoint is typed as an array by the schema; the payload is a
+        // single summary object. Accept either shape defensively.
+        next: (res) => this.rotiSummary.set(this.normalizeRoti(res)),
+        error: () => this.rotiSummary.set(null),
+      });
+  }
+
+  private normalizeRoti(res: RotiSummary | RotiSummary[] | null): RotiSummary | null {
+    if (Array.isArray(res)) return res.length > 0 ? res[0] : null;
+    return res ?? null;
+  }
+
+  protected submitRoti(score: number): void {
+    const eventId = this.eventId();
+    if (eventId == null || this.rotiSubmitting()) return;
+    this.rotiSubmitting.set(true);
+    this.eventsService
+      .eventsRotiUpdate(eventId, { score })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          this.rotiSummary.set(this.normalizeRoti(res));
+          this.rotiSubmitting.set(false);
+          this.messageService.add({
+            severity: 'success',
+            summary: this.transloco.translate('common.success'),
+            detail: this.transloco.translate('events.roti.saved'),
+          });
+        },
+        error: () => {
+          this.rotiSubmitting.set(false);
+          this.messageService.add({
+            severity: 'error',
+            summary: this.transloco.translate('common.error'),
+            detail: this.transloco.translate('events.errors.unknown'),
+          });
+        },
+      });
   }
 
   private patchEventTotal(eventId: number, total: number): void {

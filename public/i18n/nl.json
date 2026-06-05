@@ -215,6 +215,21 @@
     "errors": {
       "unknown": "Er is een fout opgetreden.",
       "forbidden": "Actie niet toegestaan."
+    },
+    "roti": {
+      "title": "Ervaren moeilijkheid",
+      "your_rating": "Jouw beoordeling",
+      "scale": {
+        "1": "1 Heel makkelijk",
+        "2": "2 Makkelijk",
+        "3": "3 Gemiddeld",
+        "4": "4 Zwaar",
+        "5": "5 Heel zwaar"
+      },
+      "average": "Gemiddelde",
+      "responses": "{{count}} reactie(s)",
+      "saved": "Bedankt, opgeslagen",
+      "none": "Geen reacties"
     }
   },
   "programs": {
@@ -376,7 +391,14 @@
       "notify_managers_label": "Coaches per e-mail informeren",
       "notify_managers_help": "Een e-mail met accepteer- en weigerlinks wordt naar de owner en managers gestuurd. De links verlopen na 7 dagen.",
       "saved_create": "Team aangemaakt.",
-      "saved_edit": "Team opgeslagen."
+      "saved_edit": "Team opgeslagen.",
+      "logo": "Logo",
+      "logo_help": "Kleine afbeelding naast de teamnaam (automatisch verkleind).",
+      "logo_upload": "Uploaden",
+      "logo_remove": "Verwijderen",
+      "logo_too_large": "Afbeelding te groot, probeer opnieuw",
+      "roti_enabled": "ROTI inschakelen (ervaren moeilijkheid)",
+      "roti_enabled_help": "Laat atleten beoordelen hoe zwaar elke sessie aanvoelde (1 tot 5)."
     },
     "member_dialog": {
       "title": "Lid toevoegen",

@@ -117,12 +117,21 @@ export class TeamsFormComponent implements OnInit {
     errorDetail: this.transloco.translate('common.update_failed'),
   }));
 
+  /** Max base64 data-URL length accepted by the backend (~375 KB binary). */
+  private static readonly LOGO_MAX_CHARS = 500000;
+  /** Longest side (px) the logo is downscaled to before encoding. */
+  private static readonly LOGO_MAX_DIM = 256;
+
+  protected readonly logoValue = signal<string>('');
+
   protected readonly form = this.fb.nonNullable.group({
     name: ['', [Validators.required]],
     sport_id: this.fb.nonNullable.control<number | null>(null, [Validators.required]),
     level_id: this.fb.nonNullable.control<number | null>(null),
     language: this.fb.nonNullable.control<LanguageCode>('fr', [Validators.required]),
     is_public: [false],
+    logo: this.fb.nonNullable.control<string>(''),
+    roti_enabled: [false],
     managers_ids: this.fb.nonNullable.control<number[]>([]),
     auto_accept_policy: [false],
     notify_managers_on_join_request: [true],
@@ -169,6 +178,7 @@ export class TeamsFormComponent implements OnInit {
           next: (t) => {
             this.team.set(t);
             this.activeValue.set(t.is_active ?? true);
+            this.logoValue.set(t.logo ?? '');
             this.availableManagers.set(t.managers ?? []);
             this.partitionStatuses(this.availableStatuses(), t.attendance_statuses ?? null);
             this.form.reset({
@@ -177,6 +187,8 @@ export class TeamsFormComponent implements OnInit {
               level_id: t.level?.id ?? null,
               language: (t.language as LanguageCode) ?? 'fr',
               is_public: t.is_public ?? false,
+              logo: t.logo ?? '',
+              roti_enabled: t.roti_enabled ?? false,
               managers_ids: (t.managers ?? []).map((m) => m.id),
               auto_accept_policy: t.join_request_policy === JoinRequestPolicyEnum.Auto,
               notify_managers_on_join_request: t.notify_managers_on_join_request ?? true,
@@ -193,6 +205,89 @@ export class TeamsFormComponent implements OnInit {
 
   protected fieldError(name: string): string | null {
     return this.fieldErrors()?.[name]?.join(', ') ?? null;
+  }
+
+  /** Read + downscale the chosen image to a small data-URL, set the logo control. */
+  protected async onLogoSelected(event: globalThis.Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    try {
+      const dataUrl = await this.fileToResizedDataUrl(file);
+      if (dataUrl.length > TeamsFormComponent.LOGO_MAX_CHARS) {
+        this.notifyLogoTooLarge();
+      } else {
+        this.applyLogo(dataUrl);
+      }
+    } catch {
+      this.notifyLogoTooLarge();
+    } finally {
+      // Reset so re-selecting the same file fires change again.
+      input.value = '';
+    }
+  }
+
+  protected removeLogo(): void {
+    this.applyLogo('');
+  }
+
+  private applyLogo(dataUrl: string): void {
+    this.logoValue.set(dataUrl);
+    this.form.controls.logo.setValue(dataUrl);
+    this.form.controls.logo.markAsDirty();
+  }
+
+  private notifyLogoTooLarge(): void {
+    this.messageService.add({
+      severity: 'warn',
+      summary: this.transloco.translate('common.error'),
+      detail: this.transloco.translate('teams.form.logo_too_large'),
+    });
+  }
+
+  /**
+   * Load the file into an <img>, draw it onto a canvas downscaled so the
+   * longest side is at most LOGO_MAX_DIM (aspect preserved), and return a
+   * PNG data-URL. SVGs are kept as-is (vector, already small).
+   */
+  private fileToResizedDataUrl(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error('read_failed'));
+      reader.onload = () => {
+        const src = reader.result as string;
+        if (file.type === 'image/svg+xml') {
+          resolve(src);
+          return;
+        }
+        const img = new Image();
+        img.onerror = () => reject(new Error('decode_failed'));
+        img.onload = () => {
+          const max = TeamsFormComponent.LOGO_MAX_DIM;
+          const scale = Math.min(1, max / Math.max(img.width, img.height));
+          const w = Math.max(1, Math.round(img.width * scale));
+          const h = Math.max(1, Math.round(img.height * scale));
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            reject(new Error('no_context'));
+            return;
+          }
+          ctx.drawImage(img, 0, 0, w, h);
+          // Prefer PNG; if too heavy, fall back to progressively lower JPEG quality.
+          let out = canvas.toDataURL('image/png');
+          for (const q of [0.85, 0.7, 0.55, 0.4]) {
+            if (out.length <= TeamsFormComponent.LOGO_MAX_CHARS) break;
+            out = canvas.toDataURL('image/jpeg', q);
+          }
+          resolve(out);
+        };
+        img.src = src;
+      };
+      reader.readAsDataURL(file);
+    });
   }
 
   protected cancel(): void {
@@ -219,6 +314,7 @@ export class TeamsFormComponent implements OnInit {
         level_id: value.level_id,
         language: value.language as LanguageEnum,
         is_public: value.is_public,
+        logo: value.logo,
       };
       this.teamsService
         .teamsCreate(createPayload as unknown as Team)
@@ -244,6 +340,8 @@ export class TeamsFormComponent implements OnInit {
       level_id: value.level_id ?? null,
       language: value.language as LanguageEnum,
       is_public: value.is_public,
+      logo: value.logo,
+      roti_enabled: value.roti_enabled,
       managers_ids: value.managers_ids,
       attendance_statuses: this.statusesTarget().map((s) => s.id),
       join_request_policy: value.auto_accept_policy

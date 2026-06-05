@@ -215,6 +215,21 @@
     "errors": {
       "unknown": "Une erreur est survenue.",
       "forbidden": "Action non autorisée."
+    },
+    "roti": {
+      "title": "Difficulté ressentie",
+      "your_rating": "Votre ressenti",
+      "scale": {
+        "1": "1 Très facile",
+        "2": "2 Facile",
+        "3": "3 Modéré",
+        "4": "4 Difficile",
+        "5": "5 Très difficile"
+      },
+      "average": "Moyenne",
+      "responses": "{{count}} réponse(s)",
+      "saved": "Merci, c'est enregistré",
+      "none": "Aucune réponse"
     }
   },
   "programs": {
@@ -376,7 +391,14 @@
       "policy_auto_help": "Toute personne qui demande à rejoindre est acceptée immédiatement.",
       "policy_manual_help": "Vous (ou un manager) devez accepter ou refuser chaque demande.",
       "notify_managers_label": "Notifier les coachs par email",
-      "notify_managers_help": "Un email avec les liens d'acceptation et de refus est envoyé à l'owner et aux managers. Les liens expirent après 7 jours."
+      "notify_managers_help": "Un email avec les liens d'acceptation et de refus est envoyé à l'owner et aux managers. Les liens expirent après 7 jours.",
+      "logo": "Logo",
+      "logo_help": "Petite image affichée à côté du nom de l'équipe (redimensionnée automatiquement).",
+      "logo_upload": "Téléverser",
+      "logo_remove": "Retirer",
+      "logo_too_large": "Image trop lourde, réessayez",
+      "roti_enabled": "Activer le ROTI (difficulté ressentie)",
+      "roti_enabled_help": "Permet aux athlètes de noter la difficulté ressentie de chaque séance (1 à 5)."
     },
     "member_dialog": {
       "title": "Ajouter un membre",

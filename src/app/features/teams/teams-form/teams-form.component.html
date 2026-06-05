@@ -93,6 +93,48 @@
                   >
                     <p-toggleSwitch formControlName="is_public" inputId="is_public" />
                   </app-meta-field>
+                  <app-meta-field
+                    [full]="true"
+                    [label]="'teams.form.logo' | transloco"
+                    [tooltip]="'teams.form.logo_help' | transloco"
+                  >
+                    <div class="flex items-center gap-3 flex-wrap">
+                      @if (logoValue()) {
+                        <img
+                          [src]="logoValue()"
+                          [alt]="'teams.form.logo' | transloco"
+                          class="size-16 rounded-lg object-cover border border-gray-200"
+                        />
+                      }
+                      <input
+                        #logoInput
+                        type="file"
+                        class="hidden"
+                        accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                        (change)="onLogoSelected($event)"
+                      />
+                      <p-button
+                        type="button"
+                        severity="secondary"
+                        [outlined]="true"
+                        size="small"
+                        icon="pi pi-upload"
+                        [label]="'teams.form.logo_upload' | transloco"
+                        (onClick)="logoInput.click()"
+                      />
+                      @if (logoValue()) {
+                        <p-button
+                          type="button"
+                          severity="danger"
+                          [text]="true"
+                          size="small"
+                          icon="pi pi-times"
+                          [label]="'teams.form.logo_remove' | transloco"
+                          (onClick)="removeLogo()"
+                        />
+                      }
+                    </div>
+                  </app-meta-field>
                 </div>
               </div>
             </p-tabpanel>
@@ -187,6 +229,15 @@
                         />
                       </app-meta-field>
                     }
+
+                    <app-meta-field
+                      [full]="true"
+                      for="roti_enabled"
+                      [label]="'teams.form.roti_enabled' | transloco"
+                      [tooltip]="'teams.form.roti_enabled_help' | transloco"
+                    >
+                      <p-toggleSwitch formControlName="roti_enabled" inputId="roti_enabled" />
+                    </app-meta-field>
                   </div>
                 </div>
               </p-tabpanel>

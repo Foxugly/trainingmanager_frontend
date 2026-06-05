@@ -124,6 +124,12 @@
           <i class="pi pi-list-check mr-2" aria-hidden="true"></i>
           {{ 'events.detail.tabs.attendance' | transloco }}
         </p-tab>
+        @if (rotiEnabled()) {
+          <p-tab value="difficulty">
+            <i class="pi pi-gauge mr-2" aria-hidden="true"></i>
+            {{ 'events.roti.title' | transloco }}
+          </p-tab>
+        }
       </p-tablist>
 
       <p-tabpanels>
@@ -431,6 +437,78 @@
             <p class="text-sm text-gray-500">{{ 'common.loading' | transloco }}…</p>
           }
         </p-tabpanel>
+
+        <!-- TAB 3 — DIFFICULTY (ROTI) -->
+        @if (rotiEnabled()) {
+          <p-tabpanel value="difficulty">
+            <section class="max-w-xl">
+              <!-- Athlete: rate the session difficulty -->
+              @if (isAthlete()) {
+                <h2 class="text-lg font-semibold mb-1">{{ 'events.roti.your_rating' | transloco }}</h2>
+                <p class="text-sm text-gray-500 mb-3">{{ 'events.roti.title' | transloco }}</p>
+                <div class="inline-flex items-center gap-2 flex-wrap">
+                  @for (s of rotiScores; track s) {
+                    <p-button
+                      [label]="s.toString()"
+                      [severity]="rotiSummary()?.my_score === s ? 'primary' : 'secondary'"
+                      [outlined]="rotiSummary()?.my_score !== s"
+                      [rounded]="true"
+                      size="small"
+                      [disabled]="rotiSubmitting()"
+                      [pTooltip]="'events.roti.scale.' + s | transloco"
+                      tooltipPosition="bottom"
+                      [ariaLabel]="'events.roti.scale.' + s | transloco"
+                      [ariaPressed]="rotiSummary()?.my_score === s"
+                      (onClick)="submitRoti(s)"
+                    />
+                  }
+                </div>
+                @if (rotiSummary()?.my_score; as mine) {
+                  <p class="mt-2 text-xs text-gray-500">
+                    {{ 'events.roti.scale.' + mine | transloco }}
+                  </p>
+                }
+              }
+
+              <!-- Manager: aggregate (read-only). Shown also to a manager-athlete below their rating. -->
+              @if (canManage()) {
+                <div [class.mt-6]="isAthlete()">
+                  <h2 class="text-lg font-semibold mb-2">{{ 'events.roti.title' | transloco }}</h2>
+                  @if (rotiSummary(); as summary) {
+                    @if (summary.count > 0) {
+                      <div class="flex items-baseline gap-3 mb-3">
+                        <span class="text-2xl font-bold text-emerald-700">
+                          {{ summary.average !== null ? (summary.average | number: '1.1-1') : '—' }} / 5
+                        </span>
+                        <span class="text-sm text-gray-500">
+                          {{ 'events.roti.responses' | transloco: { count: summary.count } }}
+                        </span>
+                      </div>
+                      <ul class="space-y-1.5">
+                        @for (bar of rotiDistribution(); track bar.score) {
+                          <li class="flex items-center gap-2 text-sm">
+                            <span class="w-4 text-right text-gray-600">{{ bar.score }}</span>
+                            <div class="flex-1 h-2.5 rounded bg-gray-100 overflow-hidden">
+                              <div
+                                class="h-full rounded bg-emerald-500"
+                                [style.width.%]="(bar.count / rotiMaxCount()) * 100"
+                              ></div>
+                            </div>
+                            <span class="w-6 text-right text-gray-500">{{ bar.count }}</span>
+                          </li>
+                        }
+                      </ul>
+                    } @else {
+                      <p class="text-sm text-gray-500">{{ 'events.roti.none' | transloco }}</p>
+                    }
+                  } @else {
+                    <p class="text-sm text-gray-500">{{ 'common.loading' | transloco }}…</p>
+                  }
+                </div>
+              }
+            </section>
+          </p-tabpanel>
+        }
       </p-tabpanels>
     </p-tabs>
   }

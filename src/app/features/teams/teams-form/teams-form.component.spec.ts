@@ -74,6 +74,9 @@ interface ProtectedFields {
   availableManagers(): CustomUserPublic[];
   activeValue(): boolean;
   patchActive: (id: number, value: boolean) => unknown;
+  logoValue(): string;
+  removeLogo(): void;
+  onLogoSelected(e: globalThis.Event): Promise<void>;
   form: {
     getRawValue(): Record<string, unknown>;
     patchValue(v: Record<string, unknown>): void;
@@ -310,5 +313,44 @@ describe('TeamsFormComponent', () => {
     await setup('5');
     access(component).cancel();
     expect(router.navigate).toHaveBeenCalledWith(['/teams', 5]);
+  });
+
+  it('seeds logo + roti_enabled from the loaded team on edit', async () => {
+    await setup('5', ownerUser, { ...team, logo: 'data:image/png;base64,AAA', roti_enabled: true });
+    expect(access(component).logoValue()).toBe('data:image/png;base64,AAA');
+    expect(access(component).form.getRawValue()).toMatchObject({
+      logo: 'data:image/png;base64,AAA',
+      roti_enabled: true,
+    });
+  });
+
+  it('removeLogo() clears the logo control + signal', async () => {
+    await setup('5', ownerUser, { ...team, logo: 'data:image/png;base64,AAA' });
+    access(component).removeLogo();
+    expect(access(component).logoValue()).toBe('');
+    expect(access(component).form.getRawValue()).toMatchObject({ logo: '' });
+  });
+
+  it('create payload includes the logo data-URL', () => {
+    access(component).form.patchValue({
+      name: 'New',
+      sport_id: 1,
+      language: 'fr',
+      logo: 'data:image/png;base64,LOGO',
+    });
+    access(component).submit();
+    expect(teamsMock.teamsCreate).toHaveBeenCalledWith(
+      expect.objectContaining({ logo: 'data:image/png;base64,LOGO' }),
+    );
+  });
+
+  it('update payload includes logo + roti_enabled', async () => {
+    await setup('5');
+    access(component).form.patchValue({ logo: 'data:image/png;base64,X', roti_enabled: true });
+    access(component).submit();
+    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(
+      5,
+      expect.objectContaining({ logo: 'data:image/png;base64,X', roti_enabled: true }),
+    );
   });
 });

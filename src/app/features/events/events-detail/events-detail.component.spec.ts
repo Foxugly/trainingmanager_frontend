@@ -168,6 +168,12 @@ interface ProtectedFields {
   cancelNewRow(key: string): void;
   saveEditExercise(ex: Exercise): void;
   saveNewRow(row: { key: string; roundId: number }): void;
+  // ROTI
+  rotiEnabled(): boolean;
+  isAthlete(): boolean;
+  rotiSummary(): { average: number | null; count: number; distribution: { [k: string]: number }; my_score: number | null } | null;
+  rotiDistribution(): { score: number; count: number }[];
+  submitRoti(score: number): void;
 }
 
 type ExerciseRowForm = FormGroup<{
@@ -188,6 +194,8 @@ describe('EventsDetailComponent', () => {
     eventsGenerateTrainingCreate: ReturnType<typeof vi.fn>;
     eventsDestroy: ReturnType<typeof vi.fn>;
     eventsPartialUpdate: ReturnType<typeof vi.fn>;
+    eventsRotiRetrieve: ReturnType<typeof vi.fn>;
+    eventsRotiUpdate: ReturnType<typeof vi.fn>;
   };
   let programsMock: { programsRetrieve: ReturnType<typeof vi.fn> };
   let teamsMock: { teamsRetrieve: ReturnType<typeof vi.fn> };
@@ -212,6 +220,7 @@ describe('EventsDetailComponent', () => {
     idParam: string | null = '7',
     eventResult: Event | null = eventNoRounds,
     currentUser: CustomUserPublic = ownerUser,
+    teamResult: Team = team,
   ) {
     TestBed.resetTestingModule();
     routeIdParam = idParam;
@@ -235,9 +244,19 @@ describe('EventsDetailComponent', () => {
         .mockImplementation((_id: number, body: { total?: number }) =>
           of({ ...(eventResult ?? eventNoRounds), total: body?.total ?? 0 } as Event),
         ),
+      eventsRotiRetrieve: vi
+        .fn()
+        .mockReturnValue(
+          of([{ average: 3.4, count: 5, distribution: { '1': 0, '2': 1, '3': 2, '4': 1, '5': 1 }, my_score: 4 }]),
+        ),
+      eventsRotiUpdate: vi
+        .fn()
+        .mockImplementation((_id: number, body: { score: number }) =>
+          of({ average: 3.5, count: 6, distribution: {}, my_score: body.score }),
+        ),
     };
     programsMock = { programsRetrieve: vi.fn().mockReturnValue(of(program)) };
-    teamsMock = { teamsRetrieve: vi.fn().mockReturnValue(of(team)) };
+    teamsMock = { teamsRetrieve: vi.fn().mockReturnValue(of(teamResult)) };
     roundsMock = {
       roundsDestroy: vi.fn().mockReturnValue(of(null)),
       roundsRetrieve: vi.fn().mockImplementation((id: number) => of({ ...round1, id })),
@@ -661,5 +680,49 @@ describe('EventsDetailComponent', () => {
     expect(access(component).editingExerciseId()).toBeNull();
     expect(access(component).formFor(access(component).rowKeyForExercise(exercise1))).toBeNull();
     expect(exercisesMock.exercisesPartialUpdate).not.toHaveBeenCalled();
+  });
+
+  // --- ROTI (session difficulty) ---
+
+  const rotiTeam: Team = { ...team, roti_enabled: true };
+  const athleteUser = otherUser; // not owner, not in managers → 'member' / athlete
+
+  it('does not load ROTI when the team has roti_enabled falsy', () => {
+    expect(access(component).rotiEnabled()).toBe(false);
+    expect(eventsMock.eventsRotiRetrieve).not.toHaveBeenCalled();
+    expect(access(component).rotiSummary()).toBeNull();
+  });
+
+  it('loads the ROTI summary when the team has roti_enabled', async () => {
+    await setup('7', eventNoRounds, ownerUser, rotiTeam);
+    await new Promise((r) => setTimeout(r, 0));
+    expect(access(component).rotiEnabled()).toBe(true);
+    expect(eventsMock.eventsRotiRetrieve).toHaveBeenCalledWith(7);
+    // array payload unwrapped to a single summary
+    expect(access(component).rotiSummary()?.count).toBe(5);
+    expect(access(component).rotiSummary()?.average).toBe(3.4);
+  });
+
+  it('isAthlete is true for a member-only user and false for the owner', async () => {
+    await setup('7', eventNoRounds, athleteUser, rotiTeam);
+    expect(access(component).isAthlete()).toBe(true);
+    await setup('7', eventNoRounds, ownerUser, rotiTeam);
+    expect(access(component).isAthlete()).toBe(false);
+  });
+
+  it('athlete submitRoti PUTs the score then refreshes the summary', async () => {
+    await setup('7', eventNoRounds, athleteUser, rotiTeam);
+    await new Promise((r) => setTimeout(r, 0));
+    access(component).submitRoti(2);
+    expect(eventsMock.eventsRotiUpdate).toHaveBeenCalledWith(7, { score: 2 });
+    expect(access(component).rotiSummary()?.my_score).toBe(2);
+  });
+
+  it('rotiDistribution maps the 1..5 buckets to counts', async () => {
+    await setup('7', eventNoRounds, ownerUser, rotiTeam);
+    await new Promise((r) => setTimeout(r, 0));
+    const dist = access(component).rotiDistribution();
+    expect(dist.map((d) => d.score)).toEqual([1, 2, 3, 4, 5]);
+    expect(dist.map((d) => d.count)).toEqual([0, 1, 2, 1, 1]);
   });
 });

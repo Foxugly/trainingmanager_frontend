@@ -215,6 +215,21 @@
     "errors": {
       "unknown": "An error occurred.",
       "forbidden": "Action not allowed."
+    },
+    "roti": {
+      "title": "Perceived difficulty",
+      "your_rating": "Your rating",
+      "scale": {
+        "1": "1 Very easy",
+        "2": "2 Easy",
+        "3": "3 Moderate",
+        "4": "4 Hard",
+        "5": "5 Very hard"
+      },
+      "average": "Average",
+      "responses": "{{count}} response(s)",
+      "saved": "Thanks, saved",
+      "none": "No responses"
     }
   },
   "programs": {
@@ -376,7 +391,14 @@
       "notify_managers_label": "Notify coaches by email",
       "notify_managers_help": "An email with accept and reject links is sent to the owner and managers. Links expire after 7 days.",
       "saved_create": "Team created.",
-      "saved_edit": "Team saved."
+      "saved_edit": "Team saved.",
+      "logo": "Logo",
+      "logo_help": "Small image shown next to the team name (resized automatically).",
+      "logo_upload": "Upload",
+      "logo_remove": "Remove",
+      "logo_too_large": "Image too large, please try again",
+      "roti_enabled": "Enable ROTI (perceived difficulty)",
+      "roti_enabled_help": "Lets athletes rate how hard each session felt (1 to 5)."
     },
     "member_dialog": {
       "title": "Add a member",

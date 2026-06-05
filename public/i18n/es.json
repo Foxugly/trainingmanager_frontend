@@ -215,6 +215,21 @@
     "errors": {
       "unknown": "Se ha producido un error.",
       "forbidden": "Acción no autorizada."
+    },
+    "roti": {
+      "title": "Dificultad percibida",
+      "your_rating": "Tu valoración",
+      "scale": {
+        "1": "1 Muy fácil",
+        "2": "2 Fácil",
+        "3": "3 Moderado",
+        "4": "4 Difícil",
+        "5": "5 Muy difícil"
+      },
+      "average": "Media",
+      "responses": "{{count}} respuesta(s)",
+      "saved": "Gracias, guardado",
+      "none": "Sin respuestas"
     }
   },
   "programs": {
@@ -376,7 +391,14 @@
       "notify_managers_label": "Notificar a los coaches por correo",
       "notify_managers_help": "Se envía un correo con los enlaces de aceptar y rechazar al propietario y a los managers. Los enlaces expiran después de 7 días.",
       "saved_create": "Equipo creado.",
-      "saved_edit": "Equipo guardado."
+      "saved_edit": "Equipo guardado.",
+      "logo": "Logo",
+      "logo_help": "Imagen pequeña que se muestra junto al nombre del equipo (redimensionada automáticamente).",
+      "logo_upload": "Subir",
+      "logo_remove": "Quitar",
+      "logo_too_large": "Imagen demasiado grande, inténtalo de nuevo",
+      "roti_enabled": "Activar ROTI (dificultad percibida)",
+      "roti_enabled_help": "Permite a los atletas valorar lo dura que resultó cada sesión (de 1 a 5)."
     },
     "member_dialog": {
       "title": "Añadir un miembro",

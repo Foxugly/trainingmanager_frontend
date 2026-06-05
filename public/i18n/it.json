@@ -215,6 +215,21 @@
     "errors": {
       "unknown": "Si è verificato un errore.",
       "forbidden": "Azione non autorizzata."
+    },
+    "roti": {
+      "title": "Difficoltà percepita",
+      "your_rating": "La tua valutazione",
+      "scale": {
+        "1": "1 Molto facile",
+        "2": "2 Facile",
+        "3": "3 Moderato",
+        "4": "4 Difficile",
+        "5": "5 Molto difficile"
+      },
+      "average": "Media",
+      "responses": "{{count}} risposta/e",
+      "saved": "Grazie, salvato",
+      "none": "Nessuna risposta"
     }
   },
   "programs": {
@@ -376,7 +391,14 @@
       "notify_managers_label": "Notifica gli allenatori via email",
       "notify_managers_help": "Un'email con i link per accettare e rifiutare viene inviata al proprietario e ai manager. I link scadono dopo 7 giorni.",
       "saved_create": "Squadra creata.",
-      "saved_edit": "Squadra salvata."
+      "saved_edit": "Squadra salvata.",
+      "logo": "Logo",
+      "logo_help": "Piccola immagine mostrata accanto al nome della squadra (ridimensionata automaticamente).",
+      "logo_upload": "Carica",
+      "logo_remove": "Rimuovi",
+      "logo_too_large": "Immagine troppo grande, riprova",
+      "roti_enabled": "Abilita ROTI (difficoltà percepita)",
+      "roti_enabled_help": "Consente agli atleti di valutare quanto è stata dura ogni sessione (da 1 a 5)."
     },
     "member_dialog": {
       "title": "Aggiungi un membro",
