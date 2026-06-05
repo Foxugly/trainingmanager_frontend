@@ -152,6 +152,16 @@ model/roti-upsert.ts
 model/round.ts
 model/sport-admin.ts
 model/sport.ts
+model/stats-attendance-by-member.ts
+model/stats-attendance-by-session.ts
+model/stats-attendance.ts
+model/stats-intensity-by-segment.ts
+model/stats-intensity.ts
+model/stats-member.ts
+model/stats-period.ts
+model/stats-volume-by-member.ts
+model/stats-volume-by-week.ts
+model/stats-volume.ts
 model/team-invitation.ts
 model/team-join-request-magic-action-post.ts
 model/team-join-request-magic-action-response.ts
@@ -159,6 +169,7 @@ model/team-join-request.ts
 model/team-membership.ts
 model/team-minimal.ts
 model/team-quota-status.ts
+model/team-stats.ts
 model/team.ts
 model/token-obtain-pair-response.ts
 model/token-refresh.ts

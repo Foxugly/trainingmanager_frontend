@@ -23,6 +23,7 @@ import { PatchedTeam } from '../model/models';
 import { PatchedTeamMembership } from '../model/models';
 import { Team } from '../model/models';
 import { TeamMembership } from '../model/models';
+import { TeamStats } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
@@ -297,6 +298,17 @@ export interface TeamsServiceInterface {
      * @param id A unique integer value identifying this team.
      */
     teamsRetrieve(id: number, extraHttpRequestParams?: any): Observable<Team>;
+
+    /**
+     * Team statistics (attendance, volume, intensity)
+     * Read-only aggregated statistics for the team\&#39;s events whose &#x60;date&#x60; falls in the window [&#x60;from&#x60;, &#x60;to&#x60;] (both inclusive). Defaults to the last 12 weeks (&#x60;to&#x60; &#x3D; today, &#x60;from&#x60; &#x3D; today - 84 days) when both are absent; a single bound fills the other (&#x60;to&#x60; defaults to today, &#x60;from&#x60; defaults to &#x60;to&#x60; - 84 days). The span is clamped to a maximum of 2 years.  Without &#x60;member&#x60; the payload is the **team aggregate** (owner/manager only). With &#x60;member&#x3D;&lt;id&gt;&#x60; the payload is **scoped to that athlete**: allowed for the team\&#39;s owner/managers for any member, or for the athlete viewing their OWN member record.
+     * @endpoint get /api/v1/teams/{id}/stats/
+     * @param id A unique integer value identifying this team.
+     * @param from Window start (inclusive, ISO YYYY-MM-DD). Defaults to &#x60;to&#x60; - 84 days.
+     * @param member Optional member id. When set, scopes the whole payload to that athlete. Owner/managers may request any member of the team; an athlete may only request their own member id (otherwise 403). Member not in the team -&gt; 404.
+     * @param to Window end (inclusive, ISO YYYY-MM-DD). Defaults to today.
+     */
+    teamsStatsRetrieve(id: number, from?: string, member?: number, to?: string, extraHttpRequestParams?: any): Observable<TeamStats>;
 
     /**
      * 

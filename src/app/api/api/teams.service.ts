@@ -40,6 +40,8 @@ import { PatchedTeamMembership } from '../model/patched-team-membership';
 import { Team } from '../model/team';
 // @ts-ignore
 import { TeamMembership } from '../model/team-membership';
+// @ts-ignore
+import { TeamStats } from '../model/team-stats';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -2175,6 +2177,99 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         return this.httpClient.request<Team>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Team statistics (attendance, volume, intensity)
+     * Read-only aggregated statistics for the team\&#39;s events whose &#x60;date&#x60; falls in the window [&#x60;from&#x60;, &#x60;to&#x60;] (both inclusive). Defaults to the last 12 weeks (&#x60;to&#x60; &#x3D; today, &#x60;from&#x60; &#x3D; today - 84 days) when both are absent; a single bound fills the other (&#x60;to&#x60; defaults to today, &#x60;from&#x60; defaults to &#x60;to&#x60; - 84 days). The span is clamped to a maximum of 2 years.  Without &#x60;member&#x60; the payload is the **team aggregate** (owner/manager only). With &#x60;member&#x3D;&lt;id&gt;&#x60; the payload is **scoped to that athlete**: allowed for the team\&#39;s owner/managers for any member, or for the athlete viewing their OWN member record.
+     * @endpoint get /api/v1/teams/{id}/stats/
+     * @param id A unique integer value identifying this team.
+     * @param from Window start (inclusive, ISO YYYY-MM-DD). Defaults to &#x60;to&#x60; - 84 days.
+     * @param member Optional member id. When set, scopes the whole payload to that athlete. Owner/managers may request any member of the team; an athlete may only request their own member id (otherwise 403). Member not in the team -&gt; 404.
+     * @param to Window end (inclusive, ISO YYYY-MM-DD). Defaults to today.
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public teamsStatsRetrieve(id: number, from?: string, member?: number, to?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamStats>;
+    public teamsStatsRetrieve(id: number, from?: string, member?: number, to?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamStats>>;
+    public teamsStatsRetrieve(id: number, from?: string, member?: number, to?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamStats>>;
+    public teamsStatsRetrieve(id: number, from?: string, member?: number, to?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling teamsStatsRetrieve.');
+        }
+
+        let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'from',
+            <any>from,
+            QueryParamStyle.Form,
+            true,
+        );
+
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'member',
+            <any>member,
+            QueryParamStyle.Form,
+            true,
+        );
+
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'to',
+            <any>to,
+            QueryParamStyle.Form,
+            true,
+        );
+
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (jwtAuth) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/teams/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/stats/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<TeamStats>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
