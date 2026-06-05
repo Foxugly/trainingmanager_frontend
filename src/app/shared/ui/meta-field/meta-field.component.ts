@@ -20,6 +20,7 @@ import { Tooltip } from 'primeng/tooltip';
       @if (tooltip()) {
         <i
           class="pi pi-info-circle meta-info"
+          role="img"
           [pTooltip]="tooltip()!"
           tooltipPosition="top"
           tabindex="0"
