@@ -186,10 +186,15 @@
     "actions": {
       "edit": "Edit",
       "attendance": "Set attendance",
+      "print": "Print",
       "delete": "Delete",
       "delete_confirm_title": "Delete this session?",
       "delete_confirm_message": "Session \"{{name}}\" will be permanently deleted, along with its blocks and exercises. This cannot be undone.",
       "deleted": "Session deleted."
+    },
+    "print": {
+      "title": "Session sheet",
+      "scan_hint": "Scan to open the session"
     },
     "attendance": {
       "title": "Attendance entry",

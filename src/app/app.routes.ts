@@ -149,6 +149,15 @@ export const routes: Routes = [
     ],
   },
   {
+    // Top-level route (no layout shell): a chrome-less printable session sheet.
+    path: 'events/:id/print',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/events/event-print/event-print.component').then(
+        (m) => m.EventPrintComponent,
+      ),
+  },
+  {
     path: '',
     component: MainLayoutComponent,
     canActivate: [authGuard],

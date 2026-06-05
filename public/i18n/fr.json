@@ -186,10 +186,15 @@
     "actions": {
       "edit": "Modifier",
       "attendance": "Saisir présences",
+      "print": "Imprimer",
       "delete": "Supprimer",
       "delete_confirm_title": "Supprimer cette séance ?",
       "delete_confirm_message": "La séance « {{name}} » sera supprimée définitivement, ainsi que ses blocs et exercices. Cette action est irréversible.",
       "deleted": "Séance supprimée."
+    },
+    "print": {
+      "title": "Fiche de séance",
+      "scan_hint": "Scannez pour ouvrir la séance"
     },
     "attendance": {
       "title": "Saisie des présences",

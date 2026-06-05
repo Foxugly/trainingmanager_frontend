@@ -186,10 +186,15 @@
     "actions": {
       "edit": "Bewerken",
       "attendance": "Aanwezigheden invoeren",
+      "print": "Afdrukken",
       "delete": "Verwijderen",
       "delete_confirm_title": "Deze sessie verwijderen?",
       "delete_confirm_message": "Sessie « {{name}} » wordt permanent verwijderd, samen met haar blokken en oefeningen. Dit kan niet ongedaan worden gemaakt.",
       "deleted": "Sessie verwijderd."
+    },
+    "print": {
+      "title": "Sessiefiche",
+      "scan_hint": "Scan om de sessie te openen"
     },
     "attendance": {
       "title": "Aanwezigheden invoeren",

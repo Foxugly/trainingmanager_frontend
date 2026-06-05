@@ -1,0 +1,137 @@
+@if (loading() && !event()) {
+  <p class="loading">{{ 'common.loading' | transloco }}…</p>
+} @else if (notFound()) {
+  <p class="loading">{{ 'events.detail.not_found' | transloco }}</p>
+} @else if (event(); as e) {
+  <!-- Screen-only toolbar (hidden in print via @media print) -->
+  <div class="toolbar no-print">
+    <a [routerLink]="['/events', e.id]">
+      <p-button
+        icon="pi pi-arrow-left"
+        [label]="'common.back' | transloco"
+        severity="secondary"
+        [outlined]="true"
+      />
+    </a>
+    <p-button
+      icon="pi pi-print"
+      [label]="'events.actions.print' | transloco"
+      (onClick)="print()"
+    />
+  </div>
+
+  <article class="sheet">
+    <header class="sheet-header">
+      <div class="sheet-heading">
+        <h1>{{ e.name }}</h1>
+        <dl class="meta">
+          @if (e.date) {
+            <div class="meta-item">
+              <dt>{{ 'events.fields.date' | transloco }}</dt>
+              <dd>{{ e.date | date: 'fullDate' }}</dd>
+            </div>
+          }
+          @if (e.hour_start) {
+            <div class="meta-item">
+              <dt>{{ 'events.fields.hour_start' | transloco }}</dt>
+              <dd>
+                {{ e.hour_start.slice(0, 5) }}@if (e.hour_end) { –{{ e.hour_end.slice(0, 5) }} }
+              </dd>
+            </div>
+          }
+          @if (e.refer_program) {
+            <div class="meta-item">
+              <dt>{{ 'events.fields.program' | transloco }}</dt>
+              <dd>{{ e.refer_program.name }}</dd>
+            </div>
+          }
+          @if (eventTotalDistance() > 0) {
+            <div class="meta-item">
+              <dt>{{ 'events.fields.total' | transloco }}</dt>
+              <dd>{{ formatDistance(eventTotalDistance()) }}</dd>
+            </div>
+          }
+        </dl>
+        @if (e.goal) {
+          <p class="goal">{{ e.goal }}</p>
+        }
+      </div>
+
+      <div class="qr">
+        @if (qrDataUrl(); as qr) {
+          <img [src]="qr" [alt]="'events.print.scan_hint' | transloco" width="120" height="120" />
+        }
+        <span class="qr-caption">{{ 'events.print.scan_hint' | transloco }}</span>
+      </div>
+    </header>
+
+    @for (round of rounds(); track round.id) {
+      <section class="round">
+        <h2 class="round-title">
+          <span>{{ 'events.detail.block_label' | transloco }} {{ round.order ?? 1 }}</span>
+          @if (roundTotalDistance(round) > 0) {
+            <span class="round-dist">({{ formatDistance(roundTotalDistance(round)) }})</span>
+          }
+          @if ((round.count ?? 1) > 1) {
+            <span class="round-sub">
+              @if (roundDistancePerIteration(round) > 0) {
+                · {{ round.count }} × {{ formatDistance(roundDistancePerIteration(round)) }}
+              } @else {
+                · × {{ round.count }}
+              }
+            </span>
+          }
+          @if (hasNonZeroTime(round.t_start)) {
+            <span class="round-sub">· {{ 'events.detail.start' | transloco }} {{ round.t_start }}</span>
+          }
+          @if (hasNonZeroTime(round.t_break)) {
+            <span class="round-sub">· {{ 'events.detail.break' | transloco }} {{ round.t_break }}</span>
+          }
+        </h2>
+
+        @if ((exercisesByRound().get(round.id) || []).length > 0) {
+          <table class="exercises">
+            <thead>
+              <tr>
+                <th>{{ 'events.exercise_form.fields.repetition' | transloco }} × {{ 'events.exercise_form.fields.distance' | transloco }}</th>
+                <th>{{ 'events.exercise_form.fields.modality' | transloco }}</th>
+                <th>{{ 'events.exercise_form.fields.energysegment' | transloco }}</th>
+                <th>{{ 'events.detail.start' | transloco }}</th>
+                <th>{{ 'events.detail.break' | transloco }}</th>
+                <th>{{ 'events.exercise_form.fields.notes' | transloco }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (ex of exercisesByRound().get(round.id) || []; track ex.id) {
+                <tr>
+                  <td>
+                    {{ ex.repetition ?? 1 }} × {{ ex.distance ?? 0 }}m
+                    @if ((ex.repetition ?? 1) > 1 && exerciseDistance(ex) > 0) {
+                      <span class="muted">= {{ exerciseDistance(ex) }}m</span>
+                    }
+                  </td>
+                  <td>{{ ex.modality.name }}</td>
+                  <td>
+                    @if (ex.energysegment.abv) {
+                      {{ ex.energysegment.abv }}@if (ex.energysegment.energy_system.name) { ({{ ex.energysegment.energy_system.name }}) }
+                    }
+                  </td>
+                  <td>{{ hasNonZeroTime(ex.t_start) ? ex.t_start : '' }}</td>
+                  <td>{{ hasNonZeroTime(ex.t_break) ? ex.t_break : '' }}</td>
+                  <td>{{ ex.notes }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        } @else {
+          <p class="muted">{{ 'events.detail.no_exercises' | transloco }}</p>
+        }
+      </section>
+    }
+
+    <footer class="sheet-footer">
+      <span class="footer-url">{{ publicUrl() }}</span>
+      <span class="footer-app">{{ 'app.title' | transloco }}</span>
+    </footer>
+  </article>
+}

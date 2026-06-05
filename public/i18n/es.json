@@ -186,10 +186,15 @@
     "actions": {
       "edit": "Editar",
       "attendance": "Registrar asistencias",
+      "print": "Imprimir",
       "delete": "Eliminar",
       "delete_confirm_title": "¿Eliminar esta sesión?",
       "delete_confirm_message": "La sesión « {{name}} » se eliminará de forma permanente, junto con sus bloques y ejercicios. Esta acción es irreversible.",
       "deleted": "Sesión eliminada."
+    },
+    "print": {
+      "title": "Ficha de sesión",
+      "scan_hint": "Escanea para abrir la sesión"
     },
     "attendance": {
       "title": "Registro de asistencias",

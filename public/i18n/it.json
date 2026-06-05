@@ -186,10 +186,15 @@
     "actions": {
       "edit": "Modifica",
       "attendance": "Registra presenze",
+      "print": "Stampa",
       "delete": "Elimina",
       "delete_confirm_title": "Eliminare questa sessione?",
       "delete_confirm_message": "La sessione « {{name}} » verrà eliminata definitivamente, insieme ai suoi blocchi ed esercizi. L'operazione è irreversibile.",
       "deleted": "Sessione eliminata."
+    },
+    "print": {
+      "title": "Scheda della sessione",
+      "scan_hint": "Scansiona per aprire la sessione"
     },
     "attendance": {
       "title": "Registrazione presenze",

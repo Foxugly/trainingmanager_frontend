@@ -27,6 +27,17 @@
       }
 
 
+      <a detailHeaderActions [routerLink]="['/events', e.id, 'print']">
+        <p-button
+          icon="pi pi-print"
+          severity="secondary"
+          [outlined]="true"
+          [rounded]="true"
+          [pTooltip]="'events.actions.print' | transloco"
+          tooltipPosition="bottom"
+          [ariaLabel]="'events.actions.print' | transloco"
+        />
+      </a>
       @if (canManage()) {
         <a detailHeaderActions [routerLink]="['/events', e.id, 'edit']">
           <p-button
