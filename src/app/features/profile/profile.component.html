@@ -5,52 +5,123 @@
   </app-page-header>
 
   @if (user(); as me) {
-    <div class="card form-card builder-stack">
+    <div class="card form-card">
       <form [formGroup]="form">
-        <p-tabs value="account" class="builder-tabs">
-          <p-tablist>
-            <p-tab value="account"><i class="pi pi-user tab-icon"></i>{{ 'profile.tab_account' | transloco }}</p-tab>
-            <p-tab value="prefs"><i class="pi pi-sliders-h tab-icon"></i>{{ 'profile.tab_prefs' | transloco }}</p-tab>
-          </p-tablist>
-          <p-tabpanels>
-            <p-tabpanel value="account">
-              <div class="builder-pane">
-                <div class="meta-grid">
-                  <app-meta-field [label]="'profile.username' | transloco">
-                    <span>{{ me.username }}</span>
-                  </app-meta-field>
-                  <app-meta-field [label]="'profile.email' | transloco" [hint]="'profile.email_readonly_help' | transloco">
-                    <span>{{ me.email }}</span>
-                  </app-meta-field>
-                  <app-meta-field [label]="'profile.first_name' | transloco" for="first_name" [error]="fieldError('first_name')">
-                    <input pInputText id="first_name" formControlName="first_name" autocomplete="given-name" />
-                  </app-meta-field>
-                  <app-meta-field [label]="'profile.last_name' | transloco" for="last_name" [error]="fieldError('last_name')">
-                    <input pInputText id="last_name" formControlName="last_name" autocomplete="family-name" />
-                  </app-meta-field>
-                  <app-meta-field [label]="'profile.date_joined' | transloco">
-                    <span>{{ me.date_joined | date: 'medium' }}</span>
-                  </app-meta-field>
-                </div>
-              </div>
-            </p-tabpanel>
-            <p-tabpanel value="prefs">
-              <div class="builder-pane">
-                <div class="meta-grid">
-                  <app-meta-field [full]="true" [label]="'profile.language' | transloco" for="language">
-                    <p-select inputId="language" formControlName="language" [options]="languages"
-                      optionLabel="nativeName" optionValue="code" />
-                  </app-meta-field>
-                </div>
-              </div>
-            </p-tabpanel>
-          </p-tabpanels>
-        </p-tabs>
+        <div class="meta-grid">
+          <app-meta-field [label]="'profile.username' | transloco">
+            <span>{{ me.username }}</span>
+          </app-meta-field>
+          <app-meta-field [label]="'profile.email' | transloco"
+            [tooltip]="'profile.email_readonly_help' | transloco">
+            <span>{{ me.email }}</span>
+          </app-meta-field>
+          <app-meta-field [label]="'profile.first_name' | transloco" for="first_name"
+            [error]="fieldError('first_name')">
+            <input pInputText id="first_name" formControlName="first_name" autocomplete="given-name" />
+          </app-meta-field>
+          <app-meta-field [label]="'profile.last_name' | transloco" for="last_name"
+            [error]="fieldError('last_name')">
+            <input pInputText id="last_name" formControlName="last_name" autocomplete="family-name" />
+          </app-meta-field>
+          <app-meta-field [full]="true" [label]="'profile.language' | transloco" for="language">
+            <p-select inputId="language" formControlName="language" [options]="languages"
+              optionLabel="nativeName" optionValue="code" />
+          </app-meta-field>
+          <app-meta-field [label]="'profile.date_joined' | transloco">
+            <span>{{ me.date_joined | date: 'medium' }}</span>
+          </app-meta-field>
+        </div>
       </form>
 
-      <app-form-footer [saving]="loading()" [disabled]="form.invalid"
-        [cancelLabel]="'common.cancel' | transloco" [saveLabel]="'common.save' | transloco"
-        (cancel)="cancel()" (save)="submit()" />
+      <div class="footer-actions">
+        <p-button type="button" severity="secondary" [outlined]="true" icon="pi pi-lock"
+          [label]="'profile.change_password' | transloco" (onClick)="openChangePassword()" />
+        <span class="flex-1"></span>
+        <p-button type="button" icon="pi pi-save" [label]="'common.save' | transloco"
+          [loading]="loading()" [disabled]="form.invalid" (onClick)="submit()" />
+      </div>
     </div>
+
+    <section class="mt-8 rounded-xl border border-red-200 bg-red-50 p-4">
+      <h2 class="text-sm font-semibold uppercase tracking-wide text-red-700 mb-1">
+        {{ 'profile.danger_zone' | transloco }}
+      </h2>
+      <div class="flex items-center justify-between gap-3 flex-wrap">
+        <div>
+          <strong class="text-red-900">{{ 'profile.delete_account_title' | transloco }}</strong>
+          <p class="text-sm text-red-800">{{ 'profile.delete_account_help' | transloco }}</p>
+        </div>
+        <p-button severity="danger" icon="pi pi-trash"
+          [label]="'profile.delete_account_cta' | transloco" (onClick)="openDeleteDialog()" />
+      </div>
+    </section>
   }
+
+  <!-- Change-password dialog -->
+  <p-dialog
+    [visible]="changePwOpen()"
+    (visibleChange)="onChangePwVisibleChange($event)"
+    [modal]="true"
+    [closable]="!changePwLoading()"
+    [style]="{ width: '30rem' }"
+    [header]="'profile.change_password' | transloco"
+  >
+    <form [formGroup]="changePwForm">
+      <div class="meta-grid">
+        <app-meta-field [full]="true" [label]="'profile.confirm_password' | transloco"
+          for="current_password" [error]="changePwFieldError('current_password')">
+          <p-password inputId="current_password" formControlName="current_password"
+            [feedback]="false" [toggleMask]="true" autocomplete="current-password" [fluid]="true" />
+        </app-meta-field>
+        <app-meta-field [full]="true" [label]="'profile.new_password' | transloco"
+          for="new_password" [error]="changePwFieldError('new_password')">
+          <p-password inputId="new_password" formControlName="new_password"
+            [feedback]="false" [toggleMask]="true" autocomplete="new-password" [fluid]="true" />
+        </app-meta-field>
+        <app-meta-field [full]="true" [label]="'profile.new_password_confirm' | transloco"
+          for="new_password_confirm" [error]="changePwFieldError('new_password_confirm')">
+          <p-password inputId="new_password_confirm" formControlName="new_password_confirm"
+            [feedback]="false" [toggleMask]="true" autocomplete="new-password" [fluid]="true" />
+        </app-meta-field>
+      </div>
+    </form>
+    <app-form-footer
+      [saving]="changePwLoading()"
+      [disabled]="changePwForm.invalid"
+      [cancelLabel]="'common.cancel' | transloco"
+      [saveLabel]="'common.save' | transloco"
+      (cancel)="cancelChangePassword()"
+      (save)="submitChangePassword()"
+    />
+  </p-dialog>
+
+  <!-- Delete-account dialog -->
+  <p-dialog
+    [visible]="deleteOpen()"
+    (visibleChange)="onDeleteVisibleChange($event)"
+    [modal]="true"
+    [closable]="!deleteLoading()"
+    [style]="{ width: '30rem' }"
+    [header]="'profile.delete_account_title' | transloco"
+  >
+    <div class="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+      {{ 'profile.delete_account_help' | transloco }}
+    </div>
+    <form [formGroup]="deleteForm">
+      <div class="meta-grid">
+        <app-meta-field [full]="true" [label]="'profile.confirm_password' | transloco"
+          for="delete_current_password" [error]="deleteFieldError('current_password')">
+          <p-password inputId="delete_current_password" formControlName="current_password"
+            [feedback]="false" [toggleMask]="true" autocomplete="current-password" [fluid]="true" />
+        </app-meta-field>
+      </div>
+    </form>
+    <div class="footer-actions">
+      <p-button type="button" severity="secondary" [outlined]="true" icon="pi pi-times"
+        [label]="'common.cancel' | transloco" [disabled]="deleteLoading()" (onClick)="cancelDelete()" />
+      <p-button type="button" severity="danger" icon="pi pi-trash"
+        [label]="'profile.delete_account_cta' | transloco" [loading]="deleteLoading()"
+        [disabled]="deleteForm.invalid" (onClick)="submitDelete()" />
+    </div>
+  </p-dialog>
 </div>

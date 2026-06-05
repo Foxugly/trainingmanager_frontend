@@ -6,12 +6,16 @@ import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
+import { Dialog } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
+import { Password } from 'primeng/password';
 import { Select } from 'primeng/select';
-import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
+import { AuthService as AuthApi } from '../../api/api/auth.service';
 import { MeService } from '../../api/api/me.service';
+import { AccountDelete } from '../../api/model/account-delete';
 import { LanguageEnum } from '../../api/model/language-enum';
 import { Me } from '../../api/model/me';
+import { PasswordChange } from '../../api/model/password-change';
 import { PatchedMe } from '../../api/model/patched-me';
 import { AuthService } from '../../core/auth/auth.service';
 import { AVAILABLE_LANGUAGES, LanguageCode } from '../../core/i18n/available-languages';
@@ -35,11 +39,8 @@ interface ProfileFormValue {
     InputText,
     Select,
     Button,
-    Tabs,
-    TabList,
-    Tab,
-    TabPanels,
-    TabPanel,
+    Dialog,
+    Password,
     PageHeaderComponent,
     MetaFieldComponent,
     FormFooterComponent,
@@ -53,6 +54,7 @@ interface ProfileFormValue {
 export class ProfileComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
+  private readonly authApi = inject(AuthApi);
   private readonly meService = inject(MeService);
   private readonly languageService = inject(LanguageService);
   private readonly transloco = inject(TranslocoService);
@@ -68,6 +70,24 @@ export class ProfileComponent implements OnInit {
     first_name: ['', Validators.required],
     last_name: ['', Validators.required],
     language: ['fr' as LanguageCode, Validators.required],
+  });
+
+  // --- Change-password dialog ---
+  protected readonly changePwOpen = signal(false);
+  protected readonly changePwLoading = signal(false);
+  protected readonly changePwErrors = signal<FieldErrors | null>(null);
+  protected readonly changePwForm = this.fb.nonNullable.group({
+    current_password: ['', Validators.required],
+    new_password: ['', Validators.required],
+    new_password_confirm: ['', Validators.required],
+  });
+
+  // --- Delete-account dialog ---
+  protected readonly deleteOpen = signal(false);
+  protected readonly deleteLoading = signal(false);
+  protected readonly deleteErrors = signal<FieldErrors | null>(null);
+  protected readonly deleteForm = this.fb.nonNullable.group({
+    current_password: ['', Validators.required],
   });
 
   ngOnInit(): void {
@@ -130,14 +150,6 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  protected cancel(): void {
-    const me = this.user();
-    if (me) {
-      this.hydrate(me);
-    }
-    this.fieldErrors.set(null);
-  }
-
   private applyServerError(err: HttpErrorResponse): void {
     const { fields, detail } = extractServerError(err);
     this.fieldErrors.set(fields);
@@ -150,5 +162,168 @@ export class ProfileComponent implements OnInit {
           : this.transloco.translate('profile.errors.unknown'),
       });
     }
+  }
+
+  // --- Change-password ---
+
+  protected changePwFieldError(name: string): string | null {
+    return this.changePwErrors()?.[name]?.join(', ') ?? null;
+  }
+
+  protected openChangePassword(): void {
+    this.changePwForm.reset({ current_password: '', new_password: '', new_password_confirm: '' });
+    this.changePwErrors.set(null);
+    this.changePwOpen.set(true);
+  }
+
+  protected cancelChangePassword(): void {
+    if (this.changePwLoading()) return;
+    this.changePwOpen.set(false);
+  }
+
+  protected onChangePwVisibleChange(value: boolean): void {
+    if (!value && !this.changePwLoading()) {
+      this.changePwOpen.set(false);
+    }
+  }
+
+  protected submitChangePassword(): void {
+    if (this.changePwForm.invalid || this.changePwLoading()) return;
+    const value = this.changePwForm.getRawValue();
+    if (value.new_password !== value.new_password_confirm) {
+      this.changePwErrors.set({
+        new_password_confirm: [this.transloco.translate('profile.password_mismatch')],
+      });
+      return;
+    }
+    this.changePwLoading.set(true);
+    this.changePwErrors.set(null);
+
+    const payload: PasswordChange = {
+      current_password: value.current_password,
+      new_password: value.new_password,
+    };
+    this.authApi.authPasswordChangeCreate(payload).subscribe({
+      next: () => {
+        this.changePwLoading.set(false);
+        this.changePwOpen.set(false);
+        this.messageService.add({
+          severity: 'success',
+          summary: this.transloco.translate('common.success'),
+          detail: this.transloco.translate('profile.password_changed'),
+        });
+      },
+      error: (err: HttpErrorResponse) => {
+        this.changePwLoading.set(false);
+        this.applyChangePwError(err);
+      },
+    });
+  }
+
+  private applyChangePwError(err: HttpErrorResponse): void {
+    const code = (err?.error as { code?: string } | null | undefined)?.code;
+    if (code === 'current_password_invalid') {
+      this.changePwErrors.set({
+        current_password: [this.transloco.translate('profile.errors.current_password_invalid')],
+      });
+      return;
+    }
+    if (code === 'password_unchanged') {
+      this.changePwErrors.set({
+        new_password: [this.transloco.translate('profile.errors.password_unchanged')],
+      });
+      return;
+    }
+    const { fields, detail } = extractServerError(err);
+    if (fields) {
+      this.changePwErrors.set(fields);
+      return;
+    }
+    this.messageService.add({
+      severity: 'error',
+      summary: this.transloco.translate('common.error'),
+      detail: detail
+        ? this.transloco.translate(detail)
+        : this.transloco.translate('profile.errors.unknown'),
+    });
+  }
+
+  // --- Delete account ---
+
+  protected deleteFieldError(name: string): string | null {
+    return this.deleteErrors()?.[name]?.join(', ') ?? null;
+  }
+
+  protected openDeleteDialog(): void {
+    this.deleteForm.reset({ current_password: '' });
+    this.deleteErrors.set(null);
+    this.deleteOpen.set(true);
+  }
+
+  protected cancelDelete(): void {
+    if (this.deleteLoading()) return;
+    this.deleteOpen.set(false);
+  }
+
+  protected onDeleteVisibleChange(value: boolean): void {
+    if (!value && !this.deleteLoading()) {
+      this.deleteOpen.set(false);
+    }
+  }
+
+  protected submitDelete(): void {
+    if (this.deleteForm.invalid || this.deleteLoading()) return;
+    this.deleteLoading.set(true);
+    this.deleteErrors.set(null);
+
+    const payload: AccountDelete = {
+      current_password: this.deleteForm.getRawValue().current_password,
+    };
+    this.authApi.authAccountDeleteCreate(payload).subscribe({
+      next: () => {
+        this.deleteLoading.set(false);
+        this.deleteOpen.set(false);
+        this.messageService.add({
+          severity: 'success',
+          summary: this.transloco.translate('common.success'),
+          detail: this.transloco.translate('profile.account_deleted'),
+        });
+        this.authService.logout();
+      },
+      error: (err: HttpErrorResponse) => {
+        this.deleteLoading.set(false);
+        this.applyDeleteError(err);
+      },
+    });
+  }
+
+  private applyDeleteError(err: HttpErrorResponse): void {
+    const body = err?.error as { code?: string; detail?: string } | null | undefined;
+    if (body?.code === 'current_password_invalid') {
+      this.deleteErrors.set({
+        current_password: [this.transloco.translate('profile.errors.current_password_invalid')],
+      });
+      return;
+    }
+    if (body?.code === 'owns_teams') {
+      this.messageService.add({
+        severity: 'error',
+        summary: this.transloco.translate('common.error'),
+        detail: body.detail ?? this.transloco.translate('profile.errors.owns_teams'),
+      });
+      return;
+    }
+    const { fields, detail } = extractServerError(err);
+    if (fields) {
+      this.deleteErrors.set(fields);
+      return;
+    }
+    this.messageService.add({
+      severity: 'error',
+      summary: this.transloco.translate('common.error'),
+      detail: detail
+        ? this.transloco.translate(detail)
+        : this.transloco.translate('profile.errors.unknown'),
+    });
   }
 }

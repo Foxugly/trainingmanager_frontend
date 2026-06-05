@@ -795,7 +795,7 @@
     }
   },
   "profile": {
-    "title": "Il mio profilo",
+    "title": "Profilo",
     "username": "Nome utente",
     "email": "Email",
     "email_readonly_help": "L'indirizzo email può essere modificato solo da un amministratore.",
@@ -807,8 +807,22 @@
     "tab_prefs": "Preferenze",
     "saved": "Profilo salvato.",
     "language_switch_failed": "Impossibile cambiare la lingua, riprova.",
+    "change_password": "Cambia password",
+    "password_changed": "Password aggiornata.",
+    "confirm_password": "Password attuale",
+    "new_password": "Nuova password",
+    "new_password_confirm": "Conferma nuova password",
+    "password_mismatch": "Le password non corrispondono.",
+    "danger_zone": "Zona pericolosa",
+    "delete_account_title": "Elimina il mio account",
+    "delete_account_help": "Questa azione è irreversibile.",
+    "delete_account_cta": "Elimina account",
+    "account_deleted": "Account eliminato.",
     "errors": {
-      "unknown": "Si è verificato un errore, riprova."
+      "unknown": "Si è verificato un errore, riprova.",
+      "current_password_invalid": "La password attuale non è corretta.",
+      "password_unchanged": "La nuova password deve essere diversa.",
+      "owns_teams": "Trasferisci o elimina le tue squadre prima di eliminare l'account."
     }
   },
   "admin": {

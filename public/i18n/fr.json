@@ -795,7 +795,7 @@
     }
   },
   "profile": {
-    "title": "Mon profil",
+    "title": "Profil",
     "username": "Nom d'utilisateur",
     "email": "Email",
     "email_readonly_help": "L'adresse email ne peut être changée que par un administrateur.",
@@ -807,8 +807,22 @@
     "tab_prefs": "Préférences",
     "saved": "Profil enregistré.",
     "language_switch_failed": "Impossible de changer la langue, réessayez.",
+    "change_password": "Changer le mot de passe",
+    "password_changed": "Mot de passe mis à jour.",
+    "confirm_password": "Mot de passe actuel",
+    "new_password": "Nouveau mot de passe",
+    "new_password_confirm": "Confirmer le nouveau mot de passe",
+    "password_mismatch": "Les mots de passe ne correspondent pas.",
+    "danger_zone": "Zone de danger",
+    "delete_account_title": "Supprimer mon compte",
+    "delete_account_help": "Cette action est irréversible.",
+    "delete_account_cta": "Supprimer le compte",
+    "account_deleted": "Compte supprimé.",
     "errors": {
-      "unknown": "Une erreur est survenue, réessayez."
+      "unknown": "Une erreur est survenue, réessayez.",
+      "current_password_invalid": "Mot de passe actuel incorrect.",
+      "password_unchanged": "Le nouveau mot de passe doit être différent.",
+      "owns_teams": "Transférez ou supprimez vos équipes avant de supprimer votre compte."
     }
   },
   "admin": {

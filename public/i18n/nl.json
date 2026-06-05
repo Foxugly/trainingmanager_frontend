@@ -795,7 +795,7 @@
     }
   },
   "profile": {
-    "title": "Mijn profiel",
+    "title": "Profiel",
     "username": "Gebruikersnaam",
     "email": "E-mail",
     "email_readonly_help": "Het e-mailadres kan alleen door een beheerder worden gewijzigd.",
@@ -807,8 +807,22 @@
     "tab_prefs": "Voorkeuren",
     "saved": "Profiel opgeslagen.",
     "language_switch_failed": "Taal wijzigen is mislukt, probeer het opnieuw.",
+    "change_password": "Wachtwoord wijzigen",
+    "password_changed": "Wachtwoord bijgewerkt.",
+    "confirm_password": "Huidig wachtwoord",
+    "new_password": "Nieuw wachtwoord",
+    "new_password_confirm": "Bevestig nieuw wachtwoord",
+    "password_mismatch": "Wachtwoorden komen niet overeen.",
+    "danger_zone": "Gevarenzone",
+    "delete_account_title": "Mijn account verwijderen",
+    "delete_account_help": "Deze actie is onomkeerbaar.",
+    "delete_account_cta": "Account verwijderen",
+    "account_deleted": "Account verwijderd.",
     "errors": {
-      "unknown": "Er is een fout opgetreden, probeer het opnieuw."
+      "unknown": "Er is een fout opgetreden, probeer het opnieuw.",
+      "current_password_invalid": "Huidig wachtwoord is onjuist.",
+      "password_unchanged": "Het nieuwe wachtwoord moet anders zijn.",
+      "owns_teams": "Draag uw teams over of verwijder ze voordat u uw account verwijdert."
     }
   },
   "admin": {

@@ -12,6 +12,7 @@ import { Button } from 'primeng/button';
     <div class="footer-actions">
       <p-button
         type="button"
+        icon="pi pi-times"
         severity="secondary"
         [outlined]="true"
         [label]="cancelLabel()"
@@ -20,6 +21,7 @@ import { Button } from 'primeng/button';
       />
       <p-button
         type="button"
+        icon="pi pi-save"
         [label]="saveLabel()"
         [loading]="saving()"
         [disabled]="disabled() || saving()"

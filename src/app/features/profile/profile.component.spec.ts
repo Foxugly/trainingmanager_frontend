@@ -6,6 +6,7 @@ import { TranslocoTestingModule } from '@jsverse/transloco';
 import { MessageService } from 'primeng/api';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { AuthService as AuthApi } from '../../api/api/auth.service';
 import { MeService } from '../../api/api/me.service';
 import { LanguageEnum } from '../../api/model/language-enum';
 import { Me } from '../../api/model/me';
@@ -39,7 +40,26 @@ interface ProtectedFields {
   fieldError(name: string): string | null;
   user(): Me | null;
   submit(): void;
-  cancel(): void;
+  // change-password
+  changePwOpen(): boolean;
+  changePwForm: {
+    patchValue: (v: Partial<{
+      current_password: string;
+      new_password: string;
+      new_password_confirm: string;
+    }>) => void;
+  };
+  changePwErrors(): { [k: string]: string[] } | null;
+  changePwFieldError(name: string): string | null;
+  openChangePassword(): void;
+  submitChangePassword(): void;
+  // delete-account
+  deleteOpen(): boolean;
+  deleteForm: { patchValue: (v: Partial<{ current_password: string }>) => void };
+  deleteErrors(): { [k: string]: string[] } | null;
+  deleteFieldError(name: string): string | null;
+  openDeleteDialog(): void;
+  submitDelete(): void;
 }
 
 describe('ProfileComponent', () => {
@@ -50,6 +70,11 @@ describe('ProfileComponent', () => {
     currentUser: ReturnType<typeof vi.fn>;
     fetchMe: ReturnType<typeof vi.fn>;
     setCurrentUser: ReturnType<typeof vi.fn>;
+    logout: ReturnType<typeof vi.fn>;
+  };
+  let authApiMock: {
+    authPasswordChangeCreate: ReturnType<typeof vi.fn>;
+    authAccountDeleteCreate: ReturnType<typeof vi.fn>;
   };
   let langMock: { applyToTranslocoOnly: ReturnType<typeof vi.fn> };
   let messageService: MessageService;
@@ -64,6 +89,11 @@ describe('ProfileComponent', () => {
       currentUser: userSignal.asReadonly() as unknown as ReturnType<typeof vi.fn>,
       fetchMe: vi.fn().mockReturnValue(of(baseUser)),
       setCurrentUser: vi.fn(),
+      logout: vi.fn(),
+    };
+    authApiMock = {
+      authPasswordChangeCreate: vi.fn(),
+      authAccountDeleteCreate: vi.fn(),
     };
     langMock = { applyToTranslocoOnly: vi.fn() };
 
@@ -81,6 +111,7 @@ describe('ProfileComponent', () => {
         MessageService,
         { provide: MeService, useValue: meMock },
         { provide: AuthService, useValue: authMock },
+        { provide: AuthApi, useValue: authApiMock },
         { provide: LanguageService, useValue: langMock },
       ],
     })
@@ -165,9 +196,134 @@ describe('ProfileComponent', () => {
     );
   });
 
-  it('cancel() resets the form to the user values', () => {
-    access(component).form.patchValue({ first_name: 'Changed' });
-    access(component).cancel();
-    expect(access(component).form.value.first_name).toBe('Alice');
+  // --- Change-password flow ---
+
+  it('submitChangePassword() blocks client-side when new != confirm', () => {
+    access(component).openChangePassword();
+    access(component).changePwForm.patchValue({
+      current_password: 'old',
+      new_password: 'newpass1',
+      new_password_confirm: 'newpass2',
+    });
+
+    access(component).submitChangePassword();
+
+    expect(authApiMock.authPasswordChangeCreate).not.toHaveBeenCalled();
+    expect(access(component).changePwFieldError('new_password_confirm')).not.toBeNull();
+  });
+
+  it('submitChangePassword() calls the API and closes on success', () => {
+    authApiMock.authPasswordChangeCreate.mockReturnValue(of({ detail: 'ok' }));
+    access(component).openChangePassword();
+    access(component).changePwForm.patchValue({
+      current_password: 'old',
+      new_password: 'newpass1',
+      new_password_confirm: 'newpass1',
+    });
+
+    access(component).submitChangePassword();
+
+    expect(authApiMock.authPasswordChangeCreate).toHaveBeenCalledWith({
+      current_password: 'old',
+      new_password: 'newpass1',
+    });
+    expect(access(component).changePwOpen()).toBe(false);
+    expect(messageService.add).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'success' }),
+    );
+  });
+
+  it('submitChangePassword() maps current_password_invalid to a field error', () => {
+    authApiMock.authPasswordChangeCreate.mockReturnValue(
+      throwError(() => ({ status: 400, error: { code: 'current_password_invalid' } })),
+    );
+    access(component).openChangePassword();
+    access(component).changePwForm.patchValue({
+      current_password: 'wrong',
+      new_password: 'newpass1',
+      new_password_confirm: 'newpass1',
+    });
+
+    access(component).submitChangePassword();
+
+    expect(access(component).changePwFieldError('current_password')).not.toBeNull();
+    expect(access(component).changePwOpen()).toBe(true);
+  });
+
+  it('submitChangePassword() maps password_unchanged to the new_password field', () => {
+    authApiMock.authPasswordChangeCreate.mockReturnValue(
+      throwError(() => ({ status: 400, error: { code: 'password_unchanged' } })),
+    );
+    access(component).openChangePassword();
+    access(component).changePwForm.patchValue({
+      current_password: 'old',
+      new_password: 'old',
+      new_password_confirm: 'old',
+    });
+
+    access(component).submitChangePassword();
+
+    expect(access(component).changePwFieldError('new_password')).not.toBeNull();
+  });
+
+  it('submitChangePassword() maps fields.new_password inline', () => {
+    authApiMock.authPasswordChangeCreate.mockReturnValue(
+      throwError(() => ({ status: 400, error: { fields: { new_password: ['Too short.'] } } })),
+    );
+    access(component).openChangePassword();
+    access(component).changePwForm.patchValue({
+      current_password: 'old',
+      new_password: 'x',
+      new_password_confirm: 'x',
+    });
+
+    access(component).submitChangePassword();
+
+    expect(access(component).changePwFieldError('new_password')).toBe('Too short.');
+  });
+
+  // --- Delete-account flow ---
+
+  it('submitDelete() calls the API, logs out and toasts on 204', () => {
+    authApiMock.authAccountDeleteCreate.mockReturnValue(of(null));
+    access(component).openDeleteDialog();
+    access(component).deleteForm.patchValue({ current_password: 'pw' });
+
+    access(component).submitDelete();
+
+    expect(authApiMock.authAccountDeleteCreate).toHaveBeenCalledWith({ current_password: 'pw' });
+    expect(authMock.logout).toHaveBeenCalled();
+    expect(messageService.add).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'success' }),
+    );
+  });
+
+  it('submitDelete() toasts the server detail and keeps the dialog open on owns_teams (409)', () => {
+    authApiMock.authAccountDeleteCreate.mockReturnValue(
+      throwError(() => ({ status: 409, error: { code: 'owns_teams', detail: 'You own teams.' } })),
+    );
+    access(component).openDeleteDialog();
+    access(component).deleteForm.patchValue({ current_password: 'pw' });
+
+    access(component).submitDelete();
+
+    expect(authMock.logout).not.toHaveBeenCalled();
+    expect(access(component).deleteOpen()).toBe(true);
+    expect(messageService.add).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'error', detail: 'You own teams.' }),
+    );
+  });
+
+  it('submitDelete() maps current_password_invalid inline on 400', () => {
+    authApiMock.authAccountDeleteCreate.mockReturnValue(
+      throwError(() => ({ status: 400, error: { code: 'current_password_invalid' } })),
+    );
+    access(component).openDeleteDialog();
+    access(component).deleteForm.patchValue({ current_password: 'wrong' });
+
+    access(component).submitDelete();
+
+    expect(access(component).deleteFieldError('current_password')).not.toBeNull();
+    expect(authMock.logout).not.toHaveBeenCalled();
   });
 });
