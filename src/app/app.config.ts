@@ -12,8 +12,31 @@ import { provideRouter } from '@angular/router';
 import { provideTransloco } from '@jsverse/transloco';
 import { MessageService } from 'primeng/api';
 import { providePrimeNG } from 'primeng/config';
+import { definePreset } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
 import { firstValueFrom } from 'rxjs';
+
+// Styled mode = Aura preset with Emerald as the primary colour. The `{emerald.*}`
+// tokens reference the palette shipped by @primeuix/themes, so the whole
+// primary scale (buttons, links, focus rings, …) follows Emerald in both light
+// and dark mode without touching individual components.
+const AuraEmerald = definePreset(Aura, {
+  semantic: {
+    primary: {
+      50: '{emerald.50}',
+      100: '{emerald.100}',
+      200: '{emerald.200}',
+      300: '{emerald.300}',
+      400: '{emerald.400}',
+      500: '{emerald.500}',
+      600: '{emerald.600}',
+      700: '{emerald.700}',
+      800: '{emerald.800}',
+      900: '{emerald.900}',
+      950: '{emerald.950}',
+    },
+  },
+});
 
 import { getRuntimeConfig } from './core/runtime-config';
 import { provideApi } from './api/provide-api';
@@ -30,7 +53,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAnimationsAsync(),
     providePrimeNG({
-      theme: { preset: Aura, options: { darkModeSelector: '.dark-mode' } },
+      theme: { preset: AuraEmerald, options: { darkModeSelector: '.dark-mode' } },
     }),
     provideHttpClient(withInterceptors([authInterceptor, languageInterceptor])),
     // Prod: apiBase comes from the runtime config (window.__TM_API_BASE_URL,
