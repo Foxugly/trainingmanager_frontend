@@ -147,6 +147,8 @@ model/program.ts
 model/register.ts
 model/reorder-exercises-request.ts
 model/reorder-rounds-request.ts
+model/roti-summary.ts
+model/roti-upsert.ts
 model/round.ts
 model/sport-admin.ts
 model/sport.ts

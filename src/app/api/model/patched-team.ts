@@ -29,6 +29,14 @@ export interface PatchedTeam {
     is_active?: boolean;
     is_public?: boolean;
     /**
+     * Small base64 data-URL for the team logo (e.g. \'data:image/png;base64,...\'). Stored inline in the DB; no file storage.
+     */
+    logo?: string;
+    /**
+     * If True, athletes can submit a per-session difficulty rating (ROTI, 1..5) for the team\'s events.
+     */
+    roti_enabled?: boolean;
+    /**
      * Defines who can post messages in the team chat.  * `all` - All members can post * `coaches_only` - Only coaches can post
      */
     chat_mode?: ChatModeEnum;

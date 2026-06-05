@@ -21,6 +21,8 @@ import { PaginatedEventList } from '../model/models';
 import { PatchedAttendance } from '../model/models';
 import { PatchedEvent } from '../model/models';
 import { ReorderRoundsRequest } from '../model/models';
+import { RotiSummary } from '../model/models';
+import { RotiUpsert } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
@@ -156,6 +158,31 @@ export interface EventsServiceInterface {
      * @param id A unique integer value identifying this event.
      */
     eventsRetrieve(id: number, extraHttpRequestParams?: any): Observable<Event>;
+
+    /**
+     * Get ROTI summary for an event (incl. my_score)
+     * Returns the aggregate ROTI for the event (average, count, distribution) plus the caller\&#39;s own score (my_score). Coaches and athlete-members of the team may read.
+     * @endpoint get /api/v1/events/{event_pk}/roti/
+     * @param eventPk 
+     */
+    eventsRotiRetrieve(eventPk: number, extraHttpRequestParams?: any): Observable<Array<RotiSummary>>;
+
+    /**
+     * ROTI aggregate summary for an event (managers)
+     * Same shape as GET .../roti/. Provided as an explicit endpoint for the manager dashboard.
+     * @endpoint get /api/v1/events/{event_pk}/roti/summary/
+     * @param eventPk 
+     */
+    eventsRotiSummary(eventPk: number, extraHttpRequestParams?: any): Observable<RotiSummary>;
+
+    /**
+     * Upsert the caller\&#39;s own ROTI score (1..5)
+     * Athlete-only: resolves the caller\&#39;s Member within the event\&#39;s team and update_or_creates their Roti(event, member) with the given score. Returns 403 if the team has roti_enabled&#x3D;False or the caller is not an athlete-member; 400 if the score is out of range.
+     * @endpoint put /api/v1/events/{event_pk}/roti/
+     * @param eventPk 
+     * @param rotiUpsert 
+     */
+    eventsRotiUpdate(eventPk: number, rotiUpsert: RotiUpsert, extraHttpRequestParams?: any): Observable<RotiSummary>;
 
     /**
      * 

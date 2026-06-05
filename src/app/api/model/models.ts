@@ -101,6 +101,8 @@ export * from './program-minimal';
 export * from './register';
 export * from './reorder-exercises-request';
 export * from './reorder-rounds-request';
+export * from './roti-summary';
+export * from './roti-upsert';
 export * from './round';
 export * from './sport';
 export * from './sport-admin';

@@ -36,6 +36,10 @@ import { PatchedAttendance } from '../model/patched-attendance';
 import { PatchedEvent } from '../model/patched-event';
 // @ts-ignore
 import { ReorderRoundsRequest } from '../model/reorder-rounds-request';
+// @ts-ignore
+import { RotiSummary } from '../model/roti-summary';
+// @ts-ignore
+import { RotiUpsert } from '../model/roti-upsert';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -1065,6 +1069,202 @@ export class EventsService extends BaseService implements EventsServiceInterface
         return this.httpClient.request<Event>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Get ROTI summary for an event (incl. my_score)
+     * Returns the aggregate ROTI for the event (average, count, distribution) plus the caller\&#39;s own score (my_score). Coaches and athlete-members of the team may read.
+     * @endpoint get /api/v1/events/{event_pk}/roti/
+     * @param eventPk 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public eventsRotiRetrieve(eventPk: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<RotiSummary>>;
+    public eventsRotiRetrieve(eventPk: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<RotiSummary>>>;
+    public eventsRotiRetrieve(eventPk: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<RotiSummary>>>;
+    public eventsRotiRetrieve(eventPk: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (eventPk === null || eventPk === undefined) {
+            throw new Error('Required parameter eventPk was null or undefined when calling eventsRotiRetrieve.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (jwtAuth) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/events/${this.configuration.encodeParam({name: "eventPk", value: eventPk, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/roti/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<Array<RotiSummary>>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * ROTI aggregate summary for an event (managers)
+     * Same shape as GET .../roti/. Provided as an explicit endpoint for the manager dashboard.
+     * @endpoint get /api/v1/events/{event_pk}/roti/summary/
+     * @param eventPk 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public eventsRotiSummary(eventPk: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<RotiSummary>;
+    public eventsRotiSummary(eventPk: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<RotiSummary>>;
+    public eventsRotiSummary(eventPk: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<RotiSummary>>;
+    public eventsRotiSummary(eventPk: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (eventPk === null || eventPk === undefined) {
+            throw new Error('Required parameter eventPk was null or undefined when calling eventsRotiSummary.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (jwtAuth) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/events/${this.configuration.encodeParam({name: "eventPk", value: eventPk, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/roti/summary/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<RotiSummary>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Upsert the caller\&#39;s own ROTI score (1..5)
+     * Athlete-only: resolves the caller\&#39;s Member within the event\&#39;s team and update_or_creates their Roti(event, member) with the given score. Returns 403 if the team has roti_enabled&#x3D;False or the caller is not an athlete-member; 400 if the score is out of range.
+     * @endpoint put /api/v1/events/{event_pk}/roti/
+     * @param eventPk 
+     * @param rotiUpsert 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public eventsRotiUpdate(eventPk: number, rotiUpsert: RotiUpsert, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<RotiSummary>;
+    public eventsRotiUpdate(eventPk: number, rotiUpsert: RotiUpsert, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<RotiSummary>>;
+    public eventsRotiUpdate(eventPk: number, rotiUpsert: RotiUpsert, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<RotiSummary>>;
+    public eventsRotiUpdate(eventPk: number, rotiUpsert: RotiUpsert, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (eventPk === null || eventPk === undefined) {
+            throw new Error('Required parameter eventPk was null or undefined when calling eventsRotiUpdate.');
+        }
+        if (rotiUpsert === null || rotiUpsert === undefined) {
+            throw new Error('Required parameter rotiUpsert was null or undefined when calling eventsRotiUpdate.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (jwtAuth) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'application/x-www-form-urlencoded',
+            'multipart/form-data'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/events/${this.configuration.encodeParam({name: "eventPk", value: eventPk, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/roti/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<RotiSummary>('put', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: rotiUpsert,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
