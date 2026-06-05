@@ -1,91 +1,56 @@
-<section class="max-w-2xl">
-  <h1 class="text-2xl font-bold mb-6">{{ 'profile.title' | transloco }}</h1>
+<div class="page page--narrow">
+  <app-page-header [title]="'profile.title' | transloco">
+    <p-button slot="left" type="button" severity="secondary" [outlined]="true"
+      icon="pi pi-arrow-left" [label]="'common.back' | transloco" [routerLink]="['/dashboard']" />
+  </app-page-header>
 
   @if (user(); as me) {
-    <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-      <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
-        <div class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">
-            {{ 'profile.username' | transloco }}
-          </span>
-          <span class="text-gray-900">{{ me.username }}</span>
-        </div>
-
-        <div class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">
-            {{ 'profile.email' | transloco }}
-          </span>
-          <span class="text-gray-900">{{ me.email }}</span>
-          <small class="text-xs text-gray-500">{{ 'profile.email_readonly_help' | transloco }}</small>
-        </div>
-
-        <div class="flex flex-col gap-2">
-          <label for="first_name" class="text-sm font-medium text-gray-700">
-            {{ 'profile.first_name' | transloco }}
-          </label>
-          <input
-            pInputText
-            id="first_name"
-            formControlName="first_name"
-            autocomplete="given-name"
-          />
-        </div>
-
-        <div class="flex flex-col gap-2">
-          <label for="last_name" class="text-sm font-medium text-gray-700">
-            {{ 'profile.last_name' | transloco }}
-          </label>
-          <input
-            pInputText
-            id="last_name"
-            formControlName="last_name"
-            autocomplete="family-name"
-          />
-        </div>
-
-        <div class="flex flex-col gap-2">
-          <label for="language" class="text-sm font-medium text-gray-700">
-            {{ 'profile.language' | transloco }}
-          </label>
-          <p-select
-            inputId="language"
-            formControlName="language"
-            [options]="languages"
-            optionLabel="nativeName"
-            optionValue="code"
-            styleClass="w-full"
-          />
-        </div>
-
-        <div class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-gray-700">
-            {{ 'profile.date_joined' | transloco }}
-          </span>
-          <span class="text-gray-900">{{ me.date_joined | date: 'medium' }}</span>
-        </div>
-
-        @if (successMessage(); as msg) {
-          <p-message severity="success" [text]="msg | transloco" />
-        }
-        @if (errorMessage(); as msg) {
-          <p-message severity="error" [text]="msg | transloco" />
-        }
-
-        <div class="flex justify-end gap-2 mt-2">
-          <p-button
-            type="button"
-            severity="secondary"
-            [label]="'common.cancel' | transloco"
-            (onClick)="cancel()"
-          />
-          <p-button
-            type="submit"
-            [label]="'common.save' | transloco"
-            [loading]="loading()"
-            [disabled]="form.invalid"
-          />
-        </div>
+    <div class="card form-card builder-stack">
+      <form [formGroup]="form">
+        <p-tabs value="account" class="builder-tabs">
+          <p-tablist>
+            <p-tab value="account"><i class="pi pi-user tab-icon"></i>{{ 'profile.tab_account' | transloco }}</p-tab>
+            <p-tab value="prefs"><i class="pi pi-sliders-h tab-icon"></i>{{ 'profile.tab_prefs' | transloco }}</p-tab>
+          </p-tablist>
+          <p-tabpanels>
+            <p-tabpanel value="account">
+              <div class="builder-pane">
+                <div class="meta-grid">
+                  <app-meta-field [label]="'profile.username' | transloco">
+                    <span>{{ me.username }}</span>
+                  </app-meta-field>
+                  <app-meta-field [label]="'profile.email' | transloco" [hint]="'profile.email_readonly_help' | transloco">
+                    <span>{{ me.email }}</span>
+                  </app-meta-field>
+                  <app-meta-field [label]="'profile.first_name' | transloco" for="first_name" [error]="fieldError('first_name')">
+                    <input pInputText id="first_name" formControlName="first_name" autocomplete="given-name" />
+                  </app-meta-field>
+                  <app-meta-field [label]="'profile.last_name' | transloco" for="last_name" [error]="fieldError('last_name')">
+                    <input pInputText id="last_name" formControlName="last_name" autocomplete="family-name" />
+                  </app-meta-field>
+                  <app-meta-field [label]="'profile.date_joined' | transloco">
+                    <span>{{ me.date_joined | date: 'medium' }}</span>
+                  </app-meta-field>
+                </div>
+              </div>
+            </p-tabpanel>
+            <p-tabpanel value="prefs">
+              <div class="builder-pane">
+                <div class="meta-grid">
+                  <app-meta-field [full]="true" [label]="'profile.language' | transloco" for="language">
+                    <p-select inputId="language" formControlName="language" [options]="languages"
+                      optionLabel="nativeName" optionValue="code" />
+                  </app-meta-field>
+                </div>
+              </div>
+            </p-tabpanel>
+          </p-tabpanels>
+        </p-tabs>
       </form>
+
+      <app-form-footer [saving]="loading()" [disabled]="form.invalid"
+        [cancelLabel]="'common.cancel' | transloco" [saveLabel]="'common.save' | transloco"
+        (cancel)="cancel()" (save)="submit()" />
     </div>
   }
-</section>
+</div>

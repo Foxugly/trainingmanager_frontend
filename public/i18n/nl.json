@@ -802,6 +802,8 @@
     "last_name": "Achternaam",
     "language": "Taal",
     "date_joined": "Registratiedatum",
+    "tab_account": "Account",
+    "tab_prefs": "Voorkeuren",
     "saved": "Profiel opgeslagen.",
     "language_switch_failed": "Taal wijzigen is mislukt, probeer het opnieuw.",
     "errors": {

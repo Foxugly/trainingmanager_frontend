@@ -802,6 +802,8 @@
     "last_name": "Apellido",
     "language": "Idioma",
     "date_joined": "Fecha de registro",
+    "tab_account": "Cuenta",
+    "tab_prefs": "Preferencias",
     "saved": "Perfil guardado.",
     "language_switch_failed": "No se pudo cambiar el idioma, inténtalo de nuevo.",
     "errors": {
