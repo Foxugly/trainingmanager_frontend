@@ -166,6 +166,9 @@
     "form": {
       "new_title": "New session",
       "edit_title": "Edit session",
+      "tab_info": "Info",
+      "tab_planning": "Schedule",
+      "tab_details": "Details",
       "name": "Name",
       "program": "Program",
       "goal": "Goal",

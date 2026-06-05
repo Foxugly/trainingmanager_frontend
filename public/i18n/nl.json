@@ -166,6 +166,9 @@
     "form": {
       "new_title": "Nieuwe sessie",
       "edit_title": "Sessie bewerken",
+      "tab_info": "Info",
+      "tab_planning": "Planning",
+      "tab_details": "Details",
       "name": "Naam",
       "program": "Programma",
       "goal": "Doel",

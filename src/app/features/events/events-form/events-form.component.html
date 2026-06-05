@@ -1,146 +1,87 @@
-<div class="max-w-3xl">
-  <a
-    [routerLink]="eventId() ? ['/events', eventId()] : ['/events']"
-    class="text-sm text-blue-600 hover:underline"
-  >
-    ← {{ 'common.back' | transloco }}
-  </a>
+<div class="page page--narrow">
+  <app-page-header [title]="(isEditMode() ? 'events.form.edit_title' : 'events.form.new_title') | transloco">
+    <p-button
+      slot="left"
+      type="button"
+      severity="secondary"
+      [outlined]="true"
+      icon="pi pi-arrow-left"
+      [label]="'common.back' | transloco"
+      [routerLink]="eventId() ? ['/events', eventId()] : ['/events']"
+    />
+  </app-page-header>
 
-  <h1 class="text-2xl font-bold mb-6 mt-2">
-    @if (eventId()) {
-      {{ 'events.form.edit_title' | transloco }}
-    } @else {
-      {{ 'events.form.new_title' | transloco }}
-    }
-  </h1>
+  @if (loading()) {
+    <div class="card"><p class="meta-hint">{{ 'common.loading' | transloco }}…</p></div>
+  } @else {
+    <div class="card form-card builder-stack">
+      <form [formGroup]="form">
+        <p-tabs value="info" class="builder-tabs">
+          <p-tablist>
+            <p-tab value="info"><i class="pi pi-info-circle tab-icon"></i>{{ 'events.form.tab_info' | transloco }}</p-tab>
+            <p-tab value="planning"><i class="pi pi-calendar tab-icon"></i>{{ 'events.form.tab_planning' | transloco }}</p-tab>
+            <p-tab value="details"><i class="pi pi-sliders-h tab-icon"></i>{{ 'events.form.tab_details' | transloco }}</p-tab>
+          </p-tablist>
+          <p-tabpanels>
+            <p-tabpanel value="info">
+              <div class="builder-pane">
+                <div class="meta-grid">
+                  <app-meta-field [full]="true" [label]="'events.form.name' | transloco" for="name" [error]="fieldError('name')">
+                    <input pInputText id="name" formControlName="name" />
+                  </app-meta-field>
+                  <app-meta-field [label]="'events.form.program' | transloco" for="refer_program_id" [error]="fieldError('refer_program_id')">
+                    <p-select inputId="refer_program_id" [options]="availablePrograms()"
+                      formControlName="refer_program_id" optionLabel="name" optionValue="id" [filter]="true" />
+                  </app-meta-field>
+                  <app-meta-field [label]="'events.form.goal' | transloco" for="goal" [error]="fieldError('goal')">
+                    <input pInputText id="goal" formControlName="goal" />
+                  </app-meta-field>
+                </div>
+              </div>
+            </p-tabpanel>
+            <p-tabpanel value="planning">
+              <div class="builder-pane">
+                <div class="meta-grid">
+                  <app-meta-field [label]="'events.form.date' | transloco" for="date" [error]="fieldError('date')">
+                    <p-datepicker inputId="date" formControlName="date" dateFormat="dd/mm/yy" [showIcon]="true" appendTo="body" />
+                  </app-meta-field>
+                  <app-meta-field [label]="'events.form.hour_start' | transloco" for="hour_start">
+                    <p-datepicker inputId="hour_start" formControlName="hour_start" [timeOnly]="true" [showIcon]="true" appendTo="body" />
+                  </app-meta-field>
+                  <app-meta-field [label]="'events.form.hour_end' | transloco" for="hour_end"
+                    [error]="form.errors?.['time_range'] ? ('events.form.errors.time_range' | transloco) : null">
+                    <p-datepicker inputId="hour_end" formControlName="hour_end" [timeOnly]="true" [showIcon]="true" appendTo="body" />
+                  </app-meta-field>
+                </div>
+              </div>
+            </p-tabpanel>
+            <p-tabpanel value="details">
+              <div class="builder-pane">
+                <div class="meta-grid">
+                  <app-meta-field [label]="'events.form.total' | transloco" for="total" [error]="fieldError('total')">
+                    <p-inputnumber inputId="total" formControlName="total" [min]="0" [showButtons]="true"
+                      buttonLayout="horizontal" spinnerMode="horizontal"
+                      decrementButtonIcon="pi pi-minus" incrementButtonIcon="pi pi-plus" />
+                  </app-meta-field>
+                  <app-meta-field [label]="'events.form.color' | transloco">
+                    <p-colorpicker formControlName="color" />
+                    <input pInputText formControlName="color" class="flex-1" maxlength="10" />
+                  </app-meta-field>
+                </div>
+              </div>
+            </p-tabpanel>
+          </p-tabpanels>
+        </p-tabs>
+      </form>
 
-  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-5">
-    <div class="flex flex-col gap-2">
-      <label for="name" class="text-sm font-medium text-gray-700">
-        {{ 'events.form.name' | transloco }}
-      </label>
-      <input pInputText id="name" formControlName="name" class="w-full" />
-    </div>
-
-    <div class="flex flex-col gap-2">
-      <label for="refer_program_id" class="text-sm font-medium text-gray-700">
-        {{ 'events.form.program' | transloco }}
-      </label>
-      <p-select
-        inputId="refer_program_id"
-        [options]="availablePrograms()"
-        formControlName="refer_program_id"
-        optionLabel="name"
-        optionValue="id"
-        [filter]="true"
-        styleClass="w-full"
-      />
-    </div>
-
-    <div class="flex flex-col gap-2">
-      <label for="goal" class="text-sm font-medium text-gray-700">
-        {{ 'events.form.goal' | transloco }}
-      </label>
-      <input pInputText id="goal" formControlName="goal" class="w-full" />
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="flex flex-col gap-2">
-        <label for="date" class="text-sm font-medium text-gray-700">
-          {{ 'events.form.date' | transloco }}
-        </label>
-        <p-datepicker
-          inputId="date"
-          formControlName="date"
-          dateFormat="dd/mm/yy"
-          [showIcon]="true"
-          appendTo="body"
-          styleClass="w-full"
-        />
-      </div>
-      <div class="flex flex-col gap-2">
-        <label for="hour_start" class="text-sm font-medium text-gray-700">
-          {{ 'events.form.hour_start' | transloco }}
-        </label>
-        <p-datepicker
-          inputId="hour_start"
-          formControlName="hour_start"
-          [timeOnly]="true"
-          [showIcon]="true"
-          appendTo="body"
-          styleClass="w-full"
-        />
-      </div>
-      <div class="flex flex-col gap-2">
-        <label for="hour_end" class="text-sm font-medium text-gray-700">
-          {{ 'events.form.hour_end' | transloco }}
-        </label>
-        <p-datepicker
-          inputId="hour_end"
-          formControlName="hour_end"
-          [timeOnly]="true"
-          [showIcon]="true"
-          appendTo="body"
-          styleClass="w-full"
-        />
-      </div>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="flex flex-col gap-2">
-        <label for="total" class="text-sm font-medium text-gray-700">
-          {{ 'events.form.total' | transloco }}
-        </label>
-        <p-inputnumber
-          inputId="total"
-          formControlName="total"
-          [min]="0"
-          [showButtons]="true"
-          styleClass="w-full"
-        />
-      </div>
-      <div class="flex flex-col gap-2">
-        <label class="text-sm font-medium text-gray-700">
-          {{ 'events.form.color' | transloco }}
-        </label>
-        <div class="flex items-center gap-3">
-          <p-colorpicker formControlName="color" [inline]="false" />
-          <input pInputText formControlName="color" class="flex-1" maxlength="10" />
-        </div>
-      </div>
-    </div>
-
-    @if (form.errors?.['time_range']) {
-      <p-message severity="warn" [text]="'events.form.errors.time_range' | transloco" />
-    }
-
-    @if (errorMessage(); as msg) {
-      <p-message severity="error" [text]="msg | transloco" />
-    }
-
-    @if (fieldErrors(); as errors) {
-      <div class="flex flex-col gap-1">
-        @for (entry of errors | keyvalue; track entry.key) {
-          <p-message severity="warn" [text]="entry.key + ': ' + entry.value.join(', ')" />
-        }
-      </div>
-    }
-
-    <div class="flex justify-end gap-2 mt-2">
-      <a [routerLink]="eventId() ? ['/events', eventId()] : ['/events']">
-        <p-button
-          type="button"
-          severity="secondary"
-          [text]="true"
-          [label]="'common.cancel' | transloco"
-        />
-      </a>
-      <p-button
-        type="submit"
-        [label]="'events.form.save' | transloco"
-        [loading]="saving()"
+      <app-form-footer
+        [saving]="saving()"
         [disabled]="form.invalid"
+        [cancelLabel]="'common.cancel' | transloco"
+        [saveLabel]="'common.save' | transloco"
+        (cancel)="cancel()"
+        (save)="submit()"
       />
     </div>
-  </form>
+  }
 </div>
