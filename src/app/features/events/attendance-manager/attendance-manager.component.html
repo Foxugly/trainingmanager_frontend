@@ -17,11 +17,19 @@
           @for (status of orderedStatuses(); track status.code) {
             <p-button
               [icon]="'pi ' + statusIcon(status.code)"
-              [severity]="row.status_code === status.code ? 'primary' : 'secondary'"
-              [text]="row.status_code !== status.code"
+              [severity]="status.color ? null : row.status_code === status.code ? 'primary' : 'secondary'"
+              [outlined]="!!status.color && row.status_code !== status.code"
+              [text]="!status.color && row.status_code !== status.code"
               [rounded]="true"
               size="small"
               [disabled]="row.saving"
+              [style]="
+                status.color
+                  ? row.status_code === status.code
+                    ? { backgroundColor: status.color, borderColor: status.color, color: '#fff' }
+                    : { color: status.color, borderColor: status.color }
+                  : null
+              "
               [pTooltip]="status.label"
               tooltipPosition="bottom"
               [ariaLabel]="status.label"

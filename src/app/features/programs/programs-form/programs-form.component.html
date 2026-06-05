@@ -50,7 +50,7 @@
                     [full]="true"
                     [label]="'programs.form.team' | transloco"
                     for="team_id"
-                    [hint]="isEditMode() ? ('programs.form.team_locked_help' | transloco) : null"
+                    [tooltip]="isEditMode() ? ('programs.form.team_locked_help' | transloco) : null"
                     [error]="!isEditMode() && availableTeams().length === 0 ? ('programs.form.no_manager_team' | transloco) : fieldError('team_id')"
                   >
                     @if (isEditMode()) {
@@ -82,7 +82,7 @@
                   <app-meta-field
                     [label]="'programs.form.frequency' | transloco"
                     for="frequency_per_week"
-                    [hint]="'programs.form.frequency_help' | transloco"
+                    [tooltip]="'programs.form.frequency_help' | transloco"
                     [error]="fieldError('frequency_per_week')"
                   >
                     <p-inputnumber

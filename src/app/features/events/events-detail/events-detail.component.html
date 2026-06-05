@@ -140,7 +140,7 @@
                   <p-button
                     [label]="'events.detail.actions.add_round' | transloco"
                     icon="pi pi-plus"
-                    severity="secondary"
+                    severity="success"
                     [outlined]="true"
                     size="small"
                     (onClick)="openCreateRound()"
@@ -221,7 +221,7 @@
                               />
                               <p-button
                                 icon="pi pi-pencil"
-                                severity="secondary"
+                                severity="info"
                                 [text]="true"
                                 [rounded]="true"
                                 size="small"
@@ -233,7 +233,7 @@
                               @if (team()) {
                                 <p-button
                                   icon="pi pi-plus"
-                                  severity="secondary"
+                                  severity="success"
                                   [text]="true"
                                   [rounded]="true"
                                   size="small"
@@ -317,7 +317,7 @@
                                 @if (canManage()) {
                                   <p-button
                                     icon="pi pi-pencil"
-                                    severity="secondary"
+                                    severity="info"
                                     [text]="true"
                                     [rounded]="true"
                                     size="small"

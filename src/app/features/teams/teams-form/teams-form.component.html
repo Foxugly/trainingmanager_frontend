@@ -72,7 +72,7 @@
                     [full]="true"
                     for="is_public"
                     [label]="'teams.form.is_public' | transloco"
-                    [hint]="'teams.form.is_public_help' | transloco"
+                    [tooltip]="'teams.form.is_public_help' | transloco"
                   >
                     <p-toggleSwitch formControlName="is_public" inputId="is_public" />
                   </app-meta-field>
@@ -87,7 +87,7 @@
                     <app-meta-field
                       [full]="true"
                       [label]="'teams.form.managers' | transloco"
-                      [hint]="'teams.form.managers_help' | transloco"
+                      [tooltip]="'teams.form.managers_help' | transloco"
                     >
                       <p-multiSelect
                         [options]="availableManagers()"
@@ -110,7 +110,7 @@
                     <app-meta-field
                       [full]="true"
                       [label]="'teams.form.attendance_statuses' | transloco"
-                      [hint]="'teams.form.attendance_statuses_help' | transloco"
+                      [tooltip]="'teams.form.attendance_statuses_help' | transloco"
                     >
                       <p-pickList
                         [source]="statusesSource()"
