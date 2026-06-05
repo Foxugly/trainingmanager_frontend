@@ -267,6 +267,9 @@
     "form": {
       "new_title": "Nieuw programma",
       "edit_title": "Programma bewerken",
+      "tab_info": "Info",
+      "tab_planning": "Planning",
+      "tab_description": "Beschrijving",
       "name": "Naam",
       "name_placeholder": "Bijv. Winterperiode",
       "team": "Team",
@@ -511,6 +514,10 @@
     "loading": "Laden",
     "error": "Fout",
     "success": "Gelukt",
+    "active": "Actief",
+    "inactive": "Inactief",
+    "confirm_deactivate": "Dit item deactiveren?",
+    "update_failed": "Bijwerken mislukt.",
     "opens_new_tab": "Opent in een nieuw tabblad",
     "entity": {
       "team": "Team",

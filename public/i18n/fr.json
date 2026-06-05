@@ -267,6 +267,9 @@
     "form": {
       "new_title": "Nouveau programme",
       "edit_title": "Modifier le programme",
+      "tab_info": "Infos",
+      "tab_planning": "Planning",
+      "tab_description": "Description",
       "name": "Nom",
       "name_placeholder": "Ex : Préparation hivernale",
       "team": "Équipe",
@@ -511,6 +514,10 @@
     "loading": "Chargement",
     "error": "Erreur",
     "success": "Succès",
+    "active": "Actif",
+    "inactive": "Inactif",
+    "confirm_deactivate": "Désactiver cet élément ?",
+    "update_failed": "La mise à jour a échoué.",
     "opens_new_tab": "Ouvre dans un nouvel onglet",
     "entity": {
       "team": "Équipe",

@@ -267,6 +267,9 @@
     "form": {
       "new_title": "Nuevo programa",
       "edit_title": "Editar programa",
+      "tab_info": "Info",
+      "tab_planning": "Calendario",
+      "tab_description": "Descripción",
       "name": "Nombre",
       "name_placeholder": "Ej. Pretemporada invierno",
       "team": "Equipo",
@@ -511,6 +514,10 @@
     "loading": "Cargando",
     "error": "Error",
     "success": "Éxito",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "confirm_deactivate": "¿Desactivar este elemento?",
+    "update_failed": "La actualización falló.",
     "opens_new_tab": "Abre en una nueva pestaña",
     "entity": {
       "team": "Equipo",

@@ -267,6 +267,9 @@
     "form": {
       "new_title": "New program",
       "edit_title": "Edit program",
+      "tab_info": "Info",
+      "tab_planning": "Schedule",
+      "tab_description": "Description",
       "name": "Name",
       "name_placeholder": "E.g. Winter prep",
       "team": "Team",
@@ -511,6 +514,10 @@
     "loading": "Loading",
     "error": "Error",
     "success": "Success",
+    "active": "Active",
+    "inactive": "Inactive",
+    "confirm_deactivate": "Deactivate this item?",
+    "update_failed": "Update failed.",
     "opens_new_tab": "Opens in a new tab",
     "entity": {
       "team": "Team",
