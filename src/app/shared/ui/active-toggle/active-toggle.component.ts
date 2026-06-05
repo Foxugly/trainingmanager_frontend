@@ -31,7 +31,7 @@ export interface ActiveToggleLabels {
       [disabled]="busy"
       [pTooltip]="value() ? labels().active : labels().inactive"
       tooltipPosition="bottom"
-      [attr.aria-label]="value() ? labels().active : labels().inactive"
+      [ariaLabel]="value() ? labels().active : labels().inactive"
     />
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
