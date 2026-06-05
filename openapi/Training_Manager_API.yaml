@@ -365,6 +365,32 @@ paths:
           description: Access token missing or invalid.
         '429':
           description: Too Many Requests (rate limit hit).
+  /api/v1/auth/account/delete/:
+    post:
+      operationId: auth_account_delete_create
+      description: |-
+        POST /api/v1/auth/account/delete/ — authenticated: delete own account.
+        Body: {current_password}. 204 on success. 409 (code owns_teams) when the
+        user still owns teams. No tokens; user row is removed.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountDelete'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: Account deleted. No content.
+        '400':
+          description: current_password missing or wrong (code=current_password_invalid).
+        '401':
+          description: Access token missing or invalid.
+        '409':
+          description: The user still owns one or more teams (code=owns_teams).
   /api/v1/auth/password/change/:
     post:
       operationId: auth_password_change_create
@@ -6177,6 +6203,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Team'
+    AccountDelete:
+      type: object
+      properties:
+        current_password:
+          type: string
+          writeOnly: true
+      required:
+      - current_password
     PasswordChange:
       type: object
       properties:

@@ -3,6 +3,7 @@ export * from './ai-ping-response';
 export * from './ai-usage-aggregate-response';
 export * from './ai-usage-aggregate-row';
 export * from './ai-usage-detail';
+export * from './account-delete';
 export * from './action-proposed-enum';
 export * from './attendance';
 export * from './attendance-bulk';

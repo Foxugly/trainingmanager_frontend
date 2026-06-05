@@ -11,6 +11,7 @@ import { HttpHeaders }                                       from '@angular/comm
 
 import { Observable }                                        from 'rxjs';
 
+import { AccountDelete } from '../model/models';
 import { EmailConfirm } from '../model/models';
 import { EmailResend } from '../model/models';
 import { Logout } from '../model/models';
@@ -33,6 +34,14 @@ import { Configuration }                                     from '../configurat
 export interface AuthServiceInterface {
     defaultHeaders: HttpHeaders;
     configuration: Configuration;
+
+    /**
+     * 
+     * POST /api/v1/auth/account/delete/ — authenticated: delete own account. Body: {current_password}. 204 on success. 409 (code owns_teams) when the user still owns teams. No tokens; user row is removed.
+     * @endpoint post /api/v1/auth/account/delete/
+     * @param accountDelete 
+     */
+    authAccountDeleteCreate(accountDelete: AccountDelete, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * 

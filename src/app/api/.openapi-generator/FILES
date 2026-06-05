@@ -41,6 +41,7 @@ configuration.ts
 encoder.ts
 git_push.sh
 index.ts
+model/account-delete.ts
 model/action-proposed-enum.ts
 model/ai-ping-request.ts
 model/ai-ping-response.ts
