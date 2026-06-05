@@ -43,7 +43,8 @@ interface ProtectedFields {
   sportId(): number | null;
   modalityId(): number | null;
   saving(): boolean;
-  errorMessage(): string | null;
+  activeValue(): boolean;
+  patchActive: (id: number, value: boolean) => unknown;
   fieldErrors(): Record<string, string[]> | null;
   submit(): void;
 }
@@ -125,16 +126,35 @@ describe('ModalitiesFormComponent', () => {
     expect(access(component).form.valid).toBe(true);
   });
 
+  it('defaults activeValue to true in create mode', () => {
+    expect(access(component).activeValue()).toBe(true);
+  });
+
   it('hydrates the form from sportsModalitiesRetrieve(modalityId, sportPk, true) in edit mode', async () => {
     await setup('11');
 
     expect(access(component).modalityId()).toBe(11);
     expect(serviceMock.sportsModalitiesRetrieve).toHaveBeenCalledWith(11, 1, true);
+    expect(access(component).activeValue()).toBe(true);
     expect(access(component).form.value).toMatchObject({
       name_fr: 'Crawl',
       name_nl: '',
       name_en: 'Front crawl',
-      is_active: true,
+    });
+  });
+
+  it('seeds activeValue from modality.is_active in edit mode', async () => {
+    fakeAdmin.is_active = false;
+    await setup('11');
+    expect(access(component).activeValue()).toBe(false);
+    fakeAdmin.is_active = true;
+  });
+
+  it('patchActive calls sportsModalitiesPartialUpdate(id, sportPk, true, {is_active})', async () => {
+    await setup('11');
+    access(component).patchActive(11, false);
+    expect(serviceMock.sportsModalitiesPartialUpdate).toHaveBeenCalledWith(11, 1, true, {
+      is_active: false,
     });
   });
 
@@ -151,7 +171,7 @@ describe('ModalitiesFormComponent', () => {
     expect(navigate).toHaveBeenCalledWith(['/admin/sports', 1, 'modalities']);
   });
 
-  it('submit() in edit mode calls sportsModalitiesPartialUpdate(modalityId, sportPk, true, payload)', async () => {
+  it('submit() in edit mode calls sportsModalitiesPartialUpdate(id, sportPk, undefined, payload)', async () => {
     await setup('11');
     const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
     access(component).form.patchValue({ name_nl: 'Crawl NL' });
@@ -163,7 +183,7 @@ describe('ModalitiesFormComponent', () => {
       serviceMock.sportsModalitiesPartialUpdate.mock.calls[0];
     expect(id).toBe(11);
     expect(sportPk).toBe(1);
-    expect(includeInactive).toBe(true);
+    expect(includeInactive).toBeUndefined();
     expect(payload).toMatchObject({ name_nl: 'Crawl NL', sport: 1 });
     expect(navigate).toHaveBeenCalledWith(['/admin/sports', 1, 'modalities']);
   });
@@ -181,12 +201,15 @@ describe('ModalitiesFormComponent', () => {
     expect(access(component).saving()).toBe(false);
   });
 
-  it('maps detail when no fields are returned', () => {
+  it('toasts the detail when no fields are returned', () => {
     serviceMock.sportsModalitiesCreate.mockReturnValue(
       throwError(() => ({ status: 500, error: { detail: 'Server unhappy' } })),
     );
     access(component).submit();
 
-    expect(access(component).errorMessage()).toBe('Server unhappy');
+    expect(access(component).fieldErrors()).toBeNull();
+    expect(messageMock.add).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'error', detail: 'Server unhappy' }),
+    );
   });
 });

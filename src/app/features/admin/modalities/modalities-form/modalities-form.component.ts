@@ -1,10 +1,10 @@
-import { KeyValuePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
   OnInit,
+  computed,
   inject,
   signal,
 } from '@angular/core';
@@ -12,38 +12,47 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
-import { Checkbox } from 'primeng/checkbox';
+import { ConfirmDialog } from 'primeng/confirmdialog';
 import { InputText } from 'primeng/inputtext';
-import { Message } from 'primeng/message';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
+import { EMPTY, Observable } from 'rxjs';
 import { SportsService } from '../../../../api/api/sports.service';
 import { ModalityAdmin } from '../../../../api/model/modality-admin';
 import { PatchedModalityAdmin } from '../../../../api/model/patched-modality-admin';
 import { Sport } from '../../../../api/model/sport';
-
-interface FieldErrors {
-  [field: string]: string[];
-}
+import { type FieldErrors, extractServerError } from '../../../../shared/forms/notify-error';
+import {
+  ActiveToggleComponent,
+  type ActiveToggleLabels,
+} from '../../../../shared/ui/active-toggle/active-toggle.component';
+import { FormFooterComponent } from '../../../../shared/ui/form-footer/form-footer.component';
+import { MetaFieldComponent } from '../../../../shared/ui/meta-field/meta-field.component';
+import { PageHeaderComponent } from '../../../../shared/ui/page-header/page-header.component';
+import { StatusBadgeComponent } from '../../../../shared/ui/status-badge/status-badge.component';
 
 @Component({
   selector: 'app-modalities-form',
   imports: [
-    KeyValuePipe,
     ReactiveFormsModule,
     RouterLink,
     InputText,
-    Checkbox,
     Button,
-    Message,
+    ConfirmDialog,
     Tabs,
     TabList,
     Tab,
     TabPanels,
     TabPanel,
+    PageHeaderComponent,
+    StatusBadgeComponent,
+    ActiveToggleComponent,
+    MetaFieldComponent,
+    FormFooterComponent,
     TranslocoPipe,
   ],
+  providers: [ConfirmationService],
   templateUrl: './modalities-form.component.html',
   styleUrl: './modalities-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -62,8 +71,32 @@ export class ModalitiesFormComponent implements OnInit {
   protected readonly sport = signal<Sport | null>(null);
   protected readonly loading = signal(false);
   protected readonly saving = signal(false);
-  protected readonly errorMessage = signal<string | null>(null);
   protected readonly fieldErrors = signal<FieldErrors | null>(null);
+  protected readonly activeValue = signal(true);
+
+  protected readonly patchActive = (id: number, value: boolean): Observable<unknown> => {
+    const sportId = this.sportId();
+    if (sportId == null) return EMPTY;
+    return this.sportsService.sportsModalitiesPartialUpdate(id, sportId, true, {
+      is_active: value,
+    } as PatchedModalityAdmin);
+  };
+
+  protected readonly pageTitle = computed<string>(() => {
+    const base = this.transloco.translate(
+      this.modalityId() ? 'admin.modalities.form.edit_title' : 'admin.modalities.form.new_title',
+    );
+    const s = this.sport();
+    return s ? `${base} — ${s.name}` : base;
+  });
+
+  protected readonly activeLabels = computed<ActiveToggleLabels>(() => ({
+    active: this.transloco.translate('common.active'),
+    inactive: this.transloco.translate('common.inactive'),
+    confirm: this.transloco.translate('common.confirm_deactivate'),
+    errorSummary: this.transloco.translate('common.error'),
+    errorDetail: this.transloco.translate('common.update_failed'),
+  }));
 
   protected readonly form = this.fb.nonNullable.group({
     name_fr: [''],
@@ -71,7 +104,6 @@ export class ModalitiesFormComponent implements OnInit {
     name_en: [''],
     name_it: [''],
     name_es: [''],
-    is_active: [true],
   });
 
   ngOnInit(): void {
@@ -108,22 +140,30 @@ export class ModalitiesFormComponent implements OnInit {
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (m) => {
+            this.activeValue.set(m.is_active ?? true);
             this.form.reset({
               name_fr: m.name_fr ?? '',
               name_nl: m.name_nl ?? '',
               name_en: m.name_en ?? '',
               name_it: m.name_it ?? '',
               name_es: m.name_es ?? '',
-              is_active: m.is_active ?? true,
             });
             this.loading.set(false);
           },
           error: () => {
-            this.errorMessage.set('admin.modalities.errors.unknown');
+            this.notifyLoadError();
             this.loading.set(false);
           },
         });
     }
+  }
+
+  protected fieldError(name: string): string | null {
+    return this.fieldErrors()?.[name]?.join(', ') ?? null;
+  }
+
+  protected cancel(): void {
+    this.router.navigate(['/admin/sports', this.sportId(), 'modalities']);
   }
 
   protected submit(): void {
@@ -132,7 +172,6 @@ export class ModalitiesFormComponent implements OnInit {
     if (sportId == null) return;
 
     this.saving.set(true);
-    this.errorMessage.set(null);
     this.fieldErrors.set(null);
 
     const value = this.form.getRawValue();
@@ -145,14 +184,13 @@ export class ModalitiesFormComponent implements OnInit {
       name_it: value.name_it || null,
       name_es: value.name_es || null,
       sport: sportId,
-      is_active: value.is_active,
     };
 
     const request$ = modalityId
       ? this.sportsService.sportsModalitiesPartialUpdate(
           modalityId,
           sportId,
-          true,
+          undefined,
           payload as PatchedModalityAdmin,
         )
       : this.sportsService.sportsModalitiesCreate(sportId, payload as ModalityAdmin);
@@ -174,31 +212,25 @@ export class ModalitiesFormComponent implements OnInit {
     });
   }
 
+  private notifyLoadError(): void {
+    this.messageService.add({
+      severity: 'error',
+      summary: this.transloco.translate('common.error'),
+      detail: this.transloco.translate('admin.modalities.errors.unknown'),
+    });
+  }
+
   private applyServerError(err: HttpErrorResponse): void {
-    const body = err?.error as
-      | { code?: string; detail?: string; fields?: FieldErrors }
-      | null
-      | undefined;
-
-    if (body?.fields && Object.keys(body.fields).length > 0) {
-      this.fieldErrors.set(body.fields);
-      return;
+    const { fields, detail } = extractServerError(err);
+    this.fieldErrors.set(fields);
+    if (!fields) {
+      this.messageService.add({
+        severity: 'error',
+        summary: this.transloco.translate('common.error'),
+        detail: detail
+          ? this.transloco.translate(detail)
+          : this.transloco.translate('admin.modalities.errors.unknown'),
+      });
     }
-
-    if (body && typeof body === 'object') {
-      const fieldEntries: FieldErrors = {};
-      for (const [key, value] of Object.entries(body)) {
-        if (key === 'code' || key === 'detail' || key === 'fields') continue;
-        if (Array.isArray(value)) {
-          fieldEntries[key] = value.filter((m): m is string => typeof m === 'string');
-        }
-      }
-      if (Object.keys(fieldEntries).length > 0) {
-        this.fieldErrors.set(fieldEntries);
-        return;
-      }
-    }
-
-    this.errorMessage.set(body?.detail ?? 'admin.modalities.errors.unknown');
   }
 }

@@ -1,116 +1,66 @@
-<div class="max-w-3xl">
-  <a
-    [routerLink]="['/admin/sports', sportId(), 'modalities']"
-    class="text-sm text-blue-600 hover:underline"
-  >
-    ← {{ 'common.back' | transloco }}
-  </a>
-
-  <h1 class="text-2xl font-bold mb-6 mt-2">
+<div class="page page--narrow">
+  <app-page-header [title]="pageTitle()">
+    <p-button
+      slot="left"
+      type="button"
+      severity="secondary"
+      [outlined]="true"
+      icon="pi pi-arrow-left"
+      [label]="'common.back' | transloco"
+      [routerLink]="['/admin/sports', sportId(), 'modalities']"
+    />
     @if (modalityId()) {
-      {{ 'admin.modalities.form.edit_title' | transloco }}
-    } @else {
-      {{ 'admin.modalities.form.new_title' | transloco }}
-    }
-    @if (sport(); as s) {
-      — {{ s.name }}
-    }
-  </h1>
-
-  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-5">
-    <div class="flex flex-col gap-2">
-      <span class="text-sm font-medium text-gray-700">
-        {{ 'admin.modalities.fields.name' | transloco }}
-      </span>
-      <p-tabs value="fr">
-        <p-tablist>
-          <p-tab value="fr">FR</p-tab>
-          <p-tab value="nl">NL</p-tab>
-          <p-tab value="en">EN</p-tab>
-          <p-tab value="it">IT</p-tab>
-          <p-tab value="es">ES</p-tab>
-        </p-tablist>
-        <p-tabpanels>
-          <p-tabpanel value="fr">
-            <input
-              pInputText
-              formControlName="name_fr"
-              placeholder="Français"
-              class="w-full"
-            />
-          </p-tabpanel>
-          <p-tabpanel value="nl">
-            <input
-              pInputText
-              formControlName="name_nl"
-              placeholder="Nederlands"
-              class="w-full"
-            />
-          </p-tabpanel>
-          <p-tabpanel value="en">
-            <input
-              pInputText
-              formControlName="name_en"
-              placeholder="English"
-              class="w-full"
-            />
-          </p-tabpanel>
-          <p-tabpanel value="it">
-            <input
-              pInputText
-              formControlName="name_it"
-              placeholder="Italiano"
-              class="w-full"
-            />
-          </p-tabpanel>
-          <p-tabpanel value="es">
-            <input
-              pInputText
-              formControlName="name_es"
-              placeholder="Español"
-              class="w-full"
-            />
-          </p-tabpanel>
-        </p-tabpanels>
-      </p-tabs>
-    </div>
-
-    @if (modalityId()) {
-      <div class="flex items-center gap-2">
-        <p-checkbox formControlName="is_active" [binary]="true" inputId="mod_is_active" />
-        <label for="mod_is_active" class="text-sm text-gray-700 cursor-pointer">
-          {{ 'admin.modalities.form.is_active' | transloco }}
-        </label>
-      </div>
-    }
-
-    @if (errorMessage(); as msg) {
-      <p-message severity="error" [text]="msg | transloco" />
-    }
-
-    @if (fieldErrors(); as errors) {
-      <div class="flex flex-col gap-1">
-        @for (entry of errors | keyvalue; track entry.key) {
-          <p-message severity="warn" [text]="entry.key + ': ' + entry.value.join(', ')" />
-        }
-      </div>
-    }
-
-    <div class="flex justify-end gap-2 mt-2">
-      <a [routerLink]="['/admin/sports', sportId(), 'modalities']">
-        <p-button
-          type="button"
-          severity="secondary"
-          [text]="true"
-          [label]="'common.cancel' | transloco"
-        />
-      </a>
-      <p-button
-        type="submit"
-        [label]="'common.save' | transloco"
-        [loading]="saving()"
-        [disabled]="form.invalid"
+      <app-status-badge
+        slot="title-after"
+        [kind]="activeValue() ? 'active' : 'inactive'"
+        [label]="(activeValue() ? 'common.active' : 'common.inactive') | transloco"
       />
-    </div>
-  </form>
+    }
+    @if (modalityId()) {
+      <app-active-toggle
+        slot="right"
+        [entityId]="modalityId()!"
+        [value]="activeValue()"
+        [patch]="patchActive"
+        [labels]="activeLabels()"
+        (valueChange)="activeValue.set($event)"
+      />
+    }
+  </app-page-header>
+
+  <div class="card form-card">
+    <form [formGroup]="form">
+      <div class="meta-grid">
+        <app-meta-field [full]="true" [label]="'admin.modalities.fields.name' | transloco">
+          <p-tabs value="fr" class="builder-tabs">
+            <p-tablist>
+              <p-tab value="fr">FR</p-tab>
+              <p-tab value="nl">NL</p-tab>
+              <p-tab value="en">EN</p-tab>
+              <p-tab value="it">IT</p-tab>
+              <p-tab value="es">ES</p-tab>
+            </p-tablist>
+            <p-tabpanels>
+              <p-tabpanel value="fr"><input pInputText formControlName="name_fr" placeholder="Français" class="w-full" /></p-tabpanel>
+              <p-tabpanel value="nl"><input pInputText formControlName="name_nl" placeholder="Nederlands" class="w-full" /></p-tabpanel>
+              <p-tabpanel value="en"><input pInputText formControlName="name_en" placeholder="English" class="w-full" /></p-tabpanel>
+              <p-tabpanel value="it"><input pInputText formControlName="name_it" placeholder="Italiano" class="w-full" /></p-tabpanel>
+              <p-tabpanel value="es"><input pInputText formControlName="name_es" placeholder="Español" class="w-full" /></p-tabpanel>
+            </p-tabpanels>
+          </p-tabs>
+        </app-meta-field>
+      </div>
+    </form>
+
+    <app-form-footer
+      [saving]="saving()"
+      [disabled]="form.invalid"
+      [cancelLabel]="'common.cancel' | transloco"
+      [saveLabel]="'common.save' | transloco"
+      (cancel)="cancel()"
+      (save)="submit()"
+    />
+  </div>
+
+  <p-confirmDialog />
 </div>
