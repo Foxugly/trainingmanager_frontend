@@ -987,5 +987,29 @@
         "unknown": "Er is een fout opgetreden."
       }
     }
+  },
+  "stats": {
+    "tab": "Statistieken",
+    "my_tab": "Mijn statistieken",
+    "period": "Periode",
+    "preset_12w": "12 wkn",
+    "preset_season": "Alles",
+    "back_to_team": "← Terug naar team",
+    "empty": "Nog geen gegevens voor deze periode",
+    "attendance": "Aanwezigheid",
+    "volume": "Volume",
+    "intensity": "Intensiteit",
+    "attendance_rate": "Aanwezigheidspercentage",
+    "total_volume": "Totaal volume",
+    "by_member": "Per lid",
+    "by_week": "Per week",
+    "by_session": "Per sessie",
+    "member": "Lid",
+    "present": "Aanwezig",
+    "total": "Totaal",
+    "last_present": "Laatst aanwezig",
+    "distance": "Afstand",
+    "axis_rate": "Percentage (%)",
+    "axis_distance": "Afstand"
   }
 }

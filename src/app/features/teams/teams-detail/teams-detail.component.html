@@ -27,9 +27,14 @@
       }
 
       @if (canManage()) {
-        <app-active-toggle detailHeaderActions
-          [entityId]="t.id" [value]="activeValue()" [patch]="patchActive"
-          [labels]="activeLabels()" (valueChange)="activeValue.set($event)" />
+        <app-active-toggle
+          detailHeaderActions
+          [entityId]="t.id"
+          [value]="activeValue()"
+          [patch]="patchActive"
+          [labels]="activeLabels()"
+          (valueChange)="activeValue.set($event)"
+        />
       }
       @if (canManage()) {
         <a detailHeaderActions [routerLink]="['/teams', t.id, 'edit']">
@@ -45,7 +50,10 @@
         </a>
       }
 
-      <dl detailHeaderMeta class="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm">
+      <dl
+        detailHeaderMeta
+        class="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm"
+      >
         @if (t.sport.name) {
           <div class="flex items-center gap-2">
             <i class="pi pi-tag text-gray-400" aria-hidden="true"></i>
@@ -78,7 +86,9 @@
     </app-detail-header>
 
     @if (!t.is_active) {
-      <div class="mb-6 rounded border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+      <div
+        class="mb-6 rounded border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900"
+      >
         <i class="pi pi-exclamation-triangle mr-1.5" aria-hidden="true"></i>
         {{ 'teams.detail.archived_banner' | transloco }}
       </div>
@@ -94,22 +104,14 @@
           <i class="pi pi-id-card mr-2" aria-hidden="true"></i>
           {{ 'teams.detail.tabs.managers' | transloco }}
           @if (t.managers.length > 0) {
-            <p-badge
-              [value]="t.managers.length.toString()"
-              severity="info"
-              styleClass="ml-2"
-            />
+            <p-badge [value]="t.managers.length.toString()" severity="info" styleClass="ml-2" />
           }
         </p-tab>
         <p-tab value="members">
           <i class="pi pi-users mr-2" aria-hidden="true"></i>
           {{ 'teams.detail.tabs.members' | transloco }}
           @if (memberships().length > 0) {
-            <p-badge
-              [value]="memberships().length.toString()"
-              severity="info"
-              styleClass="ml-2"
-            />
+            <p-badge [value]="memberships().length.toString()" severity="info" styleClass="ml-2" />
           }
         </p-tab>
         @if (canManage()) {
@@ -123,6 +125,17 @@
                 styleClass="ml-2"
               />
             }
+          </p-tab>
+        }
+        @if (canManage()) {
+          <p-tab value="stats">
+            <i class="pi pi-chart-bar mr-2" aria-hidden="true"></i>
+            {{ 'stats.tab' | transloco }}
+          </p-tab>
+        } @else if (isAthleteMember()) {
+          <p-tab value="my-stats">
+            <i class="pi pi-chart-bar mr-2" aria-hidden="true"></i>
+            {{ 'stats.my_tab' | transloco }}
           </p-tab>
         }
       </p-tablist>
@@ -168,13 +181,20 @@
         <!-- TAB 3: MEMBRES -->
         <p-tabpanel value="members">
           @if (myMembership(); as mb) {
-            <div class="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-xs text-emerald-800">
+            <div
+              class="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-xs text-emerald-800"
+            >
               <i class="pi pi-check-circle" aria-hidden="true"></i>
-              {{ 'teams.detail.member_since' | transloco: { date: (mb.joined_at | date: 'mediumDate') } }}
+              {{
+                'teams.detail.member_since'
+                  | transloco: { date: (mb.joined_at | date: 'mediumDate') }
+              }}
             </div>
           } @else if (myPendingRequest()) {
             <div class="mb-4 flex flex-wrap items-center gap-3">
-              <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1.5 text-sm font-medium text-amber-800">
+              <span
+                class="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1.5 text-sm font-medium text-amber-800"
+              >
                 <i class="pi pi-clock text-xs" aria-hidden="true"></i>
                 {{ 'teams.join_request.pending_chip' | transloco }}
               </span>
@@ -234,7 +254,9 @@
                     {{ mb.member_fullname || mb.member_username }}
                   </span>
                   @if (mb.member_fullname && mb.member_username) {
-                    <span class="text-gray-500 text-xs truncate">&#64;{{ mb.member_username }}</span>
+                    <span class="text-gray-500 text-xs truncate"
+                      >&#64;{{ mb.member_username }}</span
+                    >
                   }
                   <span class="ml-auto text-xs text-gray-500 shrink-0">
                     {{ mb.joined_at | date: 'mediumDate' }}
@@ -279,7 +301,9 @@
                               {{ req.user_fullname || req.user_username }}
                             </span>
                             @if (req.user_fullname && req.user_username) {
-                              <span class="text-xs text-gray-500">&#64;{{ req.user_username }}</span>
+                              <span class="text-xs text-gray-500"
+                                >&#64;{{ req.user_username }}</span
+                              >
                             }
                             <span class="text-xs text-gray-500">
                               · {{ req.requested_at | date: 'medium' }}
@@ -367,6 +391,34 @@
                 </ul>
               }
             </section>
+          </p-tabpanel>
+        }
+
+        <!-- TAB: STATISTICS (manager/owner aggregate + drill-down) -->
+        @if (canManage()) {
+          <p-tabpanel value="stats">
+            @if (selectedStatsMember() !== null) {
+              <div class="mb-3">
+                <p-button
+                  [label]="'stats.back_to_team' | transloco"
+                  icon="pi pi-arrow-left"
+                  severity="secondary"
+                  [text]="true"
+                  size="small"
+                  (onClick)="selectedStatsMember.set(null)"
+                />
+              </div>
+            }
+            <app-team-stats
+              [teamId]="t.id"
+              [memberId]="selectedStatsMember()"
+              (selectMember)="selectedStatsMember.set($event)"
+            />
+          </p-tabpanel>
+        } @else if (isAthleteMember()) {
+          <!-- TAB: MY STATISTICS (athlete self-view) -->
+          <p-tabpanel value="my-stats">
+            <app-team-stats [teamId]="t.id" [memberId]="myMemberId()" />
           </p-tabpanel>
         }
       </p-tabpanels>

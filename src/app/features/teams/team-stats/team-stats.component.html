@@ -1,0 +1,172 @@
+<div class="flex flex-col gap-4">
+  <!-- Date range + presets -->
+  <div class="card flex flex-wrap items-center gap-3">
+    <div class="flex flex-col gap-1">
+      <span class="text-xs font-medium text-gray-500">{{ 'stats.period' | transloco }}</span>
+      <p-datepicker
+        selectionMode="range"
+        [ngModel]="range()"
+        (ngModelChange)="onRangeChange($event)"
+        dateFormat="yy-mm-dd"
+        [readonlyInput]="true"
+        appendTo="body"
+        [showButtonBar]="true"
+        styleClass="w-72"
+      />
+    </div>
+    <div class="flex items-end gap-2 pb-0.5">
+      <p-button
+        [label]="'stats.preset_12w' | transloco"
+        severity="secondary"
+        [outlined]="true"
+        size="small"
+        (onClick)="setPreset(12)"
+      />
+      <p-button
+        [label]="'stats.preset_season' | transloco"
+        severity="secondary"
+        [outlined]="true"
+        size="small"
+        (onClick)="setPreset('all')"
+      />
+    </div>
+  </div>
+
+  @if (loading()) {
+    <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+  } @else if (isEmpty()) {
+    <app-empty-state icon="chart-bar" tone="gray" [title]="'stats.empty' | transloco" />
+  } @else if (stats(); as s) {
+    <!-- 1. ATTENDANCE -->
+    <section class="card">
+      <div class="flex items-baseline justify-between gap-3 mb-3 flex-wrap">
+        <h3 class="text-base font-semibold">{{ 'stats.attendance' | transloco }}</h3>
+        <div class="flex items-baseline gap-2">
+          <span class="text-2xl font-bold text-indigo-600">
+            {{ attendanceRatePct() === null ? '—' : attendanceRatePct() + '%' }}
+          </span>
+          <span class="text-xs text-gray-500">{{ 'stats.attendance_rate' | transloco }}</span>
+        </div>
+      </div>
+
+      @if (attendanceChart(); as c) {
+        <div class="chart-wrap">
+          <p-chart type="line" [data]="c.data" [options]="c.options" />
+        </div>
+      }
+
+      @if (isAggregate()) {
+        @if (attendanceByMember().length > 0) {
+          <p-table
+            [value]="attendanceByMember()"
+            [sortField]="'rate'"
+            [sortOrder]="-1"
+            styleClass="mt-4 p-datatable-sm"
+            responsiveLayout="scroll"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th pSortableColumn="name">{{ 'stats.member' | transloco }}</th>
+                <th pSortableColumn="rate" class="text-right">
+                  {{ 'stats.attendance_rate' | transloco }}
+                </th>
+                <th class="text-right">
+                  {{ 'stats.present' | transloco }}/{{ 'stats.total' | transloco }}
+                </th>
+                <th>{{ 'stats.last_present' | transloco }}</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-row>
+              <tr
+                class="cursor-pointer"
+                (click)="onMemberRowClick(row.member_id)"
+                (keydown.enter)="onMemberRowClick(row.member_id)"
+                tabindex="0"
+              >
+                <td class="font-medium text-indigo-700">{{ row.name }}</td>
+                <td class="text-right">{{ ratePct(row.rate) }}</td>
+                <td class="text-right">{{ row.present }}/{{ row.total }}</td>
+                <td>
+                  {{ row.last_present_date ? (row.last_present_date | date: 'mediumDate') : '—' }}
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        }
+      } @else {
+        <!-- Member mode: personal attendance timeline (present/absent per session) -->
+        @if (s.attendance.by_session.length > 0) {
+          <ul class="mt-4 divide-y divide-gray-200 border border-gray-200 rounded">
+            @for (sess of s.attendance.by_session; track sess.event_id) {
+              <li class="px-3 py-1.5 flex items-center gap-2 text-sm">
+                @if (sess.present > 0) {
+                  <i class="pi pi-check-circle text-emerald-500" aria-hidden="true"></i>
+                } @else {
+                  <i class="pi pi-times-circle text-rose-400" aria-hidden="true"></i>
+                }
+                <span class="font-medium truncate">{{ sess.name }}</span>
+                <span class="ml-auto text-xs text-gray-500 shrink-0">
+                  {{ sess.date ? (sess.date | date: 'mediumDate') : '—' }}
+                </span>
+              </li>
+            }
+          </ul>
+        }
+      }
+    </section>
+
+    <!-- 2. VOLUME -->
+    <section class="card">
+      <div class="flex items-baseline justify-between gap-3 mb-3 flex-wrap">
+        <h3 class="text-base font-semibold">{{ 'stats.volume' | transloco }}</h3>
+        <div class="flex items-baseline gap-2">
+          <span class="text-2xl font-bold text-emerald-600">{{ totalDistanceLabel() }}</span>
+          <span class="text-xs text-gray-500">{{ 'stats.total_volume' | transloco }}</span>
+        </div>
+      </div>
+
+      @if (volumeChart(); as c) {
+        <div class="chart-wrap">
+          <p-chart type="bar" [data]="c.data" [options]="c.options" />
+        </div>
+      }
+
+      @if (isAggregate() && volumeByMember().length > 0) {
+        <p-table
+          [value]="volumeByMember()"
+          [sortField]="'distance'"
+          [sortOrder]="-1"
+          styleClass="mt-4 p-datatable-sm"
+          responsiveLayout="scroll"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="name">{{ 'stats.member' | transloco }}</th>
+              <th pSortableColumn="distance" class="text-right">
+                {{ 'stats.distance' | transloco }}
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-row>
+            <tr>
+              <td class="font-medium">{{ row.name }}</td>
+              <td class="text-right">{{ formatDistance(row.distance) }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      }
+    </section>
+
+    <!-- 3. INTENSITY -->
+    <section class="card">
+      <h3 class="text-base font-semibold mb-3">{{ 'stats.intensity' | transloco }}</h3>
+      @if (intensityChart(); as c) {
+        <div class="chart-wrap chart-wrap--doughnut">
+          <p-chart type="doughnut" [data]="c.data" [options]="c.options" />
+        </div>
+      } @else {
+        <p class="text-gray-500 text-sm">{{ 'stats.empty' | transloco }}</p>
+      }
+    </section>
+  }
+</div>

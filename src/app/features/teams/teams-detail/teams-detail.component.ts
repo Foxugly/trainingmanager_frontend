@@ -40,6 +40,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { MemberMembershipService } from '../member-membership.service';
 import { TeamRole } from '../teams-list/teams-list.component';
 import { ProgramsListComponent } from '../../programs/programs-list/programs-list.component';
+import { TeamStatsComponent } from '../team-stats/team-stats.component';
 import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-header.component';
 import {
   ActiveToggleComponent,
@@ -74,6 +75,7 @@ interface FieldErrors {
     Tooltip,
     TranslocoPipe,
     ProgramsListComponent,
+    TeamStatsComponent,
     DetailHeaderComponent,
     ActiveToggleComponent,
   ],
@@ -204,6 +206,27 @@ export class TeamsDetailComponent implements OnInit {
     return this.memberships().find((mb) => mb.member_username === me.username) ?? null;
   });
 
+  /**
+   * The current user's member id for THIS team, resolved from the loaded
+   * memberships (TeamMembership.member). Null when the viewer is not an
+   * athlete-member of the team. Used to scope the athlete self-view.
+   */
+  protected readonly myMemberId = computed<number | null>(
+    () => this.myMembership()?.member ?? null,
+  );
+
+  /**
+   * Athlete tab is for members who are athletes of the team but NOT managers
+   * (managers use the aggregate Statistiques tab + drill-down). Requires a
+   * resolvable member id.
+   */
+  protected readonly isAthleteMember = computed(
+    () => !this.canManage() && this.myMemberId() !== null,
+  );
+
+  /** Drill-down target on the manager Statistiques tab; null = team aggregate. */
+  protected readonly selectedStatsMember = signal<number | null>(null);
+
   protected readonly roleClasses: Record<TeamRole, string> = {
     owner: 'text-xs font-semibold px-2 py-1 rounded bg-blue-100 text-blue-800',
     manager: 'text-xs font-semibold px-2 py-1 rounded bg-emerald-100 text-emerald-800',
@@ -291,7 +314,14 @@ export class TeamsDetailComponent implements OnInit {
   private loadJoinRequests(id: number): void {
     this.loadingJoinRequests.set(true);
     this.joinRequestsService
-      .joinRequestsList(undefined, undefined, undefined, undefined, JoinRequestStatusEnum.Pending, id)
+      .joinRequestsList(
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        JoinRequestStatusEnum.Pending,
+        id,
+      )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
@@ -307,7 +337,14 @@ export class TeamsDetailComponent implements OnInit {
     if (!me) return;
     this.loadingMyRequest.set(true);
     this.joinRequestsService
-      .joinRequestsList(undefined, undefined, undefined, undefined, JoinRequestStatusEnum.Pending, teamId)
+      .joinRequestsList(
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        JoinRequestStatusEnum.Pending,
+        teamId,
+      )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {

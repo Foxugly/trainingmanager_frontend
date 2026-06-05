@@ -987,5 +987,29 @@
         "unknown": "Si è verificato un errore."
       }
     }
+  },
+  "stats": {
+    "tab": "Statistiche",
+    "my_tab": "Le mie statistiche",
+    "period": "Periodo",
+    "preset_12w": "12 sett.",
+    "preset_season": "Tutto",
+    "back_to_team": "← Torna alla squadra",
+    "empty": "Ancora nessun dato per questo periodo",
+    "attendance": "Presenze",
+    "volume": "Volume",
+    "intensity": "Intensità",
+    "attendance_rate": "Tasso di presenza",
+    "total_volume": "Volume totale",
+    "by_member": "Per membro",
+    "by_week": "Per settimana",
+    "by_session": "Per sessione",
+    "member": "Membro",
+    "present": "Presente",
+    "total": "Totale",
+    "last_present": "Ultima presenza",
+    "distance": "Distanza",
+    "axis_rate": "Tasso (%)",
+    "axis_distance": "Distanza"
   }
 }

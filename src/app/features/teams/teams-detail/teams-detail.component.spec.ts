@@ -124,6 +124,9 @@ interface ProtectedFields {
   myPendingRequest(): TeamJoinRequest | null;
   canRequestJoin(): boolean;
   isMemberOrAbove(): boolean;
+  myMemberId(): number | null;
+  isAthleteMember(): boolean;
+  selectedStatsMember(): number | null;
   joinMessage(): string;
   joinError(): string | null;
   showJoinDialog(): boolean;
@@ -191,9 +194,7 @@ describe('TeamsDetailComponent', () => {
         .fn()
         .mockReturnValue(of(overrides.joinRequestsList ?? { count: 1, results: [joinReq1] })),
       joinRequestsPartialUpdate: vi.fn().mockReturnValue(of({ ...joinReq1 })),
-      joinRequestsCreate: vi
-        .fn()
-        .mockReturnValue(of({ id: 99, team: 4, message: 'hi' })),
+      joinRequestsCreate: vi.fn().mockReturnValue(of({ id: 99, team: 4, message: 'hi' })),
     };
     memberMembershipMock = {
       createMemberAndAttach: vi.fn().mockReturnValue(of({ member: { id: 99 }, membership: mb1 })),
@@ -587,5 +588,41 @@ describe('TeamsDetailComponent', () => {
       joinRequestsList: { count: 0, results: [] },
     });
     expect(access(component).myMembership()).toBeNull();
+  });
+
+  it('owner gets the aggregate Statistiques tab (canManage), not the athlete tab', () => {
+    // default setup: ownerUser is owner of the team
+    expect(access(component).canManage()).toBe(true);
+    expect(access(component).isAthleteMember()).toBe(false);
+    expect(access(component).selectedStatsMember()).toBeNull();
+  });
+
+  it('selectedStatsMember drives manager drill-down and resets to null', () => {
+    const sel = (component as unknown as { selectedStatsMember: { set(v: number | null): void } })
+      .selectedStatsMember;
+    sel.set(23);
+    expect(access(component).selectedStatsMember()).toBe(23);
+    sel.set(null);
+    expect(access(component).selectedStatsMember()).toBeNull();
+  });
+
+  it('athlete-member (non-manager) resolves myMemberId and gets the athlete tab', async () => {
+    const myMb: TeamMembership = { ...mb1, member: 23, member_username: otherUser.username };
+    await setup('4', { ...team, is_public: true }, otherUser, {
+      memberships: [myMb],
+      joinRequestsList: { count: 0, results: [] },
+    });
+    expect(access(component).canManage()).toBe(false);
+    expect(access(component).myMemberId()).toBe(23);
+    expect(access(component).isAthleteMember()).toBe(true);
+  });
+
+  it('non-member visitor has no athlete tab and no resolvable member id', async () => {
+    await setup('4', { ...team, is_public: true }, otherUser, {
+      memberships: [],
+      joinRequestsList: { count: 0, results: [] },
+    });
+    expect(access(component).myMemberId()).toBeNull();
+    expect(access(component).isAthleteMember()).toBe(false);
   });
 });

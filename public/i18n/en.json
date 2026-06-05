@@ -987,5 +987,29 @@
         "unknown": "Something went wrong."
       }
     }
+  },
+  "stats": {
+    "tab": "Statistics",
+    "my_tab": "My statistics",
+    "period": "Period",
+    "preset_12w": "12 wks",
+    "preset_season": "All",
+    "back_to_team": "← Back to team",
+    "empty": "No data for this period yet",
+    "attendance": "Attendance",
+    "volume": "Volume",
+    "intensity": "Intensity",
+    "attendance_rate": "Attendance rate",
+    "total_volume": "Total volume",
+    "by_member": "By member",
+    "by_week": "By week",
+    "by_session": "By session",
+    "member": "Member",
+    "present": "Present",
+    "total": "Total",
+    "last_present": "Last attended",
+    "distance": "Distance",
+    "axis_rate": "Rate (%)",
+    "axis_distance": "Distance"
   }
 }

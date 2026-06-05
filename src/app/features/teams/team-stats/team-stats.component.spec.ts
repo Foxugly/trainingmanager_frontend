@@ -1,0 +1,195 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { TranslocoTestingModule } from '@jsverse/transloco';
+import { of } from 'rxjs';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { TeamsService } from '../../../api/api/teams.service';
+import { TeamStats } from '../../../api/model/team-stats';
+import { TeamStatsComponent } from './team-stats.component';
+
+const aggregateStats: TeamStats = {
+  period: { from: '2026-03-01', to: '2026-05-24' },
+  member: null,
+  attendance: {
+    team_rate: 0.75,
+    by_session: [
+      { event_id: 1, name: 'Séance A', date: '2026-05-01', present: 8, total: 10, rate: 0.8 },
+      { event_id: 2, name: 'Séance B', date: '2026-05-08', present: 6, total: 10, rate: 0.6 },
+    ],
+    by_member: [
+      {
+        member_id: 23,
+        name: 'Renaud Vilain',
+        present: 7,
+        total: 10,
+        rate: 0.7,
+        last_present_date: '2026-05-08',
+      },
+      {
+        member_id: 24,
+        name: 'Alice Dupont',
+        present: 9,
+        total: 10,
+        rate: 0.9,
+        last_present_date: '2026-05-08',
+      },
+    ],
+  },
+  volume: {
+    total_distance: 12500,
+    by_week: [
+      { week_start: '2026-05-04', distance: 6000 },
+      { week_start: '2026-05-11', distance: 6500 },
+    ],
+    by_member: [
+      { member_id: 23, name: 'Renaud Vilain', distance: 6000 },
+      { member_id: 24, name: 'Alice Dupont', distance: 6500 },
+    ],
+  },
+  intensity: {
+    by_segment: [
+      { abv: 'Z1', label: 'Endurance', distance: 8000 },
+      { abv: 'Z3', label: 'Seuil', distance: 4500 },
+    ],
+  },
+};
+
+interface ProtectedFields {
+  stats(): TeamStats | null;
+  loading(): boolean;
+  isAggregate(): boolean;
+  isEmpty(): boolean;
+  attendanceRatePct(): number | null;
+  totalDistanceLabel(): string;
+  formatDistance(m: number): string;
+  attendanceChart(): { data: unknown; options: unknown } | null;
+  volumeChart(): { data: unknown; options: unknown } | null;
+  intensityChart(): { data: unknown; options: unknown } | null;
+  attendanceByMember(): unknown[];
+  volumeByMember(): unknown[];
+  onMemberRowClick(id: number): void;
+  setPreset(weeks: number | 'all'): void;
+  range(): Date[];
+}
+
+describe('TeamStatsComponent', () => {
+  let fixture: ComponentFixture<TeamStatsComponent>;
+  let component: TeamStatsComponent;
+  let teamsMock: { teamsStatsRetrieve: ReturnType<typeof vi.fn> };
+
+  const access = (c: TeamStatsComponent) => c as unknown as ProtectedFields;
+
+  async function setup(memberId: number | null = null, result: TeamStats | null = aggregateStats) {
+    TestBed.resetTestingModule();
+    teamsMock = {
+      teamsStatsRetrieve: vi.fn().mockReturnValue(of(result ?? aggregateStats)),
+    };
+    await TestBed.configureTestingModule({
+      imports: [
+        TeamStatsComponent,
+        TranslocoTestingModule.forRoot({
+          langs: { fr: {} },
+          translocoConfig: { availableLangs: ['fr'], defaultLang: 'fr' },
+        }),
+      ],
+      providers: [provideNoopAnimations(), { provide: TeamsService, useValue: teamsMock }],
+    })
+      .overrideComponent(TeamStatsComponent, { set: { template: '', imports: [] } })
+      .compileComponents();
+
+    fixture = TestBed.createComponent(TeamStatsComponent);
+    component = fixture.componentInstance;
+    fixture.componentRef.setInput('teamId', 4);
+    fixture.componentRef.setInput('memberId', memberId);
+    fixture.detectChanges();
+  }
+
+  beforeEach(async () => {
+    await setup();
+  });
+
+  it('fetches stats with YYYY-MM-DD formatted dates on init (aggregate: no member)', () => {
+    expect(teamsMock.teamsStatsRetrieve).toHaveBeenCalledTimes(1);
+    const [id, from, member, to] = teamsMock.teamsStatsRetrieve.mock.calls[0];
+    expect(id).toBe(4);
+    expect(from).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(to).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(member).toBeUndefined();
+  });
+
+  it('passes the member id positionally when scoped to an athlete', async () => {
+    await setup(23);
+    const [id, , member] = teamsMock.teamsStatsRetrieve.mock.calls[0];
+    expect(id).toBe(4);
+    expect(member).toBe(23);
+    expect(access(component).isAggregate()).toBe(false);
+  });
+
+  it('stores the payload and is not empty', () => {
+    expect(access(component).stats()?.volume.total_distance).toBe(12500);
+    expect(access(component).isEmpty()).toBe(false);
+  });
+
+  it('computes the team attendance rate as a rounded percentage', () => {
+    expect(access(component).attendanceRatePct()).toBe(75);
+  });
+
+  it('formats total distance as km once over 1 km', () => {
+    expect(access(component).totalDistanceLabel()).toContain('km');
+    expect(access(component).formatDistance(500)).toBe('500 m');
+  });
+
+  it('builds attendance, volume and intensity chart data', () => {
+    const att = access(component).attendanceChart();
+    const vol = access(component).volumeChart();
+    const inten = access(component).intensityChart();
+    expect(att).not.toBeNull();
+    expect((att!.data as { labels: unknown[] }).labels).toHaveLength(2);
+    expect((vol!.data as { labels: unknown[] }).labels).toEqual(['2026-05-04', '2026-05-11']);
+    expect((inten!.data as { datasets: { data: number[] }[] }).datasets[0].data).toEqual([
+      8000, 4500,
+    ]);
+  });
+
+  it('exposes the by_member tables in aggregate mode', () => {
+    expect(access(component).attendanceByMember()).toHaveLength(2);
+    expect(access(component).volumeByMember()).toHaveLength(2);
+  });
+
+  it('emits selectMember when an athlete row is clicked (aggregate mode)', () => {
+    const spy = vi.fn();
+    component.selectMember.subscribe(spy);
+    access(component).onMemberRowClick(24);
+    expect(spy).toHaveBeenCalledWith(24);
+  });
+
+  it('does NOT emit selectMember in member mode', async () => {
+    await setup(23);
+    const spy = vi.fn();
+    component.selectMember.subscribe(spy);
+    access(component).onMemberRowClick(23);
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('setPreset updates the range and refetches', () => {
+    teamsMock.teamsStatsRetrieve.mockClear();
+    access(component).setPreset('all'); // ~2 years back, clearly differs from the 12-wk default
+    const [from] = access(component).range();
+    const yearsBack = (Date.now() - from.getTime()) / (365 * 24 * 3600 * 1000);
+    expect(yearsBack).toBeGreaterThan(1.5);
+    fixture.detectChanges(); // flush the refetch effect
+    expect(teamsMock.teamsStatsRetrieve).toHaveBeenCalled();
+  });
+
+  it('flags empty payloads', async () => {
+    const emptyStats: TeamStats = {
+      period: { from: '2026-03-01', to: '2026-05-24' },
+      member: null,
+      attendance: { team_rate: null, by_session: [], by_member: [] },
+      volume: { total_distance: 0, by_week: [], by_member: [] },
+      intensity: { by_segment: [] },
+    };
+    await setup(null, emptyStats);
+    expect(access(component).isEmpty()).toBe(true);
+  });
+});

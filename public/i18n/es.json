@@ -987,5 +987,29 @@
         "unknown": "Se ha producido un error."
       }
     }
+  },
+  "stats": {
+    "tab": "Estadísticas",
+    "my_tab": "Mis estadísticas",
+    "period": "Período",
+    "preset_12w": "12 sem.",
+    "preset_season": "Todo",
+    "back_to_team": "← Volver al equipo",
+    "empty": "Aún no hay datos para este período",
+    "attendance": "Asistencia",
+    "volume": "Volumen",
+    "intensity": "Intensidad",
+    "attendance_rate": "Tasa de asistencia",
+    "total_volume": "Volumen total",
+    "by_member": "Por miembro",
+    "by_week": "Por semana",
+    "by_session": "Por sesión",
+    "member": "Miembro",
+    "present": "Presente",
+    "total": "Total",
+    "last_present": "Última asistencia",
+    "distance": "Distancia",
+    "axis_rate": "Tasa (%)",
+    "axis_distance": "Distancia"
   }
 }
