@@ -514,7 +514,7 @@
         <!-- TAB 2 — ATTENDANCE -->
         <p-tabpanel value="attendance">
           @if (canManage() && team(); as t) {
-            <app-attendance-manager [event]="e" [team]="t" />
+            <app-attendance-manager [event]="e" [team]="t" [rsvpByMember]="rsvpByMember()" />
           } @else if (!canManage()) {
             <p class="text-sm text-gray-500 italic">
               {{ 'events.detail.attendance_manager_only' | transloco }}
@@ -559,33 +559,82 @@
               <!-- Manager: aggregate (read-only). Shown also to a manager-athlete below their rating. -->
               @if (canManage()) {
                 <div [class.mt-6]="isAthlete()">
-                  <h2 class="text-lg font-semibold mb-2">{{ 'events.roti.title' | transloco }}</h2>
+                  <h2 class="text-lg font-semibold mb-3">{{ 'events.roti.title' | transloco }}</h2>
                   @if (rotiSummary(); as summary) {
                     @if (summary.count > 0) {
-                      <div class="flex items-baseline gap-3 mb-3">
-                        <span class="text-2xl font-bold text-emerald-700">
-                          {{ summary.average !== null ? (summary.average | number: '1.1-1') : '—' }} / 5
-                        </span>
-                        <span class="text-sm text-gray-500">
-                          {{ 'events.roti.responses' | transloco: { count: summary.count } }}
-                        </span>
+                      <!-- KPI cards -->
+                      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5">
+                        <div class="rounded-lg border border-gray-200 bg-white px-4 py-3">
+                          <div class="text-2xl font-bold text-emerald-700 leading-none">
+                            {{ summary.average !== null ? (summary.average | number: '1.1-1') : '—' }}
+                            <span class="text-base font-medium text-gray-400">/ 5</span>
+                          </div>
+                          <div class="mt-1 text-xs font-medium text-gray-500">
+                            {{ 'events.roti.average' | transloco }}
+                          </div>
+                        </div>
+                        <div class="rounded-lg border border-gray-200 bg-white px-4 py-3">
+                          <div class="text-2xl font-bold text-gray-900 leading-none">
+                            {{ summary.count }}
+                          </div>
+                          <div class="mt-1 text-xs font-medium text-gray-500">
+                            {{ 'events.roti.responses_label' | transloco }}
+                          </div>
+                        </div>
+                        @if (summary.my_score !== null) {
+                          <div class="rounded-lg border border-gray-200 bg-white px-4 py-3">
+                            <div class="text-2xl font-bold text-gray-900 leading-none">
+                              {{ summary.my_score }}
+                              <span class="text-base font-medium text-gray-400">/ 5</span>
+                            </div>
+                            <div class="mt-1 text-xs font-medium text-gray-500">
+                              {{ 'events.roti.my_score' | transloco }}
+                            </div>
+                          </div>
+                        }
                       </div>
-                      <ul class="space-y-1.5">
+
+                      <!-- Distribution bars -->
+                      <h3 class="text-sm font-semibold text-gray-700 mb-2">
+                        {{ 'events.roti.distribution' | transloco }}
+                      </h3>
+                      <ul class="space-y-2">
                         @for (bar of rotiDistribution(); track bar.score) {
-                          <li class="flex items-center gap-2 text-sm">
-                            <span class="w-4 text-right text-gray-600">{{ bar.score }}</span>
-                            <div class="flex-1 h-2.5 rounded bg-gray-100 overflow-hidden">
+                          <li class="flex items-center gap-3 text-sm">
+                            <span
+                              class="w-28 shrink-0 text-gray-600"
+                              [pTooltip]="'events.roti.scale.' + bar.score | transloco"
+                              tooltipPosition="top"
+                            >
+                              {{ 'events.roti.scale.' + bar.score | transloco }}
+                            </span>
+                            <div
+                              class="flex-1 h-3 rounded-full bg-gray-100 overflow-hidden"
+                              role="meter"
+                              [attr.aria-valuenow]="bar.count"
+                              [attr.aria-valuemin]="0"
+                              [attr.aria-valuemax]="summary.count"
+                              [attr.aria-label]="
+                                ('events.roti.scale.' + bar.score | transloco) +
+                                ': ' +
+                                ('events.roti.responses' | transloco: { count: bar.count })
+                              "
+                            >
                               <div
-                                class="h-full rounded bg-emerald-500"
+                                class="h-full rounded-full bg-emerald-500 transition-[width]"
                                 [style.width.%]="(bar.count / rotiMaxCount()) * 100"
                               ></div>
                             </div>
-                            <span class="w-6 text-right text-gray-500">{{ bar.count }}</span>
+                            <span class="w-6 text-right font-medium text-gray-700">{{ bar.count }}</span>
                           </li>
                         }
                       </ul>
                     } @else {
-                      <p class="text-sm text-gray-500">{{ 'events.roti.none' | transloco }}</p>
+                      <app-empty-state
+                        icon="gauge"
+                        tone="gray"
+                        [title]="'events.roti.none' | transloco"
+                      />
                     }
                   } @else {
                     <p class="text-sm text-gray-500">{{ 'common.loading' | transloco }}…</p>
@@ -771,9 +820,49 @@
     <form
       [formGroup]="form"
       (ngSubmit)="onSave()"
-      class="flex flex-wrap items-start gap-2 text-sm"
+      class="flex flex-wrap items-end gap-2 text-sm"
     >
+      <div class="flex flex-col w-20">
+        <label [for]="'rep-' + key" class="mb-0.5 text-xs font-medium text-gray-500">
+          {{ 'events.exercise_form.fields.repetition' | transloco }}
+        </label>
+        <p-inputNumber
+          formControlName="repetition"
+          [min]="1"
+          [useGrouping]="false"
+          size="small"
+          inputStyleClass="w-full"
+          [inputId]="'rep-' + key"
+          [attr.aria-label]="'events.exercise_form.fields.repetition' | transloco"
+        />
+        @if (rowFieldError(key, 'repetition'); as err) {
+          <small class="text-red-600">{{ err }}</small>
+        }
+      </div>
+
+      <div class="flex flex-col w-28">
+        <label class="mb-0.5 text-xs font-medium text-gray-500">
+          {{ 'events.exercise_form.fields.distance' | transloco }}
+        </label>
+        <p-inputNumber
+          formControlName="distance"
+          [min]="0"
+          [step]="25"
+          suffix=" m"
+          [useGrouping]="false"
+          size="small"
+          inputStyleClass="w-full"
+          [attr.aria-label]="'events.exercise_form.fields.distance' | transloco"
+        />
+        @if (rowFieldError(key, 'distance'); as err) {
+          <small class="text-red-600">{{ err }}</small>
+        }
+      </div>
+
       <div class="flex flex-col min-w-[9rem] flex-1">
+        <label class="mb-0.5 text-xs font-medium text-gray-500">
+          {{ 'events.exercise_form.fields.modality' | transloco }}
+        </label>
         <p-select
           formControlName="modality_id"
           [options]="modalities()"
@@ -793,6 +882,9 @@
       </div>
 
       <div class="flex flex-col min-w-[9rem] flex-1">
+        <label class="mb-0.5 text-xs font-medium text-gray-500">
+          {{ 'events.exercise_form.fields.energysegment' | transloco }}
+        </label>
         <p-select
           formControlName="energysegment_id"
           [options]="energySegments()"
@@ -811,37 +903,9 @@
       </div>
 
       <div class="flex flex-col w-20">
-        <p-inputNumber
-          formControlName="repetition"
-          [min]="1"
-          [useGrouping]="false"
-          size="small"
-          inputStyleClass="w-full"
-          [inputId]="'rep-' + key"
-          [attr.aria-label]="'events.exercise_form.fields.repetition' | transloco"
-        />
-        @if (rowFieldError(key, 'repetition'); as err) {
-          <small class="text-red-600">{{ err }}</small>
-        }
-      </div>
-
-      <div class="flex flex-col w-28">
-        <p-inputNumber
-          formControlName="distance"
-          [min]="0"
-          [step]="25"
-          suffix=" m"
-          [useGrouping]="false"
-          size="small"
-          inputStyleClass="w-full"
-          [attr.aria-label]="'events.exercise_form.fields.distance' | transloco"
-        />
-        @if (rowFieldError(key, 'distance'); as err) {
-          <small class="text-red-600">{{ err }}</small>
-        }
-      </div>
-
-      <div class="flex flex-col w-20">
+        <label class="mb-0.5 text-xs font-medium text-gray-500">
+          {{ 'events.exercise_form.fields.t_start' | transloco }}
+        </label>
         <input
           pInputText
           pSize="small"
@@ -862,6 +926,9 @@
       </div>
 
       <div class="flex flex-col w-20">
+        <label class="mb-0.5 text-xs font-medium text-gray-500">
+          {{ 'events.exercise_form.fields.t_break' | transloco }}
+        </label>
         <input
           pInputText
           pSize="small"
@@ -882,6 +949,9 @@
       </div>
 
       <div class="flex flex-col flex-grow min-w-[8rem]">
+        <label class="mb-0.5 text-xs font-medium text-gray-500">
+          {{ 'events.exercise_form.fields.notes' | transloco }}
+        </label>
         <input
           pInputText
           pSize="small"
@@ -895,7 +965,7 @@
         }
       </div>
 
-      <div class="flex items-center gap-1 shrink-0 pt-0.5">
+      <div class="flex items-center gap-1 shrink-0 pb-0.5">
         <p-button
           type="submit"
           icon="pi pi-check"

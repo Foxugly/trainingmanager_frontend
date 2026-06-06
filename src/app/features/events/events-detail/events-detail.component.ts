@@ -58,6 +58,7 @@ import { type FieldErrors, extractServerError } from '../../../shared/forms/noti
 import { AiErrorMappingService } from '../../ai/ai-error-mapping.service';
 import { TeamRole, computeTeamRole } from '../../teams/teams-list/teams-list.component';
 import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-header.component';
+import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { AttachmentListComponent } from '../../../shared/ui/attachment-list/attachment-list.component';
 import { RoundFormDialogComponent } from '../round-form-dialog/round-form-dialog.component';
 import { AttendanceManagerComponent } from '../attendance-manager/attendance-manager.component';
@@ -113,6 +114,7 @@ interface NewExerciseRow {
     Tooltip,
     TranslocoPipe,
     DetailHeaderComponent,
+    EmptyStateComponent,
     AttachmentListComponent,
     RoundFormDialogComponent,
     AttendanceManagerComponent,
@@ -260,6 +262,22 @@ export class EventsDetailComponent implements OnInit {
         return 'danger';
     }
   }
+
+  /**
+   * Per-member RSVP availability map (member_id → status), derived from the
+   * manager-facing `by_member` breakdown. Fed to the attendance manager so each
+   * athlete's declared availability shows next to their name. Members with no
+   * response are omitted.
+   */
+  protected readonly rsvpByMember = computed<Map<number, RsvpStatusEnum>>(() => {
+    const map = new Map<number, RsvpStatusEnum>();
+    for (const m of this.rsvpSummary()?.by_member ?? []) {
+      if (m.status != null) {
+        map.set(m.member_id, m.status as unknown as RsvpStatusEnum);
+      }
+    }
+    return map;
+  });
 
   /** True when nobody has responded yet (all counts zero). */
   protected readonly rsvpHasResponses = computed<boolean>(() => {

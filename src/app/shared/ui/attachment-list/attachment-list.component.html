@@ -3,34 +3,65 @@
     <p class="att-muted">{{ 'common.loading' | transloco }}…</p>
   } @else {
     @if (items().length === 0 && !isUploading()) {
-      <p class="att-muted">{{ 'attachments.empty' | transloco }}</p>
+      <app-empty-state icon="paperclip" tone="gray" [title]="'attachments.empty' | transloco" />
     } @else {
       <ul class="att-list">
         @for (item of items(); track item.id) {
           <li class="att-row">
-            <i class="att-icon" [class]="iconFor(item.content_type_mime)" aria-hidden="true"></i>
-            <button type="button" class="att-name" (click)="onDownload(item)">
-              {{ item.filename }}
-            </button>
-            <span class="att-size">{{ formatSize(item.size_bytes) }}</span>
-            @if (canEdit()) {
+            <span class="att-pill" [class]="'att-pill--' + toneFor(item.content_type_mime)">
+              <i [class]="iconFor(item.content_type_mime)" aria-hidden="true"></i>
+            </span>
+            <div class="att-main">
+              <button
+                type="button"
+                class="att-name"
+                (click)="onDownload(item)"
+                [pTooltip]="'attachments.download' | transloco"
+                tooltipPosition="top"
+              >
+                {{ item.filename }}
+              </button>
+              <div class="att-meta">
+                <span class="att-size">{{ formatSize(item.size_bytes) }}</span>
+                <span class="att-dot" aria-hidden="true">·</span>
+                <span class="att-date">{{ item.created_at | date: 'mediumDate' }}</span>
+              </div>
+            </div>
+            <div class="att-actions-inline">
               <p-button
-                icon="pi pi-trash"
-                severity="danger"
+                icon="pi pi-download"
+                severity="secondary"
                 [text]="true"
                 [rounded]="true"
                 size="small"
-                [ariaLabel]="'attachments.delete_aria' | transloco: { name: item.filename }"
-                (onClick)="confirmDelete(item)"
+                [ariaLabel]="'attachments.download' | transloco"
+                (onClick)="onDownload(item)"
               />
-            }
+              @if (canEdit()) {
+                <p-button
+                  icon="pi pi-trash"
+                  severity="danger"
+                  [text]="true"
+                  [rounded]="true"
+                  size="small"
+                  [ariaLabel]="'attachments.delete_aria' | transloco: { name: item.filename }"
+                  (onClick)="confirmDelete(item)"
+                />
+              }
+            </div>
           </li>
         }
         @for (name of uploading(); track name) {
           <li class="att-row att-row--uploading">
-            <i class="att-icon pi pi-spin pi-spinner" aria-hidden="true"></i>
-            <span class="att-name att-name--pending">{{ name }}</span>
-            <span class="att-size">{{ 'attachments.uploading' | transloco }}…</span>
+            <span class="att-pill att-pill--file">
+              <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
+            </span>
+            <div class="att-main">
+              <span class="att-name att-name--pending">{{ name }}</span>
+              <div class="att-meta">
+                <span class="att-size">{{ 'attachments.uploading' | transloco }}…</span>
+              </div>
+            </div>
           </li>
         }
       </ul>

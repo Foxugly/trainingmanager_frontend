@@ -22,6 +22,7 @@ import { EventsService } from '../../../api/api/events.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { AttendanceStatus } from '../../../api/model/attendance-status';
 import { Event } from '../../../api/model/event';
+import { RsvpStatusEnum } from '../../../api/model/rsvp-status-enum';
 import { Team } from '../../../api/model/team';
 
 interface AttendanceRow {
@@ -52,6 +53,11 @@ const SAVE_DEBOUNCE_MS = 300;
 export class AttendanceManagerComponent implements OnInit, OnDestroy {
   readonly event = input.required<Event>();
   readonly team = input.required<Team>();
+  /**
+   * Per-member RSVP availability, keyed by member id. When a member has declared
+   * a status it is shown (muted) next to their name. Optional — empty by default.
+   */
+  readonly rsvpByMember = input<Map<number, RsvpStatusEnum>>(new Map());
 
   private readonly eventsService = inject(EventsService);
   private readonly teamsService = inject(TeamsService);
@@ -82,6 +88,11 @@ export class AttendanceManagerComponent implements OnInit, OnDestroy {
 
   protected statusIcon(code: string): string {
     return STATUS_ICONS[code] ?? FALLBACK_ICON;
+  }
+
+  /** The member's RSVP status, or null when they haven't responded. */
+  protected rsvpFor(memberId: number): RsvpStatusEnum | null {
+    return this.rsvpByMember().get(memberId) ?? null;
   }
 
   ngOnInit(): void {

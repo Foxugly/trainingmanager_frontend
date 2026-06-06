@@ -268,7 +268,10 @@
       "average": "Media",
       "responses": "{{count}} respuesta(s)",
       "saved": "Gracias, guardado",
-      "none": "Sin respuestas"
+      "none": "Sin respuestas",
+      "responses_label": "Respuestas",
+      "my_score": "Mi nota",
+      "distribution": "Distribución"
     },
     "rsvp": {
       "tab": "Disponibilidad",
@@ -1184,7 +1187,8 @@
       "file_too_large": "Archivo demasiado grande",
       "unconfigured": "El almacenamiento de archivos no está disponible por el momento",
       "forbidden": "No tienes permiso para realizar esta acción"
-    }
+    },
+    "download": "Descargar"
   },
   "public_share": {
     "team": {

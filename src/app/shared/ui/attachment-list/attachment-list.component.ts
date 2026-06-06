@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -14,10 +15,12 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
+import { Tooltip } from 'primeng/tooltip';
 import { AttachmentsService } from '../../../api/api/attachments.service';
 import { Attachment } from '../../../api/model/attachment';
 import { AttachmentStatusEnum } from '../../../api/model/attachment-status-enum';
 import { AttachmentUploadService } from '../../../core/attachments/attachment-upload.service';
+import { EmptyStateComponent } from '../empty-state/empty-state.component';
 
 /** Accept attribute for the file picker — mirrors the backend MIME allow-list. */
 const ACCEPT = '.pdf,application/pdf,image/*,video/mp4,video/webm,video/quicktime';
@@ -33,7 +36,7 @@ const ACCEPT = '.pdf,application/pdf,image/*,video/mp4,video/webm,video/quicktim
  */
 @Component({
   selector: 'app-attachment-list',
-  imports: [Button, ConfirmDialog, TranslocoPipe],
+  imports: [DatePipe, Button, ConfirmDialog, Tooltip, TranslocoPipe, EmptyStateComponent],
   templateUrl: './attachment-list.component.html',
   styleUrl: './attachment-list.component.scss',
   providers: [ConfirmationService],
@@ -99,6 +102,14 @@ export class AttachmentListComponent {
     if (mime.startsWith('image/')) return 'pi pi-image';
     if (mime.startsWith('video/')) return 'pi pi-video';
     return 'pi pi-file';
+  }
+
+  /** CSS class suffix driving the colored icon-pill tone per MIME kind. */
+  protected toneFor(mime: string): 'pdf' | 'image' | 'video' | 'file' {
+    if (mime === 'application/pdf') return 'pdf';
+    if (mime.startsWith('image/')) return 'image';
+    if (mime.startsWith('video/')) return 'video';
+    return 'file';
   }
 
   protected formatSize(bytes: number): string {

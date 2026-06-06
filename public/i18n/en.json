@@ -268,7 +268,10 @@
       "average": "Average",
       "responses": "{{count}} response(s)",
       "saved": "Thanks, saved",
-      "none": "No responses"
+      "none": "No responses",
+      "responses_label": "Responses",
+      "my_score": "My score",
+      "distribution": "Distribution"
     },
     "rsvp": {
       "tab": "Availability",
@@ -1184,7 +1187,8 @@
       "file_too_large": "File too large",
       "unconfigured": "File storage is currently unavailable",
       "forbidden": "You are not allowed to perform this action"
-    }
+    },
+    "download": "Download"
   },
   "public_share": {
     "team": {

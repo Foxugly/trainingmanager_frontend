@@ -12,7 +12,14 @@
   <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
     @for (row of rows(); track row.member_id) {
       <li class="flex items-center justify-between gap-3 px-3 py-2">
-        <span class="font-medium text-gray-900 truncate">{{ row.fullname }}</span>
+        <span class="truncate">
+          <span class="font-medium text-gray-900">{{ row.fullname }}</span>
+          @if (rsvpFor(row.member_id); as rsvp) {
+            <span class="text-gray-400 font-normal">
+              ({{ 'events.rsvp.' + rsvp | transloco }})
+            </span>
+          }
+        </span>
         <div class="inline-flex items-center gap-1 shrink-0">
           @for (status of orderedStatuses(); track status.code) {
             <p-button

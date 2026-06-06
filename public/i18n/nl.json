@@ -268,7 +268,10 @@
       "average": "Gemiddelde",
       "responses": "{{count}} reactie(s)",
       "saved": "Bedankt, opgeslagen",
-      "none": "Geen reacties"
+      "none": "Geen reacties",
+      "responses_label": "Reacties",
+      "my_score": "Mijn score",
+      "distribution": "Verdeling"
     },
     "rsvp": {
       "tab": "Beschikbaarheid",
@@ -1184,7 +1187,8 @@
       "file_too_large": "Bestand te groot",
       "unconfigured": "Bestandsopslag is momenteel niet beschikbaar",
       "forbidden": "U mag deze actie niet uitvoeren"
-    }
+    },
+    "download": "Downloaden"
   },
   "public_share": {
     "team": {

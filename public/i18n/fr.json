@@ -268,7 +268,10 @@
       "average": "Moyenne",
       "responses": "{{count}} réponse(s)",
       "saved": "Merci, c'est enregistré",
-      "none": "Aucune réponse"
+      "none": "Aucune réponse",
+      "responses_label": "Réponses",
+      "my_score": "Ma note",
+      "distribution": "Répartition"
     },
     "rsvp": {
       "tab": "Disponibilités",
@@ -1184,7 +1187,8 @@
       "file_too_large": "Fichier trop volumineux",
       "unconfigured": "Stockage des fichiers indisponible pour le moment",
       "forbidden": "Vous n’êtes pas autorisé à effectuer cette action"
-    }
+    },
+    "download": "Télécharger"
   },
   "public_share": {
     "team": {
