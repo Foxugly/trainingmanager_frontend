@@ -41,6 +41,7 @@
               <p-tab value="managers"><i class="pi pi-users tab-icon"></i>{{ 'teams.form.tab_managers' | transloco }}</p-tab>
               <p-tab value="statuses"><i class="pi pi-check-square tab-icon"></i>{{ 'teams.form.tab_statuses' | transloco }}</p-tab>
               <p-tab value="join"><i class="pi pi-user-plus tab-icon"></i>{{ 'teams.form.tab_join' | transloco }}</p-tab>
+              <p-tab value="public_share"><i class="pi pi-share-alt tab-icon"></i>{{ 'public_share.team.section_title' | transloco }}</p-tab>
             }
           </p-tablist>
           <p-tabpanels>
@@ -359,6 +360,59 @@
                         inputId="notify_athlete_on_visible_note"
                       />
                     </app-meta-field>
+                  </div>
+                </div>
+              </p-tabpanel>
+
+              <p-tabpanel value="public_share">
+                <div class="builder-pane">
+                  <div class="meta-grid">
+                    <app-meta-field
+                      [full]="true"
+                      for="public_sharing_enabled"
+                      [label]="'public_share.team.enabled_label' | transloco"
+                      [tooltip]="'public_share.team.enabled_help' | transloco"
+                    >
+                      <p-toggleSwitch
+                        formControlName="public_sharing_enabled"
+                        inputId="public_sharing_enabled"
+                      />
+                    </app-meta-field>
+
+                    @if (isPublicSharingEnabled()) {
+                      <app-meta-field
+                        [full]="true"
+                        for="public_show_distance"
+                        [label]="'public_share.team.show_distance' | transloco"
+                      >
+                        <p-toggleSwitch
+                          formControlName="public_show_distance"
+                          inputId="public_show_distance"
+                        />
+                      </app-meta-field>
+
+                      <app-meta-field
+                        [full]="true"
+                        for="public_show_goal"
+                        [label]="'public_share.team.show_goal' | transloco"
+                      >
+                        <p-toggleSwitch
+                          formControlName="public_show_goal"
+                          inputId="public_show_goal"
+                        />
+                      </app-meta-field>
+
+                      <app-meta-field
+                        [full]="true"
+                        for="public_show_rounds"
+                        [label]="'public_share.team.show_rounds' | transloco"
+                      >
+                        <p-toggleSwitch
+                          formControlName="public_show_rounds"
+                          inputId="public_show_rounds"
+                        />
+                      </app-meta-field>
+                    }
                   </div>
                 </div>
               </p-tabpanel>

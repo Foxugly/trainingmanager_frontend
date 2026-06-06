@@ -66,6 +66,8 @@ import {
   DuplicateEventDialogComponent,
   type DuplicateEventSubmit,
 } from '../duplicate-event-dialog/duplicate-event-dialog.component';
+import { ShareEventDialogComponent } from '../share-event-dialog/share-event-dialog.component';
+import { EventShareResponse } from '../../../api/model/event-share-response';
 import { timeMmSsValidator } from '../shared/time-validator';
 
 /** Reactive form for an inline exercise row (create or edit). */
@@ -116,6 +118,7 @@ interface NewExerciseRow {
     AttendanceManagerComponent,
     RegenerateTrainingDialogComponent,
     DuplicateEventDialogComponent,
+    ShareEventDialogComponent,
   ],
   templateUrl: './events-detail.component.html',
   styleUrl: './events-detail.component.scss',
@@ -185,6 +188,9 @@ export class EventsDetailComponent implements OnInit {
 
   protected readonly showDuplicateDialog = signal(false);
   protected readonly duplicating = signal(false);
+
+  protected readonly showShareDialog = signal(false);
+  protected readonly sharing = signal(false);
 
   protected readonly currentUserRole = computed<TeamRole | null>(() => {
     const t = this.team();
@@ -794,6 +800,49 @@ export class EventsDetailComponent implements OnInit {
         error: (err: HttpErrorResponse) => {
           this.duplicating.set(false);
           this.notifyMutationError(err);
+        },
+      });
+  }
+
+  protected openShare(): void {
+    if (!this.event()) return;
+    this.showShareDialog.set(true);
+  }
+
+  /** Toggle the session's public share state via the share endpoint. */
+  protected onShareToggled(isPublic: boolean): void {
+    const eventId = this.eventId();
+    if (eventId == null || this.sharing()) return;
+    this.sharing.set(true);
+    this.eventsService
+      .eventsShareCreate(eventId, { is_public: isPublic })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res: EventShareResponse) => {
+          this.sharing.set(false);
+          this.event.update((e) =>
+            e ? { ...e, is_public: res.is_public, public_token: res.public_token ?? null } : e,
+          );
+          this.messageService.add({
+            severity: 'success',
+            summary: this.transloco.translate('common.success'),
+            detail: this.transloco.translate(
+              res.is_public ? 'public_share.event.enabled' : 'public_share.event.disabled',
+            ),
+          });
+        },
+        error: (err: HttpErrorResponse) => {
+          this.sharing.set(false);
+          const code = (err?.error as { code?: string } | null | undefined)?.code;
+          if (err?.status === 409 && code === 'public_sharing_disabled') {
+            this.messageService.add({
+              severity: 'warn',
+              summary: this.transloco.translate('common.error'),
+              detail: this.transloco.translate('public_share.event.sharing_disabled'),
+            });
+          } else {
+            this.notifyMutationError(err);
+          }
         },
       });
   }

@@ -205,12 +205,22 @@ export class TeamsFormComponent implements OnInit {
     vis_distance: this.fb.nonNullable.control<VisibilityMode>(VisibilityMode.Always),
     vis_goal: this.fb.nonNullable.control<VisibilityMode>(VisibilityMode.Always),
     vis_rounds: this.fb.nonNullable.control<VisibilityMode>(VisibilityMode.Always),
+    public_sharing_enabled: [false],
+    public_show_distance: [true],
+    public_show_goal: [false],
+    public_show_rounds: [true],
   });
 
   private readonly autoAcceptValue = toSignal(this.form.controls.auto_accept_policy.valueChanges, {
     initialValue: this.form.controls.auto_accept_policy.value,
   });
   protected readonly isAutoPolicy = computed(() => this.autoAcceptValue() === true);
+
+  private readonly publicSharingValue = toSignal(
+    this.form.controls.public_sharing_enabled.valueChanges,
+    { initialValue: this.form.controls.public_sharing_enabled.value },
+  );
+  protected readonly isPublicSharingEnabled = computed(() => this.publicSharingValue() === true);
 
   ngOnInit(): void {
     this.sportsService
@@ -271,6 +281,10 @@ export class TeamsFormComponent implements OnInit {
               vis_distance: t.vis_distance ?? VisibilityMode.Always,
               vis_goal: t.vis_goal ?? VisibilityMode.Always,
               vis_rounds: t.vis_rounds ?? VisibilityMode.Always,
+              public_sharing_enabled: t.public_sharing_enabled ?? false,
+              public_show_distance: t.public_show_distance ?? true,
+              public_show_goal: t.public_show_goal ?? false,
+              public_show_rounds: t.public_show_rounds ?? true,
             });
             this.loading.set(false);
           },
@@ -440,6 +454,10 @@ export class TeamsFormComponent implements OnInit {
       vis_distance: value.vis_distance,
       vis_goal: value.vis_goal,
       vis_rounds: value.vis_rounds,
+      public_sharing_enabled: value.public_sharing_enabled,
+      public_show_distance: value.public_show_distance,
+      public_show_goal: value.public_show_goal,
+      public_show_rounds: value.public_show_rounds,
     };
 
     this.teamsService

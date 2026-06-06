@@ -71,7 +71,7 @@ const upcomingEvent: Event = {
   hour_start: '18:00:00', hour_end: '19:30:00', total: 0,
   refer_program: { id: 100, name: 'Cycle aérobie' }, refer_program_id: 100,
   rounds: [], members: [11, 12], generated_by_ai: false, ai_response: '',
-  ai_generated_at: null, created_at: '', updated_at: '',
+  ai_generated_at: null, created_at: '', updated_at: '', is_public: false, public_token: null,
 };
 
 const farFutureEvent: Event = {

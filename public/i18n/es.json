@@ -1168,5 +1168,39 @@
       "unconfigured": "El almacenamiento de archivos no está disponible por el momento",
       "forbidden": "No tienes permiso para realizar esta acción"
     }
+  },
+  "public_share": {
+    "team": {
+      "section_title": "Compartir público",
+      "enabled_label": "Permitir compartir las sesiones públicamente",
+      "enabled_help": "Los responsables podrán compartir una sesión mediante un enlace público de solo lectura.",
+      "show_distance": "Mostrar la distancia",
+      "show_goal": "Mostrar el objetivo",
+      "show_rounds": "Mostrar bloques y ejercicios"
+    },
+    "event": {
+      "action": "Compartir",
+      "dialog_title": "Compartir la sesión",
+      "toggle_label": "Sesión compartida públicamente",
+      "url_label": "Enlace público",
+      "copy": "Copiar el enlace",
+      "copied": "Enlace copiado",
+      "copy_failed": "No se pudo copiar el enlace",
+      "enabled": "Sesión compartida públicamente",
+      "disabled": "Compartir desactivado",
+      "sharing_disabled": "Primero activa el uso compartido público en los ajustes del equipo.",
+      "badge": "Público",
+      "close": "Cerrar"
+    },
+    "public_page": {
+      "read_only": "Vista pública de solo lectura",
+      "goal": "Objetivo",
+      "distance": "Distancia",
+      "rounds": "Bloques",
+      "block": "Bloque",
+      "break": "Descanso",
+      "error_title": "Enlace no disponible",
+      "error": "Este enlace para compartir no es válido o se ha desactivado."
+    }
   }
 }

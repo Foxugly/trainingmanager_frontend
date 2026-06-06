@@ -1,0 +1,148 @@
+<div class="public-session">
+  @if (loading()) {
+    <div class="flex flex-col items-center justify-center gap-4 py-24">
+      <p-progressSpinner styleClass="w-12 h-12" strokeWidth="3" />
+      <p class="text-sm text-gray-500">{{ 'common.loading' | transloco }}…</p>
+    </div>
+  } @else if (error() || !session()) {
+    <div class="mx-auto max-w-xl px-4 py-16">
+      <app-empty-state
+        icon="lock"
+        tone="gray"
+        [title]="'public_share.public_page.error_title' | transloco"
+        [subtitle]="'public_share.public_page.error' | transloco"
+      />
+    </div>
+  } @else if (session(); as s) {
+    <div class="mx-auto max-w-2xl px-4 py-8 sm:py-12">
+      <p class="mb-3 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
+        <i class="pi pi-eye text-xs" aria-hidden="true"></i>
+        {{ 'public_share.public_page.read_only' | transloco }}
+      </p>
+
+      <article class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+        <header class="border-b border-gray-100 pb-5">
+          @if (s.team_name) {
+            <p class="text-sm font-medium text-emerald-700">{{ s.team_name }}</p>
+          }
+          <h1 class="mt-1 text-2xl font-bold text-gray-900 sm:text-3xl">{{ s.name }}</h1>
+          @if (s.program_name) {
+            <p class="mt-1 text-sm text-gray-500">
+              <i class="pi pi-list mr-1 text-xs" aria-hidden="true"></i>{{ s.program_name }}
+            </p>
+          }
+          <div class="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm text-gray-600">
+            @if (formattedDate(); as d) {
+              <span class="inline-flex items-center gap-1.5">
+                <i class="pi pi-calendar text-gray-400" aria-hidden="true"></i>{{ d }}
+              </span>
+            }
+            @if (formattedTime(); as t) {
+              <span class="inline-flex items-center gap-1.5">
+                <i class="pi pi-clock text-gray-400" aria-hidden="true"></i>{{ t }}
+              </span>
+            }
+          </div>
+        </header>
+
+        <dl class="mt-5 flex flex-col gap-4">
+          @if (s.location) {
+            <div>
+              <dt class="text-xs font-semibold uppercase tracking-wide text-gray-400">
+                {{ 'events.fields.location' | transloco }}
+              </dt>
+              <dd class="mt-0.5 text-gray-800">{{ s.location }}</dd>
+            </div>
+          }
+          @if (s.equipment) {
+            <div>
+              <dt class="text-xs font-semibold uppercase tracking-wide text-gray-400">
+                {{ 'events.fields.equipment' | transloco }}
+              </dt>
+              <dd class="mt-0.5 whitespace-pre-line text-gray-800">{{ s.equipment }}</dd>
+            </div>
+          }
+          @if (s.goal) {
+            <div>
+              <dt class="text-xs font-semibold uppercase tracking-wide text-gray-400">
+                {{ 'public_share.public_page.goal' | transloco }}
+              </dt>
+              <dd class="mt-0.5 whitespace-pre-line italic text-gray-800">{{ s.goal }}</dd>
+            </div>
+          }
+          @if (s.total != null) {
+            <div>
+              <dt class="text-xs font-semibold uppercase tracking-wide text-gray-400">
+                {{ 'public_share.public_page.distance' | transloco }}
+              </dt>
+              <dd class="mt-0.5 font-semibold text-emerald-700">
+                {{ s.total }}{{ 'common.units.meters_short' | transloco }}
+              </dd>
+            </div>
+          }
+        </dl>
+
+        @if (hasRounds()) {
+          <section class="mt-6 border-t border-gray-100 pt-5">
+            <h2 class="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-400">
+              {{ 'public_share.public_page.rounds' | transloco }}
+            </h2>
+            <ol class="flex flex-col gap-4">
+              @for (round of rounds(); track $index) {
+                <li class="rounded-lg border border-gray-100 bg-gray-50/60 p-4">
+                  <div class="mb-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm font-medium text-gray-700">
+                    <span class="inline-flex items-center gap-1.5">
+                      <i class="pi pi-replay text-gray-400 text-xs" aria-hidden="true"></i>
+                      {{ 'public_share.public_page.block' | transloco }} {{ $index + 1 }}
+                    </span>
+                    @if (round.count != null && round.count > 1) {
+                      <span class="text-gray-500">×{{ round.count }}</span>
+                    }
+                    @if (round.t_start) {
+                      <span class="text-gray-500">{{ round.t_start }}</span>
+                    }
+                    @if (round.t_break) {
+                      <span class="text-gray-500">
+                        {{ 'public_share.public_page.break' | transloco }}: {{ round.t_break }}
+                      </span>
+                    }
+                  </div>
+                  @if (round.exercises.length > 0) {
+                    <ul class="flex flex-col gap-1.5">
+                      @for (ex of round.exercises; track $index) {
+                        <li class="flex flex-wrap items-baseline gap-x-2 text-sm text-gray-700">
+                          @if (ex.repetition != null && ex.repetition > 1) {
+                            <span class="font-medium">{{ ex.repetition }}×</span>
+                          }
+                          @if (ex.distance != null) {
+                            <span class="font-medium">
+                              {{ ex.distance }}{{ 'common.units.meters_short' | transloco }}
+                            </span>
+                          }
+                          @if (ex.modality) {
+                            <span>{{ ex.modality }}</span>
+                          }
+                          @if (ex.energysegment) {
+                            <span class="text-gray-400">· {{ ex.energysegment }}</span>
+                          }
+                          @if (ex.notes) {
+                            <span class="text-gray-400 italic">— {{ ex.notes }}</span>
+                          }
+                        </li>
+                      }
+                    </ul>
+                  }
+                </li>
+              }
+            </ol>
+          </section>
+        }
+      </article>
+
+      <footer class="mt-6 text-center text-xs text-gray-400">
+        {{ 'public_share.public_page.read_only' | transloco }} ·
+        {{ 'app.title' | transloco }} · v{{ appVersion }}
+      </footer>
+    </div>
+  }
+</div>

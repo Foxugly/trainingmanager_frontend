@@ -1,0 +1,60 @@
+<p-dialog
+  [visible]="visible()"
+  (visibleChange)="onVisibleChange($event)"
+  [modal]="true"
+  [closable]="!loading()"
+  [style]="{ width: '32rem' }"
+  [header]="'public_share.event.dialog_title' | transloco"
+>
+  <div class="flex flex-col gap-4">
+    <label class="flex items-center justify-between gap-3">
+      <span class="text-sm font-medium text-gray-700">
+        {{ 'public_share.event.toggle_label' | transloco }}
+      </span>
+      <p-toggleswitch
+        [ngModel]="isPublic()"
+        (ngModelChange)="onToggle($event)"
+        [disabled]="loading()"
+        inputId="share_is_public"
+      />
+    </label>
+
+    @if (publicUrl(); as url) {
+      <div class="flex flex-col gap-2">
+        <label for="share_url" class="text-sm font-medium text-gray-700">
+          {{ 'public_share.event.url_label' | transloco }}
+        </label>
+        <div class="flex items-center gap-2">
+          <input
+            pInputText
+            id="share_url"
+            class="flex-1"
+            [value]="url"
+            readonly
+            (focus)="$any($event.target).select()"
+          />
+          <p-button
+            type="button"
+            icon="pi pi-copy"
+            severity="secondary"
+            [outlined]="true"
+            [label]="'public_share.event.copy' | transloco"
+            [ariaLabel]="'public_share.event.copy' | transloco"
+            (onClick)="copyLink()"
+          />
+        </div>
+      </div>
+    }
+  </div>
+
+  <ng-template #footer>
+    <p-button
+      type="button"
+      severity="secondary"
+      [text]="true"
+      [label]="'public_share.event.close' | transloco"
+      [disabled]="loading()"
+      (onClick)="onVisibleChange(false)"
+    />
+  </ng-template>
+</p-dialog>

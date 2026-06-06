@@ -1168,5 +1168,39 @@
       "unconfigured": "File storage is currently unavailable",
       "forbidden": "You are not allowed to perform this action"
     }
+  },
+  "public_share": {
+    "team": {
+      "section_title": "Public sharing",
+      "enabled_label": "Allow public sharing of sessions",
+      "enabled_help": "Managers will be able to share a session via a read-only public link.",
+      "show_distance": "Show distance",
+      "show_goal": "Show goal",
+      "show_rounds": "Show blocks & exercises"
+    },
+    "event": {
+      "action": "Share",
+      "dialog_title": "Share the session",
+      "toggle_label": "Session shared publicly",
+      "url_label": "Public link",
+      "copy": "Copy link",
+      "copied": "Link copied",
+      "copy_failed": "Failed to copy the link",
+      "enabled": "Session shared publicly",
+      "disabled": "Sharing disabled",
+      "sharing_disabled": "First enable public sharing in the team settings.",
+      "badge": "Public",
+      "close": "Close"
+    },
+    "public_page": {
+      "read_only": "Read-only public view",
+      "goal": "Goal",
+      "distance": "Distance",
+      "rounds": "Blocks",
+      "block": "Block",
+      "break": "Rest",
+      "error_title": "Link unavailable",
+      "error": "This share link is invalid or has been disabled."
+    }
   }
 }

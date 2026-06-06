@@ -1168,5 +1168,39 @@
       "unconfigured": "Bestandsopslag is momenteel niet beschikbaar",
       "forbidden": "U mag deze actie niet uitvoeren"
     }
+  },
+  "public_share": {
+    "team": {
+      "section_title": "Openbaar delen",
+      "enabled_label": "Openbaar delen van sessies toestaan",
+      "enabled_help": "Beheerders kunnen een sessie delen via een alleen-lezen openbare link.",
+      "show_distance": "Afstand tonen",
+      "show_goal": "Doel tonen",
+      "show_rounds": "Blokken & oefeningen tonen"
+    },
+    "event": {
+      "action": "Delen",
+      "dialog_title": "Sessie delen",
+      "toggle_label": "Sessie openbaar gedeeld",
+      "url_label": "Openbare link",
+      "copy": "Link kopiëren",
+      "copied": "Link gekopieerd",
+      "copy_failed": "Kopiëren van de link mislukt",
+      "enabled": "Sessie openbaar gedeeld",
+      "disabled": "Delen uitgeschakeld",
+      "sharing_disabled": "Schakel eerst openbaar delen in bij de teaminstellingen.",
+      "badge": "Openbaar",
+      "close": "Sluiten"
+    },
+    "public_page": {
+      "read_only": "Openbare weergave (alleen-lezen)",
+      "goal": "Doel",
+      "distance": "Afstand",
+      "rounds": "Blokken",
+      "block": "Blok",
+      "break": "Rust",
+      "error_title": "Link niet beschikbaar",
+      "error": "Deze deellink is ongeldig of is uitgeschakeld."
+    }
   }
 }

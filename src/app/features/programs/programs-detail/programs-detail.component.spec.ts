@@ -97,7 +97,7 @@ const eventA: Event = {
   date: '2026-06-05', hour_start: '18:00:00', hour_end: '19:30:00', total: 0,
   refer_program: { id: 7, name: 'Plan IA été' }, refer_program_id: 7,
   rounds: [], members: [], generated_by_ai: false, ai_response: '',
-  ai_generated_at: null, created_at: '', updated_at: '',
+  ai_generated_at: null, created_at: '', updated_at: '', is_public: false, public_token: null,
 };
 const eventB: Event = { ...eventA, id: 101, name: 'Séance B', date: '2026-06-12', hour_start: '17:00:00' };
 const eventOutsideMonth: Event = { ...eventA, id: 102, name: 'Séance juillet', date: '2026-07-15' };

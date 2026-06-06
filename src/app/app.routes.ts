@@ -85,6 +85,15 @@ export const routes: Routes = [
           ),
       },
       {
+        // Unauthenticated read-only shared session. Path matches the backend's
+        // public_url_path (/s/e/<token>).
+        path: 's/e/:token',
+        loadComponent: () =>
+          import('./features/public-session/public-session.component').then(
+            (m) => m.PublicSessionComponent,
+          ),
+      },
+      {
         path: 'auth/forgot-password',
         pathMatch: 'full',
         loadComponent: () =>

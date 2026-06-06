@@ -1168,5 +1168,39 @@
       "unconfigured": "Stockage des fichiers indisponible pour le moment",
       "forbidden": "Vous n’êtes pas autorisé à effectuer cette action"
     }
+  },
+  "public_share": {
+    "team": {
+      "section_title": "Partage public",
+      "enabled_label": "Autoriser le partage public des séances",
+      "enabled_help": "Les responsables pourront partager une séance via un lien public en lecture seule.",
+      "show_distance": "Afficher la distance",
+      "show_goal": "Afficher l’objectif",
+      "show_rounds": "Afficher les blocs & exercices"
+    },
+    "event": {
+      "action": "Partager",
+      "dialog_title": "Partager la séance",
+      "toggle_label": "Séance partagée publiquement",
+      "url_label": "Lien public",
+      "copy": "Copier le lien",
+      "copied": "Lien copié",
+      "copy_failed": "Échec de la copie du lien",
+      "enabled": "Séance partagée publiquement",
+      "disabled": "Partage désactivé",
+      "sharing_disabled": "Activez d’abord le partage public dans les réglages de l’équipe.",
+      "badge": "Public",
+      "close": "Fermer"
+    },
+    "public_page": {
+      "read_only": "Vue publique en lecture seule",
+      "goal": "Objectif",
+      "distance": "Distance",
+      "rounds": "Blocs",
+      "block": "Bloc",
+      "break": "Récup.",
+      "error_title": "Lien indisponible",
+      "error": "Ce lien de partage est invalide ou a été désactivé."
+    }
   }
 }

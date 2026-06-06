@@ -1168,5 +1168,39 @@
       "unconfigured": "Archiviazione dei file non disponibile al momento",
       "forbidden": "Non sei autorizzato a eseguire questa azione"
     }
+  },
+  "public_share": {
+    "team": {
+      "section_title": "Condivisione pubblica",
+      "enabled_label": "Consenti la condivisione pubblica delle sessioni",
+      "enabled_help": "I responsabili potranno condividere una sessione tramite un link pubblico in sola lettura.",
+      "show_distance": "Mostra la distanza",
+      "show_goal": "Mostra l’obiettivo",
+      "show_rounds": "Mostra blocchi ed esercizi"
+    },
+    "event": {
+      "action": "Condividi",
+      "dialog_title": "Condividi la sessione",
+      "toggle_label": "Sessione condivisa pubblicamente",
+      "url_label": "Link pubblico",
+      "copy": "Copia il link",
+      "copied": "Link copiato",
+      "copy_failed": "Copia del link non riuscita",
+      "enabled": "Sessione condivisa pubblicamente",
+      "disabled": "Condivisione disattivata",
+      "sharing_disabled": "Attiva prima la condivisione pubblica nelle impostazioni della squadra.",
+      "badge": "Pubblico",
+      "close": "Chiudi"
+    },
+    "public_page": {
+      "read_only": "Vista pubblica in sola lettura",
+      "goal": "Obiettivo",
+      "distance": "Distanza",
+      "rounds": "Blocchi",
+      "block": "Blocco",
+      "break": "Recupero",
+      "error_title": "Link non disponibile",
+      "error": "Questo link di condivisione non è valido o è stato disattivato."
+    }
   }
 }

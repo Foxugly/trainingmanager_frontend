@@ -40,6 +40,16 @@
       }
 
 
+      @if (e.is_public) {
+        <span
+          detailHeaderBadges
+          class="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800"
+        >
+          <i class="pi pi-share-alt text-xs" aria-hidden="true"></i>
+          {{ 'public_share.event.badge' | transloco }}
+        </span>
+      }
+
       <a detailHeaderActions [routerLink]="['/events', e.id, 'print']">
         <p-button
           icon="pi pi-print"
@@ -76,6 +86,20 @@
           tooltipPosition="bottom"
           [ariaLabel]="'events.duplicate.action' | transloco"
           (onClick)="openDuplicate()"
+        />
+      }
+      @if (canManage()) {
+        <p-button
+          detailHeaderActions
+          icon="pi pi-share-alt"
+          severity="secondary"
+          [outlined]="true"
+          [rounded]="true"
+          [loading]="sharing()"
+          [pTooltip]="'public_share.event.action' | transloco"
+          tooltipPosition="bottom"
+          [ariaLabel]="'public_share.event.action' | transloco"
+          (onClick)="openShare()"
         />
       }
       @if (canRegenerate()) {
@@ -724,6 +748,14 @@
     [sourceDate]="e.date ?? null"
     [loading]="duplicating()"
     (confirmed)="onDuplicateConfirmed($event)"
+  />
+
+  <app-share-event-dialog
+    [(visible)]="showShareDialog"
+    [isPublic]="e.is_public"
+    [publicToken]="e.public_token"
+    [loading]="sharing()"
+    (toggled)="onShareToggled($event)"
   />
 }
 
