@@ -398,7 +398,9 @@
       "logo_remove": "Quitar",
       "logo_too_large": "Imagen demasiado grande, inténtalo de nuevo",
       "roti_enabled": "Activar ROTI (dificultad percibida)",
-      "roti_enabled_help": "Permite a los atletas valorar lo dura que resultó cada sesión (de 1 a 5)."
+      "roti_enabled_help": "Permite a los atletas valorar lo dura que resultó cada sesión (de 1 a 5).",
+      "weekly_recap_enabled": "Activar el resumen semanal",
+      "weekly_recap_enabled_help": "Enviar un resumen semanal a los entrenadores del equipo"
     },
     "member_dialog": {
       "title": "Añadir un miembro",
@@ -568,7 +570,9 @@
     },
     "language_switcher": {
       "aria": "Elegir idioma"
-    }
+    },
+    "edit": "Editar",
+    "delete": "Eliminar"
   },
   "dashboard": {
     "greeting": "Hola {{name}} 👋",
@@ -858,7 +862,11 @@
       "current_password_invalid": "La contraseña actual es incorrecta.",
       "password_unchanged": "La nueva contraseña debe ser diferente.",
       "owns_teams": "Transfiere o elimina tus equipos antes de eliminar tu cuenta."
-    }
+    },
+    "tab_profile": "Perfil",
+    "tab_notifications": "Notificaciones",
+    "weekly_recap_opt_in": "Resumen semanal",
+    "weekly_recap_opt_in_help": "Recibir el resumen semanal de los equipos que gestionas"
   },
   "admin": {
     "title": "Administración",
@@ -1017,5 +1025,20 @@
     "export_pdf": "PDF",
     "print_title": "Estadísticas",
     "select_team": "Equipo"
+  },
+  "notes": {
+    "title": "Notas",
+    "add": "Añadir una nota",
+    "visible_to_athlete": "Visible para el atleta",
+    "visible_badge": "Visible",
+    "private_badge": "Privada",
+    "empty": "Sin notas",
+    "my_title": "Mis notas",
+    "delete_confirm": "¿Eliminar esta nota?",
+    "saved": "Nota guardada",
+    "deleted": "Nota eliminada",
+    "errors": {
+      "unknown": "Algo salió mal."
+    }
   }
 }

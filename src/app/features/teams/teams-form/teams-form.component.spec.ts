@@ -353,4 +353,19 @@ describe('TeamsFormComponent', () => {
       expect.objectContaining({ logo: 'data:image/png;base64,X', roti_enabled: true }),
     );
   });
+
+  it('seeds weekly_recap_enabled from the loaded team on edit', async () => {
+    await setup('5', ownerUser, { ...team, weekly_recap_enabled: true });
+    expect(access(component).form.getRawValue()).toMatchObject({ weekly_recap_enabled: true });
+  });
+
+  it('update payload includes weekly_recap_enabled', async () => {
+    await setup('5');
+    access(component).form.patchValue({ weekly_recap_enabled: true });
+    access(component).submit();
+    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(
+      5,
+      expect.objectContaining({ weekly_recap_enabled: true }),
+    );
+  });
 });

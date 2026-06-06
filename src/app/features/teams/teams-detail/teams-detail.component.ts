@@ -41,6 +41,7 @@ import { MemberMembershipService } from '../member-membership.service';
 import { TeamRole } from '../teams-list/teams-list.component';
 import { ProgramsListComponent } from '../../programs/programs-list/programs-list.component';
 import { TeamStatsComponent } from '../team-stats/team-stats.component';
+import { MemberNotesComponent } from '../member-notes/member-notes.component';
 import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-header.component';
 import {
   ActiveToggleComponent,
@@ -76,6 +77,7 @@ interface FieldErrors {
     TranslocoPipe,
     ProgramsListComponent,
     TeamStatsComponent,
+    MemberNotesComponent,
     DetailHeaderComponent,
     ActiveToggleComponent,
   ],
@@ -226,6 +228,22 @@ export class TeamsDetailComponent implements OnInit {
 
   /** Drill-down target on the manager Statistiques tab; null = team aggregate. */
   protected readonly selectedStatsMember = signal<number | null>(null);
+
+  // --- Coach notes dialog (per member) ---
+  protected readonly notesDialogOpen = signal(false);
+  protected readonly notesMembership = signal<TeamMembership | null>(null);
+
+  protected openNotes(mb: TeamMembership): void {
+    this.notesMembership.set(mb);
+    this.notesDialogOpen.set(true);
+  }
+
+  protected onNotesDialogVisibleChange(value: boolean): void {
+    this.notesDialogOpen.set(value);
+    if (!value) {
+      this.notesMembership.set(null);
+    }
+  }
 
   protected readonly roleClasses: Record<TeamRole, string> = {
     owner: 'text-xs font-semibold px-2 py-1 rounded bg-blue-100 text-blue-800',

@@ -132,6 +132,7 @@ export class TeamsFormComponent implements OnInit {
     is_public: [false],
     logo: this.fb.nonNullable.control<string>(''),
     roti_enabled: [false],
+    weekly_recap_enabled: [false],
     managers_ids: this.fb.nonNullable.control<number[]>([]),
     auto_accept_policy: [false],
     notify_managers_on_join_request: [true],
@@ -189,6 +190,7 @@ export class TeamsFormComponent implements OnInit {
               is_public: t.is_public ?? false,
               logo: t.logo ?? '',
               roti_enabled: t.roti_enabled ?? false,
+              weekly_recap_enabled: t.weekly_recap_enabled ?? false,
               managers_ids: (t.managers ?? []).map((m) => m.id),
               auto_accept_policy: t.join_request_policy === JoinRequestPolicyEnum.Auto,
               notify_managers_on_join_request: t.notify_managers_on_join_request ?? true,
@@ -342,6 +344,7 @@ export class TeamsFormComponent implements OnInit {
       is_public: value.is_public,
       logo: value.logo,
       roti_enabled: value.roti_enabled,
+      weekly_recap_enabled: value.weekly_recap_enabled,
       managers_ids: value.managers_ids,
       attendance_statuses: this.statusesTarget().map((s) => s.id),
       join_request_policy: value.auto_accept_policy

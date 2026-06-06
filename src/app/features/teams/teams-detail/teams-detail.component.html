@@ -190,6 +190,16 @@
                   | transloco: { date: (mb.joined_at | date: 'mediumDate') }
               }}
             </div>
+            @if (isAthleteMember() && myMemberId() !== null && teamId() !== null) {
+              <section class="mb-6">
+                <h3 class="mb-2 text-base font-semibold">{{ 'notes.my_title' | transloco }}</h3>
+                <app-member-notes
+                  [teamId]="teamId()!"
+                  [memberId]="myMemberId()!"
+                  [canEdit]="false"
+                />
+              </section>
+            }
           } @else if (myPendingRequest()) {
             <div class="mb-4 flex flex-wrap items-center gap-3">
               <span
@@ -262,6 +272,16 @@
                     {{ mb.joined_at | date: 'mediumDate' }}
                   </span>
                   @if (canManage()) {
+                    <p-button
+                      icon="pi pi-file-edit"
+                      severity="secondary"
+                      [text]="true"
+                      [rounded]="true"
+                      size="small"
+                      [pTooltip]="'notes.title' | transloco"
+                      [ariaLabel]="'notes.title' | transloco"
+                      (onClick)="openNotes(mb)"
+                    />
                     <p-button
                       icon="pi pi-trash"
                       severity="danger"
@@ -425,6 +445,26 @@
     </p-tabs>
   }
 </div>
+
+<!-- Coach notes dialog (per member) -->
+<p-dialog
+  [visible]="notesDialogOpen()"
+  (visibleChange)="onNotesDialogVisibleChange($event)"
+  [modal]="true"
+  [dismissableMask]="true"
+  [style]="{ width: '40rem' }"
+  [header]="
+    (notesMembership()?.member_fullname || notesMembership()?.member_username || '') +
+    ' — ' +
+    ('notes.title' | transloco)
+  "
+>
+  @if (notesDialogOpen() && notesMembership(); as mb) {
+    @if (teamId() !== null) {
+      <app-member-notes [teamId]="teamId()!" [memberId]="mb.member" [canEdit]="true" />
+    }
+  }
+</p-dialog>
 
 <p-dialog
   [visible]="showAddMemberDialog()"

@@ -10,6 +10,8 @@ import { Dialog } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
 import { Password } from 'primeng/password';
 import { Select } from 'primeng/select';
+import { Tabs, TabList, Tab, TabPanels, TabPanel } from 'primeng/tabs';
+import { ToggleSwitch } from 'primeng/toggleswitch';
 import { AuthService as AuthApi } from '../../api/api/auth.service';
 import { MeService } from '../../api/api/me.service';
 import { AccountDelete } from '../../api/model/account-delete';
@@ -29,6 +31,7 @@ interface ProfileFormValue {
   first_name: string;
   last_name: string;
   language: LanguageCode;
+  weekly_recap_opt_in: boolean;
 }
 
 @Component({
@@ -41,6 +44,12 @@ interface ProfileFormValue {
     Button,
     Dialog,
     Password,
+    Tabs,
+    TabList,
+    Tab,
+    TabPanels,
+    TabPanel,
+    ToggleSwitch,
     PageHeaderComponent,
     MetaFieldComponent,
     FormFooterComponent,
@@ -70,6 +79,7 @@ export class ProfileComponent implements OnInit {
     first_name: ['', Validators.required],
     last_name: ['', Validators.required],
     language: ['fr' as LanguageCode, Validators.required],
+    weekly_recap_opt_in: [true],
   });
 
   // --- Change-password dialog ---
@@ -107,6 +117,7 @@ export class ProfileComponent implements OnInit {
       first_name: me.first_name ?? '',
       last_name: me.last_name ?? '',
       language: (me.language ?? 'fr') as LanguageCode,
+      weekly_recap_opt_in: me.weekly_recap_opt_in ?? true,
     });
   }
 
@@ -126,6 +137,7 @@ export class ProfileComponent implements OnInit {
       first_name: value.first_name,
       last_name: value.last_name,
       language: value.language as LanguageEnum,
+      weekly_recap_opt_in: value.weekly_recap_opt_in,
     };
 
     this.meService.mePartialUpdate(payload).subscribe({

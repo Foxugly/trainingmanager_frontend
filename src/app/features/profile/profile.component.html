@@ -7,30 +7,74 @@
   @if (user(); as me) {
     <div class="card form-card">
       <form [formGroup]="form">
-        <div class="meta-grid">
-          <app-meta-field [label]="'profile.username' | transloco">
-            <span>{{ me.username }}</span>
-          </app-meta-field>
-          <app-meta-field [label]="'profile.email' | transloco"
-            [tooltip]="'profile.email_readonly_help' | transloco">
-            <span>{{ me.email }}</span>
-          </app-meta-field>
-          <app-meta-field [label]="'profile.first_name' | transloco" for="first_name"
-            [error]="fieldError('first_name')">
-            <input pInputText id="first_name" formControlName="first_name" autocomplete="given-name" />
-          </app-meta-field>
-          <app-meta-field [label]="'profile.last_name' | transloco" for="last_name"
-            [error]="fieldError('last_name')">
-            <input pInputText id="last_name" formControlName="last_name" autocomplete="family-name" />
-          </app-meta-field>
-          <app-meta-field [full]="true" [label]="'profile.language' | transloco" for="language">
-            <p-select inputId="language" formControlName="language" [options]="languages"
-              optionLabel="nativeName" optionValue="code" />
-          </app-meta-field>
-          <app-meta-field [label]="'profile.date_joined' | transloco">
-            <span>{{ me.date_joined | date: 'medium' }}</span>
-          </app-meta-field>
-        </div>
+        <p-tabs value="profile">
+          <p-tablist>
+            <p-tab value="profile">
+              <i class="pi pi-user tab-icon"></i>{{ 'profile.tab_profile' | transloco }}
+            </p-tab>
+            <p-tab value="notifications">
+              <i class="pi pi-bell tab-icon"></i>{{ 'profile.tab_notifications' | transloco }}
+            </p-tab>
+          </p-tablist>
+          <p-tabpanels>
+            <p-tabpanel value="profile">
+              <div class="meta-grid">
+                <app-meta-field [label]="'profile.username' | transloco">
+                  <span>{{ me.username }}</span>
+                </app-meta-field>
+                <app-meta-field [label]="'profile.email' | transloco"
+                  [tooltip]="'profile.email_readonly_help' | transloco">
+                  <span>{{ me.email }}</span>
+                </app-meta-field>
+                <app-meta-field [label]="'profile.first_name' | transloco" for="first_name"
+                  [error]="fieldError('first_name')">
+                  <input pInputText id="first_name" formControlName="first_name" autocomplete="given-name" />
+                </app-meta-field>
+                <app-meta-field [label]="'profile.last_name' | transloco" for="last_name"
+                  [error]="fieldError('last_name')">
+                  <input pInputText id="last_name" formControlName="last_name" autocomplete="family-name" />
+                </app-meta-field>
+                <app-meta-field [full]="true" [label]="'profile.language' | transloco" for="language">
+                  <p-select inputId="language" formControlName="language" [options]="languages"
+                    optionLabel="nativeName" optionValue="code" />
+                </app-meta-field>
+                <app-meta-field [label]="'profile.date_joined' | transloco">
+                  <span>{{ me.date_joined | date: 'medium' }}</span>
+                </app-meta-field>
+              </div>
+
+              <section class="mt-8 rounded-xl border border-red-200 bg-red-50 p-4">
+                <h2 class="text-sm font-semibold uppercase tracking-wide text-red-700 mb-1">
+                  {{ 'profile.danger_zone' | transloco }}
+                </h2>
+                <div class="flex items-center justify-between gap-3 flex-wrap">
+                  <div>
+                    <strong class="text-red-900">{{ 'profile.delete_account_title' | transloco }}</strong>
+                    <p class="text-sm text-red-800">{{ 'profile.delete_account_help' | transloco }}</p>
+                  </div>
+                  <p-button severity="danger" icon="pi pi-trash"
+                    [label]="'profile.delete_account_cta' | transloco" (onClick)="openDeleteDialog()" />
+                </div>
+              </section>
+            </p-tabpanel>
+
+            <p-tabpanel value="notifications">
+              <div class="meta-grid">
+                <app-meta-field
+                  [full]="true"
+                  for="weekly_recap_opt_in"
+                  [label]="'profile.weekly_recap_opt_in' | transloco"
+                  [tooltip]="'profile.weekly_recap_opt_in_help' | transloco"
+                >
+                  <p-toggleSwitch
+                    formControlName="weekly_recap_opt_in"
+                    inputId="weekly_recap_opt_in"
+                  />
+                </app-meta-field>
+              </div>
+            </p-tabpanel>
+          </p-tabpanels>
+        </p-tabs>
       </form>
 
       <div class="footer-actions">
@@ -41,20 +85,6 @@
           [loading]="loading()" [disabled]="form.invalid" (onClick)="submit()" />
       </div>
     </div>
-
-    <section class="mt-8 rounded-xl border border-red-200 bg-red-50 p-4">
-      <h2 class="text-sm font-semibold uppercase tracking-wide text-red-700 mb-1">
-        {{ 'profile.danger_zone' | transloco }}
-      </h2>
-      <div class="flex items-center justify-between gap-3 flex-wrap">
-        <div>
-          <strong class="text-red-900">{{ 'profile.delete_account_title' | transloco }}</strong>
-          <p class="text-sm text-red-800">{{ 'profile.delete_account_help' | transloco }}</p>
-        </div>
-        <p-button severity="danger" icon="pi pi-trash"
-          [label]="'profile.delete_account_cta' | transloco" (onClick)="openDeleteDialog()" />
-      </div>
-    </section>
   }
 
   <!-- Change-password dialog -->

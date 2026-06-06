@@ -398,7 +398,9 @@
       "logo_remove": "Verwijderen",
       "logo_too_large": "Afbeelding te groot, probeer opnieuw",
       "roti_enabled": "ROTI inschakelen (ervaren moeilijkheid)",
-      "roti_enabled_help": "Laat atleten beoordelen hoe zwaar elke sessie aanvoelde (1 tot 5)."
+      "roti_enabled_help": "Laat atleten beoordelen hoe zwaar elke sessie aanvoelde (1 tot 5).",
+      "weekly_recap_enabled": "Wekelijks overzicht inschakelen",
+      "weekly_recap_enabled_help": "Stuur een wekelijks overzicht naar de coaches van het team"
     },
     "member_dialog": {
       "title": "Lid toevoegen",
@@ -568,7 +570,9 @@
     },
     "language_switcher": {
       "aria": "Taal kiezen"
-    }
+    },
+    "edit": "Bewerken",
+    "delete": "Verwijderen"
   },
   "dashboard": {
     "greeting": "Hallo {{name}} 👋",
@@ -858,7 +862,11 @@
       "current_password_invalid": "Huidig wachtwoord is onjuist.",
       "password_unchanged": "Het nieuwe wachtwoord moet anders zijn.",
       "owns_teams": "Draag uw teams over of verwijder ze voordat u uw account verwijdert."
-    }
+    },
+    "tab_profile": "Profiel",
+    "tab_notifications": "Meldingen",
+    "weekly_recap_opt_in": "Wekelijks overzicht",
+    "weekly_recap_opt_in_help": "Ontvang het wekelijkse overzicht van de teams die je beheert"
   },
   "admin": {
     "title": "Beheer",
@@ -1017,5 +1025,20 @@
     "export_pdf": "PDF",
     "print_title": "Statistieken",
     "select_team": "Team"
+  },
+  "notes": {
+    "title": "Notities",
+    "add": "Notitie toevoegen",
+    "visible_to_athlete": "Zichtbaar voor atleet",
+    "visible_badge": "Zichtbaar",
+    "private_badge": "Privé",
+    "empty": "Geen notities",
+    "my_title": "Mijn notities",
+    "delete_confirm": "Deze notitie verwijderen?",
+    "saved": "Notitie opgeslagen",
+    "deleted": "Notitie verwijderd",
+    "errors": {
+      "unknown": "Er is iets misgegaan."
+    }
   }
 }

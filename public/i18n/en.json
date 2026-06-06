@@ -398,7 +398,9 @@
       "logo_remove": "Remove",
       "logo_too_large": "Image too large, please try again",
       "roti_enabled": "Enable ROTI (perceived difficulty)",
-      "roti_enabled_help": "Lets athletes rate how hard each session felt (1 to 5)."
+      "roti_enabled_help": "Lets athletes rate how hard each session felt (1 to 5).",
+      "weekly_recap_enabled": "Enable weekly recap",
+      "weekly_recap_enabled_help": "Send a weekly recap to the team’s coaches"
     },
     "member_dialog": {
       "title": "Add a member",
@@ -568,7 +570,9 @@
     },
     "language_switcher": {
       "aria": "Choose language"
-    }
+    },
+    "edit": "Edit",
+    "delete": "Delete"
   },
   "dashboard": {
     "greeting": "Hello {{name}} 👋",
@@ -858,7 +862,11 @@
       "current_password_invalid": "Current password is incorrect.",
       "password_unchanged": "The new password must be different.",
       "owns_teams": "Transfer or delete your teams before deleting your account."
-    }
+    },
+    "tab_profile": "Profile",
+    "tab_notifications": "Notifications",
+    "weekly_recap_opt_in": "Weekly recap",
+    "weekly_recap_opt_in_help": "Receive the weekly recap for the teams you manage"
   },
   "admin": {
     "title": "Administration",
@@ -1017,5 +1025,20 @@
     "export_pdf": "PDF",
     "print_title": "Statistics",
     "select_team": "Team"
+  },
+  "notes": {
+    "title": "Notes",
+    "add": "Add a note",
+    "visible_to_athlete": "Visible to athlete",
+    "visible_badge": "Visible",
+    "private_badge": "Private",
+    "empty": "No notes",
+    "my_title": "My notes",
+    "delete_confirm": "Delete this note?",
+    "saved": "Note saved",
+    "deleted": "Note deleted",
+    "errors": {
+      "unknown": "Something went wrong."
+    }
   }
 }

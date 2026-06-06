@@ -238,6 +238,18 @@
                     >
                       <p-toggleSwitch formControlName="roti_enabled" inputId="roti_enabled" />
                     </app-meta-field>
+
+                    <app-meta-field
+                      [full]="true"
+                      for="weekly_recap_enabled"
+                      [label]="'teams.form.weekly_recap_enabled' | transloco"
+                      [tooltip]="'teams.form.weekly_recap_enabled_help' | transloco"
+                    >
+                      <p-toggleSwitch
+                        formControlName="weekly_recap_enabled"
+                        inputId="weekly_recap_enabled"
+                      />
+                    </app-meta-field>
                   </div>
                 </div>
               </p-tabpanel>

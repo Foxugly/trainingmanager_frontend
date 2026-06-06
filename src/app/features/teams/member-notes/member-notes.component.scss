@@ -1,0 +1,20 @@
+:host {
+  display: block;
+}
+
+.note-content {
+  word-break: break-word;
+
+  :where(p, ul, ol) {
+    margin: 0 0 0.5rem;
+  }
+
+  :where(ul, ol) {
+    padding-left: 1.25rem;
+  }
+
+  :where(a) {
+    color: var(--p-primary-color);
+    text-decoration: underline;
+  }
+}

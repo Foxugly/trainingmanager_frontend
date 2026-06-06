@@ -25,6 +25,7 @@ const baseUser: Me = {
   date_joined: '2026-01-01T00:00:00Z',
   is_staff: false,
   is_superuser: false,
+  weekly_recap_opt_in: true,
   team_quota: { used: 0, max: 0, can_create: false },
 };
 
@@ -32,8 +33,20 @@ interface ProtectedFields {
   form: {
     invalid: boolean;
     valid: boolean;
-    value: { first_name: string; last_name: string; language: string };
-    patchValue: (v: Partial<{ first_name: string; last_name: string; language: string }>) => void;
+    value: {
+      first_name: string;
+      last_name: string;
+      language: string;
+      weekly_recap_opt_in: boolean;
+    };
+    patchValue: (
+      v: Partial<{
+        first_name: string;
+        last_name: string;
+        language: string;
+        weekly_recap_opt_in: boolean;
+      }>,
+    ) => void;
   };
   loading(): boolean;
   fieldErrors(): { [k: string]: string[] } | null;
@@ -134,6 +147,7 @@ describe('ProfileComponent', () => {
       first_name: 'Alice',
       last_name: 'Anderson',
       language: 'fr',
+      weekly_recap_opt_in: true,
     });
     expect(access(component).form.valid).toBe(true);
   });
@@ -154,6 +168,7 @@ describe('ProfileComponent', () => {
       first_name: 'Alicia',
       last_name: 'Anderson',
       language: 'fr',
+      weekly_recap_opt_in: true,
     });
     expect(authMock.setCurrentUser).toHaveBeenCalled();
     expect(messageService.add).toHaveBeenCalledWith(
@@ -169,6 +184,21 @@ describe('ProfileComponent', () => {
     access(component).submit();
 
     expect(langMock.applyToTranslocoOnly).toHaveBeenCalledWith('it');
+  });
+
+  it('hydrates weekly_recap_opt_in from the user (opt-out model defaults to true)', () => {
+    expect(access(component).form.value.weekly_recap_opt_in).toBe(true);
+  });
+
+  it('submit() persists the notifications toggle (weekly_recap_opt_in) via mePartialUpdate', () => {
+    meMock.mePartialUpdate.mockReturnValue(of({ ...baseUser, weekly_recap_opt_in: false }));
+    access(component).form.patchValue({ weekly_recap_opt_in: false });
+
+    access(component).submit();
+
+    expect(meMock.mePartialUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({ weekly_recap_opt_in: false }),
+    );
   });
 
   it('submit() maps field-level validation errors from DRF into fieldErrors', () => {

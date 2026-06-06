@@ -127,6 +127,10 @@ interface ProtectedFields {
   myMemberId(): number | null;
   isAthleteMember(): boolean;
   selectedStatsMember(): number | null;
+  notesDialogOpen(): boolean;
+  notesMembership(): TeamMembership | null;
+  openNotes(mb: TeamMembership): void;
+  onNotesDialogVisibleChange(value: boolean): void;
   joinMessage(): string;
   joinError(): string | null;
   showJoinDialog(): boolean;
@@ -295,6 +299,19 @@ describe('TeamsDetailComponent', () => {
     );
     expect(serviceMock.teamsMembershipsList).toHaveBeenCalledTimes(2);
     expect(access(component).showAddMemberDialog()).toBe(false);
+  });
+
+  it('openNotes opens the per-member notes dialog scoped to that membership', () => {
+    access(component).openNotes(mb1);
+    expect(access(component).notesDialogOpen()).toBe(true);
+    expect(access(component).notesMembership()?.member).toBe(mb1.member);
+  });
+
+  it('onNotesDialogVisibleChange(false) closes the dialog and clears the membership', () => {
+    access(component).openNotes(mb1);
+    access(component).onNotesDialogVisibleChange(false);
+    expect(access(component).notesDialogOpen()).toBe(false);
+    expect(access(component).notesMembership()).toBeNull();
   });
 
   it('confirmRemoveMember calls teamsMembershipsDestroy on accept', () => {

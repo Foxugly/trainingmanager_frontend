@@ -1,0 +1,106 @@
+<div class="member-notes flex flex-col gap-4">
+  @if (canEdit()) {
+    <!-- Add / edit note (coach only) -->
+    <form [formGroup]="form" class="flex flex-col gap-3 rounded-lg border border-gray-200 p-3">
+      <h3 class="text-sm font-semibold">
+        @if (editingId() !== null) {
+          {{ 'common.edit' | transloco }}
+        } @else {
+          {{ 'notes.add' | transloco }}
+        }
+      </h3>
+      <p-editor formControlName="content" [style]="{ height: '10rem' }" />
+      <app-meta-field
+        [label]="'notes.visible_to_athlete' | transloco"
+        for="note_visible_to_athlete"
+      >
+        <p-toggleSwitch
+          formControlName="visible_to_athlete"
+          inputId="note_visible_to_athlete"
+        />
+      </app-meta-field>
+      <div class="flex items-center justify-end gap-2">
+        @if (editingId() !== null) {
+          <p-button
+            type="button"
+            severity="secondary"
+            [text]="true"
+            [label]="'common.cancel' | transloco"
+            (onClick)="cancelEdit()"
+          />
+        }
+        <p-button
+          type="button"
+          icon="pi pi-save"
+          [label]="'common.save' | transloco"
+          [loading]="saving()"
+          [disabled]="!form.controls.content.value"
+          (onClick)="submit()"
+        />
+      </div>
+    </form>
+  }
+
+  <!-- Notes list -->
+  @if (loading()) {
+    <p class="text-sm text-gray-500">{{ 'common.loading' | transloco }}…</p>
+  } @else if (isEmpty()) {
+    <p class="text-sm text-gray-500">{{ 'notes.empty' | transloco }}</p>
+  } @else {
+    <ul class="flex flex-col gap-3">
+      @for (note of notes(); track note.id) {
+        <li class="rounded-lg border border-gray-200 p-3">
+          <div class="mb-2 flex flex-wrap items-center gap-2 text-xs text-gray-500">
+            <span class="font-medium text-gray-700">{{ note.author_username || '—' }}</span>
+            <span>·</span>
+            <span>{{ note.created_at | date: 'medium' }}</span>
+            @if (note.visible_to_athlete) {
+              <p-tag
+                severity="success"
+                icon="pi pi-eye"
+                [value]="'notes.visible_badge' | transloco"
+              />
+            } @else {
+              <p-tag
+                severity="secondary"
+                icon="pi pi-lock"
+                [value]="'notes.private_badge' | transloco"
+              />
+            }
+            @if (canEdit()) {
+              <span class="ml-auto flex items-center gap-1">
+                <p-button
+                  type="button"
+                  icon="pi pi-pencil"
+                  severity="secondary"
+                  [text]="true"
+                  [rounded]="true"
+                  size="small"
+                  [pTooltip]="'common.edit' | transloco"
+                  [ariaLabel]="'common.edit' | transloco"
+                  (onClick)="startEdit(note)"
+                />
+                <p-button
+                  type="button"
+                  icon="pi pi-trash"
+                  severity="danger"
+                  [text]="true"
+                  [rounded]="true"
+                  size="small"
+                  [pTooltip]="'common.delete' | transloco"
+                  [ariaLabel]="'common.delete' | transloco"
+                  (onClick)="confirmDelete(note)"
+                />
+              </span>
+            }
+          </div>
+          <div class="note-content text-sm" [innerHTML]="note.content"></div>
+        </li>
+      }
+    </ul>
+  }
+
+  @if (canEdit()) {
+    <p-confirmDialog />
+  }
+</div>
