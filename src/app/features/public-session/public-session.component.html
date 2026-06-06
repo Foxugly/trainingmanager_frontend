@@ -59,7 +59,7 @@
               <dt class="text-xs font-semibold uppercase tracking-wide text-gray-400">
                 {{ 'events.fields.equipment' | transloco }}
               </dt>
-              <dd class="mt-0.5 whitespace-pre-line text-gray-800">{{ s.equipment }}</dd>
+              <dd class="mt-0.5 rich-text text-gray-800" [innerHTML]="s.equipment"></dd>
             </div>
           }
           @if (s.goal) {
@@ -67,7 +67,7 @@
               <dt class="text-xs font-semibold uppercase tracking-wide text-gray-400">
                 {{ 'public_share.public_page.goal' | transloco }}
               </dt>
-              <dd class="mt-0.5 whitespace-pre-line italic text-gray-800">{{ s.goal }}</dd>
+              <dd class="mt-0.5 rich-text italic text-gray-800" [innerHTML]="s.goal"></dd>
             </div>
           }
           @if (s.total != null) {

@@ -222,7 +222,10 @@
       "vis_distance": "Distance",
       "vis_goal": "Goal",
       "vis_rounds": "Session detail",
-      "vis_help": "Inherited from the team settings; overridable for this session."
+      "vis_help": "Inherited from the team settings; overridable for this session.",
+      "section_planning": "Planning",
+      "section_visibility": "Visibility",
+      "location_placeholder": "Pool, track or address…"
     },
     "actions": {
       "edit": "Edit",

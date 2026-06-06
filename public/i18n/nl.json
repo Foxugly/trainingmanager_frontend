@@ -222,7 +222,10 @@
       "vis_distance": "Afstand",
       "vis_goal": "Doel",
       "vis_rounds": "Sessiedetails",
-      "vis_help": "Overgenomen van de teaminstellingen; aanpasbaar voor deze sessie."
+      "vis_help": "Overgenomen van de teaminstellingen; aanpasbaar voor deze sessie.",
+      "section_planning": "Planning",
+      "section_visibility": "Zichtbaarheid",
+      "location_placeholder": "Zwembad, baan of adres…"
     },
     "actions": {
       "edit": "Bewerken",

@@ -100,6 +100,9 @@ interface ProtectedFields {
   cancel(): void;
   submit(): void;
   onVisChanged(): void;
+  pools(): string[];
+  poolSuggestions(): string[];
+  filterPools(event: { query: string }): void;
 }
 
 describe('EventsFormComponent', () => {
@@ -113,6 +116,7 @@ describe('EventsFormComponent', () => {
   let teamsMock: {
     teamsList: ReturnType<typeof vi.fn>;
     teamsRetrieve: ReturnType<typeof vi.fn>;
+    teamsPoolsRetrieve: ReturnType<typeof vi.fn>;
   };
   let programsMock: { programsList: ReturnType<typeof vi.fn> };
   let routeIdParam: string | null;
@@ -140,6 +144,7 @@ describe('EventsFormComponent', () => {
     teamsMock = {
       teamsList: vi.fn().mockReturnValue(of({ count: 1, results: [team] })),
       teamsRetrieve: vi.fn().mockReturnValue(of(team)),
+      teamsPoolsRetrieve: vi.fn().mockReturnValue(of({ pools: ['Olympic pool', 'Training pool'] })),
     };
     programsMock = {
       programsList: vi.fn().mockReturnValue(of({ count: 1, results: [program] })),
@@ -376,6 +381,35 @@ describe('EventsFormComponent', () => {
     access(component).submit();
     expect(eventsMock.eventsPartialUpdate.mock.calls[0][1]).toMatchObject({
       vis_goal: VisibilityMode.After,
+    });
+  });
+
+  it('loads the team pools for the selected program (location autocomplete)', async () => {
+    access(component).form.patchValue({ refer_program_id: 4 });
+    await new Promise((r) => setTimeout(r, 0));
+    expect(teamsMock.teamsPoolsRetrieve).toHaveBeenCalledWith(4);
+    expect(access(component).pools()).toEqual(['Olympic pool', 'Training pool']);
+  });
+
+  it('filterPools narrows the suggestions by the typed query', async () => {
+    access(component).form.patchValue({ refer_program_id: 4 });
+    await new Promise((r) => setTimeout(r, 0));
+    access(component).filterPools({ query: 'oly' });
+    expect(access(component).poolSuggestions()).toEqual(['Olympic pool']);
+    access(component).filterPools({ query: '' });
+    expect(access(component).poolSuggestions()).toEqual(['Olympic pool', 'Training pool']);
+  });
+
+  it('keeps a free-typed location not present in the pool list', async () => {
+    access(component).form.patchValue({
+      name: 'Free pool session',
+      refer_program_id: 4,
+      date: new Date(2026, 4, 5),
+      location: 'Brand new lake',
+    });
+    access(component).submit();
+    expect(eventsMock.eventsCreate.mock.calls[0][0]).toMatchObject({
+      location: 'Brand new lake',
     });
   });
 });

@@ -19,14 +19,14 @@ import {
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { MessageService } from 'primeng/api';
+import { AutoComplete, AutoCompleteCompleteEvent } from 'primeng/autocomplete';
 import { Button } from 'primeng/button';
 import { ColorPicker } from 'primeng/colorpicker';
 import { DatePicker } from 'primeng/datepicker';
+import { Editor } from 'primeng/editor';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
-import { Textarea } from 'primeng/textarea';
-import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { firstValueFrom } from 'rxjs';
 import { EventsService } from '../../../api/api/events.service';
 import { ProgramsService } from '../../../api/api/programs.service';
@@ -88,15 +88,11 @@ function timeRangeValidator(group: AbstractControl): ValidationErrors | null {
     InputText,
     InputNumber,
     Select,
-    Textarea,
+    AutoComplete,
+    Editor,
     DatePicker,
     ColorPicker,
     Button,
-    Tabs,
-    TabList,
-    Tab,
-    TabPanels,
-    TabPanel,
     PageHeaderComponent,
     MetaFieldComponent,
     FormFooterComponent,
@@ -123,6 +119,13 @@ export class EventsFormComponent implements OnInit {
   protected readonly availablePrograms = signal<Program[]>([]);
   protected readonly fieldErrors = signal<FieldErrors | null>(null);
 
+  /** Known pools ("piscines") for the resolved team, for the location autocomplete. */
+  protected readonly pools = signal<string[]>([]);
+  /** Filtered suggestions shown in the p-autoComplete dropdown. */
+  protected readonly poolSuggestions = signal<string[]>([]);
+  /** Team id the pools were last loaded for (avoids redundant fetches). */
+  private poolsLoadedForTeamId: number | null = null;
+
   protected readonly isEditMode = computed(() => this.eventId() !== null);
 
   /** Visibility-mode select options, re-translated on language change. */
@@ -140,7 +143,9 @@ export class EventsFormComponent implements OnInit {
     {
       name: ['', [Validators.required, Validators.maxLength(100)]],
       refer_program_id: this.fb.nonNullable.control<number | null>(null, [Validators.required]),
-      goal: ['', [Validators.maxLength(100)]],
+      // goal & equipment now hold rich-text HTML (sanitized server-side); no
+      // client length cap on the HTML payload.
+      goal: [''],
       location: ['', [Validators.maxLength(255)]],
       equipment: [''],
       date: this.fb.nonNullable.control<Date | null>(null, [Validators.required]),
@@ -172,7 +177,10 @@ export class EventsFormComponent implements OnInit {
       // defaults — unless the user has already overridden them.
       this.form.controls.refer_program_id.valueChanges
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((pid) => this.prefillVisFromTeam(pid));
+        .subscribe((pid) => {
+          this.prefillVisFromTeam(pid);
+          this.loadPoolsForProgram(pid);
+        });
 
       const programParam = this.route.snapshot.queryParamMap.get('program');
       if (programParam) {
@@ -181,6 +189,7 @@ export class EventsFormComponent implements OnInit {
           this.form.patchValue({ refer_program_id: pid });
           this.form.controls.refer_program_id.disable();
           this.prefillVisFromTeam(pid);
+          this.loadPoolsForProgram(pid);
         }
       }
     }
@@ -218,6 +227,45 @@ export class EventsFormComponent implements OnInit {
           );
         },
       });
+  }
+
+  /**
+   * Resolve the team id for a program (from the loaded program list) and load
+   * its known pools into the autocomplete suggestions. No-op when the team
+   * can't be resolved yet — the field then behaves as plain free text.
+   */
+  private loadPoolsForProgram(programId: number | null | undefined): void {
+    if (programId == null) return;
+    const program = this.availablePrograms().find((p) => p.id === programId);
+    const teamId = program?.team_id ?? program?.team?.id ?? null;
+    if (teamId == null) return;
+    this.loadPoolsForTeam(teamId);
+  }
+
+  /** Fetch the team's distinct event locations for the autocomplete. */
+  private loadPoolsForTeam(teamId: number): void {
+    if (this.poolsLoadedForTeamId === teamId) return;
+    this.poolsLoadedForTeamId = teamId;
+    this.teamsService
+      .teamsPoolsRetrieve(teamId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => this.pools.set(res.pools ?? []),
+        error: () => {
+          // Pools are an optional convenience; on failure fall back to free text.
+          this.poolsLoadedForTeamId = null;
+          this.pools.set([]);
+        },
+      });
+  }
+
+  /** p-autoComplete completeMethod: filter the known pools by the typed query. */
+  protected filterPools(event: AutoCompleteCompleteEvent): void {
+    const q = (event.query ?? '').toLowerCase().trim();
+    const all = this.pools();
+    this.poolSuggestions.set(
+      q ? all.filter((p) => p.toLowerCase().includes(q)) : all.slice(),
+    );
   }
 
   private loadAvailablePrograms(): void {
@@ -258,6 +306,9 @@ export class EventsFormComponent implements OnInit {
     const dedup = new Map<number, Program>();
     for (const p of all) dedup.set(p.id, p);
     this.availablePrograms.set(Array.from(dedup.values()));
+    // The program list may arrive after the event/param did; (re)resolve pools
+    // now that team ids are known.
+    this.loadPoolsForProgram(this.form.controls.refer_program_id.value);
   }
 
   private loadEvent(id: number): void {
@@ -283,6 +334,7 @@ export class EventsFormComponent implements OnInit {
             vis_rounds: e.vis_rounds ?? VisibilityMode.Always,
           });
           this.form.controls.refer_program_id.disable();
+          this.loadPoolsForProgram(e.refer_program?.id ?? null);
           this.loading.set(false);
         },
         error: () => {

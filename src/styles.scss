@@ -9,3 +9,37 @@
 @import "quill/dist/quill.snow.css";
 
 /* You can add global styles to this file, and also import other style files */
+
+/* Rendered rich-text (Quill HTML) from goal/equipment etc. Restores basic
+   block/list formatting that Tailwind's preflight resets away. */
+.rich-text {
+  p {
+    margin: 0 0 0.5em;
+  }
+  p:last-child {
+    margin-bottom: 0;
+  }
+  ul,
+  ol {
+    margin: 0 0 0.5em;
+    padding-left: 1.5em;
+  }
+  ul {
+    list-style: disc;
+  }
+  ol {
+    list-style: decimal;
+  }
+  a {
+    color: var(--p-primary-color, #10b981);
+    text-decoration: underline;
+  }
+  strong,
+  b {
+    font-weight: 600;
+  }
+  em,
+  i {
+    font-style: italic;
+  }
+}

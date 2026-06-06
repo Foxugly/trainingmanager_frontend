@@ -222,7 +222,10 @@
       "vis_distance": "Distanza",
       "vis_goal": "Obiettivo",
       "vis_rounds": "Dettaglio sessione",
-      "vis_help": "Ereditato dalle impostazioni della squadra; modificabile per questa sessione."
+      "vis_help": "Ereditato dalle impostazioni della squadra; modificabile per questa sessione.",
+      "section_planning": "Pianificazione",
+      "section_visibility": "Visibilità",
+      "location_placeholder": "Piscina, pista o indirizzo…"
     },
     "actions": {
       "edit": "Modifica",

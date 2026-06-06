@@ -16,132 +16,122 @@
   } @else {
     <div class="card form-card builder-stack">
       <form [formGroup]="form">
-        <p-tabs value="info" class="builder-tabs">
-          <p-tablist>
-            <p-tab value="info"><i class="pi pi-info-circle tab-icon"></i>{{ 'events.form.tab_info' | transloco }}</p-tab>
-            <p-tab value="planning"><i class="pi pi-calendar tab-icon"></i>{{ 'events.form.tab_planning' | transloco }}</p-tab>
-            <p-tab value="details"><i class="pi pi-sliders-h tab-icon"></i>{{ 'events.form.tab_details' | transloco }}</p-tab>
-            <p-tab value="visibility"><i class="pi pi-eye tab-icon"></i>{{ 'events.form.tab_visibility' | transloco }}</p-tab>
-          </p-tablist>
-          <p-tabpanels>
-            <p-tabpanel value="info">
-              <div class="builder-pane">
-                <div class="meta-grid">
-                  <app-meta-field [full]="true" [label]="'events.form.name' | transloco" for="name" [error]="fieldError('name')">
-                    <input pInputText id="name" formControlName="name" />
-                  </app-meta-field>
-                  <app-meta-field [label]="'events.form.program' | transloco" for="refer_program_id" [error]="fieldError('refer_program_id')">
-                    <p-select inputId="refer_program_id" [options]="availablePrograms()"
-                      formControlName="refer_program_id" optionLabel="name" optionValue="id" [filter]="true" />
-                  </app-meta-field>
-                  <app-meta-field [label]="'events.form.goal' | transloco" for="goal" [error]="fieldError('goal')">
-                    <input pInputText id="goal" formControlName="goal" />
-                  </app-meta-field>
-                  <app-meta-field
-                    [full]="true"
-                    [label]="'events.form.location' | transloco"
-                    [tooltip]="'events.form.location_tooltip' | transloco"
-                    for="location"
-                    [error]="fieldError('location')"
-                  >
-                    <input pInputText id="location" formControlName="location" maxlength="255" />
-                  </app-meta-field>
-                  <app-meta-field
-                    [full]="true"
-                    [label]="'events.form.equipment' | transloco"
-                    [tooltip]="'events.form.equipment_tooltip' | transloco"
-                    for="equipment"
-                    [error]="fieldError('equipment')"
-                  >
-                    <textarea pTextarea id="equipment" formControlName="equipment" rows="3"></textarea>
-                  </app-meta-field>
-                </div>
-              </div>
-            </p-tabpanel>
-            <p-tabpanel value="planning">
-              <div class="builder-pane">
-                <div class="meta-grid">
-                  <app-meta-field [label]="'events.form.date' | transloco" for="date" [error]="fieldError('date')">
-                    <p-datepicker inputId="date" formControlName="date" dateFormat="dd/mm/yy" [showIcon]="true" appendTo="body" />
-                  </app-meta-field>
-                  <app-meta-field [label]="'events.form.hour_start' | transloco" for="hour_start">
-                    <p-datepicker inputId="hour_start" formControlName="hour_start" [timeOnly]="true" [showIcon]="true" appendTo="body" />
-                  </app-meta-field>
-                  <app-meta-field [label]="'events.form.hour_end' | transloco" for="hour_end"
-                    [error]="form.errors?.['time_range'] ? ('events.form.errors.time_range' | transloco) : null">
-                    <p-datepicker inputId="hour_end" formControlName="hour_end" [timeOnly]="true" [showIcon]="true" appendTo="body" />
-                  </app-meta-field>
-                </div>
-              </div>
-            </p-tabpanel>
-            <p-tabpanel value="details">
-              <div class="builder-pane">
-                <div class="meta-grid">
-                  <app-meta-field [label]="'events.form.total' | transloco" for="total" [error]="fieldError('total')">
-                    <p-inputnumber inputId="total" formControlName="total" [min]="0" [showButtons]="true"
-                      buttonLayout="horizontal" spinnerMode="horizontal"
-                      decrementButtonIcon="pi pi-minus" incrementButtonIcon="pi pi-plus" />
-                  </app-meta-field>
-                  <app-meta-field [label]="'events.form.color' | transloco">
-                    <p-colorpicker formControlName="color" />
-                    <input pInputText formControlName="color" class="flex-1" maxlength="10" />
-                  </app-meta-field>
-                </div>
-              </div>
-            </p-tabpanel>
-            <p-tabpanel value="visibility">
-              <div class="builder-pane">
-                <div class="meta-grid">
-                  <app-meta-field
-                    [full]="true"
-                    [label]="'events.form.vis_distance' | transloco"
-                    for="vis_distance"
-                    [tooltip]="'events.form.vis_help' | transloco"
-                  >
-                    <p-select
-                      inputId="vis_distance"
-                      [options]="visibilityOptions()"
-                      formControlName="vis_distance"
-                      optionLabel="label"
-                      optionValue="value"
-                      (onChange)="onVisChanged()"
-                    />
-                  </app-meta-field>
-                  <app-meta-field
-                    [full]="true"
-                    [label]="'events.form.vis_goal' | transloco"
-                    for="vis_goal"
-                    [tooltip]="'events.form.vis_help' | transloco"
-                  >
-                    <p-select
-                      inputId="vis_goal"
-                      [options]="visibilityOptions()"
-                      formControlName="vis_goal"
-                      optionLabel="label"
-                      optionValue="value"
-                      (onChange)="onVisChanged()"
-                    />
-                  </app-meta-field>
-                  <app-meta-field
-                    [full]="true"
-                    [label]="'events.form.vis_rounds' | transloco"
-                    for="vis_rounds"
-                    [tooltip]="'events.form.vis_help' | transloco"
-                  >
-                    <p-select
-                      inputId="vis_rounds"
-                      [options]="visibilityOptions()"
-                      formControlName="vis_rounds"
-                      optionLabel="label"
-                      optionValue="value"
-                      (onChange)="onVisChanged()"
-                    />
-                  </app-meta-field>
-                </div>
-              </div>
-            </p-tabpanel>
-          </p-tabpanels>
-        </p-tabs>
+        <!-- Top section: identity, goal, equipment, distance & color -->
+        <div class="meta-grid cols-2">
+          <app-meta-field [label]="'events.form.name' | transloco" for="name" [error]="fieldError('name')">
+            <input pInputText id="name" formControlName="name" />
+          </app-meta-field>
+          <app-meta-field
+            [label]="'events.form.location' | transloco"
+            [tooltip]="'events.form.location_tooltip' | transloco"
+            for="location"
+            [error]="fieldError('location')"
+          >
+            <p-autoComplete
+              inputId="location"
+              formControlName="location"
+              [suggestions]="poolSuggestions()"
+              (completeMethod)="filterPools($event)"
+              [dropdown]="true"
+              [forceSelection]="false"
+              [completeOnFocus]="true"
+              [placeholder]="'events.form.location_placeholder' | transloco"
+              [maxlength]="255"
+              appendTo="body"
+              styleClass="w-full"
+              [inputStyle]="{ width: '100%' }"
+            />
+          </app-meta-field>
+        </div>
+
+        <div class="meta-grid">
+          <app-meta-field [full]="true" [label]="'events.form.goal' | transloco" for="goal" [error]="fieldError('goal')">
+            <p-editor formControlName="goal" [style]="{ height: '10rem' }" />
+          </app-meta-field>
+          <app-meta-field
+            [full]="true"
+            [label]="'events.form.equipment' | transloco"
+            [tooltip]="'events.form.equipment_tooltip' | transloco"
+            for="equipment"
+            [error]="fieldError('equipment')"
+          >
+            <p-editor formControlName="equipment" [style]="{ height: '10rem' }" />
+          </app-meta-field>
+        </div>
+
+        <div class="meta-grid cols-2">
+          <app-meta-field [label]="'events.form.total' | transloco" for="total" [error]="fieldError('total')">
+            <p-inputnumber inputId="total" formControlName="total" [min]="0" [showButtons]="true"
+              buttonLayout="horizontal" spinnerMode="horizontal"
+              decrementButtonIcon="pi pi-minus" incrementButtonIcon="pi pi-plus" />
+          </app-meta-field>
+          <app-meta-field [label]="'events.form.color' | transloco">
+            <p-colorpicker formControlName="color" />
+            <input pInputText formControlName="color" class="flex-1" maxlength="10" />
+          </app-meta-field>
+        </div>
+
+        <!-- Section: Planning -->
+        <h3 class="builder-section-title mt-6">{{ 'events.form.section_planning' | transloco }}</h3>
+        <div class="meta-grid cols-3">
+          <app-meta-field [label]="'events.form.date' | transloco" for="date" [error]="fieldError('date')">
+            <p-datepicker inputId="date" formControlName="date" dateFormat="dd/mm/yy" [showIcon]="true" appendTo="body" />
+          </app-meta-field>
+          <app-meta-field [label]="'events.form.hour_start' | transloco" for="hour_start">
+            <p-datepicker inputId="hour_start" formControlName="hour_start" [timeOnly]="true" [showIcon]="true" appendTo="body" />
+          </app-meta-field>
+          <app-meta-field [label]="'events.form.hour_end' | transloco" for="hour_end"
+            [error]="form.errors?.['time_range'] ? ('events.form.errors.time_range' | transloco) : null">
+            <p-datepicker inputId="hour_end" formControlName="hour_end" [timeOnly]="true" [showIcon]="true" appendTo="body" />
+          </app-meta-field>
+        </div>
+
+        <!-- Section: Visibilité -->
+        <h3 class="builder-section-title mt-6">{{ 'events.form.section_visibility' | transloco }}</h3>
+        <div class="meta-grid cols-3">
+          <app-meta-field
+            [label]="'events.form.vis_distance' | transloco"
+            for="vis_distance"
+            [tooltip]="'events.form.vis_help' | transloco"
+          >
+            <p-select
+              inputId="vis_distance"
+              [options]="visibilityOptions()"
+              formControlName="vis_distance"
+              optionLabel="label"
+              optionValue="value"
+              (onChange)="onVisChanged()"
+            />
+          </app-meta-field>
+          <app-meta-field
+            [label]="'events.form.vis_goal' | transloco"
+            for="vis_goal"
+            [tooltip]="'events.form.vis_help' | transloco"
+          >
+            <p-select
+              inputId="vis_goal"
+              [options]="visibilityOptions()"
+              formControlName="vis_goal"
+              optionLabel="label"
+              optionValue="value"
+              (onChange)="onVisChanged()"
+            />
+          </app-meta-field>
+          <app-meta-field
+            [label]="'events.form.vis_rounds' | transloco"
+            for="vis_rounds"
+            [tooltip]="'events.form.vis_help' | transloco"
+          >
+            <p-select
+              inputId="vis_rounds"
+              [options]="visibilityOptions()"
+              formControlName="vis_rounds"
+              optionLabel="label"
+              optionValue="value"
+              (onChange)="onVisChanged()"
+            />
+          </app-meta-field>
+        </div>
       </form>
 
       <app-form-footer

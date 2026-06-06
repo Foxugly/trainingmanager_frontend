@@ -53,7 +53,7 @@
           }
         </dl>
         @if (e.goal) {
-          <p class="goal">{{ e.goal }}</p>
+          <p class="goal" [innerHTML]="e.goal"></p>
         }
       </div>
 
