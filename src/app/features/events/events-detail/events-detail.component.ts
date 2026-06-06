@@ -557,14 +557,22 @@ export class EventsDetailComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const idParam = this.route.snapshot.paramMap.get('id');
-    const id = idParam ? Number(idParam) : NaN;
-    if (!Number.isFinite(id)) {
-      this.notFound.set(true);
-      return;
-    }
-    this.eventId.set(id);
-    this.loadEvent(id);
+    // Subscribe to paramMap (not snapshot): navigating between two event
+    // detail routes reuses this component instance — e.g. after duplicating
+    // a session we navigate to the copy's detail. A one-off snapshot read
+    // would leave the previous event's data on screen.
+    this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      const idParam = params.get('id');
+      const id = idParam ? Number(idParam) : NaN;
+      if (!Number.isFinite(id)) {
+        this.notFound.set(true);
+        return;
+      }
+      this.notFound.set(false);
+      this.event.set(null);
+      this.eventId.set(id);
+      this.loadEvent(id);
+    });
   }
 
   private loadEvent(id: number): void {

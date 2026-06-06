@@ -2,7 +2,7 @@ import { signal } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { ActivatedRoute, Router, provideRouter } from '@angular/router';
+import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { of, throwError } from 'rxjs';
@@ -370,7 +370,10 @@ describe('EventsDetailComponent', () => {
         { provide: AuthService, useValue: { currentUser: userSig.asReadonly() } },
         {
           provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: { get: () => routeIdParam } } },
+          useValue: {
+            snapshot: { paramMap: { get: () => routeIdParam } },
+            paramMap: of(convertToParamMap(routeIdParam == null ? {} : { id: routeIdParam })),
+          },
         },
       ],
     })
