@@ -33,6 +33,13 @@ export interface MeServiceInterface {
 
     /**
      * 
+     * GET /api/v1/me/export/ — RGPD data portability.  Returns a single JSON document with all personal data we hold about the authenticated caller, as a downloadable attachment. The password hash and the live calendar_token secret are NEVER included.
+     * @endpoint get /api/v1/me/export/
+     */
+    meExportRetrieve(extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * 
      * GET/PATCH du profil de l\&#39;utilisateur connecté.  PUT is intentionally disabled to prevent partial bodies from resetting unspecified writable fields (first_name, last_name, language) to their defaults. Use PATCH for any update.  &#x60;email&#x60; is read-only here; changing the email requires admin intervention in v1 (a verified change-email flow is deferred to v2).
      * @endpoint patch /api/v1/me/
      * @param patchedMe 

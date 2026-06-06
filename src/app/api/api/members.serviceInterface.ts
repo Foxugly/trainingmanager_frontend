@@ -26,6 +26,14 @@ export interface MembersServiceInterface {
 
     /**
      * 
+     * Irreversibly anonymize an athlete\&#39;s personal data (RGPD erasure).  A coach (owner/manager) of a team the member belongs to (active OR past membership) blanks the member\&#39;s PII: firstname/lastname become a neutral placeholder, email and phonenumber are cleared. Any linked user account is UNLINKED (member.user &#x3D; None) but NOT deleted — users own their own account. Coach notes ABOUT this member are deleted (they may contain PII). Training history (memberships, performances, rsvp, roti) is KEPT, now tied to the anonymized member so aggregate stats survive.  THIS IS IRREVERSIBLE. There is no undo.
+     * @endpoint post /api/v1/members/{id}/anonymize/
+     * @param id A unique integer value identifying this Member.
+     */
+    membersAnonymize(id: number, extraHttpRequestParams?: any): Observable<Member>;
+
+    /**
+     * 
      * CRUD complet pour Member, scopé par teams du Member.
      * @endpoint post /api/v1/members/
      * @param member 
