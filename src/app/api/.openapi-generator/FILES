@@ -5,6 +5,8 @@ api.module.ts
 api/ai.service.ts
 api/ai.serviceInterface.ts
 api/api.ts
+api/attachments.service.ts
+api/attachments.serviceInterface.ts
 api/attendance-statuses.service.ts
 api/attendance-statuses.serviceInterface.ts
 api/auth.service.ts
@@ -52,6 +54,9 @@ model/ai-ping-response.ts
 model/ai-usage-aggregate-response.ts
 model/ai-usage-aggregate-row.ts
 model/ai-usage-detail.ts
+model/attachment-download-response.ts
+model/attachment-status-enum.ts
+model/attachment.ts
 model/attendance-bulk-item.ts
 model/attendance-bulk.ts
 model/attendance-status-admin.ts
@@ -111,6 +116,7 @@ model/notification.ts
 model/null-enum.ts
 model/overlap-strategy-enum.ts
 model/paginated-ai-usage-detail-list.ts
+model/paginated-attachment-list.ts
 model/paginated-attendance-list.ts
 model/paginated-attendance-status-list.ts
 model/paginated-energy-segment-list.ts
@@ -156,6 +162,9 @@ model/patched-sport-admin.ts
 model/patched-team-join-request.ts
 model/patched-team-membership.ts
 model/patched-team.ts
+model/presign-upload-headers.ts
+model/presign-upload-request.ts
+model/presign-upload-response.ts
 model/program-minimal.ts
 model/program.ts
 model/read-all-response.ts
@@ -183,6 +192,7 @@ model/stats-period.ts
 model/stats-volume-by-member.ts
 model/stats-volume-by-week.ts
 model/stats-volume.ts
+model/target-type-enum.ts
 model/team-invitation.ts
 model/team-join-request-magic-action-post.ts
 model/team-join-request-magic-action-response.ts
