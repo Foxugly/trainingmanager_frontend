@@ -9,15 +9,15 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
+import { Checkbox } from 'primeng/checkbox';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { InputText } from 'primeng/inputtext';
 import { MultiSelect } from 'primeng/multiselect';
-import { PickList } from 'primeng/picklist';
 import { Select } from 'primeng/select';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { ToggleSwitch } from 'primeng/toggleswitch';
@@ -43,6 +43,7 @@ import {
   ActiveToggleComponent,
   type ActiveToggleLabels,
 } from '../../../shared/ui/active-toggle/active-toggle.component';
+import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { FormFooterComponent } from '../../../shared/ui/form-footer/form-footer.component';
 import { MetaFieldComponent } from '../../../shared/ui/meta-field/meta-field.component';
 import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
@@ -52,11 +53,12 @@ import { StatusBadgeComponent } from '../../../shared/ui/status-badge/status-bad
   selector: 'app-teams-form',
   imports: [
     ReactiveFormsModule,
+    FormsModule,
     RouterLink,
     InputText,
     Select,
     MultiSelect,
-    PickList,
+    Checkbox,
     ToggleSwitch,
     Button,
     ConfirmDialog,
@@ -68,6 +70,7 @@ import { StatusBadgeComponent } from '../../../shared/ui/status-badge/status-bad
     PageHeaderComponent,
     StatusBadgeComponent,
     ActiveToggleComponent,
+    EmptyStateComponent,
     MetaFieldComponent,
     FormFooterComponent,
     TranslocoPipe,
@@ -98,7 +101,6 @@ export class TeamsFormComponent implements OnInit {
   protected readonly availableLevels = signal<Level[]>([]);
   protected readonly availableManagers = signal<CustomUserPublic[]>([]);
   protected readonly availableStatuses = signal<AttendanceStatus[]>([]);
-  protected readonly statusesSource = signal<AttendanceStatus[]>([]);
   protected readonly statusesTarget = signal<AttendanceStatus[]>([]);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly fieldErrors = signal<FieldErrors | null>(null);
@@ -300,6 +302,33 @@ export class TeamsFormComponent implements OnInit {
     return this.fieldErrors()?.[name]?.join(', ') ?? null;
   }
 
+  /** Managers currently selected (id present in the `managers_ids` control). */
+  protected readonly selectedManagersValue = toSignal(
+    this.form.controls.managers_ids.valueChanges,
+    { initialValue: this.form.controls.managers_ids.value },
+  );
+  protected readonly selectedManagers = computed<CustomUserPublic[]>(() => {
+    const ids = new Set(this.selectedManagersValue() ?? []);
+    return this.availableManagers().filter((m) => ids.has(m.id));
+  });
+
+  /** Two-letter initials for the avatar pill. */
+  protected managerInitials(m: CustomUserPublic): string {
+    const first = (m.first_name ?? '').trim();
+    const last = (m.last_name ?? '').trim();
+    if (first || last) {
+      return `${first.charAt(0)}${last.charAt(0)}`.toUpperCase() || first.charAt(0).toUpperCase();
+    }
+    return (m.username ?? '?').charAt(0).toUpperCase();
+  }
+
+  /** Remove a manager by deselecting its id from the form control. */
+  protected removeManager(id: number): void {
+    const next = (this.form.controls.managers_ids.value ?? []).filter((mid) => mid !== id);
+    this.form.controls.managers_ids.setValue(next);
+    this.form.controls.managers_ids.markAsDirty();
+  }
+
   /** Read + downscale the chosen image to a small data-URL, set the logo control. */
   protected async onLogoSelected(event: globalThis.Event): Promise<void> {
     const input = event.target as HTMLInputElement;
@@ -480,26 +509,30 @@ export class TeamsFormComponent implements OnInit {
   private partitionStatuses(all: AttendanceStatus[], selectedIds: number[] | null): void {
     if (selectedIds === null || all.length === 0) {
       this.statusesTarget.set([]);
-      this.statusesSource.set(all);
       return;
     }
     const selected = new Set(selectedIds);
-    const target = all.filter((s) => selected.has(s.id));
-    const source = all.filter((s) => !selected.has(s.id));
-    this.statusesTarget.set(target);
-    this.statusesSource.set(source);
+    this.statusesTarget.set(all.filter((s) => selected.has(s.id)));
   }
 
-  protected onStatusesMoveToTarget(items: AttendanceStatus[]): void {
-    const ids = new Set(items.map((s) => s.id));
-    this.statusesTarget.update((cur) => [...cur, ...items.filter((i) => !cur.some((c) => c.id === i.id))]);
-    this.statusesSource.update((cur) => cur.filter((s) => !ids.has(s.id)));
+  /** Whether the given status is currently selected for the team. */
+  protected isStatusSelected(id: number): boolean {
+    return this.statusesTarget().some((s) => s.id === id);
   }
 
-  protected onStatusesMoveToSource(items: AttendanceStatus[]): void {
-    const ids = new Set(items.map((s) => s.id));
-    this.statusesSource.update((cur) => [...cur, ...items.filter((i) => !cur.some((c) => c.id === i.id))]);
-    this.statusesTarget.update((cur) => cur.filter((s) => !ids.has(s.id)));
+  /**
+   * Toggle a status on/off for the team. Mirrors the value into the
+   * `statusesTarget` signal so the submit payload (the set of selected ids)
+   * is unchanged from the previous picklist implementation.
+   */
+  protected toggleStatus(status: AttendanceStatus, checked: boolean): void {
+    if (checked) {
+      this.statusesTarget.update((cur) =>
+        cur.some((s) => s.id === status.id) ? cur : [...cur, status],
+      );
+    } else {
+      this.statusesTarget.update((cur) => cur.filter((s) => s.id !== status.id));
+    }
   }
 
   private notifySaved(detailKey: string): void {

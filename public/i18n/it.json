@@ -472,7 +472,11 @@
       "topic_creation": "Creazione argomenti",
       "topic_creation_help": "Definisce chi può creare nuovi argomenti di discussione nella squadra.",
       "rsvp_enabled": "Abilita disponibilità (RSVP)",
-      "rsvp_enabled_help": "Consente agli atleti di dichiarare la propria disponibilità (presente / forse / assente) per ogni sessione."
+      "rsvp_enabled_help": "Consente agli atleti di dichiarare la propria disponibilità (presente / forse / assente) per ogni sessione.",
+      "vis_athletes_section": "Atleti",
+      "manager_remove": "Rimuovi questo manager",
+      "managers_empty_title": "Nessun manager",
+      "managers_empty_subtitle": "Seleziona o deseleziona i manager dall’elenco qui sopra."
     },
     "member_dialog": {
       "title": "Aggiungi un membro",

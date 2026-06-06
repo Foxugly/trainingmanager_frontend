@@ -16,6 +16,29 @@
   grid-template-columns: 1fr;
 }
 
+// Opt-in multi-column row modifiers. The default `.form-card .meta-grid` rule
+// above (specificity 0,2,0) forces a single column, so these modifiers carry
+// equal specificity to override it. Compose a form row as its own
+// `<div class="meta-grid cols-N">` containing N non-`[full]` fields so each
+// field takes one equal-width track. A `[full]` field still spans the row.
+.form-card .meta-grid.cols-2 {
+  grid-template-columns: 1fr 1fr;
+}
+.form-card .meta-grid.cols-3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+.form-card .meta-grid.cols-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+@media (max-width: 768px) {
+  .form-card .meta-grid.cols-2,
+  .form-card .meta-grid.cols-3,
+  .form-card .meta-grid.cols-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
 .meta-item {
   display: flex;
   flex-direction: column;

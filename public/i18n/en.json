@@ -472,7 +472,11 @@
       "topic_creation": "Topic creation",
       "topic_creation_help": "Defines who can create new discussion topics in the team.",
       "rsvp_enabled": "Enable availability (RSVP)",
-      "rsvp_enabled_help": "Lets athletes declare their availability (going / maybe / not going) for each session."
+      "rsvp_enabled_help": "Lets athletes declare their availability (going / maybe / not going) for each session.",
+      "vis_athletes_section": "Athletes",
+      "manager_remove": "Remove this manager",
+      "managers_empty_title": "No managers",
+      "managers_empty_subtitle": "Select or deselect managers from the list above."
     },
     "member_dialog": {
       "title": "Add a member",

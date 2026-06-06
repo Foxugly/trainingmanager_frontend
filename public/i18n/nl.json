@@ -472,7 +472,11 @@
       "topic_creation": "Onderwerpen aanmaken",
       "topic_creation_help": "Bepaalt wie nieuwe discussieonderwerpen in het team kan aanmaken.",
       "rsvp_enabled": "Beschikbaarheid inschakelen (RSVP)",
-      "rsvp_enabled_help": "Laat atleten hun beschikbaarheid aangeven (aanwezig / misschien / afwezig) voor elke sessie."
+      "rsvp_enabled_help": "Laat atleten hun beschikbaarheid aangeven (aanwezig / misschien / afwezig) voor elke sessie.",
+      "vis_athletes_section": "Atleten",
+      "manager_remove": "Deze manager verwijderen",
+      "managers_empty_title": "Geen managers",
+      "managers_empty_subtitle": "Selecteer of deselecteer managers in de lijst hierboven."
     },
     "member_dialog": {
       "title": "Lid toevoegen",

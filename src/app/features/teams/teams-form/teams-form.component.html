@@ -41,16 +41,13 @@
               <p-tab value="managers"><i class="pi pi-users tab-icon"></i>{{ 'teams.form.tab_managers' | transloco }}</p-tab>
               <p-tab value="statuses"><i class="pi pi-check-square tab-icon"></i>{{ 'teams.form.tab_statuses' | transloco }}</p-tab>
               <p-tab value="join"><i class="pi pi-user-plus tab-icon"></i>{{ 'teams.form.tab_join' | transloco }}</p-tab>
-              <p-tab value="public_share"><i class="pi pi-share-alt tab-icon"></i>{{ 'public_share.team.section_title' | transloco }}</p-tab>
             }
           </p-tablist>
           <p-tabpanels>
             <p-tabpanel value="info">
               <div class="builder-pane">
-                <div class="meta-grid">
-                  <app-meta-field [full]="true" [label]="'teams.form.name' | transloco" for="name" [error]="fieldError('name')">
-                    <input pInputText id="name" formControlName="name" />
-                  </app-meta-field>
+                <!-- Row 1: sport / level / public toggle / timezone (4 cols) -->
+                <div class="meta-grid cols-4">
                   <app-meta-field [label]="'teams.form.sport' | transloco" for="sport_id" [error]="fieldError('sport_id')">
                     <p-select
                       inputId="sport_id"
@@ -78,6 +75,34 @@
                       [placeholder]="'teams.form.level_placeholder' | transloco"
                     />
                   </app-meta-field>
+                  <app-meta-field
+                    for="is_public"
+                    [label]="'teams.form.is_public' | transloco"
+                    [tooltip]="'teams.form.is_public_help' | transloco"
+                  >
+                    <p-toggleSwitch formControlName="is_public" inputId="is_public" />
+                  </app-meta-field>
+                  <app-meta-field
+                    [label]="'teams.form.timezone' | transloco"
+                    for="timezone"
+                    [tooltip]="'teams.form.timezone_help' | transloco"
+                  >
+                    <p-select
+                      inputId="timezone"
+                      [options]="timezoneOptions"
+                      formControlName="timezone"
+                      optionLabel="label"
+                      optionValue="value"
+                      [filter]="true"
+                    />
+                  </app-meta-field>
+                </div>
+
+                <!-- Row 2: name / language (2 cols) -->
+                <div class="meta-grid cols-2">
+                  <app-meta-field [label]="'teams.form.name' | transloco" for="name" [error]="fieldError('name')">
+                    <input pInputText id="name" formControlName="name" />
+                  </app-meta-field>
                   <app-meta-field [label]="'teams.form.language' | transloco" for="language">
                     <p-select
                       inputId="language"
@@ -87,14 +112,10 @@
                       optionValue="code"
                     />
                   </app-meta-field>
-                  <app-meta-field
-                    [full]="true"
-                    for="is_public"
-                    [label]="'teams.form.is_public' | transloco"
-                    [tooltip]="'teams.form.is_public_help' | transloco"
-                  >
-                    <p-toggleSwitch formControlName="is_public" inputId="is_public" />
-                  </app-meta-field>
+                </div>
+
+                <!-- Row 3: logo (full width) -->
+                <div class="meta-grid">
                   <app-meta-field
                     [full]="true"
                     [label]="'teams.form.logo' | transloco"
@@ -143,21 +164,9 @@
 
             <p-tabpanel value="visibility">
               <div class="builder-pane">
-                <div class="meta-grid">
-                  <app-meta-field
-                    [label]="'teams.form.timezone' | transloco"
-                    for="timezone"
-                    [tooltip]="'teams.form.timezone_help' | transloco"
-                  >
-                    <p-select
-                      inputId="timezone"
-                      [options]="timezoneOptions"
-                      formControlName="timezone"
-                      optionLabel="label"
-                      optionValue="value"
-                      [filter]="true"
-                    />
-                  </app-meta-field>
+                <!-- Section: athlete visibility defaults -->
+                <h3 class="builder-section-title">{{ 'teams.form.vis_athletes_section' | transloco }}</h3>
+                <div class="meta-grid cols-3">
                   <app-meta-field
                     [label]="'teams.form.vis_distance' | transloco"
                     for="vis_distance"
@@ -198,6 +207,56 @@
                     />
                   </app-meta-field>
                 </div>
+
+                <!-- Section: public sharing (merged from the former tab) -->
+                <h3 class="builder-section-title mt-6">
+                  {{ 'public_share.team.section_title' | transloco }}
+                </h3>
+                <div class="meta-grid cols-4">
+                  <app-meta-field
+                    for="public_sharing_enabled"
+                    [label]="'public_share.team.enabled_label' | transloco"
+                    [tooltip]="'public_share.team.enabled_help' | transloco"
+                  >
+                    <p-toggleSwitch
+                      formControlName="public_sharing_enabled"
+                      inputId="public_sharing_enabled"
+                    />
+                  </app-meta-field>
+
+                  <app-meta-field
+                    for="public_show_distance"
+                    [label]="'public_share.team.show_distance' | transloco"
+                  >
+                    <p-toggleSwitch
+                      formControlName="public_show_distance"
+                      inputId="public_show_distance"
+                      [disabled]="!isPublicSharingEnabled()"
+                    />
+                  </app-meta-field>
+
+                  <app-meta-field
+                    for="public_show_goal"
+                    [label]="'public_share.team.show_goal' | transloco"
+                  >
+                    <p-toggleSwitch
+                      formControlName="public_show_goal"
+                      inputId="public_show_goal"
+                      [disabled]="!isPublicSharingEnabled()"
+                    />
+                  </app-meta-field>
+
+                  <app-meta-field
+                    for="public_show_rounds"
+                    [label]="'public_share.team.show_rounds' | transloco"
+                  >
+                    <p-toggleSwitch
+                      formControlName="public_show_rounds"
+                      inputId="public_show_rounds"
+                      [disabled]="!isPublicSharingEnabled()"
+                    />
+                  </app-meta-field>
+                </div>
               </div>
             </p-tabpanel>
 
@@ -222,6 +281,41 @@
                       />
                     </app-meta-field>
                   </div>
+
+                  @if (selectedManagers().length > 0) {
+                    <ul class="manager-list">
+                      @for (m of selectedManagers(); track m.id) {
+                        <li class="manager-row">
+                          <span class="manager-avatar" aria-hidden="true">
+                            {{ managerInitials(m) }}
+                          </span>
+                          <span class="manager-name">
+                            {{ m.first_name || m.username }}
+                            @if (m.first_name && m.username) {
+                              <span class="manager-handle">&#64;{{ m.username }}</span>
+                            }
+                          </span>
+                          <p-button
+                            type="button"
+                            icon="pi pi-times"
+                            severity="danger"
+                            [text]="true"
+                            [rounded]="true"
+                            size="small"
+                            [ariaLabel]="'teams.form.manager_remove' | transloco"
+                            (onClick)="removeManager(m.id)"
+                          />
+                        </li>
+                      }
+                    </ul>
+                  } @else {
+                    <app-empty-state
+                      icon="user-plus"
+                      tone="gray"
+                      [title]="'teams.form.managers_empty_title' | transloco"
+                      [subtitle]="'teams.form.managers_empty_subtitle' | transloco"
+                    />
+                  }
                 </div>
               </p-tabpanel>
 
@@ -233,36 +327,33 @@
                       [label]="'teams.form.attendance_statuses' | transloco"
                       [tooltip]="'teams.form.attendance_statuses_help' | transloco"
                     >
-                      <p-pickList
-                        [source]="statusesSource()"
-                        [target]="statusesTarget()"
-                        [dragdrop]="true"
-                        [responsive]="true"
-                        [showSourceControls]="false"
-                        [showTargetControls]="false"
-                        [sourceHeader]="'teams.form.attendance_statuses_source' | transloco"
-                        [targetHeader]="'teams.form.attendance_statuses_target' | transloco"
-                        [sourceStyle]="{ height: '14rem' }"
-                        [targetStyle]="{ height: '14rem' }"
-                        breakpoint="960px"
-                        (onMoveToTarget)="onStatusesMoveToTarget($event.items)"
-                        (onMoveAllToTarget)="onStatusesMoveToTarget($event.items)"
-                        (onMoveToSource)="onStatusesMoveToSource($event.items)"
-                        (onMoveAllToSource)="onStatusesMoveToSource($event.items)"
-                      >
-                        <ng-template let-status #item>
-                          <div class="flex items-center gap-2">
-                            @if (status.color) {
-                              <span
-                                class="inline-block w-2 h-2 rounded-full"
-                                [style.background-color]="status.color"
-                                aria-hidden="true"
-                              ></span>
-                            }
-                            <span>{{ status.label }}</span>
-                          </div>
-                        </ng-template>
-                      </p-pickList>
+                      @if (availableStatuses().length === 0) {
+                        <p class="meta-hint">{{ 'teams.form.managers_empty' | transloco }}</p>
+                      } @else {
+                        <ul class="status-checklist">
+                          @for (status of availableStatuses(); track status.id) {
+                            <li class="status-row">
+                              <p-checkbox
+                                [binary]="true"
+                                [inputId]="'status_' + status.id"
+                                [ngModel]="isStatusSelected(status.id)"
+                                [ngModelOptions]="{ standalone: true }"
+                                (ngModelChange)="toggleStatus(status, $event)"
+                              />
+                              <label [attr.for]="'status_' + status.id" class="status-label">
+                                @if (status.color) {
+                                  <span
+                                    class="status-dot"
+                                    [style.background-color]="status.color"
+                                    aria-hidden="true"
+                                  ></span>
+                                }
+                                <span>{{ status.label }}</span>
+                              </label>
+                            </li>
+                          }
+                        </ul>
+                      }
                     </app-meta-field>
                   </div>
                 </div>
@@ -270,9 +361,9 @@
 
               <p-tabpanel value="join">
                 <div class="builder-pane">
-                  <div class="meta-grid">
+                  <!-- Row: join-request policy + notify managers -->
+                  <div class="meta-grid cols-2">
                     <app-meta-field
-                      [full]="true"
                       [label]="'teams.form.policy_auto_label' | transloco"
                       [tooltip]="(isAutoPolicy() ? 'teams.form.policy_auto_help' : 'teams.form.policy_manual_help') | transloco"
                     >
@@ -281,7 +372,6 @@
 
                     @if (!isAutoPolicy()) {
                       <app-meta-field
-                        [full]="true"
                         [label]="'teams.form.notify_managers_label' | transloco"
                         [tooltip]="'teams.form.notify_managers_help' | transloco"
                       >
@@ -291,9 +381,11 @@
                         />
                       </app-meta-field>
                     }
+                  </div>
 
+                  <!-- Row: topic creation + weekly recap -->
+                  <div class="meta-grid cols-2">
                     <app-meta-field
-                      [full]="true"
                       for="topic_creation"
                       [label]="'teams.form.topic_creation' | transloco"
                       [tooltip]="'teams.form.topic_creation_help' | transloco"
@@ -308,25 +400,6 @@
                     </app-meta-field>
 
                     <app-meta-field
-                      [full]="true"
-                      for="roti_enabled"
-                      [label]="'teams.form.roti_enabled' | transloco"
-                      [tooltip]="'teams.form.roti_enabled_help' | transloco"
-                    >
-                      <p-toggleSwitch formControlName="roti_enabled" inputId="roti_enabled" />
-                    </app-meta-field>
-
-                    <app-meta-field
-                      [full]="true"
-                      for="rsvp_enabled"
-                      [label]="'teams.form.rsvp_enabled' | transloco"
-                      [tooltip]="'teams.form.rsvp_enabled_help' | transloco"
-                    >
-                      <p-toggleSwitch formControlName="rsvp_enabled" inputId="rsvp_enabled" />
-                    </app-meta-field>
-
-                    <app-meta-field
-                      [full]="true"
                       for="weekly_recap_enabled"
                       [label]="'teams.form.weekly_recap_enabled' | transloco"
                       [tooltip]="'teams.form.weekly_recap_enabled_help' | transloco"
@@ -336,9 +409,30 @@
                         inputId="weekly_recap_enabled"
                       />
                     </app-meta-field>
+                  </div>
+
+                  <!-- Row: ROTI + RSVP -->
+                  <div class="meta-grid cols-2">
+                    <app-meta-field
+                      for="roti_enabled"
+                      [label]="'teams.form.roti_enabled' | transloco"
+                      [tooltip]="'teams.form.roti_enabled_help' | transloco"
+                    >
+                      <p-toggleSwitch formControlName="roti_enabled" inputId="roti_enabled" />
+                    </app-meta-field>
 
                     <app-meta-field
-                      [full]="true"
+                      for="rsvp_enabled"
+                      [label]="'teams.form.rsvp_enabled' | transloco"
+                      [tooltip]="'teams.form.rsvp_enabled_help' | transloco"
+                    >
+                      <p-toggleSwitch formControlName="rsvp_enabled" inputId="rsvp_enabled" />
+                    </app-meta-field>
+                  </div>
+
+                  <!-- Row: note notifications -->
+                  <div class="meta-grid cols-2">
+                    <app-meta-field
                       for="notify_coaches_on_note"
                       [label]="'teams.form.notify_coaches_on_note' | transloco"
                       [tooltip]="'teams.form.notify_coaches_on_note_help' | transloco"
@@ -350,7 +444,6 @@
                     </app-meta-field>
 
                     <app-meta-field
-                      [full]="true"
                       for="notify_athlete_on_visible_note"
                       [label]="'teams.form.notify_athlete_on_visible_note' | transloco"
                       [tooltip]="'teams.form.notify_athlete_on_visible_note_help' | transloco"
@@ -360,59 +453,6 @@
                         inputId="notify_athlete_on_visible_note"
                       />
                     </app-meta-field>
-                  </div>
-                </div>
-              </p-tabpanel>
-
-              <p-tabpanel value="public_share">
-                <div class="builder-pane">
-                  <div class="meta-grid">
-                    <app-meta-field
-                      [full]="true"
-                      for="public_sharing_enabled"
-                      [label]="'public_share.team.enabled_label' | transloco"
-                      [tooltip]="'public_share.team.enabled_help' | transloco"
-                    >
-                      <p-toggleSwitch
-                        formControlName="public_sharing_enabled"
-                        inputId="public_sharing_enabled"
-                      />
-                    </app-meta-field>
-
-                    @if (isPublicSharingEnabled()) {
-                      <app-meta-field
-                        [full]="true"
-                        for="public_show_distance"
-                        [label]="'public_share.team.show_distance' | transloco"
-                      >
-                        <p-toggleSwitch
-                          formControlName="public_show_distance"
-                          inputId="public_show_distance"
-                        />
-                      </app-meta-field>
-
-                      <app-meta-field
-                        [full]="true"
-                        for="public_show_goal"
-                        [label]="'public_share.team.show_goal' | transloco"
-                      >
-                        <p-toggleSwitch
-                          formControlName="public_show_goal"
-                          inputId="public_show_goal"
-                        />
-                      </app-meta-field>
-
-                      <app-meta-field
-                        [full]="true"
-                        for="public_show_rounds"
-                        [label]="'public_share.team.show_rounds' | transloco"
-                      >
-                        <p-toggleSwitch
-                          formControlName="public_show_rounds"
-                          inputId="public_show_rounds"
-                        />
-                      </app-meta-field>
-                    }
                   </div>
                 </div>
               </p-tabpanel>
