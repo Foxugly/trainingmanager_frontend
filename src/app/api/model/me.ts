@@ -36,6 +36,10 @@ export interface Me {
      */
     readonly is_superuser: boolean;
     readonly team_quota: TeamQuotaStatus;
+    /**
+     * Unguessable token embedded in the user\'s personal iCal (.ics) subscription URL. The token IS the authentication for that (otherwise anonymous) feed. Rotate it to revoke an old URL.
+     */
+    readonly calendar_token: string;
 }
 
 

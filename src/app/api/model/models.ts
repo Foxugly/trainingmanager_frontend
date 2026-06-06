@@ -11,6 +11,7 @@ export * from './attendance-bulk-item';
 export * from './attendance-status';
 export * from './attendance-status-admin';
 export * from './audience-enum';
+export * from './calendar-token';
 export * from './chat-mode-enum';
 export * from './clone-exercise-request';
 export * from './complete-invitation';

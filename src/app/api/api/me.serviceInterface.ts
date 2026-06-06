@@ -11,6 +11,7 @@ import { HttpHeaders }                                       from '@angular/comm
 
 import { Observable }                                        from 'rxjs';
 
+import { CalendarToken } from '../model/models';
 import { Me } from '../model/models';
 import { PatchedMe } from '../model/models';
 
@@ -22,6 +23,13 @@ import { Configuration }                                     from '../configurat
 export interface MeServiceInterface {
     defaultHeaders: HttpHeaders;
     configuration: Configuration;
+
+    /**
+     * 
+     * POST /api/v1/me/calendar-token/rotate/ — rotate the caller\&#39;s token.  Generates a brand-new &#x60;&#x60;calendar_token&#x60;&#x60; for the authenticated user, which immediately invalidates the previous .ics subscription URL, and returns the new token so the SPA can rebuild the URL.
+     * @endpoint post /api/v1/me/calendar-token/rotate/
+     */
+    meCalendarTokenRotate(extraHttpRequestParams?: any): Observable<CalendarToken>;
 
     /**
      * 
