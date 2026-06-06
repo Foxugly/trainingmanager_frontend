@@ -833,7 +833,28 @@
       "resend_email_sent": "Email envoyé. Vérifiez votre boîte de réception.",
       "resend_rate_limited": "Trop de demandes. Réessayez dans quelques minutes.",
       "no_account_yet": "Pas encore de compte ?",
-      "no_account_yet_link": "Inscrivez-vous"
+      "no_account_yet_link": "Inscrivez-vous",
+      "or": "ou"
+    },
+    "magic_link": {
+      "login_cta": "Se connecter par lien magique",
+      "intro": "Saisissez votre adresse email et nous vous enverrons un lien de connexion sécurisé.",
+      "email_label": "Adresse email",
+      "email_placeholder": "vous@exemple.com",
+      "email_required": "Indiquez votre adresse email.",
+      "send": "Envoyer le lien",
+      "sent": "Si un compte existe pour cette adresse, un lien de connexion vient d'être envoyé. Vérifiez votre boîte mail.",
+      "back_to_password": "Utiliser le mot de passe",
+      "rate_limited": "Trop de demandes. Réessayez dans quelques minutes.",
+      "exchange": {
+        "loading": "Connexion en cours…",
+        "expired_title": "Lien expiré",
+        "expired_body": "Ce lien de connexion a expiré. Demandez-en un nouveau pour vous connecter.",
+        "request_new": "Demander un nouveau lien",
+        "invalid_title": "Lien invalide",
+        "invalid_body": "Ce lien de connexion est invalide ou a déjà été utilisé.",
+        "back_to_login": "Retour à la connexion"
+      }
     },
     "register": {
       "title": "Créer un compte",

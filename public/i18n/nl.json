@@ -858,7 +858,28 @@
       "resend_email_sent": "E-mail verzonden. Controleer je inbox.",
       "resend_rate_limited": "Te veel verzoeken. Probeer het over enkele minuten opnieuw.",
       "no_account_yet": "Nog geen account?",
-      "no_account_yet_link": "Maak er een aan"
+      "no_account_yet_link": "Maak er een aan",
+      "or": "of"
+    },
+    "magic_link": {
+      "login_cta": "Aanmelden via magische link",
+      "intro": "Voer je e-mailadres in en we sturen je een veilige aanmeldlink.",
+      "email_label": "E-mailadres",
+      "email_placeholder": "jij@voorbeeld.com",
+      "email_required": "Vul je e-mailadres in.",
+      "send": "Verstuur de link",
+      "sent": "Als er een account bestaat voor dit adres, is er zojuist een aanmeldlink verzonden. Controleer je mailbox.",
+      "back_to_password": "Wachtwoord gebruiken",
+      "rate_limited": "Te veel aanvragen. Probeer het over enkele minuten opnieuw.",
+      "exchange": {
+        "loading": "Bezig met aanmelden…",
+        "expired_title": "Link verlopen",
+        "expired_body": "Deze aanmeldlink is verlopen. Vraag een nieuwe aan om je aan te melden.",
+        "request_new": "Nieuwe link aanvragen",
+        "invalid_title": "Ongeldige link",
+        "invalid_body": "Deze aanmeldlink is ongeldig of is al gebruikt.",
+        "back_to_login": "Terug naar aanmelden"
+      }
     },
     "register": {
       "title": "Account aanmaken",

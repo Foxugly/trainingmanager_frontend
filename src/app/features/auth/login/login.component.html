@@ -41,74 +41,137 @@
       </div>
     }
 
-    <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
-      <div class="flex flex-col gap-2">
-        <label for="username" class="text-sm font-medium text-gray-700">
-          {{ 'auth.login.username' | transloco }}
-        </label>
-        <input
-          pInputText
-          id="username"
-          formControlName="username"
-          autocomplete="username"
-          class="w-full"
-        />
-      </div>
-
-      <div class="flex flex-col gap-2">
-        <label for="password" class="text-sm font-medium text-gray-700">
-          {{ 'auth.login.password' | transloco }}
-        </label>
-        <p-password
-          formControlName="password"
-          [feedback]="false"
-          [toggleMask]="true"
-          inputId="password"
-          autocomplete="current-password"
-          styleClass="w-full"
-          [inputStyle]="{ width: '100%' }"
-        />
-      </div>
-
-      <div class="flex items-center justify-between gap-2">
-        <div class="flex items-center gap-2">
-          <p-checkbox formControlName="remember" [binary]="true" inputId="remember" />
-          <label for="remember" class="text-sm text-gray-700 cursor-pointer">
-            {{ 'auth.login.remember_me_label' | transloco }}
+    @if (!magicLinkMode()) {
+      <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+        <div class="flex flex-col gap-2">
+          <label for="username" class="text-sm font-medium text-gray-700">
+            {{ 'auth.login.username' | transloco }}
           </label>
+          <input
+            pInputText
+            id="username"
+            formControlName="username"
+            autocomplete="username"
+            class="w-full"
+          />
         </div>
-        <a
-          [routerLink]="['/auth/forgot-password']"
-          class="text-xs text-emerald-700 hover:underline"
-        >
-          {{ 'auth.login.forgot_password_link' | transloco }}
-        </a>
+
+        <div class="flex flex-col gap-2">
+          <label for="password" class="text-sm font-medium text-gray-700">
+            {{ 'auth.login.password' | transloco }}
+          </label>
+          <p-password
+            formControlName="password"
+            [feedback]="false"
+            [toggleMask]="true"
+            inputId="password"
+            autocomplete="current-password"
+            styleClass="w-full"
+            [inputStyle]="{ width: '100%' }"
+          />
+        </div>
+
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <p-checkbox formControlName="remember" [binary]="true" inputId="remember" />
+            <label for="remember" class="text-sm text-gray-700 cursor-pointer">
+              {{ 'auth.login.remember_me_label' | transloco }}
+            </label>
+          </div>
+          <a
+            [routerLink]="['/auth/forgot-password']"
+            class="text-xs text-emerald-700 hover:underline"
+          >
+            {{ 'auth.login.forgot_password_link' | transloco }}
+          </a>
+        </div>
+
+        @if (errorMessage(); as msg) {
+          <p-message severity="error" [text]="msg" />
+        }
+        @if (retryCountdown(); as seconds) {
+          <p-message
+            severity="warn"
+            [text]="'auth.login.rate_limit_countdown' | transloco: { seconds: seconds }"
+          />
+        }
+
+        <p-button
+          type="submit"
+          [label]="'auth.login.submit' | transloco"
+          [loading]="loading()"
+          [disabled]="submitDisabled() || form.invalid"
+          styleClass="w-full"
+        />
+      </form>
+
+      <div class="mt-4 flex items-center gap-3 text-xs text-gray-400">
+        <span class="h-px flex-1 bg-gray-200"></span>
+        <span>{{ 'auth.login.or' | transloco }}</span>
+        <span class="h-px flex-1 bg-gray-200"></span>
       </div>
 
-      @if (errorMessage(); as msg) {
-        <p-message severity="error" [text]="msg" />
-      }
-      @if (retryCountdown(); as seconds) {
-        <p-message
-          severity="warn"
-          [text]="'auth.login.rate_limit_countdown' | transloco: { seconds: seconds }"
-        />
-      }
+      <button
+        type="button"
+        class="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-100"
+        (click)="toggleMagicLinkMode()"
+      >
+        <i class="pi pi-envelope" aria-hidden="true"></i>
+        {{ 'auth.magic_link.login_cta' | transloco }}
+      </button>
 
-      <p-button
-        type="submit"
-        [label]="'auth.login.submit' | transloco"
-        [loading]="loading()"
-        [disabled]="submitDisabled() || form.invalid"
-        styleClass="w-full"
-      />
-
-      <p class="text-center text-sm text-gray-600 mt-2">
+      <p class="text-center text-sm text-gray-600 mt-4">
         {{ 'auth.login.no_account_yet' | transloco }}
         <a [routerLink]="['/register']" class="text-emerald-600 hover:underline font-medium">
           {{ 'auth.login.no_account_yet_link' | transloco }}
         </a>
       </p>
-    </form>
+    } @else {
+      <div class="flex flex-col gap-4">
+        <p class="text-sm text-gray-600">{{ 'auth.magic_link.intro' | transloco }}</p>
+
+        @if (magicLinkSent()) {
+          <p-message severity="success" [text]="'auth.magic_link.sent' | transloco" />
+        } @else {
+          <form [formGroup]="form" (ngSubmit)="submitMagicLink()" class="flex flex-col gap-4">
+            <div class="flex flex-col gap-2">
+              <label for="magic-email" class="text-sm font-medium text-gray-700">
+                {{ 'auth.magic_link.email_label' | transloco }}
+              </label>
+              <input
+                pInputText
+                id="magic-email"
+                type="email"
+                formControlName="email"
+                autocomplete="email"
+                [placeholder]="'auth.magic_link.email_placeholder' | transloco"
+                class="w-full"
+              />
+            </div>
+
+            @if (magicLinkError(); as msg) {
+              <p-message severity="error" [text]="msg | transloco" />
+            }
+
+            <p-button
+              type="submit"
+              [label]="'auth.magic_link.send' | transloco"
+              icon="pi pi-envelope"
+              [loading]="magicLinkSubmitting()"
+              [disabled]="magicLinkSubmitting()"
+              styleClass="w-full"
+            />
+          </form>
+        }
+
+        <button
+          type="button"
+          class="text-center text-sm text-emerald-700 hover:underline"
+          (click)="toggleMagicLinkMode()"
+        >
+          {{ 'auth.magic_link.back_to_password' | transloco }}
+        </button>
+      </div>
+    }
   </div>
 </section>

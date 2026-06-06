@@ -6,6 +6,9 @@ import { AuthService as ApiAuthService } from '../../api/api/auth.service';
 import { MeService } from '../../api/api/me.service';
 import { EmailConfirm } from '../../api/model/email-confirm';
 import { EmailResend } from '../../api/model/email-resend';
+import { MagicLinkExchangeRequest } from '../../api/model/magic-link-exchange-request';
+import { MagicLinkRequest } from '../../api/model/magic-link-request';
+import { MagicLinkRequestResponse } from '../../api/model/magic-link-request-response';
 import { Me } from '../../api/model/me';
 import { PasswordResetConfirm } from '../../api/model/password-reset-confirm';
 import { PasswordResetConfirmResponse } from '../../api/model/password-reset-confirm-response';
@@ -138,6 +141,27 @@ export class AuthService {
     const payload: PasswordResetConfirm = { key, new_password: newPassword };
     return this.apiAuth
       .authPasswordResetConfirmCreate(payload)
+      .pipe(switchMap((res) => this.loginWithTokens(res.access, res.refresh)));
+  }
+
+  /**
+   * Request a passwordless sign-in email. The backend always answers 200 with
+   * the same body (no user enumeration); the caller shows a neutral message.
+   */
+  requestMagicLink(email: string): Observable<MagicLinkRequestResponse> {
+    const payload: MagicLinkRequest = { email };
+    return this.apiAuth.authMagicLinkRequestCreate(payload);
+  }
+
+  /**
+   * Trade a magic-link token for a JWT pair, then adopt those tokens and load
+   * /me/ via the same helper the password-login path uses — the resulting auth
+   * state is indistinguishable from a regular sign-in.
+   */
+  exchangeMagicLink(token: string): Observable<Me> {
+    const payload: MagicLinkExchangeRequest = { token };
+    return this.apiAuth
+      .authMagicLinkExchangeCreate(payload)
       .pipe(switchMap((res) => this.loginWithTokens(res.access, res.refresh)));
   }
 }

@@ -833,7 +833,28 @@
       "resend_email_sent": "Email sent. Check your inbox.",
       "resend_rate_limited": "Too many requests. Try again in a few minutes.",
       "no_account_yet": "Don't have an account yet?",
-      "no_account_yet_link": "Sign up"
+      "no_account_yet_link": "Sign up",
+      "or": "or"
+    },
+    "magic_link": {
+      "login_cta": "Sign in with a magic link",
+      "intro": "Enter your email address and we'll send you a secure sign-in link.",
+      "email_label": "Email address",
+      "email_placeholder": "you@example.com",
+      "email_required": "Please enter your email address.",
+      "send": "Send the link",
+      "sent": "If an account exists for this address, a sign-in link has just been sent. Check your inbox.",
+      "back_to_password": "Use a password instead",
+      "rate_limited": "Too many requests. Please try again in a few minutes.",
+      "exchange": {
+        "loading": "Signing you in…",
+        "expired_title": "Link expired",
+        "expired_body": "This sign-in link has expired. Request a new one to sign in.",
+        "request_new": "Request a new link",
+        "invalid_title": "Invalid link",
+        "invalid_body": "This sign-in link is invalid or has already been used.",
+        "back_to_login": "Back to login"
+      }
     },
     "register": {
       "title": "Create an account",

@@ -32,19 +32,29 @@ interface ProtectedFields {
   retryCountdown(): number | null;
   submit(): void;
   resendVerification(): void;
+  magicLinkMode(): boolean;
+  magicLinkSubmitting(): boolean;
+  magicLinkSent(): boolean;
+  magicLinkError(): string | null;
+  toggleMagicLinkMode(): void;
+  submitMagicLink(): void;
 }
 
 describe('LoginComponent', () => {
   let fixture: ComponentFixture<LoginComponent>;
   let component: LoginComponent;
-  let authMock: { login: ReturnType<typeof vi.fn>; resendEmail: ReturnType<typeof vi.fn> };
+  let authMock: {
+    login: ReturnType<typeof vi.fn>;
+    resendEmail: ReturnType<typeof vi.fn>;
+    requestMagicLink: ReturnType<typeof vi.fn>;
+  };
   let router: Router;
   let queryParams: Record<string, string>;
 
   const access = (c: LoginComponent) => c as unknown as ProtectedFields;
 
   beforeEach(async () => {
-    authMock = { login: vi.fn(), resendEmail: vi.fn() };
+    authMock = { login: vi.fn(), resendEmail: vi.fn(), requestMagicLink: vi.fn() };
     queryParams = {};
 
     await TestBed.configureTestingModule({
@@ -185,6 +195,37 @@ describe('LoginComponent', () => {
     access(component).form.patchValue({ email: 'a@b.c' });
     access(component).resendVerification();
     expect(access(component).resendError()).toBe('auth.login.resend_rate_limited');
+  });
+
+  it('toggleMagicLinkMode(): flips into magic-link mode', () => {
+    expect(access(component).magicLinkMode()).toBe(false);
+    access(component).toggleMagicLinkMode();
+    expect(access(component).magicLinkMode()).toBe(true);
+  });
+
+  it('submitMagicLink(): calls requestMagicLink and shows the neutral confirmation', () => {
+    authMock.requestMagicLink.mockReturnValue(of({ detail: 'ok' }));
+    access(component).form.patchValue({ email: 'a@b.c' });
+    access(component).submitMagicLink();
+
+    expect(authMock.requestMagicLink).toHaveBeenCalledWith('a@b.c');
+    expect(access(component).magicLinkSent()).toBe(true);
+    expect(access(component).magicLinkError()).toBeNull();
+  });
+
+  it('submitMagicLink(): requires an email', () => {
+    access(component).submitMagicLink();
+    expect(authMock.requestMagicLink).not.toHaveBeenCalled();
+    expect(access(component).magicLinkError()).toBe('auth.magic_link.email_required');
+  });
+
+  it('submitMagicLink(): 429 → rate_limited error', () => {
+    authMock.requestMagicLink.mockReturnValue(throwError(() => ({ status: 429 })));
+    access(component).form.patchValue({ email: 'a@b.c' });
+    access(component).submitMagicLink();
+
+    expect(access(component).magicLinkError()).toBe('auth.magic_link.rate_limited');
+    expect(access(component).magicLinkSent()).toBe(false);
   });
 
   it('login 429 → rate_limit_message + retryCountdown set from Retry-After header', () => {

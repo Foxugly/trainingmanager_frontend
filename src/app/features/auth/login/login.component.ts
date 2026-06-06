@@ -46,6 +46,13 @@ export class LoginComponent {
   protected readonly loading = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly emailNotVerified = signal(false);
+
+  // Magic-link (passwordless) mode: swaps the username/password form for an
+  // email-only "send me a sign-in link" form within the same card.
+  protected readonly magicLinkMode = signal(false);
+  protected readonly magicLinkSubmitting = signal(false);
+  protected readonly magicLinkSent = signal(false);
+  protected readonly magicLinkError = signal<string | null>(null);
   protected readonly resending = signal(false);
   protected readonly resendDone = signal(false);
   protected readonly resendError = signal<string | null>(null);
@@ -99,6 +106,41 @@ export class LoginComponent {
             this.errorMessage.set(body.detail);
           } else {
             this.errorMessage.set(this.transloco.translate('auth.errors.unknown'));
+          }
+        },
+      });
+  }
+
+  protected toggleMagicLinkMode(): void {
+    this.errorMessage.set(null);
+    this.magicLinkError.set(null);
+    this.magicLinkSent.set(false);
+    this.magicLinkMode.update((v) => !v);
+  }
+
+  protected submitMagicLink(): void {
+    const email = (this.form.getRawValue().email ?? '').trim();
+    if (!email || this.magicLinkSubmitting()) {
+      this.magicLinkError.set('auth.magic_link.email_required');
+      return;
+    }
+    this.magicLinkSubmitting.set(true);
+    this.magicLinkError.set(null);
+    this.authService
+      .requestMagicLink(email)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        // Constant-time UX: any 2xx maps to the same neutral confirmation.
+        next: () => {
+          this.magicLinkSubmitting.set(false);
+          this.magicLinkSent.set(true);
+        },
+        error: (err: HttpErrorResponse) => {
+          this.magicLinkSubmitting.set(false);
+          if (err.status === 429) {
+            this.magicLinkError.set('auth.magic_link.rate_limited');
+          } else {
+            this.magicLinkError.set('auth.errors.unknown');
           }
         },
       });

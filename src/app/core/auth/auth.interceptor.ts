@@ -13,6 +13,8 @@ const AUTH_PATHS = [
   '/auth/email/resend/',
   '/auth/password/reset/',
   '/auth/password/reset/confirm/',
+  '/auth/magic-link/request/',
+  '/auth/magic-link/exchange/',
 ];
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {

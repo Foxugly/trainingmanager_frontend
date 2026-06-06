@@ -111,6 +111,13 @@ export const routes: Routes = [
             (m) => m.ResetPasswordComponent,
           ),
       },
+      {
+        path: 'auth/magic-link/:token',
+        loadComponent: () =>
+          import('./features/auth/magic-link/magic-link.component').then(
+            (m) => m.MagicLinkComponent,
+          ),
+      },
     ],
   },
   {

@@ -858,7 +858,28 @@
       "resend_email_sent": "Correo enviado. Revisa tu bandeja de entrada.",
       "resend_rate_limited": "Demasiadas solicitudes. Inténtalo de nuevo en unos minutos.",
       "no_account_yet": "¿Aún no tienes cuenta?",
-      "no_account_yet_link": "Regístrate"
+      "no_account_yet_link": "Regístrate",
+      "or": "o"
+    },
+    "magic_link": {
+      "login_cta": "Iniciar sesión con un enlace mágico",
+      "intro": "Introduce tu dirección de correo y te enviaremos un enlace de acceso seguro.",
+      "email_label": "Dirección de correo",
+      "email_placeholder": "tu@ejemplo.com",
+      "email_required": "Introduce tu dirección de correo.",
+      "send": "Enviar el enlace",
+      "sent": "Si existe una cuenta para esta dirección, se acaba de enviar un enlace de acceso. Revisa tu bandeja de entrada.",
+      "back_to_password": "Usar la contraseña",
+      "rate_limited": "Demasiadas solicitudes. Inténtalo de nuevo en unos minutos.",
+      "exchange": {
+        "loading": "Iniciando sesión…",
+        "expired_title": "Enlace caducado",
+        "expired_body": "Este enlace de acceso ha caducado. Solicita uno nuevo para iniciar sesión.",
+        "request_new": "Solicitar un nuevo enlace",
+        "invalid_title": "Enlace no válido",
+        "invalid_body": "Este enlace de acceso no es válido o ya se ha utilizado.",
+        "back_to_login": "Volver al inicio de sesión"
+      }
     },
     "register": {
       "title": "Crear una cuenta",
