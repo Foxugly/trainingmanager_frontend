@@ -178,6 +178,16 @@
       "success_title": "Generatie geslaagd",
       "success_summary": "{{rounds}} blok(ken), {{exercises}} oefening(en) aangemaakt, {{reused}} oefening(en) hergebruikt."
     },
+    "duplicate": {
+      "action": "Dupliceren",
+      "title": "Sessie dupliceren",
+      "date": "Datum van de kopie",
+      "repeat_weekly": "Wekelijks herhalen",
+      "occurrences": "Aantal sessies",
+      "submit": "Dupliceren",
+      "success_single": "Sessie gedupliceerd",
+      "success_plural": "{{count}} sessies aangemaakt"
+    },
     "unknown_program": "Onbekend programma",
     "form": {
       "new_title": "Nieuwe sessie",

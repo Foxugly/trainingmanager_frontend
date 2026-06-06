@@ -178,6 +178,16 @@
       "success_title": "Rigenerazione riuscita",
       "success_summary": "{{rounds}} blocco/i, {{exercises}} esercizio/i creati, {{reused}} esercizio/i riutilizzati."
     },
+    "duplicate": {
+      "action": "Duplica",
+      "title": "Duplica la sessione",
+      "date": "Data della copia",
+      "repeat_weekly": "Ripeti ogni settimana",
+      "occurrences": "Numero di sessioni",
+      "submit": "Duplica",
+      "success_single": "Sessione duplicata",
+      "success_plural": "{{count}} sessioni create"
+    },
     "unknown_program": "Programma sconosciuto",
     "form": {
       "new_title": "Nuova sessione",

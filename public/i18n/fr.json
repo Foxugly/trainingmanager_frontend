@@ -178,6 +178,16 @@
       "success_title": "Régénération réussie",
       "success_summary": "{{rounds}} bloc(s), {{exercises}} exercice(s) créé(s), {{reused}} exercice(s) réutilisé(s)."
     },
+    "duplicate": {
+      "action": "Dupliquer",
+      "title": "Dupliquer la séance",
+      "date": "Date de la copie",
+      "repeat_weekly": "Répéter chaque semaine",
+      "occurrences": "Nombre de séances",
+      "submit": "Dupliquer",
+      "success_single": "Séance dupliquée",
+      "success_plural": "{{count}} séances créées"
+    },
     "unknown_program": "Programme inconnu",
     "form": {
       "new_title": "Nouvelle séance",

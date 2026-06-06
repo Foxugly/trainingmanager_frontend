@@ -61,6 +61,10 @@ import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-h
 import { RoundFormDialogComponent } from '../round-form-dialog/round-form-dialog.component';
 import { AttendanceManagerComponent } from '../attendance-manager/attendance-manager.component';
 import { RegenerateTrainingDialogComponent } from '../regenerate-training-dialog/regenerate-training-dialog.component';
+import {
+  DuplicateEventDialogComponent,
+  type DuplicateEventSubmit,
+} from '../duplicate-event-dialog/duplicate-event-dialog.component';
 import { timeMmSsValidator } from '../shared/time-validator';
 
 /** Reactive form for an inline exercise row (create or edit). */
@@ -109,6 +113,7 @@ interface NewExerciseRow {
     RoundFormDialogComponent,
     AttendanceManagerComponent,
     RegenerateTrainingDialogComponent,
+    DuplicateEventDialogComponent,
   ],
   templateUrl: './events-detail.component.html',
   styleUrl: './events-detail.component.scss',
@@ -175,6 +180,9 @@ export class EventsDetailComponent implements OnInit {
   protected readonly reordering = signal(false);
 
   protected readonly showRegenerateDialog = signal(false);
+
+  protected readonly showDuplicateDialog = signal(false);
+  protected readonly duplicating = signal(false);
 
   protected readonly currentUserRole = computed<TeamRole | null>(() => {
     const t = this.team();
@@ -737,6 +745,47 @@ export class EventsDetailComponent implements OnInit {
       summary: this.transloco.translate('common.success'),
       detail: this.transloco.translate('events.regenerate.success_title'),
     });
+  }
+
+  protected openDuplicate(): void {
+    if (!this.event()) return;
+    this.showDuplicateDialog.set(true);
+  }
+
+  protected onDuplicateConfirmed(payload: DuplicateEventSubmit): void {
+    const eventId = this.eventId();
+    if (eventId == null || this.duplicating()) return;
+    this.duplicating.set(true);
+    this.eventsService
+      .eventsDuplicateCreate(eventId, {
+        date: payload.date,
+        repeat_weekly: payload.repeat_weekly,
+        occurrences: payload.occurrences,
+      })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          this.duplicating.set(false);
+          this.showDuplicateDialog.set(false);
+          const created = res.created ?? [];
+          const count = created.length;
+          this.messageService.add({
+            severity: 'success',
+            summary: this.transloco.translate('common.success'),
+            detail:
+              count > 1
+                ? this.transloco.translate('events.duplicate.success_plural', { count })
+                : this.transloco.translate('events.duplicate.success_single'),
+          });
+          if (count > 0) {
+            this.router.navigate(['/events', created[0].id]);
+          }
+        },
+        error: (err: HttpErrorResponse) => {
+          this.duplicating.set(false);
+          this.notifyMutationError(err);
+        },
+      });
   }
 
   protected confirmDelete(): void {

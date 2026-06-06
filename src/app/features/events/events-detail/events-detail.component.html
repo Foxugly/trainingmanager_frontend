@@ -64,6 +64,20 @@
           />
         </a>
       }
+      @if (canManage()) {
+        <p-button
+          detailHeaderActions
+          icon="pi pi-copy"
+          severity="secondary"
+          [outlined]="true"
+          [rounded]="true"
+          [loading]="duplicating()"
+          [pTooltip]="'events.duplicate.action' | transloco"
+          tooltipPosition="bottom"
+          [ariaLabel]="'events.duplicate.action' | transloco"
+          (onClick)="openDuplicate()"
+        />
+      }
       @if (canRegenerate()) {
         <p-button
           detailHeaderActions
@@ -694,6 +708,13 @@
     [hasRounds]="(e.rounds?.length ?? 0) > 0"
     [loading]="regenerating()"
     (confirmed)="onRegenerateConfirmed($event)"
+  />
+
+  <app-duplicate-event-dialog
+    [(visible)]="showDuplicateDialog"
+    [sourceDate]="e.date ?? null"
+    [loading]="duplicating()"
+    (confirmed)="onDuplicateConfirmed($event)"
   />
 }
 
