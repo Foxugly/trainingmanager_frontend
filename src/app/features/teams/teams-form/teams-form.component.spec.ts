@@ -437,6 +437,26 @@ describe('TeamsFormComponent', () => {
     );
   });
 
+  it('pre-fills topic_creation from the loaded team on edit', async () => {
+    await setup('5', ownerUser, { ...team, topic_creation: 'members' as never });
+    expect(access(component).form.getRawValue()).toMatchObject({ topic_creation: 'members' });
+  });
+
+  it('defaults topic_creation to coaches when the team has none', async () => {
+    await setup('5', ownerUser, { ...team, topic_creation: undefined });
+    expect(access(component).form.getRawValue()).toMatchObject({ topic_creation: 'coaches' });
+  });
+
+  it('update payload includes topic_creation', async () => {
+    await setup('5');
+    access(component).form.patchValue({ topic_creation: 'members' });
+    access(component).submit();
+    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(
+      5,
+      expect.objectContaining({ topic_creation: 'members' }),
+    );
+  });
+
   it('update payload includes timezone + vis_*', async () => {
     await setup('5');
     access(component).form.patchValue({

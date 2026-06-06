@@ -374,7 +374,8 @@
         "managers": "Managers",
         "members": "Membres",
         "requests_invitations": "Demandes & invitations",
-        "visibility": "Visibilité"
+        "visibility": "Visibilité",
+        "discussions": "Discussions"
       }
     },
     "form": {
@@ -431,7 +432,9 @@
       "vis_goal": "Objectif (par défaut)",
       "vis_goal_help": "Réglage par défaut appliqué aux nouvelles séances ; modifiable séance par séance.",
       "vis_rounds": "Détail de la séance (par défaut)",
-      "vis_rounds_help": "Réglage par défaut appliqué aux nouvelles séances ; modifiable séance par séance."
+      "vis_rounds_help": "Réglage par défaut appliqué aux nouvelles séances ; modifiable séance par séance.",
+      "topic_creation": "Création de sujets",
+      "topic_creation_help": "Définit qui peut créer de nouveaux sujets de discussion dans l'équipe."
     },
     "member_dialog": {
       "title": "Ajouter un membre",
@@ -576,6 +579,30 @@
       "already_member": "Ce membre fait déjà partie de l'équipe.",
       "invitation_already_pending": "Une invitation est déjà en cours pour cet email.",
       "email_already_member": "Cet email est déjà membre de l'équipe."
+    },
+    "topic_creation": {
+      "owner": "Propriétaire uniquement",
+      "coaches": "Propriétaire et coachs",
+      "members": "Tout le monde (athlètes inclus)"
+    },
+    "discussions": {
+      "new_topic": "Nouveau sujet",
+      "title_label": "Titre",
+      "audience": "Audience",
+      "audience_team": "Équipe",
+      "audience_coaches": "Coachs",
+      "allow_athlete_replies": "Autoriser les réponses des athlètes",
+      "reply_placeholder": "Votre message…",
+      "send": "Envoyer",
+      "replies_disabled": "Les réponses des athlètes ne sont pas autorisées",
+      "empty": "Aucune discussion",
+      "no_messages": "Aucun message",
+      "delete_topic_confirm": "Supprimer ce sujet et tous ses messages ?",
+      "delete_message_confirm": "Supprimer ce message ?",
+      "message_count": "{{count}} message(s)",
+      "topic_created": "Sujet créé.",
+      "topic_deleted": "Sujet supprimé.",
+      "message_deleted": "Message supprimé."
     }
   },
   "common": {
@@ -603,7 +630,8 @@
       "aria": "Choisir la langue"
     },
     "edit": "Modifier",
-    "delete": "Supprimer"
+    "delete": "Supprimer",
+    "confirm": "Confirmer"
   },
   "dashboard": {
     "greeting": "Bonjour {{name}} 👋",

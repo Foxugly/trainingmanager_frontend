@@ -374,7 +374,8 @@
         "managers": "Managers",
         "members": "Leden",
         "requests_invitations": "Aanvragen & uitnodigingen",
-        "visibility": "Zichtbaarheid"
+        "visibility": "Zichtbaarheid",
+        "discussions": "Discussies"
       }
     },
     "form": {
@@ -431,7 +432,9 @@
       "vis_goal": "Doel (standaard)",
       "vis_goal_help": "Standaard voor nieuwe sessies; per sessie aanpasbaar.",
       "vis_rounds": "Sessiedetails (standaard)",
-      "vis_rounds_help": "Standaard voor nieuwe sessies; per sessie aanpasbaar."
+      "vis_rounds_help": "Standaard voor nieuwe sessies; per sessie aanpasbaar.",
+      "topic_creation": "Onderwerpen aanmaken",
+      "topic_creation_help": "Bepaalt wie nieuwe discussieonderwerpen in het team kan aanmaken."
     },
     "member_dialog": {
       "title": "Lid toevoegen",
@@ -576,6 +579,30 @@
       "already_member": "Dit lid maakt al deel uit van het team.",
       "invitation_already_pending": "Er is al een uitnodiging in behandeling voor deze e-mail.",
       "email_already_member": "Dit e-mailadres is al lid van het team."
+    },
+    "topic_creation": {
+      "owner": "Alleen eigenaar",
+      "coaches": "Eigenaar en coaches",
+      "members": "Iedereen (inclusief atleten)"
+    },
+    "discussions": {
+      "new_topic": "Nieuw onderwerp",
+      "title_label": "Titel",
+      "audience": "Doelgroep",
+      "audience_team": "Team",
+      "audience_coaches": "Coaches",
+      "allow_athlete_replies": "Antwoorden van atleten toestaan",
+      "reply_placeholder": "Je bericht…",
+      "send": "Verzenden",
+      "replies_disabled": "Antwoorden van atleten zijn niet toegestaan",
+      "empty": "Geen discussies",
+      "no_messages": "Geen berichten",
+      "delete_topic_confirm": "Dit onderwerp en alle berichten verwijderen?",
+      "delete_message_confirm": "Dit bericht verwijderen?",
+      "message_count": "{{count}} bericht(en)",
+      "topic_created": "Onderwerp aangemaakt.",
+      "topic_deleted": "Onderwerp verwijderd.",
+      "message_deleted": "Bericht verwijderd."
     }
   },
   "common": {
@@ -603,7 +630,8 @@
       "aria": "Taal kiezen"
     },
     "edit": "Bewerken",
-    "delete": "Verwijderen"
+    "delete": "Verwijderen",
+    "confirm": "Bevestigen"
   },
   "dashboard": {
     "greeting": "Hallo {{name}} 👋",

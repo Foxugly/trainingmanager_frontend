@@ -42,6 +42,10 @@ import { TeamRole } from '../teams-list/teams-list.component';
 import { ProgramsListComponent } from '../../programs/programs-list/programs-list.component';
 import { TeamStatsComponent } from '../team-stats/team-stats.component';
 import { MemberNotesComponent } from '../member-notes/member-notes.component';
+import {
+  TeamDiscussionsComponent,
+  type DiscussionRole,
+} from '../team-discussions/team-discussions.component';
 import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-header.component';
 import {
   ActiveToggleComponent,
@@ -78,6 +82,7 @@ interface FieldErrors {
     ProgramsListComponent,
     TeamStatsComponent,
     MemberNotesComponent,
+    TeamDiscussionsComponent,
     DetailHeaderComponent,
     ActiveToggleComponent,
   ],
@@ -161,6 +166,17 @@ export class TeamsDetailComponent implements OnInit {
   });
 
   protected readonly isMemberOrAbove = computed(() => this.currentUserRole() !== null);
+
+  /** Viewer's role as the discussions panel expects it (member-or-above). */
+  protected readonly discussionRole = computed<DiscussionRole | null>(() => {
+    const role = this.currentUserRole();
+    return role === 'owner' || role === 'manager' || role === 'member' ? role : null;
+  });
+
+  protected readonly currentUserId = computed<number>(() => this.authService.currentUser()?.id ?? 0);
+
+  /** Optional deep-link target topic id from ?topic=<id>. */
+  protected readonly initialTopicId = signal<number | null>(null);
 
   protected readonly canRequestJoin = computed<boolean>(() => {
     const t = this.team();
@@ -272,6 +288,16 @@ export class TeamsDetailComponent implements OnInit {
       return;
     }
     this.teamId.set(id);
+
+    // Optional deep-link: ?tab=discussions(&topic=<id>) — e.g. from notifications.
+    const qp = this.route.snapshot.queryParamMap;
+    if (qp.get('tab') === 'discussions') {
+      this.activeTab.set('discussions');
+      const topicParam = qp.get('topic');
+      const topicId = topicParam ? Number(topicParam) : NaN;
+      if (Number.isFinite(topicId)) this.initialTopicId.set(topicId);
+    }
+
     this.loadTeam(id);
     this.loadMemberships(id);
     this.loadInvitations(id);

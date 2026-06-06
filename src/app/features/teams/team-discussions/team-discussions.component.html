@@ -1,0 +1,211 @@
+<p-confirmDialog />
+
+<div class="discussions">
+  @if (selectedTopic(); as topic) {
+    <!-- THREAD VIEW -->
+    <div class="thread">
+      <div class="thread-header">
+        <p-button
+          icon="pi pi-arrow-left"
+          severity="secondary"
+          [text]="true"
+          [rounded]="true"
+          [ariaLabel]="'common.back' | transloco"
+          (onClick)="backToList()"
+        />
+        <div class="thread-title">
+          <h3>{{ topic.title }}</h3>
+          <div class="thread-meta">
+            <p-tag
+              [value]="
+                (topic.audience === AudienceEnum.Coaches
+                  ? 'teams.discussions.audience_coaches'
+                  : 'teams.discussions.audience_team'
+                ) | transloco
+              "
+              [severity]="topic.audience === AudienceEnum.Coaches ? 'warn' : 'info'"
+            />
+            <span class="author">{{ authorName(topic.author) }}</span>
+          </div>
+        </div>
+        @if (canDeleteTopic(topic)) {
+          <p-button
+            icon="pi pi-trash"
+            severity="danger"
+            [text]="true"
+            [rounded]="true"
+            [ariaLabel]="'common.delete' | transloco"
+            (onClick)="confirmDeleteTopic(topic)"
+          />
+        }
+      </div>
+
+      <div class="messages">
+        @if (loadingMessages()) {
+          <p class="muted">{{ 'common.loading' | transloco }}</p>
+        } @else if (messages().length === 0) {
+          <p class="muted">{{ 'teams.discussions.no_messages' | transloco }}</p>
+        } @else {
+          @for (msg of messages(); track msg.id) {
+            <div class="message" [class.own]="isOwnMessage(msg)">
+              <div class="message-head">
+                <span class="author">{{ authorName(msg.author) }}</span>
+                <span class="time">{{ msg.created_at | date: 'short' }}</span>
+                @if (canDeleteMessage(msg)) {
+                  <p-button
+                    icon="pi pi-trash"
+                    severity="danger"
+                    [text]="true"
+                    [rounded]="true"
+                    size="small"
+                    [ariaLabel]="'common.delete' | transloco"
+                    (onClick)="confirmDeleteMessage(msg)"
+                  />
+                }
+              </div>
+              <div class="message-body" [innerHTML]="msg.content"></div>
+            </div>
+          }
+        }
+      </div>
+
+      @if (canReply()) {
+        <div class="reply-box">
+          <textarea
+            pTextarea
+            [(ngModel)]="replyContentModel"
+            rows="3"
+            [placeholder]="'teams.discussions.reply_placeholder' | transloco"
+            [attr.aria-label]="'teams.discussions.reply_placeholder' | transloco"
+          ></textarea>
+          <p-button
+            [label]="'teams.discussions.send' | transloco"
+            icon="pi pi-send"
+            [loading]="sendingReply()"
+            [disabled]="replyContent().trim().length === 0"
+            (onClick)="sendReply()"
+          />
+        </div>
+      } @else {
+        <p class="muted replies-disabled">
+          {{ 'teams.discussions.replies_disabled' | transloco }}
+        </p>
+      }
+    </div>
+  } @else {
+    <!-- TOPIC LIST -->
+    <div class="list-header">
+      @if (canCreateTopic()) {
+        <p-button
+          [label]="'teams.discussions.new_topic' | transloco"
+          icon="pi pi-plus"
+          (onClick)="openNewTopic()"
+        />
+      }
+    </div>
+
+    @if (loadingTopics()) {
+      <p class="muted">{{ 'common.loading' | transloco }}</p>
+    } @else if (topics().length === 0) {
+      <app-empty-state icon="comments" [title]="'teams.discussions.empty' | transloco" />
+    } @else {
+      <ul class="topic-list">
+        @for (topic of topics(); track topic.id) {
+          <li class="topic-card">
+            <button type="button" class="topic-main" (click)="openTopic(topic)">
+              <div class="topic-title-row">
+                <span class="topic-title">{{ topic.title }}</span>
+                <p-tag
+                  [value]="
+                    (topic.audience === AudienceEnum.Coaches
+                      ? 'teams.discussions.audience_coaches'
+                      : 'teams.discussions.audience_team'
+                    ) | transloco
+                  "
+                  [severity]="topic.audience === AudienceEnum.Coaches ? 'warn' : 'info'"
+                />
+              </div>
+              <div class="topic-meta">
+                <span><i class="pi pi-comment" aria-hidden="true"></i> {{ topic.message_count }}</span>
+                <span>{{ topic.updated_at | date: 'short' }}</span>
+                <span class="author">{{ authorName(topic.author) }}</span>
+              </div>
+            </button>
+            @if (canDeleteTopic(topic)) {
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [text]="true"
+                [rounded]="true"
+                [ariaLabel]="'common.delete' | transloco"
+                (onClick)="confirmDeleteTopic(topic)"
+              />
+            }
+          </li>
+        }
+      </ul>
+    }
+  }
+</div>
+
+<!-- NEW TOPIC DIALOG -->
+<p-dialog
+  [visible]="showNewTopic()"
+  (visibleChange)="$event ? null : closeNewTopic()"
+  [modal]="true"
+  [header]="'teams.discussions.new_topic' | transloco"
+  [style]="{ width: '32rem' }"
+  [dismissableMask]="true"
+>
+  <div class="dialog-body">
+    <label class="field">
+      <span class="field-label">{{ 'teams.discussions.title_label' | transloco }}</span>
+      <input
+        pInputText
+        [(ngModel)]="newTopicTitleModel"
+        [attr.aria-label]="'teams.discussions.title_label' | transloco"
+      />
+    </label>
+
+    @if (isCoach()) {
+      <label class="field">
+        <span class="field-label">{{ 'teams.discussions.audience' | transloco }}</span>
+        <p-select
+          [options]="audienceOptions()"
+          [(ngModel)]="newTopicAudienceModel"
+          optionLabel="label"
+          optionValue="value"
+          [attr.aria-label]="'teams.discussions.audience' | transloco"
+        />
+      </label>
+    } @else {
+      <div class="field">
+        <span class="field-label">{{ 'teams.discussions.audience' | transloco }}</span>
+        <p-tag [value]="'teams.discussions.audience_team' | transloco" severity="info" />
+      </div>
+    }
+
+    @if (newTopicAudience() === AudienceEnum.Team) {
+      <label class="field-inline">
+        <input type="checkbox" [(ngModel)]="newTopicAllowRepliesModel" />
+        <span>{{ 'teams.discussions.allow_athlete_replies' | transloco }}</span>
+      </label>
+    }
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button
+      [label]="'common.cancel' | transloco"
+      severity="secondary"
+      [text]="true"
+      (onClick)="closeNewTopic()"
+    />
+    <p-button
+      [label]="'teams.discussions.new_topic' | transloco"
+      icon="pi pi-check"
+      [loading]="creatingTopic()"
+      [disabled]="newTopicTitle().trim().length === 0"
+      (onClick)="submitNewTopic()"
+    />
+  </ng-template>
+</p-dialog>

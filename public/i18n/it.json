@@ -374,7 +374,8 @@
         "managers": "Manager",
         "members": "Membri",
         "requests_invitations": "Richieste e inviti",
-        "visibility": "Visibilità"
+        "visibility": "Visibilità",
+        "discussions": "Discussioni"
       }
     },
     "form": {
@@ -431,7 +432,9 @@
       "vis_goal": "Obiettivo (predefinito)",
       "vis_goal_help": "Predefinito per le nuove sessioni; modificabile per ogni sessione.",
       "vis_rounds": "Dettaglio sessione (predefinito)",
-      "vis_rounds_help": "Predefinito per le nuove sessioni; modificabile per ogni sessione."
+      "vis_rounds_help": "Predefinito per le nuove sessioni; modificabile per ogni sessione.",
+      "topic_creation": "Creazione argomenti",
+      "topic_creation_help": "Definisce chi può creare nuovi argomenti di discussione nella squadra."
     },
     "member_dialog": {
       "title": "Aggiungi un membro",
@@ -576,6 +579,30 @@
       "already_member": "Questo membro fa già parte della squadra.",
       "invitation_already_pending": "Esiste già un invito in corso per questa email.",
       "email_already_member": "Questa email fa già parte della squadra."
+    },
+    "topic_creation": {
+      "owner": "Solo proprietario",
+      "coaches": "Proprietario e coach",
+      "members": "Tutti (atleti inclusi)"
+    },
+    "discussions": {
+      "new_topic": "Nuovo argomento",
+      "title_label": "Titolo",
+      "audience": "Destinatari",
+      "audience_team": "Squadra",
+      "audience_coaches": "Coach",
+      "allow_athlete_replies": "Consenti risposte degli atleti",
+      "reply_placeholder": "Il tuo messaggio…",
+      "send": "Invia",
+      "replies_disabled": "Le risposte degli atleti non sono consentite",
+      "empty": "Nessuna discussione",
+      "no_messages": "Nessun messaggio",
+      "delete_topic_confirm": "Eliminare questo argomento e tutti i suoi messaggi?",
+      "delete_message_confirm": "Eliminare questo messaggio?",
+      "message_count": "{{count}} messaggio/i",
+      "topic_created": "Argomento creato.",
+      "topic_deleted": "Argomento eliminato.",
+      "message_deleted": "Messaggio eliminato."
     }
   },
   "common": {
@@ -603,7 +630,8 @@
       "aria": "Scegli la lingua"
     },
     "edit": "Modifica",
-    "delete": "Elimina"
+    "delete": "Elimina",
+    "confirm": "Conferma"
   },
   "dashboard": {
     "greeting": "Ciao {{name}} 👋",

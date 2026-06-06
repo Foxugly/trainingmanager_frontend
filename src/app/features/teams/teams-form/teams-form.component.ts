@@ -33,6 +33,7 @@ import { Level } from '../../../api/model/level';
 import { PatchedTeam } from '../../../api/model/patched-team';
 import { Sport } from '../../../api/model/sport';
 import { Team } from '../../../api/model/team';
+import { TopicCreationEnum } from '../../../api/model/topic-creation-enum';
 import { VisibilityMode } from '../../../api/model/visibility-mode';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AVAILABLE_LANGUAGES, LanguageCode } from '../../../core/i18n/available-languages';
@@ -144,6 +145,26 @@ export class TeamsFormComponent implements OnInit {
     return zones.map((z) => ({ label: z, value: z }));
   })();
 
+  /** Topic-creation policy select options, re-translated on language change. */
+  protected readonly topicCreationOptions = computed(() => {
+    // Touch the active lang so labels recompute when it changes.
+    this.transloco.getActiveLang();
+    return [
+      {
+        label: this.transloco.translate('teams.topic_creation.owner'),
+        value: TopicCreationEnum.Owner,
+      },
+      {
+        label: this.transloco.translate('teams.topic_creation.coaches'),
+        value: TopicCreationEnum.Coaches,
+      },
+      {
+        label: this.transloco.translate('teams.topic_creation.members'),
+        value: TopicCreationEnum.Members,
+      },
+    ];
+  });
+
   protected readonly isEditMode = computed(() => this.teamId() !== null);
 
   protected readonly patchActive = (id: number, value: boolean) =>
@@ -175,6 +196,7 @@ export class TeamsFormComponent implements OnInit {
     weekly_recap_enabled: [false],
     managers_ids: this.fb.nonNullable.control<number[]>([]),
     auto_accept_policy: [false],
+    topic_creation: this.fb.nonNullable.control<TopicCreationEnum>(TopicCreationEnum.Coaches),
     notify_managers_on_join_request: [true],
     notify_coaches_on_note: [true],
     notify_athlete_on_visible_note: [true],
@@ -239,6 +261,7 @@ export class TeamsFormComponent implements OnInit {
               weekly_recap_enabled: t.weekly_recap_enabled ?? false,
               managers_ids: (t.managers ?? []).map((m) => m.id),
               auto_accept_policy: t.join_request_policy === JoinRequestPolicyEnum.Auto,
+              topic_creation: t.topic_creation ?? TopicCreationEnum.Coaches,
               notify_managers_on_join_request: t.notify_managers_on_join_request ?? true,
               notify_coaches_on_note: t.notify_coaches_on_note ?? true,
               notify_athlete_on_visible_note: t.notify_athlete_on_visible_note ?? true,
@@ -406,6 +429,7 @@ export class TeamsFormComponent implements OnInit {
       join_request_policy: value.auto_accept_policy
         ? JoinRequestPolicyEnum.Auto
         : JoinRequestPolicyEnum.Manual,
+      topic_creation: value.topic_creation,
       notify_managers_on_join_request: value.notify_managers_on_join_request,
       notify_coaches_on_note: value.notify_coaches_on_note,
       notify_athlete_on_visible_note: value.notify_athlete_on_visible_note,

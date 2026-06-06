@@ -114,6 +114,12 @@
             <p-badge [value]="memberships().length.toString()" severity="info" styleClass="ml-2" />
           }
         </p-tab>
+        @if (isMemberOrAbove()) {
+          <p-tab value="discussions">
+            <i class="pi pi-comments mr-2" aria-hidden="true"></i>
+            {{ 'teams.detail.tabs.discussions' | transloco }}
+          </p-tab>
+        }
         @if (canManage()) {
           <p-tab value="requests">
             <i class="pi pi-inbox mr-2" aria-hidden="true"></i>
@@ -297,6 +303,19 @@
             </ul>
           }
         </p-tabpanel>
+
+        <!-- TAB: DISCUSSIONS (any team member) -->
+        @if (isMemberOrAbove() && discussionRole(); as role) {
+          <p-tabpanel value="discussions">
+            <app-team-discussions
+              [teamId]="t.id"
+              [team]="t"
+              [role]="role"
+              [currentUserId]="currentUserId()"
+              [initialTopicId]="initialTopicId()"
+            />
+          </p-tabpanel>
+        }
 
         <!-- TAB 3: DEMANDES & INVITATIONS (manager-only) -->
         @if (canManage()) {

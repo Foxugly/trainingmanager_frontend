@@ -124,6 +124,9 @@ interface ProtectedFields {
   myPendingRequest(): TeamJoinRequest | null;
   canRequestJoin(): boolean;
   isMemberOrAbove(): boolean;
+  discussionRole(): TeamRole | null;
+  currentUserId(): number;
+  initialTopicId(): number | null;
   myMemberId(): number | null;
   isAthleteMember(): boolean;
   selectedStatsMember(): number | null;
@@ -162,6 +165,7 @@ describe('TeamsDetailComponent', () => {
   let memberMembershipMock: { createMemberAndAttach: ReturnType<typeof vi.fn> };
   let userSig: ReturnType<typeof signal<CustomUserPublic | null>>;
   let routeIdParam: string | null;
+  let routeQueryParams: Record<string, string>;
   let router: Router;
 
   const access = (c: TeamsDetailComponent) => c as unknown as ProtectedFields;
@@ -174,10 +178,12 @@ describe('TeamsDetailComponent', () => {
       memberships?: TeamMembership[];
       joinRequestsList?: { count: number; results: TeamJoinRequest[] };
       invitationsList?: { count: number; results: TeamInvitation[] };
+      queryParams?: Record<string, string>;
     } = {},
   ) {
     TestBed.resetTestingModule();
     routeIdParam = idParam;
+    routeQueryParams = overrides.queryParams ?? {};
     serviceMock = {
       teamsRetrieve: vi
         .fn()
@@ -228,7 +234,12 @@ describe('TeamsDetailComponent', () => {
         },
         {
           provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: { get: () => routeIdParam } } },
+          useValue: {
+            snapshot: {
+              paramMap: { get: () => routeIdParam },
+              queryParamMap: { get: (k: string) => routeQueryParams[k] ?? null },
+            },
+          },
         },
       ],
     })
@@ -641,5 +652,30 @@ describe('TeamsDetailComponent', () => {
     });
     expect(access(component).myMemberId()).toBeNull();
     expect(access(component).isAthleteMember()).toBe(false);
+  });
+
+  it('discussionRole mirrors the owner role for a member-or-above viewer', () => {
+    // default setup: ownerUser owns the team
+    expect(access(component).discussionRole()).toBe('owner');
+    expect(access(component).currentUserId()).toBe(ownerUser.id);
+  });
+
+  it('discussionRole is null for a non-member visitor', async () => {
+    await setup('4', { ...team, is_public: true }, otherUser, {
+      memberships: [],
+      joinRequestsList: { count: 0, results: [] },
+    });
+    expect(access(component).discussionRole()).toBeNull();
+  });
+
+  it('deep-link ?tab=discussions&topic=10 selects the tab and seeds the topic id', async () => {
+    await setup('4', team, ownerUser, { queryParams: { tab: 'discussions', topic: '10' } });
+    expect(access(component).activeTab()).toBe('discussions');
+    expect(access(component).initialTopicId()).toBe(10);
+  });
+
+  it('no deep-link leaves the default programs tab and a null initial topic', () => {
+    expect(access(component).activeTab()).toBe('programs');
+    expect(access(component).initialTopicId()).toBeNull();
   });
 });

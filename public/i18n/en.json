@@ -374,7 +374,8 @@
         "managers": "Managers",
         "members": "Members",
         "requests_invitations": "Requests & invitations",
-        "visibility": "Visibility"
+        "visibility": "Visibility",
+        "discussions": "Discussions"
       }
     },
     "form": {
@@ -431,7 +432,9 @@
       "vis_goal": "Goal (default)",
       "vis_goal_help": "Default applied to new sessions; overridable per session.",
       "vis_rounds": "Session detail (default)",
-      "vis_rounds_help": "Default applied to new sessions; overridable per session."
+      "vis_rounds_help": "Default applied to new sessions; overridable per session.",
+      "topic_creation": "Topic creation",
+      "topic_creation_help": "Defines who can create new discussion topics in the team."
     },
     "member_dialog": {
       "title": "Add a member",
@@ -576,6 +579,30 @@
       "already_member": "This member is already part of the team.",
       "invitation_already_pending": "An invitation is already pending for this email.",
       "email_already_member": "This email is already a member of the team."
+    },
+    "topic_creation": {
+      "owner": "Owner only",
+      "coaches": "Owner and coaches",
+      "members": "Everyone (athletes included)"
+    },
+    "discussions": {
+      "new_topic": "New topic",
+      "title_label": "Title",
+      "audience": "Audience",
+      "audience_team": "Team",
+      "audience_coaches": "Coaches",
+      "allow_athlete_replies": "Allow athlete replies",
+      "reply_placeholder": "Your message…",
+      "send": "Send",
+      "replies_disabled": "Athlete replies are not allowed",
+      "empty": "No discussions",
+      "no_messages": "No messages",
+      "delete_topic_confirm": "Delete this topic and all its messages?",
+      "delete_message_confirm": "Delete this message?",
+      "message_count": "{{count}} message(s)",
+      "topic_created": "Topic created.",
+      "topic_deleted": "Topic deleted.",
+      "message_deleted": "Message deleted."
     }
   },
   "common": {
@@ -603,7 +630,8 @@
       "aria": "Choose language"
     },
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "confirm": "Confirm"
   },
   "dashboard": {
     "greeting": "Hello {{name}} 👋",

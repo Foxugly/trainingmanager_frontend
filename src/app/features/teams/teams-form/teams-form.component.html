@@ -293,6 +293,21 @@
 
                     <app-meta-field
                       [full]="true"
+                      for="topic_creation"
+                      [label]="'teams.form.topic_creation' | transloco"
+                      [tooltip]="'teams.form.topic_creation_help' | transloco"
+                    >
+                      <p-select
+                        inputId="topic_creation"
+                        [options]="topicCreationOptions()"
+                        formControlName="topic_creation"
+                        optionLabel="label"
+                        optionValue="value"
+                      />
+                    </app-meta-field>
+
+                    <app-meta-field
+                      [full]="true"
                       for="roti_enabled"
                       [label]="'teams.form.roti_enabled' | transloco"
                       [tooltip]="'teams.form.roti_enabled_help' | transloco"
