@@ -1233,6 +1233,16 @@
     },
     "delete_confirm": "Deze prestatie verwijderen?"
   },
+  "audit": {
+    "tab": "Logboek",
+    "col_when": "Datum",
+    "col_who": "Auteur",
+    "col_action": "Actie",
+    "col_target": "Doel",
+    "system": "Systeem",
+    "empty": "Geen vermeldingen in het logboek",
+    "load_more": "Meer laden"
+  },
   "rgpd": {
     "export": {
       "section": "Persoonsgegevens",

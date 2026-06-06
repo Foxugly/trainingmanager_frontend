@@ -1233,6 +1233,16 @@
     },
     "delete_confirm": "¿Eliminar este rendimiento?"
   },
+  "audit": {
+    "tab": "Registro",
+    "col_when": "Fecha",
+    "col_who": "Autor",
+    "col_action": "Acción",
+    "col_target": "Objetivo",
+    "system": "Sistema",
+    "empty": "No hay entradas en el registro",
+    "load_more": "Cargar más"
+  },
   "rgpd": {
     "export": {
       "section": "Datos personales",

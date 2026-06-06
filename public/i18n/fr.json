@@ -1233,6 +1233,16 @@
     },
     "delete_confirm": "Supprimer cette performance ?"
   },
+  "audit": {
+    "tab": "Journal",
+    "col_when": "Date",
+    "col_who": "Auteur",
+    "col_action": "Action",
+    "col_target": "Cible",
+    "system": "Système",
+    "empty": "Aucune entrée dans le journal",
+    "load_more": "Charger plus"
+  },
   "rgpd": {
     "export": {
       "section": "Données personnelles",

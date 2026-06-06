@@ -6,10 +6,13 @@ import { TranslocoTestingModule } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { AuditLogService } from '../../../api/api/audit-log.service';
 import { InvitationsService } from '../../../api/api/invitations.service';
 import { JoinRequestsService } from '../../../api/api/join-requests.service';
 import { MembersService } from '../../../api/api/members.service';
 import { TeamsService } from '../../../api/api/teams.service';
+import { AuditLogEntry } from '../../../api/model/audit-log-entry';
+import { ActionEnum } from '../../../api/model/action-enum';
 import { CustomUserPublic } from '../../../api/model/custom-user-public';
 import { InvitationStatusEnum } from '../../../api/model/invitation-status-enum';
 import { JoinRequestStatusEnum } from '../../../api/model/join-request-status-enum';
@@ -72,6 +75,30 @@ const joinReq1: TeamJoinRequest = {
   responded_at: null,
   responded_by: null,
   responded_by_username: null,
+};
+
+const auditEntry1: AuditLogEntry = {
+  id: 501,
+  actor: 17,
+  actor_label: 'testfrontend',
+  action: ActionEnum.MemberRemoved,
+  action_display: 'Membre retiré',
+  team: 4,
+  target_repr: 'Renaud Vilain',
+  metadata: null,
+  created_at: '2026-05-20T10:30:00Z',
+};
+
+const auditEntry2: AuditLogEntry = {
+  id: 502,
+  actor: null,
+  actor_label: '',
+  action: ActionEnum.SessionShared,
+  action_display: 'Séance partagée',
+  team: 4,
+  target_repr: 'Séance #12',
+  metadata: null,
+  created_at: '2026-05-19T08:00:00Z',
 };
 
 const mb1: TeamMembership = {
@@ -144,6 +171,12 @@ interface ProtectedFields {
   closeJoinDialog(): void;
   submitJoinRequest(): void;
   confirmCancelMyRequest(): void;
+  auditRows(): Array<{ id: number; when: string; who: string; action: string; target: string }>;
+  loadingAudit(): boolean;
+  auditLoaded(): boolean;
+  auditHasMore(): boolean;
+  onTabChange(value: string): void;
+  loadMoreAudit(): void;
 }
 
 describe('TeamsDetailComponent', () => {
@@ -167,6 +200,7 @@ describe('TeamsDetailComponent', () => {
   };
   let memberMembershipMock: { createMemberAndAttach: ReturnType<typeof vi.fn> };
   let membersMock: { membersAnonymize: ReturnType<typeof vi.fn> };
+  let auditMock: { auditLogList: ReturnType<typeof vi.fn> };
   let userSig: ReturnType<typeof signal<CustomUserPublic | null>>;
   let routeIdParam: string | null;
   let routeQueryParams: Record<string, string>;
@@ -182,6 +216,7 @@ describe('TeamsDetailComponent', () => {
       memberships?: TeamMembership[];
       joinRequestsList?: { count: number; results: TeamJoinRequest[] };
       invitationsList?: { count: number; results: TeamInvitation[] };
+      auditLogList?: { count: number; next: string | null; results: AuditLogEntry[] };
       queryParams?: Record<string, string>;
     } = {},
   ) {
@@ -216,6 +251,17 @@ describe('TeamsDetailComponent', () => {
     membersMock = {
       membersAnonymize: vi.fn().mockReturnValue(of({ id: 23 })),
     };
+    auditMock = {
+      auditLogList: vi.fn().mockReturnValue(
+        of(
+          overrides.auditLogList ?? {
+            count: 2,
+            next: null,
+            results: [auditEntry1, auditEntry2],
+          },
+        ),
+      ),
+    };
     userSig = signal<CustomUserPublic | null>(currentUser);
 
     await TestBed.configureTestingModule({
@@ -236,6 +282,7 @@ describe('TeamsDetailComponent', () => {
         { provide: JoinRequestsService, useValue: joinRequestsMock },
         { provide: MemberMembershipService, useValue: memberMembershipMock },
         { provide: MembersService, useValue: membersMock },
+        { provide: AuditLogService, useValue: auditMock },
         {
           provide: AuthService,
           useValue: { currentUser: userSig.asReadonly(), refreshMe: vi.fn() },
@@ -707,5 +754,55 @@ describe('TeamsDetailComponent', () => {
   it('no deep-link leaves the default programs tab and a null initial topic', () => {
     expect(access(component).activeTab()).toBe('programs');
     expect(access(component).initialTopicId()).toBeNull();
+  });
+
+  it('audit log is not fetched on init (lazy until the tab opens)', () => {
+    expect(auditMock.auditLogList).not.toHaveBeenCalled();
+    expect(access(component).auditRows()).toHaveLength(0);
+    expect(access(component).auditLoaded()).toBe(false);
+  });
+
+  it('opening the Journal tab fetches the team audit log and maps rows', () => {
+    access(component).onTabChange('audit');
+    expect(auditMock.auditLogList).toHaveBeenCalledWith(undefined, 1, undefined, undefined, 4);
+    const rows = access(component).auditRows();
+    expect(rows).toHaveLength(2);
+    expect(rows[0].id).toBe(501);
+    expect(rows[0].action).toBe('Membre retiré');
+    expect(rows[0].target).toBe('Renaud Vilain');
+    // empty actor_label falls back to the localized "Système" key
+    expect(rows[1].who).toBe('audit.system');
+    expect(rows[0].who).toBe('testfrontend');
+    expect(access(component).auditLoaded()).toBe(true);
+  });
+
+  it('opening the Journal tab twice fetches only once (cached)', () => {
+    access(component).onTabChange('audit');
+    access(component).onTabChange('programs');
+    access(component).onTabChange('audit');
+    expect(auditMock.auditLogList).toHaveBeenCalledTimes(1);
+  });
+
+  it('loadMoreAudit appends the next page when next is present', () => {
+    auditMock.auditLogList
+      .mockReturnValueOnce(
+        of({ count: 3, next: 'http://x/?page=2', results: [auditEntry1] }),
+      )
+      .mockReturnValueOnce(of({ count: 3, next: null, results: [auditEntry2] }));
+    access(component).onTabChange('audit');
+    expect(access(component).auditRows()).toHaveLength(1);
+    expect(access(component).auditHasMore()).toBe(true);
+    access(component).loadMoreAudit();
+    expect(auditMock.auditLogList).toHaveBeenLastCalledWith(undefined, 2, undefined, undefined, 4);
+    expect(access(component).auditRows()).toHaveLength(2);
+    expect(access(component).auditHasMore()).toBe(false);
+  });
+
+  it('non-manager opening the Journal tab does NOT fetch the audit log (coach-gated)', async () => {
+    await setup('4', team, otherUser);
+    expect(access(component).canManage()).toBe(false);
+    access(component).onTabChange('audit');
+    expect(auditMock.auditLogList).not.toHaveBeenCalled();
+    expect(access(component).auditRows()).toHaveLength(0);
   });
 });

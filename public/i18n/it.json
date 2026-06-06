@@ -1233,6 +1233,16 @@
     },
     "delete_confirm": "Eliminare questa prestazione?"
   },
+  "audit": {
+    "tab": "Registro",
+    "col_when": "Data",
+    "col_who": "Autore",
+    "col_action": "Azione",
+    "col_target": "Oggetto",
+    "system": "Sistema",
+    "empty": "Nessuna voce nel registro",
+    "load_more": "Carica altro"
+  },
   "rgpd": {
     "export": {
       "section": "Dati personali",
