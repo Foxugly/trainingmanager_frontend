@@ -175,6 +175,7 @@ model/token-obtain-pair-response.ts
 model/token-refresh.ts
 model/validate-invitation.ts
 model/verified-token-obtain-pair.ts
+model/visibility-mode.ts
 param.ts
 provide-api.ts
 query.params.ts

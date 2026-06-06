@@ -5568,6 +5568,33 @@ components:
           items:
             type: integer
           readOnly: true
+        vis_distance:
+          allOf:
+          - $ref: '#/components/schemas/VisibilityMode'
+          description: |-
+            Visibility of this session's total distance to athletes.
+
+            * `always` - Always
+            * `after` - After the session
+            * `never` - Never
+        vis_goal:
+          allOf:
+          - $ref: '#/components/schemas/VisibilityMode'
+          description: |-
+            Visibility of this session's goal to athletes.
+
+            * `always` - Always
+            * `after` - After the session
+            * `never` - Never
+        vis_rounds:
+          allOf:
+          - $ref: '#/components/schemas/VisibilityMode'
+          description: |-
+            Visibility of this session's rounds (and exercises) to athletes.
+
+            * `always` - Always
+            * `after` - After the session
+            * `never` - Never
         generated_by_ai:
           type: boolean
           readOnly: true
@@ -5866,6 +5893,16 @@ components:
       description: |-
         * `manual` - Manual — managers accept/reject each request
         * `auto` - Auto-accept — every join request is accepted immediately
+    VisibilityMode:
+      enum:
+      - always
+      - after
+      - never
+      type: string
+      description: |-
+        * `always` - Always
+        * `after` - After the session
+        * `never` - Never
     JoinRequestStatusEnum:
       enum:
       - pending
@@ -7005,6 +7042,33 @@ components:
           items:
             type: integer
           readOnly: true
+        vis_distance:
+          allOf:
+          - $ref: '#/components/schemas/VisibilityMode'
+          description: |-
+            Visibility of this session's total distance to athletes.
+
+            * `always` - Always
+            * `after` - After the session
+            * `never` - Never
+        vis_goal:
+          allOf:
+          - $ref: '#/components/schemas/VisibilityMode'
+          description: |-
+            Visibility of this session's goal to athletes.
+
+            * `always` - Always
+            * `after` - After the session
+            * `never` - Never
+        vis_rounds:
+          allOf:
+          - $ref: '#/components/schemas/VisibilityMode'
+          description: |-
+            Visibility of this session's rounds (and exercises) to athletes.
+
+            * `always` - Always
+            * `after` - After the session
+            * `never` - Never
         generated_by_ai:
           type: boolean
           readOnly: true
@@ -7622,6 +7686,39 @@ components:
           description: When join_request_policy=manual, send the owner and managers
             an email with accept/reject magic links on each new request. Ignored when
             policy=auto (no manual decision is needed).
+        timezone:
+          type: string
+          description: IANA timezone name (e.g. 'Europe/Brussels'). Used to decide,
+            in the team's local time, whether a session is over for per-aspect athlete
+            visibility (vis_distance/vis_goal/vis_rounds).
+          maxLength: 64
+        vis_distance:
+          allOf:
+          - $ref: '#/components/schemas/VisibilityMode'
+          description: |-
+            Default visibility of a session's total distance to athletes. Inherited by new events; overridable per event.
+
+            * `always` - Always
+            * `after` - After the session
+            * `never` - Never
+        vis_goal:
+          allOf:
+          - $ref: '#/components/schemas/VisibilityMode'
+          description: |-
+            Default visibility of a session's goal to athletes. Inherited by new events; overridable per event.
+
+            * `always` - Always
+            * `after` - After the session
+            * `never` - Never
+        vis_rounds:
+          allOf:
+          - $ref: '#/components/schemas/VisibilityMode'
+          description: |-
+            Default visibility of a session's rounds (and their exercises) to athletes. Inherited by new events; overridable per event.
+
+            * `always` - Always
+            * `after` - After the session
+            * `never` - Never
         created_at:
           type: string
           format: date-time
@@ -8306,6 +8403,39 @@ components:
           description: When join_request_policy=manual, send the owner and managers
             an email with accept/reject magic links on each new request. Ignored when
             policy=auto (no manual decision is needed).
+        timezone:
+          type: string
+          description: IANA timezone name (e.g. 'Europe/Brussels'). Used to decide,
+            in the team's local time, whether a session is over for per-aspect athlete
+            visibility (vis_distance/vis_goal/vis_rounds).
+          maxLength: 64
+        vis_distance:
+          allOf:
+          - $ref: '#/components/schemas/VisibilityMode'
+          description: |-
+            Default visibility of a session's total distance to athletes. Inherited by new events; overridable per event.
+
+            * `always` - Always
+            * `after` - After the session
+            * `never` - Never
+        vis_goal:
+          allOf:
+          - $ref: '#/components/schemas/VisibilityMode'
+          description: |-
+            Default visibility of a session's goal to athletes. Inherited by new events; overridable per event.
+
+            * `always` - Always
+            * `after` - After the session
+            * `never` - Never
+        vis_rounds:
+          allOf:
+          - $ref: '#/components/schemas/VisibilityMode'
+          description: |-
+            Default visibility of a session's rounds (and their exercises) to athletes. Inherited by new events; overridable per event.
+
+            * `always` - Always
+            * `after` - After the session
+            * `never` - Never
         created_at:
           type: string
           format: date-time

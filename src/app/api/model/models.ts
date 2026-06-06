@@ -129,3 +129,4 @@ export * from './token-obtain-pair-response';
 export * from './token-refresh';
 export * from './validate-invitation';
 export * from './verified-token-obtain-pair';
+export * from './visibility-mode';

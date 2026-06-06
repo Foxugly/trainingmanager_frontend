@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { VisibilityMode } from './visibility-mode';
 import { ProgramMinimal } from './program-minimal';
 
 
@@ -23,10 +24,24 @@ export interface Event {
     refer_program_id: number;
     rounds?: Array<number>;
     readonly members: Array<number>;
+    /**
+     * Visibility of this session\'s total distance to athletes.  * `always` - Always * `after` - After the session * `never` - Never
+     */
+    vis_distance?: VisibilityMode;
+    /**
+     * Visibility of this session\'s goal to athletes.  * `always` - Always * `after` - After the session * `never` - Never
+     */
+    vis_goal?: VisibilityMode;
+    /**
+     * Visibility of this session\'s rounds (and exercises) to athletes.  * `always` - Always * `after` - After the session * `never` - Never
+     */
+    vis_rounds?: VisibilityMode;
     readonly generated_by_ai: boolean;
     readonly ai_response: string;
     readonly ai_generated_at: string | null;
     readonly created_at: string;
     readonly updated_at: string;
 }
+
+
 

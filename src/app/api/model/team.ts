@@ -8,6 +8,7 @@
  * Do not edit the class manually.
  */
 import { Sport } from './sport';
+import { VisibilityMode } from './visibility-mode';
 import { CustomUserPublic } from './custom-user-public';
 import { Level } from './level';
 import { ChatModeEnum } from './chat-mode-enum';
@@ -56,6 +57,22 @@ export interface Team {
      * When join_request_policy=manual, send the owner and managers an email with accept/reject magic links on each new request. Ignored when policy=auto (no manual decision is needed).
      */
     notify_managers_on_join_request?: boolean;
+    /**
+     * IANA timezone name (e.g. \'Europe/Brussels\'). Used to decide, in the team\'s local time, whether a session is over for per-aspect athlete visibility (vis_distance/vis_goal/vis_rounds).
+     */
+    timezone?: string;
+    /**
+     * Default visibility of a session\'s total distance to athletes. Inherited by new events; overridable per event.  * `always` - Always * `after` - After the session * `never` - Never
+     */
+    vis_distance?: VisibilityMode;
+    /**
+     * Default visibility of a session\'s goal to athletes. Inherited by new events; overridable per event.  * `always` - Always * `after` - After the session * `never` - Never
+     */
+    vis_goal?: VisibilityMode;
+    /**
+     * Default visibility of a session\'s rounds (and their exercises) to athletes. Inherited by new events; overridable per event.  * `always` - Always * `after` - After the session * `never` - Never
+     */
+    vis_rounds?: VisibilityMode;
     readonly created_at: string;
     readonly updated_at: string;
 }
