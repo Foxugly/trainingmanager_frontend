@@ -54,6 +54,7 @@
     },
     "detail": {
       "regenerate": "Régénérer la séance",
+      "regenerate_past_blocked": "Impossible de régénérer une séance passée.",
       "not_found": "Séance introuvable",
       "training_blocks": "Blocs d'entraînement",
       "block_label": "Bloc",

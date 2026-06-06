@@ -101,18 +101,22 @@
         />
       }
       @if (canRegenerate()) {
-        <p-button
+        <span
           detailHeaderActions
-          icon="pi pi-sparkles"
-          severity="warn"
-          [outlined]="true"
-          [rounded]="true"
-          [loading]="regenerating()"
-          [pTooltip]="'events.detail.regenerate' | transloco"
+          [pTooltip]="isPastEvent() ? ('events.detail.regenerate_past_blocked' | transloco) : ''"
           tooltipPosition="bottom"
-          [ariaLabel]="'events.detail.regenerate' | transloco"
-          (onClick)="confirmRegenerate()"
-        />
+        >
+          <p-button
+            icon="pi pi-sparkles"
+            severity="warn"
+            [outlined]="true"
+            [rounded]="true"
+            [loading]="regenerating()"
+            [disabled]="isPastEvent()"
+            [ariaLabel]="'events.detail.regenerate' | transloco"
+            (onClick)="confirmRegenerate()"
+          />
+        </span>
       }
       @if (canManage()) {
         <p-button

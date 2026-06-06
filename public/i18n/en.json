@@ -54,6 +54,7 @@
     },
     "detail": {
       "regenerate": "Regenerate session",
+      "regenerate_past_blocked": "Cannot regenerate a past session.",
       "not_found": "Session not found",
       "training_blocks": "Training blocks",
       "block_label": "Block",

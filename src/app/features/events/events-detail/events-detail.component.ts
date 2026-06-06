@@ -208,6 +208,26 @@ export class EventsDetailComponent implements OnInit {
 
   protected readonly canRegenerate = this.canManage;
 
+  /**
+   * True when the event has a date that is strictly before today (local date,
+   * compared as yyyy-mm-dd). The backend refuses to regenerate past sessions
+   * (HTTP 409 `event_in_past`), so the regenerate action is disabled for them.
+   */
+  protected readonly isPastEvent = computed(() => {
+    const date = this.event()?.date;
+    if (!date) return false;
+    return date < this.todayLocalIso();
+  });
+
+  /** Local calendar date as a yyyy-mm-dd string (not UTC). */
+  private todayLocalIso(): string {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = `${now.getMonth() + 1}`.padStart(2, '0');
+    const d = `${now.getDate()}`.padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
   // --- ROTI (session difficulty rating) ---
   protected readonly rotiEnabled = computed(() => this.team()?.roti_enabled === true);
   /** Athlete = a team member who is neither owner nor manager. */
@@ -912,6 +932,18 @@ export class EventsDetailComponent implements OnInit {
   }
 
   private applyError(err: HttpErrorResponse): void {
+    // The backend refuses to regenerate a past-dated session with HTTP 409
+    // { code: 'event_in_past' }. Surface a clear toast rather than the generic
+    // inline AI error message.
+    const code = (err?.error as { code?: string } | null | undefined)?.code;
+    if (err?.status === 409 && code === 'event_in_past') {
+      this.messageService.add({
+        severity: 'warn',
+        summary: this.transloco.translate('common.error'),
+        detail: this.transloco.translate('events.detail.regenerate_past_blocked'),
+      });
+      return;
+    }
     const info = this.aiErrorMapping.map(err);
     if (info.retryAfterSeconds != null) {
       this.errorMessage.set(

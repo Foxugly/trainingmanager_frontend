@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { signal } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -137,6 +138,8 @@ interface ProtectedFields {
   notFound(): boolean;
   canRegenerate(): boolean;
   canManage(): boolean;
+  isPastEvent(): boolean;
+  onRegenerateConfirmed(prompt: string): void;
   confirmRegenerate(): void;
   confirmDelete(): void;
   deleting(): boolean;
@@ -409,6 +412,49 @@ describe('EventsDetailComponent', () => {
   it('hides regenerate for member-only users', async () => {
     await setup('7', eventNoRounds, otherUser);
     expect(access(component).canRegenerate()).toBe(false);
+  });
+
+  it('isPastEvent is true for a session dated strictly before today', async () => {
+    // eventNoRounds is dated 2026-05-02 — well in the past for the test clock.
+    await setup('7', { ...eventNoRounds, date: '2000-01-01' });
+    expect(access(component).isPastEvent()).toBe(true);
+  });
+
+  it('isPastEvent is false for a future-dated session', async () => {
+    await setup('7', { ...eventNoRounds, date: '2999-12-31' });
+    expect(access(component).isPastEvent()).toBe(false);
+  });
+
+  it('isPastEvent is false when the session has no date', async () => {
+    await setup('7', { ...eventNoRounds, date: null });
+    expect(access(component).isPastEvent()).toBe(false);
+  });
+
+  it('isPastEvent is false for a session dated today (boundary, not strictly before)', async () => {
+    const now = new Date();
+    const todayIso = `${now.getFullYear()}-${`${now.getMonth() + 1}`.padStart(2, '0')}-${`${now.getDate()}`.padStart(2, '0')}`;
+    await setup('7', { ...eventNoRounds, date: todayIso });
+    expect(access(component).isPastEvent()).toBe(false);
+  });
+
+  it('maps a 409 event_in_past regenerate error to a friendly toast', async () => {
+    await setup('7', { ...eventNoRounds, date: '2000-01-01' });
+    const messageService = fixture.debugElement.injector.get(MessageService);
+    const addSpy = vi.spyOn(messageService, 'add');
+    eventsMock.eventsGenerateTrainingCreate.mockReturnValue(
+      throwError(
+        () =>
+          new HttpErrorResponse({
+            status: 409,
+            error: { code: 'event_in_past', detail: 'Session is in the past.' },
+          }),
+      ),
+    );
+    access(component).onRegenerateConfirmed('whatever');
+    await new Promise((r) => setTimeout(r, 0));
+    expect(addSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'warn', detail: 'events.detail.regenerate_past_blocked' }),
+    );
   });
 
   it('onRegenerateConfirmed without rounds calls eventsGenerateTrainingCreate with the additional prompt', () => {

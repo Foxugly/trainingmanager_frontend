@@ -54,6 +54,7 @@
     },
     "detail": {
       "regenerate": "Sessie opnieuw genereren",
+      "regenerate_past_blocked": "Een voorbije sessie kan niet opnieuw worden gegenereerd.",
       "not_found": "Sessie niet gevonden",
       "training_blocks": "Trainingsblokken",
       "block_label": "Blok",

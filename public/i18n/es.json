@@ -54,6 +54,7 @@
     },
     "detail": {
       "regenerate": "Regenerar la sesión",
+      "regenerate_past_blocked": "No se puede regenerar una sesión pasada.",
       "not_found": "Sesión no encontrada",
       "training_blocks": "Bloques de entrenamiento",
       "block_label": "Bloque",
