@@ -44,8 +44,16 @@ export class MagicLinkComponent implements OnInit {
       .subscribe({
         next: () => {
           const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+          // Only allow same-origin, app-internal paths. Reject protocol-relative
+          // ('//evil.com'), backslash ('/\evil.com') and absolute-URL forms to
+          // prevent open redirect — the old `.startsWith('/')` check let '//host'
+          // through.
           const safeNext =
-            returnUrl && returnUrl.startsWith('/') && !returnUrl.includes('://')
+            returnUrl &&
+            returnUrl.startsWith('/') &&
+            !returnUrl.startsWith('//') &&
+            !returnUrl.startsWith('/\\') &&
+            !returnUrl.includes('://')
               ? returnUrl
               : '/dashboard';
           this.router.navigateByUrl(safeNext);
