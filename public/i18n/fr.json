@@ -1151,5 +1151,22 @@
     "always": "Toujours",
     "after": "Après la séance",
     "never": "Jamais"
+  },
+  "attachments": {
+    "title": "Pièces jointes",
+    "add": "Ajouter un fichier",
+    "empty": "Aucune pièce jointe",
+    "uploading": "Envoi en cours",
+    "uploaded": "Fichier ajouté",
+    "deleted": "Fichier supprimé",
+    "delete_confirm": "Supprimer « {{name}} » ?",
+    "delete_aria": "Supprimer {{name}}",
+    "errors": {
+      "generic": "Échec de l’envoi du fichier",
+      "mime_not_allowed": "Type de fichier non autorisé",
+      "file_too_large": "Fichier trop volumineux",
+      "unconfigured": "Stockage des fichiers indisponible pour le moment",
+      "forbidden": "Vous n’êtes pas autorisé à effectuer cette action"
+    }
   }
 }

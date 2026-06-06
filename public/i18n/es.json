@@ -1151,5 +1151,22 @@
     "always": "Siempre",
     "after": "Tras la sesión",
     "never": "Nunca"
+  },
+  "attachments": {
+    "title": "Adjuntos",
+    "add": "Añadir un archivo",
+    "empty": "Sin adjuntos",
+    "uploading": "Subiendo",
+    "uploaded": "Archivo añadido",
+    "deleted": "Archivo eliminado",
+    "delete_confirm": "¿Eliminar «{{name}}»?",
+    "delete_aria": "Eliminar {{name}}",
+    "errors": {
+      "generic": "Error al subir el archivo",
+      "mime_not_allowed": "Tipo de archivo no permitido",
+      "file_too_large": "Archivo demasiado grande",
+      "unconfigured": "El almacenamiento de archivos no está disponible por el momento",
+      "forbidden": "No tienes permiso para realizar esta acción"
+    }
   }
 }

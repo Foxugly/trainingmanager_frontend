@@ -1,0 +1,64 @@
+<div class="attachments">
+  @if (loading()) {
+    <p class="att-muted">{{ 'common.loading' | transloco }}…</p>
+  } @else {
+    @if (items().length === 0 && !isUploading()) {
+      <p class="att-muted">{{ 'attachments.empty' | transloco }}</p>
+    } @else {
+      <ul class="att-list">
+        @for (item of items(); track item.id) {
+          <li class="att-row">
+            <i class="att-icon" [class]="iconFor(item.content_type_mime)" aria-hidden="true"></i>
+            <button type="button" class="att-name" (click)="onDownload(item)">
+              {{ item.filename }}
+            </button>
+            <span class="att-size">{{ formatSize(item.size_bytes) }}</span>
+            @if (canEdit()) {
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [text]="true"
+                [rounded]="true"
+                size="small"
+                [ariaLabel]="'attachments.delete_aria' | transloco: { name: item.filename }"
+                (onClick)="confirmDelete(item)"
+              />
+            }
+          </li>
+        }
+        @for (name of uploading(); track name) {
+          <li class="att-row att-row--uploading">
+            <i class="att-icon pi pi-spin pi-spinner" aria-hidden="true"></i>
+            <span class="att-name att-name--pending">{{ name }}</span>
+            <span class="att-size">{{ 'attachments.uploading' | transloco }}…</span>
+          </li>
+        }
+      </ul>
+    }
+
+    @if (canEdit()) {
+      <div class="att-actions">
+        <input
+          #fileInput
+          type="file"
+          class="att-file-input"
+          [accept]="accept"
+          multiple
+          [attr.aria-label]="'attachments.add' | transloco"
+          (change)="onFilesSelected($event)"
+        />
+        <p-button
+          icon="pi pi-paperclip"
+          severity="secondary"
+          [outlined]="true"
+          size="small"
+          [label]="'attachments.add' | transloco"
+          [disabled]="isUploading()"
+          (onClick)="triggerFilePicker(fileInput)"
+        />
+      </div>
+    }
+  }
+</div>
+
+<p-confirmDialog />

@@ -1151,5 +1151,22 @@
     "always": "Altijd",
     "after": "Na de sessie",
     "never": "Nooit"
+  },
+  "attachments": {
+    "title": "Bijlagen",
+    "add": "Bestand toevoegen",
+    "empty": "Geen bijlagen",
+    "uploading": "Uploaden",
+    "uploaded": "Bestand toegevoegd",
+    "deleted": "Bestand verwijderd",
+    "delete_confirm": "“{{name}}” verwijderen?",
+    "delete_aria": "{{name}} verwijderen",
+    "errors": {
+      "generic": "Uploaden van bestand mislukt",
+      "mime_not_allowed": "Bestandstype niet toegestaan",
+      "file_too_large": "Bestand te groot",
+      "unconfigured": "Bestandsopslag is momenteel niet beschikbaar",
+      "forbidden": "U mag deze actie niet uitvoeren"
+    }
   }
 }

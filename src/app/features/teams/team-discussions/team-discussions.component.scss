@@ -149,6 +149,11 @@
   word-break: break-word;
 }
 
+.message-attachments {
+  display: block;
+  margin-top: 0.5rem;
+}
+
 .reply-box {
   display: flex;
   flex-direction: column;

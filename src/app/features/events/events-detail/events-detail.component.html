@@ -177,6 +177,10 @@
             {{ 'events.rsvp.tab' | transloco }}
           </p-tab>
         }
+        <p-tab value="attachments">
+          <i class="pi pi-paperclip mr-2" aria-hidden="true"></i>
+          {{ 'attachments.title' | transloco }}
+        </p-tab>
       </p-tablist>
 
       <p-tabpanels>
@@ -669,6 +673,11 @@
             </section>
           </p-tabpanel>
         }
+
+        <!-- TAB 5 — ATTACHMENTS (Pièces jointes) -->
+        <p-tabpanel value="attachments">
+          <app-attachment-list targetType="event" [targetId]="e.id" [canEdit]="canManage()" />
+        </p-tabpanel>
       </p-tabpanels>
     </p-tabs>
   }

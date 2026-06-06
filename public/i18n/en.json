@@ -1151,5 +1151,22 @@
     "always": "Always",
     "after": "After the session",
     "never": "Never"
+  },
+  "attachments": {
+    "title": "Attachments",
+    "add": "Add a file",
+    "empty": "No attachments",
+    "uploading": "Uploading",
+    "uploaded": "File added",
+    "deleted": "File deleted",
+    "delete_confirm": "Delete “{{name}}”?",
+    "delete_aria": "Delete {{name}}",
+    "errors": {
+      "generic": "File upload failed",
+      "mime_not_allowed": "File type not allowed",
+      "file_too_large": "File too large",
+      "unconfigured": "File storage is currently unavailable",
+      "forbidden": "You are not allowed to perform this action"
+    }
   }
 }

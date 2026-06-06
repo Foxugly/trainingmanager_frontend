@@ -1151,5 +1151,22 @@
     "always": "Sempre",
     "after": "Dopo la sessione",
     "never": "Mai"
+  },
+  "attachments": {
+    "title": "Allegati",
+    "add": "Aggiungi un file",
+    "empty": "Nessun allegato",
+    "uploading": "Caricamento",
+    "uploaded": "File aggiunto",
+    "deleted": "File eliminato",
+    "delete_confirm": "Eliminare «{{name}}»?",
+    "delete_aria": "Elimina {{name}}",
+    "errors": {
+      "generic": "Caricamento del file non riuscito",
+      "mime_not_allowed": "Tipo di file non consentito",
+      "file_too_large": "File troppo grande",
+      "unconfigured": "Archiviazione dei file non disponibile al momento",
+      "forbidden": "Non sei autorizzato a eseguire questa azione"
+    }
   }
 }

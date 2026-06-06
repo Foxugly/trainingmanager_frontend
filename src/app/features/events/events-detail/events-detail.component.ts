@@ -58,6 +58,7 @@ import { type FieldErrors, extractServerError } from '../../../shared/forms/noti
 import { AiErrorMappingService } from '../../ai/ai-error-mapping.service';
 import { TeamRole, computeTeamRole } from '../../teams/teams-list/teams-list.component';
 import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-header.component';
+import { AttachmentListComponent } from '../../../shared/ui/attachment-list/attachment-list.component';
 import { RoundFormDialogComponent } from '../round-form-dialog/round-form-dialog.component';
 import { AttendanceManagerComponent } from '../attendance-manager/attendance-manager.component';
 import { RegenerateTrainingDialogComponent } from '../regenerate-training-dialog/regenerate-training-dialog.component';
@@ -110,6 +111,7 @@ interface NewExerciseRow {
     Tooltip,
     TranslocoPipe,
     DetailHeaderComponent,
+    AttachmentListComponent,
     RoundFormDialogComponent,
     AttendanceManagerComponent,
     RegenerateTrainingDialogComponent,

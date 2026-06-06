@@ -28,6 +28,7 @@ import { Topic } from '../../../api/model/topic';
 import { TopicCreationEnum } from '../../../api/model/topic-creation-enum';
 import { TopicMessage } from '../../../api/model/topic-message';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
+import { AttachmentListComponent } from '../../../shared/ui/attachment-list/attachment-list.component';
 
 /** owner | manager | member — the viewer's role within this team. */
 export type DiscussionRole = 'owner' | 'manager' | 'member';
@@ -59,6 +60,7 @@ export type DiscussionRole = 'owner' | 'manager' | 'member';
     Textarea,
     TranslocoPipe,
     EmptyStateComponent,
+    AttachmentListComponent,
   ],
   templateUrl: './team-discussions.component.html',
   styleUrl: './team-discussions.component.scss',
@@ -183,6 +185,14 @@ export class TeamDiscussionsComponent {
   }
 
   protected canDeleteMessage(msg: TopicMessage): boolean {
+    return this.isCoach() || msg.author?.id === this.currentUserId();
+  }
+
+  /**
+   * Whether the viewer may attach files to a message: the message author or any
+   * coach (owner/manager). Mirrors the backend's message-write authorization.
+   */
+  protected canAttachToMessage(msg: TopicMessage): boolean {
     return this.isCoach() || msg.author?.id === this.currentUserId();
   }
 
