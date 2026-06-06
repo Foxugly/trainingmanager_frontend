@@ -9,6 +9,8 @@ api/attachments.service.ts
 api/attachments.serviceInterface.ts
 api/attendance-statuses.service.ts
 api/attendance-statuses.serviceInterface.ts
+api/audit-log.service.ts
+api/audit-log.serviceInterface.ts
 api/auth.service.ts
 api/auth.serviceInterface.ts
 api/energy-segments.service.ts
@@ -52,6 +54,7 @@ encoder.ts
 git_push.sh
 index.ts
 model/account-delete.ts
+model/action-enum.ts
 model/action-proposed-enum.ts
 model/ai-ping-request.ts
 model/ai-ping-response.ts
@@ -67,6 +70,7 @@ model/attendance-status-admin.ts
 model/attendance-status.ts
 model/attendance.ts
 model/audience-enum.ts
+model/audit-log-entry.ts
 model/calendar-token.ts
 model/chat-mode-enum.ts
 model/clone-exercise-request.ts
@@ -126,6 +130,7 @@ model/paginated-ai-usage-detail-list.ts
 model/paginated-attachment-list.ts
 model/paginated-attendance-list.ts
 model/paginated-attendance-status-list.ts
+model/paginated-audit-log-entry-list.ts
 model/paginated-energy-segment-list.ts
 model/paginated-energy-system-list.ts
 model/paginated-event-list.ts
