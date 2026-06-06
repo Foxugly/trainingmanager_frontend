@@ -1224,6 +1224,12 @@ export class EventsDetailComponent implements OnInit {
     this.clearRowError(key);
 
     const value = form.getRawValue();
+    // Pass the round this exercise belongs to so the backend can FORK-ON-EDIT
+    // when the exercise is shared by several rounds (usage_count > 1): instead
+    // of a 409 it clones the exercise with our change and swaps it into THIS
+    // round, leaving the shared original untouched. The returned exercise may
+    // therefore have a NEW id — we swap it in by the old id.
+    const roundId = this.roundIdOfExercise(ex.id);
     this.exercisesService
       .exercisesPartialUpdate(ex.id, {
         modality_id: value.modality_id,
@@ -1233,6 +1239,7 @@ export class EventsDetailComponent implements OnInit {
         t_start: value.t_start || null,
         t_break: value.t_break || null,
         notes: value.notes ?? '',
+        ...(roundId != null ? { round_id: roundId } : {}),
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -1240,7 +1247,7 @@ export class EventsDetailComponent implements OnInit {
           this.setSaving(key, false);
           this.rowForms.delete(key);
           this.editingExerciseId.set(null);
-          this.replaceExerciseInRound(updated);
+          this.replaceExerciseInRound(ex.id, updated);
           this.notifyExerciseSaved('events.exercise_form.updated');
         },
         error: (err: HttpErrorResponse) => {
@@ -1295,10 +1302,20 @@ export class EventsDetailComponent implements OnInit {
     this.exercisesByRound.set(map);
   }
 
-  private replaceExerciseInRound(ex: Exercise): void {
+  /** Round id that currently holds the given exercise, or null. */
+  private roundIdOfExercise(exerciseId: number): number | null {
+    for (const [rid, list] of this.exercisesByRound()) {
+      if (list.some((e) => e.id === exerciseId)) return rid;
+    }
+    return null;
+  }
+
+  /** Replace the exercise matched by `oldId` with `ex` (whose id may differ
+   *  after a fork-on-edit). */
+  private replaceExerciseInRound(oldId: number, ex: Exercise): void {
     const map = new Map(this.exercisesByRound());
     for (const [rid, list] of map) {
-      const idx = list.findIndex((e) => e.id === ex.id);
+      const idx = list.findIndex((e) => e.id === oldId);
       if (idx >= 0) {
         const next = [...list];
         next[idx] = ex;
