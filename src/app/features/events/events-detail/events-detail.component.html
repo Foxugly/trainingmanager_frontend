@@ -246,7 +246,6 @@
                     [label]="'events.detail.actions.add_round' | transloco"
                     icon="pi pi-plus"
                     severity="success"
-                    [outlined]="true"
                     size="small"
                     (onClick)="openCreateRound()"
                   />
@@ -529,12 +528,12 @@
         <!-- TAB 3 — DIFFICULTY (ROTI) -->
         @if (rotiEnabled()) {
           <p-tabpanel value="difficulty">
-            <section class="max-w-xl">
+            <section class="mx-auto max-w-xl">
               <!-- Athlete: rate the session difficulty -->
               @if (isAthlete()) {
-                <h2 class="text-lg font-semibold mb-1">{{ 'events.roti.your_rating' | transloco }}</h2>
-                <p class="text-sm text-gray-500 mb-3">{{ 'events.roti.title' | transloco }}</p>
-                <div class="inline-flex items-center gap-2 flex-wrap">
+                <h2 class="text-lg font-semibold mb-1 text-center">{{ 'events.roti.your_rating' | transloco }}</h2>
+                <p class="text-sm text-gray-500 mb-3 text-center">{{ 'events.roti.title' | transloco }}</p>
+                <div class="flex flex-wrap items-center justify-center gap-2">
                   @for (s of rotiScores; track s) {
                     <p-button
                       [label]="s.toString()"
@@ -552,7 +551,7 @@
                   }
                 </div>
                 @if (rotiSummary()?.my_score; as mine) {
-                  <p class="mt-2 text-xs text-gray-500">
+                  <p class="mt-2 text-xs text-gray-500 text-center">
                     {{ 'events.roti.scale.' + mine | transloco }}
                   </p>
                 }
@@ -561,7 +560,7 @@
               <!-- Manager: aggregate (read-only). Shown also to a manager-athlete below their rating. -->
               @if (canManage()) {
                 <div [class.mt-6]="isAthlete()">
-                  <h2 class="text-lg font-semibold mb-3">{{ 'events.roti.title' | transloco }}</h2>
+                  <h2 class="text-lg font-semibold mb-3 text-center">{{ 'events.roti.title' | transloco }}</h2>
                   @if (rotiSummary(); as summary) {
                     @if (summary.count > 0) {
                       <!-- KPI cards -->

@@ -165,8 +165,7 @@
               <p-button
                 [label]="'teams.detail.add_manager' | transloco"
                 icon="pi pi-plus"
-                severity="secondary"
-                [outlined]="true"
+                severity="success"
                 size="small"
                 [disabled]="promotableMembers().length === 0"
                 (onClick)="openAddManager()"
@@ -196,6 +195,7 @@
                 <p-button
                   [label]="'teams.detail.add_manager' | transloco"
                   icon="pi pi-plus"
+                  severity="success"
                   size="small"
                   [disabled]="promotableMembers().length === 0"
                   (onClick)="openAddManager()"
@@ -279,9 +279,8 @@
             @if (canManage()) {
               <p-button
                 [label]="'teams.detail.add_member' | transloco"
-                icon="pi pi-user-plus"
-                severity="secondary"
-                [outlined]="true"
+                icon="pi pi-plus"
+                severity="success"
                 size="small"
                 (onClick)="openAddMember()"
               />

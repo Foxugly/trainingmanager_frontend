@@ -34,12 +34,13 @@
         }
         @if (canCreate()) {
           <a [routerLink]="['/teams', 'new']">
-            <p-button [label]="'teams.list.new' | transloco" icon="pi pi-plus" />
+            <p-button [label]="'teams.list.new' | transloco" icon="pi pi-plus" severity="success" />
           </a>
         } @else {
           <p-button
             [label]="'teams.list.new' | transloco"
             icon="pi pi-plus"
+            severity="success"
             [disabled]="true"
           />
         }
@@ -78,7 +79,7 @@
     >
       @if (canCreate()) {
         <a [routerLink]="['/teams', 'new']">
-          <p-button [label]="'teams.list.new' | transloco" icon="pi pi-plus" size="small" />
+          <p-button [label]="'teams.list.new' | transloco" icon="pi pi-plus" severity="success" size="small" />
         </a>
       }
       <a [routerLink]="['/teams', 'discover']">

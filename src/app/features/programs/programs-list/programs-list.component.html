@@ -11,7 +11,7 @@
         }
         @if (canCreate()) {
           <a [routerLink]="newRouterLink()" [queryParams]="newQueryParams()">
-            <p-button [label]="'programs.actions.new' | transloco" icon="pi pi-plus" />
+            <p-button [label]="'programs.actions.new' | transloco" icon="pi pi-plus" severity="success" />
           </a>
         }
       </div>
@@ -29,6 +29,7 @@
           <p-button
             [label]="'programs.actions.new' | transloco"
             icon="pi pi-plus"
+            severity="success"
             size="small"
           />
         </a>
@@ -60,6 +61,7 @@
           <p-button
             [label]="'programs.actions.new' | transloco"
             icon="pi pi-plus"
+            severity="success"
             size="small"
           />
         </a>
