@@ -9,6 +9,7 @@
  */
 import { Sport } from './sport';
 import { VisibilityMode } from './visibility-mode';
+import { TopicCreationEnum } from './topic-creation-enum';
 import { CustomUserPublic } from './custom-user-public';
 import { Level } from './level';
 import { ChatModeEnum } from './chat-mode-enum';
@@ -53,6 +54,10 @@ export interface Team {
      * Manual = managers accept/reject each TeamJoinRequest. Auto = every join request is accepted immediately on submission.  * `manual` - Manual — managers accept/reject each request * `auto` - Auto-accept — every join request is accepted immediately
      */
     join_request_policy?: JoinRequestPolicyEnum;
+    /**
+     * Who may create messaging topics in this team. owner = team owner only; coaches = owner and managers; members = owner, managers, and active athlete members.  * `owner` - Owner only * `coaches` - Owner and coaches * `members` - Everyone (incl. athletes)
+     */
+    topic_creation?: TopicCreationEnum;
     /**
      * When join_request_policy=manual, send the owner and managers an email with accept/reject magic links on each new request. Ignored when policy=auto (no manual decision is needed).
      */

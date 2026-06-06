@@ -136,6 +136,7 @@ export * from './team-stats';
 export * from './token-obtain-pair-response';
 export * from './token-refresh';
 export * from './topic';
+export * from './topic-creation-enum';
 export * from './topic-message';
 export * from './type-enum';
 export * from './unread-count';

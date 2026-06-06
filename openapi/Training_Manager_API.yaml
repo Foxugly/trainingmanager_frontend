@@ -8314,6 +8314,15 @@ components:
 
             * `manual` - Manual — managers accept/reject each request
             * `auto` - Auto-accept — every join request is accepted immediately
+        topic_creation:
+          allOf:
+          - $ref: '#/components/schemas/TopicCreationEnum'
+          description: |-
+            Who may create messaging topics in this team. owner = team owner only; coaches = owner and managers; members = owner, managers, and active athlete members.
+
+            * `owner` - Owner only
+            * `coaches` - Owner and coaches
+            * `members` - Everyone (incl. athletes)
         notify_managers_on_join_request:
           type: boolean
           description: When join_request_policy=manual, send the owner and managers
@@ -9048,6 +9057,15 @@ components:
 
             * `manual` - Manual — managers accept/reject each request
             * `auto` - Auto-accept — every join request is accepted immediately
+        topic_creation:
+          allOf:
+          - $ref: '#/components/schemas/TopicCreationEnum'
+          description: |-
+            Who may create messaging topics in this team. owner = team owner only; coaches = owner and managers; members = owner, managers, and active athlete members.
+
+            * `owner` - Owner only
+            * `coaches` - Owner and coaches
+            * `members` - Everyone (incl. athletes)
         notify_managers_on_join_request:
           type: boolean
           description: When join_request_policy=manual, send the owner and managers
@@ -9387,6 +9405,16 @@ components:
       required:
       - access
       - refresh
+    TopicCreationEnum:
+      enum:
+      - owner
+      - coaches
+      - members
+      type: string
+      description: |-
+        * `owner` - Owner only
+        * `coaches` - Owner and coaches
+        * `members` - Everyone (incl. athletes)
     Topic:
       type: object
       description: |-
