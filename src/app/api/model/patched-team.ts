@@ -75,6 +75,22 @@ export interface PatchedTeam {
      */
     notify_athlete_on_visible_note?: boolean;
     /**
+     * Allow individual sessions of this team to be shared via a public read-only link.
+     */
+    public_sharing_enabled?: boolean;
+    /**
+     * Show a shared session\'s total distance on its public link.
+     */
+    public_show_distance?: boolean;
+    /**
+     * Show a shared session\'s goal on its public link.
+     */
+    public_show_goal?: boolean;
+    /**
+     * Show a shared session\'s rounds & exercises on its public link.
+     */
+    public_show_rounds?: boolean;
+    /**
      * IANA timezone name (e.g. \'Europe/Brussels\'). Used to decide, in the team\'s local time, whether a session is over for per-aspect athlete visibility (vis_distance/vis_goal/vis_rounds).
      */
     timezone?: string;

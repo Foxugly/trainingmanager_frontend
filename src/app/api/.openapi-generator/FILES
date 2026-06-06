@@ -37,6 +37,8 @@ api/notifications.service.ts
 api/notifications.serviceInterface.ts
 api/programs.service.ts
 api/programs.serviceInterface.ts
+api/public.service.ts
+api/public.serviceInterface.ts
 api/rounds.service.ts
 api/rounds.serviceInterface.ts
 api/sports.service.ts
@@ -81,6 +83,9 @@ model/energy-segment-admin.ts
 model/energy-segment.ts
 model/energy-system-admin.ts
 model/energy-system.ts
+model/event-public.ts
+model/event-share-request.ts
+model/event-share-response.ts
 model/event.ts
 model/exercise.ts
 model/generate-plan-request.ts

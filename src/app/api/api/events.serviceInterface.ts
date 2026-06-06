@@ -16,6 +16,8 @@ import { AttendanceBulk } from '../model/models';
 import { DuplicateEventRequest } from '../model/models';
 import { DuplicateEventResponse } from '../model/models';
 import { Event } from '../model/models';
+import { EventShareRequest } from '../model/models';
+import { EventShareResponse } from '../model/models';
 import { GenerateTrainingRequest } from '../model/models';
 import { GenerateTrainingResponse } from '../model/models';
 import { PaginatedAttendanceList } from '../model/models';
@@ -231,6 +233,15 @@ export interface EventsServiceInterface {
      * @param rsvpUpsert 
      */
     eventsRsvpUpdate(eventPk: number, rsvpUpsert: RsvpUpsert, extraHttpRequestParams?: any): Observable<RsvpSummary>;
+
+    /**
+     * 
+     * Toggle the public read-only share link for this session. Enabling (is_public&#x3D;true) requires the event\&#39;s team to have public_sharing_enabled&#x3D;true (else 409 public_sharing_disabled) and mints an unguessable token if absent. Disabling (is_public&#x3D;false) keeps the token so re-enabling reuses the same URL. Manager/owner of the event\&#39;s team only.
+     * @endpoint post /api/v1/events/{id}/share/
+     * @param id A unique integer value identifying this event.
+     * @param eventShareRequest 
+     */
+    eventsShareCreate(id: number, eventShareRequest: EventShareRequest, extraHttpRequestParams?: any): Observable<EventShareResponse>;
 
     /**
      * 

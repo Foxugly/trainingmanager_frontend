@@ -49,6 +49,14 @@ export interface Event {
     readonly ai_generated_at: string | null;
     readonly created_at: string;
     readonly updated_at: string;
+    /**
+     * Whether this session is currently shared via its public link.
+     */
+    readonly is_public: boolean;
+    /**
+     * Unguessable token in the public share URL. Null = never shared. The token authenticates the otherwise-anonymous public view.
+     */
+    readonly public_token: string | null;
 }
 
 

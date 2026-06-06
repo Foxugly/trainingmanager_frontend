@@ -27,6 +27,10 @@ import { DuplicateEventResponse } from '../model/duplicate-event-response';
 // @ts-ignore
 import { Event } from '../model/event';
 // @ts-ignore
+import { EventShareRequest } from '../model/event-share-request';
+// @ts-ignore
+import { EventShareResponse } from '../model/event-share-response';
+// @ts-ignore
 import { GenerateTrainingRequest } from '../model/generate-training-request';
 // @ts-ignore
 import { GenerateTrainingResponse } from '../model/generate-training-response';
@@ -1620,6 +1624,81 @@ export class EventsService extends BaseService implements EventsServiceInterface
             {
                 context: localVarHttpContext,
                 body: rsvpUpsert,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Toggle the public read-only share link for this session. Enabling (is_public&#x3D;true) requires the event\&#39;s team to have public_sharing_enabled&#x3D;true (else 409 public_sharing_disabled) and mints an unguessable token if absent. Disabling (is_public&#x3D;false) keeps the token so re-enabling reuses the same URL. Manager/owner of the event\&#39;s team only.
+     * @endpoint post /api/v1/events/{id}/share/
+     * @param id A unique integer value identifying this event.
+     * @param eventShareRequest 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public eventsShareCreate(id: number, eventShareRequest: EventShareRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<EventShareResponse>;
+    public eventsShareCreate(id: number, eventShareRequest: EventShareRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EventShareResponse>>;
+    public eventsShareCreate(id: number, eventShareRequest: EventShareRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EventShareResponse>>;
+    public eventsShareCreate(id: number, eventShareRequest: EventShareRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling eventsShareCreate.');
+        }
+        if (eventShareRequest === null || eventShareRequest === undefined) {
+            throw new Error('Required parameter eventShareRequest was null or undefined when calling eventsShareCreate.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (jwtAuth) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'application/x-www-form-urlencoded',
+            'multipart/form-data'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/events/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/share/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<EventShareResponse>('post', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: eventShareRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
