@@ -13,6 +13,7 @@ import { LanguageEnum } from '../../../api/model/language-enum';
 import { Program } from '../../../api/model/program';
 import { Sport } from '../../../api/model/sport';
 import { Team } from '../../../api/model/team';
+import { VisibilityMode } from '../../../api/model/visibility-mode';
 import { EventsFormComponent } from './events-form.component';
 
 const sport: Sport = {
@@ -35,6 +36,9 @@ const team: Team = {
   is_active: true,
   is_public: false,
   attendance_statuses: [],
+  vis_distance: VisibilityMode.After,
+  vis_goal: VisibilityMode.Never,
+  vis_rounds: VisibilityMode.After,
   created_at: '2026-04-01T00:00:00Z',
   updated_at: '2026-04-01T00:00:00Z',
 };
@@ -93,6 +97,7 @@ interface ProtectedFields {
   fieldError(name: string): string | null;
   cancel(): void;
   submit(): void;
+  onVisChanged(): void;
 }
 
 describe('EventsFormComponent', () => {
@@ -103,7 +108,10 @@ describe('EventsFormComponent', () => {
     eventsCreate: ReturnType<typeof vi.fn>;
     eventsPartialUpdate: ReturnType<typeof vi.fn>;
   };
-  let teamsMock: { teamsList: ReturnType<typeof vi.fn> };
+  let teamsMock: {
+    teamsList: ReturnType<typeof vi.fn>;
+    teamsRetrieve: ReturnType<typeof vi.fn>;
+  };
   let programsMock: { programsList: ReturnType<typeof vi.fn> };
   let routeIdParam: string | null;
   let routeQueryProgram: string | null;
@@ -129,6 +137,7 @@ describe('EventsFormComponent', () => {
     };
     teamsMock = {
       teamsList: vi.fn().mockReturnValue(of({ count: 1, results: [team] })),
+      teamsRetrieve: vi.fn().mockReturnValue(of(team)),
     };
     programsMock = {
       programsList: vi.fn().mockReturnValue(of({ count: 1, results: [program] })),
@@ -318,5 +327,53 @@ describe('EventsFormComponent', () => {
     expect(messageService.add).toHaveBeenCalledWith(
       expect.objectContaining({ severity: 'error' }),
     );
+  });
+
+  it('prefills vis_* from the selected program team defaults on create', async () => {
+    access(component).form.patchValue({ refer_program_id: 4 });
+    await new Promise((r) => setTimeout(r, 0));
+    expect(teamsMock.teamsRetrieve).toHaveBeenCalledWith(4);
+    expect(access(component).form.getRawValue()).toMatchObject({
+      vis_distance: VisibilityMode.After,
+      vis_goal: VisibilityMode.Never,
+      vis_rounds: VisibilityMode.After,
+    });
+  });
+
+  it('does not overwrite vis_* with team defaults once the user has changed them', async () => {
+    access(component).form.patchValue({ vis_distance: VisibilityMode.Never });
+    access(component).onVisChanged();
+    access(component).form.patchValue({ refer_program_id: 4 });
+    await new Promise((r) => setTimeout(r, 0));
+    expect(teamsMock.teamsRetrieve).not.toHaveBeenCalled();
+    expect(access(component).form.getRawValue()).toMatchObject({
+      vis_distance: VisibilityMode.Never,
+    });
+  });
+
+  it('includes vis_* in the create payload', () => {
+    access(component).form.patchValue({
+      name: 'New session',
+      refer_program_id: 4,
+      date: new Date(2026, 4, 5),
+      vis_distance: VisibilityMode.After,
+      vis_goal: VisibilityMode.Never,
+      vis_rounds: VisibilityMode.Always,
+    });
+    access(component).submit();
+    expect(eventsMock.eventsCreate.mock.calls[0][0]).toMatchObject({
+      vis_distance: VisibilityMode.After,
+      vis_goal: VisibilityMode.Never,
+      vis_rounds: VisibilityMode.Always,
+    });
+  });
+
+  it('includes vis_* in the update payload and loads them in edit mode', async () => {
+    await setup('7');
+    access(component).form.patchValue({ vis_goal: VisibilityMode.After });
+    access(component).submit();
+    expect(eventsMock.eventsPartialUpdate.mock.calls[0][1]).toMatchObject({
+      vis_goal: VisibilityMode.After,
+    });
   });
 });

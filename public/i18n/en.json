@@ -98,6 +98,18 @@
         "accept": "Delete",
         "reject": "Cancel",
         "deleted": "Exercise deleted."
+      },
+      "hidden_distance": {
+        "after": "Distance visible after the session",
+        "never": "Distance not disclosed"
+      },
+      "hidden_goal": {
+        "after": "Goal visible after the session",
+        "never": "Goal not disclosed"
+      },
+      "hidden_rounds": {
+        "after": "The session detail is not visible yet",
+        "never": "The session detail is not disclosed"
       }
     },
     "round_form": {
@@ -183,7 +195,12 @@
       "saved": "Session saved",
       "errors": {
         "time_range": "End time must be after start time."
-      }
+      },
+      "tab_visibility": "Visibility",
+      "vis_distance": "Distance",
+      "vis_goal": "Goal",
+      "vis_rounds": "Session detail",
+      "vis_help": "Inherited from the team settings; overridable for this session."
     },
     "actions": {
       "edit": "Edit",
@@ -356,7 +373,8 @@
         "programs": "Programs",
         "managers": "Managers",
         "members": "Members",
-        "requests_invitations": "Requests & invitations"
+        "requests_invitations": "Requests & invitations",
+        "visibility": "Visibility"
       }
     },
     "form": {
@@ -400,7 +418,16 @@
       "roti_enabled": "Enable ROTI (perceived difficulty)",
       "roti_enabled_help": "Lets athletes rate how hard each session felt (1 to 5).",
       "weekly_recap_enabled": "Enable weekly recap",
-      "weekly_recap_enabled_help": "Send a weekly recap to the team’s coaches"
+      "weekly_recap_enabled_help": "Send a weekly recap to the team’s coaches",
+      "tab_visibility": "Visibility",
+      "timezone": "Time zone",
+      "timezone_help": "Team time zone, used to decide whether a session is over (\"after the session\" visibility).",
+      "vis_distance": "Distance (default)",
+      "vis_distance_help": "Default applied to new sessions; overridable per session.",
+      "vis_goal": "Goal (default)",
+      "vis_goal_help": "Default applied to new sessions; overridable per session.",
+      "vis_rounds": "Session detail (default)",
+      "vis_rounds_help": "Default applied to new sessions; overridable per session."
     },
     "member_dialog": {
       "title": "Add a member",
@@ -1040,5 +1067,10 @@
     "errors": {
       "unknown": "Something went wrong."
     }
+  },
+  "visibility": {
+    "always": "Always",
+    "after": "After the session",
+    "never": "Never"
   }
 }

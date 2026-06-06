@@ -21,6 +21,7 @@
             <p-tab value="info"><i class="pi pi-info-circle tab-icon"></i>{{ 'events.form.tab_info' | transloco }}</p-tab>
             <p-tab value="planning"><i class="pi pi-calendar tab-icon"></i>{{ 'events.form.tab_planning' | transloco }}</p-tab>
             <p-tab value="details"><i class="pi pi-sliders-h tab-icon"></i>{{ 'events.form.tab_details' | transloco }}</p-tab>
+            <p-tab value="visibility"><i class="pi pi-eye tab-icon"></i>{{ 'events.form.tab_visibility' | transloco }}</p-tab>
           </p-tablist>
           <p-tabpanels>
             <p-tabpanel value="info">
@@ -66,6 +67,57 @@
                   <app-meta-field [label]="'events.form.color' | transloco">
                     <p-colorpicker formControlName="color" />
                     <input pInputText formControlName="color" class="flex-1" maxlength="10" />
+                  </app-meta-field>
+                </div>
+              </div>
+            </p-tabpanel>
+            <p-tabpanel value="visibility">
+              <div class="builder-pane">
+                <div class="meta-grid">
+                  <app-meta-field
+                    [full]="true"
+                    [label]="'events.form.vis_distance' | transloco"
+                    for="vis_distance"
+                    [hint]="'events.form.vis_help' | transloco"
+                  >
+                    <p-select
+                      inputId="vis_distance"
+                      [options]="visibilityOptions()"
+                      formControlName="vis_distance"
+                      optionLabel="label"
+                      optionValue="value"
+                      (onChange)="onVisChanged()"
+                    />
+                  </app-meta-field>
+                  <app-meta-field
+                    [full]="true"
+                    [label]="'events.form.vis_goal' | transloco"
+                    for="vis_goal"
+                    [hint]="'events.form.vis_help' | transloco"
+                  >
+                    <p-select
+                      inputId="vis_goal"
+                      [options]="visibilityOptions()"
+                      formControlName="vis_goal"
+                      optionLabel="label"
+                      optionValue="value"
+                      (onChange)="onVisChanged()"
+                    />
+                  </app-meta-field>
+                  <app-meta-field
+                    [full]="true"
+                    [label]="'events.form.vis_rounds' | transloco"
+                    for="vis_rounds"
+                    [hint]="'events.form.vis_help' | transloco"
+                  >
+                    <p-select
+                      inputId="vis_rounds"
+                      [options]="visibilityOptions()"
+                      formControlName="vis_rounds"
+                      optionLabel="label"
+                      optionValue="value"
+                      (onChange)="onVisChanged()"
+                    />
                   </app-meta-field>
                 </div>
               </div>

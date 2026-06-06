@@ -33,7 +33,9 @@ import { TeamsService } from '../../../api/api/teams.service';
 import { Event } from '../../../api/model/event';
 import { PatchedEvent } from '../../../api/model/patched-event';
 import { Program } from '../../../api/model/program';
+import { VisibilityMode } from '../../../api/model/visibility-mode';
 import { type FieldErrors, extractServerError } from '../../../shared/forms/notify-error';
+import { buildVisibilityOptions } from '../../../shared/forms/visibility-options';
 import { FormFooterComponent } from '../../../shared/ui/form-footer/form-footer.component';
 import { MetaFieldComponent } from '../../../shared/ui/meta-field/meta-field.component';
 import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
@@ -121,6 +123,17 @@ export class EventsFormComponent implements OnInit {
 
   protected readonly isEditMode = computed(() => this.eventId() !== null);
 
+  /** Visibility-mode select options, re-translated on language change. */
+  protected readonly visibilityOptions = computed(() => {
+    this.transloco.getActiveLang();
+    return buildVisibilityOptions(this.transloco);
+  });
+
+  /** True once the user has manually touched any vis_* control (suppresses team prefill). */
+  private visTouchedByUser = false;
+  /** Program id the vis_* controls were last prefilled from (avoids redundant fetches). */
+  private prefilledForProgramId: number | null = null;
+
   protected readonly form = this.fb.nonNullable.group(
     {
       name: ['', [Validators.required, Validators.maxLength(100)]],
@@ -131,6 +144,9 @@ export class EventsFormComponent implements OnInit {
       hour_end: this.fb.nonNullable.control<Date | null>(null),
       total: this.fb.nonNullable.control<number>(0, [Validators.min(0)]),
       color: ['#3B82F6', [Validators.maxLength(10)]],
+      vis_distance: this.fb.nonNullable.control<VisibilityMode>(VisibilityMode.Always),
+      vis_goal: this.fb.nonNullable.control<VisibilityMode>(VisibilityMode.Always),
+      vis_rounds: this.fb.nonNullable.control<VisibilityMode>(VisibilityMode.Always),
     },
     { validators: [timeRangeValidator] },
   );
@@ -148,15 +164,56 @@ export class EventsFormComponent implements OnInit {
       this.eventId.set(id);
       this.loadEvent(id);
     } else {
+      // On CREATE, prefill the per-event visibility from the chosen program's team
+      // defaults — unless the user has already overridden them.
+      this.form.controls.refer_program_id.valueChanges
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe((pid) => this.prefillVisFromTeam(pid));
+
       const programParam = this.route.snapshot.queryParamMap.get('program');
       if (programParam) {
         const pid = Number(programParam);
         if (Number.isFinite(pid)) {
           this.form.patchValue({ refer_program_id: pid });
           this.form.controls.refer_program_id.disable();
+          this.prefillVisFromTeam(pid);
         }
       }
     }
+  }
+
+  /** Mark the visibility controls as user-overridden so team prefill stops. */
+  protected onVisChanged(): void {
+    this.visTouchedByUser = true;
+  }
+
+  /**
+   * Prefill the 3 vis_* selects from the selected program's team defaults.
+   * No-op once the user has manually changed a visibility value.
+   */
+  private prefillVisFromTeam(programId: number | null | undefined): void {
+    if (this.visTouchedByUser || programId == null) return;
+    if (this.prefilledForProgramId === programId) return;
+    const program = this.availablePrograms().find((p) => p.id === programId);
+    const teamId = program?.team_id ?? program?.team?.id ?? null;
+    if (teamId == null) return;
+    this.prefilledForProgramId = programId;
+    this.teamsService
+      .teamsRetrieve(teamId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (t) => {
+          if (this.visTouchedByUser) return;
+          this.form.patchValue(
+            {
+              vis_distance: t.vis_distance ?? VisibilityMode.Always,
+              vis_goal: t.vis_goal ?? VisibilityMode.Always,
+              vis_rounds: t.vis_rounds ?? VisibilityMode.Always,
+            },
+            { emitEvent: false },
+          );
+        },
+      });
   }
 
   private loadAvailablePrograms(): void {
@@ -215,6 +272,9 @@ export class EventsFormComponent implements OnInit {
             hour_end: parseTime(e.hour_end),
             total: e.total ?? 0,
             color: e.color || '#3B82F6',
+            vis_distance: e.vis_distance ?? VisibilityMode.Always,
+            vis_goal: e.vis_goal ?? VisibilityMode.Always,
+            vis_rounds: e.vis_rounds ?? VisibilityMode.Always,
           });
           this.form.controls.refer_program_id.disable();
           this.loading.set(false);
@@ -261,6 +321,9 @@ export class EventsFormComponent implements OnInit {
         hour_end: toIsoTime(value.hour_end),
         total: value.total,
         color: value.color,
+        vis_distance: value.vis_distance,
+        vis_goal: value.vis_goal,
+        vis_rounds: value.vis_rounds,
       };
       this.eventsService
         .eventsCreate(createPayload as unknown as Event)
@@ -288,6 +351,9 @@ export class EventsFormComponent implements OnInit {
       hour_end: toIsoTime(value.hour_end) ?? undefined,
       total: value.total,
       color: value.color,
+      vis_distance: value.vis_distance,
+      vis_goal: value.vis_goal,
+      vis_rounds: value.vis_rounds,
     };
 
     this.eventsService

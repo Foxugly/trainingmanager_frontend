@@ -15,6 +15,7 @@ import { LanguageEnum } from '../../../api/model/language-enum';
 import { Level } from '../../../api/model/level';
 import { Sport } from '../../../api/model/sport';
 import { Team } from '../../../api/model/team';
+import { VisibilityMode } from '../../../api/model/visibility-mode';
 import { AuthService } from '../../../core/auth/auth.service';
 import { TeamsFormComponent } from './teams-form.component';
 
@@ -366,6 +367,61 @@ describe('TeamsFormComponent', () => {
     expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(
       5,
       expect.objectContaining({ weekly_recap_enabled: true }),
+    );
+  });
+
+  it('defaults visibility controls to "always" and timezone to Europe/Brussels on create', () => {
+    expect(access(component).form.getRawValue()).toMatchObject({
+      vis_distance: VisibilityMode.Always,
+      vis_goal: VisibilityMode.Always,
+      vis_rounds: VisibilityMode.Always,
+      timezone: 'Europe/Brussels',
+    });
+  });
+
+  it('seeds visibility + timezone from the loaded team on edit', async () => {
+    await setup('5', ownerUser, {
+      ...team,
+      timezone: 'Europe/Paris',
+      vis_distance: VisibilityMode.After,
+      vis_goal: VisibilityMode.Never,
+      vis_rounds: VisibilityMode.After,
+    });
+    expect(access(component).form.getRawValue()).toMatchObject({
+      timezone: 'Europe/Paris',
+      vis_distance: VisibilityMode.After,
+      vis_goal: VisibilityMode.Never,
+      vis_rounds: VisibilityMode.After,
+    });
+  });
+
+  it('create payload includes timezone + vis_* defaults', () => {
+    access(component).form.patchValue({
+      name: 'New',
+      sport_id: 1,
+      language: 'fr',
+      timezone: 'UTC',
+      vis_distance: VisibilityMode.After,
+    });
+    access(component).submit();
+    expect(teamsMock.teamsCreate).toHaveBeenCalledWith(
+      expect.objectContaining({ timezone: 'UTC', vis_distance: VisibilityMode.After }),
+    );
+  });
+
+  it('update payload includes timezone + vis_*', async () => {
+    await setup('5');
+    access(component).form.patchValue({
+      timezone: 'America/New_York',
+      vis_rounds: VisibilityMode.Never,
+    });
+    access(component).submit();
+    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(
+      5,
+      expect.objectContaining({
+        timezone: 'America/New_York',
+        vis_rounds: VisibilityMode.Never,
+      }),
     );
   });
 });

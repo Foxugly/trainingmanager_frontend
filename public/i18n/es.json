@@ -98,6 +98,18 @@
         "accept": "Eliminar",
         "reject": "Cancelar",
         "deleted": "Ejercicio eliminado."
+      },
+      "hidden_distance": {
+        "after": "Distancia visible tras la sesión",
+        "never": "Distancia no comunicada"
+      },
+      "hidden_goal": {
+        "after": "Objetivo visible tras la sesión",
+        "never": "Objetivo no comunicado"
+      },
+      "hidden_rounds": {
+        "after": "El detalle de la sesión aún no es visible",
+        "never": "El detalle de la sesión no se comunica"
       }
     },
     "round_form": {
@@ -183,7 +195,12 @@
       "saved": "Sesión guardada",
       "errors": {
         "time_range": "La hora de fin debe ser posterior a la hora de inicio."
-      }
+      },
+      "tab_visibility": "Visibilidad",
+      "vis_distance": "Distancia",
+      "vis_goal": "Objetivo",
+      "vis_rounds": "Detalle de la sesión",
+      "vis_help": "Heredado de los ajustes del equipo; modificable para esta sesión."
     },
     "actions": {
       "edit": "Editar",
@@ -356,7 +373,8 @@
         "programs": "Programas",
         "managers": "Managers",
         "members": "Miembros",
-        "requests_invitations": "Solicitudes e invitaciones"
+        "requests_invitations": "Solicitudes e invitaciones",
+        "visibility": "Visibilidad"
       }
     },
     "form": {
@@ -400,7 +418,16 @@
       "roti_enabled": "Activar ROTI (dificultad percibida)",
       "roti_enabled_help": "Permite a los atletas valorar lo dura que resultó cada sesión (de 1 a 5).",
       "weekly_recap_enabled": "Activar el resumen semanal",
-      "weekly_recap_enabled_help": "Enviar un resumen semanal a los entrenadores del equipo"
+      "weekly_recap_enabled_help": "Enviar un resumen semanal a los entrenadores del equipo",
+      "tab_visibility": "Visibilidad",
+      "timezone": "Zona horaria",
+      "timezone_help": "Zona horaria del equipo, usada para determinar si una sesión ha terminado (visibilidad \"tras la sesión\").",
+      "vis_distance": "Distancia (predeterminado)",
+      "vis_distance_help": "Predeterminado para las nuevas sesiones; modificable por sesión.",
+      "vis_goal": "Objetivo (predeterminado)",
+      "vis_goal_help": "Predeterminado para las nuevas sesiones; modificable por sesión.",
+      "vis_rounds": "Detalle de la sesión (predeterminado)",
+      "vis_rounds_help": "Predeterminado para las nuevas sesiones; modificable por sesión."
     },
     "member_dialog": {
       "title": "Añadir un miembro",
@@ -1040,5 +1067,10 @@
     "errors": {
       "unknown": "Algo salió mal."
     }
+  },
+  "visibility": {
+    "always": "Siempre",
+    "after": "Tras la sesión",
+    "never": "Nunca"
   }
 }

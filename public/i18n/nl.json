@@ -98,6 +98,18 @@
         "accept": "Verwijderen",
         "reject": "Annuleren",
         "deleted": "Oefening verwijderd."
+      },
+      "hidden_distance": {
+        "after": "Afstand zichtbaar na de sessie",
+        "never": "Afstand niet meegedeeld"
+      },
+      "hidden_goal": {
+        "after": "Doel zichtbaar na de sessie",
+        "never": "Doel niet meegedeeld"
+      },
+      "hidden_rounds": {
+        "after": "De sessiedetails zijn nog niet zichtbaar",
+        "never": "De sessiedetails worden niet meegedeeld"
       }
     },
     "round_form": {
@@ -183,7 +195,12 @@
       "saved": "Sessie opgeslagen",
       "errors": {
         "time_range": "De eindtijd moet na de starttijd liggen."
-      }
+      },
+      "tab_visibility": "Zichtbaarheid",
+      "vis_distance": "Afstand",
+      "vis_goal": "Doel",
+      "vis_rounds": "Sessiedetails",
+      "vis_help": "Overgenomen van de teaminstellingen; aanpasbaar voor deze sessie."
     },
     "actions": {
       "edit": "Bewerken",
@@ -356,7 +373,8 @@
         "programs": "Programma's",
         "managers": "Managers",
         "members": "Leden",
-        "requests_invitations": "Aanvragen & uitnodigingen"
+        "requests_invitations": "Aanvragen & uitnodigingen",
+        "visibility": "Zichtbaarheid"
       }
     },
     "form": {
@@ -400,7 +418,16 @@
       "roti_enabled": "ROTI inschakelen (ervaren moeilijkheid)",
       "roti_enabled_help": "Laat atleten beoordelen hoe zwaar elke sessie aanvoelde (1 tot 5).",
       "weekly_recap_enabled": "Wekelijks overzicht inschakelen",
-      "weekly_recap_enabled_help": "Stuur een wekelijks overzicht naar de coaches van het team"
+      "weekly_recap_enabled_help": "Stuur een wekelijks overzicht naar de coaches van het team",
+      "tab_visibility": "Zichtbaarheid",
+      "timezone": "Tijdzone",
+      "timezone_help": "Tijdzone van het team, gebruikt om te bepalen of een sessie voorbij is (zichtbaarheid \"na de sessie\").",
+      "vis_distance": "Afstand (standaard)",
+      "vis_distance_help": "Standaard voor nieuwe sessies; per sessie aanpasbaar.",
+      "vis_goal": "Doel (standaard)",
+      "vis_goal_help": "Standaard voor nieuwe sessies; per sessie aanpasbaar.",
+      "vis_rounds": "Sessiedetails (standaard)",
+      "vis_rounds_help": "Standaard voor nieuwe sessies; per sessie aanpasbaar."
     },
     "member_dialog": {
       "title": "Lid toevoegen",
@@ -1040,5 +1067,10 @@
     "errors": {
       "unknown": "Er is iets misgegaan."
     }
+  },
+  "visibility": {
+    "always": "Altijd",
+    "after": "Na de sessie",
+    "never": "Nooit"
   }
 }

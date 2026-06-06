@@ -50,6 +50,7 @@ import { Modality } from '../../../api/model/modality';
 import { Round } from '../../../api/model/round';
 import { RotiSummary } from '../../../api/model/roti-summary';
 import { Team } from '../../../api/model/team';
+import { VisibilityMode } from '../../../api/model/visibility-mode';
 import { AuthService } from '../../../core/auth/auth.service';
 import { type FieldErrors, extractServerError } from '../../../shared/forms/notify-error';
 import { AiErrorMappingService } from '../../ai/ai-error-mapping.service';
@@ -215,6 +216,55 @@ export class EventsDetailComponent implements OnInit {
     }
     return total;
   });
+
+  // --- Athlete-side visibility hints ------------------------------------------
+  // The backend already nulls hidden values + empties hidden rounds for
+  // non-manager athletes. These computeds drive subtle "hidden" hints so the
+  // athlete understands *why* something is missing. Managers/coaches: never.
+
+  /** A non-manager viewer for whom the backend may have hidden values. */
+  protected readonly isRestrictedViewer = computed(() => this.team() !== null && !this.canManage());
+
+  /** True when distance is hidden from this athlete (mode after/never AND no value). */
+  protected readonly distanceHidden = computed(() => {
+    const e = this.event();
+    if (!e || !this.isRestrictedViewer()) return false;
+    const mode = e.vis_distance ?? VisibilityMode.Always;
+    if (mode === VisibilityMode.Always) return false;
+    return this.eventTotalDistance() === 0 && !e.total;
+  });
+
+  /** True when the goal is hidden from this athlete (mode after/never AND no value). */
+  protected readonly goalHidden = computed(() => {
+    const e = this.event();
+    if (!e || !this.isRestrictedViewer()) return false;
+    const mode = e.vis_goal ?? VisibilityMode.Always;
+    if (mode === VisibilityMode.Always) return false;
+    return !e.goal;
+  });
+
+  /** True when the rounds detail is hidden from this athlete (mode after/never AND empty). */
+  protected readonly roundsHidden = computed(() => {
+    const e = this.event();
+    if (!e || !this.isRestrictedViewer()) return false;
+    const mode = e.vis_rounds ?? VisibilityMode.Always;
+    if (mode === VisibilityMode.Always) return false;
+    if (this.loadingRounds()) return false;
+    return this.rounds().length === 0;
+  });
+
+  /** i18n key suffix for a "never" vs "after" hidden hint. */
+  protected hiddenVariant(mode: VisibilityMode | undefined): 'never' | 'after' {
+    return mode === VisibilityMode.Never ? 'never' : 'after';
+  }
+
+  protected readonly distanceHiddenVariant = computed(() =>
+    this.hiddenVariant(this.event()?.vis_distance),
+  );
+  protected readonly goalHiddenVariant = computed(() => this.hiddenVariant(this.event()?.vis_goal));
+  protected readonly roundsHiddenVariant = computed(() =>
+    this.hiddenVariant(this.event()?.vis_rounds),
+  );
 
   protected exerciseDistance(ex: Exercise): number {
     const rep = ex.repetition ?? 1;

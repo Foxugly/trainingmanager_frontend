@@ -98,6 +98,18 @@
         "accept": "Supprimer",
         "reject": "Annuler",
         "deleted": "Exercice supprimé."
+      },
+      "hidden_distance": {
+        "after": "Distance visible après la séance",
+        "never": "Distance non communiquée"
+      },
+      "hidden_goal": {
+        "after": "Objectif visible après la séance",
+        "never": "Objectif non communiqué"
+      },
+      "hidden_rounds": {
+        "after": "Le détail de la séance n'est pas encore visible",
+        "never": "Le détail de la séance n’est pas communiqué"
       }
     },
     "round_form": {
@@ -183,7 +195,12 @@
       "saved": "Séance enregistrée",
       "errors": {
         "time_range": "L'heure de fin doit être après l'heure de début."
-      }
+      },
+      "tab_visibility": "Visibilité",
+      "vis_distance": "Distance",
+      "vis_goal": "Objectif",
+      "vis_rounds": "Détail de la séance",
+      "vis_help": "Hérité des réglages de l'équipe ; modifiable pour cette séance."
     },
     "actions": {
       "edit": "Modifier",
@@ -356,7 +373,8 @@
         "programs": "Programmes",
         "managers": "Managers",
         "members": "Membres",
-        "requests_invitations": "Demandes & invitations"
+        "requests_invitations": "Demandes & invitations",
+        "visibility": "Visibilité"
       }
     },
     "form": {
@@ -400,7 +418,16 @@
       "roti_enabled": "Activer le ROTI (difficulté ressentie)",
       "roti_enabled_help": "Permet aux athlètes de noter la difficulté ressentie de chaque séance (1 à 5).",
       "weekly_recap_enabled": "Activer le récapitulatif hebdomadaire",
-      "weekly_recap_enabled_help": "Envoyer un récapitulatif hebdomadaire aux coachs de l’équipe"
+      "weekly_recap_enabled_help": "Envoyer un récapitulatif hebdomadaire aux coachs de l’équipe",
+      "tab_visibility": "Visibilité",
+      "timezone": "Fuseau horaire",
+      "timezone_help": "Fuseau de l'équipe, utilisé pour déterminer si une séance est terminée (visibilité « après la séance »).",
+      "vis_distance": "Distance (par défaut)",
+      "vis_distance_help": "Réglage par défaut appliqué aux nouvelles séances ; modifiable séance par séance.",
+      "vis_goal": "Objectif (par défaut)",
+      "vis_goal_help": "Réglage par défaut appliqué aux nouvelles séances ; modifiable séance par séance.",
+      "vis_rounds": "Détail de la séance (par défaut)",
+      "vis_rounds_help": "Réglage par défaut appliqué aux nouvelles séances ; modifiable séance par séance."
     },
     "member_dialog": {
       "title": "Ajouter un membre",
@@ -1040,5 +1067,10 @@
     "errors": {
       "unknown": "Une erreur est survenue."
     }
+  },
+  "visibility": {
+    "always": "Toujours",
+    "after": "Après la séance",
+    "never": "Jamais"
   }
 }

@@ -33,9 +33,11 @@ import { Level } from '../../../api/model/level';
 import { PatchedTeam } from '../../../api/model/patched-team';
 import { Sport } from '../../../api/model/sport';
 import { Team } from '../../../api/model/team';
+import { VisibilityMode } from '../../../api/model/visibility-mode';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AVAILABLE_LANGUAGES, LanguageCode } from '../../../core/i18n/available-languages';
 import { type FieldErrors, extractServerError } from '../../../shared/forms/notify-error';
+import { buildVisibilityOptions } from '../../../shared/forms/visibility-options';
 import {
   ActiveToggleComponent,
   type ActiveToggleLabels,
@@ -104,6 +106,44 @@ export class TeamsFormComponent implements OnInit {
 
   protected readonly availableLanguages = AVAILABLE_LANGUAGES;
 
+  /** Visibility-mode select options, re-translated on language change. */
+  protected readonly visibilityOptions = computed(() => {
+    // Touch the active lang so the labels recompute when it changes.
+    this.transloco.getActiveLang();
+    return buildVisibilityOptions(this.transloco);
+  });
+
+  /** Curated fallback if Intl.supportedValuesOf is unavailable (older runtimes). */
+  private static readonly TIMEZONE_FALLBACK: readonly string[] = [
+    'UTC',
+    'Europe/Brussels',
+    'Europe/Paris',
+    'Europe/Amsterdam',
+    'Europe/Madrid',
+    'Europe/Rome',
+    'Europe/London',
+    'Europe/Berlin',
+    'America/New_York',
+    'America/Los_Angeles',
+  ];
+
+  /** IANA timezones as {label,value} for the filterable select, precomputed once. */
+  protected readonly timezoneOptions: { label: string; value: string }[] = (() => {
+    let zones: readonly string[];
+    try {
+      const supported = (
+        Intl as unknown as { supportedValuesOf?: (key: string) => string[] }
+      ).supportedValuesOf;
+      zones =
+        typeof supported === 'function'
+          ? supported('timeZone')
+          : TeamsFormComponent.TIMEZONE_FALLBACK;
+    } catch {
+      zones = TeamsFormComponent.TIMEZONE_FALLBACK;
+    }
+    return zones.map((z) => ({ label: z, value: z }));
+  })();
+
   protected readonly isEditMode = computed(() => this.teamId() !== null);
 
   protected readonly patchActive = (id: number, value: boolean) =>
@@ -136,6 +176,10 @@ export class TeamsFormComponent implements OnInit {
     managers_ids: this.fb.nonNullable.control<number[]>([]),
     auto_accept_policy: [false],
     notify_managers_on_join_request: [true],
+    timezone: this.fb.nonNullable.control<string>('Europe/Brussels'),
+    vis_distance: this.fb.nonNullable.control<VisibilityMode>(VisibilityMode.Always),
+    vis_goal: this.fb.nonNullable.control<VisibilityMode>(VisibilityMode.Always),
+    vis_rounds: this.fb.nonNullable.control<VisibilityMode>(VisibilityMode.Always),
   });
 
   private readonly autoAcceptValue = toSignal(this.form.controls.auto_accept_policy.valueChanges, {
@@ -194,6 +238,10 @@ export class TeamsFormComponent implements OnInit {
               managers_ids: (t.managers ?? []).map((m) => m.id),
               auto_accept_policy: t.join_request_policy === JoinRequestPolicyEnum.Auto,
               notify_managers_on_join_request: t.notify_managers_on_join_request ?? true,
+              timezone: t.timezone || 'Europe/Brussels',
+              vis_distance: t.vis_distance ?? VisibilityMode.Always,
+              vis_goal: t.vis_goal ?? VisibilityMode.Always,
+              vis_rounds: t.vis_rounds ?? VisibilityMode.Always,
             });
             this.loading.set(false);
           },
@@ -317,6 +365,10 @@ export class TeamsFormComponent implements OnInit {
         language: value.language as LanguageEnum,
         is_public: value.is_public,
         logo: value.logo,
+        timezone: value.timezone,
+        vis_distance: value.vis_distance,
+        vis_goal: value.vis_goal,
+        vis_rounds: value.vis_rounds,
       };
       this.teamsService
         .teamsCreate(createPayload as unknown as Team)
@@ -351,6 +403,10 @@ export class TeamsFormComponent implements OnInit {
         ? JoinRequestPolicyEnum.Auto
         : JoinRequestPolicyEnum.Manual,
       notify_managers_on_join_request: value.notify_managers_on_join_request,
+      timezone: value.timezone,
+      vis_distance: value.vis_distance,
+      vis_goal: value.vis_goal,
+      vis_rounds: value.vis_rounds,
     };
 
     this.teamsService

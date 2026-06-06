@@ -24,6 +24,7 @@ import { Program } from '../../../api/model/program';
 import { Round } from '../../../api/model/round';
 import { Sport } from '../../../api/model/sport';
 import { Team } from '../../../api/model/team';
+import { VisibilityMode } from '../../../api/model/visibility-mode';
 import { AuthService } from '../../../core/auth/auth.service';
 import { EventsDetailComponent } from './events-detail.component';
 
@@ -174,6 +175,14 @@ interface ProtectedFields {
   rotiSummary(): { average: number | null; count: number; distribution: { [k: string]: number }; my_score: number | null } | null;
   rotiDistribution(): { score: number; count: number }[];
   submitRoti(score: number): void;
+  // Athlete-side visibility hints
+  isRestrictedViewer(): boolean;
+  distanceHidden(): boolean;
+  goalHidden(): boolean;
+  roundsHidden(): boolean;
+  distanceHiddenVariant(): 'never' | 'after';
+  goalHiddenVariant(): 'never' | 'after';
+  roundsHiddenVariant(): 'never' | 'after';
 }
 
 type ExerciseRowForm = FormGroup<{
@@ -724,5 +733,77 @@ describe('EventsDetailComponent', () => {
     const dist = access(component).rotiDistribution();
     expect(dist.map((d) => d.score)).toEqual([1, 2, 3, 4, 5]);
     expect(dist.map((d) => d.count)).toEqual([0, 1, 2, 1, 1]);
+  });
+
+  // --- Athlete-side visibility hints ---
+
+  const hiddenEvent: Event = {
+    ...eventNoRounds,
+    goal: null,
+    total: undefined,
+    vis_distance: VisibilityMode.After,
+    vis_goal: VisibilityMode.Never,
+    vis_rounds: VisibilityMode.After,
+  };
+
+  it('shows distance/goal/rounds hidden hints for a non-manager athlete when values are hidden', async () => {
+    await setup('7', hiddenEvent, otherUser);
+    await new Promise((r) => setTimeout(r, 0));
+    expect(access(component).isRestrictedViewer()).toBe(true);
+    expect(access(component).distanceHidden()).toBe(true);
+    expect(access(component).goalHidden()).toBe(true);
+    expect(access(component).roundsHidden()).toBe(true);
+    expect(access(component).distanceHiddenVariant()).toBe('after');
+    expect(access(component).goalHiddenVariant()).toBe('never');
+    expect(access(component).roundsHiddenVariant()).toBe('after');
+  });
+
+  it('never shows hidden hints to a manager/owner', async () => {
+    await setup('7', hiddenEvent, ownerUser);
+    await new Promise((r) => setTimeout(r, 0));
+    expect(access(component).isRestrictedViewer()).toBe(false);
+    expect(access(component).distanceHidden()).toBe(false);
+    expect(access(component).goalHidden()).toBe(false);
+    expect(access(component).roundsHidden()).toBe(false);
+  });
+
+  it('does not flag hidden when visibility mode is "always" even for an athlete', async () => {
+    const alwaysEvent: Event = {
+      ...eventNoRounds,
+      goal: null,
+      total: undefined,
+      vis_distance: VisibilityMode.Always,
+      vis_goal: VisibilityMode.Always,
+      vis_rounds: VisibilityMode.Always,
+    };
+    await setup('7', alwaysEvent, otherUser);
+    await new Promise((r) => setTimeout(r, 0));
+    expect(access(component).distanceHidden()).toBe(false);
+    expect(access(component).goalHidden()).toBe(false);
+    expect(access(component).roundsHidden()).toBe(false);
+  });
+
+  it('does not flag goal hidden when the goal is present despite restricted mode', async () => {
+    const visibleGoalEvent: Event = {
+      ...eventNoRounds,
+      goal: 'Endurance',
+      vis_goal: VisibilityMode.After,
+    };
+    await setup('7', visibleGoalEvent, otherUser);
+    await new Promise((r) => setTimeout(r, 0));
+    expect(access(component).goalHidden()).toBe(false);
+  });
+
+  it('does not flag distance hidden when the computed distance is non-zero despite restricted mode', async () => {
+    const visibleDistanceEvent: Event = {
+      ...eventWithRounds,
+      vis_distance: VisibilityMode.After,
+    };
+    await setup('7', visibleDistanceEvent, otherUser);
+    await new Promise((r) => setTimeout(r, 0));
+    await new Promise((r) => setTimeout(r, 0));
+    // 3 rounds × 1200 m loaded → distance is visible, not hidden.
+    expect(access(component).eventTotalDistance()).toBeGreaterThan(0);
+    expect(access(component).distanceHidden()).toBe(false);
   });
 });

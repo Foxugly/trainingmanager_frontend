@@ -36,6 +36,7 @@
         <p-tabs value="info" class="builder-tabs">
           <p-tablist>
             <p-tab value="info"><i class="pi pi-info-circle tab-icon"></i>{{ 'teams.form.tab_info' | transloco }}</p-tab>
+            <p-tab value="visibility"><i class="pi pi-eye tab-icon"></i>{{ 'teams.form.tab_visibility' | transloco }}</p-tab>
             @if (isEditMode()) {
               <p-tab value="managers"><i class="pi pi-users tab-icon"></i>{{ 'teams.form.tab_managers' | transloco }}</p-tab>
               <p-tab value="statuses"><i class="pi pi-check-square tab-icon"></i>{{ 'teams.form.tab_statuses' | transloco }}</p-tab>
@@ -134,6 +135,66 @@
                         />
                       }
                     </div>
+                  </app-meta-field>
+                </div>
+              </div>
+            </p-tabpanel>
+
+            <p-tabpanel value="visibility">
+              <div class="builder-pane">
+                <div class="meta-grid">
+                  <app-meta-field
+                    [label]="'teams.form.timezone' | transloco"
+                    for="timezone"
+                    [tooltip]="'teams.form.timezone_help' | transloco"
+                  >
+                    <p-select
+                      inputId="timezone"
+                      [options]="timezoneOptions"
+                      formControlName="timezone"
+                      optionLabel="label"
+                      optionValue="value"
+                      [filter]="true"
+                    />
+                  </app-meta-field>
+                  <app-meta-field
+                    [label]="'teams.form.vis_distance' | transloco"
+                    for="vis_distance"
+                    [tooltip]="'teams.form.vis_distance_help' | transloco"
+                  >
+                    <p-select
+                      inputId="vis_distance"
+                      [options]="visibilityOptions()"
+                      formControlName="vis_distance"
+                      optionLabel="label"
+                      optionValue="value"
+                    />
+                  </app-meta-field>
+                  <app-meta-field
+                    [label]="'teams.form.vis_goal' | transloco"
+                    for="vis_goal"
+                    [tooltip]="'teams.form.vis_goal_help' | transloco"
+                  >
+                    <p-select
+                      inputId="vis_goal"
+                      [options]="visibilityOptions()"
+                      formControlName="vis_goal"
+                      optionLabel="label"
+                      optionValue="value"
+                    />
+                  </app-meta-field>
+                  <app-meta-field
+                    [label]="'teams.form.vis_rounds' | transloco"
+                    for="vis_rounds"
+                    [tooltip]="'teams.form.vis_rounds_help' | transloco"
+                  >
+                    <p-select
+                      inputId="vis_rounds"
+                      [options]="visibilityOptions()"
+                      formControlName="vis_rounds"
+                      optionLabel="label"
+                      optionValue="value"
+                    />
                   </app-meta-field>
                 </div>
               </div>
