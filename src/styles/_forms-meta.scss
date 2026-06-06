@@ -1,40 +1,31 @@
+// Default: ONE field per row, full width. Every form & dialog using .meta-grid
+// (events/teams/programs/admin forms, profile, and the round/exercise/generate
+// dialogs) gets full-width fields. Multi-column layouts are strictly opt-in via
+// the `.cols-N` modifiers below.
 .meta-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem 1rem;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-// In edit forms (.form-card: events / teams / programs / admin / profile),
-// every field spans the full width — a single column — so inputs sit at max
-// width. The 2-column grid above stays for detail-page meta and compact
-// dialogs (e.g. round-form-dialog) which don't use .form-card.
-.form-card .meta-grid {
   grid-template-columns: 1fr;
+  gap: 0.75rem 1rem;
 }
 
-// Opt-in multi-column row modifiers. The default `.form-card .meta-grid` rule
-// above (specificity 0,2,0) forces a single column, so these modifiers carry
-// equal specificity to override it. Compose a form row as its own
+// Opt-in multi-column row modifiers. Compose a form row as its own
 // `<div class="meta-grid cols-N">` containing N non-`[full]` fields so each
 // field takes one equal-width track. A `[full]` field still spans the row.
-.form-card .meta-grid.cols-2 {
+// Collapse to a single column on mobile.
+.meta-grid.cols-2 {
   grid-template-columns: 1fr 1fr;
 }
-.form-card .meta-grid.cols-3 {
+.meta-grid.cols-3 {
   grid-template-columns: 1fr 1fr 1fr;
 }
-.form-card .meta-grid.cols-4 {
+.meta-grid.cols-4 {
   grid-template-columns: repeat(4, 1fr);
 }
 
 @media (max-width: 768px) {
-  .form-card .meta-grid.cols-2,
-  .form-card .meta-grid.cols-3,
-  .form-card .meta-grid.cols-4 {
+  .meta-grid.cols-2,
+  .meta-grid.cols-3,
+  .meta-grid.cols-4 {
     grid-template-columns: 1fr;
   }
 }
