@@ -23,6 +23,9 @@ import { PatchedEvent } from '../model/models';
 import { ReorderRoundsRequest } from '../model/models';
 import { RotiSummary } from '../model/models';
 import { RotiUpsert } from '../model/models';
+import { RsvpApplyToAttendanceResult } from '../model/models';
+import { RsvpSummary } from '../model/models';
+import { RsvpUpsert } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
@@ -192,6 +195,31 @@ export interface EventsServiceInterface {
      * @param reorderRoundsRequest 
      */
     eventsRoundsReorderCreate(id: number, reorderRoundsRequest: ReorderRoundsRequest, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * Pre-fill attendance from RSVPs (managers only)
+     * Managers/owner only. For each member with an RSVP on the event, upserts their Attendance: GOING -&gt; the \&#39;present\&#39; AttendanceStatus, NOT_GOING -&gt; \&#39;absent\&#39;. MAYBE is skipped (attendance left untouched). RSVPs whose target status code is not seeded are also skipped. Returns how many rows were applied and skipped.
+     * @endpoint post /api/v1/events/{event_pk}/rsvp/apply_to_attendance/
+     * @param eventPk 
+     */
+    eventsRsvpApplyToAttendance(eventPk: number, extraHttpRequestParams?: any): Observable<RsvpApplyToAttendanceResult>;
+
+    /**
+     * Get RSVP summary for an event (incl. my_status)
+     * Returns the aggregate availability for the event (counts, total_members) plus the caller\&#39;s own status (my_status). Managers additionally get the per-member breakdown (by_member); athletes get an empty by_member. Coaches and athlete-members of the team may read.
+     * @endpoint get /api/v1/events/{event_pk}/rsvp/
+     * @param eventPk 
+     */
+    eventsRsvpRetrieve(eventPk: number, extraHttpRequestParams?: any): Observable<RsvpSummary>;
+
+    /**
+     * Upsert the caller\&#39;s own RSVP (going/maybe/not_going)
+     * Athlete-only: resolves the caller\&#39;s Member within the event\&#39;s team and update_or_creates their Rsvp(event, member) with the given status. Returns 403 if the team has rsvp_enabled&#x3D;False or the caller is not an athlete-member; 400 if the status is invalid.
+     * @endpoint put /api/v1/events/{event_pk}/rsvp/
+     * @param eventPk 
+     * @param rsvpUpsert 
+     */
+    eventsRsvpUpdate(eventPk: number, rsvpUpsert: RsvpUpsert, extraHttpRequestParams?: any): Observable<RsvpSummary>;
 
     /**
      * 

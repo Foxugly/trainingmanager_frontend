@@ -105,6 +105,7 @@ model/note.ts
 model/notification-preference-update.ts
 model/notification-preference.ts
 model/notification.ts
+model/null-enum.ts
 model/overlap-strategy-enum.ts
 model/paginated-ai-usage-detail-list.ts
 model/paginated-attendance-list.ts
@@ -161,6 +162,12 @@ model/reorder-rounds-request.ts
 model/roti-summary.ts
 model/roti-upsert.ts
 model/round.ts
+model/rsvp-apply-to-attendance-result.ts
+model/rsvp-by-member.ts
+model/rsvp-counts.ts
+model/rsvp-status-enum.ts
+model/rsvp-summary.ts
+model/rsvp-upsert.ts
 model/sport-admin.ts
 model/sport.ts
 model/stats-attendance-by-member.ts

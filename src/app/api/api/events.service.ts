@@ -40,6 +40,12 @@ import { ReorderRoundsRequest } from '../model/reorder-rounds-request';
 import { RotiSummary } from '../model/roti-summary';
 // @ts-ignore
 import { RotiUpsert } from '../model/roti-upsert';
+// @ts-ignore
+import { RsvpApplyToAttendanceResult } from '../model/rsvp-apply-to-attendance-result';
+// @ts-ignore
+import { RsvpSummary } from '../model/rsvp-summary';
+// @ts-ignore
+import { RsvpUpsert } from '../model/rsvp-upsert';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -1339,6 +1345,202 @@ export class EventsService extends BaseService implements EventsServiceInterface
             {
                 context: localVarHttpContext,
                 body: reorderRoundsRequest,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Pre-fill attendance from RSVPs (managers only)
+     * Managers/owner only. For each member with an RSVP on the event, upserts their Attendance: GOING -&gt; the \&#39;present\&#39; AttendanceStatus, NOT_GOING -&gt; \&#39;absent\&#39;. MAYBE is skipped (attendance left untouched). RSVPs whose target status code is not seeded are also skipped. Returns how many rows were applied and skipped.
+     * @endpoint post /api/v1/events/{event_pk}/rsvp/apply_to_attendance/
+     * @param eventPk 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public eventsRsvpApplyToAttendance(eventPk: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<RsvpApplyToAttendanceResult>;
+    public eventsRsvpApplyToAttendance(eventPk: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<RsvpApplyToAttendanceResult>>;
+    public eventsRsvpApplyToAttendance(eventPk: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<RsvpApplyToAttendanceResult>>;
+    public eventsRsvpApplyToAttendance(eventPk: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (eventPk === null || eventPk === undefined) {
+            throw new Error('Required parameter eventPk was null or undefined when calling eventsRsvpApplyToAttendance.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (jwtAuth) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/events/${this.configuration.encodeParam({name: "eventPk", value: eventPk, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/rsvp/apply_to_attendance/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<RsvpApplyToAttendanceResult>('post', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Get RSVP summary for an event (incl. my_status)
+     * Returns the aggregate availability for the event (counts, total_members) plus the caller\&#39;s own status (my_status). Managers additionally get the per-member breakdown (by_member); athletes get an empty by_member. Coaches and athlete-members of the team may read.
+     * @endpoint get /api/v1/events/{event_pk}/rsvp/
+     * @param eventPk 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public eventsRsvpRetrieve(eventPk: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<RsvpSummary>;
+    public eventsRsvpRetrieve(eventPk: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<RsvpSummary>>;
+    public eventsRsvpRetrieve(eventPk: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<RsvpSummary>>;
+    public eventsRsvpRetrieve(eventPk: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (eventPk === null || eventPk === undefined) {
+            throw new Error('Required parameter eventPk was null or undefined when calling eventsRsvpRetrieve.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (jwtAuth) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/events/${this.configuration.encodeParam({name: "eventPk", value: eventPk, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/rsvp/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<RsvpSummary>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Upsert the caller\&#39;s own RSVP (going/maybe/not_going)
+     * Athlete-only: resolves the caller\&#39;s Member within the event\&#39;s team and update_or_creates their Rsvp(event, member) with the given status. Returns 403 if the team has rsvp_enabled&#x3D;False or the caller is not an athlete-member; 400 if the status is invalid.
+     * @endpoint put /api/v1/events/{event_pk}/rsvp/
+     * @param eventPk 
+     * @param rsvpUpsert 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public eventsRsvpUpdate(eventPk: number, rsvpUpsert: RsvpUpsert, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<RsvpSummary>;
+    public eventsRsvpUpdate(eventPk: number, rsvpUpsert: RsvpUpsert, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<RsvpSummary>>;
+    public eventsRsvpUpdate(eventPk: number, rsvpUpsert: RsvpUpsert, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<RsvpSummary>>;
+    public eventsRsvpUpdate(eventPk: number, rsvpUpsert: RsvpUpsert, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (eventPk === null || eventPk === undefined) {
+            throw new Error('Required parameter eventPk was null or undefined when calling eventsRsvpUpdate.');
+        }
+        if (rsvpUpsert === null || rsvpUpsert === undefined) {
+            throw new Error('Required parameter rsvpUpsert was null or undefined when calling eventsRsvpUpdate.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (jwtAuth) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'application/x-www-form-urlencoded',
+            'multipart/form-data'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/events/${this.configuration.encodeParam({name: "eventPk", value: eventPk, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/rsvp/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<RsvpSummary>('put', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: rsvpUpsert,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
