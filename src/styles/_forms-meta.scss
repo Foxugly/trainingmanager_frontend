@@ -8,6 +8,14 @@
   }
 }
 
+// In edit forms (.form-card: events / teams / programs / admin / profile),
+// every field spans the full width — a single column — so inputs sit at max
+// width. The 2-column grid above stays for detail-page meta and compact
+// dialogs (e.g. round-form-dialog) which don't use .form-card.
+.form-card .meta-grid {
+  grid-template-columns: 1fr;
+}
+
 .meta-item {
   display: flex;
   flex-direction: column;
