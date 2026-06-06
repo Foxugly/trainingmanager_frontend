@@ -247,6 +247,19 @@
       "responses": "{{count}} reactie(s)",
       "saved": "Bedankt, opgeslagen",
       "none": "Geen reacties"
+    },
+    "rsvp": {
+      "tab": "Beschikbaarheid",
+      "going": "Aanwezig",
+      "maybe": "Misschien",
+      "not_going": "Afwezig",
+      "no_response": "Geen antwoord",
+      "your_availability": "Jouw beschikbaarheid",
+      "saved": "Bedankt, je beschikbaarheid is opgeslagen",
+      "apply_to_attendance": "Aanwezigheid vooraf invullen",
+      "apply_confirm": "Aanwezigheid invullen op basis van beschikbaarheid?",
+      "applied": "{{count}} aanwezigheid(en) bijgewerkt",
+      "empty": "Geen antwoorden"
     }
   },
   "programs": {
@@ -434,7 +447,9 @@
       "vis_rounds": "Sessiedetails (standaard)",
       "vis_rounds_help": "Standaard voor nieuwe sessies; per sessie aanpasbaar.",
       "topic_creation": "Onderwerpen aanmaken",
-      "topic_creation_help": "Bepaalt wie nieuwe discussieonderwerpen in het team kan aanmaken."
+      "topic_creation_help": "Bepaalt wie nieuwe discussieonderwerpen in het team kan aanmaken.",
+      "rsvp_enabled": "Beschikbaarheid inschakelen (RSVP)",
+      "rsvp_enabled_help": "Laat atleten hun beschikbaarheid aangeven (aanwezig / misschien / afwezig) voor elke sessie."
     },
     "member_dialog": {
       "title": "Lid toevoegen",

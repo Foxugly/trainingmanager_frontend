@@ -247,6 +247,19 @@
       "responses": "{{count}} risposta/e",
       "saved": "Grazie, salvato",
       "none": "Nessuna risposta"
+    },
+    "rsvp": {
+      "tab": "Disponibilità",
+      "going": "Presente",
+      "maybe": "Forse",
+      "not_going": "Assente",
+      "no_response": "Nessuna risposta",
+      "your_availability": "La tua disponibilità",
+      "saved": "Grazie, la tua disponibilità è stata salvata",
+      "apply_to_attendance": "Precompila le presenze",
+      "apply_confirm": "Compilare le presenze in base alle disponibilità?",
+      "applied": "{{count}} presenza/e aggiornata/e",
+      "empty": "Nessuna risposta"
     }
   },
   "programs": {
@@ -434,7 +447,9 @@
       "vis_rounds": "Dettaglio sessione (predefinito)",
       "vis_rounds_help": "Predefinito per le nuove sessioni; modificabile per ogni sessione.",
       "topic_creation": "Creazione argomenti",
-      "topic_creation_help": "Definisce chi può creare nuovi argomenti di discussione nella squadra."
+      "topic_creation_help": "Definisce chi può creare nuovi argomenti di discussione nella squadra.",
+      "rsvp_enabled": "Abilita disponibilità (RSVP)",
+      "rsvp_enabled_help": "Consente agli atleti di dichiarare la propria disponibilità (presente / forse / assente) per ogni sessione."
     },
     "member_dialog": {
       "title": "Aggiungi un membro",

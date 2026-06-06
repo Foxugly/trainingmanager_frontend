@@ -49,6 +49,8 @@ import { LanguageEnum } from '../../../api/model/language-enum';
 import { Modality } from '../../../api/model/modality';
 import { Round } from '../../../api/model/round';
 import { RotiSummary } from '../../../api/model/roti-summary';
+import { RsvpSummary } from '../../../api/model/rsvp-summary';
+import { RsvpStatusEnum } from '../../../api/model/rsvp-status-enum';
 import { Team } from '../../../api/model/team';
 import { VisibilityMode } from '../../../api/model/visibility-mode';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -209,6 +211,47 @@ export class EventsDetailComponent implements OnInit {
     return counts.length ? Math.max(1, ...counts) : 1;
   });
 
+  // --- RSVP (availability) ---
+  protected readonly rsvpEnabled = computed(() => this.team()?.rsvp_enabled === true);
+  protected readonly rsvpSummary = signal<RsvpSummary | null>(null);
+  protected readonly rsvpSubmitting = signal(false);
+  protected readonly rsvpApplying = signal(false);
+  /** Status options for the athlete buttons, ordered going / maybe / not_going. */
+  protected readonly rsvpStatuses: readonly RsvpStatusEnum[] = [
+    RsvpStatusEnum.Going,
+    RsvpStatusEnum.Maybe,
+    RsvpStatusEnum.NotGoing,
+  ];
+
+  /**
+   * True when the caller's own RSVP equals `status`. Compared by string value
+   * because the generator emits a distinct inline enum for `my_status`
+   * (oneOf → RsvpSummaryMyStatusEnum) that shares values with RsvpStatusEnum.
+   */
+  protected isMyStatus(status: RsvpStatusEnum): boolean {
+    const mine = this.rsvpSummary()?.my_status;
+    return mine != null && (mine as string) === (status as string);
+  }
+
+  /** Maps an RSVP status to a PrimeNG button severity (going=success, maybe=warn, not_going=danger). */
+  protected rsvpSeverity(status: RsvpStatusEnum): 'success' | 'warn' | 'danger' {
+    switch (status) {
+      case RsvpStatusEnum.Going:
+        return 'success';
+      case RsvpStatusEnum.Maybe:
+        return 'warn';
+      case RsvpStatusEnum.NotGoing:
+        return 'danger';
+    }
+  }
+
+  /** True when nobody has responded yet (all counts zero). */
+  protected readonly rsvpHasResponses = computed<boolean>(() => {
+    const c = this.rsvpSummary()?.counts;
+    if (!c) return false;
+    return c.going > 0 || c.maybe > 0 || c.not_going > 0;
+  });
+
   protected readonly eventTotalDistance = computed<number>(() => {
     let total = 0;
     for (const round of this.rounds()) {
@@ -316,6 +359,13 @@ export class EventsDetailComponent implements OnInit {
       untracked(() => this.maybeLoadRoti());
     });
 
+    // Load the RSVP summary once the team (hence rsvp_enabled) is resolved.
+    effect(() => {
+      this.team();
+      this.eventId();
+      untracked(() => this.maybeLoadRsvp());
+    });
+
     effect(() => {
       const event = this.event();
       if (!event) return;
@@ -382,6 +432,98 @@ export class EventsDetailComponent implements OnInit {
         },
         error: () => {
           this.rotiSubmitting.set(false);
+          this.messageService.add({
+            severity: 'error',
+            summary: this.transloco.translate('common.error'),
+            detail: this.transloco.translate('events.errors.unknown'),
+          });
+        },
+      });
+  }
+
+  private rsvpLoadedForEventId: number | null = null;
+
+  /** Load the RSVP summary once the team is known and RSVP is enabled. */
+  private maybeLoadRsvp(): void {
+    const eventId = this.eventId();
+    if (eventId == null || !this.rsvpEnabled()) {
+      this.rsvpSummary.set(null);
+      this.rsvpLoadedForEventId = null;
+      return;
+    }
+    if (this.rsvpLoadedForEventId === eventId) return;
+    this.rsvpLoadedForEventId = eventId;
+    this.loadRsvp(eventId);
+  }
+
+  private loadRsvp(eventId: number): void {
+    this.eventsService
+      .eventsRsvpRetrieve(eventId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => this.rsvpSummary.set(res),
+        error: () => this.rsvpSummary.set(null),
+      });
+  }
+
+  protected submitRsvp(status: RsvpStatusEnum): void {
+    const eventId = this.eventId();
+    if (eventId == null || this.rsvpSubmitting()) return;
+    this.rsvpSubmitting.set(true);
+    this.eventsService
+      .eventsRsvpUpdate(eventId, { status })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          this.rsvpSummary.set(res);
+          this.rsvpSubmitting.set(false);
+          this.messageService.add({
+            severity: 'success',
+            summary: this.transloco.translate('common.success'),
+            detail: this.transloco.translate('events.rsvp.saved'),
+          });
+        },
+        error: () => {
+          this.rsvpSubmitting.set(false);
+          this.messageService.add({
+            severity: 'error',
+            summary: this.transloco.translate('common.error'),
+            detail: this.transloco.translate('events.errors.unknown'),
+          });
+        },
+      });
+  }
+
+  protected confirmApplyRsvpToAttendance(): void {
+    const eventId = this.eventId();
+    if (eventId == null || this.rsvpApplying()) return;
+    this.confirmationService.confirm({
+      header: this.transloco.translate('events.rsvp.apply_to_attendance'),
+      message: this.transloco.translate('events.rsvp.apply_confirm'),
+      acceptLabel: this.transloco.translate('common.confirm'),
+      rejectLabel: this.transloco.translate('common.cancel'),
+      accept: () => this.applyRsvpToAttendance(eventId),
+    });
+  }
+
+  private applyRsvpToAttendance(eventId: number): void {
+    this.rsvpApplying.set(true);
+    this.eventsService
+      .eventsRsvpApplyToAttendance(eventId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          this.rsvpApplying.set(false);
+          this.messageService.add({
+            severity: 'success',
+            summary: this.transloco.translate('common.success'),
+            detail: this.transloco.translate('events.rsvp.applied', { count: res.applied }),
+          });
+          // Refresh the attendance manager if it's the active tab (or whenever loaded).
+          this.reloadEvent();
+        },
+        error: () => {
+          this.rsvpApplying.set(false);
           this.messageService.add({
             severity: 'error',
             summary: this.transloco.translate('common.error'),

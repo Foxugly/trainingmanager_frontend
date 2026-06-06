@@ -143,6 +143,12 @@
             {{ 'events.roti.title' | transloco }}
           </p-tab>
         }
+        @if (rsvpEnabled()) {
+          <p-tab value="rsvp">
+            <i class="pi pi-calendar-plus mr-2" aria-hidden="true"></i>
+            {{ 'events.rsvp.tab' | transloco }}
+          </p-tab>
+        }
       </p-tablist>
 
       <p-tabpanels>
@@ -524,6 +530,108 @@
                       </ul>
                     } @else {
                       <p class="text-sm text-gray-500">{{ 'events.roti.none' | transloco }}</p>
+                    }
+                  } @else {
+                    <p class="text-sm text-gray-500">{{ 'common.loading' | transloco }}…</p>
+                  }
+                </div>
+              }
+            </section>
+          </p-tabpanel>
+        }
+
+        <!-- TAB 4 — RSVP (Disponibilités) -->
+        @if (rsvpEnabled()) {
+          <p-tabpanel value="rsvp">
+            <section class="max-w-xl">
+              <!-- Athlete: declare your availability -->
+              @if (isAthlete()) {
+                <h2 class="text-lg font-semibold mb-1">
+                  {{ 'events.rsvp.your_availability' | transloco }}
+                </h2>
+                <div class="inline-flex items-center gap-2 flex-wrap mt-2">
+                  @for (s of rsvpStatuses; track s) {
+                    <p-button
+                      [label]="'events.rsvp.' + s | transloco"
+                      [severity]="isMyStatus(s) ? rsvpSeverity(s) : 'secondary'"
+                      [outlined]="!isMyStatus(s)"
+                      [rounded]="true"
+                      size="small"
+                      [disabled]="rsvpSubmitting()"
+                      [ariaLabel]="'events.rsvp.' + s | transloco"
+                      [ariaPressed]="isMyStatus(s)"
+                      (onClick)="submitRsvp(s)"
+                    />
+                  }
+                </div>
+              }
+
+              <!-- Manager: aggregate + per-member list + apply-to-attendance -->
+              @if (canManage()) {
+                <div [class.mt-6]="isAthlete()">
+                  <h2 class="text-lg font-semibold mb-2">{{ 'events.rsvp.tab' | transloco }}</h2>
+                  @if (rsvpSummary(); as summary) {
+                    <!-- Count chips -->
+                    <div class="flex items-center gap-2 flex-wrap mb-4">
+                      <span
+                        class="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-800 px-3 py-1 text-sm font-medium"
+                      >
+                        {{ 'events.rsvp.going' | transloco }}: {{ summary.counts.going }}
+                      </span>
+                      <span
+                        class="inline-flex items-center gap-1 rounded-full bg-amber-100 text-amber-800 px-3 py-1 text-sm font-medium"
+                      >
+                        {{ 'events.rsvp.maybe' | transloco }}: {{ summary.counts.maybe }}
+                      </span>
+                      <span
+                        class="inline-flex items-center gap-1 rounded-full bg-rose-100 text-rose-800 px-3 py-1 text-sm font-medium"
+                      >
+                        {{ 'events.rsvp.not_going' | transloco }}: {{ summary.counts.not_going }}
+                      </span>
+                      <span
+                        class="inline-flex items-center gap-1 rounded-full bg-gray-100 text-gray-600 px-3 py-1 text-sm font-medium"
+                      >
+                        {{ 'events.rsvp.no_response' | transloco }}: {{ summary.counts.no_response }}
+                      </span>
+                    </div>
+
+                    @if (rsvpHasResponses()) {
+                      <!-- Per-member list -->
+                      <ul class="space-y-1.5 mb-4">
+                        @for (m of summary.by_member; track m.member_id) {
+                          <li class="flex items-center justify-between gap-2 text-sm">
+                            <span class="text-gray-700">{{ m.name }}</span>
+                            @if (m.status; as st) {
+                              <span
+                                class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                                [class.bg-emerald-100]="st === 'going'"
+                                [class.text-emerald-800]="st === 'going'"
+                                [class.bg-amber-100]="st === 'maybe'"
+                                [class.text-amber-800]="st === 'maybe'"
+                                [class.bg-rose-100]="st === 'not_going'"
+                                [class.text-rose-800]="st === 'not_going'"
+                              >
+                                {{ 'events.rsvp.' + st | transloco }}
+                              </span>
+                            } @else {
+                              <span class="text-gray-400">—</span>
+                            }
+                          </li>
+                        }
+                      </ul>
+
+                      <p-button
+                        [label]="'events.rsvp.apply_to_attendance' | transloco"
+                        icon="pi pi-list-check"
+                        severity="success"
+                        [outlined]="true"
+                        size="small"
+                        [loading]="rsvpApplying()"
+                        [disabled]="rsvpApplying()"
+                        (onClick)="confirmApplyRsvpToAttendance()"
+                      />
+                    } @else {
+                      <p class="text-sm text-gray-500">{{ 'events.rsvp.empty' | transloco }}</p>
                     }
                   } @else {
                     <p class="text-sm text-gray-500">{{ 'common.loading' | transloco }}…</p>

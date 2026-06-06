@@ -247,6 +247,19 @@
       "responses": "{{count}} response(s)",
       "saved": "Thanks, saved",
       "none": "No responses"
+    },
+    "rsvp": {
+      "tab": "Availability",
+      "going": "Going",
+      "maybe": "Maybe",
+      "not_going": "Not going",
+      "no_response": "No response",
+      "your_availability": "Your availability",
+      "saved": "Thanks, your availability has been saved",
+      "apply_to_attendance": "Pre-fill attendance",
+      "apply_confirm": "Fill attendance from availability?",
+      "applied": "{{count}} attendance record(s) updated",
+      "empty": "No responses"
     }
   },
   "programs": {
@@ -434,7 +447,9 @@
       "vis_rounds": "Session detail (default)",
       "vis_rounds_help": "Default applied to new sessions; overridable per session.",
       "topic_creation": "Topic creation",
-      "topic_creation_help": "Defines who can create new discussion topics in the team."
+      "topic_creation_help": "Defines who can create new discussion topics in the team.",
+      "rsvp_enabled": "Enable availability (RSVP)",
+      "rsvp_enabled_help": "Lets athletes declare their availability (going / maybe / not going) for each session."
     },
     "member_dialog": {
       "title": "Add a member",

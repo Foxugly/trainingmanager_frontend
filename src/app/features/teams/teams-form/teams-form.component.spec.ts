@@ -383,6 +383,21 @@ describe('TeamsFormComponent', () => {
     );
   });
 
+  it('seeds rsvp_enabled from the loaded team on edit', async () => {
+    await setup('5', ownerUser, { ...team, rsvp_enabled: true });
+    expect(access(component).form.getRawValue()).toMatchObject({ rsvp_enabled: true });
+  });
+
+  it('update payload includes rsvp_enabled', async () => {
+    await setup('5');
+    access(component).form.patchValue({ rsvp_enabled: true });
+    access(component).submit();
+    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(
+      5,
+      expect.objectContaining({ rsvp_enabled: true }),
+    );
+  });
+
   it('seeds weekly_recap_enabled from the loaded team on edit', async () => {
     await setup('5', ownerUser, { ...team, weekly_recap_enabled: true });
     expect(access(component).form.getRawValue()).toMatchObject({ weekly_recap_enabled: true });

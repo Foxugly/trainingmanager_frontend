@@ -317,6 +317,15 @@
 
                     <app-meta-field
                       [full]="true"
+                      for="rsvp_enabled"
+                      [label]="'teams.form.rsvp_enabled' | transloco"
+                      [tooltip]="'teams.form.rsvp_enabled_help' | transloco"
+                    >
+                      <p-toggleSwitch formControlName="rsvp_enabled" inputId="rsvp_enabled" />
+                    </app-meta-field>
+
+                    <app-meta-field
+                      [full]="true"
                       for="weekly_recap_enabled"
                       [label]="'teams.form.weekly_recap_enabled' | transloco"
                       [tooltip]="'teams.form.weekly_recap_enabled_help' | transloco"

@@ -175,6 +175,18 @@ interface ProtectedFields {
   rotiSummary(): { average: number | null; count: number; distribution: { [k: string]: number }; my_score: number | null } | null;
   rotiDistribution(): { score: number; count: number }[];
   submitRoti(score: number): void;
+  // RSVP
+  rsvpEnabled(): boolean;
+  rsvpSummary(): {
+    counts: { going: number; maybe: number; not_going: number; no_response: number };
+    total_members: number;
+    my_status: string | null;
+    by_member: { member_id: number; name: string; status: string | null }[];
+  } | null;
+  rsvpHasResponses(): boolean;
+  isMyStatus(status: string): boolean;
+  submitRsvp(status: string): void;
+  confirmApplyRsvpToAttendance(): void;
   // Athlete-side visibility hints
   isRestrictedViewer(): boolean;
   distanceHidden(): boolean;
@@ -205,6 +217,9 @@ describe('EventsDetailComponent', () => {
     eventsPartialUpdate: ReturnType<typeof vi.fn>;
     eventsRotiRetrieve: ReturnType<typeof vi.fn>;
     eventsRotiUpdate: ReturnType<typeof vi.fn>;
+    eventsRsvpRetrieve: ReturnType<typeof vi.fn>;
+    eventsRsvpUpdate: ReturnType<typeof vi.fn>;
+    eventsRsvpApplyToAttendance: ReturnType<typeof vi.fn>;
   };
   let programsMock: { programsRetrieve: ReturnType<typeof vi.fn> };
   let teamsMock: { teamsRetrieve: ReturnType<typeof vi.fn> };
@@ -263,6 +278,28 @@ describe('EventsDetailComponent', () => {
         .mockImplementation((_id: number, body: { score: number }) =>
           of({ average: 3.5, count: 6, distribution: {}, my_score: body.score }),
         ),
+      eventsRsvpRetrieve: vi.fn().mockReturnValue(
+        of({
+          counts: { going: 2, maybe: 1, not_going: 1, no_response: 1 },
+          total_members: 5,
+          my_status: null,
+          by_member: [
+            { member_id: 1, name: 'Alice', status: 'going' },
+            { member_id: 2, name: 'Bob', status: null },
+          ],
+        }),
+      ),
+      eventsRsvpUpdate: vi
+        .fn()
+        .mockImplementation((_id: number, body: { status: string }) =>
+          of({
+            counts: { going: 3, maybe: 1, not_going: 1, no_response: 0 },
+            total_members: 5,
+            my_status: body.status,
+            by_member: [],
+          }),
+        ),
+      eventsRsvpApplyToAttendance: vi.fn().mockReturnValue(of({ applied: 3, skipped: 1 })),
     };
     programsMock = { programsRetrieve: vi.fn().mockReturnValue(of(program)) };
     teamsMock = { teamsRetrieve: vi.fn().mockReturnValue(of(teamResult)) };
@@ -733,6 +770,51 @@ describe('EventsDetailComponent', () => {
     const dist = access(component).rotiDistribution();
     expect(dist.map((d) => d.score)).toEqual([1, 2, 3, 4, 5]);
     expect(dist.map((d) => d.count)).toEqual([0, 1, 2, 1, 1]);
+  });
+
+  // --- RSVP (availability) ---
+
+  const rsvpTeam: Team = { ...team, rsvp_enabled: true };
+
+  it('does not load RSVP when the team has rsvp_enabled falsy', () => {
+    expect(access(component).rsvpEnabled()).toBe(false);
+    expect(eventsMock.eventsRsvpRetrieve).not.toHaveBeenCalled();
+    expect(access(component).rsvpSummary()).toBeNull();
+  });
+
+  it('loads the RSVP summary when the team has rsvp_enabled', async () => {
+    await setup('7', eventNoRounds, ownerUser, rsvpTeam);
+    await new Promise((r) => setTimeout(r, 0));
+    expect(access(component).rsvpEnabled()).toBe(true);
+    expect(eventsMock.eventsRsvpRetrieve).toHaveBeenCalledWith(7);
+    expect(access(component).rsvpSummary()?.counts.going).toBe(2);
+    expect(access(component).rsvpSummary()?.total_members).toBe(5);
+    expect(access(component).rsvpHasResponses()).toBe(true);
+  });
+
+  it('athlete submitRsvp PUTs the status then refreshes the summary', async () => {
+    await setup('7', eventNoRounds, athleteUser, rsvpTeam);
+    await new Promise((r) => setTimeout(r, 0));
+    access(component).submitRsvp('going');
+    expect(eventsMock.eventsRsvpUpdate).toHaveBeenCalledWith(7, { status: 'going' });
+    expect(access(component).rsvpSummary()?.my_status).toBe('going');
+    expect(access(component).isMyStatus('going')).toBe(true);
+    expect(access(component).isMyStatus('maybe')).toBe(false);
+  });
+
+  it('manager apply-to-attendance posts after confirm and reloads the event', async () => {
+    await setup('7', eventNoRounds, ownerUser, rsvpTeam);
+    await new Promise((r) => setTimeout(r, 0));
+    const confirmService = fixture.debugElement.injector.get(ConfirmationService);
+    vi.spyOn(confirmService, 'confirm').mockImplementation((opts) => {
+      opts.accept?.();
+      return confirmService;
+    });
+    const retrieveCallsBefore = eventsMock.eventsRetrieve.mock.calls.length;
+    access(component).confirmApplyRsvpToAttendance();
+    expect(eventsMock.eventsRsvpApplyToAttendance).toHaveBeenCalledWith(7);
+    // reloadEvent() triggers another eventsRetrieve to refresh the attendance tab.
+    expect(eventsMock.eventsRetrieve.mock.calls.length).toBeGreaterThan(retrieveCallsBefore);
   });
 
   // --- Athlete-side visibility hints ---
