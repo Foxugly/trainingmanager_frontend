@@ -357,7 +357,11 @@
       "description": "Descripción",
       "description_placeholder": "Objetivos, contexto, limitaciones…",
       "saved_create": "Programa creado",
-      "saved_edit": "Programa actualizado"
+      "saved_edit": "Programa actualizado",
+      "delete": "Eliminar",
+      "delete_blocked": "No se puede eliminar: hay sesiones vinculadas a este programa.",
+      "delete_confirm": "¿Eliminar este programa? Esta acción es irreversible.",
+      "deleted": "Programa eliminado"
     },
     "actions": {
       "new": "Nuevo programa",

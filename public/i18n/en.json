@@ -357,7 +357,11 @@
       "description": "Description",
       "description_placeholder": "Goals, context, constraints…",
       "saved_create": "Program created",
-      "saved_edit": "Program updated"
+      "saved_edit": "Program updated",
+      "delete": "Delete",
+      "delete_blocked": "Cannot delete: sessions are linked to this program.",
+      "delete_confirm": "Delete this program? This action is irreversible.",
+      "deleted": "Program deleted"
     },
     "actions": {
       "new": "New program",

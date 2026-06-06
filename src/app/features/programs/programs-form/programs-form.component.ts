@@ -20,7 +20,7 @@ import { Editor } from 'primeng/editor';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
-import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
+import { Tooltip } from 'primeng/tooltip';
 import { ProgramsService } from '../../../api/api/programs.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { PatchedProgram } from '../../../api/model/patched-program';
@@ -65,11 +65,7 @@ function fromIsoDate(s: string | null | undefined): Date | null {
     Button,
     Editor,
     ConfirmDialog,
-    Tabs,
-    TabList,
-    Tab,
-    TabPanels,
-    TabPanel,
+    Tooltip,
     PageHeaderComponent,
     StatusBadgeComponent,
     ActiveToggleComponent,
@@ -90,6 +86,7 @@ export class ProgramsFormComponent implements OnInit {
   private readonly teamsService = inject(TeamsService);
   private readonly authService = inject(AuthService);
   private readonly messageService = inject(MessageService);
+  private readonly confirmationService = inject(ConfirmationService);
   private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -103,8 +100,13 @@ export class ProgramsFormComponent implements OnInit {
 
   protected readonly isEditMode = computed(() => this.programId() !== null);
 
+  /** A program with ≥1 linked session cannot be deleted (PROTECTed server-side). */
+  protected readonly hasLinkedEvents = computed(() => (this.program()?.events?.length ?? 0) > 0);
+
   protected readonly patchActive = (id: number, value: boolean) =>
-    this.programsService.programsPartialUpdate(id, undefined, { is_active: value } as PatchedProgram);
+    this.programsService.programsPartialUpdate(id, undefined, {
+      is_active: value,
+    } as PatchedProgram);
 
   protected readonly activeLabels = computed<ActiveToggleLabels>(() => ({
     active: this.transloco.translate('common.active'),
@@ -253,6 +255,42 @@ export class ProgramsFormComponent implements OnInit {
         error: (err: HttpErrorResponse) => {
           this.applyServerError(err);
           this.saving.set(false);
+        },
+      });
+  }
+
+  protected confirmDelete(): void {
+    if (this.hasLinkedEvents()) return;
+    this.confirmationService.confirm({
+      header: this.transloco.translate('common.delete'),
+      message: this.transloco.translate('programs.form.delete_confirm'),
+      icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => this.deleteProgram(),
+    });
+  }
+
+  private deleteProgram(): void {
+    const id = this.programId();
+    if (id === null) return;
+    this.saving.set(true);
+    const teamId = this.program()?.team?.id ?? null;
+    this.programsService
+      .programsDestroy(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.saving.set(false);
+          this.messageService.add({
+            severity: 'success',
+            summary: this.transloco.translate('common.success'),
+            detail: this.transloco.translate('programs.form.deleted'),
+          });
+          this.router.navigate(teamId != null ? ['/teams', teamId] : ['/programs']);
+        },
+        error: (err: HttpErrorResponse) => {
+          this.saving.set(false);
+          this.applyServerError(err);
         },
       });
   }

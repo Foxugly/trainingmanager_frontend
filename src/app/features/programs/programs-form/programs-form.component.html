@@ -1,5 +1,7 @@
 <div class="page page--narrow">
-  <app-page-header [title]="(isEditMode() ? 'programs.form.edit_title' : 'programs.form.new_title') | transloco">
+  <app-page-header
+    [title]="(isEditMode() ? 'programs.form.edit_title' : 'programs.form.new_title') | transloco"
+  >
     <p-button
       slot="left"
       type="button"
@@ -25,92 +27,142 @@
         [labels]="activeLabels()"
         (valueChange)="activeValue.set($event)"
       />
+      <!-- Wrap in a span so the tooltip still fires when the button is disabled
+           (PrimeNG disabled buttons don't emit hover events). -->
+      <span
+        slot="right"
+        [pTooltip]="hasLinkedEvents() ? ('programs.form.delete_blocked' | transloco) : ''"
+        tooltipPosition="bottom"
+      >
+        <p-button
+          type="button"
+          severity="danger"
+          [outlined]="true"
+          icon="pi pi-trash"
+          [label]="'programs.form.delete' | transloco"
+          [disabled]="hasLinkedEvents()"
+          [ariaLabel]="
+            (hasLinkedEvents() ? 'programs.form.delete_blocked' : 'programs.form.delete')
+              | transloco
+          "
+          (onClick)="confirmDelete()"
+        />
+      </span>
     }
   </app-page-header>
 
   @if (loading()) {
-    <div class="card"><p class="meta-hint">{{ 'common.loading' | transloco }}…</p></div>
+    <div class="card">
+      <p class="meta-hint">{{ 'common.loading' | transloco }}…</p>
+    </div>
   } @else {
     <div class="card form-card builder-stack">
       <form [formGroup]="form">
-        <p-tabs value="info" class="builder-tabs">
-          <p-tablist>
-            <p-tab value="info"><i class="pi pi-info-circle tab-icon"></i>{{ 'programs.form.tab_info' | transloco }}</p-tab>
-            <p-tab value="planning"><i class="pi pi-calendar tab-icon"></i>{{ 'programs.form.tab_planning' | transloco }}</p-tab>
-            <p-tab value="description"><i class="pi pi-align-left tab-icon"></i>{{ 'programs.form.tab_description' | transloco }}</p-tab>
-          </p-tablist>
-          <p-tabpanels>
-            <p-tabpanel value="info">
-              <div class="builder-pane">
-                <div class="meta-grid">
-                  <app-meta-field [full]="true" [label]="'programs.form.name' | transloco" for="name" [error]="fieldError('name')">
-                    <input pInputText id="name" formControlName="name" [placeholder]="'programs.form.name_placeholder' | transloco" />
-                  </app-meta-field>
-                  <app-meta-field
-                    [full]="true"
-                    [label]="'programs.form.team' | transloco"
-                    for="team_id"
-                    [tooltip]="isEditMode() ? ('programs.form.team_locked_help' | transloco) : null"
-                    [error]="!isEditMode() && availableTeams().length === 0 ? ('programs.form.no_manager_team' | transloco) : fieldError('team_id')"
-                  >
-                    @if (isEditMode()) {
-                      <input pInputText id="team_id" type="text" [value]="program()?.team?.name ?? ''" disabled />
-                    } @else {
-                      <p-select
-                        inputId="team_id"
-                        [options]="availableTeams()"
-                        formControlName="team_id"
-                        optionLabel="name"
-                        optionValue="id"
-                        [filter]="true"
-                        [placeholder]="'programs.form.team_placeholder' | transloco"
-                      />
-                    }
-                  </app-meta-field>
-                </div>
-              </div>
-            </p-tabpanel>
-            <p-tabpanel value="planning">
-              <div class="builder-pane">
-                <div class="meta-grid">
-                  <app-meta-field [label]="'programs.form.date_start' | transloco" for="date_start" [error]="fieldError('date_start')">
-                    <p-datepicker inputId="date_start" formControlName="date_start" dateFormat="dd/mm/yy" [showIcon]="true" appendTo="body" />
-                  </app-meta-field>
-                  <app-meta-field [label]="'programs.form.date_end' | transloco" for="date_end" [error]="fieldError('date_end')">
-                    <p-datepicker inputId="date_end" formControlName="date_end" dateFormat="dd/mm/yy" [showIcon]="true" appendTo="body" />
-                  </app-meta-field>
-                  <app-meta-field
-                    [label]="'programs.form.frequency' | transloco"
-                    for="frequency_per_week"
-                    [tooltip]="'programs.form.frequency_help' | transloco"
-                    [error]="fieldError('frequency_per_week')"
-                  >
-                    <p-inputnumber
-                      inputId="frequency_per_week"
-                      formControlName="frequency_per_week"
-                      [min]="0"
-                      [max]="14"
-                      [showButtons]="true"
-                      buttonLayout="horizontal"
-                      spinnerMode="horizontal"
-                      decrementButtonIcon="pi pi-minus"
-                      incrementButtonIcon="pi pi-plus"
-                    />
-                  </app-meta-field>
-                </div>
-              </div>
-            </p-tabpanel>
-            <p-tabpanel value="description">
-              <div class="builder-pane">
-                <div class="meta-grid">
-                  <app-meta-field [full]="true" [label]="'programs.form.description' | transloco" [error]="fieldError('description')">
-                    <p-editor formControlName="description" [style]="{ height: '12rem' }" />
-                  </app-meta-field>
-                </div>
-              </div>
-            </p-tabpanel>
-          </p-tabpanels>
-        </p-tabs>
+        <div class="meta-grid cols-2">
+          <app-meta-field
+            [label]="'programs.form.name' | transloco"
+            for="name"
+            [error]="fieldError('name')"
+          >
+            <input
+              pInputText
+              id="name"
+              formControlName="name"
+              [placeholder]="'programs.form.name_placeholder' | transloco"
+            />
+          </app-meta-field>
+          <app-meta-field
+            [label]="'programs.form.frequency' | transloco"
+            for="frequency_per_week"
+            [tooltip]="'programs.form.frequency_help' | transloco"
+            [error]="fieldError('frequency_per_week')"
+          >
+            <p-inputnumber
+              inputId="frequency_per_week"
+              formControlName="frequency_per_week"
+              [min]="0"
+              [max]="14"
+              [showButtons]="true"
+              buttonLayout="horizontal"
+              spinnerMode="horizontal"
+              decrementButtonIcon="pi pi-minus"
+              incrementButtonIcon="pi pi-plus"
+            />
+          </app-meta-field>
+        </div>
+
+        <div class="meta-grid cols-2">
+          <app-meta-field
+            [label]="'programs.form.date_start' | transloco"
+            for="date_start"
+            [error]="fieldError('date_start')"
+          >
+            <p-datepicker
+              inputId="date_start"
+              formControlName="date_start"
+              dateFormat="dd/mm/yy"
+              [showIcon]="true"
+              appendTo="body"
+            />
+          </app-meta-field>
+          <app-meta-field
+            [label]="'programs.form.date_end' | transloco"
+            for="date_end"
+            [error]="fieldError('date_end')"
+          >
+            <p-datepicker
+              inputId="date_end"
+              formControlName="date_end"
+              dateFormat="dd/mm/yy"
+              [showIcon]="true"
+              appendTo="body"
+            />
+          </app-meta-field>
+        </div>
+
+        <div class="meta-grid">
+          <app-meta-field
+            [full]="true"
+            [label]="'programs.form.team' | transloco"
+            for="team_id"
+            [tooltip]="isEditMode() ? ('programs.form.team_locked_help' | transloco) : null"
+            [error]="
+              !isEditMode() && availableTeams().length === 0
+                ? ('programs.form.no_manager_team' | transloco)
+                : fieldError('team_id')
+            "
+          >
+            @if (isEditMode()) {
+              <input
+                pInputText
+                id="team_id"
+                type="text"
+                [value]="program()?.team?.name ?? ''"
+                disabled
+              />
+            } @else {
+              <p-select
+                inputId="team_id"
+                [options]="availableTeams()"
+                formControlName="team_id"
+                optionLabel="name"
+                optionValue="id"
+                [filter]="true"
+                [placeholder]="'programs.form.team_placeholder' | transloco"
+              />
+            }
+          </app-meta-field>
+        </div>
+
+        <div class="meta-grid">
+          <app-meta-field
+            [full]="true"
+            [label]="'programs.form.description' | transloco"
+            [error]="fieldError('description')"
+          >
+            <p-editor formControlName="description" [style]="{ height: '12rem' }" />
+          </app-meta-field>
+        </div>
       </form>
 
       <app-form-footer

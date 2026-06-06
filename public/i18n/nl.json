@@ -357,7 +357,11 @@
       "description": "Beschrijving",
       "description_placeholder": "Doelen, context, beperkingen…",
       "saved_create": "Programma aangemaakt",
-      "saved_edit": "Programma bijgewerkt"
+      "saved_edit": "Programma bijgewerkt",
+      "delete": "Verwijderen",
+      "delete_blocked": "Verwijderen niet mogelijk: er zijn sessies aan dit programma gekoppeld.",
+      "delete_confirm": "Dit programma verwijderen? Deze actie is onomkeerbaar.",
+      "deleted": "Programma verwijderd"
     },
     "actions": {
       "new": "Nieuw programma",

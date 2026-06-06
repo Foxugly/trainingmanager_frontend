@@ -357,7 +357,11 @@
       "description": "Description",
       "description_placeholder": "Objectifs, contexte, contraintes…",
       "saved_create": "Programme créé",
-      "saved_edit": "Programme mis à jour"
+      "saved_edit": "Programme mis à jour",
+      "delete": "Supprimer",
+      "delete_blocked": "Impossible de supprimer : des séances sont liées à ce programme.",
+      "delete_confirm": "Supprimer ce programme ? Cette action est irréversible.",
+      "deleted": "Programme supprimé"
     },
     "actions": {
       "new": "Nouveau programme",

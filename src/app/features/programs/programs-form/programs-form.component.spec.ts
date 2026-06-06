@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router, provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ProgramsService } from '../../../api/api/programs.service';
@@ -66,6 +66,7 @@ interface ProtectedFields {
   programId(): number | null;
   program(): Program | null;
   isEditMode(): boolean;
+  hasLinkedEvents(): boolean;
   saving(): boolean;
   activeValue(): boolean;
   fieldErrors(): { [k: string]: string[] } | null;
@@ -81,6 +82,7 @@ interface ProtectedFields {
   };
   cancel(): void;
   submit(): void;
+  confirmDelete(): void;
 }
 
 describe('ProgramsFormComponent', () => {
@@ -90,7 +92,9 @@ describe('ProgramsFormComponent', () => {
     programsRetrieve: ReturnType<typeof vi.fn>;
     programsCreate: ReturnType<typeof vi.fn>;
     programsPartialUpdate: ReturnType<typeof vi.fn>;
+    programsDestroy: ReturnType<typeof vi.fn>;
   };
+  let confirmationService: ConfirmationService;
   let teamsMock: { teamsList: ReturnType<typeof vi.fn> };
   let userSig: ReturnType<typeof signal<CustomUserPublic | null>>;
   let routeIdParam: string | null;
@@ -115,6 +119,7 @@ describe('ProgramsFormComponent', () => {
         .mockReturnValue(retrieved ? of(retrieved) : throwError(() => new Error('404'))),
       programsCreate: vi.fn().mockReturnValue(of({ ...program, id: 42 })),
       programsPartialUpdate: vi.fn().mockReturnValue(of(program)),
+      programsDestroy: vi.fn().mockReturnValue(of(null)),
     };
     teamsMock = {
       teamsList: vi.fn().mockReturnValue(of({ count: teams.length, results: teams })),
@@ -153,6 +158,7 @@ describe('ProgramsFormComponent', () => {
     fixture = TestBed.createComponent(ProgramsFormComponent);
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
+    confirmationService = fixture.debugElement.injector.get(ConfirmationService);
     messageService = TestBed.inject(MessageService);
     vi.spyOn(messageService, 'add');
     vi.spyOn(router, 'navigate').mockReturnValue(Promise.resolve(true));
@@ -266,16 +272,12 @@ describe('ProgramsFormComponent', () => {
     access(component).form.patchValue({ name: 'X', team_id: 4 });
     access(component).submit();
     expect(access(component).fieldErrors()).toBeNull();
-    expect(messageService.add).toHaveBeenCalledWith(
-      expect.objectContaining({ severity: 'error' }),
-    );
+    expect(messageService.add).toHaveBeenCalledWith(expect.objectContaining({ severity: 'error' }));
   });
 
   it('toasts an error when a program fails to load in edit mode', async () => {
     await setup('7', null);
-    expect(messageService.add).toHaveBeenCalledWith(
-      expect.objectContaining({ severity: 'error' }),
-    );
+    expect(messageService.add).toHaveBeenCalledWith(expect.objectContaining({ severity: 'error' }));
   });
 
   it('cancel() navigates back to /programs in create mode', () => {
@@ -287,5 +289,51 @@ describe('ProgramsFormComponent', () => {
     await setup('7');
     access(component).cancel();
     expect(router.navigate).toHaveBeenCalledWith(['/programs', 7]);
+  });
+
+  it('hasLinkedEvents is false when the program has no linked sessions', async () => {
+    await setup('7', { ...program, events: [] });
+    expect(access(component).hasLinkedEvents()).toBe(false);
+  });
+
+  it('hasLinkedEvents is true when the program has ≥1 linked session', async () => {
+    await setup('7', { ...program, events: [1, 2] });
+    expect(access(component).hasLinkedEvents()).toBe(true);
+  });
+
+  it('confirmDelete → accept destroys the program and navigates to its team', async () => {
+    await setup('7', { ...program, events: [] });
+    vi.spyOn(confirmationService, 'confirm').mockImplementation((opts) => {
+      opts.accept?.();
+      return confirmationService;
+    });
+    access(component).confirmDelete();
+    expect(programsMock.programsDestroy).toHaveBeenCalledWith(7);
+    expect(router.navigate).toHaveBeenCalledWith(['/teams', 4]);
+    expect(messageService.add).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'success' }),
+    );
+  });
+
+  it('confirmDelete is a no-op when the program has linked sessions', async () => {
+    await setup('7', { ...program, events: [1] });
+    const confirmSpy = vi.spyOn(confirmationService, 'confirm');
+    access(component).confirmDelete();
+    expect(confirmSpy).not.toHaveBeenCalled();
+    expect(programsMock.programsDestroy).not.toHaveBeenCalled();
+  });
+
+  it('confirmDelete → destroy failure toasts an error', async () => {
+    await setup('7', { ...program, events: [] });
+    programsMock.programsDestroy.mockReturnValueOnce(
+      throwError(() => ({ error: { detail: 'programs.errors.unknown' } })),
+    );
+    vi.spyOn(confirmationService, 'confirm').mockImplementation((opts) => {
+      opts.accept?.();
+      return confirmationService;
+    });
+    access(component).confirmDelete();
+    expect(messageService.add).toHaveBeenCalledWith(expect.objectContaining({ severity: 'error' }));
+    expect(router.navigate).not.toHaveBeenCalled();
   });
 });

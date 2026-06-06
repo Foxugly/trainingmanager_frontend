@@ -357,7 +357,11 @@
       "description": "Descrizione",
       "description_placeholder": "Obiettivi, contesto, vincoli…",
       "saved_create": "Programma creato",
-      "saved_edit": "Programma aggiornato"
+      "saved_edit": "Programma aggiornato",
+      "delete": "Elimina",
+      "delete_blocked": "Impossibile eliminare: ci sono sessioni collegate a questo programma.",
+      "delete_confirm": "Eliminare questo programma? Questa azione è irreversibile.",
+      "deleted": "Programma eliminato"
     },
     "actions": {
       "new": "Nuovo programma",
