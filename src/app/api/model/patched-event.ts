@@ -15,6 +15,14 @@ export interface PatchedEvent {
     readonly id?: number;
     name?: string;
     goal?: string | null;
+    /**
+     * Where the session takes place (venue, pool, track, address). Always visible to athletes.
+     */
+    location?: string;
+    /**
+     * Material/gear athletes should bring. Always visible to athletes.
+     */
+    equipment?: string;
     color?: string;
     date?: string | null;
     hour_start?: string | null;
