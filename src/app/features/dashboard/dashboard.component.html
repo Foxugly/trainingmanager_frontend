@@ -529,6 +529,14 @@
       </section>
     }
 
+    <!-- Section 6c — Mes performances (athlete self-scoped, read-only) -->
+    @if (myPerformances().length > 0) {
+      <section class="mb-10">
+        <h2 class="text-lg font-semibold mb-3">{{ 'performance.my_title' | transloco }}</h2>
+        <app-performance-panel [performances]="myPerformances()" [canEdit]="false" />
+      </section>
+    }
+
     @if (!hasManagedTeams()) {
       <!-- Section 7 — Quick actions athlete (uniquement si pas de quick actions coach) -->
       <section class="mb-10">

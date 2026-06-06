@@ -1202,5 +1202,35 @@
       "error_title": "Link unavailable",
       "error": "This share link is invalid or has been disabled."
     }
+  },
+  "performance": {
+    "title": "Performances",
+    "my_title": "My performances",
+    "add": "Add a performance",
+    "edit": "Edit performance",
+    "empty": "No performances recorded",
+    "pb": "Personal best",
+    "chart_aria": "Progress of {{label}}",
+    "fields": {
+      "label": "Discipline",
+      "value": "Value",
+      "unit": "Unit",
+      "date": "Date",
+      "notes": "Notes"
+    },
+    "units": {
+      "s": "Seconds",
+      "m": "Meters",
+      "reps": "Repetitions",
+      "kg": "Kilograms",
+      "pts": "Points"
+    },
+    "toasts": {
+      "added": "Performance added",
+      "updated": "Performance updated",
+      "deleted": "Performance deleted",
+      "error": "An error occurred"
+    },
+    "delete_confirm": "Delete this performance?"
   }
 }

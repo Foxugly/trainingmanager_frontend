@@ -7,6 +7,7 @@ import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AttendanceStatusesService } from '../../api/api/attendance-statuses.service';
 import { EventsService } from '../../api/api/events.service';
+import { PerformancesService } from '../../api/api/performances.service';
 import { ProgramsService } from '../../api/api/programs.service';
 import { TeamsService } from '../../api/api/teams.service';
 import { Attendance } from '../../api/model/attendance';
@@ -249,6 +250,10 @@ describe('DashboardComponent', () => {
         { provide: ProgramsService, useValue: programsMock },
         { provide: EventsService, useValue: eventsMock },
         { provide: AttendanceStatusesService, useValue: statusesMock },
+        {
+          provide: PerformancesService,
+          useValue: { performancesList: vi.fn().mockReturnValue(of({ count: 0, results: [] })) },
+        },
         { provide: AuthService, useValue: { currentUser: userSig.asReadonly() } },
       ],
     })

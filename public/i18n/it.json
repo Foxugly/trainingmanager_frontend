@@ -1202,5 +1202,35 @@
       "error_title": "Link non disponibile",
       "error": "Questo link di condivisione non è valido o è stato disattivato."
     }
+  },
+  "performance": {
+    "title": "Prestazioni",
+    "my_title": "Le mie prestazioni",
+    "add": "Aggiungi una prestazione",
+    "edit": "Modifica prestazione",
+    "empty": "Nessuna prestazione registrata",
+    "pb": "Record personale",
+    "chart_aria": "Andamento di {{label}}",
+    "fields": {
+      "label": "Disciplina",
+      "value": "Valore",
+      "unit": "Unità",
+      "date": "Data",
+      "notes": "Note"
+    },
+    "units": {
+      "s": "Secondi",
+      "m": "Metri",
+      "reps": "Ripetizioni",
+      "kg": "Chilogrammi",
+      "pts": "Punti"
+    },
+    "toasts": {
+      "added": "Prestazione aggiunta",
+      "updated": "Prestazione aggiornata",
+      "deleted": "Prestazione eliminata",
+      "error": "Si è verificato un errore"
+    },
+    "delete_confirm": "Eliminare questa prestazione?"
   }
 }

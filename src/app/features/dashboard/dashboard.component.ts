@@ -17,15 +17,18 @@ import { Message } from 'primeng/message';
 import { Select } from 'primeng/select';
 import { Skeleton } from 'primeng/skeleton';
 import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.component';
+import { PerformancePanelComponent } from '../../shared/ui/performance-panel/performance-panel.component';
 import { TeamStatsComponent } from '../teams/team-stats/team-stats.component';
 import { firstValueFrom } from 'rxjs';
 import { AttendanceStatusesService } from '../../api/api/attendance-statuses.service';
 import { EventsService } from '../../api/api/events.service';
+import { PerformancesService } from '../../api/api/performances.service';
 import { ProgramsService } from '../../api/api/programs.service';
 import { TeamsService } from '../../api/api/teams.service';
 import { Attendance } from '../../api/model/attendance';
 import { AttendanceStatus } from '../../api/model/attendance-status';
 import { Event } from '../../api/model/event';
+import { Performance } from '../../api/model/performance';
 import { Program } from '../../api/model/program';
 import { Team } from '../../api/model/team';
 import { TeamMembership } from '../../api/model/team-membership';
@@ -99,6 +102,7 @@ function eventDateAsDate(e: Event): Date | null {
     Select,
     Skeleton,
     EmptyStateComponent,
+    PerformancePanelComponent,
     TeamStatsComponent,
     TranslocoPipe,
   ],
@@ -112,7 +116,11 @@ export class DashboardComponent implements OnInit {
   private readonly programsService = inject(ProgramsService);
   private readonly eventsService = inject(EventsService);
   private readonly statusesService = inject(AttendanceStatusesService);
+  private readonly performancesService = inject(PerformancesService);
   private readonly destroyRef = inject(DestroyRef);
+
+  /** The caller's own performance records across all teams (read-only self-view). */
+  protected readonly myPerformances = signal<Performance[]>([]);
 
   protected readonly greetingName = computed(() => {
     const user = this.authService.currentUser();
@@ -204,6 +212,21 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.bootstrap();
+    this.loadMyPerformances();
+  }
+
+  /**
+   * Self-scoped performances: no member/team filter — the backend returns the
+   * caller's own records across teams. Read-only; coaches with none see nothing.
+   */
+  private loadMyPerformances(): void {
+    this.performancesService
+      .performancesList()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => this.myPerformances.set(res.results ?? []),
+        error: () => this.myPerformances.set([]),
+      });
   }
 
   private bootstrap(): void {

@@ -42,6 +42,7 @@ import { TeamRole } from '../teams-list/teams-list.component';
 import { ProgramsListComponent } from '../../programs/programs-list/programs-list.component';
 import { TeamStatsComponent } from '../team-stats/team-stats.component';
 import { MemberNotesComponent } from '../member-notes/member-notes.component';
+import { PerformancePanelComponent } from '../../../shared/ui/performance-panel/performance-panel.component';
 import {
   TeamDiscussionsComponent,
   type DiscussionRole,
@@ -82,6 +83,7 @@ interface FieldErrors {
     ProgramsListComponent,
     TeamStatsComponent,
     MemberNotesComponent,
+    PerformancePanelComponent,
     TeamDiscussionsComponent,
     DetailHeaderComponent,
     ActiveToggleComponent,

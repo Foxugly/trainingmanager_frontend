@@ -1202,5 +1202,35 @@
       "error_title": "Link niet beschikbaar",
       "error": "Deze deellink is ongeldig of is uitgeschakeld."
     }
+  },
+  "performance": {
+    "title": "Prestaties",
+    "my_title": "Mijn prestaties",
+    "add": "Prestatie toevoegen",
+    "edit": "Prestatie bewerken",
+    "empty": "Geen prestaties geregistreerd",
+    "pb": "Persoonlijk record",
+    "chart_aria": "Verloop van {{label}}",
+    "fields": {
+      "label": "Discipline",
+      "value": "Waarde",
+      "unit": "Eenheid",
+      "date": "Datum",
+      "notes": "Notities"
+    },
+    "units": {
+      "s": "Seconden",
+      "m": "Meters",
+      "reps": "Herhalingen",
+      "kg": "Kilogram",
+      "pts": "Punten"
+    },
+    "toasts": {
+      "added": "Prestatie toegevoegd",
+      "updated": "Prestatie bijgewerkt",
+      "deleted": "Prestatie verwijderd",
+      "error": "Er is een fout opgetreden"
+    },
+    "delete_confirm": "Deze prestatie verwijderen?"
   }
 }

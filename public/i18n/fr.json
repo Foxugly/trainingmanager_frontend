@@ -1202,5 +1202,35 @@
       "error_title": "Lien indisponible",
       "error": "Ce lien de partage est invalide ou a été désactivé."
     }
+  },
+  "performance": {
+    "title": "Performances",
+    "my_title": "Mes performances",
+    "add": "Ajouter une performance",
+    "edit": "Modifier la performance",
+    "empty": "Aucune performance enregistrée",
+    "pb": "Record personnel",
+    "chart_aria": "Évolution de {{label}}",
+    "fields": {
+      "label": "Discipline",
+      "value": "Valeur",
+      "unit": "Unité",
+      "date": "Date",
+      "notes": "Notes"
+    },
+    "units": {
+      "s": "Secondes",
+      "m": "Mètres",
+      "reps": "Répétitions",
+      "kg": "Kilogrammes",
+      "pts": "Points"
+    },
+    "toasts": {
+      "added": "Performance ajoutée",
+      "updated": "Performance mise à jour",
+      "deleted": "Performance supprimée",
+      "error": "Une erreur est survenue"
+    },
+    "delete_confirm": "Supprimer cette performance ?"
   }
 }

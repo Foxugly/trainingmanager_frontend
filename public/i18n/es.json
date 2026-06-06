@@ -1202,5 +1202,35 @@
       "error_title": "Enlace no disponible",
       "error": "Este enlace para compartir no es válido o se ha desactivado."
     }
+  },
+  "performance": {
+    "title": "Rendimientos",
+    "my_title": "Mis rendimientos",
+    "add": "Añadir un rendimiento",
+    "edit": "Editar rendimiento",
+    "empty": "No hay rendimientos registrados",
+    "pb": "Récord personal",
+    "chart_aria": "Evolución de {{label}}",
+    "fields": {
+      "label": "Disciplina",
+      "value": "Valor",
+      "unit": "Unidad",
+      "date": "Fecha",
+      "notes": "Notas"
+    },
+    "units": {
+      "s": "Segundos",
+      "m": "Metros",
+      "reps": "Repeticiones",
+      "kg": "Kilogramos",
+      "pts": "Puntos"
+    },
+    "toasts": {
+      "added": "Rendimiento añadido",
+      "updated": "Rendimiento actualizado",
+      "deleted": "Rendimiento eliminado",
+      "error": "Se ha producido un error"
+    },
+    "delete_confirm": "¿Eliminar este rendimiento?"
   }
 }

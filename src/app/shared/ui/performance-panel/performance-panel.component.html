@@ -1,0 +1,197 @@
+<div class="performance-panel">
+  @if (canMutate()) {
+    <div class="mb-4 flex justify-end">
+      <p-button
+        icon="pi pi-plus"
+        [label]="'performance.add' | transloco"
+        size="small"
+        (onClick)="openAdd()"
+      />
+    </div>
+  }
+
+  @if (loading()) {
+    <p class="text-gray-500 text-sm">{{ 'common.loading' | transloco }}…</p>
+  } @else if (isEmpty()) {
+    <app-empty-state
+      icon="chart-line"
+      tone="emerald"
+      [title]="'performance.empty' | transloco"
+    />
+  } @else {
+    <div class="flex flex-col gap-6">
+      @for (group of groups(); track group.label) {
+        <section class="rounded-lg border border-gray-200 p-4">
+          <header class="mb-3 flex flex-wrap items-center gap-2">
+            <h4 class="text-base font-semibold text-gray-900">{{ group.label }}</h4>
+            <p-tag
+              severity="success"
+              [value]="('performance.pb' | transloco) + ' ' + group.pbLabel"
+            />
+          </header>
+
+          <div class="perf-chart mb-3">
+            <p-chart
+              type="line"
+              [data]="group.chart.data"
+              [options]="group.chart.options"
+              [attr.aria-label]="
+                ('performance.chart_aria' | transloco: { label: group.label })
+              "
+            />
+          </div>
+
+          <ul class="divide-y divide-gray-100 text-sm">
+            @for (entry of group.entries; track entry.id) {
+              <li class="flex items-center gap-3 py-1.5">
+                <span class="w-24 shrink-0 text-gray-500">
+                  {{ entry.recorded_on | date: 'mediumDate' }}
+                </span>
+                <span class="font-medium text-gray-900">{{ formatEntryValue(entry) }}</span>
+                @if (entry.notes) {
+                  <span class="truncate text-gray-500">{{ entry.notes }}</span>
+                }
+                @if (canMutate()) {
+                  <span class="ml-auto flex shrink-0 items-center gap-1">
+                    <p-button
+                      icon="pi pi-pencil"
+                      severity="secondary"
+                      [text]="true"
+                      [rounded]="true"
+                      size="small"
+                      [ariaLabel]="'common.edit' | transloco"
+                      (onClick)="startEdit(entry)"
+                    />
+                    <p-button
+                      icon="pi pi-trash"
+                      severity="danger"
+                      [text]="true"
+                      [rounded]="true"
+                      size="small"
+                      [ariaLabel]="'common.delete' | transloco"
+                      (onClick)="confirmDelete(entry)"
+                    />
+                  </span>
+                }
+              </li>
+            }
+          </ul>
+        </section>
+      }
+    </div>
+  }
+</div>
+
+@if (canMutate()) {
+  <p-confirmDialog />
+
+  <p-dialog
+    [visible]="dialogOpen()"
+    (visibleChange)="onDialogVisibleChange($event)"
+    [modal]="true"
+    [closable]="!saving()"
+    [dismissableMask]="true"
+    [style]="{ width: '32rem' }"
+    [header]="
+      (editingId() === null ? 'performance.add' : 'performance.edit') | transloco
+    "
+  >
+    <form [formGroup]="form" class="flex flex-col gap-4">
+      <div class="flex flex-col gap-2">
+        <label for="perf_label" class="text-sm font-medium text-gray-700">
+          {{ 'performance.fields.label' | transloco }}
+        </label>
+        <input
+          pInputText
+          id="perf_label"
+          type="text"
+          formControlName="label"
+          list="perf_label_suggestions"
+          [maxlength]="120"
+          [disabled]="saving()"
+        />
+        <datalist id="perf_label_suggestions">
+          @for (suggestion of knownLabels(); track suggestion) {
+            <option [value]="suggestion"></option>
+          }
+        </datalist>
+      </div>
+
+      <div class="flex gap-4">
+        <div class="flex flex-1 flex-col gap-2">
+          <label for="perf_value" class="text-sm font-medium text-gray-700">
+            {{ 'performance.fields.value' | transloco }}
+          </label>
+          <p-inputNumber
+            inputId="perf_value"
+            formControlName="value"
+            [minFractionDigits]="0"
+            [maxFractionDigits]="3"
+            [useGrouping]="false"
+            [disabled]="saving()"
+          />
+        </div>
+        <div class="flex flex-1 flex-col gap-2">
+          <label for="perf_unit" class="text-sm font-medium text-gray-700">
+            {{ 'performance.fields.unit' | transloco }}
+          </label>
+          <p-select
+            inputId="perf_unit"
+            formControlName="unit"
+            [options]="unitOptions()"
+            optionLabel="label"
+            optionValue="value"
+            appendTo="body"
+            [disabled]="saving()"
+          />
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="perf_date" class="text-sm font-medium text-gray-700">
+          {{ 'performance.fields.date' | transloco }}
+        </label>
+        <p-datepicker
+          inputId="perf_date"
+          formControlName="recorded_on"
+          dateFormat="dd/mm/yy"
+          [showIcon]="true"
+          appendTo="body"
+          [disabled]="saving()"
+        />
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="perf_notes" class="text-sm font-medium text-gray-700">
+          {{ 'performance.fields.notes' | transloco }}
+        </label>
+        <textarea
+          pTextarea
+          id="perf_notes"
+          formControlName="notes"
+          rows="3"
+          [disabled]="saving()"
+        ></textarea>
+      </div>
+    </form>
+
+    <ng-template #footer>
+      <p-button
+        type="button"
+        severity="secondary"
+        [text]="true"
+        [label]="'common.cancel' | transloco"
+        [disabled]="saving()"
+        (onClick)="onDialogVisibleChange(false)"
+      />
+      <p-button
+        type="button"
+        icon="pi pi-check"
+        [label]="'common.save' | transloco"
+        [loading]="saving()"
+        [disabled]="!canSubmit()"
+        (onClick)="submit()"
+      />
+    </ng-template>
+  </p-dialog>
+}

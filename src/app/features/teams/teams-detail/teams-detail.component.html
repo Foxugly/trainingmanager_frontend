@@ -205,6 +205,14 @@
                   [canEdit]="false"
                 />
               </section>
+              <section class="mb-6">
+                <h3 class="mb-2 text-base font-semibold">{{ 'performance.title' | transloco }}</h3>
+                <app-performance-panel
+                  [teamId]="teamId()!"
+                  [memberId]="myMemberId()!"
+                  [canEdit]="false"
+                />
+              </section>
             }
           } @else if (myPendingRequest()) {
             <div class="mb-4 flex flex-wrap items-center gap-3">
@@ -481,6 +489,10 @@
   @if (notesDialogOpen() && notesMembership(); as mb) {
     @if (teamId() !== null) {
       <app-member-notes [teamId]="teamId()!" [memberId]="mb.member" [canEdit]="true" />
+      <section class="mt-6 border-t border-gray-200 pt-4">
+        <h4 class="mb-2 text-base font-semibold">{{ 'performance.title' | transloco }}</h4>
+        <app-performance-panel [teamId]="teamId()!" [memberId]="mb.member" [canEdit]="true" />
+      </section>
     }
   }
 </p-dialog>

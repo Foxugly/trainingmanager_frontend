@@ -1,0 +1,22 @@
+.perf-chart {
+  position: relative;
+  height: 12rem;
+
+  ::ng-deep canvas {
+    max-height: 100%;
+  }
+}
+
+:host-context(.dark-mode) {
+  section {
+    border-color: var(--p-surface-700, #334155);
+  }
+
+  h4 {
+    color: var(--p-surface-0, #f8fafc);
+  }
+
+  ul {
+    color: var(--p-surface-200, #e2e8f0);
+  }
+}
