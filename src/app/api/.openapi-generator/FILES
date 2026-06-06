@@ -114,6 +114,10 @@ model/level.ts
 model/logout.ts
 model/magic-action-join-request-status-enum.ts
 model/magic-action-join-request.ts
+model/magic-link-exchange-request.ts
+model/magic-link-exchange-response.ts
+model/magic-link-request-response.ts
+model/magic-link-request.ts
 model/me.ts
 model/member.ts
 model/message.ts

@@ -631,6 +631,79 @@ paths:
           description: Access token missing or invalid.
         '409':
           description: The user still owns one or more teams (code=owns_teams).
+  /api/v1/auth/magic-link/exchange/:
+    post:
+      operationId: auth_magic_link_exchange_create
+      description: |-
+        POST /api/v1/auth/magic-link/exchange/ — public: trade token for JWT.
+
+        Body: {token}. On success returns the JWT pair (access + refresh).
+        Errors: expired -> 410 {"detail":"token_expired"}; invalid/ineligible
+        -> 400 {"detail":"token_invalid"}.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MagicLinkExchangeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MagicLinkExchangeRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MagicLinkExchangeRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MagicLinkExchangeResponse'
+          description: Token accepted. Returns the JWT pair {access, refresh}.
+        '400':
+          description: 'Token invalid/tampered or user no longer eligible. Body: {"detail":
+            "token_invalid"}.'
+        '410':
+          description: 'Token expired. Body: {"detail": "token_expired"}.'
+  /api/v1/auth/magic-link/request/:
+    post:
+      operationId: auth_magic_link_request_create
+      description: |-
+        POST /api/v1/auth/magic-link/request/ — public: email a sign-in link.
+
+        Always returns 200 with the same body whether or not the email matches
+        an active, email-confirmed account (no user enumeration). Rate-limited
+        to 5 requests per hour per IP.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MagicLinkRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MagicLinkRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MagicLinkRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MagicLinkRequestResponse'
+          description: 'Always 200 with {"detail": "ok"} (anti-leak).'
+        '400':
+          description: Body validation error (malformed email).
+        '429':
+          description: Too Many Requests (rate limit hit).
   /api/v1/auth/password/change/:
     post:
       operationId: auth_password_change_create
@@ -7739,6 +7812,44 @@ components:
           writeOnly: true
       required:
       - refresh
+    MagicLinkExchangeRequest:
+      type: object
+      description: Body of POST /api/v1/auth/magic-link/exchange/ — the signed
+        token from the magic-link email.
+      properties:
+        token:
+          type: string
+      required:
+      - token
+    MagicLinkExchangeResponse:
+      type: object
+      description: Success body of the exchange — the JWT pair for the signed-in user.
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          readOnly: true
+      required:
+      - access
+      - refresh
+    MagicLinkRequest:
+      type: object
+      description: Body of POST /api/v1/auth/magic-link/request/.
+      properties:
+        email:
+          type: string
+          format: email
+      required:
+      - email
+    MagicLinkRequestResponse:
+      type: object
+      properties:
+        detail:
+          type: string
+      required:
+      - detail
     Me:
       type: object
       properties:

@@ -25,6 +25,14 @@ import { EmailResend } from '../model/email-resend';
 // @ts-ignore
 import { Logout } from '../model/logout';
 // @ts-ignore
+import { MagicLinkExchangeRequest } from '../model/magic-link-exchange-request';
+// @ts-ignore
+import { MagicLinkExchangeResponse } from '../model/magic-link-exchange-response';
+// @ts-ignore
+import { MagicLinkRequest } from '../model/magic-link-request';
+// @ts-ignore
+import { MagicLinkRequestResponse } from '../model/magic-link-request-response';
+// @ts-ignore
 import { PasswordChange } from '../model/password-change';
 // @ts-ignore
 import { PasswordChangeResponse } from '../model/password-change-response';
@@ -326,6 +334,142 @@ export class AuthService extends BaseService implements AuthServiceInterface {
             {
                 context: localVarHttpContext,
                 body: logout,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * POST /api/v1/auth/magic-link/exchange/ — public: trade token for JWT.  Body: {token}. On success returns the JWT pair (access + refresh). Errors: expired -&gt; 410 {\&quot;detail\&quot;:\&quot;token_expired\&quot;}; invalid/ineligible -&gt; 400 {\&quot;detail\&quot;:\&quot;token_invalid\&quot;}.
+     * @endpoint post /api/v1/auth/magic-link/exchange/
+     * @param magicLinkExchangeRequest 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public authMagicLinkExchangeCreate(magicLinkExchangeRequest: MagicLinkExchangeRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<MagicLinkExchangeResponse>;
+    public authMagicLinkExchangeCreate(magicLinkExchangeRequest: MagicLinkExchangeRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<MagicLinkExchangeResponse>>;
+    public authMagicLinkExchangeCreate(magicLinkExchangeRequest: MagicLinkExchangeRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<MagicLinkExchangeResponse>>;
+    public authMagicLinkExchangeCreate(magicLinkExchangeRequest: MagicLinkExchangeRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (magicLinkExchangeRequest === null || magicLinkExchangeRequest === undefined) {
+            throw new Error('Required parameter magicLinkExchangeRequest was null or undefined when calling authMagicLinkExchangeCreate.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'application/x-www-form-urlencoded',
+            'multipart/form-data'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/auth/magic-link/exchange/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<MagicLinkExchangeResponse>('post', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: magicLinkExchangeRequest,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * POST /api/v1/auth/magic-link/request/ — public: email a sign-in link.  Always returns 200 with the same body whether or not the email matches an active, email-confirmed account (no user enumeration). Rate-limited to 5 requests per hour per IP.
+     * @endpoint post /api/v1/auth/magic-link/request/
+     * @param magicLinkRequest 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public authMagicLinkRequestCreate(magicLinkRequest: MagicLinkRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<MagicLinkRequestResponse>;
+    public authMagicLinkRequestCreate(magicLinkRequest: MagicLinkRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<MagicLinkRequestResponse>>;
+    public authMagicLinkRequestCreate(magicLinkRequest: MagicLinkRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<MagicLinkRequestResponse>>;
+    public authMagicLinkRequestCreate(magicLinkRequest: MagicLinkRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (magicLinkRequest === null || magicLinkRequest === undefined) {
+            throw new Error('Required parameter magicLinkRequest was null or undefined when calling authMagicLinkRequestCreate.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'application/x-www-form-urlencoded',
+            'multipart/form-data'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/auth/magic-link/request/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<MagicLinkRequestResponse>('post', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: magicLinkRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

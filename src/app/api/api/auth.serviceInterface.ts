@@ -15,6 +15,10 @@ import { AccountDelete } from '../model/models';
 import { EmailConfirm } from '../model/models';
 import { EmailResend } from '../model/models';
 import { Logout } from '../model/models';
+import { MagicLinkExchangeRequest } from '../model/models';
+import { MagicLinkExchangeResponse } from '../model/models';
+import { MagicLinkRequest } from '../model/models';
+import { MagicLinkRequestResponse } from '../model/models';
 import { PasswordChange } from '../model/models';
 import { PasswordChangeResponse } from '../model/models';
 import { PasswordResetConfirm } from '../model/models';
@@ -66,6 +70,22 @@ export interface AuthServiceInterface {
      * @param logout 
      */
     authLogoutCreate(logout: Logout, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * 
+     * POST /api/v1/auth/magic-link/exchange/ — public: trade token for JWT.  Body: {token}. On success returns the JWT pair (access + refresh). Errors: expired -&gt; 410 {\&quot;detail\&quot;:\&quot;token_expired\&quot;}; invalid/ineligible -&gt; 400 {\&quot;detail\&quot;:\&quot;token_invalid\&quot;}.
+     * @endpoint post /api/v1/auth/magic-link/exchange/
+     * @param magicLinkExchangeRequest 
+     */
+    authMagicLinkExchangeCreate(magicLinkExchangeRequest: MagicLinkExchangeRequest, extraHttpRequestParams?: any): Observable<MagicLinkExchangeResponse>;
+
+    /**
+     * 
+     * POST /api/v1/auth/magic-link/request/ — public: email a sign-in link.  Always returns 200 with the same body whether or not the email matches an active, email-confirmed account (no user enumeration). Rate-limited to 5 requests per hour per IP.
+     * @endpoint post /api/v1/auth/magic-link/request/
+     * @param magicLinkRequest 
+     */
+    authMagicLinkRequestCreate(magicLinkRequest: MagicLinkRequest, extraHttpRequestParams?: any): Observable<MagicLinkRequestResponse>;
 
     /**
      * 
