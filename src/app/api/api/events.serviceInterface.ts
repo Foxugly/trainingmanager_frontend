@@ -13,6 +13,8 @@ import { Observable }                                        from 'rxjs';
 
 import { Attendance } from '../model/models';
 import { AttendanceBulk } from '../model/models';
+import { DuplicateEventRequest } from '../model/models';
+import { DuplicateEventResponse } from '../model/models';
 import { Event } from '../model/models';
 import { GenerateTrainingRequest } from '../model/models';
 import { GenerateTrainingResponse } from '../model/models';
@@ -119,6 +121,15 @@ export interface EventsServiceInterface {
      * @param id A unique integer value identifying this event.
      */
     eventsDestroy(id: number, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * 
+     * Duplicate this training session onto a new date, optionally repeating weekly. The copy deep-copies the source\&#39;s Rounds into fresh Round rows (re-linking the shared Exercise library) so each session is fully independent; per-session members are NOT copied. With &#x60;repeat_weekly&#x3D;true&#x60; and &#x60;occurrences&#x3D;N&#x60;, N sessions are created on &#x60;date&#x60;, &#x60;date&#x60;+7d, ..., &#x60;date&#x60;+7*(N-1)d. With &#x60;repeat_weekly&#x3D;false&#x60; exactly one copy is created (occurrences is forced to 1). Manager/owner of the event\&#39;s team only.
+     * @endpoint post /api/v1/events/{id}/duplicate/
+     * @param id A unique integer value identifying this event.
+     * @param duplicateEventRequest 
+     */
+    eventsDuplicateCreate(id: number, duplicateEventRequest: DuplicateEventRequest, extraHttpRequestParams?: any): Observable<DuplicateEventResponse>;
 
     /**
      * 

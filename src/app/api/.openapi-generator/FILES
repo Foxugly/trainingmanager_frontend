@@ -66,6 +66,9 @@ model/complete-invitation.ts
 model/create-invitation.ts
 model/create-join-request.ts
 model/custom-user-public.ts
+model/duplicate-event-created.ts
+model/duplicate-event-request.ts
+model/duplicate-event-response.ts
 model/email-confirm.ts
 model/email-resend.ts
 model/endpoint-enum.ts
