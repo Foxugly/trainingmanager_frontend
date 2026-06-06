@@ -274,7 +274,7 @@
                     <app-meta-field
                       [full]="true"
                       [label]="'teams.form.policy_auto_label' | transloco"
-                      [hint]="(isAutoPolicy() ? 'teams.form.policy_auto_help' : 'teams.form.policy_manual_help') | transloco"
+                      [tooltip]="(isAutoPolicy() ? 'teams.form.policy_auto_help' : 'teams.form.policy_manual_help') | transloco"
                     >
                       <p-toggleSwitch formControlName="auto_accept_policy" inputId="auto_accept_policy" />
                     </app-meta-field>
@@ -283,7 +283,7 @@
                       <app-meta-field
                         [full]="true"
                         [label]="'teams.form.notify_managers_label' | transloco"
-                        [hint]="'teams.form.notify_managers_help' | transloco"
+                        [tooltip]="'teams.form.notify_managers_help' | transloco"
                       >
                         <p-toggleSwitch
                           formControlName="notify_managers_on_join_request"
