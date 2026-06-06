@@ -323,11 +323,24 @@ export class TeamStatsComponent {
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: {
-          legend: { position: 'right', labels: { color: '#475569' } },
-        },
+        // Legend is rendered as a separate HTML list below the chart so the
+        // segment names never overflow / overlap the canvas at any width.
+        plugins: { legend: { display: false } },
       },
     };
+  });
+
+  /** Segment legend rendered as an HTML list (color swatch + label + distance). */
+  protected readonly intensityLegend = computed<
+    { label: string; color: string; distance: string }[]
+  >(() => {
+    const s = this.stats();
+    const segs = s?.intensity.by_segment ?? [];
+    return segs.map((seg, i) => ({
+      label: seg.label || seg.abv,
+      color: SEGMENT_PALETTE[i % SEGMENT_PALETTE.length],
+      distance: this.formatDistance(seg.distance),
+    }));
   });
 
   // ---- Tables --------------------------------------------------------------

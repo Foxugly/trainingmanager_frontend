@@ -382,7 +382,8 @@
       "discover_cta": "Andere teams ontdekken"
     },
     "detail": {
-      "no_managers": "Geen managers",
+      "no_managers": "Nog geen coaches",
+      "no_managers_subtitle": "Voeg coaches toe om het beheer van het team te delen.",
       "no_members": "Geen actieve leden",
       "joined_at": "Lid sinds",
       "level": "Niveau",
@@ -508,6 +509,7 @@
       "title": "Lopende uitnodigingen",
       "invite": "Uitnodigen",
       "empty": "Geen lopende uitnodigingen",
+      "empty_subtitle": "Nodig atleten per e-mail uit om lid te worden van het team.",
       "sent_at": "Verzonden op",
       "expires_at": "Verloopt op",
       "cancel": "Uitnodiging annuleren",
@@ -589,6 +591,7 @@
     "join_requests": {
       "title": "Aanvragen om lid te worden",
       "empty": "Geen openstaande aanvragen",
+      "empty_subtitle": "Nieuwe aanvragen om lid te worden van het team verschijnen hier.",
       "no_message": "Geen bericht",
       "accept": "Accepteren",
       "reject": "Weigeren",

@@ -190,6 +190,19 @@
         <div class="chart-wrap chart-wrap--doughnut">
           <p-chart type="doughnut" [data]="c.data" [options]="c.options" />
         </div>
+        <ul class="intensity-legend mt-4">
+          @for (seg of intensityLegend(); track seg.label) {
+            <li class="flex items-center gap-2 text-sm">
+              <span
+                class="size-3 shrink-0 rounded-sm"
+                [style.background-color]="seg.color"
+                aria-hidden="true"
+              ></span>
+              <span class="truncate text-gray-700">{{ seg.label }}</span>
+              <span class="ml-auto shrink-0 font-medium text-gray-900">{{ seg.distance }}</span>
+            </li>
+          }
+        </ul>
       } @else {
         <p class="text-gray-500 text-sm">{{ 'stats.empty' | transloco }}</p>
       }

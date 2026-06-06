@@ -186,7 +186,22 @@
               }
             </ul>
           } @else {
-            <p class="text-gray-500">{{ 'teams.detail.no_managers' | transloco }}</p>
+            <app-empty-state
+              icon="user-plus"
+              tone="gray"
+              [title]="'teams.detail.no_managers' | transloco"
+              [subtitle]="'teams.detail.no_managers_subtitle' | transloco"
+            >
+              @if (isOwner()) {
+                <p-button
+                  [label]="'teams.detail.add_manager' | transloco"
+                  icon="pi pi-plus"
+                  size="small"
+                  [disabled]="promotableMembers().length === 0"
+                  (onClick)="openAddManager()"
+                />
+              }
+            </app-empty-state>
           }
         </p-tabpanel>
 
@@ -341,7 +356,12 @@
               @if (loadingJoinRequests()) {
                 <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
               } @else if (joinRequests().length === 0) {
-                <p class="text-gray-500">{{ 'teams.join_requests.empty' | transloco }}</p>
+                <app-empty-state
+                  icon="inbox"
+                  tone="gray"
+                  [title]="'teams.join_requests.empty' | transloco"
+                  [subtitle]="'teams.join_requests.empty_subtitle' | transloco"
+                />
               } @else {
                 <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
                   @for (req of joinRequests(); track req.id) {
@@ -414,7 +434,21 @@
               @if (loadingInvitations()) {
                 <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
               } @else if (invitations().length === 0) {
-                <p class="text-gray-500">{{ 'teams.invitations.empty' | transloco }}</p>
+                <app-empty-state
+                  icon="envelope"
+                  tone="gray"
+                  [title]="'teams.invitations.empty' | transloco"
+                  [subtitle]="'teams.invitations.empty_subtitle' | transloco"
+                >
+                  <p-button
+                    [label]="'teams.invitations.invite' | transloco"
+                    icon="pi pi-envelope"
+                    severity="secondary"
+                    [outlined]="true"
+                    size="small"
+                    (onClick)="openInviteDialog()"
+                  />
+                </app-empty-state>
               } @else {
                 <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
                   @for (inv of invitations(); track inv.id) {

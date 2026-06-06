@@ -382,7 +382,8 @@
       "discover_cta": "Découvrir d'autres équipes"
     },
     "detail": {
-      "no_managers": "Aucun manager",
+      "no_managers": "Aucun encadrant",
+      "no_managers_subtitle": "Ajoutez des coachs pour partager la gestion de l'équipe.",
       "no_members": "Aucun membre actif",
       "joined_at": "Rejoint le",
       "level": "Niveau",
@@ -508,6 +509,7 @@
       "title": "Invitations en cours",
       "invite": "Inviter",
       "empty": "Aucune invitation en cours",
+      "empty_subtitle": "Invitez des athlètes par e-mail à rejoindre l'équipe.",
       "sent_at": "Envoyée le",
       "expires_at": "Expire le",
       "cancel": "Annuler l'invitation",
@@ -589,6 +591,7 @@
     "join_requests": {
       "title": "Demandes de rejoindre",
       "empty": "Aucune demande en attente",
+      "empty_subtitle": "Les nouvelles demandes pour rejoindre l'équipe apparaîtront ici.",
       "no_message": "Aucun message",
       "accept": "Accepter",
       "reject": "Refuser",

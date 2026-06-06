@@ -382,7 +382,8 @@
       "discover_cta": "Descubrir otros equipos"
     },
     "detail": {
-      "no_managers": "Ningún manager",
+      "no_managers": "Aún no hay entrenadores",
+      "no_managers_subtitle": "Añade entrenadores para compartir la gestión del equipo.",
       "no_members": "Ningún miembro activo",
       "joined_at": "Se unió el",
       "level": "Nivel",
@@ -508,6 +509,7 @@
       "title": "Invitaciones pendientes",
       "invite": "Invitar",
       "empty": "Ninguna invitación pendiente",
+      "empty_subtitle": "Invita a atletas por correo electrónico para unirse al equipo.",
       "sent_at": "Enviada el",
       "expires_at": "Expira el",
       "cancel": "Anular la invitación",
@@ -589,6 +591,7 @@
     "join_requests": {
       "title": "Solicitudes de unión",
       "empty": "Sin solicitudes pendientes",
+      "empty_subtitle": "Las nuevas solicitudes para unirse al equipo aparecerán aquí.",
       "no_message": "Sin mensaje",
       "accept": "Aceptar",
       "reject": "Rechazar",

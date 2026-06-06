@@ -382,7 +382,8 @@
       "discover_cta": "Discover other teams"
     },
     "detail": {
-      "no_managers": "No managers",
+      "no_managers": "No coaches yet",
+      "no_managers_subtitle": "Add coaches to share management of the team.",
       "no_members": "No active members",
       "joined_at": "Joined",
       "level": "Level",
@@ -508,6 +509,7 @@
       "title": "Pending invitations",
       "invite": "Invite",
       "empty": "No pending invitations",
+      "empty_subtitle": "Invite athletes by email to join the team.",
       "sent_at": "Sent on",
       "expires_at": "Expires on",
       "cancel": "Cancel invitation",
@@ -589,6 +591,7 @@
     "join_requests": {
       "title": "Join requests",
       "empty": "No pending requests",
+      "empty_subtitle": "New requests to join the team will appear here.",
       "no_message": "No message",
       "accept": "Accept",
       "reject": "Reject",

@@ -382,7 +382,8 @@
       "discover_cta": "Scopri altre squadre"
     },
     "detail": {
-      "no_managers": "Nessun manager",
+      "no_managers": "Ancora nessun allenatore",
+      "no_managers_subtitle": "Aggiungi allenatori per condividere la gestione della squadra.",
       "no_members": "Nessun membro attivo",
       "joined_at": "Iscritto il",
       "level": "Livello",
@@ -508,6 +509,7 @@
       "title": "Inviti in corso",
       "invite": "Invita",
       "empty": "Nessun invito in corso",
+      "empty_subtitle": "Invita atleti via e-mail a unirsi alla squadra.",
       "sent_at": "Inviato il",
       "expires_at": "Scade il",
       "cancel": "Annulla l'invito",
@@ -589,6 +591,7 @@
     "join_requests": {
       "title": "Richieste di adesione",
       "empty": "Nessuna richiesta in attesa",
+      "empty_subtitle": "Le nuove richieste di adesione alla squadra appariranno qui.",
       "no_message": "Nessun messaggio",
       "accept": "Accetta",
       "reject": "Rifiuta",
