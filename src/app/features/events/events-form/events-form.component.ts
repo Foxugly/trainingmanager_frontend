@@ -25,6 +25,7 @@ import { DatePicker } from 'primeng/datepicker';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
+import { Textarea } from 'primeng/textarea';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { firstValueFrom } from 'rxjs';
 import { EventsService } from '../../../api/api/events.service';
@@ -87,6 +88,7 @@ function timeRangeValidator(group: AbstractControl): ValidationErrors | null {
     InputText,
     InputNumber,
     Select,
+    Textarea,
     DatePicker,
     ColorPicker,
     Button,
@@ -139,6 +141,8 @@ export class EventsFormComponent implements OnInit {
       name: ['', [Validators.required, Validators.maxLength(100)]],
       refer_program_id: this.fb.nonNullable.control<number | null>(null, [Validators.required]),
       goal: ['', [Validators.maxLength(100)]],
+      location: ['', [Validators.maxLength(255)]],
+      equipment: [''],
       date: this.fb.nonNullable.control<Date | null>(null, [Validators.required]),
       hour_start: this.fb.nonNullable.control<Date | null>(null),
       hour_end: this.fb.nonNullable.control<Date | null>(null),
@@ -267,6 +271,8 @@ export class EventsFormComponent implements OnInit {
             name: e.name,
             refer_program_id: e.refer_program?.id ?? null,
             goal: e.goal ?? '',
+            location: e.location ?? '',
+            equipment: e.equipment ?? '',
             date: parseDate(e.date),
             hour_start: parseTime(e.hour_start),
             hour_end: parseTime(e.hour_end),
@@ -316,6 +322,8 @@ export class EventsFormComponent implements OnInit {
         name: value.name,
         refer_program_id: value.refer_program_id,
         goal: value.goal || null,
+        location: value.location || '',
+        equipment: value.equipment || '',
         date: toIsoDate(value.date),
         hour_start: toIsoTime(value.hour_start),
         hour_end: toIsoTime(value.hour_end),
@@ -346,6 +354,8 @@ export class EventsFormComponent implements OnInit {
       name: value.name,
       refer_program_id: value.refer_program_id ?? undefined,
       goal: value.goal || undefined,
+      location: value.location ?? '',
+      equipment: value.equipment ?? '',
       date: toIsoDate(value.date) ?? undefined,
       hour_start: toIsoTime(value.hour_start) ?? undefined,
       hour_end: toIsoTime(value.hour_end) ?? undefined,

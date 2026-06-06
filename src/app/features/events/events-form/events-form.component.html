@@ -37,6 +37,24 @@
                   <app-meta-field [label]="'events.form.goal' | transloco" for="goal" [error]="fieldError('goal')">
                     <input pInputText id="goal" formControlName="goal" />
                   </app-meta-field>
+                  <app-meta-field
+                    [full]="true"
+                    [label]="'events.form.location' | transloco"
+                    [tooltip]="'events.form.location_tooltip' | transloco"
+                    for="location"
+                    [error]="fieldError('location')"
+                  >
+                    <input pInputText id="location" formControlName="location" maxlength="255" />
+                  </app-meta-field>
+                  <app-meta-field
+                    [full]="true"
+                    [label]="'events.form.equipment' | transloco"
+                    [tooltip]="'events.form.equipment_tooltip' | transloco"
+                    for="equipment"
+                    [error]="fieldError('equipment')"
+                  >
+                    <textarea pTextarea id="equipment" formControlName="equipment" rows="3"></textarea>
+                  </app-meta-field>
                 </div>
               </div>
             </p-tabpanel>
