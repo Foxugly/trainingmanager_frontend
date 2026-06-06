@@ -25,6 +25,7 @@ import { PatchedTeam } from '../model/models';
 import { PatchedTeamMembership } from '../model/models';
 import { Team } from '../model/models';
 import { TeamMembership } from '../model/models';
+import { TeamPoolsResponse } from '../model/models';
 import { TeamStats } from '../model/models';
 import { Topic } from '../model/models';
 import { TopicMessage } from '../model/models';
@@ -294,6 +295,14 @@ export interface TeamsServiceInterface {
      * @param patchedTeam 
      */
     teamsPartialUpdate(id: number, patchedTeam?: PatchedTeam, extraHttpRequestParams?: any): Observable<Team>;
+
+    /**
+     * Distinct session locations (pools) for autocomplete
+     * Read-only list of the distinct, non-empty &#x60;location&#x60; values used across this team\&#39;s events, ordered alphabetically. Intended for the session-editor location (\&#39;piscine\&#39;) autocomplete. Any member of the team (owner, manager, or active athlete) may read it; non-members get 404 (the team is not in their visible scope).
+     * @endpoint get /api/v1/teams/{id}/pools/
+     * @param id A unique integer value identifying this team.
+     */
+    teamsPoolsRetrieve(id: number, extraHttpRequestParams?: any): Observable<TeamPoolsResponse>;
 
     /**
      * 

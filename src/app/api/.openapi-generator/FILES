@@ -214,6 +214,7 @@ model/team-join-request-magic-action-response.ts
 model/team-join-request.ts
 model/team-membership.ts
 model/team-minimal.ts
+model/team-pools-response.ts
 model/team-quota-status.ts
 model/team-stats.ts
 model/team.ts

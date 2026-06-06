@@ -159,6 +159,7 @@ export * from './team-join-request-magic-action-post';
 export * from './team-join-request-magic-action-response';
 export * from './team-membership';
 export * from './team-minimal';
+export * from './team-pools-response';
 export * from './team-quota-status';
 export * from './team-stats';
 export * from './token-obtain-pair-response';
