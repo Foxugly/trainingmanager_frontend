@@ -19,6 +19,7 @@ const baseUser: Me = {
   is_staff: false,
   is_superuser: false,
   team_quota: { used: 0, max: 0, can_create: false },
+  calendar_token: 'tok-test',
 };
 
 function runGuard(state: RouterStateSnapshot) {

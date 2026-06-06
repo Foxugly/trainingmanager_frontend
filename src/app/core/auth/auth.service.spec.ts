@@ -21,6 +21,7 @@ const fakeUser: Me = {
   is_staff: false,
   is_superuser: false,
   team_quota: { used: 0, max: 3, can_create: true },
+  calendar_token: 'tok-test',
 };
 
 describe('AuthService', () => {

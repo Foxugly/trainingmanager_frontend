@@ -129,6 +129,64 @@
                   </div>
                 }
               </section>
+
+              @if (calendarUrl(); as calUrl) {
+                <section class="calendar-sub">
+                  <h3 class="notif-prefs-title">
+                    <i class="pi pi-calendar"></i>
+                    {{ 'profile.calendar_title' | transloco }}
+                  </h3>
+                  <p class="calendar-sub-help">{{ 'profile.calendar_help' | transloco }}</p>
+
+                  <div class="meta-grid">
+                    <app-meta-field
+                      [full]="true"
+                      for="calendar_url"
+                      [label]="'profile.calendar_title' | transloco"
+                    >
+                      <input
+                        pInputText
+                        id="calendar_url"
+                        type="text"
+                        [value]="calUrl"
+                        readonly
+                        (focus)="$any($event.target).select()"
+                        class="w-full"
+                      />
+                    </app-meta-field>
+                  </div>
+
+                  <div class="calendar-sub-actions">
+                    <p-button
+                      type="button"
+                      severity="secondary"
+                      [outlined]="true"
+                      icon="pi pi-copy"
+                      [label]="'profile.calendar_copy' | transloco"
+                      (onClick)="copyCalendarUrl()"
+                    />
+                    @if (calendarWebcalUrl(); as webcalUrl) {
+                      <a
+                        class="calendar-sub-webcal"
+                        [href]="webcalUrl"
+                        rel="noopener"
+                      >
+                        <i class="pi pi-external-link"></i> webcal://
+                      </a>
+                    }
+                    <span class="flex-1"></span>
+                    <p-button
+                      type="button"
+                      severity="danger"
+                      [outlined]="true"
+                      icon="pi pi-refresh"
+                      [label]="'profile.calendar_regenerate' | transloco"
+                      [loading]="calendarRotating()"
+                      (onClick)="regenerateCalendarUrl()"
+                    />
+                  </div>
+                </section>
+              }
             </p-tabpanel>
           </p-tabpanels>
         </p-tabs>

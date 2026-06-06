@@ -934,7 +934,14 @@
     "tab_profile": "Profile",
     "tab_notifications": "Notifications",
     "weekly_recap_opt_in": "Weekly recap",
-    "weekly_recap_opt_in_help": "Receive the weekly recap for the teams you manage"
+    "weekly_recap_opt_in_help": "Receive the weekly recap for the teams you manage",
+    "calendar_title": "Calendar subscription",
+    "calendar_help": "Add this link to your calendar (Google, Apple, Outlook, Thunderbird…) as a subscription / \"from URL\". Your sessions will update automatically.",
+    "calendar_copy": "Copy link",
+    "calendar_copied": "Link copied",
+    "calendar_regenerate": "Regenerate link",
+    "calendar_regenerate_confirm": "The old link will stop working. Continue?",
+    "calendar_regenerated": "New link generated"
   },
   "admin": {
     "title": "Administration",

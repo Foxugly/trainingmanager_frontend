@@ -934,7 +934,14 @@
     "tab_profile": "Profiel",
     "tab_notifications": "Meldingen",
     "weekly_recap_opt_in": "Wekelijks overzicht",
-    "weekly_recap_opt_in_help": "Ontvang het wekelijkse overzicht van de teams die je beheert"
+    "weekly_recap_opt_in_help": "Ontvang het wekelijkse overzicht van de teams die je beheert",
+    "calendar_title": "Agenda-abonnement",
+    "calendar_help": "Voeg deze link toe aan je agenda (Google, Apple, Outlook, Thunderbird…) als abonnement / 'vanaf URL'. Je sessies worden automatisch bijgewerkt.",
+    "calendar_copy": "Link kopiëren",
+    "calendar_copied": "Link gekopieerd",
+    "calendar_regenerate": "Link opnieuw genereren",
+    "calendar_regenerate_confirm": "De oude link werkt niet meer. Doorgaan?",
+    "calendar_regenerated": "Nieuwe link gegenereerd"
   },
   "admin": {
     "title": "Beheer",

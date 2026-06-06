@@ -75,6 +75,7 @@ function makeMe(quota: TeamQuotaStatus): Me {
     is_staff: false,
     is_superuser: false,
     team_quota: quota,
+    calendar_token: 'tok-test',
   };
 }
 

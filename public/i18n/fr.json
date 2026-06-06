@@ -934,7 +934,14 @@
     "tab_profile": "Profil",
     "tab_notifications": "Notifications",
     "weekly_recap_opt_in": "Récapitulatif hebdomadaire",
-    "weekly_recap_opt_in_help": "Recevoir le récapitulatif hebdomadaire des équipes que vous gérez"
+    "weekly_recap_opt_in_help": "Recevoir le récapitulatif hebdomadaire des équipes que vous gérez",
+    "calendar_title": "Abonnement calendrier",
+    "calendar_help": "Ajoutez ce lien dans votre agenda (Google, Apple, Outlook, Thunderbird…) en tant qu'abonnement / « depuis une URL ». Vos séances se mettront à jour automatiquement.",
+    "calendar_copy": "Copier le lien",
+    "calendar_copied": "Lien copié",
+    "calendar_regenerate": "Régénérer le lien",
+    "calendar_regenerate_confirm": "L'ancien lien cessera de fonctionner. Continuer ?",
+    "calendar_regenerated": "Nouveau lien généré"
   },
   "admin": {
     "title": "Administration",

@@ -29,6 +29,7 @@ const baseUser: Me = {
   is_superuser: false,
   weekly_recap_opt_in: true,
   team_quota: { used: 0, max: 0, can_create: false },
+  calendar_token: 'tok-abc123',
 };
 
 interface ProtectedFields {
@@ -80,6 +81,12 @@ interface ProtectedFields {
   prefsSaving(): boolean;
   toggleChannel(index: number, channel: 'in_app' | 'email', value: boolean): void;
   savePreferences(): void;
+  // iCal calendar subscription
+  calendarUrl(): string | null;
+  calendarWebcalUrl(): string | null;
+  calendarRotating(): boolean;
+  copyCalendarUrl(): void;
+  regenerateCalendarUrl(): void;
 }
 
 const prefRows: NotificationPreference[] = [
@@ -90,7 +97,10 @@ const prefRows: NotificationPreference[] = [
 describe('ProfileComponent', () => {
   let fixture: ComponentFixture<ProfileComponent>;
   let component: ProfileComponent;
-  let meMock: { mePartialUpdate: ReturnType<typeof vi.fn> };
+  let meMock: {
+    mePartialUpdate: ReturnType<typeof vi.fn>;
+    meCalendarTokenRotate: ReturnType<typeof vi.fn>;
+  };
   let authMock: {
     currentUser: ReturnType<typeof vi.fn>;
     fetchMe: ReturnType<typeof vi.fn>;
@@ -113,7 +123,7 @@ describe('ProfileComponent', () => {
   async function setup(initialUser: Me | null = baseUser) {
     TestBed.resetTestingModule();
     const userSignal = signal<Me | null>(initialUser);
-    meMock = { mePartialUpdate: vi.fn() };
+    meMock = { mePartialUpdate: vi.fn(), meCalendarTokenRotate: vi.fn() };
     authMock = {
       currentUser: userSignal.asReadonly() as unknown as ReturnType<typeof vi.fn>,
       fetchMe: vi.fn().mockReturnValue(of(baseUser)),
@@ -416,5 +426,81 @@ describe('ProfileComponent', () => {
       expect.objectContaining({ severity: 'error' }),
     );
     expect(access(component).prefsSaving()).toBe(false);
+  });
+
+  // --- iCal calendar subscription ---
+
+  it('builds the calendar subscribe URL from apiBase + token', () => {
+    // No runtime globals in jsdom → apiBase falls back to environment.apiBase
+    // (http://localhost:8000). The .ics path uses the seeded calendar_token.
+    expect(access(component).calendarUrl()).toBe(
+      'http://localhost:8000/api/v1/calendar/tok-abc123.ics',
+    );
+  });
+
+  it('derives the webcal:// variant from the https URL', () => {
+    expect(access(component).calendarWebcalUrl()).toBe(
+      'webcal://localhost:8000/api/v1/calendar/tok-abc123.ics',
+    );
+  });
+
+  it('copyCalendarUrl writes the URL to the clipboard and toasts success', async () => {
+    const writeText = vi.fn<(v: string) => Promise<void>>().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', {
+      value: { writeText },
+      configurable: true,
+    });
+
+    access(component).copyCalendarUrl();
+    await Promise.resolve();
+
+    expect(writeText).toHaveBeenCalledWith('http://localhost:8000/api/v1/calendar/tok-abc123.ics');
+    expect(messageService.add).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'success' }),
+    );
+  });
+
+  it('regenerateCalendarUrl rotates and updates the URL on confirm', () => {
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    meMock.meCalendarTokenRotate.mockReturnValue(of({ calendar_token: 'tok-new999' }));
+
+    access(component).regenerateCalendarUrl();
+
+    expect(meMock.meCalendarTokenRotate).toHaveBeenCalled();
+    expect(access(component).calendarUrl()).toBe(
+      'http://localhost:8000/api/v1/calendar/tok-new999.ics',
+    );
+    expect(authMock.setCurrentUser).toHaveBeenCalledWith(
+      expect.objectContaining({ calendar_token: 'tok-new999' }),
+    );
+    expect(messageService.add).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'success' }),
+    );
+    confirmSpy.mockRestore();
+  });
+
+  it('regenerateCalendarUrl is a no-op when the user cancels the confirm', () => {
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
+
+    access(component).regenerateCalendarUrl();
+
+    expect(meMock.meCalendarTokenRotate).not.toHaveBeenCalled();
+    expect(access(component).calendarUrl()).toBe(
+      'http://localhost:8000/api/v1/calendar/tok-abc123.ics',
+    );
+    confirmSpy.mockRestore();
+  });
+
+  it('regenerateCalendarUrl toasts an error on failure', () => {
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    meMock.meCalendarTokenRotate.mockReturnValue(throwError(() => ({ status: 500 })));
+
+    access(component).regenerateCalendarUrl();
+
+    expect(messageService.add).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'error' }),
+    );
+    expect(access(component).calendarRotating()).toBe(false);
+    confirmSpy.mockRestore();
   });
 });

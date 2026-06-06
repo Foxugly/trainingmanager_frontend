@@ -934,7 +934,14 @@
     "tab_profile": "Profilo",
     "tab_notifications": "Notifiche",
     "weekly_recap_opt_in": "Riepilogo settimanale",
-    "weekly_recap_opt_in_help": "Ricevi il riepilogo settimanale delle squadre che gestisci"
+    "weekly_recap_opt_in_help": "Ricevi il riepilogo settimanale delle squadre che gestisci",
+    "calendar_title": "Abbonamento al calendario",
+    "calendar_help": "Aggiungi questo link al tuo calendario (Google, Apple, Outlook, Thunderbird…) come abbonamento / «da URL». Le tue sessioni si aggiorneranno automaticamente.",
+    "calendar_copy": "Copia il link",
+    "calendar_copied": "Link copiato",
+    "calendar_regenerate": "Rigenera il link",
+    "calendar_regenerate_confirm": "Il vecchio link smetterà di funzionare. Continuare?",
+    "calendar_regenerated": "Nuovo link generato"
   },
   "admin": {
     "title": "Amministrazione",

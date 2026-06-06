@@ -934,7 +934,14 @@
     "tab_profile": "Perfil",
     "tab_notifications": "Notificaciones",
     "weekly_recap_opt_in": "Resumen semanal",
-    "weekly_recap_opt_in_help": "Recibir el resumen semanal de los equipos que gestionas"
+    "weekly_recap_opt_in_help": "Recibir el resumen semanal de los equipos que gestionas",
+    "calendar_title": "Suscripción al calendario",
+    "calendar_help": "Añade este enlace a tu agenda (Google, Apple, Outlook, Thunderbird…) como suscripción / «desde una URL». Tus sesiones se actualizarán automáticamente.",
+    "calendar_copy": "Copiar enlace",
+    "calendar_copied": "Enlace copiado",
+    "calendar_regenerate": "Regenerar enlace",
+    "calendar_regenerate_confirm": "El enlace anterior dejará de funcionar. ¿Continuar?",
+    "calendar_regenerated": "Nuevo enlace generado"
   },
   "admin": {
     "title": "Administración",

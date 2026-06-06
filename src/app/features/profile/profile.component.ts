@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -22,6 +29,7 @@ import { Me } from '../../api/model/me';
 import { PasswordChange } from '../../api/model/password-change';
 import { PatchedMe } from '../../api/model/patched-me';
 import { AuthService } from '../../core/auth/auth.service';
+import { getRuntimeConfig } from '../../core/runtime-config';
 import { AVAILABLE_LANGUAGES, LanguageCode } from '../../core/i18n/available-languages';
 import { LanguageService } from '../../core/i18n/language.service';
 import { type FieldErrors, extractServerError } from '../../shared/forms/notify-error';
@@ -83,6 +91,24 @@ export class ProfileComponent implements OnInit {
   protected readonly prefs = signal<NotificationPreference[]>([]);
   protected readonly prefsLoading = signal(false);
   protected readonly prefsSaving = signal(false);
+
+  // --- iCal calendar subscription ---
+  // apiBase is precomputed here (never read from window in the template).
+  private readonly apiBase = getRuntimeConfig().apiBaseUrl.replace(/\/+$/, '');
+  protected readonly calendarToken = signal<string | null>(null);
+  protected readonly calendarRotating = signal(false);
+
+  /** Full https subscribe URL for the current token, or null when unavailable. */
+  protected readonly calendarUrl = computed(() => {
+    const token = this.calendarToken();
+    return token ? `${this.apiBase}/api/v1/calendar/${token}.ics` : null;
+  });
+
+  /** webcal:// variant some calendar apps auto-handle (https → webcal). */
+  protected readonly calendarWebcalUrl = computed(() => {
+    const url = this.calendarUrl();
+    return url ? url.replace(/^https?:\/\//, 'webcal://') : null;
+  });
 
   protected readonly form = this.fb.nonNullable.group({
     first_name: ['', Validators.required],
@@ -167,8 +193,56 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  // --- iCal calendar subscription ---
+
+  protected copyCalendarUrl(): void {
+    const url = this.calendarUrl();
+    if (!url) return;
+    void navigator.clipboard.writeText(url).then(() => {
+      this.messageService.add({
+        severity: 'success',
+        summary: this.transloco.translate('common.success'),
+        detail: this.transloco.translate('profile.calendar_copied'),
+      });
+    });
+  }
+
+  protected regenerateCalendarUrl(): void {
+    if (this.calendarRotating()) return;
+    if (!window.confirm(this.transloco.translate('profile.calendar_regenerate_confirm'))) {
+      return;
+    }
+    this.calendarRotating.set(true);
+    this.meService.meCalendarTokenRotate().subscribe({
+      next: (res) => {
+        this.calendarToken.set(res.calendar_token);
+        const current = this.user();
+        if (current) {
+          const updated: Me = { ...current, calendar_token: res.calendar_token };
+          this.user.set(updated);
+          this.authService.setCurrentUser(updated);
+        }
+        this.calendarRotating.set(false);
+        this.messageService.add({
+          severity: 'success',
+          summary: this.transloco.translate('common.success'),
+          detail: this.transloco.translate('profile.calendar_regenerated'),
+        });
+      },
+      error: () => {
+        this.calendarRotating.set(false);
+        this.messageService.add({
+          severity: 'error',
+          summary: this.transloco.translate('common.error'),
+          detail: this.transloco.translate('profile.errors.unknown'),
+        });
+      },
+    });
+  }
+
   private hydrate(me: Me): void {
     this.user.set(me);
+    this.calendarToken.set(me.calendar_token);
     this.form.reset({
       first_name: me.first_name ?? '',
       last_name: me.last_name ?? '',
