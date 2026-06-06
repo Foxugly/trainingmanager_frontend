@@ -9,12 +9,15 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { Message } from 'primeng/message';
+import { Select } from 'primeng/select';
 import { Skeleton } from 'primeng/skeleton';
 import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.component';
+import { TeamStatsComponent } from '../teams/team-stats/team-stats.component';
 import { firstValueFrom } from 'rxjs';
 import { AttendanceStatusesService } from '../../api/api/attendance-statuses.service';
 import { EventsService } from '../../api/api/events.service';
@@ -87,7 +90,18 @@ function eventDateAsDate(e: Event): Date | null {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, RouterLink, Button, Message, Skeleton, EmptyStateComponent, TranslocoPipe],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterLink,
+    Button,
+    Message,
+    Select,
+    Skeleton,
+    EmptyStateComponent,
+    TeamStatsComponent,
+    TranslocoPipe,
+  ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -127,6 +141,10 @@ export class DashboardComponent implements OnInit {
 
   // Athlete sections
   protected readonly memberTeamCards = signal<MemberTeamCard[]>([]);
+  /** The caller's membership id PER member team (member_username === me.username). */
+  protected readonly myMemberIdByTeam = signal<Map<number, number>>(new Map());
+  /** Currently-selected team for the "Mes statistiques" panel (multi-team case). */
+  protected readonly selectedStatsTeam = signal<Team | null>(null);
   protected readonly memberUpcomingEvents = signal<UpcomingEvent[]>([]);
   protected readonly memberUpcomingTotal = signal(0);
   protected readonly attendanceHistory = signal<AttendanceHistoryItem[]>([]);
@@ -157,6 +175,32 @@ export class DashboardComponent implements OnInit {
   protected readonly showWelcome = computed(
     () => this.bootstrapped() && !this.hasManagedTeams() && !this.hasMemberTeams(),
   );
+
+  // ---- "Mes statistiques" (athlete) ----------------------------------------
+
+  /** Member teams for which the caller's member id is resolvable (gate for the panel). */
+  protected readonly statsTeams = computed<Team[]>(() => {
+    const map = this.myMemberIdByTeam();
+    return this.memberTeams().filter((t) => map.has(t.id));
+  });
+  protected readonly hasStats = computed(() => this.statsTeams().length > 0);
+  protected readonly multipleStatsTeams = computed(() => this.statsTeams().length > 1);
+
+  /** The team whose stats are shown: the selection (multi) or the only team (single). */
+  protected readonly activeStatsTeam = computed<Team | null>(() => {
+    const teams = this.statsTeams();
+    if (teams.length === 0) return null;
+    const selected = this.selectedStatsTeam();
+    if (selected && teams.some((t) => t.id === selected.id)) return selected;
+    return teams[0];
+  });
+
+  /** The caller's member id for the active stats team, or null if unresolved. */
+  protected readonly activeStatsMemberId = computed<number | null>(() => {
+    const team = this.activeStatsTeam();
+    if (!team) return null;
+    return this.myMemberIdByTeam().get(team.id) ?? null;
+  });
 
   ngOnInit(): void {
     this.bootstrap();
@@ -389,7 +433,9 @@ export class DashboardComponent implements OnInit {
     const myUsername = this.authService.currentUser()?.username;
 
     let membershipsByTeam: Array<{ team: Team; memberships: TeamMembership[] }> = [];
-    let myMemberId: number | null = null;
+    // The caller's member id PER team — do NOT break after the first match,
+    // each team has its own membership row for the athlete.
+    const myMemberIdByTeam = new Map<number, number>();
 
     try {
       membershipsByTeam = await Promise.all(
@@ -398,13 +444,16 @@ export class DashboardComponent implements OnInit {
           return { team, memberships: memberships ?? [] };
         }),
       );
-      for (const { memberships } of membershipsByTeam) {
+      for (const { team, memberships } of membershipsByTeam) {
         const found = memberships.find((m) => m.member_username === myUsername);
         if (found) {
-          myMemberId = found.member;
-          break;
+          myMemberIdByTeam.set(team.id, found.member);
         }
       }
+      this.myMemberIdByTeam.set(myMemberIdByTeam);
+      // Default the stats selector to the first team with a resolvable member id.
+      const firstStatsTeam = memberTeams.find((t) => myMemberIdByTeam.has(t.id)) ?? null;
+      this.selectedStatsTeam.set(firstStatsTeam);
       const cards: MemberTeamCard[] = membershipsByTeam.map(({ team, memberships }) => ({
         team,
         membersCount: memberships.length,
@@ -469,7 +518,7 @@ export class DashboardComponent implements OnInit {
     }
 
     this.buildMemberUpcoming(allMemberEvents, today, next14);
-    void this.buildAttendanceHistory(allMemberEvents, today, myMemberId);
+    void this.buildAttendanceHistory(allMemberEvents, today, myMemberIdByTeam);
   }
 
   private buildMemberUpcoming(
@@ -501,9 +550,9 @@ export class DashboardComponent implements OnInit {
   private async buildAttendanceHistory(
     allMemberEvents: Array<{ event: Event; team: Team; program: Program }>,
     today: Date,
-    myMemberId: number | null,
+    myMemberIdByTeam: Map<number, number>,
   ): Promise<void> {
-    if (myMemberId === null) {
+    if (myMemberIdByTeam.size === 0) {
       this.attendanceHistory.set([]);
       this.loadingHistory.set(false);
       return;
@@ -536,6 +585,8 @@ export class DashboardComponent implements OnInit {
     try {
       const audits = await Promise.all(
         audited.map(async ({ event, team, program }) => {
+          const myMemberId = myMemberIdByTeam.get(team.id);
+          if (myMemberId === undefined) return null;
           const res = await firstValueFrom(this.eventsService.eventsAttendanceList(event.id));
           const mine = (res.results ?? []).find((a) => a.member === myMemberId);
           return mine ? { attendance: mine, event, team, program } : null;

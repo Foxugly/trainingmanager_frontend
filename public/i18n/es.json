@@ -546,6 +546,7 @@
     }
   },
   "common": {
+    "print": "Imprimir",
     "save": "Guardar",
     "cancel": "Cancelar",
     "back": "Volver",
@@ -571,6 +572,7 @@
   },
   "dashboard": {
     "greeting": "Hola {{name}} 👋",
+    "my_stats": "Mis estadísticas",
     "subtitle": "Vista general de tus equipos y sesiones.",
     "welcome": {
       "eyebrow": "Bienvenido",
@@ -1010,6 +1012,10 @@
     "last_present": "Última asistencia",
     "distance": "Distancia",
     "axis_rate": "Tasa (%)",
-    "axis_distance": "Distancia"
+    "axis_distance": "Distancia",
+    "export_csv": "Exportar CSV",
+    "export_pdf": "PDF",
+    "print_title": "Estadísticas",
+    "select_team": "Equipo"
   }
 }

@@ -70,6 +70,10 @@ interface ProtectedFields {
   onMemberRowClick(id: number): void;
   setPreset(weeks: number | 'all'): void;
   range(): Date[];
+  showControls(): boolean;
+  exportVisible(): boolean;
+  exportCsv(): void;
+  exportPdf(): void;
 }
 
 describe('TeamStatsComponent', () => {
@@ -179,6 +183,99 @@ describe('TeamStatsComponent', () => {
     expect(yearsBack).toBeGreaterThan(1.5);
     fixture.detectChanges(); // flush the refetch effect
     expect(teamsMock.teamsStatsRetrieve).toHaveBeenCalled();
+  });
+
+  it('shows controls + export buttons by default (interactive mode)', () => {
+    expect(access(component).showControls()).toBe(true);
+    expect(access(component).exportVisible()).toBe(true);
+  });
+
+  it('print mode hides the date-range controls and export buttons', async () => {
+    TestBed.resetTestingModule();
+    await setup();
+    fixture.componentRef.setInput('print', true);
+    fixture.detectChanges();
+    expect(access(component).showControls()).toBe(false);
+    expect(access(component).exportVisible()).toBe(false);
+  });
+
+  it('showExport=false hides export buttons but keeps controls', () => {
+    fixture.componentRef.setInput('showExport', false);
+    fixture.detectChanges();
+    expect(access(component).exportVisible()).toBe(false);
+    expect(access(component).showControls()).toBe(true);
+  });
+
+  it('seeds the range from initialFrom/initialTo and refetches with them', async () => {
+    TestBed.resetTestingModule();
+    teamsMock = { teamsStatsRetrieve: vi.fn().mockReturnValue(of(aggregateStats)) };
+    await TestBed.configureTestingModule({
+      imports: [
+        TeamStatsComponent,
+        TranslocoTestingModule.forRoot({
+          langs: { fr: {} },
+          translocoConfig: { availableLangs: ['fr'], defaultLang: 'fr' },
+        }),
+      ],
+      providers: [provideNoopAnimations(), { provide: TeamsService, useValue: teamsMock }],
+    })
+      .overrideComponent(TeamStatsComponent, { set: { template: '', imports: [] } })
+      .compileComponents();
+    fixture = TestBed.createComponent(TeamStatsComponent);
+    component = fixture.componentInstance;
+    fixture.componentRef.setInput('teamId', 4);
+    fixture.componentRef.setInput('initialFrom', '2026-01-01');
+    fixture.componentRef.setInput('initialTo', '2026-02-01');
+    fixture.detectChanges();
+    const call = teamsMock.teamsStatsRetrieve.mock.calls.at(-1)!;
+    expect(call[1]).toBe('2026-01-01');
+    expect(call[3]).toBe('2026-02-01');
+  });
+
+  it('exportCsv triggers a Blob download with a scoped filename', () => {
+    const createUrl = vi
+      .spyOn(URL, 'createObjectURL')
+      .mockReturnValue('blob:mock');
+    const revokeUrl = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => undefined);
+    const clicked: HTMLAnchorElement[] = [];
+    const origCreate = document.createElement.bind(document);
+    const createSpy = vi.spyOn(document, 'createElement').mockImplementation((tag: string) => {
+      const el = origCreate(tag) as HTMLElement;
+      if (tag === 'a') {
+        (el as HTMLAnchorElement).click = () => clicked.push(el as HTMLAnchorElement);
+      }
+      return el;
+    });
+    try {
+      access(component).exportCsv();
+      expect(createUrl).toHaveBeenCalled();
+      expect(clicked).toHaveLength(1);
+      expect(clicked[0].download).toMatch(/^stats-.*\.csv$/);
+      expect(revokeUrl).toHaveBeenCalled();
+    } finally {
+      createSpy.mockRestore();
+      createUrl.mockRestore();
+      revokeUrl.mockRestore();
+    }
+  });
+
+  it('exportPdf opens the print route in a new tab with member/from/to query params', async () => {
+    await setup(23);
+    const openSpy = vi
+      .spyOn(window, 'open')
+      .mockImplementation(() => null) as unknown as ReturnType<typeof vi.fn>;
+    try {
+      access(component).exportPdf();
+      const url = (openSpy.mock.calls[0] as unknown[])[0] as string;
+      const target = (openSpy.mock.calls[0] as unknown[])[1] as string;
+      expect(url).toContain('/teams/4/stats/print');
+      expect(url).toContain('member=23');
+      expect(url).toContain('from=');
+      expect(url).toContain('to=');
+      expect(target).toBe('_blank');
+    } finally {
+      (openSpy as unknown as { mockRestore: () => void }).mockRestore();
+    }
   });
 
   it('flags empty payloads', async () => {

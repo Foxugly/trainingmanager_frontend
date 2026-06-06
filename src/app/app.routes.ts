@@ -158,6 +158,15 @@ export const routes: Routes = [
       ),
   },
   {
+    // Top-level route (no layout shell): a chrome-less printable stats sheet.
+    path: 'teams/:id/stats/print',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/teams/team-stats/team-stats-print.component').then(
+        (m) => m.TeamStatsPrintComponent,
+      ),
+  },
+  {
     path: '',
     component: MainLayoutComponent,
     canActivate: [authGuard],

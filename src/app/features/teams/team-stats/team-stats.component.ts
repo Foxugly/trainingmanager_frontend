@@ -22,6 +22,7 @@ import { StatsAttendanceByMember } from '../../../api/model/stats-attendance-by-
 import { StatsVolumeByMember } from '../../../api/model/stats-volume-by-member';
 import { TeamStats } from '../../../api/model/team-stats';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
+import { buildStatsCsv } from './stats-csv';
 
 interface ChartConfig {
   data: unknown;
@@ -61,9 +62,20 @@ export class TeamStatsComponent {
   private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
 
+  /** Guards the one-shot seeding of the range from initialFrom/initialTo. */
+  private rangeSeeded = false;
+
   readonly teamId = input.required<number>();
   /** When set, scopes the payload to that athlete; null = team aggregate. */
   readonly memberId = input<number | null>(null);
+
+  /** Shows the CSV / PDF export buttons in the header (hidden in print mode). */
+  readonly showExport = input(true);
+  /** Print mode: hides the interactive date-range + export controls for a clean printable sheet. */
+  readonly print = input(false);
+  /** Optional ISO (YYYY-MM-DD) seeds for the date range, e.g. from print-route query params. */
+  readonly initialFrom = input<string | null>(null);
+  readonly initialTo = input<string | null>(null);
 
   /** Emitted (aggregate mode only) when an athlete row is clicked, for drill-down. */
   readonly selectMember = output<number>();
@@ -71,12 +83,31 @@ export class TeamStatsComponent {
   /** Range as a two-element [from, to] tuple of Date objects (PrimeNG range mode). */
   protected readonly range = signal<Date[]>(TeamStatsComponent.defaultRange());
 
+  /** When false, the interactive date-range picker + preset buttons are hidden. */
+  protected readonly showControls = computed(() => !this.print());
+  /** Export buttons visible only when explicitly enabled and not printing. */
+  protected readonly exportVisible = computed(() => this.showExport() && !this.print());
+
   protected readonly stats = signal<TeamStats | null>(null);
   protected readonly loading = signal(false);
 
   protected readonly isAggregate = computed(() => this.memberId() === null);
 
   constructor() {
+    // Seed the range from initialFrom/initialTo (print route query params) once
+    // both inputs have resolved. Runs before the fetch effect reads range().
+    effect(() => {
+      if (this.rangeSeeded) return;
+      const fromIso = this.initialFrom();
+      const toIso = this.initialTo();
+      if (!fromIso && !toIso) return;
+      const [defFrom, defTo] = TeamStatsComponent.defaultRange();
+      const from = TeamStatsComponent.parseIso(fromIso) ?? defFrom;
+      const to = TeamStatsComponent.parseIso(toIso) ?? defTo;
+      this.rangeSeeded = true;
+      this.range.set([from, to]);
+    });
+
     // Refetch whenever team, member, or range changes.
     effect(() => {
       const id = this.teamId();
@@ -85,6 +116,14 @@ export class TeamStatsComponent {
       if (!from || !to) return;
       this.fetch(id, this.fmt(from), this.fmt(to), member ?? undefined);
     });
+  }
+
+  /** Parse a YYYY-MM-DD string into a local-time Date, or null if invalid. */
+  private static parseIso(iso: string | null): Date | null {
+    if (!iso) return null;
+    const [y, m, d] = iso.split('-').map(Number);
+    if (!y || !m || !d) return null;
+    return new Date(y, m - 1, d);
   }
 
   private static defaultRange(): Date[] {
@@ -304,5 +343,54 @@ export class TeamStatsComponent {
   protected ratePct(rate: number | null): string {
     if (rate === null || rate === undefined) return '—';
     return `${Math.round(rate * 100)}%`;
+  }
+
+  // ---- Export --------------------------------------------------------------
+
+  /** Current range as [fromIso, toIso] (YYYY-MM-DD), preferring the loaded period. */
+  private currentPeriod(): [string, string] {
+    const s = this.stats();
+    if (s?.period?.from && s.period.to) return [s.period.from, s.period.to];
+    const [from, to] = this.range();
+    return [this.fmt(from), this.fmt(to)];
+  }
+
+  /** Slug for filenames: team/member name from the payload, fallback to ids. */
+  private scopeSlug(): string {
+    const s = this.stats();
+    const raw = s?.member?.name ?? `team-${this.teamId()}`;
+    return raw
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || 'stats';
+  }
+
+  /** Build a CSV from the loaded stats and trigger a client-side download. */
+  protected exportCsv(): void {
+    const s = this.stats();
+    if (!s) return;
+    const csv = buildStatsCsv(s);
+    const [from, to] = this.currentPeriod();
+    const filename = `stats-${this.scopeSlug()}-${from}_${to}.csv`;
+    // Prepend a UTF-8 BOM so Excel reads accents correctly.
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  /** Open the printable PDF view in a new tab, preserving the current scope + range. */
+  protected exportPdf(): void {
+    const [from, to] = this.currentPeriod();
+    const params = new URLSearchParams({ from, to });
+    const member = this.memberId();
+    if (member !== null) params.set('member', String(member));
+    const url = `${window.location.origin}/teams/${this.teamId()}/stats/print?${params.toString()}`;
+    window.open(url, '_blank');
   }
 }

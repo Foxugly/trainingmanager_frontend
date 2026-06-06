@@ -502,6 +502,33 @@
       }
     </section>
 
+    <!-- Section 6b — Mes statistiques (athlete self-scoped) -->
+    @if (hasStats() && activeStatsTeam(); as statsTeam) {
+      <section class="mb-10">
+        <div class="flex items-center justify-between mb-3 gap-2 flex-wrap">
+          <h2 class="text-lg font-semibold">{{ 'dashboard.my_stats' | transloco }}</h2>
+          @if (multipleStatsTeams()) {
+            <div class="flex items-center gap-2">
+              <label for="stats-team-select" class="text-sm text-gray-600">
+                {{ 'stats.select_team' | transloco }}
+              </label>
+              <p-select
+                inputId="stats-team-select"
+                [options]="statsTeams()"
+                optionLabel="name"
+                [ngModel]="selectedStatsTeam()"
+                (ngModelChange)="selectedStatsTeam.set($event)"
+                styleClass="w-56"
+              />
+            </div>
+          }
+        </div>
+        @if (activeStatsMemberId(); as memberId) {
+          <app-team-stats [teamId]="statsTeam.id" [memberId]="memberId" />
+        }
+      </section>
+    }
+
     @if (!hasManagedTeams()) {
       <!-- Section 7 — Quick actions athlete (uniquement si pas de quick actions coach) -->
       <section class="mb-10">

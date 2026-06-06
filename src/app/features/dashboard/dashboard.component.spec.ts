@@ -108,6 +108,17 @@ const externalTeamMemberships: TeamMembership[] = [
   { id: 61, team: 9, member: 78, member_username: 'someone-else', member_fullname: 'Someone E.', joined_at: '', left_at: null, created_at: '', updated_at: '' },
 ];
 
+// A second member team — the athlete has a DIFFERENT membership id (89) here,
+// exercising the per-team member-id map (must not collapse to the first team).
+const externalTeam2: Team = {
+  ...ownedTeam, id: 10, name: 'External Team 2',
+  owner: { id: 998 } as CustomUserPublic, managers: [],
+};
+
+const externalTeam2Memberships: TeamMembership[] = [
+  { id: 70, team: 10, member: 89, member_username: 'athlete', member_fullname: 'Athlete F.', joined_at: '', left_at: null, created_at: '', updated_at: '' },
+];
+
 const presentStatus: AttendanceStatus = {
   id: 1, code: 'present', label: 'Présent', is_default: true, order: 1, color: '#22C55E', is_active: true,
 };
@@ -130,6 +141,13 @@ interface ProtectedFields {
   upcomingOverflow(): number;
   attendancePending(): { event: Event; teamName: string; programName: string }[];
   memberTeamCards(): { team: Team; membersCount: number }[];
+  myMemberIdByTeam(): Map<number, number>;
+  statsTeams(): Team[];
+  hasStats(): boolean;
+  multipleStatsTeams(): boolean;
+  activeStatsTeam(): Team | null;
+  activeStatsMemberId(): number | null;
+  selectedStatsTeam: { set(t: Team | null): void };
   memberUpcomingDisplayed(): { event: Event; teamName: string; programName: string }[];
   attendanceHistory(): { attendance: Attendance; event: Event; teamName: string; programName: string; status: AttendanceStatus | null }[];
   historyAuditTruncated(): boolean;
@@ -311,6 +329,15 @@ describe('DashboardComponent', () => {
       expect(items[0].status?.code).toBe('present');
     });
 
+    it('maps the caller member id per team (single team -> stats panel scoped to self)', () => {
+      const map = access(component).myMemberIdByTeam();
+      expect(map.get(9)).toBe(77);
+      expect(access(component).hasStats()).toBe(true);
+      expect(access(component).multipleStatsTeams()).toBe(false);
+      expect(access(component).activeStatsTeam()?.id).toBe(9);
+      expect(access(component).activeStatsMemberId()).toBe(77);
+    });
+
     it('coach sections are not built', () => {
       expect(access(component).teamCards()).toEqual([]);
       expect(access(component).attendancePending()).toEqual([]);
@@ -343,6 +370,44 @@ describe('DashboardComponent', () => {
       const athleteIds = access(component).memberUpcomingDisplayed().map((e) => e.event.id);
       expect(coachIds).toEqual([200]);
       expect(athleteIds).toEqual([300]);
+    });
+  });
+
+  describe('Mes statistiques — multiple member teams (per-team member id map)', () => {
+    beforeEach(async () => {
+      await setup({
+        teams: [externalTeam, externalTeam2],
+        user: athleteUser,
+        programs: [program9],
+        events: [memberTeamUpcomingEvent, memberTeamPastEvent],
+        membershipsByTeam: new Map([
+          [9, externalTeamMemberships],
+          [10, externalTeam2Memberships],
+        ]),
+      });
+    });
+
+    it('builds a member id PER team without collapsing to the first', () => {
+      const map = access(component).myMemberIdByTeam();
+      expect(map.get(9)).toBe(77);
+      expect(map.get(10)).toBe(89);
+      expect(map.size).toBe(2);
+    });
+
+    it('exposes both teams as stats targets and flags multi-team', () => {
+      expect(access(component).statsTeams().map((t) => t.id)).toEqual([9, 10]);
+      expect(access(component).multipleStatsTeams()).toBe(true);
+    });
+
+    it('defaults the active stats team to the first and resolves its member id', () => {
+      expect(access(component).activeStatsTeam()?.id).toBe(9);
+      expect(access(component).activeStatsMemberId()).toBe(77);
+    });
+
+    it('switching the selected team re-scopes to that team member id', () => {
+      access(component).selectedStatsTeam.set(externalTeam2);
+      expect(access(component).activeStatsTeam()?.id).toBe(10);
+      expect(access(component).activeStatsMemberId()).toBe(89);
     });
   });
 

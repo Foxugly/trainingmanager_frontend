@@ -546,6 +546,7 @@
     }
   },
   "common": {
+    "print": "Afdrukken",
     "save": "Opslaan",
     "cancel": "Annuleren",
     "back": "Terug",
@@ -571,6 +572,7 @@
   },
   "dashboard": {
     "greeting": "Hallo {{name}} 👋",
+    "my_stats": "Mijn statistieken",
     "subtitle": "Overzicht van je teams en sessies.",
     "welcome": {
       "eyebrow": "Welkom",
@@ -1010,6 +1012,10 @@
     "last_present": "Laatst aanwezig",
     "distance": "Afstand",
     "axis_rate": "Percentage (%)",
-    "axis_distance": "Afstand"
+    "axis_distance": "Afstand",
+    "export_csv": "CSV exporteren",
+    "export_pdf": "PDF",
+    "print_title": "Statistieken",
+    "select_team": "Team"
   }
 }

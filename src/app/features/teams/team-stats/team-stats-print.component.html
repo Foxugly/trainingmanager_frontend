@@ -1,0 +1,38 @@
+@if (invalid()) {
+  <p class="loading">{{ 'common.error' | transloco }}</p>
+} @else if (teamId(); as id) {
+  <!-- Screen-only toolbar (hidden in print via @media print) -->
+  <div class="toolbar no-print">
+    <a [routerLink]="['/teams', id]">
+      <p-button
+        icon="pi pi-arrow-left"
+        [label]="'common.back' | transloco"
+        severity="secondary"
+        [outlined]="true"
+      />
+    </a>
+    <p-button icon="pi pi-print" [label]="'common.print' | transloco" (onClick)="print()" />
+  </div>
+
+  <article class="sheet">
+    <header class="sheet-header">
+      <h1>{{ 'stats.print_title' | transloco }}</h1>
+      @if (from() && to()) {
+        <p class="period">{{ from() }} – {{ to() }}</p>
+      }
+    </header>
+
+    <app-team-stats
+      [teamId]="id"
+      [memberId]="memberId()"
+      [showExport]="false"
+      [print]="true"
+      [initialFrom]="from()"
+      [initialTo]="to()"
+    />
+
+    <footer class="sheet-footer">
+      <span>{{ 'app.title' | transloco }}</span>
+    </footer>
+  </article>
+}
