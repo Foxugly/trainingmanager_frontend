@@ -21,6 +21,10 @@ export interface Me {
     first_name?: string;
     last_name?: string;
     language?: LanguageEnum;
+    /**
+     * Per-user preference for the weekly recap email. Opt-out model: default True. When False, this user receives no weekly recap even for teams they own/manage that have it enabled.
+     */
+    weekly_recap_opt_in?: boolean;
     readonly last_login: string | null;
     readonly date_joined: string;
     /**

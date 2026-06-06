@@ -41,9 +41,9 @@ export interface PatchedTeam {
      */
     chat_mode?: ChatModeEnum;
     /**
-     * If True, athletes can read their own coach notes. Default False (notes are coach-only).
+     * If True, this team is included in the weekly recap email sent to its owner and managers. Default False (opt-in per team).
      */
-    athlete_can_read_notes?: boolean;
+    weekly_recap_enabled?: boolean;
     /**
      * Statuses available for marking attendance in this team\'s events. Default: present, absent, excused.
      */

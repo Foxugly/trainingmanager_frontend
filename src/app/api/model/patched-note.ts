@@ -25,6 +25,10 @@ export interface PatchedNote {
      * Rich HTML content (sanitized via bleach on save).
      */
     content?: string;
+    /**
+     * If True, the concerned athlete can read this note (when it is also active). Default False — notes are coach-only unless explicitly shared.
+     */
+    visible_to_athlete?: boolean;
     readonly is_active?: boolean;
     readonly created_at?: string;
     readonly updated_at?: string;
