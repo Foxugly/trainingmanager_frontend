@@ -17,6 +17,8 @@ import { Note } from '../model/models';
 import { PaginatedAIUsageDetailList } from '../model/models';
 import { PaginatedNoteList } from '../model/models';
 import { PaginatedTeamList } from '../model/models';
+import { PaginatedTopicList } from '../model/models';
+import { PaginatedTopicMessageList } from '../model/models';
 import { PatchedMessage } from '../model/models';
 import { PatchedNote } from '../model/models';
 import { PatchedTeam } from '../model/models';
@@ -24,6 +26,8 @@ import { PatchedTeamMembership } from '../model/models';
 import { Team } from '../model/models';
 import { TeamMembership } from '../model/models';
 import { TeamStats } from '../model/models';
+import { Topic } from '../model/models';
+import { TopicMessage } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
@@ -309,6 +313,88 @@ export interface TeamsServiceInterface {
      * @param to Window end (inclusive, ISO YYYY-MM-DD). Defaults to today.
      */
     teamsStatsRetrieve(id: number, from?: string, member?: number, to?: string, extraHttpRequestParams?: any): Observable<TeamStats>;
+
+    /**
+     * Create a topic (coach only)
+     * Topics nested under a team.  URL: /api/v1/teams/{team_pk}/topics/
+     * @endpoint post /api/v1/teams/{team_pk}/topics/
+     * @param teamPk 
+     * @param topic 
+     */
+    teamsTopicsCreate(teamPk: number, topic: Topic, extraHttpRequestParams?: any): Observable<Topic>;
+
+    /**
+     * Delete a topic (author or coach)
+     * Topics nested under a team.  URL: /api/v1/teams/{team_pk}/topics/
+     * @endpoint delete /api/v1/teams/{team_pk}/topics/{id}/
+     * @param id A unique integer value identifying this topic.
+     * @param teamPk 
+     */
+    teamsTopicsDestroy(id: number, teamPk: number, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * List visible topics for a team (newest activity first)
+     * Topics nested under a team.  URL: /api/v1/teams/{team_pk}/topics/
+     * @endpoint get /api/v1/teams/{team_pk}/topics/
+     * @param teamPk 
+     * @param ordering Which field to use when ordering the results.
+     * @param page A page number within the paginated result set.
+     * @param pageSize Number of results to return per page.
+     * @param search A search term.
+     */
+    teamsTopicsList(teamPk: number, ordering?: string, page?: number, pageSize?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedTopicList>;
+
+    /**
+     * Post a message in a topic
+     * Messages nested under a topic.  URL: /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
+     * @endpoint post /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
+     * @param teamPk ID of the parent team.
+     * @param topicPk ID of the parent topic.
+     * @param topicMessage 
+     */
+    teamsTopicsMessagesCreate(teamPk: number, topicPk: number, topicMessage: TopicMessage, extraHttpRequestParams?: any): Observable<TopicMessage>;
+
+    /**
+     * Delete a message (author or coach)
+     * Messages nested under a topic.  URL: /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
+     * @endpoint delete /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/{id}/
+     * @param id A unique integer value identifying this message.
+     * @param teamPk ID of the parent team.
+     * @param topicPk ID of the parent topic.
+     */
+    teamsTopicsMessagesDestroy(id: number, teamPk: number, topicPk: number, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * List messages in a topic (oldest first)
+     * Messages nested under a topic.  URL: /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
+     * @endpoint get /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
+     * @param teamPk ID of the parent team.
+     * @param topicPk ID of the parent topic.
+     * @param ordering Which field to use when ordering the results.
+     * @param page A page number within the paginated result set.
+     * @param pageSize Number of results to return per page.
+     * @param search A search term.
+     */
+    teamsTopicsMessagesList(teamPk: number, topicPk: number, ordering?: string, page?: number, pageSize?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedTopicMessageList>;
+
+    /**
+     * Retrieve a message
+     * Messages nested under a topic.  URL: /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
+     * @endpoint get /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/{id}/
+     * @param id A unique integer value identifying this message.
+     * @param teamPk ID of the parent team.
+     * @param topicPk ID of the parent topic.
+     */
+    teamsTopicsMessagesRetrieve(id: number, teamPk: number, topicPk: number, extraHttpRequestParams?: any): Observable<TopicMessage>;
+
+    /**
+     * Retrieve a topic
+     * Topics nested under a team.  URL: /api/v1/teams/{team_pk}/topics/
+     * @endpoint get /api/v1/teams/{team_pk}/topics/{id}/
+     * @param id A unique integer value identifying this topic.
+     * @param teamPk 
+     */
+    teamsTopicsRetrieve(id: number, teamPk: number, extraHttpRequestParams?: any): Observable<Topic>;
 
     /**
      * 

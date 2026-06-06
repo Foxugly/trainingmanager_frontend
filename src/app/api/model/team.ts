@@ -58,6 +58,14 @@ export interface Team {
      */
     notify_managers_on_join_request?: boolean;
     /**
+     * When True, the team owner and managers (except the author) are notified each time a note is added on one of the team\'s athletes.
+     */
+    notify_coaches_on_note?: boolean;
+    /**
+     * When True, an athlete with a linked user account is notified when a note shared with them (visible_to_athlete=True) is added.
+     */
+    notify_athlete_on_visible_note?: boolean;
+    /**
      * IANA timezone name (e.g. \'Europe/Brussels\'). Used to decide, in the team\'s local time, whether a session is over for per-aspect athlete visibility (vis_distance/vis_goal/vis_rounds).
      */
     timezone?: string;

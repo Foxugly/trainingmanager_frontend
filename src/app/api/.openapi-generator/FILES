@@ -31,6 +31,8 @@ api/me.service.ts
 api/me.serviceInterface.ts
 api/members.service.ts
 api/members.serviceInterface.ts
+api/notifications.service.ts
+api/notifications.serviceInterface.ts
 api/programs.service.ts
 api/programs.serviceInterface.ts
 api/rounds.service.ts
@@ -55,6 +57,7 @@ model/attendance-bulk.ts
 model/attendance-status-admin.ts
 model/attendance-status.ts
 model/attendance.ts
+model/audience-enum.ts
 model/chat-mode-enum.ts
 model/clone-exercise-request.ts
 model/complete-invitation-response.ts
@@ -98,6 +101,9 @@ model/modality-admin.ts
 model/modality.ts
 model/models.ts
 model/note.ts
+model/notification-preference-update.ts
+model/notification-preference.ts
+model/notification.ts
 model/overlap-strategy-enum.ts
 model/paginated-ai-usage-detail-list.ts
 model/paginated-attendance-list.ts
@@ -110,12 +116,15 @@ model/paginated-level-list.ts
 model/paginated-member-list.ts
 model/paginated-modality-list.ts
 model/paginated-note-list.ts
+model/paginated-notification-list.ts
 model/paginated-program-list.ts
 model/paginated-round-list.ts
 model/paginated-sport-list.ts
 model/paginated-team-invitation-list.ts
 model/paginated-team-join-request-list.ts
 model/paginated-team-list.ts
+model/paginated-topic-list.ts
+model/paginated-topic-message-list.ts
 model/password-change-response.ts
 model/password-change.ts
 model/password-reset-confirm-response.ts
@@ -144,6 +153,7 @@ model/patched-team-membership.ts
 model/patched-team.ts
 model/program-minimal.ts
 model/program.ts
+model/read-all-response.ts
 model/register.ts
 model/reorder-exercises-request.ts
 model/reorder-rounds-request.ts
@@ -173,6 +183,10 @@ model/team-stats.ts
 model/team.ts
 model/token-obtain-pair-response.ts
 model/token-refresh.ts
+model/topic-message.ts
+model/topic.ts
+model/type-enum.ts
+model/unread-count.ts
 model/validate-invitation.ts
 model/verified-token-obtain-pair.ts
 model/visibility-mode.ts
