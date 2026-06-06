@@ -66,12 +66,18 @@
   align-items: center;
   gap: 0.5rem;
 
-  ::ng-deep .p-inputtext,
-  ::ng-deep .p-select,
-  ::ng-deep .p-multiselect,
-  ::ng-deep .p-datepicker,
-  ::ng-deep .p-inputnumber,
-  ::ng-deep .p-editor-container {
+  // NOTE: this is a GLOBAL stylesheet, so ::ng-deep must NOT be used here —
+  // it is only meaningful inside component styles and makes the selector
+  // invalid (dropped by the browser) in a global file. Plain descendant
+  // selectors reach the projected PrimeNG widgets and force full width so
+  // every form control fills its grid cell.
+  .p-inputtext,
+  .p-select,
+  .p-multiselect,
+  .p-datepicker,
+  .p-inputnumber,
+  .p-autocomplete,
+  .p-editor-container {
     width: 100%;
   }
 }
