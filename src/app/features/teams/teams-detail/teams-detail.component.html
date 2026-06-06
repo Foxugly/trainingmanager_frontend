@@ -493,6 +493,28 @@
         <h4 class="mb-2 text-base font-semibold">{{ 'performance.title' | transloco }}</h4>
         <app-performance-panel [teamId]="teamId()!" [memberId]="mb.member" [canEdit]="true" />
       </section>
+
+      @if (canManage()) {
+        <section class="mt-6 rounded-xl border border-red-200 bg-red-50 p-4">
+          <h4 class="text-sm font-semibold uppercase tracking-wide text-red-700 mb-1">
+            {{ 'rgpd.anonymize.section' | transloco }}
+          </h4>
+          <div class="flex items-center justify-between gap-3 flex-wrap">
+            <p class="text-sm text-red-800 flex-1 min-w-0">
+              {{ 'rgpd.anonymize.help' | transloco }}
+            </p>
+            <p-button
+              type="button"
+              severity="danger"
+              icon="pi pi-user-minus"
+              [label]="'rgpd.anonymize.action' | transloco"
+              [ariaLabel]="'rgpd.anonymize.action' | transloco"
+              [loading]="anonymizing()"
+              (onClick)="confirmAnonymizeMember(mb)"
+            />
+          </div>
+        </section>
+      }
     }
   }
 </p-dialog>

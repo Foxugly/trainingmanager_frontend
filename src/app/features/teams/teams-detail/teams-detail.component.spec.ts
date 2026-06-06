@@ -8,6 +8,7 @@ import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { InvitationsService } from '../../../api/api/invitations.service';
 import { JoinRequestsService } from '../../../api/api/join-requests.service';
+import { MembersService } from '../../../api/api/members.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { CustomUserPublic } from '../../../api/model/custom-user-public';
 import { InvitationStatusEnum } from '../../../api/model/invitation-status-enum';
@@ -134,6 +135,8 @@ interface ProtectedFields {
   notesMembership(): TeamMembership | null;
   openNotes(mb: TeamMembership): void;
   onNotesDialogVisibleChange(value: boolean): void;
+  anonymizing(): boolean;
+  confirmAnonymizeMember(mb: TeamMembership): void;
   joinMessage(): string;
   joinError(): string | null;
   showJoinDialog(): boolean;
@@ -163,6 +166,7 @@ describe('TeamsDetailComponent', () => {
     joinRequestsCreate: ReturnType<typeof vi.fn>;
   };
   let memberMembershipMock: { createMemberAndAttach: ReturnType<typeof vi.fn> };
+  let membersMock: { membersAnonymize: ReturnType<typeof vi.fn> };
   let userSig: ReturnType<typeof signal<CustomUserPublic | null>>;
   let routeIdParam: string | null;
   let routeQueryParams: Record<string, string>;
@@ -209,6 +213,9 @@ describe('TeamsDetailComponent', () => {
     memberMembershipMock = {
       createMemberAndAttach: vi.fn().mockReturnValue(of({ member: { id: 99 }, membership: mb1 })),
     };
+    membersMock = {
+      membersAnonymize: vi.fn().mockReturnValue(of({ id: 23 })),
+    };
     userSig = signal<CustomUserPublic | null>(currentUser);
 
     await TestBed.configureTestingModule({
@@ -228,6 +235,7 @@ describe('TeamsDetailComponent', () => {
         { provide: InvitationsService, useValue: invitationsMock },
         { provide: JoinRequestsService, useValue: joinRequestsMock },
         { provide: MemberMembershipService, useValue: memberMembershipMock },
+        { provide: MembersService, useValue: membersMock },
         {
           provide: AuthService,
           useValue: { currentUser: userSig.asReadonly(), refreshMe: vi.fn() },
@@ -323,6 +331,28 @@ describe('TeamsDetailComponent', () => {
     access(component).onNotesDialogVisibleChange(false);
     expect(access(component).notesDialogOpen()).toBe(false);
     expect(access(component).notesMembership()).toBeNull();
+  });
+
+  it('confirmAnonymizeMember anonymizes on accept, closes notes dialog and reloads memberships', () => {
+    const confirmation = fixture.debugElement.injector.get(ConfirmationService);
+    vi.spyOn(confirmation, 'confirm').mockImplementation((cfg) => {
+      cfg.accept?.();
+      return confirmation;
+    });
+    access(component).openNotes(mb1);
+    access(component).confirmAnonymizeMember(mb1);
+    expect(membersMock.membersAnonymize).toHaveBeenCalledWith(mb1.member);
+    expect(access(component).notesDialogOpen()).toBe(false);
+    expect(access(component).notesMembership()).toBeNull();
+    // initial load + reload after anonymize
+    expect(serviceMock.teamsMembershipsList).toHaveBeenCalledTimes(2);
+  });
+
+  it('confirmAnonymizeMember is a no-op for a non-manager (coach-gated)', async () => {
+    await setup('4', team, otherUser);
+    expect(access(component).canManage()).toBe(false);
+    access(component).confirmAnonymizeMember(mb1);
+    expect(membersMock.membersAnonymize).not.toHaveBeenCalled();
   });
 
   it('confirmRemoveMember calls teamsMembershipsDestroy on accept', () => {

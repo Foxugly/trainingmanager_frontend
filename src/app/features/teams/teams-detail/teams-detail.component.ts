@@ -26,6 +26,7 @@ import { Textarea } from 'primeng/textarea';
 import { Tooltip } from 'primeng/tooltip';
 import { InvitationsService } from '../../../api/api/invitations.service';
 import { JoinRequestsService } from '../../../api/api/join-requests.service';
+import { MembersService } from '../../../api/api/members.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { CreateInvitation } from '../../../api/model/create-invitation';
 import { CreateJoinRequest } from '../../../api/model/create-join-request';
@@ -100,6 +101,7 @@ export class TeamsDetailComponent implements OnInit {
   private readonly teamsService = inject(TeamsService);
   private readonly invitationsService = inject(InvitationsService);
   private readonly joinRequestsService = inject(JoinRequestsService);
+  private readonly membersService = inject(MembersService);
   private readonly memberMembershipService = inject(MemberMembershipService);
   private readonly authService = inject(AuthService);
   private readonly confirmationService = inject(ConfirmationService);
@@ -251,6 +253,9 @@ export class TeamsDetailComponent implements OnInit {
   protected readonly notesDialogOpen = signal(false);
   protected readonly notesMembership = signal<TeamMembership | null>(null);
 
+  // --- RGPD anonymize (coach-only, irreversible) ---
+  protected readonly anonymizing = signal(false);
+
   protected openNotes(mb: TeamMembership): void {
     this.notesMembership.set(mb);
     this.notesDialogOpen.set(true);
@@ -261,6 +266,49 @@ export class TeamsDetailComponent implements OnInit {
     if (!value) {
       this.notesMembership.set(null);
     }
+  }
+
+  protected confirmAnonymizeMember(mb: TeamMembership): void {
+    // Hard gate: only coaches (owner/manager) may anonymize.
+    if (!this.canManage()) return;
+    this.confirmationService.confirm({
+      header: this.transloco.translate('rgpd.anonymize.confirm_title'),
+      message: this.transloco.translate('rgpd.anonymize.confirm_body'),
+      acceptLabel: this.transloco.translate('rgpd.anonymize.accept'),
+      rejectLabel: this.transloco.translate('common.cancel'),
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => this.anonymizeMember(mb),
+    });
+  }
+
+  private anonymizeMember(mb: TeamMembership): void {
+    const id = this.teamId();
+    if (id === null || !this.canManage()) return;
+    this.anonymizing.set(true);
+    this.membersService
+      .membersAnonymize(mb.member)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.anonymizing.set(false);
+          this.notesDialogOpen.set(false);
+          this.notesMembership.set(null);
+          this.messageService.add({
+            severity: 'success',
+            summary: this.transloco.translate('common.success'),
+            detail: this.transloco.translate('rgpd.anonymize.toast'),
+          });
+          this.loadMemberships(id);
+        },
+        error: () => {
+          this.anonymizing.set(false);
+          this.messageService.add({
+            severity: 'error',
+            summary: this.transloco.translate('common.error'),
+            detail: this.transloco.translate('rgpd.anonymize.error'),
+          });
+        },
+      });
   }
 
   protected readonly roleClasses: Record<TeamRole, string> = {

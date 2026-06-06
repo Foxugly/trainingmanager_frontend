@@ -193,6 +193,46 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  // --- RGPD data export ---
+  protected readonly exporting = signal(false);
+
+  protected downloadMyData(): void {
+    if (this.exporting()) return;
+    this.exporting.set(true);
+    this.meService.meExportRetrieve().subscribe({
+      next: (data) => {
+        try {
+          const blob = new Blob([JSON.stringify(data, null, 2)], {
+            type: 'application/json',
+          });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'trainingmanager-export.json';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          this.messageService.add({
+            severity: 'success',
+            summary: this.transloco.translate('common.success'),
+            detail: this.transloco.translate('rgpd.export.toast'),
+          });
+        } finally {
+          this.exporting.set(false);
+        }
+      },
+      error: () => {
+        this.exporting.set(false);
+        this.messageService.add({
+          severity: 'error',
+          summary: this.transloco.translate('common.error'),
+          detail: this.transloco.translate('rgpd.export.error'),
+        });
+      },
+    });
+  }
+
   // --- iCal calendar subscription ---
 
   protected copyCalendarUrl(): void {

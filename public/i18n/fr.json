@@ -1232,5 +1232,24 @@
       "error": "Une erreur est survenue"
     },
     "delete_confirm": "Supprimer cette performance ?"
+  },
+  "rgpd": {
+    "export": {
+      "section": "Données personnelles",
+      "cta": "Télécharger mes données (RGPD)",
+      "help": "Téléchargez une copie de toutes vos données au format JSON.",
+      "toast": "Export téléchargé",
+      "error": "Le téléchargement de l’export a échoué, réessayez."
+    },
+    "anonymize": {
+      "section": "Zone de danger",
+      "action": "Anonymiser",
+      "help": "Effacer définitivement les données personnelles de cet athlète.",
+      "confirm_title": "Anonymiser cet athlète ?",
+      "confirm_body": "Cette action est irréversible : les données personnelles de l’athlète (nom, e-mail, téléphone) seront effacées. L’historique d’entraînement est conservé.",
+      "accept": "Anonymiser",
+      "toast": "Athlète anonymisé",
+      "error": "L’anonymisation a échoué, réessayez."
+    }
   }
 }

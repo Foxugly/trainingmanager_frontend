@@ -87,6 +87,9 @@ interface ProtectedFields {
   calendarRotating(): boolean;
   copyCalendarUrl(): void;
   regenerateCalendarUrl(): void;
+  // RGPD export
+  exporting(): boolean;
+  downloadMyData(): void;
 }
 
 const prefRows: NotificationPreference[] = [
@@ -100,6 +103,7 @@ describe('ProfileComponent', () => {
   let meMock: {
     mePartialUpdate: ReturnType<typeof vi.fn>;
     meCalendarTokenRotate: ReturnType<typeof vi.fn>;
+    meExportRetrieve: ReturnType<typeof vi.fn>;
   };
   let authMock: {
     currentUser: ReturnType<typeof vi.fn>;
@@ -123,7 +127,11 @@ describe('ProfileComponent', () => {
   async function setup(initialUser: Me | null = baseUser) {
     TestBed.resetTestingModule();
     const userSignal = signal<Me | null>(initialUser);
-    meMock = { mePartialUpdate: vi.fn(), meCalendarTokenRotate: vi.fn() };
+    meMock = {
+      mePartialUpdate: vi.fn(),
+      meCalendarTokenRotate: vi.fn(),
+      meExportRetrieve: vi.fn(),
+    };
     authMock = {
       currentUser: userSignal.asReadonly() as unknown as ReturnType<typeof vi.fn>,
       fetchMe: vi.fn().mockReturnValue(of(baseUser)),
@@ -502,5 +510,45 @@ describe('ProfileComponent', () => {
     );
     expect(access(component).calendarRotating()).toBe(false);
     confirmSpy.mockRestore();
+  });
+
+  // --- RGPD data export ---
+
+  it('downloadMyData calls meExportRetrieve and toasts success', () => {
+    meMock.meExportRetrieve.mockReturnValue(of({ profile: { username: 'alice' } }));
+    const createUrl = vi
+      .spyOn(URL, 'createObjectURL')
+      .mockReturnValue('blob:fake');
+    const revokeUrl = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => undefined);
+    // jsdom doesn't implement <a>.click navigation; stub it to a no-op.
+    const clickSpy = vi
+      .spyOn(HTMLAnchorElement.prototype, 'click')
+      .mockImplementation(() => undefined);
+
+    access(component).downloadMyData();
+
+    expect(meMock.meExportRetrieve).toHaveBeenCalled();
+    expect(createUrl).toHaveBeenCalled();
+    expect(clickSpy).toHaveBeenCalled();
+    expect(revokeUrl).toHaveBeenCalledWith('blob:fake');
+    expect(access(component).exporting()).toBe(false);
+    expect(messageService.add).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'success' }),
+    );
+
+    createUrl.mockRestore();
+    revokeUrl.mockRestore();
+    clickSpy.mockRestore();
+  });
+
+  it('downloadMyData toasts an error on failure', () => {
+    meMock.meExportRetrieve.mockReturnValue(throwError(() => ({ status: 500 })));
+
+    access(component).downloadMyData();
+
+    expect(messageService.add).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'error' }),
+    );
+    expect(access(component).exporting()).toBe(false);
   });
 });

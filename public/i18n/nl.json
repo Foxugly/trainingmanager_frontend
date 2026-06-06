@@ -1232,5 +1232,24 @@
       "error": "Er is een fout opgetreden"
     },
     "delete_confirm": "Deze prestatie verwijderen?"
+  },
+  "rgpd": {
+    "export": {
+      "section": "Persoonsgegevens",
+      "cta": "Mijn gegevens downloaden (AVG)",
+      "help": "Download een kopie van al uw gegevens in JSON-formaat.",
+      "toast": "Export gedownload",
+      "error": "Het downloaden van de export is mislukt, probeer opnieuw."
+    },
+    "anonymize": {
+      "section": "Gevarenzone",
+      "action": "Anonimiseren",
+      "help": "Verwijder definitief de persoonsgegevens van deze atleet.",
+      "confirm_title": "Deze atleet anonimiseren?",
+      "confirm_body": "Deze actie is onomkeerbaar: de persoonsgegevens van de atleet (naam, e-mail, telefoon) worden gewist. De trainingsgeschiedenis blijft behouden.",
+      "accept": "Anonimiseren",
+      "toast": "Atleet geanonimiseerd",
+      "error": "Het anonimiseren is mislukt, probeer opnieuw."
+    }
   }
 }

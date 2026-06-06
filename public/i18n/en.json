@@ -1232,5 +1232,24 @@
       "error": "An error occurred"
     },
     "delete_confirm": "Delete this performance?"
+  },
+  "rgpd": {
+    "export": {
+      "section": "Personal data",
+      "cta": "Download my data (GDPR)",
+      "help": "Download a copy of all your data in JSON format.",
+      "toast": "Export downloaded",
+      "error": "Downloading the export failed, please try again."
+    },
+    "anonymize": {
+      "section": "Danger zone",
+      "action": "Anonymize",
+      "help": "Permanently erase this athlete’s personal data.",
+      "confirm_title": "Anonymize this athlete?",
+      "confirm_body": "This action is irreversible: the athlete’s personal data (name, e-mail, phone) will be erased. Training history is kept.",
+      "accept": "Anonymize",
+      "toast": "Athlete anonymized",
+      "error": "Anonymization failed, please try again."
+    }
   }
 }
