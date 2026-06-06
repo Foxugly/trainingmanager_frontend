@@ -8,6 +8,8 @@ import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AuthService as AuthApi } from '../../api/api/auth.service';
 import { MeService } from '../../api/api/me.service';
+import { NotificationsService } from '../../api/api/notifications.service';
+import { NotificationPreference } from '../../api/model/notification-preference';
 import { LanguageEnum } from '../../api/model/language-enum';
 import { Me } from '../../api/model/me';
 import { AuthService } from '../../core/auth/auth.service';
@@ -73,7 +75,17 @@ interface ProtectedFields {
   deleteFieldError(name: string): string | null;
   openDeleteDialog(): void;
   submitDelete(): void;
+  // notification preferences matrix
+  prefs(): NotificationPreference[];
+  prefsSaving(): boolean;
+  toggleChannel(index: number, channel: 'in_app' | 'email', value: boolean): void;
+  savePreferences(): void;
 }
+
+const prefRows: NotificationPreference[] = [
+  { type: 'note_for_coach', label: 'Note added', in_app: true, email: true } as NotificationPreference,
+  { type: 'message_new_reply', label: 'New reply', in_app: true, email: false } as NotificationPreference,
+];
 
 describe('ProfileComponent', () => {
   let fixture: ComponentFixture<ProfileComponent>;
@@ -90,6 +102,10 @@ describe('ProfileComponent', () => {
     authAccountDeleteCreate: ReturnType<typeof vi.fn>;
   };
   let langMock: { applyToTranslocoOnly: ReturnType<typeof vi.fn> };
+  let notifMock: {
+    notificationsPreferencesRetrieve: ReturnType<typeof vi.fn>;
+    notificationsPreferencesUpdate: ReturnType<typeof vi.fn>;
+  };
   let messageService: MessageService;
 
   const access = (c: ProfileComponent) => c as unknown as ProtectedFields;
@@ -109,6 +125,10 @@ describe('ProfileComponent', () => {
       authAccountDeleteCreate: vi.fn(),
     };
     langMock = { applyToTranslocoOnly: vi.fn() };
+    notifMock = {
+      notificationsPreferencesRetrieve: vi.fn().mockReturnValue(of(prefRows)),
+      notificationsPreferencesUpdate: vi.fn().mockReturnValue(of(prefRows)),
+    };
 
     await TestBed.configureTestingModule({
       imports: [
@@ -126,6 +146,7 @@ describe('ProfileComponent', () => {
         { provide: AuthService, useValue: authMock },
         { provide: AuthApi, useValue: authApiMock },
         { provide: LanguageService, useValue: langMock },
+        { provide: NotificationsService, useValue: notifMock },
       ],
     })
       .overrideComponent(ProfileComponent, { set: { template: '', imports: [] } })
@@ -355,5 +376,45 @@ describe('ProfileComponent', () => {
 
     expect(access(component).deleteFieldError('current_password')).not.toBeNull();
     expect(authMock.logout).not.toHaveBeenCalled();
+  });
+
+  // --- Notification preferences matrix ---
+
+  it('loads the preferences matrix on init', () => {
+    expect(notifMock.notificationsPreferencesRetrieve).toHaveBeenCalled();
+    expect(access(component).prefs().length).toBe(2);
+  });
+
+  it('toggleChannel mutates the local matrix row', () => {
+    access(component).toggleChannel(1, 'email', true);
+    expect(access(component).prefs()[1].email).toBe(true);
+    expect(access(component).prefs()[0].email).toBe(true);
+  });
+
+  it('savePreferences PUTs the matrix and toasts on success', () => {
+    access(component).toggleChannel(0, 'in_app', false);
+    access(component).savePreferences();
+
+    expect(notifMock.notificationsPreferencesUpdate).toHaveBeenCalledWith({
+      preferences: [
+        { type: 'note_for_coach', label: 'Note added', in_app: false, email: true },
+        { type: 'message_new_reply', label: 'New reply', in_app: true, email: false },
+      ],
+    });
+    expect(access(component).prefsSaving()).toBe(false);
+    expect(messageService.add).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'success' }),
+    );
+  });
+
+  it('savePreferences toasts an error on failure', () => {
+    notifMock.notificationsPreferencesUpdate.mockReturnValue(
+      throwError(() => ({ status: 500 })),
+    );
+    access(component).savePreferences();
+    expect(messageService.add).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'error' }),
+    );
+    expect(access(component).prefsSaving()).toBe(false);
   });
 });

@@ -1,0 +1,59 @@
+<button
+  #bellBtn
+  type="button"
+  class="bell-trigger"
+  [attr.aria-label]="'notifications.bell_label' | transloco"
+  (click)="toggle($event)"
+>
+  @if (hasUnread()) {
+    <p-overlayBadge [value]="badgeValue()" severity="danger">
+      <i class="pi pi-bell" aria-hidden="true"></i>
+    </p-overlayBadge>
+  } @else {
+    <i class="pi pi-bell" aria-hidden="true"></i>
+  }
+</button>
+
+<p-popover #panel styleClass="notif-popover">
+  <div class="notif-panel">
+    <div class="notif-head">
+      <span class="notif-title">{{ 'notifications.bell_label' | transloco }}</span>
+      @if (hasUnread()) {
+        <button type="button" class="notif-markall" (click)="markAllRead()">
+          {{ 'notifications.mark_all_read' | transloco }}
+        </button>
+      }
+    </div>
+
+    <div class="notif-list">
+      @if (loading() && items().length === 0) {
+        <div class="notif-empty">…</div>
+      } @else if (items().length === 0) {
+        <div class="notif-empty">
+          <i class="pi pi-inbox" aria-hidden="true"></i>
+          <span>{{ 'notifications.empty' | transloco }}</span>
+        </div>
+      } @else {
+        @for (notif of items(); track notif.id) {
+          <button
+            type="button"
+            class="notif-item"
+            [class.notif-item--unread]="!notif.is_read"
+            (click)="onSelect(notif)"
+          >
+            @if (!notif.is_read) {
+              <span class="notif-dot" aria-hidden="true"></span>
+            }
+            <span class="notif-body">
+              <span class="notif-item-title">{{ notif.title }}</span>
+              @if (notif.body) {
+                <span class="notif-item-text">{{ notif.body }}</span>
+              }
+              <span class="notif-item-time">{{ shortTime(notif.created_at) }}</span>
+            </span>
+          </button>
+        }
+      }
+    </div>
+  </div>
+</p-popover>

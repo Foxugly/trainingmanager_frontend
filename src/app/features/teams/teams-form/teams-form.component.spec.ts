@@ -283,6 +283,34 @@ describe('TeamsFormComponent', () => {
     );
   });
 
+  it('pre-fills the note-notify toggles from the team', async () => {
+    await setup('5', ownerUser, {
+      ...team,
+      notify_coaches_on_note: false,
+      notify_athlete_on_visible_note: false,
+    });
+    expect(access(component).form.getRawValue()).toMatchObject({
+      notify_coaches_on_note: false,
+      notify_athlete_on_visible_note: false,
+    });
+  });
+
+  it('update payload includes the note-notify toggles', async () => {
+    await setup('5');
+    access(component).form.patchValue({
+      notify_coaches_on_note: false,
+      notify_athlete_on_visible_note: true,
+    });
+    access(component).submit();
+    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(
+      5,
+      expect.objectContaining({
+        notify_coaches_on_note: false,
+        notify_athlete_on_visible_note: true,
+      }),
+    );
+  });
+
   it('on create 403 team_quota_exceeded → quotaExceeded set, no navigation, refreshMe called', async () => {
     teamsMock.teamsCreate.mockReturnValueOnce(
       throwError(() => ({

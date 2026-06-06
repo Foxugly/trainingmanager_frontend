@@ -419,6 +419,10 @@
       "roti_enabled_help": "Laat atleten beoordelen hoe zwaar elke sessie aanvoelde (1 tot 5).",
       "weekly_recap_enabled": "Wekelijks overzicht inschakelen",
       "weekly_recap_enabled_help": "Stuur een wekelijks overzicht naar de coaches van het team",
+      "notify_coaches_on_note": "Coaches informeren bij notities",
+      "notify_coaches_on_note_help": "De owner en managers (behalve de auteur) worden geïnformeerd telkens wanneer een notitie wordt toegevoegd bij een atleet van het team.",
+      "notify_athlete_on_visible_note": "Atleet informeren bij gedeelde notities",
+      "notify_athlete_on_visible_note_help": "Een atleet met een gekoppeld account wordt geïnformeerd wanneer een met hem gedeelde notitie wordt toegevoegd.",
       "tab_visibility": "Zichtbaarheid",
       "timezone": "Tijdzone",
       "timezone_help": "Tijdzone van het team, gebruikt om te bepalen of een sessie voorbij is (zichtbaarheid \"na de sessie\").",
@@ -859,6 +863,15 @@
       "invalid_credentials": "Ongeldige inloggegevens",
       "unknown": "Er is een fout opgetreden, probeer het opnieuw."
     }
+  },
+  "notifications": {
+    "bell_label": "Meldingen",
+    "mark_all_read": "Alles als gelezen markeren",
+    "empty": "Geen meldingen",
+    "preferences_title": "Meldingsvoorkeuren",
+    "channel_in_app": "In de app",
+    "channel_email": "E-mail",
+    "prefs_saved": "Meldingsvoorkeuren opgeslagen."
   },
   "profile": {
     "title": "Profiel",

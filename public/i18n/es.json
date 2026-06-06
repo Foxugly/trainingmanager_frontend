@@ -419,6 +419,10 @@
       "roti_enabled_help": "Permite a los atletas valorar lo dura que resultó cada sesión (de 1 a 5).",
       "weekly_recap_enabled": "Activar el resumen semanal",
       "weekly_recap_enabled_help": "Enviar un resumen semanal a los entrenadores del equipo",
+      "notify_coaches_on_note": "Notificar a los coaches sobre las notas",
+      "notify_coaches_on_note_help": "El propietario y los managers (excepto el autor) reciben una notificación cada vez que se añade una nota sobre un atleta del equipo.",
+      "notify_athlete_on_visible_note": "Notificar al atleta sobre las notas compartidas",
+      "notify_athlete_on_visible_note_help": "Un atleta con una cuenta vinculada recibe una notificación cuando se añade una nota compartida con él.",
       "tab_visibility": "Visibilidad",
       "timezone": "Zona horaria",
       "timezone_help": "Zona horaria del equipo, usada para determinar si una sesión ha terminado (visibilidad \"tras la sesión\").",
@@ -859,6 +863,15 @@
       "invalid_credentials": "Credenciales no válidas",
       "unknown": "Se ha producido un error, inténtalo de nuevo."
     }
+  },
+  "notifications": {
+    "bell_label": "Notificaciones",
+    "mark_all_read": "Marcar todo como leído",
+    "empty": "Sin notificaciones",
+    "preferences_title": "Preferencias de notificación",
+    "channel_in_app": "En la app",
+    "channel_email": "Correo",
+    "prefs_saved": "Preferencias de notificación guardadas."
   },
   "profile": {
     "title": "Perfil",

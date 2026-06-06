@@ -419,6 +419,10 @@
       "roti_enabled_help": "Lets athletes rate how hard each session felt (1 to 5).",
       "weekly_recap_enabled": "Enable weekly recap",
       "weekly_recap_enabled_help": "Send a weekly recap to the team’s coaches",
+      "notify_coaches_on_note": "Notify coaches on notes",
+      "notify_coaches_on_note_help": "The owner and managers (except the author) are notified each time a note is added on one of the team's athletes.",
+      "notify_athlete_on_visible_note": "Notify athlete on shared notes",
+      "notify_athlete_on_visible_note_help": "An athlete with a linked user account is notified when a note shared with them is added.",
       "tab_visibility": "Visibility",
       "timezone": "Time zone",
       "timezone_help": "Team time zone, used to decide whether a session is over (\"after the session\" visibility).",
@@ -859,6 +863,15 @@
       "unknown": "Something went wrong, please try again.",
       "login_failed": "Account created but auto sign-in failed. Sign in with your username and password."
     }
+  },
+  "notifications": {
+    "bell_label": "Notifications",
+    "mark_all_read": "Mark all as read",
+    "empty": "No notifications",
+    "preferences_title": "Notification preferences",
+    "channel_in_app": "In-app",
+    "channel_email": "Email",
+    "prefs_saved": "Notification preferences saved."
   },
   "profile": {
     "title": "Profile",

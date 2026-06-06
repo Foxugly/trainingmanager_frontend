@@ -18,6 +18,7 @@ import { filter } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
 import { LanguageSwitcherComponent } from '../../i18n/language-switcher/language-switcher.component';
 import { UserMenuComponent } from '../../../shared/ui/user-menu/user-menu.component';
+import { NotificationBellComponent } from '../notification-bell/notification-bell.component';
 
 export type TopmenuMode = 'public' | 'authenticated';
 
@@ -30,6 +31,7 @@ export type TopmenuMode = 'public' | 'authenticated';
     TranslocoPipe,
     LanguageSwitcherComponent,
     UserMenuComponent,
+    NotificationBellComponent,
   ],
   templateUrl: './topmenu.component.html',
   styleUrl: './topmenu.component.scss',

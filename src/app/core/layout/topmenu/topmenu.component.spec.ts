@@ -9,6 +9,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Me } from '../../../api/model/me';
 import { AuthService } from '../../auth/auth.service';
 import { LanguageService } from '../../i18n/language.service';
+import { NotificationBellComponent } from '../notification-bell/notification-bell.component';
+import { NotificationService } from '../../notifications/notification.service';
 import { TopmenuComponent } from './topmenu.component';
 
 interface ProtectedFields {
@@ -53,8 +55,24 @@ describe('TopmenuComponent', () => {
         MessageService,
         { provide: AuthService, useValue: { currentUser: userSig.asReadonly(), logout: () => undefined } },
         { provide: LanguageService, useValue: { activeLang: signal('fr').asReadonly(), switchLanguage: () => ({ subscribe: () => undefined }) } },
+        {
+          provide: NotificationService,
+          useValue: {
+            unreadCount: signal(0).asReadonly(),
+            items: signal([]).asReadonly(),
+            refreshUnread: () => ({ subscribe: () => undefined }),
+            loadRecent: () => ({ subscribe: () => undefined }),
+            markRead: () => ({ subscribe: () => undefined }),
+            markAllRead: () => ({ subscribe: () => undefined }),
+            reset: () => undefined,
+          },
+        },
       ],
-    }).compileComponents();
+    })
+      .overrideComponent(NotificationBellComponent, {
+        set: { template: '<span class="notif-bell-stub"></span>', imports: [] },
+      })
+      .compileComponents();
 
     // Patch the real Router's events stream so we can control NavigationEnd timing without
     // breaking Router DI (RouterLink/RouterLinkActive depend on a real Router instance).
@@ -183,6 +201,14 @@ describe('TopmenuComponent', () => {
     c.closeMobile();
     fixture.detectChanges();
     expect(hamburger.getAttribute('aria-expanded')).toBe('false');
+  });
+
+  it('renders the notification bell only in authenticated mode', async () => {
+    await setup({ mode: 'public' });
+    expect(fixture.nativeElement.querySelector('app-notification-bell')).toBeFalsy();
+
+    await setup({ mode: 'authenticated', user: baseUser });
+    expect(fixture.nativeElement.querySelector('app-notification-bell')).toBeTruthy();
   });
 
   it('does NOT render legacy anchor hrefs (#hero, #features, #contribute)', async () => {

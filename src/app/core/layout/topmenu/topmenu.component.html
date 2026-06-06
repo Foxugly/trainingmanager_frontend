@@ -39,6 +39,9 @@
 
   <div class="actions actions--desktop">
     <app-language-switcher />
+    @if (mode() === 'authenticated') {
+      <app-notification-bell />
+    }
     <app-user-menu />
   </div>
 
@@ -90,6 +93,9 @@
       </nav>
       <div class="actions actions--mobile">
         <app-language-switcher />
+        @if (mode() === 'authenticated') {
+          <app-notification-bell />
+        }
         <app-user-menu />
       </div>
     </div>

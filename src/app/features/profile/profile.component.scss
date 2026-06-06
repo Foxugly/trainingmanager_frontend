@@ -1,3 +1,49 @@
 :host {
   display: block;
 }
+
+.notif-prefs {
+  margin-top: 1.5rem;
+}
+
+.notif-prefs-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+}
+
+.notif-prefs-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 0.55rem 0.6rem;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  thead th {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--muted, #64748b);
+    border-bottom: 1px solid var(--p-content-border-color, #e2e8f0);
+  }
+
+  tbody tr + tr th,
+  tbody tr + tr td {
+    border-top: 1px solid var(--p-content-border-color, #f1f5f9);
+  }
+
+  .notif-prefs-type {
+    text-align: left;
+    font-weight: 500;
+    font-size: 0.88rem;
+  }
+}
+
+.notif-prefs-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}

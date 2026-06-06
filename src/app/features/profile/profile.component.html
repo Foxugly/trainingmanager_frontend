@@ -72,6 +72,63 @@
                   />
                 </app-meta-field>
               </div>
+
+              <section class="notif-prefs">
+                <h3 class="notif-prefs-title">
+                  {{ 'notifications.preferences_title' | transloco }}
+                </h3>
+
+                @if (prefs().length > 0) {
+                  <table class="notif-prefs-table">
+                    <thead>
+                      <tr>
+                        <th scope="col" class="notif-prefs-type"></th>
+                        <th scope="col">{{ 'notifications.channel_in_app' | transloco }}</th>
+                        <th scope="col">{{ 'notifications.channel_email' | transloco }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (row of prefs(); track row.type; let i = $index) {
+                        <tr>
+                          <th scope="row" class="notif-prefs-type">{{ row.label }}</th>
+                          <td>
+                            <p-toggleSwitch
+                              [ngModel]="row.in_app"
+                              [ngModelOptions]="{ standalone: true }"
+                              (ngModelChange)="toggleChannel(i, 'in_app', $event)"
+                              [inputId]="'notif-inapp-' + row.type"
+                              [ariaLabel]="
+                                row.label + ' · ' + ('notifications.channel_in_app' | transloco)
+                              "
+                            />
+                          </td>
+                          <td>
+                            <p-toggleSwitch
+                              [ngModel]="row.email"
+                              [ngModelOptions]="{ standalone: true }"
+                              (ngModelChange)="toggleChannel(i, 'email', $event)"
+                              [inputId]="'notif-email-' + row.type"
+                              [ariaLabel]="
+                                row.label + ' · ' + ('notifications.channel_email' | transloco)
+                              "
+                            />
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+
+                  <div class="notif-prefs-actions">
+                    <p-button
+                      type="button"
+                      icon="pi pi-save"
+                      [label]="'common.save' | transloco"
+                      [loading]="prefsSaving()"
+                      (onClick)="savePreferences()"
+                    />
+                  </div>
+                }
+              </section>
             </p-tabpanel>
           </p-tabpanels>
         </p-tabs>

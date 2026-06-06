@@ -419,6 +419,10 @@
       "roti_enabled_help": "Permet aux athlètes de noter la difficulté ressentie de chaque séance (1 à 5).",
       "weekly_recap_enabled": "Activer le récapitulatif hebdomadaire",
       "weekly_recap_enabled_help": "Envoyer un récapitulatif hebdomadaire aux coachs de l’équipe",
+      "notify_coaches_on_note": "Notifier les coachs sur les notes",
+      "notify_coaches_on_note_help": "L'owner et les managers (sauf l'auteur) sont notifiés à chaque ajout d'une note sur un athlète de l'équipe.",
+      "notify_athlete_on_visible_note": "Notifier l'athlète sur les notes partagées",
+      "notify_athlete_on_visible_note_help": "Un athlète avec un compte lié est notifié lorsqu'une note partagée avec lui est ajoutée.",
       "tab_visibility": "Visibilité",
       "timezone": "Fuseau horaire",
       "timezone_help": "Fuseau de l'équipe, utilisé pour déterminer si une séance est terminée (visibilité « après la séance »).",
@@ -859,6 +863,15 @@
       "unknown": "Une erreur est survenue, réessayez.",
       "login_failed": "Compte créé mais la connexion automatique a échoué. Connectez-vous avec votre nom d'utilisateur et mot de passe."
     }
+  },
+  "notifications": {
+    "bell_label": "Notifications",
+    "mark_all_read": "Tout marquer comme lu",
+    "empty": "Aucune notification",
+    "preferences_title": "Préférences de notification",
+    "channel_in_app": "Dans l'app",
+    "channel_email": "Email",
+    "prefs_saved": "Préférences de notification enregistrées."
   },
   "profile": {
     "title": "Profil",

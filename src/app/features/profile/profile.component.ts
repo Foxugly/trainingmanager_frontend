@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -14,6 +14,8 @@ import { Tabs, TabList, Tab, TabPanels, TabPanel } from 'primeng/tabs';
 import { ToggleSwitch } from 'primeng/toggleswitch';
 import { AuthService as AuthApi } from '../../api/api/auth.service';
 import { MeService } from '../../api/api/me.service';
+import { NotificationsService } from '../../api/api/notifications.service';
+import { NotificationPreference } from '../../api/model/notification-preference';
 import { AccountDelete } from '../../api/model/account-delete';
 import { LanguageEnum } from '../../api/model/language-enum';
 import { Me } from '../../api/model/me';
@@ -38,6 +40,7 @@ interface ProfileFormValue {
   selector: 'app-profile',
   imports: [
     ReactiveFormsModule,
+    FormsModule,
     RouterLink,
     InputText,
     Select,
@@ -65,6 +68,7 @@ export class ProfileComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly authApi = inject(AuthApi);
   private readonly meService = inject(MeService);
+  private readonly notificationsApi = inject(NotificationsService);
   private readonly languageService = inject(LanguageService);
   private readonly transloco = inject(TranslocoService);
   private readonly messageService = inject(MessageService);
@@ -74,6 +78,11 @@ export class ProfileComponent implements OnInit {
   protected readonly user = signal<Me | null>(null);
   protected readonly loading = signal(false);
   protected readonly fieldErrors = signal<FieldErrors | null>(null);
+
+  // --- Per-type notification channel matrix ---
+  protected readonly prefs = signal<NotificationPreference[]>([]);
+  protected readonly prefsLoading = signal(false);
+  protected readonly prefsSaving = signal(false);
 
   protected readonly form = this.fb.nonNullable.group({
     first_name: ['', Validators.required],
@@ -109,6 +118,53 @@ export class ProfileComponent implements OnInit {
         next: (me) => this.hydrate(me),
       });
     }
+    this.loadPreferences();
+  }
+
+  private loadPreferences(): void {
+    this.prefsLoading.set(true);
+    this.notificationsApi.notificationsPreferencesRetrieve().subscribe({
+      next: (rows) => {
+        this.prefs.set(rows);
+        this.prefsLoading.set(false);
+      },
+      error: () => this.prefsLoading.set(false),
+    });
+  }
+
+  protected toggleChannel(index: number, channel: 'in_app' | 'email', value: boolean): void {
+    this.prefs.update((rows) =>
+      rows.map((row, i) => (i === index ? { ...row, [channel]: value } : row)),
+    );
+  }
+
+  protected savePreferences(): void {
+    this.prefsSaving.set(true);
+    const preferences: NotificationPreference[] = this.prefs().map((p) => ({
+      type: p.type,
+      label: p.label,
+      in_app: p.in_app,
+      email: p.email,
+    }));
+    this.notificationsApi.notificationsPreferencesUpdate({ preferences }).subscribe({
+      next: (rows) => {
+        this.prefs.set(rows);
+        this.prefsSaving.set(false);
+        this.messageService.add({
+          severity: 'success',
+          summary: this.transloco.translate('common.success'),
+          detail: this.transloco.translate('notifications.prefs_saved'),
+        });
+      },
+      error: () => {
+        this.prefsSaving.set(false);
+        this.messageService.add({
+          severity: 'error',
+          summary: this.transloco.translate('common.error'),
+          detail: this.transloco.translate('profile.errors.unknown'),
+        });
+      },
+    });
   }
 
   private hydrate(me: Me): void {

@@ -311,6 +311,30 @@
                         inputId="weekly_recap_enabled"
                       />
                     </app-meta-field>
+
+                    <app-meta-field
+                      [full]="true"
+                      for="notify_coaches_on_note"
+                      [label]="'teams.form.notify_coaches_on_note' | transloco"
+                      [tooltip]="'teams.form.notify_coaches_on_note_help' | transloco"
+                    >
+                      <p-toggleSwitch
+                        formControlName="notify_coaches_on_note"
+                        inputId="notify_coaches_on_note"
+                      />
+                    </app-meta-field>
+
+                    <app-meta-field
+                      [full]="true"
+                      for="notify_athlete_on_visible_note"
+                      [label]="'teams.form.notify_athlete_on_visible_note' | transloco"
+                      [tooltip]="'teams.form.notify_athlete_on_visible_note_help' | transloco"
+                    >
+                      <p-toggleSwitch
+                        formControlName="notify_athlete_on_visible_note"
+                        inputId="notify_athlete_on_visible_note"
+                      />
+                    </app-meta-field>
                   </div>
                 </div>
               </p-tabpanel>
