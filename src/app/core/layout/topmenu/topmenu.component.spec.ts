@@ -21,8 +21,13 @@ interface ProtectedFields {
 }
 
 const baseUser: Me = {
-  id: 1, username: 'coach', first_name: 'R', last_name: 'V',
-  email: 'r@example.com', language: 'fr', is_staff: false,
+  id: 1,
+  username: 'coach',
+  first_name: 'R',
+  last_name: 'V',
+  email: 'r@example.com',
+  language: 'fr',
+  is_staff: false,
 } as unknown as Me;
 
 const staffUser: Me = { ...baseUser, is_staff: true } as Me;
@@ -33,10 +38,12 @@ describe('TopmenuComponent', () => {
   let routerEvents: Subject<unknown>;
   const access = (c: TopmenuComponent) => c as unknown as ProtectedFields;
 
-  async function setup(opts: {
-    mode?: 'public' | 'authenticated';
-    user?: Me | null;
-  } = {}) {
+  async function setup(
+    opts: {
+      mode?: 'public' | 'authenticated';
+      user?: Me | null;
+    } = {},
+  ) {
     TestBed.resetTestingModule();
     userSig = signal<Me | null>(opts.user ?? null);
     routerEvents = new Subject<unknown>();
@@ -53,8 +60,17 @@ describe('TopmenuComponent', () => {
         provideNoopAnimations(),
         provideRouter([]),
         MessageService,
-        { provide: AuthService, useValue: { currentUser: userSig.asReadonly(), logout: () => undefined } },
-        { provide: LanguageService, useValue: { activeLang: signal('fr').asReadonly(), switchLanguage: () => ({ subscribe: () => undefined }) } },
+        {
+          provide: AuthService,
+          useValue: { currentUser: userSig.asReadonly(), logout: () => undefined },
+        },
+        {
+          provide: LanguageService,
+          useValue: {
+            activeLang: signal('fr').asReadonly(),
+            switchLanguage: () => ({ subscribe: () => undefined }),
+          },
+        },
         {
           provide: NotificationService,
           useValue: {
@@ -77,7 +93,10 @@ describe('TopmenuComponent', () => {
     // Patch the real Router's events stream so we can control NavigationEnd timing without
     // breaking Router DI (RouterLink/RouterLinkActive depend on a real Router instance).
     const router = TestBed.inject(Router);
-    Object.defineProperty(router, 'events', { value: routerEvents.asObservable(), configurable: true });
+    Object.defineProperty(router, 'events', {
+      value: routerEvents.asObservable(),
+      configurable: true,
+    });
 
     fixture = TestBed.createComponent(TopmenuComponent);
     fixture.componentRef.setInput('mode', opts.mode ?? 'public');
@@ -209,6 +228,35 @@ describe('TopmenuComponent', () => {
 
     await setup({ mode: 'authenticated', user: baseUser });
     expect(fixture.nativeElement.querySelector('app-notification-bell')).toBeTruthy();
+  });
+
+  it('renders a messages icon linking to /messages only in authenticated mode', async () => {
+    await setup({ mode: 'public' });
+    expect(fixture.nativeElement.querySelector('.msg-trigger')).toBeFalsy();
+
+    await setup({ mode: 'authenticated', user: baseUser });
+    const msg = fixture.nativeElement.querySelector(
+      '.actions--desktop .msg-trigger',
+    ) as HTMLAnchorElement | null;
+    expect(msg).toBeTruthy();
+    expect(msg!.getAttribute('href')).toBe('/messages');
+    expect(msg!.querySelector('i.pi-comments')).toBeTruthy();
+  });
+
+  it('orders the desktop actions cluster: messages, bell, language switcher, user menu', async () => {
+    await setup({ mode: 'authenticated', user: baseUser });
+    const cluster = fixture.nativeElement.querySelector('.actions--desktop') as HTMLElement;
+    const selector = '.msg-trigger, app-notification-bell, app-language-switcher, app-user-menu';
+    const order = Array.from(cluster.querySelectorAll(selector)).map((el) => {
+      const tag = el.tagName.toLowerCase();
+      return tag === 'a' ? 'messages' : tag;
+    });
+    expect(order).toEqual([
+      'messages',
+      'app-notification-bell',
+      'app-language-switcher',
+      'app-user-menu',
+    ]);
   });
 
   it('does NOT render legacy anchor hrefs (#hero, #features, #contribute)', async () => {

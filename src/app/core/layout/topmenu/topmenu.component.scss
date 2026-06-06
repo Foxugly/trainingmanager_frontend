@@ -85,6 +85,36 @@
   gap: 0.5rem;
 }
 
+// Icon-only messages button — mirrors notification-bell's .bell-trigger look/size.
+.msg-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: #cbd5e1;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.15s ease, background 0.15s ease;
+
+  .pi {
+    font-size: 1.15rem;
+  }
+}
+
+.msg-trigger:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.msg-trigger:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 2px;
+}
+
 .hamburger {
   display: none;
   background: transparent;
@@ -156,6 +186,16 @@
     padding-top: 0.75rem;
     margin-top: 0.5rem;
     border-top: 1px solid #f1f5f9;
+  }
+
+  // On the light drawer background, darken the messages icon for contrast.
+  .drawer .actions--mobile .msg-trigger {
+    color: #475569;
+  }
+
+  .drawer .actions--mobile .msg-trigger:hover {
+    color: #0f172a;
+    background: #f1f5f9;
   }
 }
 

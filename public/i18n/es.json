@@ -13,7 +13,13 @@
   },
   "topmenu": {
     "open": "Abrir menú",
-    "close": "Cerrar menú"
+    "close": "Cerrar menú",
+    "messages": "Mensajes"
+  },
+  "messages": {
+    "title": "Mensajes",
+    "subtitle": "Accede a las conversaciones de tus equipos.",
+    "empty": "Ningún equipo"
   },
   "ai": {
     "generating_event": "La IA está preparando tu sesión…",

@@ -1,6 +1,14 @@
 <header class="topbar">
   <a [routerLink]="['/']" class="brand" (click)="closeMobile()">
-    <img class="brand-mark" ngSrc="/favicon.ico" width="42" height="42" alt="" aria-hidden="true" priority />
+    <img
+      class="brand-mark"
+      ngSrc="/favicon.ico"
+      width="42"
+      height="42"
+      alt=""
+      aria-hidden="true"
+      priority
+    />
     <span class="brand-label">{{ 'app.title' | transloco }}</span>
   </a>
 
@@ -38,10 +46,17 @@
   </nav>
 
   <div class="actions actions--desktop">
-    <app-language-switcher />
     @if (mode() === 'authenticated') {
+      <a
+        class="msg-trigger"
+        [routerLink]="['/messages']"
+        [attr.aria-label]="'topmenu.messages' | transloco"
+      >
+        <i class="pi pi-comments" aria-hidden="true"></i>
+      </a>
       <app-notification-bell />
     }
+    <app-language-switcher />
     <app-user-menu />
   </div>
 
@@ -54,24 +69,41 @@
     [attr.aria-label]="(mobileMenuOpen() ? 'topmenu.close' : 'topmenu.open') | transloco"
     (click)="toggleMobile()"
   >
-    <i class="pi" [class.pi-bars]="!mobileMenuOpen()" [class.pi-times]="mobileMenuOpen()" aria-hidden="true"></i>
+    <i
+      class="pi"
+      [class.pi-bars]="!mobileMenuOpen()"
+      [class.pi-times]="mobileMenuOpen()"
+      aria-hidden="true"
+    ></i>
   </button>
 
   @if (mobileMenuOpen()) {
     <div #drawerEl id="topmenu-drawer" class="drawer">
       <nav class="nav nav--mobile" [attr.aria-label]="'app.title' | transloco">
         @if (mode() === 'public') {
-          <a [routerLink]="['/']" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMobile()">
+          <a
+            [routerLink]="['/']"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            (click)="closeMobile()"
+          >
             <i class="pi pi-home" aria-hidden="true"></i> {{ 'public.nav.home' | transloco }}
           </a>
           <a [routerLink]="['/features']" routerLinkActive="active" (click)="closeMobile()">
-            <i class="pi pi-sparkles" aria-hidden="true"></i> {{ 'public.nav.features' | transloco }}
+            <i class="pi pi-sparkles" aria-hidden="true"></i>
+            {{ 'public.nav.features' | transloco }}
           </a>
-          <a [routerLink]="['/contribute']" routerLinkActive="active" class="nav-cta" (click)="closeMobile()">
+          <a
+            [routerLink]="['/contribute']"
+            routerLinkActive="active"
+            class="nav-cta"
+            (click)="closeMobile()"
+          >
             <i class="pi pi-heart" aria-hidden="true"></i> {{ 'public.nav.contribute' | transloco }}
           </a>
           <a [routerLink]="['/about']" routerLinkActive="active" (click)="closeMobile()">
-            <i class="pi pi-info-circle" aria-hidden="true"></i> {{ 'public.nav.about' | transloco }}
+            <i class="pi pi-info-circle" aria-hidden="true"></i>
+            {{ 'public.nav.about' | transloco }}
           </a>
         } @else {
           <a [routerLink]="['/dashboard']" routerLinkActive="active" (click)="closeMobile()">
@@ -86,16 +118,29 @@
           <a [routerLink]="['/events']" routerLinkActive="active" (click)="closeMobile()">
             <i class="pi pi-calendar" aria-hidden="true"></i> {{ 'nav.calendar' | transloco }}
           </a>
-          <a [routerLink]="['/contribute']" routerLinkActive="active" class="nav-cta" (click)="closeMobile()">
+          <a
+            [routerLink]="['/contribute']"
+            routerLinkActive="active"
+            class="nav-cta"
+            (click)="closeMobile()"
+          >
             <i class="pi pi-heart" aria-hidden="true"></i> {{ 'public.nav.support' | transloco }}
           </a>
         }
       </nav>
       <div class="actions actions--mobile">
-        <app-language-switcher />
         @if (mode() === 'authenticated') {
+          <a
+            class="msg-trigger"
+            [routerLink]="['/messages']"
+            [attr.aria-label]="'topmenu.messages' | transloco"
+            (click)="closeMobile()"
+          >
+            <i class="pi pi-comments" aria-hidden="true"></i>
+          </a>
           <app-notification-bell />
         }
+        <app-language-switcher />
         <app-user-menu />
       </div>
     </div>

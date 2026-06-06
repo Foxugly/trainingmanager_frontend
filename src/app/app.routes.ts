@@ -23,14 +23,12 @@ export const routes: Routes = [
         path: '',
         pathMatch: 'full',
         canActivate: [redirectAuthenticatedToDashboard],
-        loadComponent: () =>
-          import('./features/home/home.component').then((m) => m.HomeComponent),
+        loadComponent: () => import('./features/home/home.component').then((m) => m.HomeComponent),
       },
       {
         path: 'home',
         pathMatch: 'full',
-        loadComponent: () =>
-          import('./features/home/home.component').then((m) => m.HomeComponent),
+        loadComponent: () => import('./features/home/home.component').then((m) => m.HomeComponent),
       },
       {
         path: 'features',
@@ -42,9 +40,7 @@ export const routes: Routes = [
       {
         path: 'about',
         loadComponent: () =>
-          import('./features/about-page/about-page.component').then(
-            (m) => m.AboutPageComponent,
-          ),
+          import('./features/about-page/about-page.component').then((m) => m.AboutPageComponent),
       },
       {
         path: 'contribute',
@@ -104,9 +100,9 @@ export const routes: Routes = [
       {
         path: 'auth/forgot-password/sent',
         loadComponent: () =>
-          import(
-            './features/auth/forgot-password-sent/forgot-password-sent.component'
-          ).then((m) => m.ForgotPasswordSentComponent),
+          import('./features/auth/forgot-password-sent/forgot-password-sent.component').then(
+            (m) => m.ForgotPasswordSentComponent,
+          ),
       },
       {
         path: 'auth/reset-password/:key',
@@ -149,9 +145,9 @@ export const routes: Routes = [
           {
             path: 'modalities',
             loadComponent: () =>
-              import(
-                './features/admin/modalities/modalities-hub/modalities-hub.component'
-              ).then((m) => m.ModalitiesHubComponent),
+              import('./features/admin/modalities/modalities-hub/modalities-hub.component').then(
+                (m) => m.ModalitiesHubComponent,
+              ),
           },
         ],
       },
@@ -184,6 +180,11 @@ export const routes: Routes = [
         path: 'dashboard',
         loadComponent: () =>
           import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent),
+      },
+      {
+        path: 'messages',
+        loadComponent: () =>
+          import('./features/messages/messages.component').then((m) => m.MessagesComponent),
       },
       {
         path: 'profile',
