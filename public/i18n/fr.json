@@ -415,6 +415,25 @@
     "error_delete": "Impossible de supprimer le lieu.",
     "error_duplicate": "Un lieu portant ce nom existe déjà."
   },
+  "equipment": {
+    "title_plural": "Équipements",
+    "new": "Nouvel équipement",
+    "edit": "Modifier l'équipement",
+    "delete": "Supprimer l'équipement",
+    "add": "Ajouter un équipement",
+    "name": "Nom de l'équipement",
+    "name_required": "Le nom est obligatoire.",
+    "none": "Aucun équipement",
+    "select_placeholder": "Sélectionner du matériel",
+    "legacy_hint": "Matériel actuel",
+    "created": "Équipement créé.",
+    "updated": "Équipement mis à jour.",
+    "deleted": "Équipement supprimé.",
+    "delete_confirm": "Supprimer l'équipement « {{name}} » ? Il sera retiré des séances qui l'utilisent.",
+    "error_create": "Impossible d'enregistrer l'équipement.",
+    "error_delete": "Impossible de supprimer l'équipement.",
+    "error_duplicate": "Un équipement portant ce nom existe déjà."
+  },
   "training_template": {
     "tab": "Planning type",
     "slots": "Créneaux",

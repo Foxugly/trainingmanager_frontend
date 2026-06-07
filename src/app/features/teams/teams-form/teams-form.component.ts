@@ -38,11 +38,15 @@ import { Tooltip } from 'primeng/tooltip';
 import { AttendanceStatusesService } from '../../../api/api/attendance-statuses.service';
 import { LevelsService } from '../../../api/api/levels.service';
 import { PlacesService } from '../../../api/api/places.service';
+import { EquipmentService } from '../../../api/api/equipment.service';
 import { SportsService } from '../../../api/api/sports.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { Place } from '../../../api/model/place';
 import { PlaceRequest } from '../../../api/model/place-request';
 import { PatchedPlace } from '../../../api/model/patched-place';
+import { Equipment } from '../../../api/model/equipment';
+import { EquipmentRequest } from '../../../api/model/equipment-request';
+import { PatchedEquipmentRequest } from '../../../api/model/patched-equipment-request';
 import { AttendanceStatus } from '../../../api/model/attendance-status';
 import { CustomUserPublic } from '../../../api/model/custom-user-public';
 import { JoinRequestPolicyEnum } from '../../../api/model/join-request-policy-enum';
@@ -159,6 +163,7 @@ export class TeamsFormComponent implements OnInit {
   private readonly sportsService = inject(SportsService);
   private readonly levelsService = inject(LevelsService);
   private readonly placesService = inject(PlacesService);
+  private readonly equipmentService = inject(EquipmentService);
   private readonly statusesService = inject(AttendanceStatusesService);
   private readonly authService = inject(AuthService);
   private readonly confirmationService = inject(ConfirmationService);
@@ -258,6 +263,18 @@ export class TeamsFormComponent implements OnInit {
   protected readonly placeName = signal('');
   protected readonly placeAddress = signal('');
   protected readonly placeNameError = signal<string | null>(null);
+
+  // ── Équipements (managed equipment) ─────────────────────────────────────
+  /** The team's managed equipment (Matériel). */
+  protected readonly equipment = signal<Equipment[]>([]);
+  protected readonly equipmentLoading = signal(false);
+  /** Inline create/edit dialog state. */
+  protected readonly equipmentDialogVisible = signal(false);
+  protected readonly equipmentSaving = signal(false);
+  /** Id of the equipment item being edited, or null when creating a new one. */
+  protected readonly editingEquipmentId = signal<number | null>(null);
+  protected readonly equipmentName = signal('');
+  protected readonly equipmentNameError = signal<string | null>(null);
 
   /** Weekday select options (Mon=0 … Sun=6), re-translated on language change. */
   protected readonly weekdayOptions = computed(() => {
@@ -371,6 +388,7 @@ export class TeamsFormComponent implements OnInit {
       this.teamId.set(id);
       this.loadTemplate(id);
       this.loadPlaces(id);
+      this.loadEquipment(id);
       this.loading.set(true);
       this.teamsService
         .teamsRetrieve(id)
@@ -897,6 +915,143 @@ export class TeamsFormComponent implements OnInit {
   }
 
   private notifyPlaceToast(detailKey: string): void {
+    this.messageService.add({
+      severity: 'success',
+      summary: this.transloco.translate('common.success'),
+      detail: this.transloco.translate(detailKey),
+    });
+  }
+
+  // ── Équipements (managed equipment) management ──────────────────────────
+
+  private loadEquipment(teamId: number): void {
+    this.equipmentLoading.set(true);
+    this.equipmentService
+      .equipmentList(undefined, undefined, undefined, undefined, teamId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          this.equipment.set(res.results ?? []);
+          this.equipmentLoading.set(false);
+        },
+        error: () => {
+          this.equipment.set([]);
+          this.equipmentLoading.set(false);
+        },
+      });
+  }
+
+  /** Open the dialog to create a new equipment item. */
+  protected openCreateEquipment(): void {
+    this.editingEquipmentId.set(null);
+    this.equipmentName.set('');
+    this.equipmentNameError.set(null);
+    this.equipmentDialogVisible.set(true);
+  }
+
+  /** Open the dialog pre-filled to edit an existing equipment item. */
+  protected openEditEquipment(item: Equipment): void {
+    this.editingEquipmentId.set(item.id);
+    this.equipmentName.set(item.name);
+    this.equipmentNameError.set(null);
+    this.equipmentDialogVisible.set(true);
+  }
+
+  protected closeEquipmentDialog(): void {
+    this.equipmentDialogVisible.set(false);
+  }
+
+  /** Create or update the equipment item currently in the dialog. */
+  protected saveEquipment(): void {
+    const teamId = this.teamId();
+    const name = this.equipmentName().trim();
+    if (teamId === null) return;
+    if (!name) {
+      this.equipmentNameError.set(this.transloco.translate('equipment.name_required'));
+      return;
+    }
+    this.equipmentSaving.set(true);
+    this.equipmentNameError.set(null);
+    const id = this.editingEquipmentId();
+
+    const onError = (err: HttpErrorResponse) => {
+      this.equipmentSaving.set(false);
+      const body = err?.error as { code?: string } | null | undefined;
+      if (err.status === 400 && body?.code === 'equipment_already_exists') {
+        this.equipmentNameError.set(this.transloco.translate('equipment.error_duplicate'));
+      } else {
+        this.messageService.add({
+          severity: 'error',
+          summary: this.transloco.translate('common.error'),
+          detail: this.transloco.translate('equipment.error_create'),
+        });
+      }
+    };
+
+    if (id === null) {
+      const payload: EquipmentRequest = { team: teamId, name };
+      this.equipmentService
+        .equipmentCreate(payload)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (created) => {
+            this.equipmentSaving.set(false);
+            this.equipmentDialogVisible.set(false);
+            this.equipment.update((cur) => [...cur, created]);
+            this.notifyEquipmentToast('equipment.created');
+          },
+          error: onError,
+        });
+    } else {
+      const payload: PatchedEquipmentRequest = { name };
+      this.equipmentService
+        .equipmentPartialUpdate(id, payload)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (updated) => {
+            this.equipmentSaving.set(false);
+            this.equipmentDialogVisible.set(false);
+            this.equipment.update((cur) => cur.map((i) => (i.id === updated.id ? updated : i)));
+            this.notifyEquipmentToast('equipment.updated');
+          },
+          error: onError,
+        });
+    }
+  }
+
+  /** Confirm + delete an equipment item. */
+  protected confirmDeleteEquipment(item: Equipment): void {
+    this.confirmationService.confirm({
+      message: this.transloco.translate('equipment.delete_confirm', { name: item.name }),
+      header: this.transloco.translate('equipment.delete'),
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: this.transloco.translate('common.delete'),
+      rejectLabel: this.transloco.translate('common.cancel'),
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => this.deleteEquipment(item.id),
+    });
+  }
+
+  private deleteEquipment(id: number): void {
+    this.equipmentService
+      .equipmentDestroy(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.equipment.update((cur) => cur.filter((i) => i.id !== id));
+          this.notifyEquipmentToast('equipment.deleted');
+        },
+        error: () => {
+          this.messageService.add({
+            severity: 'error',
+            summary: this.transloco.translate('common.error'),
+            detail: this.transloco.translate('equipment.error_delete'),
+          });
+        },
+      });
+  }
+
+  private notifyEquipmentToast(detailKey: string): void {
     this.messageService.add({
       severity: 'success',
       summary: this.transloco.translate('common.success'),

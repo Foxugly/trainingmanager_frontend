@@ -415,6 +415,25 @@
     "error_delete": "Could not delete the place.",
     "error_duplicate": "A place with this name already exists."
   },
+  "equipment": {
+    "title_plural": "Equipment",
+    "new": "New equipment",
+    "edit": "Edit equipment",
+    "delete": "Delete equipment",
+    "add": "Add equipment",
+    "name": "Equipment name",
+    "name_required": "Name is required.",
+    "none": "No equipment",
+    "select_placeholder": "Select equipment",
+    "legacy_hint": "Current equipment",
+    "created": "Equipment created.",
+    "updated": "Equipment updated.",
+    "deleted": "Equipment deleted.",
+    "delete_confirm": "Delete the equipment “{{name}}”? It will be removed from the sessions that use it.",
+    "error_create": "Could not save the equipment.",
+    "error_delete": "Could not delete the equipment.",
+    "error_duplicate": "Equipment with this name already exists."
+  },
   "training_template": {
     "tab": "Weekly template",
     "slots": "Slots",

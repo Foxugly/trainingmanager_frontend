@@ -415,6 +415,25 @@
     "error_delete": "No se pudo eliminar el lugar.",
     "error_duplicate": "Ya existe un lugar con este nombre."
   },
+  "equipment": {
+    "title_plural": "Material",
+    "new": "Nuevo material",
+    "edit": "Editar material",
+    "delete": "Eliminar material",
+    "add": "Añadir material",
+    "name": "Nombre del material",
+    "name_required": "El nombre es obligatorio.",
+    "none": "Sin material",
+    "select_placeholder": "Seleccionar material",
+    "legacy_hint": "Material actual",
+    "created": "Material creado.",
+    "updated": "Material actualizado.",
+    "deleted": "Material eliminado.",
+    "delete_confirm": "¿Eliminar el material «{{name}}»? Se quitará de las sesiones que lo utilizan.",
+    "error_create": "No se pudo guardar el material.",
+    "error_delete": "No se pudo eliminar el material.",
+    "error_duplicate": "Ya existe material con ese nombre."
+  },
   "training_template": {
     "tab": "Plantilla semanal",
     "slots": "Franjas horarias",

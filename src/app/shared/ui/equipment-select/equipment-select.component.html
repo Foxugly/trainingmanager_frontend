@@ -1,0 +1,75 @@
+<div class="flex items-center gap-2">
+  <p-multiSelect
+    [inputId]="inputId()"
+    [options]="items()"
+    [ngModel]="value"
+    (ngModelChange)="onSelectChange($event)"
+    optionLabel="name"
+    optionValue="id"
+    [filter]="true"
+    [showClear]="true"
+    [disabled]="disabled"
+    [placeholder]="'equipment.select_placeholder' | transloco"
+    [emptyMessage]="'equipment.none' | transloco"
+    display="chip"
+    styleClass="w-full flex-1 min-w-0"
+    appendTo="body"
+  />
+  <p-button
+    type="button"
+    severity="success"
+    [outlined]="true"
+    size="small"
+    icon="pi pi-plus"
+    [ariaLabel]="'equipment.add' | transloco"
+    [pTooltip]="'equipment.add' | transloco"
+    [disabled]="disabled || teamId() == null"
+    (onClick)="openCreate()"
+  />
+</div>
+
+<p-dialog
+  [header]="'equipment.new' | transloco"
+  [visible]="dialogVisible()"
+  (visibleChange)="dialogVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '28rem' }"
+  appendTo="body"
+>
+  <div class="flex flex-col gap-4 pt-1">
+    <div class="flex flex-col gap-1">
+      <label for="new_equipment_name" class="text-sm font-medium text-gray-700">
+        {{ 'equipment.name' | transloco }}
+      </label>
+      <input
+        pInputText
+        id="new_equipment_name"
+        [ngModel]="newName()"
+        (ngModelChange)="newName.set($event)"
+        maxlength="255"
+        [attr.aria-invalid]="nameError() ? 'true' : null"
+      />
+      @if (nameError()) {
+        <small class="text-red-600">{{ nameError() }}</small>
+      }
+    </div>
+  </div>
+  <ng-template #footer>
+    <p-button
+      type="button"
+      severity="secondary"
+      [outlined]="true"
+      [label]="'common.cancel' | transloco"
+      (onClick)="closeCreate()"
+    />
+    <p-button
+      type="button"
+      icon="pi pi-check"
+      [label]="'equipment.add' | transloco"
+      [loading]="creating()"
+      (onClick)="createItem()"
+    />
+  </ng-template>
+</p-dialog>

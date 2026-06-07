@@ -48,10 +48,20 @@
             [full]="true"
             [label]="'events.form.equipment' | transloco"
             [tooltip]="'events.form.equipment_tooltip' | transloco"
-            for="equipment"
-            [error]="fieldError('equipment')"
+            for="equipment_item_ids"
+            [error]="fieldError('equipment_item_ids')"
           >
-            <app-rich-editor formControlName="equipment" [style]="{ height: '10rem' }" />
+            <app-equipment-select
+              inputId="equipment_item_ids"
+              formControlName="equipment_item_ids"
+              [teamId]="selectedTeamId()"
+            />
+            @if (legacyEquipment()) {
+              <small class="meta-hint mt-1 block">
+                {{ 'equipment.legacy_hint' | transloco }}:
+                <span [innerHTML]="legacyEquipment()"></span>
+              </small>
+            }
           </app-meta-field>
         </div>
 

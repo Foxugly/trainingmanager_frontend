@@ -415,6 +415,25 @@
     "error_delete": "Kan de locatie niet verwijderen.",
     "error_duplicate": "Er bestaat al een locatie met deze naam."
   },
+  "equipment": {
+    "title_plural": "Materiaal",
+    "new": "Nieuw materiaal",
+    "edit": "Materiaal bewerken",
+    "delete": "Materiaal verwijderen",
+    "add": "Materiaal toevoegen",
+    "name": "Naam van het materiaal",
+    "name_required": "Naam is verplicht.",
+    "none": "Geen materiaal",
+    "select_placeholder": "Materiaal selecteren",
+    "legacy_hint": "Huidig materiaal",
+    "created": "Materiaal aangemaakt.",
+    "updated": "Materiaal bijgewerkt.",
+    "deleted": "Materiaal verwijderd.",
+    "delete_confirm": "Materiaal “{{name}}” verwijderen? Het wordt verwijderd uit de sessies die het gebruiken.",
+    "error_create": "Kan het materiaal niet opslaan.",
+    "error_delete": "Kan het materiaal niet verwijderen.",
+    "error_duplicate": "Er bestaat al materiaal met deze naam."
+  },
   "training_template": {
     "tab": "Weekschema",
     "slots": "Tijdvakken",

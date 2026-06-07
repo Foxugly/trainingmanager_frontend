@@ -39,6 +39,7 @@ import { FormFooterComponent } from '../../../shared/ui/form-footer/form-footer.
 import { MetaFieldComponent } from '../../../shared/ui/meta-field/meta-field.component';
 import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
 import { PlaceSelectComponent } from '../../../shared/ui/place-select/place-select.component';
+import { EquipmentSelectComponent } from '../../../shared/ui/equipment-select/equipment-select.component';
 import { RichEditorComponent } from '../../../shared/ui/rich-editor/rich-editor.component';
 
 function toIsoDate(d: Date | null | undefined): string | null {
@@ -96,6 +97,7 @@ function timeRangeValidator(group: AbstractControl): ValidationErrors | null {
     MetaFieldComponent,
     FormFooterComponent,
     PlaceSelectComponent,
+    EquipmentSelectComponent,
     TranslocoPipe,
   ],
   templateUrl: './events-form.component.html',
@@ -126,6 +128,11 @@ export class EventsFormComponent implements OnInit {
    * Shown as a hint under the Lieu selector; selecting/creating a place wins.
    */
   protected readonly legacyLocation = signal<string | null>(null);
+  /**
+   * Legacy free-text equipment carried by an event that has no linked equipment
+   * items yet. Shown as a hint under the Matériel selector; selecting items wins.
+   */
+  protected readonly legacyEquipment = signal<string | null>(null);
 
   protected readonly isEditMode = computed(() => this.eventId() !== null);
 
@@ -148,7 +155,7 @@ export class EventsFormComponent implements OnInit {
       // client length cap on the HTML payload.
       goal: [''],
       place_id: this.fb.nonNullable.control<number | null>(null),
-      equipment: [''],
+      equipment_item_ids: this.fb.nonNullable.control<number[]>([]),
       date: this.fb.nonNullable.control<Date | null>(null, [Validators.required]),
       hour_start: this.fb.nonNullable.control<Date | null>(null),
       hour_end: this.fb.nonNullable.control<Date | null>(null),
@@ -298,7 +305,7 @@ export class EventsFormComponent implements OnInit {
             refer_program_id: e.refer_program?.id ?? null,
             goal: e.goal ?? '',
             place_id: e.place?.id ?? null,
-            equipment: e.equipment ?? '',
+            equipment_item_ids: e.equipment_items?.map((i) => i.id) ?? [],
             date: parseDate(e.date),
             hour_start: parseTime(e.hour_start),
             hour_end: parseTime(e.hour_end),
@@ -312,6 +319,11 @@ export class EventsFormComponent implements OnInit {
           // A legacy event may carry a free-text location with no linked place;
           // surface it as a hint until a place is chosen.
           this.legacyLocation.set(e.place ? null : e.location || null);
+          // A legacy event may carry free-text equipment with no linked items;
+          // surface it as a hint until equipment items are chosen.
+          this.legacyEquipment.set(
+            e.equipment_items && e.equipment_items.length > 0 ? null : e.equipment || null,
+          );
           this.resolveTeamForProgram(e.refer_program?.id ?? null);
           this.loading.set(false);
         },
@@ -353,7 +365,7 @@ export class EventsFormComponent implements OnInit {
         refer_program_id: value.refer_program_id,
         goal: value.goal || null,
         place_id: value.place_id ?? null,
-        equipment: value.equipment || '',
+        equipment_item_ids: value.equipment_item_ids ?? [],
         date: toIsoDate(value.date),
         hour_start: toIsoTime(value.hour_start),
         hour_end: toIsoTime(value.hour_end),
@@ -385,7 +397,7 @@ export class EventsFormComponent implements OnInit {
       refer_program_id: value.refer_program_id ?? undefined,
       goal: value.goal || undefined,
       place_id: value.place_id ?? null,
-      equipment: value.equipment ?? '',
+      equipment_item_ids: value.equipment_item_ids ?? [],
       date: toIsoDate(value.date) ?? undefined,
       hour_start: toIsoTime(value.hour_start) ?? undefined,
       hour_end: toIsoTime(value.hour_end) ?? undefined,
