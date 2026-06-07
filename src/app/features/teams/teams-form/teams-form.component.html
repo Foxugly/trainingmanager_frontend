@@ -462,54 +462,32 @@
                       </ul>
                     }
 
-                    <!-- Section: Équipements (managed equipment) -->
+                    <!-- Section: Équipements (enable a subset of the sport catalog) -->
                     <div class="flex items-center justify-between mb-2 mt-8">
                       <h3 class="builder-section-title !mb-0">
                         {{ 'equipment.title_plural' | transloco }}
                       </h3>
-                      <p-button
-                        type="button"
-                        severity="success"
-                        size="small"
-                        icon="pi pi-plus"
-                        [label]="'equipment.add' | transloco"
-                        (onClick)="openCreateEquipment()"
-                      />
                     </div>
+                    <p class="meta-hint mb-2">{{ 'equipment.enable_help' | transloco }}</p>
 
                     @if (equipmentLoading()) {
                       <p class="meta-hint">{{ 'common.loading' | transloco }}…</p>
-                    } @else if (equipment().length === 0) {
-                      <p class="meta-hint mb-2">{{ 'equipment.none' | transloco }}</p>
+                    } @else if (equipmentCatalog().length === 0) {
+                      <p class="meta-hint mb-2">{{ 'equipment.none_for_sport' | transloco }}</p>
                     } @else {
-                      <ul class="manager-list">
-                        @for (item of equipment(); track item.id) {
-                          <li class="manager-row">
-                            <span class="manager-name flex flex-col">
-                              <span class="font-medium">{{ item.name }}</span>
-                            </span>
-                            <p-button
-                              type="button"
-                              icon="pi pi-pencil"
-                              severity="secondary"
-                              [text]="true"
-                              [rounded]="true"
-                              size="small"
-                              [ariaLabel]="'equipment.edit' | transloco"
-                              [pTooltip]="'equipment.edit' | transloco"
-                              (onClick)="openEditEquipment(item)"
+                      <ul class="status-checklist">
+                        @for (item of equipmentCatalog(); track item.id) {
+                          <li class="status-row">
+                            <p-checkbox
+                              [binary]="true"
+                              [inputId]="'equipment_' + item.id"
+                              [ngModel]="isEquipmentEnabled(item.id)"
+                              [ngModelOptions]="{ standalone: true }"
+                              (ngModelChange)="toggleEquipment(item, $event)"
                             />
-                            <p-button
-                              type="button"
-                              icon="pi pi-trash"
-                              severity="danger"
-                              [text]="true"
-                              [rounded]="true"
-                              size="small"
-                              [ariaLabel]="'equipment.delete' | transloco"
-                              [pTooltip]="'equipment.delete' | transloco"
-                              (onClick)="confirmDeleteEquipment(item)"
-                            />
+                            <label [attr.for]="'equipment_' + item.id" class="status-label">
+                              <span>{{ item.name }}</span>
+                            </label>
                           </li>
                         }
                       </ul>
@@ -830,53 +808,6 @@
         [label]="'common.save' | transloco"
         [loading]="placeSaving()"
         (onClick)="savePlace()"
-      />
-    </ng-template>
-  </p-dialog>
-
-  <p-dialog
-    [header]="(editingEquipmentId() === null ? 'equipment.new' : 'equipment.edit') | transloco"
-    [visible]="equipmentDialogVisible()"
-    (visibleChange)="equipmentDialogVisible.set($event)"
-    [modal]="true"
-    [draggable]="false"
-    [resizable]="false"
-    [style]="{ width: '28rem' }"
-    appendTo="body"
-  >
-    <div class="flex flex-col gap-4 pt-1">
-      <div class="flex flex-col gap-1">
-        <label for="equipment_form_name" class="text-sm font-medium text-gray-700">
-          {{ 'equipment.name' | transloco }}
-        </label>
-        <input
-          pInputText
-          id="equipment_form_name"
-          [ngModel]="equipmentName()"
-          (ngModelChange)="equipmentName.set($event)"
-          [ngModelOptions]="{ standalone: true }"
-          maxlength="255"
-          [attr.aria-invalid]="equipmentNameError() ? 'true' : null"
-        />
-        @if (equipmentNameError()) {
-          <small class="text-red-600">{{ equipmentNameError() }}</small>
-        }
-      </div>
-    </div>
-    <ng-template #footer>
-      <p-button
-        type="button"
-        severity="secondary"
-        [outlined]="true"
-        [label]="'common.cancel' | transloco"
-        (onClick)="closeEquipmentDialog()"
-      />
-      <p-button
-        type="button"
-        icon="pi pi-check"
-        [label]="'common.save' | transloco"
-        [loading]="equipmentSaving()"
-        (onClick)="saveEquipment()"
       />
     </ng-template>
   </p-dialog>

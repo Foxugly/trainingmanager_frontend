@@ -45,8 +45,6 @@ import { Place } from '../../../api/model/place';
 import { PlaceRequest } from '../../../api/model/place-request';
 import { PatchedPlace } from '../../../api/model/patched-place';
 import { Equipment } from '../../../api/model/equipment';
-import { EquipmentRequest } from '../../../api/model/equipment-request';
-import { PatchedEquipmentRequest } from '../../../api/model/patched-equipment-request';
 import { AttendanceStatus } from '../../../api/model/attendance-status';
 import { CustomUserPublic } from '../../../api/model/custom-user-public';
 import { JoinRequestPolicyEnum } from '../../../api/model/join-request-policy-enum';
@@ -264,17 +262,14 @@ export class TeamsFormComponent implements OnInit {
   protected readonly placeAddress = signal('');
   protected readonly placeNameError = signal<string | null>(null);
 
-  // ── Équipements (managed equipment) ─────────────────────────────────────
-  /** The team's managed equipment (Matériel). */
-  protected readonly equipment = signal<Equipment[]>([]);
+  // ── Équipements (global catalog, enabled per team) ──────────────────────
+  /**
+   * The full equipment (Matériel) catalog for the team's sport. The owner
+   * enables a subset by checking items; the selected ids are persisted via
+   * the `equipment_ids` write-only field on the team PATCH.
+   */
+  protected readonly equipmentCatalog = signal<Equipment[]>([]);
   protected readonly equipmentLoading = signal(false);
-  /** Inline create/edit dialog state. */
-  protected readonly equipmentDialogVisible = signal(false);
-  protected readonly equipmentSaving = signal(false);
-  /** Id of the equipment item being edited, or null when creating a new one. */
-  protected readonly editingEquipmentId = signal<number | null>(null);
-  protected readonly equipmentName = signal('');
-  protected readonly equipmentNameError = signal<string | null>(null);
 
   /** Weekday select options (Mon=0 … Sun=6), re-translated on language change. */
   protected readonly weekdayOptions = computed(() => {
@@ -332,6 +327,7 @@ export class TeamsFormComponent implements OnInit {
     rsvp_enabled: [false],
     weekly_recap_enabled: [false],
     managers_ids: this.fb.nonNullable.control<number[]>([]),
+    equipment_ids: this.fb.nonNullable.control<number[]>([]),
     auto_accept_policy: [false],
     topic_creation: this.fb.nonNullable.control<TopicCreationEnum>(TopicCreationEnum.Coaches),
     notify_managers_on_join_request: [true],
@@ -388,7 +384,6 @@ export class TeamsFormComponent implements OnInit {
       this.teamId.set(id);
       this.loadTemplate(id);
       this.loadPlaces(id);
-      this.loadEquipment(id);
       this.loading.set(true);
       this.teamsService
         .teamsRetrieve(id)
@@ -403,6 +398,13 @@ export class TeamsFormComponent implements OnInit {
             });
             this.availableManagers.set(t.managers ?? []);
             this.partitionStatuses(this.availableStatuses(), t.attendance_statuses ?? null);
+            // Load the sport's equipment catalog so the owner can enable a subset.
+            const sportId = t.sport?.id;
+            if (sportId != null) {
+              this.loadEquipmentCatalog(sportId);
+            } else {
+              this.equipmentCatalog.set([]);
+            }
             this.form.reset({
               name: t.name,
               sport_id: t.sport?.id ?? null,
@@ -414,6 +416,7 @@ export class TeamsFormComponent implements OnInit {
               rsvp_enabled: t.rsvp_enabled ?? false,
               weekly_recap_enabled: t.weekly_recap_enabled ?? false,
               managers_ids: (t.managers ?? []).map((m) => m.id),
+              equipment_ids: (t.equipment ?? []).map((e) => e.id),
               auto_accept_policy: t.join_request_policy === JoinRequestPolicyEnum.Auto,
               topic_creation: t.topic_creation ?? TopicCreationEnum.Coaches,
               notify_managers_on_join_request: t.notify_managers_on_join_request ?? true,
@@ -611,6 +614,7 @@ export class TeamsFormComponent implements OnInit {
       rsvp_enabled: value.rsvp_enabled,
       weekly_recap_enabled: value.weekly_recap_enabled,
       managers_ids: value.managers_ids,
+      equipment_ids: value.equipment_ids,
       attendance_statuses: this.statusesTarget().map((s) => s.id),
       join_request_policy: value.auto_accept_policy
         ? JoinRequestPolicyEnum.Auto
@@ -922,141 +926,42 @@ export class TeamsFormComponent implements OnInit {
     });
   }
 
-  // ── Équipements (managed equipment) management ──────────────────────────
+  // ── Équipements (enable a subset of the sport catalog) ──────────────────
 
-  private loadEquipment(teamId: number): void {
+  /** Fetch the full equipment catalog for the team's sport. */
+  private loadEquipmentCatalog(sportId: number): void {
     this.equipmentLoading.set(true);
     this.equipmentService
-      .equipmentList(undefined, undefined, undefined, undefined, teamId)
+      // Signature: (ordering, page, pageSize, search, sport, team)
+      .equipmentList(undefined, undefined, undefined, undefined, sportId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
-          this.equipment.set(res.results ?? []);
+          this.equipmentCatalog.set(res.results ?? []);
           this.equipmentLoading.set(false);
         },
         error: () => {
-          this.equipment.set([]);
+          this.equipmentCatalog.set([]);
           this.equipmentLoading.set(false);
         },
       });
   }
 
-  /** Open the dialog to create a new equipment item. */
-  protected openCreateEquipment(): void {
-    this.editingEquipmentId.set(null);
-    this.equipmentName.set('');
-    this.equipmentNameError.set(null);
-    this.equipmentDialogVisible.set(true);
+  /** Whether the given catalog item is enabled for the team. */
+  protected isEquipmentEnabled(id: number): boolean {
+    return (this.form.controls.equipment_ids.value ?? []).includes(id);
   }
 
-  /** Open the dialog pre-filled to edit an existing equipment item. */
-  protected openEditEquipment(item: Equipment): void {
-    this.editingEquipmentId.set(item.id);
-    this.equipmentName.set(item.name);
-    this.equipmentNameError.set(null);
-    this.equipmentDialogVisible.set(true);
-  }
-
-  protected closeEquipmentDialog(): void {
-    this.equipmentDialogVisible.set(false);
-  }
-
-  /** Create or update the equipment item currently in the dialog. */
-  protected saveEquipment(): void {
-    const teamId = this.teamId();
-    const name = this.equipmentName().trim();
-    if (teamId === null) return;
-    if (!name) {
-      this.equipmentNameError.set(this.transloco.translate('equipment.name_required'));
-      return;
-    }
-    this.equipmentSaving.set(true);
-    this.equipmentNameError.set(null);
-    const id = this.editingEquipmentId();
-
-    const onError = (err: HttpErrorResponse) => {
-      this.equipmentSaving.set(false);
-      const body = err?.error as { code?: string } | null | undefined;
-      if (err.status === 400 && body?.code === 'equipment_already_exists') {
-        this.equipmentNameError.set(this.transloco.translate('equipment.error_duplicate'));
-      } else {
-        this.messageService.add({
-          severity: 'error',
-          summary: this.transloco.translate('common.error'),
-          detail: this.transloco.translate('equipment.error_create'),
-        });
-      }
-    };
-
-    if (id === null) {
-      const payload: EquipmentRequest = { team: teamId, name };
-      this.equipmentService
-        .equipmentCreate(payload)
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: (created) => {
-            this.equipmentSaving.set(false);
-            this.equipmentDialogVisible.set(false);
-            this.equipment.update((cur) => [...cur, created]);
-            this.notifyEquipmentToast('equipment.created');
-          },
-          error: onError,
-        });
-    } else {
-      const payload: PatchedEquipmentRequest = { name };
-      this.equipmentService
-        .equipmentPartialUpdate(id, payload)
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: (updated) => {
-            this.equipmentSaving.set(false);
-            this.equipmentDialogVisible.set(false);
-            this.equipment.update((cur) => cur.map((i) => (i.id === updated.id ? updated : i)));
-            this.notifyEquipmentToast('equipment.updated');
-          },
-          error: onError,
-        });
-    }
-  }
-
-  /** Confirm + delete an equipment item. */
-  protected confirmDeleteEquipment(item: Equipment): void {
-    this.confirmationService.confirm({
-      message: this.transloco.translate('equipment.delete_confirm', { name: item.name }),
-      header: this.transloco.translate('equipment.delete'),
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: this.transloco.translate('common.delete'),
-      rejectLabel: this.transloco.translate('common.cancel'),
-      acceptButtonStyleClass: 'p-button-danger',
-      accept: () => this.deleteEquipment(item.id),
-    });
-  }
-
-  private deleteEquipment(id: number): void {
-    this.equipmentService
-      .equipmentDestroy(id)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.equipment.update((cur) => cur.filter((i) => i.id !== id));
-          this.notifyEquipmentToast('equipment.deleted');
-        },
-        error: () => {
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('equipment.error_delete'),
-          });
-        },
-      });
-  }
-
-  private notifyEquipmentToast(detailKey: string): void {
-    this.messageService.add({
-      severity: 'success',
-      summary: this.transloco.translate('common.success'),
-      detail: this.transloco.translate(detailKey),
-    });
+  /** Toggle a catalog item on/off in the team's enabled set. */
+  protected toggleEquipment(item: Equipment, checked: boolean): void {
+    const current = this.form.controls.equipment_ids.value ?? [];
+    const next = checked
+      ? current.includes(item.id)
+        ? current
+        : [...current, item.id]
+      : current.filter((eid) => eid !== item.id);
+    this.form.controls.equipment_ids.setValue(next);
+    this.form.controls.equipment_ids.markAsDirty();
   }
 
   protected saveTemplate(): void {

@@ -417,22 +417,10 @@
   },
   "equipment": {
     "title_plural": "Attrezzatura",
-    "new": "Nuova attrezzatura",
-    "edit": "Modifica attrezzatura",
-    "delete": "Elimina attrezzatura",
-    "add": "Aggiungi attrezzatura",
-    "name": "Nome dell'attrezzatura",
-    "name_required": "Il nome è obbligatorio.",
-    "none": "Nessuna attrezzatura",
+    "enable_help": "Seleziona l'attrezzatura disponibile per questa squadra. Solo l'attrezzatura attivata viene proposta durante la creazione delle sessioni.",
+    "none_for_sport": "Nessuna attrezzatura per questo sport.",
     "select_placeholder": "Seleziona attrezzatura",
-    "legacy_hint": "Attrezzatura attuale",
-    "created": "Attrezzatura creata.",
-    "updated": "Attrezzatura aggiornata.",
-    "deleted": "Attrezzatura eliminata.",
-    "delete_confirm": "Eliminare l'attrezzatura «{{name}}»? Verrà rimossa dalle sessioni che la utilizzano.",
-    "error_create": "Impossibile salvare l'attrezzatura.",
-    "error_delete": "Impossibile eliminare l'attrezzatura.",
-    "error_duplicate": "Esiste già un'attrezzatura con questo nome."
+    "legacy_hint": "Attrezzatura attuale"
   },
   "training_template": {
     "tab": "Schema settimanale",

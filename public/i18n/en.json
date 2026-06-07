@@ -417,22 +417,10 @@
   },
   "equipment": {
     "title_plural": "Equipment",
-    "new": "New equipment",
-    "edit": "Edit equipment",
-    "delete": "Delete equipment",
-    "add": "Add equipment",
-    "name": "Equipment name",
-    "name_required": "Name is required.",
-    "none": "No equipment",
+    "enable_help": "Check the equipment available to this team. Only enabled equipment is offered when creating sessions.",
+    "none_for_sport": "No equipment for this sport.",
     "select_placeholder": "Select equipment",
-    "legacy_hint": "Current equipment",
-    "created": "Equipment created.",
-    "updated": "Equipment updated.",
-    "deleted": "Equipment deleted.",
-    "delete_confirm": "Delete the equipment “{{name}}”? It will be removed from the sessions that use it.",
-    "error_create": "Could not save the equipment.",
-    "error_delete": "Could not delete the equipment.",
-    "error_duplicate": "Equipment with this name already exists."
+    "legacy_hint": "Current equipment"
   },
   "training_template": {
     "tab": "Weekly template",

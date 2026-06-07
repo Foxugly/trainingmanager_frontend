@@ -417,22 +417,10 @@
   },
   "equipment": {
     "title_plural": "Équipements",
-    "new": "Nouvel équipement",
-    "edit": "Modifier l'équipement",
-    "delete": "Supprimer l'équipement",
-    "add": "Ajouter un équipement",
-    "name": "Nom de l'équipement",
-    "name_required": "Le nom est obligatoire.",
-    "none": "Aucun équipement",
+    "enable_help": "Cochez le matériel disponible pour cette équipe. Seul le matériel activé est proposé lors de la création des séances.",
+    "none_for_sport": "Aucun matériel pour ce sport.",
     "select_placeholder": "Sélectionner du matériel",
-    "legacy_hint": "Matériel actuel",
-    "created": "Équipement créé.",
-    "updated": "Équipement mis à jour.",
-    "deleted": "Équipement supprimé.",
-    "delete_confirm": "Supprimer l'équipement « {{name}} » ? Il sera retiré des séances qui l'utilisent.",
-    "error_create": "Impossible d'enregistrer l'équipement.",
-    "error_delete": "Impossible de supprimer l'équipement.",
-    "error_duplicate": "Un équipement portant ce nom existe déjà."
+    "legacy_hint": "Matériel actuel"
   },
   "training_template": {
     "tab": "Planning type",

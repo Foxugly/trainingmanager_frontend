@@ -1,8 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { EquipmentService } from '../../../api/api/equipment.service';
 import { Equipment } from '../../../api/model/equipment';
@@ -11,11 +10,6 @@ import { EquipmentSelectComponent } from './equipment-select.component';
 interface ProtectedFields {
   items(): Equipment[];
   value: number[];
-  dialogVisible(): boolean;
-  newName(): string;
-  nameError(): string | null;
-  openCreate(): void;
-  createItem(): void;
   onSelectChange(v: number[] | null): void;
   writeValue(v: number[] | null): void;
 }
@@ -25,7 +19,6 @@ describe('EquipmentSelectComponent', () => {
   let component: EquipmentSelectComponent;
   let equipmentMock: {
     equipmentList: ReturnType<typeof vi.fn>;
-    equipmentCreate: ReturnType<typeof vi.fn>;
   };
   const access = (c: EquipmentSelectComponent) => c as unknown as ProtectedFields;
 
@@ -35,12 +28,9 @@ describe('EquipmentSelectComponent', () => {
       equipmentList: vi.fn().mockReturnValue(
         of({
           count: 1,
-          results: [{ id: 7, team: 5, name: 'Pull-buoy' } as Equipment],
+          results: [{ id: 7, name: 'Pull-buoy' } as Equipment],
         }),
       ),
-      equipmentCreate: vi
-        .fn()
-        .mockReturnValue(of({ id: 8, team: 5, name: 'Plaquettes' } as Equipment)),
     };
 
     await TestBed.configureTestingModule({
@@ -53,7 +43,6 @@ describe('EquipmentSelectComponent', () => {
       ],
       providers: [
         provideNoopAnimations(),
-        MessageService,
         { provide: EquipmentService, useValue: equipmentMock },
       ],
     })
@@ -70,8 +59,10 @@ describe('EquipmentSelectComponent', () => {
     await setup();
   });
 
-  it('loads the team equipment when teamId is set', () => {
+  it("loads the team's enabled equipment subset via the ?team filter", () => {
+    // Signature: (ordering, page, pageSize, search, sport, team) — team is 6th.
     expect(equipmentMock.equipmentList).toHaveBeenCalledWith(
+      undefined,
       undefined,
       undefined,
       undefined,
@@ -92,36 +83,5 @@ describe('EquipmentSelectComponent', () => {
   it('writeValue sets the inner value', () => {
     access(component).writeValue([9]);
     expect(access(component).value).toEqual([9]);
-  });
-
-  it('createItem posts and auto-selects the new item', () => {
-    let pushed: number[] = [];
-    component.registerOnChange((v) => (pushed = v));
-    access(component).openCreate();
-    (component as unknown as { newName: { set(v: string): void } }).newName.set('Plaquettes');
-    access(component).createItem();
-    expect(equipmentMock.equipmentCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ team: 5, name: 'Plaquettes' }),
-    );
-    expect(access(component).items().some((i) => i.id === 8)).toBe(true);
-    expect(pushed).toContain(8);
-    expect(access(component).dialogVisible()).toBe(false);
-  });
-
-  it('blocks createItem + flags an error on an empty name', () => {
-    access(component).openCreate();
-    access(component).createItem();
-    expect(equipmentMock.equipmentCreate).not.toHaveBeenCalled();
-    expect(access(component).nameError()).not.toBeNull();
-  });
-
-  it('surfaces the duplicate-name error from the backend', () => {
-    equipmentMock.equipmentCreate.mockReturnValueOnce(
-      throwError(() => ({ status: 400, error: { code: 'equipment_already_exists' } })),
-    );
-    access(component).openCreate();
-    (component as unknown as { newName: { set(v: string): void } }).newName.set('Dup');
-    access(component).createItem();
-    expect(access(component).nameError()).not.toBeNull();
   });
 });

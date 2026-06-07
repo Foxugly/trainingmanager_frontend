@@ -417,22 +417,10 @@
   },
   "equipment": {
     "title_plural": "Material",
-    "new": "Nuevo material",
-    "edit": "Editar material",
-    "delete": "Eliminar material",
-    "add": "Añadir material",
-    "name": "Nombre del material",
-    "name_required": "El nombre es obligatorio.",
-    "none": "Sin material",
+    "enable_help": "Marca el material disponible para este equipo. Solo el material activado se ofrece al crear las sesiones.",
+    "none_for_sport": "Sin material para este deporte.",
     "select_placeholder": "Seleccionar material",
-    "legacy_hint": "Material actual",
-    "created": "Material creado.",
-    "updated": "Material actualizado.",
-    "deleted": "Material eliminado.",
-    "delete_confirm": "¿Eliminar el material «{{name}}»? Se quitará de las sesiones que lo utilizan.",
-    "error_create": "No se pudo guardar el material.",
-    "error_delete": "No se pudo eliminar el material.",
-    "error_duplicate": "Ya existe material con ese nombre."
+    "legacy_hint": "Material actual"
   },
   "training_template": {
     "tab": "Plantilla semanal",
