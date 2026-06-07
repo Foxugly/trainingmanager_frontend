@@ -24,7 +24,6 @@ import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { Textarea } from 'primeng/textarea';
 import { Tooltip } from 'primeng/tooltip';
-import { HttpErrorResponse } from '@angular/common/http';
 import { PlacesService } from '../../../api/api/places.service';
 import { Place } from '../../../api/model/place';
 import { PlaceRequest } from '../../../api/model/place-request';
@@ -34,9 +33,11 @@ import { PlaceRequest } from '../../../api/model/place-request';
  *
  * Transparent ControlValueAccessor whose value is the selected place id
  * (`number | null`) — bind it to a `place_id` / `default_place_id` form control.
- * Pass the team via [teamId]; the component loads that team's managed places and
- * lets a manager create a new one without leaving the form. Newly created places
- * are appended to the local list and auto-selected.
+ * Pass the team via [teamId]; the component loads that team's LINKED places
+ * (the `?team` filter on the shared sport pool) and lets a manager create a new
+ * one without leaving the form. A newly created place is linked to the team
+ * (write-only `team` on create), appended to the local list and auto-selected,
+ * so it is immediately a valid `place_id` for the event.
  */
 @Component({
   selector: 'app-place-select',
@@ -92,17 +93,18 @@ export class PlaceSelectComponent implements ControlValueAccessor {
 
   constructor() {
     // React to the resolved team id (set asynchronously once the program/team
-    // is known) by loading that team's managed places.
+    // is known) by loading that team's linked places.
     effect(() => this.loadForTeam(this.teamId()));
   }
 
-  /** Load the given team's places once; idempotent per team id. */
+  /** Load the given team's linked places once; idempotent per team id. */
   loadForTeam(teamId: number | null | undefined): void {
     if (teamId == null) return;
     if (this.loadedForTeamId === teamId) return;
     this.loadedForTeamId = teamId;
     this.placesService
-      .placesList(undefined, undefined, undefined, undefined, teamId)
+      // Signature: (ordering, page, pageSize, search, sport, team) — ?team filter.
+      .placesList(undefined, undefined, undefined, undefined, undefined, teamId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
@@ -184,18 +186,13 @@ export class PlaceSelectComponent implements ControlValueAccessor {
           });
           this.cdr.markForCheck();
         },
-        error: (err: HttpErrorResponse) => {
+        error: () => {
           this.creating.set(false);
-          const body = err?.error as { code?: string } | null | undefined;
-          if (err.status === 400 && body?.code === 'place_already_exists') {
-            this.nameError.set(this.transloco.translate('place.error_duplicate'));
-          } else {
-            this.messageService.add({
-              severity: 'error',
-              summary: this.transloco.translate('common.error'),
-              detail: this.transloco.translate('place.error_create'),
-            });
-          }
+          this.messageService.add({
+            severity: 'error',
+            summary: this.transloco.translate('common.error'),
+            detail: this.transloco.translate('place.error_create'),
+          });
           this.cdr.markForCheck();
         },
       });

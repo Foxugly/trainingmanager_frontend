@@ -342,35 +342,8 @@
                       </div>
                     }
 
-                    <!-- Section: lieu par défaut + saison -->
-                    <div class="meta-grid cols-3">
-                      <app-meta-field
-                        [label]="'place.default_place' | transloco"
-                        for="default_place_id"
-                      >
-                        <p-select
-                          inputId="default_place_id"
-                          [options]="places()"
-                          formControlName="default_place_id"
-                          optionLabel="name"
-                          optionValue="id"
-                          [filter]="true"
-                          [showClear]="true"
-                          [placeholder]="'place.select_placeholder' | transloco"
-                          [emptyMessage]="'place.none' | transloco"
-                          appendTo="body"
-                          styleClass="w-full"
-                        >
-                          <ng-template let-place #item>
-                            <div class="flex flex-col">
-                              <span>{{ place.name }}</span>
-                              @if (place.address) {
-                                <span class="text-xs text-gray-500">{{ place.address }}</span>
-                              }
-                            </div>
-                          </ng-template>
-                        </p-select>
-                      </app-meta-field>
+                    <!-- Section: saison -->
+                    <div class="meta-grid cols-2">
                       <app-meta-field
                         [label]="'training_template.season_start' | transloco"
                         for="season_start"
@@ -408,7 +381,7 @@
                       />
                     </div>
 
-                    <!-- Section: Lieux (managed places) -->
+                    <!-- Section: Lieux (link a subset of the sport pool) -->
                     <div class="flex items-center justify-between mb-2 mt-8">
                       <h3 class="builder-section-title !mb-0">{{ 'place.title_plural' | transloco }}</h3>
                       <p-button
@@ -420,47 +393,65 @@
                         (onClick)="openCreatePlace()"
                       />
                     </div>
+                    <p class="meta-hint mb-2">{{ 'place.link_help' | transloco }}</p>
 
                     @if (placesLoading()) {
                       <p class="meta-hint">{{ 'common.loading' | transloco }}…</p>
                     } @else if (places().length === 0) {
-                      <p class="meta-hint mb-2">{{ 'place.none' | transloco }}</p>
+                      <p class="meta-hint mb-2">{{ 'place.pool_empty' | transloco }}</p>
                     } @else {
-                      <ul class="manager-list">
+                      <ul class="status-checklist">
                         @for (place of places(); track place.id) {
-                          <li class="manager-row">
-                            <span class="manager-name flex flex-col">
-                              <span class="font-medium">{{ place.name }}</span>
+                          <li class="status-row">
+                            <p-checkbox
+                              [binary]="true"
+                              [inputId]="'place_' + place.id"
+                              [ngModel]="isPlaceSelected(place.id)"
+                              [ngModelOptions]="{ standalone: true }"
+                              (ngModelChange)="togglePlace(place, $event)"
+                            />
+                            <label [attr.for]="'place_' + place.id" class="status-label flex flex-col items-start">
+                              <span>{{ place.name }}</span>
                               @if (place.address) {
-                                <span class="manager-handle">{{ place.address }}</span>
+                                <span class="text-xs text-gray-500">{{ place.address }}</span>
                               }
-                            </span>
-                            <p-button
-                              type="button"
-                              icon="pi pi-pencil"
-                              severity="secondary"
-                              [text]="true"
-                              [rounded]="true"
-                              size="small"
-                              [ariaLabel]="'place.edit' | transloco"
-                              [pTooltip]="'place.edit' | transloco"
-                              (onClick)="openEditPlace(place)"
-                            />
-                            <p-button
-                              type="button"
-                              icon="pi pi-trash"
-                              severity="danger"
-                              [text]="true"
-                              [rounded]="true"
-                              size="small"
-                              [ariaLabel]="'place.delete' | transloco"
-                              [pTooltip]="'place.delete' | transloco"
-                              (onClick)="confirmDeletePlace(place)"
-                            />
+                            </label>
                           </li>
                         }
                       </ul>
                     }
+
+                    <!-- Default place: picked from the linked subset -->
+                    <div class="meta-grid mt-3">
+                      <app-meta-field
+                        [full]="true"
+                        [label]="'place.default_place' | transloco"
+                        for="default_place_id"
+                      >
+                        <p-select
+                          inputId="default_place_id"
+                          [options]="selectedPlaces()"
+                          [formControl]="form.controls.default_place_id"
+                          optionLabel="name"
+                          optionValue="id"
+                          [filter]="true"
+                          [showClear]="true"
+                          [placeholder]="'place.select_placeholder' | transloco"
+                          [emptyMessage]="'place.default_empty' | transloco"
+                          appendTo="body"
+                          styleClass="w-full"
+                        >
+                          <ng-template let-place #item>
+                            <div class="flex flex-col">
+                              <span>{{ place.name }}</span>
+                              @if (place.address) {
+                                <span class="text-xs text-gray-500">{{ place.address }}</span>
+                              }
+                            </div>
+                          </ng-template>
+                        </p-select>
+                      </app-meta-field>
+                    </div>
 
                     <!-- Section: Équipements (enable a subset of the sport catalog) -->
                     <div class="flex items-center justify-between mb-2 mt-8">
@@ -751,7 +742,7 @@
   <p-confirmDialog />
 
   <p-dialog
-    [header]="(editingPlaceId() === null ? 'place.new' : 'place.edit') | transloco"
+    [header]="'place.new' | transloco"
     [visible]="placeDialogVisible()"
     (visibleChange)="placeDialogVisible.set($event)"
     [modal]="true"

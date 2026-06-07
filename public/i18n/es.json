@@ -397,8 +397,6 @@
   "place": {
     "title_plural": "Lugares",
     "new": "Nuevo lugar",
-    "edit": "Editar lugar",
-    "delete": "Eliminar lugar",
     "add": "Añadir un lugar",
     "name": "Nombre del lugar",
     "name_required": "El nombre es obligatorio.",
@@ -408,12 +406,10 @@
     "default_place": "Lugar predeterminado",
     "legacy_hint": "Lugar actual",
     "created": "Lugar creado.",
-    "updated": "Lugar actualizado.",
-    "deleted": "Lugar eliminado.",
-    "delete_confirm": "¿Eliminar el lugar «{{name}}»? Las sesiones anteriores conservan su texto de ubicación.",
     "error_create": "No se pudo guardar el lugar.",
-    "error_delete": "No se pudo eliminar el lugar.",
-    "error_duplicate": "Ya existe un lugar con este nombre."
+    "link_help": "Marca los lugares del deporte para vincularlos a este equipo.",
+    "pool_empty": "Aún no hay lugares para este deporte. Añade uno.",
+    "default_empty": "Ningún lugar vinculado"
   },
   "equipment": {
     "title_plural": "Material",

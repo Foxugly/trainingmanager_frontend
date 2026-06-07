@@ -397,8 +397,6 @@
   "place": {
     "title_plural": "Lieux",
     "new": "Nouveau lieu",
-    "edit": "Modifier le lieu",
-    "delete": "Supprimer le lieu",
     "add": "Ajouter un lieu",
     "name": "Nom du lieu",
     "name_required": "Le nom est obligatoire.",
@@ -408,12 +406,10 @@
     "default_place": "Lieu par défaut",
     "legacy_hint": "Lieu actuel",
     "created": "Lieu créé.",
-    "updated": "Lieu mis à jour.",
-    "deleted": "Lieu supprimé.",
-    "delete_confirm": "Supprimer le lieu « {{name}} » ? Les séances passées conservent leur intitulé de lieu.",
     "error_create": "Impossible d'enregistrer le lieu.",
-    "error_delete": "Impossible de supprimer le lieu.",
-    "error_duplicate": "Un lieu portant ce nom existe déjà."
+    "link_help": "Cochez les lieux du sport à associer à cette équipe.",
+    "pool_empty": "Aucun lieu pour ce sport. Ajoutez-en un.",
+    "default_empty": "Aucun lieu associé"
   },
   "equipment": {
     "title_plural": "Équipements",

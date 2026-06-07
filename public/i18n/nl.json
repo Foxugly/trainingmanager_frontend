@@ -397,8 +397,6 @@
   "place": {
     "title_plural": "Locaties",
     "new": "Nieuwe locatie",
-    "edit": "Locatie bewerken",
-    "delete": "Locatie verwijderen",
     "add": "Locatie toevoegen",
     "name": "Naam van de locatie",
     "name_required": "Naam is verplicht.",
@@ -408,12 +406,10 @@
     "default_place": "Standaardlocatie",
     "legacy_hint": "Huidige locatie",
     "created": "Locatie aangemaakt.",
-    "updated": "Locatie bijgewerkt.",
-    "deleted": "Locatie verwijderd.",
-    "delete_confirm": "Locatie “{{name}}” verwijderen? Eerdere sessies behouden hun locatietekst.",
     "error_create": "Kan de locatie niet opslaan.",
-    "error_delete": "Kan de locatie niet verwijderen.",
-    "error_duplicate": "Er bestaat al een locatie met deze naam."
+    "link_help": "Vink de sportlocaties aan om aan dit team te koppelen.",
+    "pool_empty": "Nog geen locatie voor deze sport. Voeg er een toe.",
+    "default_empty": "Geen gekoppelde locatie"
   },
   "equipment": {
     "title_plural": "Materiaal",

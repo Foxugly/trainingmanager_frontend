@@ -59,6 +59,7 @@ const team: Team = {
   is_active: true,
   is_public: false,
   attendance_statuses: [],
+  places: [],
   created_at: '2026-04-01T00:00:00Z',
   updated_at: '2026-04-01T00:00:00Z',
 };
@@ -96,21 +97,30 @@ interface ProtectedFields {
   slotHasTimeError(i: number): boolean;
   saveTemplate(): void;
   weekdayOptions(): Array<{ label: string; value: number }>;
-  // Lieux (managed places)
+  // Lieux (shared sport pool, M2M)
   places(): Place[];
-  editingPlaceId(): number | null;
+  selectedPlaces(): Place[];
   placeName(): string;
   placeAddress(): string;
   placeNameError(): string | null;
   placeDialogVisible(): boolean;
   openCreatePlace(): void;
-  openEditPlace(p: Place): void;
   savePlace(): void;
-  confirmDeletePlace(p: Place): void;
+  isPlaceSelected(id: number): boolean;
+  togglePlace(p: Place, checked: boolean): void;
   templateForm: {
     patchValue(v: Record<string, unknown>): void;
     invalid: boolean;
-    controls: { default_place_id: { value: number | null; setValue(v: number | null): void } };
+  };
+}
+
+/** Narrow accessor for the reactive form controls touched by Lieux tests. */
+interface PlaceControls {
+  form: {
+    controls: {
+      place_ids: { value: number[] };
+      default_place_id: { value: number | null; setValue(v: number | null): void };
+    };
   };
 }
 
@@ -130,8 +140,6 @@ describe('TeamsFormComponent', () => {
   let placesMock: {
     placesList: ReturnType<typeof vi.fn>;
     placesCreate: ReturnType<typeof vi.fn>;
-    placesPartialUpdate: ReturnType<typeof vi.fn>;
-    placesDestroy: ReturnType<typeof vi.fn>;
   };
   let userSig: ReturnType<typeof signal<CustomUserPublic | null>>;
   let routeIdParam: string | null;
@@ -163,19 +171,19 @@ describe('TeamsFormComponent', () => {
       levelsList: vi.fn().mockReturnValue(of({ count: 1, results: [level] })),
     };
     placesMock = {
+      // The sport pool (loaded via ?sport once the team's sport is known).
       placesList: vi.fn().mockReturnValue(
         of({
-          count: 1,
-          results: [{ id: 7, team: 5, name: 'Piscine olympique', address: '1 rue X' } as Place],
+          count: 2,
+          results: [
+            { id: 7, sport: 1, name: 'Piscine olympique', address: '1 rue X' } as Place,
+            { id: 9, sport: 1, name: 'Piscine B', address: '2 rue Y' } as Place,
+          ],
         }),
       ),
       placesCreate: vi
         .fn()
-        .mockReturnValue(of({ id: 8, team: 5, name: 'Nouveau', address: '' } as Place)),
-      placesPartialUpdate: vi
-        .fn()
-        .mockReturnValue(of({ id: 7, team: 5, name: 'Renommé', address: 'Y' } as Place)),
-      placesDestroy: vi.fn().mockReturnValue(of(undefined)),
+        .mockReturnValue(of({ id: 8, sport: 1, name: 'Nouveau', address: '' } as Place)),
     };
     userSig = signal<CustomUserPublic | null>(currentUser);
 
@@ -547,17 +555,18 @@ describe('TeamsFormComponent', () => {
 
   // ── Planning type (weekly training template) ──────────────────────────────
 
-  it('loads the team training template + places on edit', async () => {
+  it('loads the team training template + sport venue pool on edit', async () => {
     await setup('5');
     expect(teamsMock.teamsTrainingTemplateRetrieve).toHaveBeenCalledWith(5);
+    // Pool is loaded via ?sport (position 5), not ?team.
     expect(placesMock.placesList).toHaveBeenCalledWith(
       undefined,
       undefined,
       undefined,
       undefined,
-      5,
+      1,
     );
-    expect(access(component).places()).toHaveLength(1);
+    expect(access(component).places()).toHaveLength(2);
     expect(access(component).places()[0].name).toBe('Piscine olympique');
   });
 
@@ -584,7 +593,6 @@ describe('TeamsFormComponent', () => {
       .patchValue({ weekday: 2, hour_start: start, hour_end: end });
     access(component).templateForm.patchValue({
       default_pool: 'Piscine X',
-      default_place_id: 7,
       season_start: season,
       season_end: null,
     });
@@ -598,32 +606,52 @@ describe('TeamsFormComponent', () => {
     expect(payload.slots).toEqual([
       { weekday: 2, hour_start: '18:00', hour_end: '19:30' },
     ]);
-    // The default place is persisted via a team PATCH after the template update.
-    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(
-      5,
-      expect.objectContaining({ default_place_id: 7 }),
-    );
+    // The default place is now a team field, persisted by the main team PATCH
+    // (submit), no longer via a side PATCH from saveTemplate.
+    expect(teamsMock.teamsPartialUpdate).not.toHaveBeenCalled();
   });
 
-  // ── Lieux (managed places) CRUD ───────────────────────────────────────────
+  // ── Lieux (shared sport pool, M2M) ────────────────────────────────────────
 
-  it('pre-selects the team default_place on edit', async () => {
+  const placeControls = (c: TeamsFormComponent) => (c as unknown as PlaceControls).form.controls;
+
+  it('pre-checks the team linked places and pre-selects the default on edit', async () => {
     await setup('5', ownerUser, {
       ...team,
+      places: [{ id: 7, name: 'Piscine olympique', address: '1 rue X' }],
       default_place: { id: 7, name: 'Piscine olympique', address: '1 rue X' },
     });
-    expect(access(component).templateForm.controls.default_place_id.value).toBe(7);
+    expect(access(component).isPlaceSelected(7)).toBe(true);
+    expect(access(component).isPlaceSelected(9)).toBe(false);
+    expect(placeControls(component).default_place_id.value).toBe(7);
   });
 
-  it('openCreatePlace resets the dialog to create mode', async () => {
+  it('togglePlace adds/removes the id from place_ids', async () => {
     await setup('5');
-    access(component).openCreatePlace();
-    expect(access(component).editingPlaceId()).toBeNull();
-    expect(access(component).placeName()).toBe('');
-    expect(access(component).placeDialogVisible()).toBe(true);
+    access(component).togglePlace({ id: 9, name: 'Piscine B' } as Place, true);
+    expect(placeControls(component).place_ids.value).toContain(9);
+    access(component).togglePlace({ id: 9, name: 'Piscine B' } as Place, false);
+    expect(placeControls(component).place_ids.value).not.toContain(9);
   });
 
-  it('savePlace creates a new place and appends it to the list', async () => {
+  it('unchecking the current default clears default_place_id', async () => {
+    await setup('5', ownerUser, {
+      ...team,
+      places: [{ id: 7, name: 'Piscine olympique', address: '1 rue X' }],
+      default_place: { id: 7, name: 'Piscine olympique', address: '1 rue X' },
+    });
+    access(component).togglePlace({ id: 7, name: 'Piscine olympique' } as Place, false);
+    expect(placeControls(component).place_ids.value).not.toContain(7);
+    expect(placeControls(component).default_place_id.value).toBeNull();
+  });
+
+  it('selectedPlaces reflects the currently-linked subset of the pool', async () => {
+    await setup('5');
+    access(component).togglePlace({ id: 9, name: 'Piscine B' } as Place, true);
+    expect(access(component).selectedPlaces().map((p) => p.id)).toEqual([9]);
+  });
+
+  it('savePlace creates a place, links it to the team, and checks it', async () => {
     await setup('5');
     access(component).openCreatePlace();
     (component as unknown as { placeName: { set(v: string): void } }).placeName.set('Nouveau');
@@ -632,6 +660,7 @@ describe('TeamsFormComponent', () => {
       expect.objectContaining({ team: 5, name: 'Nouveau' }),
     );
     expect(access(component).places().some((p) => p.id === 8)).toBe(true);
+    expect(placeControls(component).place_ids.value).toContain(8);
   });
 
   it('savePlace blocks and flags an error when the name is empty', async () => {
@@ -642,45 +671,18 @@ describe('TeamsFormComponent', () => {
     expect(access(component).placeNameError()).not.toBeNull();
   });
 
-  it('openEditPlace + savePlace updates an existing place', async () => {
+  it('submit sends place_ids + default_place_id, with the default forced into place_ids', async () => {
     await setup('5');
-    access(component).openEditPlace({ id: 7, team: 5, name: 'Piscine olympique', address: '1 rue X' } as Place);
-    expect(access(component).editingPlaceId()).toBe(7);
-    access(component).savePlace();
-    expect(placesMock.placesPartialUpdate).toHaveBeenCalledWith(
-      7,
-      expect.objectContaining({ name: 'Piscine olympique' }),
+    access(component).togglePlace({ id: 9, name: 'Piscine B' } as Place, true);
+    placeControls(component).default_place_id.setValue(7);
+    access(component).submit();
+    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(
+      5,
+      expect.objectContaining({
+        place_ids: expect.arrayContaining([9, 7]),
+        default_place_id: 7,
+      }),
     );
-  });
-
-  it('surfaces a duplicate-name error from the backend', async () => {
-    await setup('5');
-    placesMock.placesCreate.mockReturnValueOnce(
-      throwError(() => ({ status: 400, error: { code: 'place_already_exists' } })),
-    );
-    access(component).openCreatePlace();
-    (component as unknown as { placeName: { set(v: string): void } }).placeName.set('Dup');
-    access(component).savePlace();
-    expect(access(component).placeNameError()).not.toBeNull();
-  });
-
-  it('confirmDeletePlace → deletePlace removes the place from the list', async () => {
-    await setup('5');
-    // ConfirmationService is component-scoped (provided on the component), so
-    // resolve it from the component's own injector, not the module root.
-    const confirm = fixture.debugElement.injector.get(ConfirmationService);
-    const confirmSpy = vi.spyOn(confirm, 'confirm').mockReturnValue(confirm);
-    access(component).confirmDeletePlace({
-      id: 7,
-      team: 5,
-      name: 'Piscine olympique',
-      address: '',
-    } as Place);
-    // Invoke the captured accept callback to simulate the user confirming.
-    const opts = confirmSpy.mock.calls[0][0];
-    opts.accept?.();
-    expect(placesMock.placesDestroy).toHaveBeenCalledWith(7);
-    expect(access(component).places().some((p) => p.id === 7)).toBe(false);
   });
 
   it('slotHasTimeError flags a slot whose end is before its start', async () => {

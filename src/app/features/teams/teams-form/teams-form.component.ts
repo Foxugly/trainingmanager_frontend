@@ -34,7 +34,6 @@ import { Select } from 'primeng/select';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { Textarea } from 'primeng/textarea';
 import { ToggleSwitch } from 'primeng/toggleswitch';
-import { Tooltip } from 'primeng/tooltip';
 import { AttendanceStatusesService } from '../../../api/api/attendance-statuses.service';
 import { LevelsService } from '../../../api/api/levels.service';
 import { PlacesService } from '../../../api/api/places.service';
@@ -43,7 +42,6 @@ import { SportsService } from '../../../api/api/sports.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { Place } from '../../../api/model/place';
 import { PlaceRequest } from '../../../api/model/place-request';
-import { PatchedPlace } from '../../../api/model/patched-place';
 import { Equipment } from '../../../api/model/equipment';
 import { AttendanceStatus } from '../../../api/model/attendance-status';
 import { CustomUserPublic } from '../../../api/model/custom-user-public';
@@ -132,7 +130,6 @@ function slotTimeRangeValidator(group: AbstractControl): ValidationErrors | null
     DatePicker,
     Dialog,
     Textarea,
-    Tooltip,
     Button,
     ConfirmDialog,
     Tabs,
@@ -164,7 +161,6 @@ export class TeamsFormComponent implements OnInit {
   private readonly equipmentService = inject(EquipmentService);
   private readonly statusesService = inject(AttendanceStatusesService);
   private readonly authService = inject(AuthService);
-  private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
   private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
@@ -249,18 +245,29 @@ export class TeamsFormComponent implements OnInit {
   protected readonly templateLoading = signal(false);
   protected readonly templateSaving = signal(false);
 
-  // ── Lieux (managed places) ──────────────────────────────────────────────
-  /** The team's managed places (Lieux), shared by the manager list + default selector. */
+  // ── Lieux (shared sport pool, linked to the team via M2M) ───────────────
+  /**
+   * The whole venue pool for the team's sport (loaded via `?sport`). The owner
+   * links a subset by checking items; the selected ids are persisted via the
+   * `place_ids` write-only field on the team PATCH. The default-place selector
+   * picks from the currently-linked subset.
+   */
   protected readonly places = signal<Place[]>([]);
   protected readonly placesLoading = signal(false);
-  /** Inline create/edit dialog state. */
+  /** Inline create dialog state (new place is linked to the team on create). */
   protected readonly placeDialogVisible = signal(false);
   protected readonly placeSaving = signal(false);
-  /** Id of the place being edited, or null when creating a new one. */
-  protected readonly editingPlaceId = signal<number | null>(null);
   protected readonly placeName = signal('');
   protected readonly placeAddress = signal('');
   protected readonly placeNameError = signal<string | null>(null);
+
+  /** Currently-linked place ids, mirrored from the `place_ids` form control. */
+  private readonly placeIdsValue = signal<number[]>([]);
+  /** The subset of the pool currently linked to the team (for the default selector). */
+  protected readonly selectedPlaces = computed<Place[]>(() => {
+    const ids = new Set(this.placeIdsValue());
+    return this.places().filter((p) => ids.has(p.id));
+  });
 
   // ── Équipements (global catalog, enabled per team) ──────────────────────
   /**
@@ -289,7 +296,6 @@ export class TeamsFormComponent implements OnInit {
   protected readonly templateForm = this.fb.group({
     slots: this.fb.array<SlotFormGroup>([]),
     default_pool: this.fb.nonNullable.control<string>(''),
-    default_place_id: this.fb.nonNullable.control<number | null>(null),
     season_start: this.fb.nonNullable.control<Date | null>(null),
     season_end: this.fb.nonNullable.control<Date | null>(null),
   });
@@ -328,6 +334,8 @@ export class TeamsFormComponent implements OnInit {
     weekly_recap_enabled: [false],
     managers_ids: this.fb.nonNullable.control<number[]>([]),
     equipment_ids: this.fb.nonNullable.control<number[]>([]),
+    place_ids: this.fb.nonNullable.control<number[]>([]),
+    default_place_id: this.fb.nonNullable.control<number | null>(null),
     auto_accept_policy: [false],
     topic_creation: this.fb.nonNullable.control<TopicCreationEnum>(TopicCreationEnum.Coaches),
     notify_managers_on_join_request: [true],
@@ -383,7 +391,6 @@ export class TeamsFormComponent implements OnInit {
       }
       this.teamId.set(id);
       this.loadTemplate(id);
-      this.loadPlaces(id);
       this.loading.set(true);
       this.teamsService
         .teamsRetrieve(id)
@@ -393,17 +400,17 @@ export class TeamsFormComponent implements OnInit {
             this.team.set(t);
             this.activeValue.set(t.is_active ?? true);
             this.logoValue.set(t.logo ?? '');
-            this.templateForm.controls.default_place_id.setValue(t.default_place?.id ?? null, {
-              emitEvent: false,
-            });
             this.availableManagers.set(t.managers ?? []);
             this.partitionStatuses(this.availableStatuses(), t.attendance_statuses ?? null);
-            // Load the sport's equipment catalog so the owner can enable a subset.
+            // Load the sport's equipment catalog + venue pool so the owner can
+            // enable/link a subset of each.
             const sportId = t.sport?.id;
             if (sportId != null) {
               this.loadEquipmentCatalog(sportId);
+              this.loadPlacePool(sportId);
             } else {
               this.equipmentCatalog.set([]);
+              this.places.set([]);
             }
             this.form.reset({
               name: t.name,
@@ -417,6 +424,8 @@ export class TeamsFormComponent implements OnInit {
               weekly_recap_enabled: t.weekly_recap_enabled ?? false,
               managers_ids: (t.managers ?? []).map((m) => m.id),
               equipment_ids: (t.equipment ?? []).map((e) => e.id),
+              place_ids: (t.places ?? []).map((p) => p.id),
+              default_place_id: t.default_place?.id ?? null,
               auto_accept_policy: t.join_request_policy === JoinRequestPolicyEnum.Auto,
               topic_creation: t.topic_creation ?? TopicCreationEnum.Coaches,
               notify_managers_on_join_request: t.notify_managers_on_join_request ?? true,
@@ -431,6 +440,7 @@ export class TeamsFormComponent implements OnInit {
               public_show_goal: t.public_show_goal ?? false,
               public_show_rounds: t.public_show_rounds ?? true,
             });
+            this.placeIdsValue.set((t.places ?? []).map((p) => p.id));
             this.loading.set(false);
           },
           error: () => {
@@ -603,6 +613,14 @@ export class TeamsFormComponent implements OnInit {
       return;
     }
 
+    // Ensure the default place (if any) is part of the linked set for
+    // consistency; the server auto-adds it too, but we keep the payload honest.
+    const defaultPlaceId = value.default_place_id ?? null;
+    const placeIds =
+      defaultPlaceId != null && !value.place_ids.includes(defaultPlaceId)
+        ? [...value.place_ids, defaultPlaceId]
+        : value.place_ids;
+
     const updatePayload: PatchedTeam = {
       name: value.name,
       sport_id: value.sport_id ?? undefined,
@@ -615,6 +633,8 @@ export class TeamsFormComponent implements OnInit {
       weekly_recap_enabled: value.weekly_recap_enabled,
       managers_ids: value.managers_ids,
       equipment_ids: value.equipment_ids,
+      place_ids: placeIds,
+      default_place_id: defaultPlaceId,
       attendance_statuses: this.statusesTarget().map((s) => s.id),
       join_request_policy: value.auto_accept_policy
         ? JoinRequestPolicyEnum.Auto
@@ -783,12 +803,14 @@ export class TeamsFormComponent implements OnInit {
       });
   }
 
-  // ── Lieux (managed places) management ───────────────────────────────────
+  // ── Lieux (shared sport pool) management ────────────────────────────────
 
-  private loadPlaces(teamId: number): void {
+  /** Fetch the whole venue pool for the team's sport (to attach/share). */
+  private loadPlacePool(sportId: number): void {
     this.placesLoading.set(true);
     this.placesService
-      .placesList(undefined, undefined, undefined, undefined, teamId)
+      // Signature: (ordering, page, pageSize, search, sport, team) — ?sport pool.
+      .placesList(undefined, undefined, undefined, undefined, sportId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
@@ -802,20 +824,33 @@ export class TeamsFormComponent implements OnInit {
       });
   }
 
-  /** Open the dialog to create a new place. */
-  protected openCreatePlace(): void {
-    this.editingPlaceId.set(null);
-    this.placeName.set('');
-    this.placeAddress.set('');
-    this.placeNameError.set(null);
-    this.placeDialogVisible.set(true);
+  /** Whether the given pool place is currently linked to the team. */
+  protected isPlaceSelected(id: number): boolean {
+    return (this.form.controls.place_ids.value ?? []).includes(id);
   }
 
-  /** Open the dialog pre-filled to edit an existing place. */
-  protected openEditPlace(place: Place): void {
-    this.editingPlaceId.set(place.id);
-    this.placeName.set(place.name);
-    this.placeAddress.set(place.address ?? '');
+  /** Link/unlink a pool place to the team via the `place_ids` control. */
+  protected togglePlace(place: Place, checked: boolean): void {
+    const current = this.form.controls.place_ids.value ?? [];
+    const next = checked
+      ? current.includes(place.id)
+        ? current
+        : [...current, place.id]
+      : current.filter((pid) => pid !== place.id);
+    this.form.controls.place_ids.setValue(next);
+    this.form.controls.place_ids.markAsDirty();
+    this.placeIdsValue.set(next);
+    // Unchecking the current default clears the default selector.
+    if (!checked && this.form.controls.default_place_id.value === place.id) {
+      this.form.controls.default_place_id.setValue(null);
+      this.form.controls.default_place_id.markAsDirty();
+    }
+  }
+
+  /** Open the dialog to create a new place (linked to the team on create). */
+  protected openCreatePlace(): void {
+    this.placeName.set('');
+    this.placeAddress.set('');
     this.placeNameError.set(null);
     this.placeDialogVisible.set(true);
   }
@@ -824,7 +859,7 @@ export class TeamsFormComponent implements OnInit {
     this.placeDialogVisible.set(false);
   }
 
-  /** Create or update the place currently in the dialog. */
+  /** Create a place in the pool, link it to the team, and check it. */
   protected savePlace(): void {
     const teamId = this.teamId();
     const name = this.placeName().trim();
@@ -836,83 +871,25 @@ export class TeamsFormComponent implements OnInit {
     this.placeSaving.set(true);
     this.placeNameError.set(null);
     const address = this.placeAddress().trim() || undefined;
-    const id = this.editingPlaceId();
-
-    const onError = (err: HttpErrorResponse) => {
-      this.placeSaving.set(false);
-      const body = err?.error as { code?: string } | null | undefined;
-      if (err.status === 400 && body?.code === 'place_already_exists') {
-        this.placeNameError.set(this.transloco.translate('place.error_duplicate'));
-      } else {
-        this.messageService.add({
-          severity: 'error',
-          summary: this.transloco.translate('common.error'),
-          detail: this.transloco.translate('place.error_create'),
-        });
-      }
-    };
-
-    if (id === null) {
-      const payload: PlaceRequest = { team: teamId, name, address };
-      this.placesService
-        .placesCreate(payload)
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: (created) => {
-            this.placeSaving.set(false);
-            this.placeDialogVisible.set(false);
-            this.places.update((cur) => [...cur, created]);
-            this.notifyPlaceToast('place.created');
-          },
-          error: onError,
-        });
-    } else {
-      const payload: PatchedPlace = { name, address };
-      this.placesService
-        .placesPartialUpdate(id, payload)
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: (updated) => {
-            this.placeSaving.set(false);
-            this.placeDialogVisible.set(false);
-            this.places.update((cur) => cur.map((p) => (p.id === updated.id ? updated : p)));
-            this.notifyPlaceToast('place.updated');
-          },
-          error: onError,
-        });
-    }
-  }
-
-  /** Confirm + delete a place (past sessions keep their location text). */
-  protected confirmDeletePlace(place: Place): void {
-    this.confirmationService.confirm({
-      message: this.transloco.translate('place.delete_confirm', { name: place.name }),
-      header: this.transloco.translate('place.delete'),
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: this.transloco.translate('common.delete'),
-      rejectLabel: this.transloco.translate('common.cancel'),
-      acceptButtonStyleClass: 'p-button-danger',
-      accept: () => this.deletePlace(place.id),
-    });
-  }
-
-  private deletePlace(id: number): void {
+    const payload: PlaceRequest = { team: teamId, name, address };
     this.placesService
-      .placesDestroy(id)
+      .placesCreate(payload)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => {
-          this.places.update((cur) => cur.filter((p) => p.id !== id));
-          if (this.templateForm.controls.default_place_id.value === id) {
-            this.templateForm.controls.default_place_id.setValue(null, { emitEvent: false });
-          }
-          this.notifyPlaceToast('place.deleted');
+        next: (created) => {
+          this.placeSaving.set(false);
+          this.placeDialogVisible.set(false);
+          this.places.update((cur) => [...cur, created]);
+          // A freshly-created place belongs to the team: check it immediately.
+          this.togglePlace(created, true);
+          this.notifyPlaceToast('place.created');
         },
         error: () => {
+          this.placeSaving.set(false);
           this.messageService.add({
             severity: 'error',
             summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('place.error_delete'),
+            detail: this.transloco.translate('place.error_create'),
           });
         },
       });
@@ -1001,26 +978,13 @@ export class TeamsFormComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          // The default place is a team field (the backend syncs default_pool
-          // from it); persist it via a team PATCH after the template update.
-          this.teamsService
-            .teamsPartialUpdate(id, {
-              default_place_id: value.default_place_id ?? null,
-            } as PatchedTeam)
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe({
-              next: (t) => {
-                this.templateSaving.set(false);
-                this.templateForm.markAsPristine();
-                this.team.set(t);
-                this.messageService.add({
-                  severity: 'success',
-                  summary: this.transloco.translate('common.success'),
-                  detail: this.transloco.translate('training_template.saved'),
-                });
-              },
-              error: onTemplateError,
-            });
+          this.templateSaving.set(false);
+          this.templateForm.markAsPristine();
+          this.messageService.add({
+            severity: 'success',
+            summary: this.transloco.translate('common.success'),
+            detail: this.transloco.translate('training_template.saved'),
+          });
         },
         error: onTemplateError,
       });

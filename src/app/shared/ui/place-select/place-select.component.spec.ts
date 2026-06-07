@@ -71,8 +71,16 @@ describe('PlaceSelectComponent', () => {
     await setup();
   });
 
-  it('loads the team places when teamId is set', () => {
-    expect(placesMock.placesList).toHaveBeenCalledWith(undefined, undefined, undefined, undefined, 5);
+  it('loads the team linked places via ?team (position 6) when teamId is set', () => {
+    // Signature: (ordering, page, pageSize, search, sport, team).
+    expect(placesMock.placesList).toHaveBeenCalledWith(
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      5,
+    );
     expect(access(component).places()).toHaveLength(1);
   });
 
@@ -110,13 +118,14 @@ describe('PlaceSelectComponent', () => {
     expect(access(component).nameError()).not.toBeNull();
   });
 
-  it('surfaces the duplicate-name error from the backend', () => {
-    placesMock.placesCreate.mockReturnValueOnce(
-      throwError(() => ({ status: 400, error: { code: 'place_already_exists' } })),
-    );
+  it('keeps the dialog open and shows a toast when the create fails', () => {
+    const messages = TestBed.inject(MessageService);
+    const addSpy = vi.spyOn(messages, 'add');
+    placesMock.placesCreate.mockReturnValueOnce(throwError(() => ({ status: 500 })));
     access(component).openCreate();
-    (component as unknown as { newName: { set(v: string): void } }).newName.set('Dup');
+    (component as unknown as { newName: { set(v: string): void } }).newName.set('Boom');
     access(component).createPlace();
-    expect(access(component).nameError()).not.toBeNull();
+    expect(addSpy).toHaveBeenCalledWith(expect.objectContaining({ severity: 'error' }));
+    expect(access(component).dialogVisible()).toBe(true);
   });
 });

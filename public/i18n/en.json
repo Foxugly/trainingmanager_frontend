@@ -397,8 +397,6 @@
   "place": {
     "title_plural": "Places",
     "new": "New place",
-    "edit": "Edit place",
-    "delete": "Delete place",
     "add": "Add a place",
     "name": "Place name",
     "name_required": "Name is required.",
@@ -408,12 +406,10 @@
     "default_place": "Default place",
     "legacy_hint": "Current location",
     "created": "Place created.",
-    "updated": "Place updated.",
-    "deleted": "Place deleted.",
-    "delete_confirm": "Delete the place “{{name}}”? Past sessions keep their location text.",
     "error_create": "Could not save the place.",
-    "error_delete": "Could not delete the place.",
-    "error_duplicate": "A place with this name already exists."
+    "link_help": "Check the sport venues to link to this team.",
+    "pool_empty": "No venue for this sport yet. Add one.",
+    "default_empty": "No linked place"
   },
   "equipment": {
     "title_plural": "Equipment",
