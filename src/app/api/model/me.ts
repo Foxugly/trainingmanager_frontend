@@ -31,15 +31,15 @@ export interface Me {
      * Designates whether the user can log into this admin site.
      */
     readonly is_staff: boolean;
-    /**
-     * Designates that this user has all permissions without explicitly assigning them.
-     */
-    readonly is_superuser: boolean;
     readonly team_quota: TeamQuotaStatus;
     /**
      * Unguessable token embedded in the user\'s personal iCal (.ics) subscription URL. The token IS the authentication for that (otherwise anonymous) feed. Rotate it to revoke an old URL.
      */
     readonly calendar_token: string;
+    /**
+     * Id of the user\'s linked athlete Member, or null. Lets the SPA offer athlete self-service (e.g. log own performances).
+     */
+    readonly member_id: number | null;
 }
 
 

@@ -7955,12 +7955,6 @@ components:
           readOnly: true
           title: Staff status
           description: Designates whether the user can log into this admin site.
-        is_superuser:
-          type: boolean
-          readOnly: true
-          title: Superuser status
-          description: Designates that this user has all permissions without explicitly
-            assigning them.
         team_quota:
           allOf:
           - $ref: '#/components/schemas/TeamQuotaStatus'
@@ -7971,14 +7965,20 @@ components:
           description: Unguessable token embedded in the user's personal iCal (.ics)
             subscription URL. The token IS the authentication for that (otherwise
             anonymous) feed. Rotate it to revoke an old URL.
+        member_id:
+          type: integer
+          nullable: true
+          readOnly: true
+          description: Id of the user's linked athlete Member, or null. Lets the SPA
+            offer athlete self-service (e.g. log own performances).
       required:
       - calendar_token
       - date_joined
       - email
       - id
       - is_staff
-      - is_superuser
       - last_login
+      - member_id
       - team_quota
       - username
     Member:
@@ -9373,15 +9373,13 @@ components:
           readOnly: true
           title: Staff status
           description: Designates whether the user can log into this admin site.
-        is_superuser:
-          type: boolean
-          readOnly: true
-          title: Superuser status
-          description: Designates that this user has all permissions without explicitly
-            assigning them.
         team_quota:
           allOf:
           - $ref: '#/components/schemas/TeamQuotaStatus'
+          readOnly: true
+        member_id:
+          type: integer
+          nullable: true
           readOnly: true
     PatchedMember:
       type: object
@@ -11247,12 +11245,18 @@ components:
       - note_for_athlete
       - message_new_topic
       - message_new_reply
+      - performance_logged
+      - plan_generated
+      - session_reminder
       type: string
       description: |-
         * `note_for_coach` - Note added on an athlete
         * `note_for_athlete` - A note was shared with you
         * `message_new_topic` - A new topic was created in your team
         * `message_new_reply` - A new message was posted in a topic
+        * `performance_logged` - A performance was logged for you
+        * `plan_generated` - A new training plan was scheduled
+        * `session_reminder` - You have a session tomorrow
     UnreadCount:
       type: object
       description: Response shape for GET /notifications/unread_count/.

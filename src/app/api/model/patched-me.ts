@@ -31,11 +31,8 @@ export interface PatchedMe {
      * Designates whether the user can log into this admin site.
      */
     readonly is_staff?: boolean;
-    /**
-     * Designates that this user has all permissions without explicitly assigning them.
-     */
-    readonly is_superuser?: boolean;
     readonly team_quota?: TeamQuotaStatus;
+    readonly member_id?: number | null;
 }
 
 
