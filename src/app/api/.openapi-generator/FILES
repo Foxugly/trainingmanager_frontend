@@ -227,12 +227,15 @@ model/token-refresh.ts
 model/topic-creation-enum.ts
 model/topic-message.ts
 model/topic.ts
+model/training-slot.ts
+model/training-template.ts
 model/type-enum.ts
 model/unit-enum.ts
 model/unread-count.ts
 model/validate-invitation.ts
 model/verified-token-obtain-pair.ts
 model/visibility-mode.ts
+model/weekday-enum.ts
 param.ts
 provide-api.ts
 query.params.ts

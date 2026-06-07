@@ -29,6 +29,7 @@ import { TeamPoolsResponse } from '../model/models';
 import { TeamStats } from '../model/models';
 import { Topic } from '../model/models';
 import { TopicMessage } from '../model/models';
+import { TrainingTemplate } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
@@ -404,6 +405,23 @@ export interface TeamsServiceInterface {
      * @param teamPk 
      */
     teamsTopicsRetrieve(id: number, teamPk: number, extraHttpRequestParams?: any): Observable<Topic>;
+
+    /**
+     * Read the team\&#39;s weekly training template
+     * Returns the team\&#39;s reusable weekly training template: the list of weekly slots (weekday Monday&#x3D;0…Sunday&#x3D;6 + hour_start/hour_end), the default pool/venue, and the default season dates. Any member of the team may read it; non-members get 404.
+     * @endpoint get /api/v1/teams/{id}/training-template/
+     * @param id A unique integer value identifying this team.
+     */
+    teamsTrainingTemplateRetrieve(id: number, extraHttpRequestParams?: any): Observable<TrainingTemplate>;
+
+    /**
+     * Replace the team\&#39;s weekly training template (manager only)
+     * Atomically REPLACES the team\&#39;s training template: deletes the existing weekly slots and recreates them from the payload, and sets default_pool / season_start / season_end on the team. Manager/owner only (else 403). Each slot\&#39;s weekday must be 0..6 and hour_end must be after hour_start (else 400).
+     * @endpoint put /api/v1/teams/{id}/training-template/
+     * @param id A unique integer value identifying this team.
+     * @param trainingTemplate 
+     */
+    teamsTrainingTemplateUpdate(id: number, trainingTemplate: TrainingTemplate, extraHttpRequestParams?: any): Observable<TrainingTemplate>;
 
     /**
      * 

@@ -13,7 +13,7 @@ import { OverlapStrategyEnum } from './overlap-strategy-enum';
 export interface GeneratePlanRequest { 
     date_start: string;
     date_end: string;
-    frequency_per_week: number;
+    frequency_per_week?: number;
     description?: string;
     additional_prompt?: string;
     overlap_strategy?: OverlapStrategyEnum;
