@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { EquipmentMinimal } from './equipment-minimal';
 import { VisibilityMode } from './visibility-mode';
 import { PlaceMinimal } from './place-minimal';
 import { ProgramMinimal } from './program-minimal';
@@ -26,6 +27,8 @@ export interface Event {
      * Material/gear athletes should bring. Always visible to athletes.
      */
     equipment?: string;
+    readonly equipment_items?: Array<EquipmentMinimal>;
+    equipment_item_ids?: Array<number>;
     color?: string;
     date?: string | null;
     hour_start?: string | null;

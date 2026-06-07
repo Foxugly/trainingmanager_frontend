@@ -17,6 +17,8 @@ api/energy-segments.service.ts
 api/energy-segments.serviceInterface.ts
 api/energy-systems.service.ts
 api/energy-systems.serviceInterface.ts
+api/equipment.service.ts
+api/equipment.serviceInterface.ts
 api/events.service.ts
 api/events.serviceInterface.ts
 api/exercises.service.ts
@@ -91,6 +93,9 @@ model/energy-segment-admin.ts
 model/energy-segment.ts
 model/energy-system-admin.ts
 model/energy-system.ts
+model/equipment-minimal.ts
+model/equipment-request.ts
+model/equipment.ts
 model/event-public.ts
 model/event-share-request.ts
 model/event-share-response.ts
@@ -139,6 +144,7 @@ model/paginated-attendance-status-list.ts
 model/paginated-audit-log-entry-list.ts
 model/paginated-energy-segment-list.ts
 model/paginated-energy-system-list.ts
+model/paginated-equipment-list.ts
 model/paginated-event-list.ts
 model/paginated-exercise-list.ts
 model/paginated-level-list.ts
@@ -168,6 +174,8 @@ model/patched-attendance-status-admin.ts
 model/patched-attendance.ts
 model/patched-energy-segment-admin.ts
 model/patched-energy-system-admin.ts
+model/patched-equipment-request.ts
+model/patched-equipment.ts
 model/patched-event.ts
 model/patched-exercise.ts
 model/patched-level-admin.ts
