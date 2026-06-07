@@ -44,6 +44,23 @@
   }
 }
 
+// Opt-in flat variant: drop the per-field card chrome (border / soft fill /
+// padding) for a lighter, less "boxed" form — the input keeps its own border, so
+// fields stay legible. Enabled per-form by adding `.form-flat` on the container;
+// other forms are untouched. A bit more row spacing compensates for the removed
+// boxes.
+.form-flat {
+  .meta-item {
+    padding: 0;
+    border: none;
+    background: none;
+    border-radius: 0;
+  }
+  .meta-grid {
+    gap: 1.1rem 1.25rem;
+  }
+}
+
 .meta-label {
   font-size: 0.82rem;
   color: var(--muted);

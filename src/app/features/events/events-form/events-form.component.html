@@ -14,9 +14,10 @@
   @if (loading()) {
     <div class="card"><p class="meta-hint">{{ 'common.loading' | transloco }}…</p></div>
   } @else {
-    <div class="card form-card builder-stack">
+    <div class="card form-card builder-stack form-flat">
       <form [formGroup]="form">
         <!-- Top section: identity, goal, equipment, distance & color -->
+        <h3 class="builder-section-title">{{ 'events.form.section_info' | transloco }}</h3>
         <div class="meta-grid cols-2">
           <app-meta-field [label]="'events.form.name' | transloco" for="name" [error]="fieldError('name')">
             <input pInputText id="name" formControlName="name" />
@@ -42,7 +43,7 @@
 
         <div class="meta-grid">
           <app-meta-field [full]="true" [label]="'events.form.goal' | transloco" for="goal" [error]="fieldError('goal')">
-            <app-rich-editor formControlName="goal" [style]="{ height: '10rem' }" />
+            <app-rich-editor formControlName="goal" [style]="{ height: '7rem' }" />
           </app-meta-field>
           <app-meta-field
             [full]="true"

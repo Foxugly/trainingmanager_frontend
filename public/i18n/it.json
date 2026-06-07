@@ -235,7 +235,8 @@
       "vis_goal": "Obiettivo",
       "vis_rounds": "Dettaglio sessione",
       "vis_help": "Ereditato dalle impostazioni della squadra; modificabile per questa sessione.",
-      "section_planning": "Pianificazione",
+      "section_info": "Informazioni",
+        "section_planning": "Pianificazione",
       "section_visibility": "Visibilità",
       "location_placeholder": "Piscina, pista o indirizzo…"
     },

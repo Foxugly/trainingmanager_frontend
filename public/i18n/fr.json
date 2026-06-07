@@ -235,7 +235,8 @@
       "vis_goal": "Objectif",
       "vis_rounds": "Détail de la séance",
       "vis_help": "Hérité des réglages de l'équipe ; modifiable pour cette séance.",
-      "section_planning": "Planning",
+      "section_info": "Infos",
+        "section_planning": "Planning",
       "section_visibility": "Visibilité",
       "location_placeholder": "Piscine, piste ou adresse…"
     },
