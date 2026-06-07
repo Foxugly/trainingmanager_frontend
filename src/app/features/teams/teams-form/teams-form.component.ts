@@ -23,20 +23,26 @@ import {
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { AutoComplete, AutoCompleteCompleteEvent } from 'primeng/autocomplete';
 import { Button } from 'primeng/button';
 import { Checkbox } from 'primeng/checkbox';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { DatePicker } from 'primeng/datepicker';
+import { Dialog } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
 import { MultiSelect } from 'primeng/multiselect';
 import { Select } from 'primeng/select';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
+import { Textarea } from 'primeng/textarea';
 import { ToggleSwitch } from 'primeng/toggleswitch';
+import { Tooltip } from 'primeng/tooltip';
 import { AttendanceStatusesService } from '../../../api/api/attendance-statuses.service';
 import { LevelsService } from '../../../api/api/levels.service';
+import { PlacesService } from '../../../api/api/places.service';
 import { SportsService } from '../../../api/api/sports.service';
 import { TeamsService } from '../../../api/api/teams.service';
+import { Place } from '../../../api/model/place';
+import { PlaceRequest } from '../../../api/model/place-request';
+import { PatchedPlace } from '../../../api/model/patched-place';
 import { AttendanceStatus } from '../../../api/model/attendance-status';
 import { CustomUserPublic } from '../../../api/model/custom-user-public';
 import { JoinRequestPolicyEnum } from '../../../api/model/join-request-policy-enum';
@@ -121,8 +127,10 @@ function slotTimeRangeValidator(group: AbstractControl): ValidationErrors | null
     MultiSelect,
     Checkbox,
     ToggleSwitch,
-    AutoComplete,
     DatePicker,
+    Dialog,
+    Textarea,
+    Tooltip,
     Button,
     ConfirmDialog,
     Tabs,
@@ -150,8 +158,10 @@ export class TeamsFormComponent implements OnInit {
   private readonly teamsService = inject(TeamsService);
   private readonly sportsService = inject(SportsService);
   private readonly levelsService = inject(LevelsService);
+  private readonly placesService = inject(PlacesService);
   private readonly statusesService = inject(AttendanceStatusesService);
   private readonly authService = inject(AuthService);
+  private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
   private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
@@ -235,9 +245,19 @@ export class TeamsFormComponent implements OnInit {
   // ── Planning type (weekly training template) ────────────────────────────
   protected readonly templateLoading = signal(false);
   protected readonly templateSaving = signal(false);
-  /** Known pools ("piscines") for this team, for the default_pool autocomplete. */
-  protected readonly pools = signal<string[]>([]);
-  protected readonly poolSuggestions = signal<string[]>([]);
+
+  // ── Lieux (managed places) ──────────────────────────────────────────────
+  /** The team's managed places (Lieux), shared by the manager list + default selector. */
+  protected readonly places = signal<Place[]>([]);
+  protected readonly placesLoading = signal(false);
+  /** Inline create/edit dialog state. */
+  protected readonly placeDialogVisible = signal(false);
+  protected readonly placeSaving = signal(false);
+  /** Id of the place being edited, or null when creating a new one. */
+  protected readonly editingPlaceId = signal<number | null>(null);
+  protected readonly placeName = signal('');
+  protected readonly placeAddress = signal('');
+  protected readonly placeNameError = signal<string | null>(null);
 
   /** Weekday select options (Mon=0 … Sun=6), re-translated on language change. */
   protected readonly weekdayOptions = computed(() => {
@@ -257,6 +277,7 @@ export class TeamsFormComponent implements OnInit {
   protected readonly templateForm = this.fb.group({
     slots: this.fb.array<SlotFormGroup>([]),
     default_pool: this.fb.nonNullable.control<string>(''),
+    default_place_id: this.fb.nonNullable.control<number | null>(null),
     season_start: this.fb.nonNullable.control<Date | null>(null),
     season_end: this.fb.nonNullable.control<Date | null>(null),
   });
@@ -349,7 +370,7 @@ export class TeamsFormComponent implements OnInit {
       }
       this.teamId.set(id);
       this.loadTemplate(id);
-      this.loadPools(id);
+      this.loadPlaces(id);
       this.loading.set(true);
       this.teamsService
         .teamsRetrieve(id)
@@ -359,6 +380,9 @@ export class TeamsFormComponent implements OnInit {
             this.team.set(t);
             this.activeValue.set(t.is_active ?? true);
             this.logoValue.set(t.logo ?? '');
+            this.templateForm.controls.default_place_id.setValue(t.default_place?.id ?? null, {
+              emitEvent: false,
+            });
             this.availableManagers.set(t.managers ?? []);
             this.partitionStatuses(this.availableStatuses(), t.attendance_statuses ?? null);
             this.form.reset({
@@ -737,21 +761,147 @@ export class TeamsFormComponent implements OnInit {
       });
   }
 
-  private loadPools(teamId: number): void {
-    this.teamsService
-      .teamsPoolsRetrieve(teamId)
+  // ── Lieux (managed places) management ───────────────────────────────────
+
+  private loadPlaces(teamId: number): void {
+    this.placesLoading.set(true);
+    this.placesService
+      .placesList(undefined, undefined, undefined, undefined, teamId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (res) => this.pools.set(res.pools ?? []),
-        error: () => this.pools.set([]),
+        next: (res) => {
+          this.places.set(res.results ?? []);
+          this.placesLoading.set(false);
+        },
+        error: () => {
+          this.places.set([]);
+          this.placesLoading.set(false);
+        },
       });
   }
 
-  /** p-autoComplete completeMethod: filter the known pools by the typed query. */
-  protected filterPools(event: AutoCompleteCompleteEvent): void {
-    const q = (event.query ?? '').toLowerCase().trim();
-    const all = this.pools();
-    this.poolSuggestions.set(q ? all.filter((p) => p.toLowerCase().includes(q)) : all.slice());
+  /** Open the dialog to create a new place. */
+  protected openCreatePlace(): void {
+    this.editingPlaceId.set(null);
+    this.placeName.set('');
+    this.placeAddress.set('');
+    this.placeNameError.set(null);
+    this.placeDialogVisible.set(true);
+  }
+
+  /** Open the dialog pre-filled to edit an existing place. */
+  protected openEditPlace(place: Place): void {
+    this.editingPlaceId.set(place.id);
+    this.placeName.set(place.name);
+    this.placeAddress.set(place.address ?? '');
+    this.placeNameError.set(null);
+    this.placeDialogVisible.set(true);
+  }
+
+  protected closePlaceDialog(): void {
+    this.placeDialogVisible.set(false);
+  }
+
+  /** Create or update the place currently in the dialog. */
+  protected savePlace(): void {
+    const teamId = this.teamId();
+    const name = this.placeName().trim();
+    if (teamId === null) return;
+    if (!name) {
+      this.placeNameError.set(this.transloco.translate('place.name_required'));
+      return;
+    }
+    this.placeSaving.set(true);
+    this.placeNameError.set(null);
+    const address = this.placeAddress().trim() || undefined;
+    const id = this.editingPlaceId();
+
+    const onError = (err: HttpErrorResponse) => {
+      this.placeSaving.set(false);
+      const body = err?.error as { code?: string } | null | undefined;
+      if (err.status === 400 && body?.code === 'place_already_exists') {
+        this.placeNameError.set(this.transloco.translate('place.error_duplicate'));
+      } else {
+        this.messageService.add({
+          severity: 'error',
+          summary: this.transloco.translate('common.error'),
+          detail: this.transloco.translate('place.error_create'),
+        });
+      }
+    };
+
+    if (id === null) {
+      const payload: PlaceRequest = { team: teamId, name, address };
+      this.placesService
+        .placesCreate(payload)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (created) => {
+            this.placeSaving.set(false);
+            this.placeDialogVisible.set(false);
+            this.places.update((cur) => [...cur, created]);
+            this.notifyPlaceToast('place.created');
+          },
+          error: onError,
+        });
+    } else {
+      const payload: PatchedPlace = { name, address };
+      this.placesService
+        .placesPartialUpdate(id, payload)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (updated) => {
+            this.placeSaving.set(false);
+            this.placeDialogVisible.set(false);
+            this.places.update((cur) => cur.map((p) => (p.id === updated.id ? updated : p)));
+            this.notifyPlaceToast('place.updated');
+          },
+          error: onError,
+        });
+    }
+  }
+
+  /** Confirm + delete a place (past sessions keep their location text). */
+  protected confirmDeletePlace(place: Place): void {
+    this.confirmationService.confirm({
+      message: this.transloco.translate('place.delete_confirm', { name: place.name }),
+      header: this.transloco.translate('place.delete'),
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: this.transloco.translate('common.delete'),
+      rejectLabel: this.transloco.translate('common.cancel'),
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => this.deletePlace(place.id),
+    });
+  }
+
+  private deletePlace(id: number): void {
+    this.placesService
+      .placesDestroy(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.places.update((cur) => cur.filter((p) => p.id !== id));
+          if (this.templateForm.controls.default_place_id.value === id) {
+            this.templateForm.controls.default_place_id.setValue(null, { emitEvent: false });
+          }
+          this.notifyPlaceToast('place.deleted');
+        },
+        error: () => {
+          this.messageService.add({
+            severity: 'error',
+            summary: this.transloco.translate('common.error'),
+            detail: this.transloco.translate('place.error_delete'),
+          });
+        },
+      });
+  }
+
+  private notifyPlaceToast(detailKey: string): void {
+    this.messageService.add({
+      severity: 'success',
+      summary: this.transloco.translate('common.success'),
+      detail: this.transloco.translate(detailKey),
+    });
   }
 
   protected saveTemplate(): void {
@@ -773,35 +923,46 @@ export class TeamsFormComponent implements OnInit {
       season_end: toIsoDate(value.season_end),
     };
 
+    const onTemplateError = (err: HttpErrorResponse) => {
+      this.templateSaving.set(false);
+      const detail =
+        err.status === 403
+          ? this.transloco.translate('training_template.error_forbidden')
+          : this.transloco.translate('training_template.error');
+      this.messageService.add({
+        severity: 'error',
+        summary: this.transloco.translate('common.error'),
+        detail,
+      });
+    };
+
     this.teamsService
       .teamsTrainingTemplateUpdate(id, payload)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (saved) => {
-          this.templateSaving.set(false);
-          this.templateForm.markAsPristine();
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('training_template.saved'),
-          });
-          // Refresh pools in case a new default_pool was introduced.
-          if (saved?.default_pool && !this.pools().includes(saved.default_pool)) {
-            this.pools.update((cur) => [...cur, saved.default_pool as string]);
-          }
+        next: () => {
+          // The default place is a team field (the backend syncs default_pool
+          // from it); persist it via a team PATCH after the template update.
+          this.teamsService
+            .teamsPartialUpdate(id, {
+              default_place_id: value.default_place_id ?? null,
+            } as PatchedTeam)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+              next: (t) => {
+                this.templateSaving.set(false);
+                this.templateForm.markAsPristine();
+                this.team.set(t);
+                this.messageService.add({
+                  severity: 'success',
+                  summary: this.transloco.translate('common.success'),
+                  detail: this.transloco.translate('training_template.saved'),
+                });
+              },
+              error: onTemplateError,
+            });
         },
-        error: (err: HttpErrorResponse) => {
-          this.templateSaving.set(false);
-          const detail =
-            err.status === 403
-              ? this.transloco.translate('training_template.error_forbidden')
-              : this.transloco.translate('training_template.error');
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail,
-          });
-        },
+        error: onTemplateError,
       });
   }
 }

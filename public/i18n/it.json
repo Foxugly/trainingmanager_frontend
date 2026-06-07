@@ -394,6 +394,27 @@
       "unknown": "Si è verificato un errore."
     }
   },
+  "place": {
+    "title_plural": "Luoghi",
+    "new": "Nuovo luogo",
+    "edit": "Modifica luogo",
+    "delete": "Elimina luogo",
+    "add": "Aggiungi un luogo",
+    "name": "Nome del luogo",
+    "name_required": "Il nome è obbligatorio.",
+    "address": "Indirizzo",
+    "none": "Nessun luogo",
+    "select_placeholder": "Seleziona un luogo",
+    "default_place": "Luogo predefinito",
+    "legacy_hint": "Luogo attuale",
+    "created": "Luogo creato.",
+    "updated": "Luogo aggiornato.",
+    "deleted": "Luogo eliminato.",
+    "delete_confirm": "Eliminare il luogo «{{name}}»? Le sessioni passate mantengono il testo del luogo.",
+    "error_create": "Impossibile salvare il luogo.",
+    "error_delete": "Impossibile eliminare il luogo.",
+    "error_duplicate": "Esiste già un luogo con questo nome."
+  },
   "training_template": {
     "tab": "Schema settimanale",
     "slots": "Fasce orarie",

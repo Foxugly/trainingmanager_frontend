@@ -394,6 +394,27 @@
       "unknown": "Er is een fout opgetreden."
     }
   },
+  "place": {
+    "title_plural": "Locaties",
+    "new": "Nieuwe locatie",
+    "edit": "Locatie bewerken",
+    "delete": "Locatie verwijderen",
+    "add": "Locatie toevoegen",
+    "name": "Naam van de locatie",
+    "name_required": "Naam is verplicht.",
+    "address": "Adres",
+    "none": "Geen locatie",
+    "select_placeholder": "Selecteer een locatie",
+    "default_place": "Standaardlocatie",
+    "legacy_hint": "Huidige locatie",
+    "created": "Locatie aangemaakt.",
+    "updated": "Locatie bijgewerkt.",
+    "deleted": "Locatie verwijderd.",
+    "delete_confirm": "Locatie “{{name}}” verwijderen? Eerdere sessies behouden hun locatietekst.",
+    "error_create": "Kan de locatie niet opslaan.",
+    "error_delete": "Kan de locatie niet verwijderen.",
+    "error_duplicate": "Er bestaat al een locatie met deze naam."
+  },
   "training_template": {
     "tab": "Weekschema",
     "slots": "Tijdvakken",

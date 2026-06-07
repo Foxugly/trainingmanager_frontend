@@ -19,7 +19,6 @@ import {
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { MessageService } from 'primeng/api';
-import { AutoComplete, AutoCompleteCompleteEvent } from 'primeng/autocomplete';
 import { Button } from 'primeng/button';
 import { ColorPicker } from 'primeng/colorpicker';
 import { DatePicker } from 'primeng/datepicker';
@@ -39,6 +38,7 @@ import { buildVisibilityOptions } from '../../../shared/forms/visibility-options
 import { FormFooterComponent } from '../../../shared/ui/form-footer/form-footer.component';
 import { MetaFieldComponent } from '../../../shared/ui/meta-field/meta-field.component';
 import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
+import { PlaceSelectComponent } from '../../../shared/ui/place-select/place-select.component';
 import { RichEditorComponent } from '../../../shared/ui/rich-editor/rich-editor.component';
 
 function toIsoDate(d: Date | null | undefined): string | null {
@@ -88,7 +88,6 @@ function timeRangeValidator(group: AbstractControl): ValidationErrors | null {
     InputText,
     InputNumber,
     Select,
-    AutoComplete,
     RichEditorComponent,
     DatePicker,
     ColorPicker,
@@ -96,6 +95,7 @@ function timeRangeValidator(group: AbstractControl): ValidationErrors | null {
     PageHeaderComponent,
     MetaFieldComponent,
     FormFooterComponent,
+    PlaceSelectComponent,
     TranslocoPipe,
   ],
   templateUrl: './events-form.component.html',
@@ -119,12 +119,13 @@ export class EventsFormComponent implements OnInit {
   protected readonly availablePrograms = signal<Program[]>([]);
   protected readonly fieldErrors = signal<FieldErrors | null>(null);
 
-  /** Known pools ("piscines") for the resolved team, for the location autocomplete. */
-  protected readonly pools = signal<string[]>([]);
-  /** Filtered suggestions shown in the p-autoComplete dropdown. */
-  protected readonly poolSuggestions = signal<string[]>([]);
-  /** Team id the pools were last loaded for (avoids redundant fetches). */
-  private poolsLoadedForTeamId: number | null = null;
+  /** Team id resolved from the selected program, scoping the Place selector. */
+  protected readonly selectedTeamId = signal<number | null>(null);
+  /**
+   * Legacy free-text location carried by an event that has no linked place yet.
+   * Shown as a hint under the Lieu selector; selecting/creating a place wins.
+   */
+  protected readonly legacyLocation = signal<string | null>(null);
 
   protected readonly isEditMode = computed(() => this.eventId() !== null);
 
@@ -146,7 +147,7 @@ export class EventsFormComponent implements OnInit {
       // goal & equipment now hold rich-text HTML (sanitized server-side); no
       // client length cap on the HTML payload.
       goal: [''],
-      location: ['', [Validators.maxLength(255)]],
+      place_id: this.fb.nonNullable.control<number | null>(null),
       equipment: [''],
       date: this.fb.nonNullable.control<Date | null>(null, [Validators.required]),
       hour_start: this.fb.nonNullable.control<Date | null>(null),
@@ -179,7 +180,7 @@ export class EventsFormComponent implements OnInit {
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe((pid) => {
           this.prefillVisFromTeam(pid);
-          this.loadPoolsForProgram(pid);
+          this.resolveTeamForProgram(pid);
         });
 
       const programParam = this.route.snapshot.queryParamMap.get('program');
@@ -189,7 +190,7 @@ export class EventsFormComponent implements OnInit {
           this.form.patchValue({ refer_program_id: pid });
           this.form.controls.refer_program_id.disable();
           this.prefillVisFromTeam(pid);
-          this.loadPoolsForProgram(pid);
+          this.resolveTeamForProgram(pid);
         }
       }
     }
@@ -230,42 +231,16 @@ export class EventsFormComponent implements OnInit {
   }
 
   /**
-   * Resolve the team id for a program (from the loaded program list) and load
-   * its known pools into the autocomplete suggestions. No-op when the team
-   * can't be resolved yet — the field then behaves as plain free text.
+   * Resolve the team id for a program (from the loaded program list) and expose
+   * it to the Place selector so it loads that team's managed places. No-op when
+   * the team can't be resolved yet (program list not loaded).
    */
-  private loadPoolsForProgram(programId: number | null | undefined): void {
+  private resolveTeamForProgram(programId: number | null | undefined): void {
     if (programId == null) return;
     const program = this.availablePrograms().find((p) => p.id === programId);
     const teamId = program?.team_id ?? program?.team?.id ?? null;
     if (teamId == null) return;
-    this.loadPoolsForTeam(teamId);
-  }
-
-  /** Fetch the team's distinct event locations for the autocomplete. */
-  private loadPoolsForTeam(teamId: number): void {
-    if (this.poolsLoadedForTeamId === teamId) return;
-    this.poolsLoadedForTeamId = teamId;
-    this.teamsService
-      .teamsPoolsRetrieve(teamId)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (res) => this.pools.set(res.pools ?? []),
-        error: () => {
-          // Pools are an optional convenience; on failure fall back to free text.
-          this.poolsLoadedForTeamId = null;
-          this.pools.set([]);
-        },
-      });
-  }
-
-  /** p-autoComplete completeMethod: filter the known pools by the typed query. */
-  protected filterPools(event: AutoCompleteCompleteEvent): void {
-    const q = (event.query ?? '').toLowerCase().trim();
-    const all = this.pools();
-    this.poolSuggestions.set(
-      q ? all.filter((p) => p.toLowerCase().includes(q)) : all.slice(),
-    );
+    this.selectedTeamId.set(teamId);
   }
 
   private loadAvailablePrograms(): void {
@@ -306,9 +281,9 @@ export class EventsFormComponent implements OnInit {
     const dedup = new Map<number, Program>();
     for (const p of all) dedup.set(p.id, p);
     this.availablePrograms.set(Array.from(dedup.values()));
-    // The program list may arrive after the event/param did; (re)resolve pools
-    // now that team ids are known.
-    this.loadPoolsForProgram(this.form.controls.refer_program_id.value);
+    // The program list may arrive after the event/param did; (re)resolve the
+    // team now that team ids are known so the Place selector can load places.
+    this.resolveTeamForProgram(this.form.controls.refer_program_id.value);
   }
 
   private loadEvent(id: number): void {
@@ -322,7 +297,7 @@ export class EventsFormComponent implements OnInit {
             name: e.name,
             refer_program_id: e.refer_program?.id ?? null,
             goal: e.goal ?? '',
-            location: e.location ?? '',
+            place_id: e.place?.id ?? null,
             equipment: e.equipment ?? '',
             date: parseDate(e.date),
             hour_start: parseTime(e.hour_start),
@@ -334,7 +309,10 @@ export class EventsFormComponent implements OnInit {
             vis_rounds: e.vis_rounds ?? VisibilityMode.Always,
           });
           this.form.controls.refer_program_id.disable();
-          this.loadPoolsForProgram(e.refer_program?.id ?? null);
+          // A legacy event may carry a free-text location with no linked place;
+          // surface it as a hint until a place is chosen.
+          this.legacyLocation.set(e.place ? null : e.location || null);
+          this.resolveTeamForProgram(e.refer_program?.id ?? null);
           this.loading.set(false);
         },
         error: () => {
@@ -374,7 +352,7 @@ export class EventsFormComponent implements OnInit {
         name: value.name,
         refer_program_id: value.refer_program_id,
         goal: value.goal || null,
-        location: value.location || '',
+        place_id: value.place_id ?? null,
         equipment: value.equipment || '',
         date: toIsoDate(value.date),
         hour_start: toIsoTime(value.hour_start),
@@ -406,7 +384,7 @@ export class EventsFormComponent implements OnInit {
       name: value.name,
       refer_program_id: value.refer_program_id ?? undefined,
       goal: value.goal || undefined,
-      location: value.location ?? '',
+      place_id: value.place_id ?? null,
       equipment: value.equipment ?? '',
       date: toIsoDate(value.date) ?? undefined,
       hour_start: toIsoTime(value.hour_start) ?? undefined,

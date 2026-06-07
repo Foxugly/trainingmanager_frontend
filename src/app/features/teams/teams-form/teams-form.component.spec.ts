@@ -7,9 +7,11 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { LevelsService } from '../../../api/api/levels.service';
+import { PlacesService } from '../../../api/api/places.service';
 import { SportsService } from '../../../api/api/sports.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { CustomUserPublic } from '../../../api/model/custom-user-public';
+import { Place } from '../../../api/model/place';
 import { JoinRequestPolicyEnum } from '../../../api/model/join-request-policy-enum';
 import { LanguageEnum } from '../../../api/model/language-enum';
 import { Level } from '../../../api/model/level';
@@ -88,17 +90,28 @@ interface ProtectedFields {
   submit(): void;
   cancel(): void;
   // Planning type tab
-  templateForm: {
-    patchValue(v: Record<string, unknown>): void;
-    invalid: boolean;
-  };
   slots: { length: number };
   addSlot(): void;
   removeSlot(i: number): void;
   slotHasTimeError(i: number): boolean;
   saveTemplate(): void;
-  pools(): string[];
   weekdayOptions(): Array<{ label: string; value: number }>;
+  // Lieux (managed places)
+  places(): Place[];
+  editingPlaceId(): number | null;
+  placeName(): string;
+  placeAddress(): string;
+  placeNameError(): string | null;
+  placeDialogVisible(): boolean;
+  openCreatePlace(): void;
+  openEditPlace(p: Place): void;
+  savePlace(): void;
+  confirmDeletePlace(p: Place): void;
+  templateForm: {
+    patchValue(v: Record<string, unknown>): void;
+    invalid: boolean;
+    controls: { default_place_id: { value: number | null; setValue(v: number | null): void } };
+  };
 }
 
 describe('TeamsFormComponent', () => {
@@ -114,6 +127,12 @@ describe('TeamsFormComponent', () => {
   };
   let sportsMock: { sportsList: ReturnType<typeof vi.fn> };
   let levelsMock: { levelsList: ReturnType<typeof vi.fn> };
+  let placesMock: {
+    placesList: ReturnType<typeof vi.fn>;
+    placesCreate: ReturnType<typeof vi.fn>;
+    placesPartialUpdate: ReturnType<typeof vi.fn>;
+    placesDestroy: ReturnType<typeof vi.fn>;
+  };
   let userSig: ReturnType<typeof signal<CustomUserPublic | null>>;
   let routeIdParam: string | null;
   let router: Router;
@@ -143,6 +162,21 @@ describe('TeamsFormComponent', () => {
     levelsMock = {
       levelsList: vi.fn().mockReturnValue(of({ count: 1, results: [level] })),
     };
+    placesMock = {
+      placesList: vi.fn().mockReturnValue(
+        of({
+          count: 1,
+          results: [{ id: 7, team: 5, name: 'Piscine olympique', address: '1 rue X' } as Place],
+        }),
+      ),
+      placesCreate: vi
+        .fn()
+        .mockReturnValue(of({ id: 8, team: 5, name: 'Nouveau', address: '' } as Place)),
+      placesPartialUpdate: vi
+        .fn()
+        .mockReturnValue(of({ id: 7, team: 5, name: 'Renommé', address: 'Y' } as Place)),
+      placesDestroy: vi.fn().mockReturnValue(of(undefined)),
+    };
     userSig = signal<CustomUserPublic | null>(currentUser);
 
     await TestBed.configureTestingModule({
@@ -161,6 +195,7 @@ describe('TeamsFormComponent', () => {
         { provide: TeamsService, useValue: teamsMock },
         { provide: SportsService, useValue: sportsMock },
         { provide: LevelsService, useValue: levelsMock },
+        { provide: PlacesService, useValue: placesMock },
         { provide: AuthService, useValue: { currentUser: userSig.asReadonly(), refreshMe: vi.fn() } },
         {
           provide: ActivatedRoute,
@@ -512,11 +547,18 @@ describe('TeamsFormComponent', () => {
 
   // ── Planning type (weekly training template) ──────────────────────────────
 
-  it('loads the team training template + pools on edit', async () => {
+  it('loads the team training template + places on edit', async () => {
     await setup('5');
     expect(teamsMock.teamsTrainingTemplateRetrieve).toHaveBeenCalledWith(5);
-    expect(teamsMock.teamsPoolsRetrieve).toHaveBeenCalledWith(5);
-    expect(access(component).pools()).toEqual(['Piscine A', 'Piscine B']);
+    expect(placesMock.placesList).toHaveBeenCalledWith(
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      5,
+    );
+    expect(access(component).places()).toHaveLength(1);
+    expect(access(component).places()[0].name).toBe('Piscine olympique');
   });
 
   it('addSlot appends and removeSlot removes a slot row', async () => {
@@ -542,6 +584,7 @@ describe('TeamsFormComponent', () => {
       .patchValue({ weekday: 2, hour_start: start, hour_end: end });
     access(component).templateForm.patchValue({
       default_pool: 'Piscine X',
+      default_place_id: 7,
       season_start: season,
       season_end: null,
     });
@@ -555,6 +598,89 @@ describe('TeamsFormComponent', () => {
     expect(payload.slots).toEqual([
       { weekday: 2, hour_start: '18:00', hour_end: '19:30' },
     ]);
+    // The default place is persisted via a team PATCH after the template update.
+    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(
+      5,
+      expect.objectContaining({ default_place_id: 7 }),
+    );
+  });
+
+  // ── Lieux (managed places) CRUD ───────────────────────────────────────────
+
+  it('pre-selects the team default_place on edit', async () => {
+    await setup('5', ownerUser, {
+      ...team,
+      default_place: { id: 7, name: 'Piscine olympique', address: '1 rue X' },
+    });
+    expect(access(component).templateForm.controls.default_place_id.value).toBe(7);
+  });
+
+  it('openCreatePlace resets the dialog to create mode', async () => {
+    await setup('5');
+    access(component).openCreatePlace();
+    expect(access(component).editingPlaceId()).toBeNull();
+    expect(access(component).placeName()).toBe('');
+    expect(access(component).placeDialogVisible()).toBe(true);
+  });
+
+  it('savePlace creates a new place and appends it to the list', async () => {
+    await setup('5');
+    access(component).openCreatePlace();
+    (component as unknown as { placeName: { set(v: string): void } }).placeName.set('Nouveau');
+    access(component).savePlace();
+    expect(placesMock.placesCreate).toHaveBeenCalledWith(
+      expect.objectContaining({ team: 5, name: 'Nouveau' }),
+    );
+    expect(access(component).places().some((p) => p.id === 8)).toBe(true);
+  });
+
+  it('savePlace blocks and flags an error when the name is empty', async () => {
+    await setup('5');
+    access(component).openCreatePlace();
+    access(component).savePlace();
+    expect(placesMock.placesCreate).not.toHaveBeenCalled();
+    expect(access(component).placeNameError()).not.toBeNull();
+  });
+
+  it('openEditPlace + savePlace updates an existing place', async () => {
+    await setup('5');
+    access(component).openEditPlace({ id: 7, team: 5, name: 'Piscine olympique', address: '1 rue X' } as Place);
+    expect(access(component).editingPlaceId()).toBe(7);
+    access(component).savePlace();
+    expect(placesMock.placesPartialUpdate).toHaveBeenCalledWith(
+      7,
+      expect.objectContaining({ name: 'Piscine olympique' }),
+    );
+  });
+
+  it('surfaces a duplicate-name error from the backend', async () => {
+    await setup('5');
+    placesMock.placesCreate.mockReturnValueOnce(
+      throwError(() => ({ status: 400, error: { code: 'place_already_exists' } })),
+    );
+    access(component).openCreatePlace();
+    (component as unknown as { placeName: { set(v: string): void } }).placeName.set('Dup');
+    access(component).savePlace();
+    expect(access(component).placeNameError()).not.toBeNull();
+  });
+
+  it('confirmDeletePlace → deletePlace removes the place from the list', async () => {
+    await setup('5');
+    // ConfirmationService is component-scoped (provided on the component), so
+    // resolve it from the component's own injector, not the module root.
+    const confirm = fixture.debugElement.injector.get(ConfirmationService);
+    const confirmSpy = vi.spyOn(confirm, 'confirm').mockReturnValue(confirm);
+    access(component).confirmDeletePlace({
+      id: 7,
+      team: 5,
+      name: 'Piscine olympique',
+      address: '',
+    } as Place);
+    // Invoke the captured accept callback to simulate the user confirming.
+    const opts = confirmSpy.mock.calls[0][0];
+    opts.accept?.();
+    expect(placesMock.placesDestroy).toHaveBeenCalledWith(7);
+    expect(access(component).places().some((p) => p.id === 7)).toBe(false);
   });
 
   it('slotHasTimeError flags a slot whose end is before its start', async () => {

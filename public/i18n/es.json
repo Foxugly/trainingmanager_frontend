@@ -394,6 +394,27 @@
       "unknown": "Se ha producido un error."
     }
   },
+  "place": {
+    "title_plural": "Lugares",
+    "new": "Nuevo lugar",
+    "edit": "Editar lugar",
+    "delete": "Eliminar lugar",
+    "add": "Añadir un lugar",
+    "name": "Nombre del lugar",
+    "name_required": "El nombre es obligatorio.",
+    "address": "Dirección",
+    "none": "Ningún lugar",
+    "select_placeholder": "Seleccionar un lugar",
+    "default_place": "Lugar predeterminado",
+    "legacy_hint": "Lugar actual",
+    "created": "Lugar creado.",
+    "updated": "Lugar actualizado.",
+    "deleted": "Lugar eliminado.",
+    "delete_confirm": "¿Eliminar el lugar «{{name}}»? Las sesiones anteriores conservan su texto de ubicación.",
+    "error_create": "No se pudo guardar el lugar.",
+    "error_delete": "No se pudo eliminar el lugar.",
+    "error_duplicate": "Ya existe un lugar con este nombre."
+  },
   "training_template": {
     "tab": "Plantilla semanal",
     "slots": "Franjas horarias",

@@ -24,23 +24,19 @@
           <app-meta-field
             [label]="'events.form.location' | transloco"
             [tooltip]="'events.form.location_tooltip' | transloco"
-            for="location"
-            [error]="fieldError('location')"
+            for="place_id"
+            [error]="fieldError('place_id')"
           >
-            <p-autoComplete
-              inputId="location"
-              formControlName="location"
-              [suggestions]="poolSuggestions()"
-              (completeMethod)="filterPools($event)"
-              [dropdown]="true"
-              [forceSelection]="false"
-              [completeOnFocus]="true"
-              [placeholder]="'events.form.location_placeholder' | transloco"
-              [maxlength]="255"
-              appendTo="body"
-              styleClass="w-full"
-              [inputStyle]="{ width: '100%' }"
+            <app-place-select
+              inputId="place_id"
+              formControlName="place_id"
+              [teamId]="selectedTeamId()"
             />
+            @if (legacyLocation()) {
+              <small class="meta-hint mt-1 block">
+                {{ 'place.legacy_hint' | transloco }}: {{ legacyLocation() }}
+              </small>
+            }
           </app-meta-field>
         </div>
 

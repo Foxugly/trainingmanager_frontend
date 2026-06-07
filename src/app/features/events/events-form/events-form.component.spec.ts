@@ -6,6 +6,7 @@ import { MessageService } from 'primeng/api';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { EventsService } from '../../../api/api/events.service';
+import { PlacesService } from '../../../api/api/places.service';
 import { ProgramsService } from '../../../api/api/programs.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { Event } from '../../../api/model/event';
@@ -100,9 +101,8 @@ interface ProtectedFields {
   cancel(): void;
   submit(): void;
   onVisChanged(): void;
-  pools(): string[];
-  poolSuggestions(): string[];
-  filterPools(event: { query: string }): void;
+  selectedTeamId(): number | null;
+  legacyLocation(): string | null;
 }
 
 describe('EventsFormComponent', () => {
@@ -119,6 +119,10 @@ describe('EventsFormComponent', () => {
     teamsPoolsRetrieve: ReturnType<typeof vi.fn>;
   };
   let programsMock: { programsList: ReturnType<typeof vi.fn> };
+  let placesMock: {
+    placesList: ReturnType<typeof vi.fn>;
+    placesCreate: ReturnType<typeof vi.fn>;
+  };
   let routeIdParam: string | null;
   let routeQueryProgram: string | null;
   let router: Router;
@@ -149,6 +153,17 @@ describe('EventsFormComponent', () => {
     programsMock = {
       programsList: vi.fn().mockReturnValue(of({ count: 1, results: [program] })),
     };
+    placesMock = {
+      placesList: vi.fn().mockReturnValue(
+        of({
+          count: 1,
+          results: [{ id: 9, team: 4, name: 'Piscine olympique', address: '1 rue X' }],
+        }),
+      ),
+      placesCreate: vi
+        .fn()
+        .mockReturnValue(of({ id: 10, team: 4, name: 'Nouveau lieu', address: '' })),
+    };
 
     await TestBed.configureTestingModule({
       imports: [
@@ -165,6 +180,7 @@ describe('EventsFormComponent', () => {
         { provide: EventsService, useValue: eventsMock },
         { provide: TeamsService, useValue: teamsMock },
         { provide: ProgramsService, useValue: programsMock },
+        { provide: PlacesService, useValue: placesMock },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -384,32 +400,44 @@ describe('EventsFormComponent', () => {
     });
   });
 
-  it('loads the team pools for the selected program (location autocomplete)', async () => {
+  it('resolves the selected program team id for the Place selector', async () => {
     access(component).form.patchValue({ refer_program_id: 4 });
     await new Promise((r) => setTimeout(r, 0));
-    expect(teamsMock.teamsPoolsRetrieve).toHaveBeenCalledWith(4);
-    expect(access(component).pools()).toEqual(['Olympic pool', 'Training pool']);
+    expect(access(component).selectedTeamId()).toBe(4);
   });
 
-  it('filterPools narrows the suggestions by the typed query', async () => {
-    access(component).form.patchValue({ refer_program_id: 4 });
-    await new Promise((r) => setTimeout(r, 0));
-    access(component).filterPools({ query: 'oly' });
-    expect(access(component).poolSuggestions()).toEqual(['Olympic pool']);
-    access(component).filterPools({ query: '' });
-    expect(access(component).poolSuggestions()).toEqual(['Olympic pool', 'Training pool']);
-  });
-
-  it('keeps a free-typed location not present in the pool list', async () => {
+  it('sends place_id (not location) in the create payload', async () => {
     access(component).form.patchValue({
-      name: 'Free pool session',
+      name: 'Place session',
       refer_program_id: 4,
       date: new Date(2026, 4, 5),
-      location: 'Brand new lake',
+      place_id: 9,
     });
     access(component).submit();
-    expect(eventsMock.eventsCreate.mock.calls[0][0]).toMatchObject({
-      location: 'Brand new lake',
+    expect(eventsMock.eventsCreate.mock.calls[0][0]).toMatchObject({ place_id: 9 });
+    expect(eventsMock.eventsCreate.mock.calls[0][0]).not.toHaveProperty('location');
+  });
+
+  it('sends place_id in the update payload on edit', async () => {
+    await setup('7');
+    access(component).form.patchValue({ place_id: 9 });
+    access(component).submit();
+    expect(eventsMock.eventsPartialUpdate.mock.calls[0][1]).toMatchObject({ place_id: 9 });
+  });
+
+  it('pre-selects the event place and clears the legacy location hint on edit', async () => {
+    await setup('7', {
+      ...eventFromBackend,
+      location: 'Old text pool',
+      place: { id: 9, name: 'Piscine olympique', address: '1 rue X' },
     });
+    expect(access(component).form.getRawValue()).toMatchObject({ place_id: 9 });
+    expect(access(component).legacyLocation()).toBeNull();
+  });
+
+  it('shows the legacy location as a hint when the event has no linked place', async () => {
+    await setup('7', { ...eventFromBackend, location: 'Lac libre', place: undefined });
+    expect(access(component).form.getRawValue()).toMatchObject({ place_id: null });
+    expect(access(component).legacyLocation()).toBe('Lac libre');
   });
 });
