@@ -2,6 +2,7 @@ import { Component, signal } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { MessageService } from 'primeng/api';
 import { of, throwError } from 'rxjs';
@@ -110,6 +111,7 @@ describe('AttendanceManagerComponent', () => {
       providers: [
         provideHttpClient(),
         provideNoopAnimations(),
+        provideRouter([]),
         { provide: EventsService, useValue: eventsMock },
         { provide: AttendanceStatusesService, useValue: statusesMock },
         { provide: TeamsService, useValue: teamsMock },

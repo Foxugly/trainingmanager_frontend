@@ -1,4 +1,14 @@
 {
+  "athlete": {
+    "eyebrow": "Atleet",
+    "fallback": "Atleet",
+    "not_found": "Atleet niet gevonden",
+    "sections": {
+      "stats": "Statistieken",
+      "performances": "Prestaties",
+      "notes": "Notities"
+    }
+  },
   "app": {
     "title": "Trainingsbeheerder",
     "logout": "Afmelden",

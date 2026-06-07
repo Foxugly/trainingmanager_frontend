@@ -1,4 +1,14 @@
 {
+  "athlete": {
+    "eyebrow": "Athlete",
+    "fallback": "Athlete",
+    "not_found": "Athlete not found",
+    "sections": {
+      "stats": "Statistics",
+      "performances": "Performances",
+      "notes": "Notes"
+    }
+  },
   "app": {
     "title": "Training Manager",
     "logout": "Sign out",

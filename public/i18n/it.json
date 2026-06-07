@@ -1,4 +1,14 @@
 {
+  "athlete": {
+    "eyebrow": "Atleta",
+    "fallback": "Atleta",
+    "not_found": "Atleta non trovato",
+    "sections": {
+      "stats": "Statistiche",
+      "performances": "Prestazioni",
+      "notes": "Note"
+    }
+  },
   "app": {
     "title": "Gestore Allenamenti",
     "logout": "Disconnetti",

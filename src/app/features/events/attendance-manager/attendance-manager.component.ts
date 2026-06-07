@@ -12,6 +12,7 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
@@ -46,7 +47,7 @@ const SAVE_DEBOUNCE_MS = 300;
 
 @Component({
   selector: 'app-attendance-manager',
-  imports: [CommonModule, Button, Tooltip, TranslocoPipe],
+  imports: [CommonModule, RouterLink, Button, Tooltip, TranslocoPipe],
   templateUrl: './attendance-manager.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

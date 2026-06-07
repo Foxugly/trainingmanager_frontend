@@ -1,0 +1,49 @@
+<div>
+  @if (loading()) {
+    <p class="mt-4 text-gray-500">{{ 'common.loading' | transloco }}…</p>
+  } @else if (notFound()) {
+    <app-empty-state icon="user" tone="gray" [title]="'athlete.not_found' | transloco">
+
+      <a
+        [routerLink]="backLink()"
+        class="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-700 transition hover:text-emerald-900"
+      >
+        <i class="pi pi-arrow-left" aria-hidden="true"></i>
+        {{ 'common.back' | transloco }}
+      </a>
+    </app-empty-state>
+  } @else if (canManage() && teamId() !== null && memberId() !== null) {
+    <app-detail-header
+      [eyebrow]="'athlete.eyebrow' | transloco"
+      [title]="athleteName() || ('athlete.fallback' | transloco)"
+      [backLink]="backLink()"
+      icon="pi-user"
+    />
+
+    <div class="space-y-8">
+      <!-- Statistiques : présences / volume / intensité -->
+      <section>
+        <h2 class="mb-3 text-lg font-semibold text-gray-900">
+          {{ 'athlete.sections.stats' | transloco }}
+        </h2>
+        <app-team-stats [teamId]="teamId()!" [memberId]="memberId()" [showExport]="true" />
+      </section>
+
+      <!-- Performances -->
+      <section>
+        <h2 class="mb-3 text-lg font-semibold text-gray-900">
+          {{ 'athlete.sections.performances' | transloco }}
+        </h2>
+        <app-performance-panel [teamId]="teamId()!" [memberId]="memberId()" [canEdit]="true" />
+      </section>
+
+      <!-- Notes du coach -->
+      <section>
+        <h2 class="mb-3 text-lg font-semibold text-gray-900">
+          {{ 'athlete.sections.notes' | transloco }}
+        </h2>
+        <app-member-notes [teamId]="teamId()!" [memberId]="memberId()!" [canEdit]="true" />
+      </section>
+    </div>
+  }
+</div>

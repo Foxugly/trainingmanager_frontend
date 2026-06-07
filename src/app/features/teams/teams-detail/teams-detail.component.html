@@ -294,9 +294,18 @@
             <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
               @for (mb of filteredMemberships(); track mb.id) {
                 <li class="px-3 py-1.5 flex items-center gap-2 text-sm">
-                  <span class="font-medium truncate">
-                    {{ mb.member_fullname || mb.member_username }}
-                  </span>
+                  @if (canManage()) {
+                    <a
+                      [routerLink]="['/teams', t.id, 'members', mb.member]"
+                      class="font-medium truncate text-emerald-700 hover:text-emerald-900 hover:underline"
+                    >
+                      {{ mb.member_fullname || mb.member_username }}
+                    </a>
+                  } @else {
+                    <span class="font-medium truncate">
+                      {{ mb.member_fullname || mb.member_username }}
+                    </span>
+                  }
                   @if (mb.member_fullname && mb.member_username) {
                     <span class="text-gray-500 text-xs truncate"
                       >&#64;{{ mb.member_username }}</span

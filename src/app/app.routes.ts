@@ -302,6 +302,14 @@ export const routes: Routes = [
                 (m) => m.TeamsFormComponent,
               ),
           },
+          {
+            // Coach-facing per-athlete detail page (stats + performances + notes).
+            path: ':teamId/members/:memberId',
+            loadComponent: () =>
+              import('./features/teams/athlete-detail/athlete-detail.component').then(
+                (m) => m.AthleteDetailComponent,
+              ),
+          },
         ],
       },
       {
