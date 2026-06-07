@@ -1300,6 +1300,7 @@
   "performance": {
     "title": "Prestazioni",
     "my_title": "Le mie prestazioni",
+    "select_team": "Squadra",
     "add": "Aggiungi una prestazione",
     "edit": "Modifica prestazione",
     "empty": "Nessuna prestazione registrata",

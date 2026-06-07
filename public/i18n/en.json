@@ -1300,6 +1300,7 @@
   "performance": {
     "title": "Performances",
     "my_title": "My performances",
+    "select_team": "Team",
     "add": "Add a performance",
     "edit": "Edit performance",
     "empty": "No performances recorded",

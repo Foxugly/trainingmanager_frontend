@@ -1300,6 +1300,7 @@
   "performance": {
     "title": "Performances",
     "my_title": "Mes performances",
+    "select_team": "Équipe",
     "add": "Ajouter une performance",
     "edit": "Modifier la performance",
     "empty": "Aucune performance enregistrée",

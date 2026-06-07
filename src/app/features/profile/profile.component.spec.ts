@@ -26,7 +26,7 @@ const baseUser: Me = {
   last_login: null,
   date_joined: '2026-01-01T00:00:00Z',
   is_staff: false,
-  is_superuser: false,
+  member_id: null,
   weekly_recap_opt_in: true,
   team_quota: { used: 0, max: 0, can_create: false },
   calendar_token: 'tok-abc123',

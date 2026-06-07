@@ -149,6 +149,11 @@ interface ProtectedFields {
   activeStatsTeam(): Team | null;
   activeStatsMemberId(): number | null;
   selectedStatsTeam: { set(t: Team | null): void };
+  myMemberId(): number | null;
+  canLogOwnPerformances(): boolean;
+  activePerfTeam(): Team | null;
+  multiplePerfTeams(): boolean;
+  selectedPerfTeam: { set(t: Team | null): void };
   memberUpcomingDisplayed(): { event: Event; teamName: string; programName: string }[];
   attendanceHistory(): { attendance: Attendance; event: Event; teamName: string; programName: string; status: AttendanceStatus | null }[];
   historyAuditTruncated(): boolean;
@@ -413,6 +418,67 @@ describe('DashboardComponent', () => {
       access(component).selectedStatsTeam.set(externalTeam2);
       expect(access(component).activeStatsTeam()?.id).toBe(10);
       expect(access(component).activeStatsMemberId()).toBe(89);
+    });
+  });
+
+  describe('Mes performances — athlete self-service', () => {
+    // me.member_id present → editable panel scoped to (selected team, me.member_id).
+    const athleteWithMemberId = {
+      id: 88,
+      username: 'athlete',
+      member_id: 77,
+    } as unknown as CustomUserPublic;
+
+    it('exposes editable self-service when member_id set AND ≥1 member team', async () => {
+      await setup({
+        teams: [externalTeam],
+        user: athleteWithMemberId,
+        programs: [program9],
+        events: [memberTeamUpcomingEvent, memberTeamPastEvent],
+        membershipsByTeam: new Map([[9, externalTeamMemberships]]),
+      });
+      expect(access(component).myMemberId()).toBe(77);
+      expect(access(component).canLogOwnPerformances()).toBe(true);
+      expect(access(component).activePerfTeam()?.id).toBe(9);
+      expect(access(component).multiplePerfTeams()).toBe(false);
+    });
+
+    it('defaults perf team to first and switches on selection (multi member teams)', async () => {
+      await setup({
+        teams: [externalTeam, externalTeam2],
+        user: athleteWithMemberId,
+        programs: [program9],
+        events: [memberTeamUpcomingEvent, memberTeamPastEvent],
+        membershipsByTeam: new Map([
+          [9, externalTeamMemberships],
+          [10, externalTeam2Memberships],
+        ]),
+      });
+      expect(access(component).multiplePerfTeams()).toBe(true);
+      expect(access(component).activePerfTeam()?.id).toBe(9);
+      access(component).selectedPerfTeam.set(externalTeam2);
+      expect(access(component).activePerfTeam()?.id).toBe(10);
+    });
+
+    it('does NOT offer self-service when member_id is null (pure coach / no athlete Member)', async () => {
+      await setup({
+        teams: [externalTeam],
+        user: athleteUser, // no member_id
+        programs: [program9],
+        events: [memberTeamUpcomingEvent, memberTeamPastEvent],
+        membershipsByTeam: new Map([[9, externalTeamMemberships]]),
+      });
+      expect(access(component).myMemberId()).toBe(null);
+      expect(access(component).canLogOwnPerformances()).toBe(false);
+    });
+
+    it('does NOT offer self-service when member_id set but no member teams', async () => {
+      await setup({
+        teams: [ownedTeam],
+        user: { id: 17, username: 'coach', member_id: 5 } as unknown as CustomUserPublic,
+      });
+      expect(access(component).myMemberId()).toBe(5);
+      expect(access(component).canLogOwnPerformances()).toBe(false);
     });
   });
 

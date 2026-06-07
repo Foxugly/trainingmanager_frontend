@@ -127,6 +127,11 @@ export class DashboardComponent implements OnInit {
     return user?.first_name || user?.username || '';
   });
 
+  /** The caller's linked athlete Member id (null for pure coaches). */
+  protected readonly myMemberId = computed<number | null>(
+    () => this.authService.currentUser()?.member_id ?? null,
+  );
+
   protected readonly managedTeams = signal<Team[]>([]);
   protected readonly memberTeams = signal<Team[]>([]);
   protected readonly hasManagedTeams = computed(() => this.managedTeams().length > 0);
@@ -209,6 +214,31 @@ export class DashboardComponent implements OnInit {
     if (!team) return null;
     return this.myMemberIdByTeam().get(team.id) ?? null;
   });
+
+  // ---- "Mes performances" self-service (athlete CRUD) ----------------------
+
+  /** Currently-selected team for the editable own-performances panel. */
+  protected readonly selectedPerfTeam = signal<Team | null>(null);
+
+  /**
+   * Self-service is available when the user has a linked athlete Member AND
+   * belongs to ≥1 team as a member/athlete. Otherwise we fall back to the
+   * read-only self-scoped list (or nothing, for a pure coach with no records).
+   */
+  protected readonly canLogOwnPerformances = computed(
+    () => this.myMemberId() !== null && this.memberTeams().length > 0,
+  );
+
+  /** The team whose editable perf panel is shown: selection or first member team. */
+  protected readonly activePerfTeam = computed<Team | null>(() => {
+    const teams = this.memberTeams();
+    if (teams.length === 0) return null;
+    const selected = this.selectedPerfTeam();
+    if (selected && teams.some((t) => t.id === selected.id)) return selected;
+    return teams[0];
+  });
+
+  protected readonly multiplePerfTeams = computed(() => this.memberTeams().length > 1);
 
   ngOnInit(): void {
     this.bootstrap();
@@ -477,6 +507,8 @@ export class DashboardComponent implements OnInit {
       // Default the stats selector to the first team with a resolvable member id.
       const firstStatsTeam = memberTeams.find((t) => myMemberIdByTeam.has(t.id)) ?? null;
       this.selectedStatsTeam.set(firstStatsTeam);
+      // Default the editable-performances selector to the first member team.
+      this.selectedPerfTeam.set(memberTeams[0] ?? null);
       const cards: MemberTeamCard[] = membershipsByTeam.map(({ team, memberships }) => ({
         team,
         membersCount: memberships.length,

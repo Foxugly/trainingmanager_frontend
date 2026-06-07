@@ -530,8 +530,36 @@
       </section>
     }
 
-    <!-- Section 6c — Mes performances (athlete self-scoped, read-only) -->
-    @if (myPerformances().length > 0) {
+    <!-- Section 6c — Mes performances -->
+    @if (canLogOwnPerformances() && activePerfTeam(); as perfTeam) {
+      <!-- Self-service: athlete logs/edits/deletes own performances, team-scoped. -->
+      <section class="mb-10">
+        <div class="flex items-center justify-between mb-3 gap-2 flex-wrap">
+          <h2 class="text-lg font-semibold">{{ 'performance.my_title' | transloco }}</h2>
+          @if (multiplePerfTeams()) {
+            <div class="flex items-center gap-2">
+              <label for="perf-team-select" class="text-sm text-gray-600">
+                {{ 'performance.select_team' | transloco }}
+              </label>
+              <p-select
+                inputId="perf-team-select"
+                [options]="memberTeams()"
+                optionLabel="name"
+                [ngModel]="selectedPerfTeam()"
+                (ngModelChange)="selectedPerfTeam.set($event)"
+                styleClass="w-56"
+              />
+            </div>
+          }
+        </div>
+        <app-performance-panel
+          [teamId]="perfTeam.id"
+          [memberId]="myMemberId()"
+          [canEdit]="true"
+        />
+      </section>
+    } @else if (myPerformances().length > 0) {
+      <!-- Read-only self-scoped list (pure coach / no linked athlete Member). -->
       <section class="mb-10">
         <h2 class="text-lg font-semibold mb-3">{{ 'performance.my_title' | transloco }}</h2>
         <app-performance-panel [performances]="myPerformances()" [canEdit]="false" />

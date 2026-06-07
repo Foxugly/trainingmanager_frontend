@@ -1300,6 +1300,7 @@
   "performance": {
     "title": "Prestaties",
     "my_title": "Mijn prestaties",
+    "select_team": "Team",
     "add": "Prestatie toevoegen",
     "edit": "Prestatie bewerken",
     "empty": "Geen prestaties geregistreerd",

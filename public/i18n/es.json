@@ -1300,6 +1300,7 @@
   "performance": {
     "title": "Rendimientos",
     "my_title": "Mis rendimientos",
+    "select_team": "Equipo",
     "add": "Añadir un rendimiento",
     "edit": "Editar rendimiento",
     "empty": "No hay rendimientos registrados",
