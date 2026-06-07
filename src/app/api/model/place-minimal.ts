@@ -10,7 +10,7 @@
 
 
 /**
- * Compact nested read shape for Event.place / Team.default_place.
+ * Compact nested read shape for Event.place / Team.default_place / places.
  */
 export interface PlaceMinimal { 
     readonly id: number;

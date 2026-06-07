@@ -29,6 +29,8 @@ export interface PatchedTeam {
     readonly owner?: CustomUserPublic;
     readonly managers?: Array<CustomUserPublic>;
     managers_ids?: Array<number>;
+    readonly places?: Array<PlaceMinimal>;
+    place_ids?: Array<number>;
     readonly default_place?: PlaceMinimal;
     default_place_id?: number | null;
     readonly equipment?: Array<EquipmentMinimal>;

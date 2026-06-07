@@ -10,10 +10,9 @@
 
 
 /**
- * Write payload for creating/updating a managed team venue (Lieu).  `team` is a writable PK on create; the view enforces that the requester manages the team. The (team, name) unique constraint is surfaced as a 400 with code `place_already_exists` instead of a DB IntegrityError.
+ * Write payload for creating/updating a venue (Lieu) in the sport pool.  On create the requester passes the ``team`` it is creating the place for (write-only): the view links it and derives the place\'s ``sport`` from that team.
  */
 export interface PlaceRequest { 
-    team: number;
     /**
      * Display name of the venue (e.g. \'Piscine olympique\').
      */
@@ -22,5 +21,6 @@ export interface PlaceRequest {
      * Optional postal address / directions for the venue.
      */
     address?: string;
+    team?: number;
 }
 

@@ -10,11 +10,14 @@
 
 
 /**
- * Read/write serializer for the managed team venue (Lieu).  `team` is a writable PK on create; the view enforces that the requester manages the team. The (team, name) unique constraint is surfaced as a 400 with code `place_already_exists` instead of a DB IntegrityError.
+ * Read/write serializer for a venue (Lieu) in the global sport-scoped pool.  A place is shared (M2M ``Team.places``). On create the requester passes the ``team`` it is creating the place for (write-only): the view links it and derives the place\'s ``sport`` from that team. ``sport`` is read-only output.
  */
 export interface PatchedPlace { 
     readonly id?: number;
-    team?: number;
+    /**
+     * Sport this venue belongs to (e.g. Natation).
+     */
+    readonly sport?: number | null;
     /**
      * Display name of the venue (e.g. \'Piscine olympique\').
      */
@@ -23,6 +26,7 @@ export interface PatchedPlace {
      * Optional postal address / directions for the venue.
      */
     address?: string;
+    team?: number;
     readonly created_at?: string;
     readonly updated_at?: string;
 }

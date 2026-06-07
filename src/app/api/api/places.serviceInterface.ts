@@ -26,8 +26,8 @@ export interface PlacesServiceInterface {
     configuration: Configuration;
 
     /**
-     * Create a place (manager only)
-     * Create a managed venue for a team. The requester must own or manage the team. A duplicate (team, name) returns 400 with code &#x60;place_already_exists&#x60;.
+     * Create a place and link it to a team (manager only)
+     * Creates a venue in the pool and links it to the given team (the requester must manage that team); the place\&#39;s sport is the team\&#39;s sport.
      * @endpoint post /api/v1/places/
      * @param placeRequest 
      */
@@ -42,16 +42,17 @@ export interface PlacesServiceInterface {
     placesDestroy(id: number, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
-     * List managed places (Lieux) of a team
-     * Returns the team\&#39;s managed venues, ordered by name. Scoped to the teams the requester is a strict member of (owner/manager/active athlete). Pass ?team&#x3D;&lt;id&gt; to filter to a single team; without it, places across all the requester\&#39;s member teams are returned.
+     * List venues (Lieux) from the sport pool
+     * Returns venues from the global, sport-scoped pool. ?team&#x3D;&lt;id&gt; restricts to a team\&#39;s linked places (members only); ?sport&#x3D;&lt;id&gt; returns the whole pool for a sport (to attach/share). Without filters, returns places linked to the requester\&#39;s member teams.
      * @endpoint get /api/v1/places/
      * @param ordering Which field to use when ordering the results.
      * @param page A page number within the paginated result set.
      * @param pageSize Number of results to return per page.
      * @param search A search term.
-     * @param team Restrict to one team the requester is a member of.
+     * @param sport Return the whole pool for a sport.
+     * @param team Restrict to a team\&#39;s linked places.
      */
-    placesList(ordering?: string, page?: number, pageSize?: number, search?: string, team?: number, extraHttpRequestParams?: any): Observable<PaginatedPlaceList>;
+    placesList(ordering?: string, page?: number, pageSize?: number, search?: string, sport?: number, team?: number, extraHttpRequestParams?: any): Observable<PaginatedPlaceList>;
 
     /**
      * Patch a place (manager only)
