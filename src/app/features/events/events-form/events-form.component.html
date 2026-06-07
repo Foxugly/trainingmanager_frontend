@@ -14,7 +14,7 @@
   @if (loading()) {
     <div class="card"><p class="meta-hint">{{ 'common.loading' | transloco }}…</p></div>
   } @else {
-    <div class="card form-card builder-stack form-flat">
+    <div class="card form-card builder-stack">
       <form [formGroup]="form">
         <!-- Top section: identity, goal, equipment, distance & color -->
         <h3 class="builder-section-title">{{ 'events.form.section_info' | transloco }}</h3>

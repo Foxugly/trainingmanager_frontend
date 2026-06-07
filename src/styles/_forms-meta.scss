@@ -5,7 +5,8 @@
 .meta-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 0.75rem 1rem;
+  // Flat forms (no per-field box): a touch more row spacing reads better.
+  gap: 1rem 1.25rem;
 }
 
 // Opt-in multi-column row modifiers. Compose a form row as its own
@@ -30,34 +31,16 @@
   }
 }
 
+// Flat by default: NO per-field card chrome (border / soft fill / padding). The
+// projected input keeps its own border, so fields stay legible while the form
+// reads light and uncluttered. (Was previously a boxed look; flattened app-wide.)
 .meta-item {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
-  padding: 0.5rem 0.65rem;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--surface-soft);
 
   &--full {
     grid-column: 1 / -1;
-  }
-}
-
-// Opt-in flat variant: drop the per-field card chrome (border / soft fill /
-// padding) for a lighter, less "boxed" form — the input keeps its own border, so
-// fields stay legible. Enabled per-form by adding `.form-flat` on the container;
-// other forms are untouched. A bit more row spacing compensates for the removed
-// boxes.
-.form-flat {
-  .meta-item {
-    padding: 0;
-    border: none;
-    background: none;
-    border-radius: 0;
-  }
-  .meta-grid {
-    gap: 1.1rem 1.25rem;
   }
 }
 
@@ -74,18 +57,36 @@
   align-items: center;
   gap: 0.5rem;
 
+  // The field's widget stretches to fill the row. Custom CVA wrappers
+  // (rich-editor / place / equipment) are block elements that would otherwise
+  // size to content inside this flex row, so stretch them explicitly. The
+  // colour swatch (p-colorpicker) is deliberately excluded so it stays small
+  // next to its flex-1 hex input.
+  > app-rich-editor,
+  > app-place-select,
+  > app-equipment-select,
+  > .p-inputtext,
+  > .p-select,
+  > .p-multiselect,
+  > .p-datepicker,
+  > .p-inputnumber,
+  > .p-autocomplete {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
   // NOTE: this is a GLOBAL stylesheet, so ::ng-deep must NOT be used here —
   // it is only meaningful inside component styles and makes the selector
   // invalid (dropped by the browser) in a global file. Plain descendant
   // selectors reach the projected PrimeNG widgets and force full width so
-  // every form control fills its grid cell.
+  // every control fills its (now stretched) wrapper.
   .p-inputtext,
   .p-select,
   .p-multiselect,
   .p-datepicker,
   .p-inputnumber,
   .p-autocomplete,
-  .p-editor-container {
+  .p-editor {
     width: 100%;
   }
 }
