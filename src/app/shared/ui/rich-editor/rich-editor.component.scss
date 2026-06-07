@@ -1,0 +1,15 @@
+/*
+ * Quill snow-theme styles, scoped to this component's chunk via
+ * ViewEncapsulation.None on RichEditorComponent. Importing it here (instead of
+ * the global src/styles.scss) keeps Quill's CSS out of the initial bundle — it
+ * ships only in the lazy chunk that renders an editor. See the component doc.
+ *
+ * This single file legitimately blows past the strict per-component-style budget
+ * (it is ~24 kB of vendored third-party CSS). angular.json keeps the
+ * `anyComponentStyle` warning at 4 kB (so this file emits one expected,
+ * self-documenting warning and every other component style is still policed) and
+ * raises only the error ceiling to 28 kB so the build does not fail on this
+ * known third-party stylesheet. Angular budgets cannot target a single file, so
+ * a `name`-scoped exception is not possible for `anyComponentStyle`.
+ */
+@import "quill/dist/quill.snow.css";

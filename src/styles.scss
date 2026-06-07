@@ -6,7 +6,16 @@
 
 @import "tailwindcss";
 @import "primeicons/primeicons.css";
-@import "quill/dist/quill.snow.css";
+
+/*
+ * Quill's snow-theme CSS (`quill/dist/quill.snow.css`, ~24 kB) is intentionally
+ * NOT imported here. It used to live in this GLOBAL stylesheet, which put it in
+ * the initial bundle even though every <p-editor> sits behind a lazy route.
+ * It is now loaded only with the editor via RichEditorComponent
+ * (src/app/shared/ui/rich-editor/), whose ViewEncapsulation.None style ships
+ * the Quill CSS in the lazy chunk that uses the editor. This keeps the initial
+ * bundle under the 1 MB budget. See member-notes / events-form / programs-form.
+ */
 
 /* You can add global styles to this file, and also import other style files */
 

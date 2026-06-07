@@ -16,7 +16,6 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
-import { Editor } from 'primeng/editor';
 import { Tag } from 'primeng/tag';
 import { ToggleSwitch } from 'primeng/toggleswitch';
 import { Tooltip } from 'primeng/tooltip';
@@ -24,6 +23,7 @@ import { TeamsService } from '../../../api/api/teams.service';
 import { Note } from '../../../api/model/note';
 import { PatchedNote } from '../../../api/model/patched-note';
 import { MetaFieldComponent } from '../../../shared/ui/meta-field/meta-field.component';
+import { RichEditorComponent } from '../../../shared/ui/rich-editor/rich-editor.component';
 
 /**
  * Reusable per-athlete coach-notes panel.
@@ -44,7 +44,7 @@ import { MetaFieldComponent } from '../../../shared/ui/meta-field/meta-field.com
     DatePipe,
     Button,
     ConfirmDialog,
-    Editor,
+    RichEditorComponent,
     Tag,
     ToggleSwitch,
     Tooltip,

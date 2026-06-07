@@ -16,7 +16,6 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { DatePicker } from 'primeng/datepicker';
-import { Editor } from 'primeng/editor';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
@@ -35,6 +34,7 @@ import {
 import { FormFooterComponent } from '../../../shared/ui/form-footer/form-footer.component';
 import { MetaFieldComponent } from '../../../shared/ui/meta-field/meta-field.component';
 import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
+import { RichEditorComponent } from '../../../shared/ui/rich-editor/rich-editor.component';
 import { StatusBadgeComponent } from '../../../shared/ui/status-badge/status-badge.component';
 import { TeamRole, computeTeamRole } from '../../teams/teams-list/teams-list.component';
 
@@ -63,7 +63,7 @@ function fromIsoDate(s: string | null | undefined): Date | null {
     DatePicker,
     Select,
     Button,
-    Editor,
+    RichEditorComponent,
     ConfirmDialog,
     Tooltip,
     PageHeaderComponent,

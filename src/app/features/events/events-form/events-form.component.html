@@ -46,7 +46,7 @@
 
         <div class="meta-grid">
           <app-meta-field [full]="true" [label]="'events.form.goal' | transloco" for="goal" [error]="fieldError('goal')">
-            <p-editor formControlName="goal" [style]="{ height: '10rem' }" />
+            <app-rich-editor formControlName="goal" [style]="{ height: '10rem' }" />
           </app-meta-field>
           <app-meta-field
             [full]="true"
@@ -55,7 +55,7 @@
             for="equipment"
             [error]="fieldError('equipment')"
           >
-            <p-editor formControlName="equipment" [style]="{ height: '10rem' }" />
+            <app-rich-editor formControlName="equipment" [style]="{ height: '10rem' }" />
           </app-meta-field>
         </div>
 

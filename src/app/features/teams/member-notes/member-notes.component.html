@@ -9,7 +9,7 @@
           {{ 'notes.add' | transloco }}
         }
       </h3>
-      <p-editor formControlName="content" [style]="{ height: '10rem' }" />
+      <app-rich-editor formControlName="content" [style]="{ height: '10rem' }" />
       <app-meta-field
         [label]="'notes.visible_to_athlete' | transloco"
         for="note_visible_to_athlete"

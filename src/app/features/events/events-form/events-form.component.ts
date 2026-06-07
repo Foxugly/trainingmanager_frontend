@@ -23,7 +23,6 @@ import { AutoComplete, AutoCompleteCompleteEvent } from 'primeng/autocomplete';
 import { Button } from 'primeng/button';
 import { ColorPicker } from 'primeng/colorpicker';
 import { DatePicker } from 'primeng/datepicker';
-import { Editor } from 'primeng/editor';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
@@ -40,6 +39,7 @@ import { buildVisibilityOptions } from '../../../shared/forms/visibility-options
 import { FormFooterComponent } from '../../../shared/ui/form-footer/form-footer.component';
 import { MetaFieldComponent } from '../../../shared/ui/meta-field/meta-field.component';
 import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
+import { RichEditorComponent } from '../../../shared/ui/rich-editor/rich-editor.component';
 
 function toIsoDate(d: Date | null | undefined): string | null {
   if (!d) return null;
@@ -89,7 +89,7 @@ function timeRangeValidator(group: AbstractControl): ValidationErrors | null {
     InputNumber,
     Select,
     AutoComplete,
-    Editor,
+    RichEditorComponent,
     DatePicker,
     ColorPicker,
     Button,
