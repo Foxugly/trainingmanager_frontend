@@ -81,8 +81,10 @@ jobs:
           #  the COMMITTED git blob (never the django tree → §3.10); 6. enable
           #  unit; 7. pull the bundle from S3 via the instance role (blank the
           #  certbot creds so the role is used) and atomic-swap it into the
-          #  docroot; 8. restart the runtime-fetch unit (writes the SSM snippet +
-          #  nginx -t + reload); 9. normalise perms.
+          #  docroot; 8. restart the runtime-fetch unit (writes the SSM snippet;
+          #  it only reloads nginx when the snippet CHANGED); 8b. unconditional
+          #  `nginx -t && reload` so vhost edits in this commit always take
+          #  effect; 9. normalise perms.
           APP=/var/www/django_websites/trainingmanager_frontend
           DOC="$APP/dist/trainingmanager-frontend/browser"
           GB="git -C $APP -c safe.directory=$APP show origin/main"
@@ -97,6 +99,7 @@ jobs:
             "env AWS_SHARED_CREDENTIALS_FILE=/dev/null AWS_CONFIG_FILE=/dev/null aws s3 cp s3://$BUCKET/builds/tm-frontend/$SHA.tar.gz /tmp/tmfe.tar.gz --region eu-west-1",
             "rm -rf /tmp/tmfe && mkdir -p /tmp/tmfe && tar -xzf /tmp/tmfe.tar.gz -C /tmp/tmfe && mkdir -p $DOC && rsync -a --delete /tmp/tmfe/ $DOC/ && rm -rf /tmp/tmfe /tmp/tmfe.tar.gz",
             "systemctl restart tm-frontend-runtime-fetch",
+            "nginx -t && systemctl reload nginx",
             "chown -R django:www-data $APP && chmod -R g-w,o-rwx $APP"
           ], "executionTimeout": ["900"] }
           EOF
