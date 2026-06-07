@@ -21,6 +21,25 @@ import { firstValueFrom } from 'rxjs';
 // primary scale (buttons, links, focus rings, …) follows Emerald in both light
 // and dark mode without touching individual components.
 const AuraEmerald = definePreset(Aura, {
+  primitive: {
+    // Map the `green` primitive onto Emerald so every "success" severity
+    // (the `pi pi-plus` add buttons, success tags, …) renders in the SAME brand
+    // emerald as `primary` / the Save button — one green across the UI, instead
+    // of Aura's default green sitting next to our emerald primary.
+    green: {
+      50: '{emerald.50}',
+      100: '{emerald.100}',
+      200: '{emerald.200}',
+      300: '{emerald.300}',
+      400: '{emerald.400}',
+      500: '{emerald.500}',
+      600: '{emerald.600}',
+      700: '{emerald.700}',
+      800: '{emerald.800}',
+      900: '{emerald.900}',
+      950: '{emerald.950}',
+    },
+  },
   semantic: {
     primary: {
       50: '{emerald.50}',
