@@ -94,6 +94,10 @@ interface ProtectedFields {
   slots: { length: number };
   addSlot(): void;
   removeSlot(i: number): void;
+  isSlotEditing(i: number): boolean;
+  editSlot(i: number): void;
+  confirmSlot(i: number): void;
+  slotSummary(i: number): string;
   slotHasTimeError(i: number): boolean;
   saveTemplate(): void;
   weekdayOptions(): Array<{ label: string; value: number }>;
@@ -578,6 +582,49 @@ describe('TeamsFormComponent', () => {
     expect(access(component).slots.length).toBe(2);
     access(component).removeSlot(0);
     expect(access(component).slots.length).toBe(1);
+  });
+
+  it('addSlot opens the new row in edit mode; confirmSlot collapses a valid row', async () => {
+    await setup('5');
+    access(component).addSlot();
+    // A freshly-added slot starts editable.
+    expect(access(component).isSlotEditing(0)).toBe(true);
+    const start = new Date();
+    start.setHours(18, 0, 0, 0);
+    const end = new Date();
+    end.setHours(19, 30, 0, 0);
+    (access(component).slots as unknown as { at(i: number): { patchValue(v: unknown): void } })
+      .at(0)
+      .patchValue({ weekday: 0, hour_start: start, hour_end: end });
+    access(component).confirmSlot(0);
+    expect(access(component).isSlotEditing(0)).toBe(false);
+    // Summary renders "<weekday> 18:00 – 19:30".
+    expect(access(component).slotSummary(0)).toContain('18:00');
+    expect(access(component).slotSummary(0)).toContain('19:30');
+    // editSlot re-opens the row.
+    access(component).editSlot(0);
+    expect(access(component).isSlotEditing(0)).toBe(true);
+  });
+
+  it('confirmSlot keeps an invalid row editable', async () => {
+    await setup('5');
+    access(component).addSlot();
+    // No times set → invalid → stays in edit mode.
+    access(component).confirmSlot(0);
+    expect(access(component).isSlotEditing(0)).toBe(true);
+  });
+
+  it('removeSlot shifts edit-mode indices of later rows down', async () => {
+    await setup('5');
+    access(component).addSlot();
+    access(component).addSlot();
+    // Both new rows are editable (indices 0 and 1).
+    expect(access(component).isSlotEditing(0)).toBe(true);
+    expect(access(component).isSlotEditing(1)).toBe(true);
+    access(component).removeSlot(0);
+    // The former index-1 row is now index 0 and still editable.
+    expect(access(component).slots.length).toBe(1);
+    expect(access(component).isSlotEditing(0)).toBe(true);
   });
 
   it('saveTemplate calls teamsTrainingTemplateUpdate with HH:MM slots + ISO dates', async () => {

@@ -7,6 +7,7 @@ import {
   computed,
   inject,
   signal,
+  viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -133,6 +134,14 @@ export class EventsFormComponent implements OnInit {
    * items yet. Shown as a hint under the Matériel selector; selecting items wins.
    */
   protected readonly legacyEquipment = signal<string | null>(null);
+
+  /** The Matériel selector instance, to surface its empty-list state as a hint. */
+  private readonly equipmentSelect = viewChild(EquipmentSelectComponent);
+  /**
+   * True when the team has been resolved and exposes no enabled equipment, so
+   * the multi-select is empty for a reason the coach can act on.
+   */
+  protected readonly equipmentEmpty = computed(() => this.equipmentSelect()?.empty() ?? false);
 
   protected readonly isEditMode = computed(() => this.eventId() !== null);
 

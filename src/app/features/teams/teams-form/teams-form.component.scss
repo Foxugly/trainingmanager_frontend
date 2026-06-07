@@ -96,7 +96,14 @@
   border-radius: 999px;
 }
 
-// Planning type: one editable training slot row (weekday + start/end + delete).
+// Planning type: a self-contained card wrapping the créneaux + season block,
+// with its own save button — visually separate from the global bottom save.
+.slot-card {
+  margin: 0;
+  border: 1px solid var(--border);
+}
+
+// Planning type: one training slot row (read-only summary or inline editor).
 .slot-row {
   display: flex;
   align-items: flex-end;
@@ -105,4 +112,16 @@
   border: 1px solid var(--border);
   border-radius: 10px;
   background: var(--surface-soft);
+
+  // Collapsed (summary) rows are single-line — center the controls vertically.
+  &:has(.slot-summary) {
+    align-items: center;
+  }
+}
+
+// Read-only one-line slot summary, e.g. "Lundi 18:00 – 19:30".
+.slot-summary {
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--text-strong);
 }

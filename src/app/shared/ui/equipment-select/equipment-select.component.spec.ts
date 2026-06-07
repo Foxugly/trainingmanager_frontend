@@ -84,4 +84,31 @@ describe('EquipmentSelectComponent', () => {
     access(component).writeValue([9]);
     expect(access(component).value).toEqual([9]);
   });
+
+  it('empty() is false once a non-empty enabled list is loaded', () => {
+    expect(component.empty()).toBe(false);
+  });
+
+  it('empty() is true when the team exposes no enabled equipment', async () => {
+    TestBed.resetTestingModule();
+    const emptyMock = {
+      equipmentList: vi.fn().mockReturnValue(of({ count: 0, results: [] })),
+    };
+    await TestBed.configureTestingModule({
+      imports: [
+        EquipmentSelectComponent,
+        TranslocoTestingModule.forRoot({
+          langs: { fr: {} },
+          translocoConfig: { availableLangs: ['fr'], defaultLang: 'fr' },
+        }),
+      ],
+      providers: [provideNoopAnimations(), { provide: EquipmentService, useValue: emptyMock }],
+    })
+      .overrideComponent(EquipmentSelectComponent, { set: { template: '', imports: [] } })
+      .compileComponents();
+    const f = TestBed.createComponent(EquipmentSelectComponent);
+    f.componentRef.setInput('teamId', 5);
+    f.detectChanges();
+    expect(f.componentInstance.empty()).toBe(true);
+  });
 });

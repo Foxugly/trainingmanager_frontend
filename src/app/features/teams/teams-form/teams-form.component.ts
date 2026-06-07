@@ -34,6 +34,7 @@ import { Select } from 'primeng/select';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { Textarea } from 'primeng/textarea';
 import { ToggleSwitch } from 'primeng/toggleswitch';
+import { Tooltip } from 'primeng/tooltip';
 import { AttendanceStatusesService } from '../../../api/api/attendance-statuses.service';
 import { LevelsService } from '../../../api/api/levels.service';
 import { PlacesService } from '../../../api/api/places.service';
@@ -131,6 +132,7 @@ function slotTimeRangeValidator(group: AbstractControl): ValidationErrors | null
     Dialog,
     Textarea,
     Button,
+    Tooltip,
     ConfirmDialog,
     Tabs,
     TabList,
@@ -244,6 +246,12 @@ export class TeamsFormComponent implements OnInit {
   // ── Planning type (weekly training template) ────────────────────────────
   protected readonly templateLoading = signal(false);
   protected readonly templateSaving = signal(false);
+  /**
+   * Indices of slot rows currently shown in inline-edit mode. Existing slots
+   * render as a read-only summary line by default; a freshly-added slot starts
+   * in edit mode. The set is keyed by the slot's position in the FormArray.
+   */
+  protected readonly editingSlotIndices = signal<ReadonlySet<number>>(new Set());
 
   // ── Lieux (shared sport pool, linked to the team via M2M) ───────────────
   /**
@@ -765,11 +773,58 @@ export class TeamsFormComponent implements OnInit {
   protected addSlot(): void {
     this.slots.push(this.buildSlotGroup());
     this.slots.markAsDirty();
+    // A new slot has no values yet — open it directly in edit mode.
+    this.editingSlotIndices.update((cur) => new Set(cur).add(this.slots.length - 1));
   }
 
   protected removeSlot(index: number): void {
     this.slots.removeAt(index);
     this.slots.markAsDirty();
+    // Drop the removed index and shift every higher index down by one so the
+    // edit-mode set keeps tracking the right rows after the array re-indexes.
+    this.editingSlotIndices.update((cur) => {
+      const next = new Set<number>();
+      for (const i of cur) {
+        if (i < index) next.add(i);
+        else if (i > index) next.add(i - 1);
+      }
+      return next;
+    });
+  }
+
+  /** Whether the slot row at `index` is currently in inline-edit mode. */
+  protected isSlotEditing(index: number): boolean {
+    return this.editingSlotIndices().has(index);
+  }
+
+  /** Switch a slot row to inline-edit mode. */
+  protected editSlot(index: number): void {
+    this.editingSlotIndices.update((cur) => new Set(cur).add(index));
+  }
+
+  /** Collapse a slot row back to its read-only summary (if it is valid). */
+  protected confirmSlot(index: number): void {
+    const group = this.slots.at(index);
+    if (group && group.invalid) {
+      group.markAllAsTouched();
+      return;
+    }
+    this.editingSlotIndices.update((cur) => {
+      const next = new Set(cur);
+      next.delete(index);
+      return next;
+    });
+  }
+
+  /** Read-only one-line summary for a slot, e.g. "Lundi 18:00 – 19:30". */
+  protected slotSummary(index: number): string {
+    const group = this.slots.at(index);
+    if (!group) return '';
+    const weekday = group.controls.weekday.value;
+    const label = this.weekdayOptions()[weekday]?.label ?? '';
+    const start = toHourMinute(group.controls.hour_start.value) ?? '—';
+    const end = toHourMinute(group.controls.hour_end.value) ?? '—';
+    return `${label} ${start} – ${end}`.trim();
   }
 
   /** True when the slot at `index` has an end time at or before its start. */
@@ -789,6 +844,8 @@ export class TeamsFormComponent implements OnInit {
           for (const slot of tpl.slots ?? []) {
             this.slots.push(this.buildSlotGroup(slot));
           }
+          // Existing slots start collapsed (read-only summary).
+          this.editingSlotIndices.set(new Set());
           this.templateForm.patchValue({
             default_pool: tpl.default_pool ?? '',
             season_start: parseDate(tpl.season_start),

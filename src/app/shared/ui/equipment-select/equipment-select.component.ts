@@ -3,6 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   DestroyRef,
+  computed,
   effect,
   forwardRef,
   inject,
@@ -55,6 +56,14 @@ export class EquipmentSelectComponent implements ControlValueAccessor {
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly items = signal<Equipment[]>([]);
+  /** True once a team's equipment list has been fetched (success or empty). */
+  private readonly loaded = signal(false);
+  /**
+   * Public, read-only flag for callers: the team has been resolved and its
+   * enabled-equipment list came back empty. Lets the host show a "enable
+   * equipment in team settings first" hint instead of a silently empty field.
+   */
+  readonly empty = computed(() => this.loaded() && this.items().length === 0);
   /** Team id the equipment list was last loaded for (avoids redundant fetches). */
   private loadedForTeamId: number | null = null;
 
@@ -82,6 +91,7 @@ export class EquipmentSelectComponent implements ControlValueAccessor {
       .subscribe({
         next: (res) => {
           this.items.set(res.results ?? []);
+          this.loaded.set(true);
           this.cdr.markForCheck();
         },
         error: () => {

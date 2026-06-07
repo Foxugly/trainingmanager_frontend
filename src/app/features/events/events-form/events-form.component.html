@@ -56,6 +56,11 @@
               formControlName="equipment_item_ids"
               [teamId]="selectedTeamId()"
             />
+            @if (equipmentEmpty()) {
+              <small class="meta-hint mt-1 block">
+                {{ 'events.form.equipment_empty_hint' | transloco }}
+              </small>
+            }
             @if (legacyEquipment()) {
               <small class="meta-hint mt-1 block">
                 {{ 'equipment.legacy_hint' | transloco }}:
