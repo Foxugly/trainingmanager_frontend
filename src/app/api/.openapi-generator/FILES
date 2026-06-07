@@ -94,7 +94,6 @@ model/energy-segment.ts
 model/energy-system-admin.ts
 model/energy-system.ts
 model/equipment-minimal.ts
-model/equipment-request.ts
 model/equipment.ts
 model/event-public.ts
 model/event-share-request.ts
@@ -174,8 +173,6 @@ model/patched-attendance-status-admin.ts
 model/patched-attendance.ts
 model/patched-energy-segment-admin.ts
 model/patched-energy-system-admin.ts
-model/patched-equipment-request.ts
-model/patched-equipment.ts
 model/patched-event.ts
 model/patched-exercise.ts
 model/patched-level-admin.ts

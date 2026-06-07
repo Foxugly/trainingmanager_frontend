@@ -10,7 +10,7 @@
 
 
 /**
- * Compact nested read shape for Event.equipment_items.
+ * Compact nested read shape for Team.equipment / Event.equipment_items.
  */
 export interface EquipmentMinimal { 
     readonly id: number;

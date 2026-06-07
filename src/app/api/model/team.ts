@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { EquipmentMinimal } from './equipment-minimal';
 import { Sport } from './sport';
 import { VisibilityMode } from './visibility-mode';
 import { TopicCreationEnum } from './topic-creation-enum';
@@ -30,6 +31,8 @@ export interface Team {
     managers_ids?: Array<number>;
     readonly default_place?: PlaceMinimal;
     default_place_id?: number | null;
+    readonly equipment?: Array<EquipmentMinimal>;
+    equipment_ids?: Array<number>;
     language?: LanguageEnum;
     is_active?: boolean;
     is_public?: boolean;

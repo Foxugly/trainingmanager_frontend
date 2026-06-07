@@ -10,16 +10,13 @@
 
 
 /**
- * Read/write serializer for managed team equipment (Matériel).  `team` is a writable PK on create; the view enforces that the requester manages the team. The (team, name) unique constraint is surfaced as a 400 with code `equipment_already_exists` instead of a DB IntegrityError.
+ * Read serializer for the global equipment catalog.  ``name`` is auto-localized to the active language by modeltranslation. The catalog is curated centrally (admin + seed), so the API is read-only.
  */
 export interface Equipment { 
     readonly id: number;
-    team: number;
     /**
      * Display name of the equipment (e.g. \'Pull-buoy\').
      */
-    name: string;
-    readonly created_at: string;
-    readonly updated_at: string;
+    readonly name: string;
 }
 

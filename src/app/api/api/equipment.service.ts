@@ -19,11 +19,7 @@ import { OpenApiHttpParams, QueryParamStyle } from '../query.params';
 // @ts-ignore
 import { Equipment } from '../model/equipment';
 // @ts-ignore
-import { EquipmentRequest } from '../model/equipment-request';
-// @ts-ignore
 import { PaginatedEquipmentList } from '../model/paginated-equipment-list';
-// @ts-ignore
-import { PatchedEquipmentRequest } from '../model/patched-equipment-request';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -45,153 +41,23 @@ export class EquipmentService extends BaseService implements EquipmentServiceInt
     }
 
     /**
-     * Create an equipment item (manager only)
-     * Create a managed equipment item for a team. The requester must own or manage the team. A duplicate (team, name) returns 400 with code &#x60;equipment_already_exists&#x60;.
-     * @endpoint post /api/v1/equipment/
-     * @param equipmentRequest 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     * @param options additional options
-     */
-    public equipmentCreate(equipmentRequest: EquipmentRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Equipment>;
-    public equipmentCreate(equipmentRequest: EquipmentRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Equipment>>;
-    public equipmentCreate(equipmentRequest: EquipmentRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Equipment>>;
-    public equipmentCreate(equipmentRequest: EquipmentRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        if (equipmentRequest === null || equipmentRequest === undefined) {
-            throw new Error('Required parameter equipmentRequest was null or undefined when calling equipmentCreate.');
-        }
-
-        let localVarHeaders = this.defaultHeaders;
-
-        // authentication (jwtAuth) required
-        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
-
-        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
-            'application/json'
-        ]);
-        if (localVarHttpHeaderAcceptSelected !== undefined) {
-            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
-        }
-
-        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
-
-        const localVarTransferCache: boolean = options?.transferCache ?? true;
-
-
-        // to determine the Content-Type header
-        const consumes: string[] = [
-            'application/json',
-            'application/x-www-form-urlencoded',
-            'multipart/form-data'
-        ];
-        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected !== undefined) {
-            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
-        }
-
-        let responseType_: 'text' | 'json' | 'blob' = 'json';
-        if (localVarHttpHeaderAcceptSelected) {
-            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
-                responseType_ = 'text';
-            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
-                responseType_ = 'json';
-            } else {
-                responseType_ = 'blob';
-            }
-        }
-
-        let localVarPath = `/api/v1/equipment/`;
-        const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<Equipment>('post', `${basePath}${localVarPath}`,
-            {
-                context: localVarHttpContext,
-                body: equipmentRequest,
-                responseType: <any>responseType_,
-                ...(withCredentials ? { withCredentials } : {}),
-                headers: localVarHeaders,
-                observe: observe,
-                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
-     * Delete an equipment item (manager only)
-     * Hard-deletes the item and removes it from any session that referenced it (the M2M link is dropped).
-     * @endpoint delete /api/v1/equipment/{id}/
-     * @param id A unique integer value identifying this Equipment.
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     * @param options additional options
-     */
-    public equipmentDestroy(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public equipmentDestroy(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public equipmentDestroy(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public equipmentDestroy(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        if (id === null || id === undefined) {
-            throw new Error('Required parameter id was null or undefined when calling equipmentDestroy.');
-        }
-
-        let localVarHeaders = this.defaultHeaders;
-
-        // authentication (jwtAuth) required
-        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
-
-        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
-        ]);
-        if (localVarHttpHeaderAcceptSelected !== undefined) {
-            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
-        }
-
-        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
-
-        const localVarTransferCache: boolean = options?.transferCache ?? true;
-
-
-        let responseType_: 'text' | 'json' | 'blob' = 'json';
-        if (localVarHttpHeaderAcceptSelected) {
-            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
-                responseType_ = 'text';
-            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
-                responseType_ = 'json';
-            } else {
-                responseType_ = 'blob';
-            }
-        }
-
-        let localVarPath = `/api/v1/equipment/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/`;
-        const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<any>('delete', `${basePath}${localVarPath}`,
-            {
-                context: localVarHttpContext,
-                responseType: <any>responseType_,
-                ...(withCredentials ? { withCredentials } : {}),
-                headers: localVarHeaders,
-                observe: observe,
-                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
-     * List managed equipment (Matériel) of a team
-     * Returns the team\&#39;s managed equipment, ordered by name. Scoped to the teams the requester is a strict member of (owner/manager/active athlete). Pass ?team&#x3D;&lt;id&gt; to filter to a single team; without it, equipment across all the requester\&#39;s member teams is returned.
+     * List the global equipment (Matériel) catalog
+     * Returns the active, multilingual equipment catalog (names localized to the active language). Pass ?team&#x3D;&lt;id&gt; to restrict to the equipment a team has enabled (the requester must be a member of that team).
      * @endpoint get /api/v1/equipment/
      * @param ordering Which field to use when ordering the results.
      * @param page A page number within the paginated result set.
      * @param pageSize Number of results to return per page.
      * @param search A search term.
-     * @param team Restrict to one team the requester is a member of.
+     * @param sport Restrict to one sport\&#39;s catalog.
+     * @param team Restrict to a team\&#39;s enabled equipment.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public equipmentList(ordering?: string, page?: number, pageSize?: number, search?: string, team?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedEquipmentList>;
-    public equipmentList(ordering?: string, page?: number, pageSize?: number, search?: string, team?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedEquipmentList>>;
-    public equipmentList(ordering?: string, page?: number, pageSize?: number, search?: string, team?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedEquipmentList>>;
-    public equipmentList(ordering?: string, page?: number, pageSize?: number, search?: string, team?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public equipmentList(ordering?: string, page?: number, pageSize?: number, search?: string, sport?: number, team?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedEquipmentList>;
+    public equipmentList(ordering?: string, page?: number, pageSize?: number, search?: string, sport?: number, team?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedEquipmentList>>;
+    public equipmentList(ordering?: string, page?: number, pageSize?: number, search?: string, sport?: number, team?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedEquipmentList>>;
+    public equipmentList(ordering?: string, page?: number, pageSize?: number, search?: string, sport?: number, team?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -226,6 +92,15 @@ export class EquipmentService extends BaseService implements EquipmentServiceInt
             localVarQueryParameters,
             'search',
             <any>search,
+            QueryParamStyle.Form,
+            true,
+        );
+
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'sport',
+            <any>sport,
             QueryParamStyle.Form,
             true,
         );
@@ -285,81 +160,8 @@ export class EquipmentService extends BaseService implements EquipmentServiceInt
     }
 
     /**
-     * Patch an equipment item (manager only)
-     * CRUD on managed team equipment (Matériel).  Read: any strict member of the equipment\&#39;s team. Write (create/update/delete): owner or manager of the team only.
-     * @endpoint patch /api/v1/equipment/{id}/
-     * @param id A unique integer value identifying this Equipment.
-     * @param patchedEquipmentRequest 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     * @param options additional options
-     */
-    public equipmentPartialUpdate(id: number, patchedEquipmentRequest?: PatchedEquipmentRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Equipment>;
-    public equipmentPartialUpdate(id: number, patchedEquipmentRequest?: PatchedEquipmentRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Equipment>>;
-    public equipmentPartialUpdate(id: number, patchedEquipmentRequest?: PatchedEquipmentRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Equipment>>;
-    public equipmentPartialUpdate(id: number, patchedEquipmentRequest?: PatchedEquipmentRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        if (id === null || id === undefined) {
-            throw new Error('Required parameter id was null or undefined when calling equipmentPartialUpdate.');
-        }
-
-        let localVarHeaders = this.defaultHeaders;
-
-        // authentication (jwtAuth) required
-        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
-
-        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
-            'application/json'
-        ]);
-        if (localVarHttpHeaderAcceptSelected !== undefined) {
-            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
-        }
-
-        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
-
-        const localVarTransferCache: boolean = options?.transferCache ?? true;
-
-
-        // to determine the Content-Type header
-        const consumes: string[] = [
-            'application/json',
-            'application/x-www-form-urlencoded',
-            'multipart/form-data'
-        ];
-        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected !== undefined) {
-            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
-        }
-
-        let responseType_: 'text' | 'json' | 'blob' = 'json';
-        if (localVarHttpHeaderAcceptSelected) {
-            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
-                responseType_ = 'text';
-            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
-                responseType_ = 'json';
-            } else {
-                responseType_ = 'blob';
-            }
-        }
-
-        let localVarPath = `/api/v1/equipment/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/`;
-        const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<Equipment>('patch', `${basePath}${localVarPath}`,
-            {
-                context: localVarHttpContext,
-                body: patchedEquipmentRequest,
-                responseType: <any>responseType_,
-                ...(withCredentials ? { withCredentials } : {}),
-                headers: localVarHeaders,
-                observe: observe,
-                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
      * Retrieve an equipment item
-     * CRUD on managed team equipment (Matériel).  Read: any strict member of the equipment\&#39;s team. Write (create/update/delete): owner or manager of the team only.
+     * Read-only access to the global equipment catalog.  The catalog is curated centrally (Django admin + seed migration). Teams enable a subset via &#x60;&#x60;Team.equipment&#x60;&#x60;; &#x60;&#x60;?team&#x3D;&lt;id&gt;&#x60;&#x60; returns that subset.
      * @endpoint get /api/v1/equipment/{id}/
      * @param id A unique integer value identifying this Equipment.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
@@ -407,82 +209,6 @@ export class EquipmentService extends BaseService implements EquipmentServiceInt
         return this.httpClient.request<Equipment>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                responseType: <any>responseType_,
-                ...(withCredentials ? { withCredentials } : {}),
-                headers: localVarHeaders,
-                observe: observe,
-                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
-     * Update an equipment item (manager only)
-     * CRUD on managed team equipment (Matériel).  Read: any strict member of the equipment\&#39;s team. Write (create/update/delete): owner or manager of the team only.
-     * @endpoint put /api/v1/equipment/{id}/
-     * @param id A unique integer value identifying this Equipment.
-     * @param equipmentRequest 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     * @param options additional options
-     */
-    public equipmentUpdate(id: number, equipmentRequest: EquipmentRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Equipment>;
-    public equipmentUpdate(id: number, equipmentRequest: EquipmentRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Equipment>>;
-    public equipmentUpdate(id: number, equipmentRequest: EquipmentRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Equipment>>;
-    public equipmentUpdate(id: number, equipmentRequest: EquipmentRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        if (id === null || id === undefined) {
-            throw new Error('Required parameter id was null or undefined when calling equipmentUpdate.');
-        }
-        if (equipmentRequest === null || equipmentRequest === undefined) {
-            throw new Error('Required parameter equipmentRequest was null or undefined when calling equipmentUpdate.');
-        }
-
-        let localVarHeaders = this.defaultHeaders;
-
-        // authentication (jwtAuth) required
-        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
-
-        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
-            'application/json'
-        ]);
-        if (localVarHttpHeaderAcceptSelected !== undefined) {
-            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
-        }
-
-        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
-
-        const localVarTransferCache: boolean = options?.transferCache ?? true;
-
-
-        // to determine the Content-Type header
-        const consumes: string[] = [
-            'application/json',
-            'application/x-www-form-urlencoded',
-            'multipart/form-data'
-        ];
-        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected !== undefined) {
-            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
-        }
-
-        let responseType_: 'text' | 'json' | 'blob' = 'json';
-        if (localVarHttpHeaderAcceptSelected) {
-            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
-                responseType_ = 'text';
-            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
-                responseType_ = 'json';
-            } else {
-                responseType_ = 'blob';
-            }
-        }
-
-        let localVarPath = `/api/v1/equipment/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/`;
-        const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<Equipment>('put', `${basePath}${localVarPath}`,
-            {
-                context: localVarHttpContext,
-                body: equipmentRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

@@ -12,9 +12,7 @@ import { HttpHeaders }                                       from '@angular/comm
 import { Observable }                                        from 'rxjs';
 
 import { Equipment } from '../model/models';
-import { EquipmentRequest } from '../model/models';
 import { PaginatedEquipmentList } from '../model/models';
-import { PatchedEquipmentRequest } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
@@ -26,57 +24,24 @@ export interface EquipmentServiceInterface {
     configuration: Configuration;
 
     /**
-     * Create an equipment item (manager only)
-     * Create a managed equipment item for a team. The requester must own or manage the team. A duplicate (team, name) returns 400 with code &#x60;equipment_already_exists&#x60;.
-     * @endpoint post /api/v1/equipment/
-     * @param equipmentRequest 
-     */
-    equipmentCreate(equipmentRequest: EquipmentRequest, extraHttpRequestParams?: any): Observable<Equipment>;
-
-    /**
-     * Delete an equipment item (manager only)
-     * Hard-deletes the item and removes it from any session that referenced it (the M2M link is dropped).
-     * @endpoint delete /api/v1/equipment/{id}/
-     * @param id A unique integer value identifying this Equipment.
-     */
-    equipmentDestroy(id: number, extraHttpRequestParams?: any): Observable<{}>;
-
-    /**
-     * List managed equipment (Matériel) of a team
-     * Returns the team\&#39;s managed equipment, ordered by name. Scoped to the teams the requester is a strict member of (owner/manager/active athlete). Pass ?team&#x3D;&lt;id&gt; to filter to a single team; without it, equipment across all the requester\&#39;s member teams is returned.
+     * List the global equipment (Matériel) catalog
+     * Returns the active, multilingual equipment catalog (names localized to the active language). Pass ?team&#x3D;&lt;id&gt; to restrict to the equipment a team has enabled (the requester must be a member of that team).
      * @endpoint get /api/v1/equipment/
      * @param ordering Which field to use when ordering the results.
      * @param page A page number within the paginated result set.
      * @param pageSize Number of results to return per page.
      * @param search A search term.
-     * @param team Restrict to one team the requester is a member of.
+     * @param sport Restrict to one sport\&#39;s catalog.
+     * @param team Restrict to a team\&#39;s enabled equipment.
      */
-    equipmentList(ordering?: string, page?: number, pageSize?: number, search?: string, team?: number, extraHttpRequestParams?: any): Observable<PaginatedEquipmentList>;
-
-    /**
-     * Patch an equipment item (manager only)
-     * CRUD on managed team equipment (Matériel).  Read: any strict member of the equipment\&#39;s team. Write (create/update/delete): owner or manager of the team only.
-     * @endpoint patch /api/v1/equipment/{id}/
-     * @param id A unique integer value identifying this Equipment.
-     * @param patchedEquipmentRequest 
-     */
-    equipmentPartialUpdate(id: number, patchedEquipmentRequest?: PatchedEquipmentRequest, extraHttpRequestParams?: any): Observable<Equipment>;
+    equipmentList(ordering?: string, page?: number, pageSize?: number, search?: string, sport?: number, team?: number, extraHttpRequestParams?: any): Observable<PaginatedEquipmentList>;
 
     /**
      * Retrieve an equipment item
-     * CRUD on managed team equipment (Matériel).  Read: any strict member of the equipment\&#39;s team. Write (create/update/delete): owner or manager of the team only.
+     * Read-only access to the global equipment catalog.  The catalog is curated centrally (Django admin + seed migration). Teams enable a subset via &#x60;&#x60;Team.equipment&#x60;&#x60;; &#x60;&#x60;?team&#x3D;&lt;id&gt;&#x60;&#x60; returns that subset.
      * @endpoint get /api/v1/equipment/{id}/
      * @param id A unique integer value identifying this Equipment.
      */
     equipmentRetrieve(id: number, extraHttpRequestParams?: any): Observable<Equipment>;
-
-    /**
-     * Update an equipment item (manager only)
-     * CRUD on managed team equipment (Matériel).  Read: any strict member of the equipment\&#39;s team. Write (create/update/delete): owner or manager of the team only.
-     * @endpoint put /api/v1/equipment/{id}/
-     * @param id A unique integer value identifying this Equipment.
-     * @param equipmentRequest 
-     */
-    equipmentUpdate(id: number, equipmentRequest: EquipmentRequest, extraHttpRequestParams?: any): Observable<Equipment>;
 
 }
