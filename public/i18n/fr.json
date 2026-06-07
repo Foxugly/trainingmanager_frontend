@@ -384,6 +384,44 @@
       "unknown": "Une erreur est survenue."
     }
   },
+  "training_template": {
+    "tab": "Planning type",
+    "slots": "Créneaux",
+    "slots_empty": "Aucun créneau défini.",
+    "add_slot": "Ajouter un créneau",
+    "remove_slot": "Supprimer le créneau",
+    "weekday_label": "Jour",
+    "default_pool": "Piscine par défaut",
+    "season": "Saison",
+    "season_start": "Début",
+    "season_end": "Fin",
+    "save": "Enregistrer le planning type",
+    "saved": "Planning type enregistré.",
+    "error": "Impossible d'enregistrer le planning type.",
+    "error_forbidden": "Seul un manager de l'équipe peut modifier le planning type.",
+    "time_range_error": "L'heure de fin doit être après l'heure de début",
+    "summary_label": "Planning type :",
+    "no_template_hint": "Définissez un planning type pour l'équipe pour automatiser la fréquence.",
+    "no_template_link": "Modifier l'équipe",
+    "weekday": {
+      "monday": "Lundi",
+      "tuesday": "Mardi",
+      "wednesday": "Mercredi",
+      "thursday": "Jeudi",
+      "friday": "Vendredi",
+      "saturday": "Samedi",
+      "sunday": "Dimanche"
+    },
+    "weekday_short": {
+      "monday": "Lun",
+      "tuesday": "Mar",
+      "wednesday": "Mer",
+      "thursday": "Jeu",
+      "friday": "Ven",
+      "saturday": "Sam",
+      "sunday": "Dim"
+    }
+  },
   "teams": {
     "list": {
       "title": "Mes équipes",

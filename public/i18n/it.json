@@ -384,6 +384,44 @@
       "unknown": "Si è verificato un errore."
     }
   },
+  "training_template": {
+    "tab": "Schema settimanale",
+    "slots": "Fasce orarie",
+    "slots_empty": "Nessuna fascia oraria definita.",
+    "add_slot": "Aggiungi una fascia",
+    "remove_slot": "Rimuovi fascia",
+    "weekday_label": "Giorno",
+    "default_pool": "Piscina predefinita",
+    "season": "Stagione",
+    "season_start": "Inizio",
+    "season_end": "Fine",
+    "save": "Salva lo schema settimanale",
+    "saved": "Schema settimanale salvato.",
+    "error": "Impossibile salvare lo schema settimanale.",
+    "error_forbidden": "Solo un responsabile della squadra può modificare lo schema settimanale.",
+    "time_range_error": "L'ora di fine deve essere successiva all'ora di inizio",
+    "summary_label": "Schema settimanale:",
+    "no_template_hint": "Definisci uno schema settimanale per la squadra per automatizzare la frequenza.",
+    "no_template_link": "Modifica squadra",
+    "weekday": {
+      "monday": "Lunedì",
+      "tuesday": "Martedì",
+      "wednesday": "Mercoledì",
+      "thursday": "Giovedì",
+      "friday": "Venerdì",
+      "saturday": "Sabato",
+      "sunday": "Domenica"
+    },
+    "weekday_short": {
+      "monday": "Lun",
+      "tuesday": "Mar",
+      "wednesday": "Mer",
+      "thursday": "Gio",
+      "friday": "Ven",
+      "saturday": "Sab",
+      "sunday": "Dom"
+    }
+  },
   "teams": {
     "list": {
       "title": "Le mie squadre",

@@ -87,6 +87,18 @@ interface ProtectedFields {
   };
   submit(): void;
   cancel(): void;
+  // Planning type tab
+  templateForm: {
+    patchValue(v: Record<string, unknown>): void;
+    invalid: boolean;
+  };
+  slots: { length: number };
+  addSlot(): void;
+  removeSlot(i: number): void;
+  slotHasTimeError(i: number): boolean;
+  saveTemplate(): void;
+  pools(): string[];
+  weekdayOptions(): Array<{ label: string; value: number }>;
 }
 
 describe('TeamsFormComponent', () => {
@@ -96,6 +108,9 @@ describe('TeamsFormComponent', () => {
     teamsRetrieve: ReturnType<typeof vi.fn>;
     teamsCreate: ReturnType<typeof vi.fn>;
     teamsPartialUpdate: ReturnType<typeof vi.fn>;
+    teamsTrainingTemplateRetrieve: ReturnType<typeof vi.fn>;
+    teamsTrainingTemplateUpdate: ReturnType<typeof vi.fn>;
+    teamsPoolsRetrieve: ReturnType<typeof vi.fn>;
   };
   let sportsMock: { sportsList: ReturnType<typeof vi.fn> };
   let levelsMock: { levelsList: ReturnType<typeof vi.fn> };
@@ -114,6 +129,13 @@ describe('TeamsFormComponent', () => {
         .mockReturnValue(retrieved ? of(retrieved) : throwError(() => new Error('404'))),
       teamsCreate: vi.fn().mockReturnValue(of({ ...team, id: 42 })),
       teamsPartialUpdate: vi.fn().mockReturnValue(of(team)),
+      teamsTrainingTemplateRetrieve: vi
+        .fn()
+        .mockReturnValue(of({ slots: [], default_pool: '', season_start: null, season_end: null })),
+      teamsTrainingTemplateUpdate: vi
+        .fn()
+        .mockImplementation((_id, tpl) => of(tpl)),
+      teamsPoolsRetrieve: vi.fn().mockReturnValue(of({ pools: ['Piscine A', 'Piscine B'] })),
     };
     sportsMock = {
       sportsList: vi.fn().mockReturnValue(of({ count: 1, results: [sport] })),
@@ -486,5 +508,66 @@ describe('TeamsFormComponent', () => {
         vis_rounds: VisibilityMode.Never,
       }),
     );
+  });
+
+  // ── Planning type (weekly training template) ──────────────────────────────
+
+  it('loads the team training template + pools on edit', async () => {
+    await setup('5');
+    expect(teamsMock.teamsTrainingTemplateRetrieve).toHaveBeenCalledWith(5);
+    expect(teamsMock.teamsPoolsRetrieve).toHaveBeenCalledWith(5);
+    expect(access(component).pools()).toEqual(['Piscine A', 'Piscine B']);
+  });
+
+  it('addSlot appends and removeSlot removes a slot row', async () => {
+    await setup('5');
+    expect(access(component).slots.length).toBe(0);
+    access(component).addSlot();
+    access(component).addSlot();
+    expect(access(component).slots.length).toBe(2);
+    access(component).removeSlot(0);
+    expect(access(component).slots.length).toBe(1);
+  });
+
+  it('saveTemplate calls teamsTrainingTemplateUpdate with HH:MM slots + ISO dates', async () => {
+    await setup('5');
+    access(component).addSlot();
+    const start = new Date();
+    start.setHours(18, 0, 0, 0);
+    const end = new Date();
+    end.setHours(19, 30, 0, 0);
+    const season = new Date(2026, 8, 1); // 2026-09-01
+    (access(component).slots as unknown as { at(i: number): { patchValue(v: unknown): void } })
+      .at(0)
+      .patchValue({ weekday: 2, hour_start: start, hour_end: end });
+    access(component).templateForm.patchValue({
+      default_pool: 'Piscine X',
+      season_start: season,
+      season_end: null,
+    });
+    access(component).saveTemplate();
+    expect(teamsMock.teamsTrainingTemplateUpdate).toHaveBeenCalledTimes(1);
+    const [id, payload] = teamsMock.teamsTrainingTemplateUpdate.mock.calls[0];
+    expect(id).toBe(5);
+    expect(payload.default_pool).toBe('Piscine X');
+    expect(payload.season_start).toBe('2026-09-01');
+    expect(payload.season_end).toBe(null);
+    expect(payload.slots).toEqual([
+      { weekday: 2, hour_start: '18:00', hour_end: '19:30' },
+    ]);
+  });
+
+  it('slotHasTimeError flags a slot whose end is before its start', async () => {
+    await setup('5');
+    access(component).addSlot();
+    const start = new Date();
+    start.setHours(19, 0, 0, 0);
+    const end = new Date();
+    end.setHours(18, 0, 0, 0);
+    (access(component).slots as unknown as { at(i: number): { patchValue(v: unknown): void } })
+      .at(0)
+      .patchValue({ weekday: 0, hour_start: start, hour_end: end });
+    expect(access(component).slotHasTimeError(0)).toBe(true);
+    expect(access(component).templateForm.invalid).toBe(true);
   });
 });

@@ -384,6 +384,44 @@
       "unknown": "An error occurred."
     }
   },
+  "training_template": {
+    "tab": "Weekly template",
+    "slots": "Slots",
+    "slots_empty": "No slot defined.",
+    "add_slot": "Add a slot",
+    "remove_slot": "Remove slot",
+    "weekday_label": "Day",
+    "default_pool": "Default pool",
+    "season": "Season",
+    "season_start": "Start",
+    "season_end": "End",
+    "save": "Save weekly template",
+    "saved": "Weekly template saved.",
+    "error": "Could not save the weekly template.",
+    "error_forbidden": "Only a team manager can edit the weekly template.",
+    "time_range_error": "End time must be after start time",
+    "summary_label": "Weekly template:",
+    "no_template_hint": "Set a weekly template for the team to automate the frequency.",
+    "no_template_link": "Edit team",
+    "weekday": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday"
+    },
+    "weekday_short": {
+      "monday": "Mon",
+      "tuesday": "Tue",
+      "wednesday": "Wed",
+      "thursday": "Thu",
+      "friday": "Fri",
+      "saturday": "Sat",
+      "sunday": "Sun"
+    }
+  },
   "teams": {
     "list": {
       "title": "My teams",

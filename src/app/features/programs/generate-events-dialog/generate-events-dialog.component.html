@@ -50,22 +50,44 @@
       </div>
     </div>
 
-    <div class="flex flex-col gap-1">
-      <label for="frequency_per_week" class="text-sm font-medium text-gray-700">
-        {{ 'programs.generate.frequency_per_week' | transloco }}
-      </label>
-      <p-inputnumber
-        inputId="frequency_per_week"
-        formControlName="frequency_per_week"
-        [min]="1"
-        [max]="14"
-        [showButtons]="true"
-        styleClass="w-full"
-      />
-      <small class="text-xs text-gray-500">
-        {{ 'programs.generate.frequency_help' | transloco }}
-      </small>
-    </div>
+    @if (hasTemplate()) {
+      <div
+        class="flex flex-col gap-1 rounded-md border border-emerald-200 bg-emerald-50 p-3"
+      >
+        <span class="text-sm font-medium text-emerald-900">
+          <i class="pi pi-calendar mr-1" aria-hidden="true"></i>
+          {{ 'training_template.summary_label' | transloco }}
+        </span>
+        <span class="text-sm text-emerald-800">{{ templateSummary() }}</span>
+      </div>
+    } @else {
+      <div class="flex flex-col gap-1">
+        <label for="frequency_per_week" class="text-sm font-medium text-gray-700">
+          {{ 'programs.generate.frequency_per_week' | transloco }}
+        </label>
+        <p-inputnumber
+          inputId="frequency_per_week"
+          formControlName="frequency_per_week"
+          [min]="1"
+          [max]="14"
+          [showButtons]="true"
+          styleClass="w-full"
+        />
+        <small class="text-xs text-gray-500">
+          {{ 'programs.generate.frequency_help' | transloco }}
+        </small>
+        <small class="text-xs text-gray-500">
+          {{ 'training_template.no_template_hint' | transloco }}
+          <a
+            class="text-emerald-700 underline"
+            [routerLink]="['/teams', program().team_id, 'edit']"
+            (click)="cancel()"
+          >
+            {{ 'training_template.no_template_link' | transloco }}
+          </a>
+        </small>
+      </div>
+    }
 
     <div class="flex flex-col gap-1">
       <label for="description" class="text-sm font-medium text-gray-700">

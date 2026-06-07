@@ -384,6 +384,44 @@
       "unknown": "Se ha producido un error."
     }
   },
+  "training_template": {
+    "tab": "Plantilla semanal",
+    "slots": "Franjas horarias",
+    "slots_empty": "No hay ninguna franja definida.",
+    "add_slot": "Añadir una franja",
+    "remove_slot": "Eliminar franja",
+    "weekday_label": "Día",
+    "default_pool": "Piscina predeterminada",
+    "season": "Temporada",
+    "season_start": "Inicio",
+    "season_end": "Fin",
+    "save": "Guardar la plantilla semanal",
+    "saved": "Plantilla semanal guardada.",
+    "error": "No se ha podido guardar la plantilla semanal.",
+    "error_forbidden": "Solo un responsable del equipo puede editar la plantilla semanal.",
+    "time_range_error": "La hora de fin debe ser posterior a la hora de inicio",
+    "summary_label": "Plantilla semanal:",
+    "no_template_hint": "Define una plantilla semanal para el equipo para automatizar la frecuencia.",
+    "no_template_link": "Editar equipo",
+    "weekday": {
+      "monday": "Lunes",
+      "tuesday": "Martes",
+      "wednesday": "Miércoles",
+      "thursday": "Jueves",
+      "friday": "Viernes",
+      "saturday": "Sábado",
+      "sunday": "Domingo"
+    },
+    "weekday_short": {
+      "monday": "Lun",
+      "tuesday": "Mar",
+      "wednesday": "Mié",
+      "thursday": "Jue",
+      "friday": "Vie",
+      "saturday": "Sáb",
+      "sunday": "Dom"
+    }
+  },
   "teams": {
     "list": {
       "title": "Mis equipos",

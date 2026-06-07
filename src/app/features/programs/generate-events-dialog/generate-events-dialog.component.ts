@@ -22,10 +22,13 @@ import { Message } from 'primeng/message';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Select } from 'primeng/select';
 import { Textarea } from 'primeng/textarea';
+import { RouterLink } from '@angular/router';
 import { ProgramsService } from '../../../api/api/programs.service';
+import { TeamsService } from '../../../api/api/teams.service';
 import { GeneratePlanRequest } from '../../../api/model/generate-plan-request';
 import { OverlapStrategyEnum } from '../../../api/model/overlap-strategy-enum';
 import { Program } from '../../../api/model/program';
+import { TrainingTemplate } from '../../../api/model/training-template';
 import { AiErrorMappingService } from '../../ai/ai-error-mapping.service';
 
 export interface GenerateEventsResult {
@@ -61,6 +64,7 @@ function parseDate(value: string | null | undefined): Date | null {
     Button,
     Message,
     ProgressSpinner,
+    RouterLink,
     TranslocoPipe,
   ],
   templateUrl: './generate-events-dialog.component.html',
@@ -70,6 +74,7 @@ function parseDate(value: string | null | undefined): Date | null {
 export class GenerateEventsDialogComponent {
   private readonly fb = inject(FormBuilder);
   private readonly programsService = inject(ProgramsService);
+  private readonly teamsService = inject(TeamsService);
   private readonly aiErrorMapping = inject(AiErrorMappingService);
   private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
@@ -80,6 +85,37 @@ export class GenerateEventsDialogComponent {
 
   protected readonly loading = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
+
+  /** The team's weekly training template (null until loaded / when none). */
+  protected readonly template = signal<TrainingTemplate | null>(null);
+  /** Team id the template was last loaded for (avoids redundant fetches). */
+  private templateLoadedForTeamId: number | null = null;
+
+  /** True when the team defines a weekly template with at least one slot. */
+  protected readonly hasTemplate = computed(() => (this.template()?.slots?.length ?? 0) > 0);
+
+  /** Human-readable one-line summary of the template slots + default pool. */
+  protected readonly templateSummary = computed(() => {
+    const tpl = this.template();
+    if (!tpl || !tpl.slots?.length) return '';
+    this.transloco.getActiveLang();
+    const dayKeys = [
+      'training_template.weekday_short.monday',
+      'training_template.weekday_short.tuesday',
+      'training_template.weekday_short.wednesday',
+      'training_template.weekday_short.thursday',
+      'training_template.weekday_short.friday',
+      'training_template.weekday_short.saturday',
+      'training_template.weekday_short.sunday',
+    ];
+    const parts = tpl.slots.map((s) => {
+      const day = this.transloco.translate(dayKeys[s.weekday] ?? '');
+      return `${day} ${s.hour_start.slice(0, 5)}–${s.hour_end.slice(0, 5)}`;
+    });
+    let summary = parts.join(', ');
+    if (tpl.default_pool) summary += ` · ${tpl.default_pool}`;
+    return summary;
+  });
 
   protected readonly form = this.fb.nonNullable.group({
     date_start: this.fb.nonNullable.control<Date | null>(null, [Validators.required]),
@@ -118,7 +154,55 @@ export class GenerateEventsDialogComponent {
         overlap_strategy: 'add_only',
       });
       this.errorMessage.set(null);
+      this.loadTemplate(p);
     });
+  }
+
+  /**
+   * Fetch the program team's weekly training template. When the template has
+   * slots, the frequency field is derived server-side: it's hidden + its
+   * validators dropped, and date_start/date_end are pre-filled from the
+   * season window when present.
+   */
+  private loadTemplate(program: Program): void {
+    const teamId = program.team_id ?? program.team?.id ?? null;
+    if (teamId == null) return;
+    if (this.templateLoadedForTeamId === teamId && this.template() !== null) {
+      this.applyTemplate(this.template());
+      return;
+    }
+    this.templateLoadedForTeamId = teamId;
+    this.teamsService
+      .teamsTrainingTemplateRetrieve(teamId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (tpl) => {
+          this.template.set(tpl);
+          this.applyTemplate(tpl);
+        },
+        error: () => {
+          this.template.set(null);
+          this.templateLoadedForTeamId = null;
+        },
+      });
+  }
+
+  /** Toggle the frequency validators + prefill the season window from a template. */
+  private applyTemplate(tpl: TrainingTemplate | null): void {
+    const freq = this.form.controls.frequency_per_week;
+    if (tpl && (tpl.slots?.length ?? 0) > 0) {
+      freq.clearValidators();
+      freq.updateValueAndValidity();
+      const seasonStart = parseDate(tpl.season_start);
+      const seasonEnd = parseDate(tpl.season_end);
+      this.form.patchValue({
+        ...(seasonStart ? { date_start: seasonStart } : {}),
+        ...(seasonEnd ? { date_end: seasonEnd } : {}),
+      });
+    } else {
+      freq.setValidators([Validators.required, Validators.min(1), Validators.max(14)]);
+      freq.updateValueAndValidity();
+    }
   }
 
   protected submit(): void {
@@ -131,7 +215,9 @@ export class GenerateEventsDialogComponent {
     const payload: GeneratePlanRequest = {
       date_start: toIsoDate(value.date_start),
       date_end: toIsoDate(value.date_end),
-      frequency_per_week: value.frequency_per_week,
+      // When the team has a weekly template, the backend derives the frequency
+      // from its slots — omit frequency_per_week entirely.
+      ...(this.hasTemplate() ? {} : { frequency_per_week: value.frequency_per_week }),
       description: value.description || undefined,
       overlap_strategy: value.overlap_strategy as unknown as OverlapStrategyEnum,
     };

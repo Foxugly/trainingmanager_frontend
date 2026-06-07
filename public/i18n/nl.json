@@ -384,6 +384,44 @@
       "unknown": "Er is een fout opgetreden."
     }
   },
+  "training_template": {
+    "tab": "Weekschema",
+    "slots": "Tijdvakken",
+    "slots_empty": "Geen tijdvak gedefinieerd.",
+    "add_slot": "Tijdvak toevoegen",
+    "remove_slot": "Tijdvak verwijderen",
+    "weekday_label": "Dag",
+    "default_pool": "Standaardzwembad",
+    "season": "Seizoen",
+    "season_start": "Begin",
+    "season_end": "Einde",
+    "save": "Weekschema opslaan",
+    "saved": "Weekschema opgeslagen.",
+    "error": "Kan het weekschema niet opslaan.",
+    "error_forbidden": "Alleen een teammanager kan het weekschema bewerken.",
+    "time_range_error": "De eindtijd moet na de begintijd liggen",
+    "summary_label": "Weekschema:",
+    "no_template_hint": "Stel een weekschema in voor het team om de frequentie te automatiseren.",
+    "no_template_link": "Team bewerken",
+    "weekday": {
+      "monday": "Maandag",
+      "tuesday": "Dinsdag",
+      "wednesday": "Woensdag",
+      "thursday": "Donderdag",
+      "friday": "Vrijdag",
+      "saturday": "Zaterdag",
+      "sunday": "Zondag"
+    },
+    "weekday_short": {
+      "monday": "Ma",
+      "tuesday": "Di",
+      "wednesday": "Wo",
+      "thursday": "Do",
+      "friday": "Vr",
+      "saturday": "Za",
+      "sunday": "Zo"
+    }
+  },
   "teams": {
     "list": {
       "title": "Mijn teams",

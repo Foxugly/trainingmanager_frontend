@@ -38,6 +38,7 @@
             <p-tab value="info"><i class="pi pi-info-circle tab-icon"></i>{{ 'teams.form.tab_info' | transloco }}</p-tab>
             <p-tab value="visibility"><i class="pi pi-eye tab-icon"></i>{{ 'teams.form.tab_visibility' | transloco }}</p-tab>
             @if (isEditMode()) {
+              <p-tab value="planning"><i class="pi pi-calendar tab-icon"></i>{{ 'training_template.tab' | transloco }}</p-tab>
               <p-tab value="managers"><i class="pi pi-users tab-icon"></i>{{ 'teams.form.tab_managers' | transloco }}</p-tab>
               <p-tab value="statuses"><i class="pi pi-check-square tab-icon"></i>{{ 'teams.form.tab_statuses' | transloco }}</p-tab>
               <p-tab value="join"><i class="pi pi-user-plus tab-icon"></i>{{ 'teams.form.tab_join' | transloco }}</p-tab>
@@ -261,6 +262,145 @@
             </p-tabpanel>
 
             @if (isEditMode()) {
+              <p-tabpanel value="planning">
+                <div class="builder-pane" [formGroup]="templateForm">
+                  @if (templateLoading()) {
+                    <p class="meta-hint">{{ 'common.loading' | transloco }}…</p>
+                  } @else {
+                    <!-- Section: créneaux -->
+                    <div class="flex items-center justify-between mb-2">
+                      <h3 class="builder-section-title !mb-0">
+                        {{ 'training_template.slots' | transloco }}
+                      </h3>
+                      <p-button
+                        type="button"
+                        severity="success"
+                        size="small"
+                        icon="pi pi-plus"
+                        [label]="'training_template.add_slot' | transloco"
+                        (onClick)="addSlot()"
+                      />
+                    </div>
+
+                    @if (slots.length === 0) {
+                      <p class="meta-hint mb-4">{{ 'training_template.slots_empty' | transloco }}</p>
+                    } @else {
+                      <div class="flex flex-col gap-3 mb-4" formArrayName="slots">
+                        @for (slot of slots.controls; track $index) {
+                          <div [formGroupName]="$index" class="slot-row">
+                            <div class="meta-grid cols-3 flex-1">
+                              <app-meta-field
+                                [label]="'training_template.weekday_label' | transloco"
+                                [for]="'slot_weekday_' + $index"
+                              >
+                                <p-select
+                                  [inputId]="'slot_weekday_' + $index"
+                                  [options]="weekdayOptions()"
+                                  formControlName="weekday"
+                                  optionLabel="label"
+                                  optionValue="value"
+                                />
+                              </app-meta-field>
+                              <app-meta-field
+                                [label]="'events.form.hour_start' | transloco"
+                                [for]="'slot_start_' + $index"
+                              >
+                                <p-datepicker
+                                  [inputId]="'slot_start_' + $index"
+                                  formControlName="hour_start"
+                                  [timeOnly]="true"
+                                  [showIcon]="true"
+                                  appendTo="body"
+                                />
+                              </app-meta-field>
+                              <app-meta-field
+                                [label]="'events.form.hour_end' | transloco"
+                                [for]="'slot_end_' + $index"
+                                [error]="slotHasTimeError($index) ? ('training_template.time_range_error' | transloco) : null"
+                              >
+                                <p-datepicker
+                                  [inputId]="'slot_end_' + $index"
+                                  formControlName="hour_end"
+                                  [timeOnly]="true"
+                                  [showIcon]="true"
+                                  appendTo="body"
+                                />
+                              </app-meta-field>
+                            </div>
+                            <p-button
+                              type="button"
+                              icon="pi pi-trash"
+                              severity="danger"
+                              [text]="true"
+                              [rounded]="true"
+                              size="small"
+                              [ariaLabel]="'training_template.remove_slot' | transloco"
+                              (onClick)="removeSlot($index)"
+                            />
+                          </div>
+                        }
+                      </div>
+                    }
+
+                    <!-- Section: piscine par défaut + saison -->
+                    <div class="meta-grid cols-3">
+                      <app-meta-field
+                        [label]="'training_template.default_pool' | transloco"
+                        for="default_pool"
+                      >
+                        <p-autoComplete
+                          inputId="default_pool"
+                          formControlName="default_pool"
+                          [suggestions]="poolSuggestions()"
+                          (completeMethod)="filterPools($event)"
+                          [dropdown]="true"
+                          [forceSelection]="false"
+                          [completeOnFocus]="true"
+                          appendTo="body"
+                          styleClass="w-full"
+                          [inputStyle]="{ width: '100%' }"
+                        />
+                      </app-meta-field>
+                      <app-meta-field
+                        [label]="'training_template.season_start' | transloco"
+                        for="season_start"
+                      >
+                        <p-datepicker
+                          inputId="season_start"
+                          formControlName="season_start"
+                          dateFormat="dd/mm/yy"
+                          [showIcon]="true"
+                          appendTo="body"
+                        />
+                      </app-meta-field>
+                      <app-meta-field
+                        [label]="'training_template.season_end' | transloco"
+                        for="season_end"
+                      >
+                        <p-datepicker
+                          inputId="season_end"
+                          formControlName="season_end"
+                          dateFormat="dd/mm/yy"
+                          [showIcon]="true"
+                          appendTo="body"
+                        />
+                      </app-meta-field>
+                    </div>
+
+                    <div class="flex justify-end pt-4">
+                      <p-button
+                        type="button"
+                        icon="pi pi-save"
+                        [label]="'training_template.save' | transloco"
+                        [loading]="templateSaving()"
+                        [disabled]="templateForm.invalid || templateSaving()"
+                        (onClick)="saveTemplate()"
+                      />
+                    </div>
+                  }
+                </div>
+              </p-tabpanel>
+
               <p-tabpanel value="managers">
                 <div class="builder-pane">
                   <div class="meta-grid">

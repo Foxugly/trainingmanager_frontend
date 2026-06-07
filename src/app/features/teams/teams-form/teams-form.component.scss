@@ -95,3 +95,14 @@
   height: 0.55rem;
   border-radius: 999px;
 }
+
+// Planning type: one editable training slot row (weekday + start/end + delete).
+.slot-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-soft);
+}

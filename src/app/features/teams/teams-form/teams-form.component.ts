@@ -9,13 +9,25 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { AutoComplete, AutoCompleteCompleteEvent } from 'primeng/autocomplete';
 import { Button } from 'primeng/button';
 import { Checkbox } from 'primeng/checkbox';
 import { ConfirmDialog } from 'primeng/confirmdialog';
+import { DatePicker } from 'primeng/datepicker';
 import { InputText } from 'primeng/inputtext';
 import { MultiSelect } from 'primeng/multiselect';
 import { Select } from 'primeng/select';
@@ -34,6 +46,9 @@ import { PatchedTeam } from '../../../api/model/patched-team';
 import { Sport } from '../../../api/model/sport';
 import { Team } from '../../../api/model/team';
 import { TopicCreationEnum } from '../../../api/model/topic-creation-enum';
+import { TrainingSlot } from '../../../api/model/training-slot';
+import { TrainingTemplate } from '../../../api/model/training-template';
+import { WeekdayEnum } from '../../../api/model/weekday-enum';
 import { VisibilityMode } from '../../../api/model/visibility-mode';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AVAILABLE_LANGUAGES, LanguageCode } from '../../../core/i18n/available-languages';
@@ -49,6 +64,52 @@ import { MetaFieldComponent } from '../../../shared/ui/meta-field/meta-field.com
 import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
 import { StatusBadgeComponent } from '../../../shared/ui/status-badge/status-badge.component';
 
+function toIsoDate(d: Date | null | undefined): string | null {
+  if (!d) return null;
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function toHourMinute(d: Date | null | undefined): string | null {
+  if (!d) return null;
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  return `${hh}:${mm}`;
+}
+
+function parseDate(value: string | null | undefined): Date | null {
+  if (!value) return null;
+  const d = new Date(value);
+  return Number.isFinite(d.getTime()) ? d : null;
+}
+
+function parseTime(value: string | null | undefined): Date | null {
+  if (!value) return null;
+  const m = value.match(/^(\d{2}):(\d{2})/);
+  if (!m) return null;
+  const d = new Date();
+  d.setHours(parseInt(m[1], 10), parseInt(m[2], 10), 0, 0);
+  return d;
+}
+
+type SlotFormGroup = FormGroup<{
+  weekday: FormControl<WeekdayEnum>;
+  hour_start: FormControl<Date | null>;
+  hour_end: FormControl<Date | null>;
+}>;
+
+/** Per-slot validator: hour_end must be strictly after hour_start. */
+function slotTimeRangeValidator(group: AbstractControl): ValidationErrors | null {
+  const start = group.get('hour_start')?.value as Date | null;
+  const end = group.get('hour_end')?.value as Date | null;
+  if (!start || !end) return null;
+  const startMinutes = start.getHours() * 60 + start.getMinutes();
+  const endMinutes = end.getHours() * 60 + end.getMinutes();
+  return endMinutes <= startMinutes ? { time_range: true } : null;
+}
+
 @Component({
   selector: 'app-teams-form',
   imports: [
@@ -60,6 +121,8 @@ import { StatusBadgeComponent } from '../../../shared/ui/status-badge/status-bad
     MultiSelect,
     Checkbox,
     ToggleSwitch,
+    AutoComplete,
+    DatePicker,
     Button,
     ConfirmDialog,
     Tabs,
@@ -169,6 +232,39 @@ export class TeamsFormComponent implements OnInit {
 
   protected readonly isEditMode = computed(() => this.teamId() !== null);
 
+  // ── Planning type (weekly training template) ────────────────────────────
+  protected readonly templateLoading = signal(false);
+  protected readonly templateSaving = signal(false);
+  /** Known pools ("piscines") for this team, for the default_pool autocomplete. */
+  protected readonly pools = signal<string[]>([]);
+  protected readonly poolSuggestions = signal<string[]>([]);
+
+  /** Weekday select options (Mon=0 … Sun=6), re-translated on language change. */
+  protected readonly weekdayOptions = computed(() => {
+    this.transloco.getActiveLang();
+    const keys = [
+      'training_template.weekday.monday',
+      'training_template.weekday.tuesday',
+      'training_template.weekday.wednesday',
+      'training_template.weekday.thursday',
+      'training_template.weekday.friday',
+      'training_template.weekday.saturday',
+      'training_template.weekday.sunday',
+    ];
+    return keys.map((k, i) => ({ label: this.transloco.translate(k), value: i as WeekdayEnum }));
+  });
+
+  protected readonly templateForm = this.fb.group({
+    slots: this.fb.array<SlotFormGroup>([]),
+    default_pool: this.fb.nonNullable.control<string>(''),
+    season_start: this.fb.nonNullable.control<Date | null>(null),
+    season_end: this.fb.nonNullable.control<Date | null>(null),
+  });
+
+  protected get slots(): FormArray<SlotFormGroup> {
+    return this.templateForm.controls.slots;
+  }
+
   protected readonly patchActive = (id: number, value: boolean) =>
     this.teamsService.teamsPartialUpdate(id, { is_active: value } as PatchedTeam);
 
@@ -252,6 +348,8 @@ export class TeamsFormComponent implements OnInit {
         return;
       }
       this.teamId.set(id);
+      this.loadTemplate(id);
+      this.loadPools(id);
       this.loading.set(true);
       this.teamsService
         .teamsRetrieve(id)
@@ -575,5 +673,135 @@ export class TeamsFormComponent implements OnInit {
           : this.transloco.translate('teams.errors.unknown'),
       });
     }
+  }
+
+  // ── Planning type (weekly training template) ────────────────────────────
+
+  /** Build a slot form group from an optional existing slot. */
+  private buildSlotGroup(slot?: TrainingSlot): SlotFormGroup {
+    return this.fb.group(
+      {
+        weekday: this.fb.nonNullable.control<WeekdayEnum>(
+          slot?.weekday ?? WeekdayEnum.NUMBER_0,
+          [Validators.required],
+        ),
+        hour_start: this.fb.nonNullable.control<Date | null>(parseTime(slot?.hour_start), [
+          Validators.required,
+        ]),
+        hour_end: this.fb.nonNullable.control<Date | null>(parseTime(slot?.hour_end), [
+          Validators.required,
+        ]),
+      },
+      { validators: [slotTimeRangeValidator] },
+    ) as SlotFormGroup;
+  }
+
+  protected addSlot(): void {
+    this.slots.push(this.buildSlotGroup());
+    this.slots.markAsDirty();
+  }
+
+  protected removeSlot(index: number): void {
+    this.slots.removeAt(index);
+    this.slots.markAsDirty();
+  }
+
+  /** True when the slot at `index` has an end time at or before its start. */
+  protected slotHasTimeError(index: number): boolean {
+    const group = this.slots.at(index);
+    return !!group && group.errors?.['time_range'] === true;
+  }
+
+  private loadTemplate(teamId: number): void {
+    this.templateLoading.set(true);
+    this.teamsService
+      .teamsTrainingTemplateRetrieve(teamId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (tpl) => {
+          this.slots.clear();
+          for (const slot of tpl.slots ?? []) {
+            this.slots.push(this.buildSlotGroup(slot));
+          }
+          this.templateForm.patchValue({
+            default_pool: tpl.default_pool ?? '',
+            season_start: parseDate(tpl.season_start),
+            season_end: parseDate(tpl.season_end),
+          });
+          this.templateForm.markAsPristine();
+          this.templateLoading.set(false);
+        },
+        error: () => {
+          this.templateLoading.set(false);
+        },
+      });
+  }
+
+  private loadPools(teamId: number): void {
+    this.teamsService
+      .teamsPoolsRetrieve(teamId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => this.pools.set(res.pools ?? []),
+        error: () => this.pools.set([]),
+      });
+  }
+
+  /** p-autoComplete completeMethod: filter the known pools by the typed query. */
+  protected filterPools(event: AutoCompleteCompleteEvent): void {
+    const q = (event.query ?? '').toLowerCase().trim();
+    const all = this.pools();
+    this.poolSuggestions.set(q ? all.filter((p) => p.toLowerCase().includes(q)) : all.slice());
+  }
+
+  protected saveTemplate(): void {
+    const id = this.teamId();
+    if (id === null || this.templateForm.invalid) return;
+
+    this.templateSaving.set(true);
+    const value = this.templateForm.getRawValue();
+    const slots: TrainingSlot[] = (value.slots ?? []).map((s) => ({
+      weekday: s.weekday as WeekdayEnum,
+      hour_start: toHourMinute(s.hour_start) ?? '',
+      hour_end: toHourMinute(s.hour_end) ?? '',
+    }));
+
+    const payload: TrainingTemplate = {
+      slots,
+      default_pool: value.default_pool || '',
+      season_start: toIsoDate(value.season_start),
+      season_end: toIsoDate(value.season_end),
+    };
+
+    this.teamsService
+      .teamsTrainingTemplateUpdate(id, payload)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (saved) => {
+          this.templateSaving.set(false);
+          this.templateForm.markAsPristine();
+          this.messageService.add({
+            severity: 'success',
+            summary: this.transloco.translate('common.success'),
+            detail: this.transloco.translate('training_template.saved'),
+          });
+          // Refresh pools in case a new default_pool was introduced.
+          if (saved?.default_pool && !this.pools().includes(saved.default_pool)) {
+            this.pools.update((cur) => [...cur, saved.default_pool as string]);
+          }
+        },
+        error: (err: HttpErrorResponse) => {
+          this.templateSaving.set(false);
+          const detail =
+            err.status === 403
+              ? this.transloco.translate('training_template.error_forbidden')
+              : this.transloco.translate('training_template.error');
+          this.messageService.add({
+            severity: 'error',
+            summary: this.transloco.translate('common.error'),
+            detail,
+          });
+        },
+      });
   }
 }
