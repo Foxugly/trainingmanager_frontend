@@ -10,6 +10,7 @@
 import { Sport } from './sport';
 import { VisibilityMode } from './visibility-mode';
 import { TopicCreationEnum } from './topic-creation-enum';
+import { PlaceMinimal } from './place-minimal';
 import { CustomUserPublic } from './custom-user-public';
 import { Level } from './level';
 import { ChatModeEnum } from './chat-mode-enum';
@@ -27,6 +28,8 @@ export interface Team {
     readonly owner: CustomUserPublic;
     readonly managers: Array<CustomUserPublic>;
     managers_ids?: Array<number>;
+    readonly default_place?: PlaceMinimal;
+    default_place_id?: number | null;
     language?: LanguageEnum;
     is_active?: boolean;
     is_public?: boolean;

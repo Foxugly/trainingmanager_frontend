@@ -8,6 +8,7 @@
  * Do not edit the class manually.
  */
 import { VisibilityMode } from './visibility-mode';
+import { PlaceMinimal } from './place-minimal';
 import { ProgramMinimal } from './program-minimal';
 
 
@@ -19,6 +20,8 @@ export interface Event {
      * Where the session takes place (venue, pool, track, address). Always visible to athletes.
      */
     location?: string;
+    readonly place?: PlaceMinimal;
+    place_id?: number | null;
     /**
      * Material/gear athletes should bring. Always visible to athletes.
      */

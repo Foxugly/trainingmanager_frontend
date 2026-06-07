@@ -39,6 +39,8 @@ api/notifications.service.ts
 api/notifications.serviceInterface.ts
 api/performances.service.ts
 api/performances.serviceInterface.ts
+api/places.service.ts
+api/places.serviceInterface.ts
 api/programs.service.ts
 api/programs.serviceInterface.ts
 api/public.service.ts
@@ -145,6 +147,7 @@ model/paginated-modality-list.ts
 model/paginated-note-list.ts
 model/paginated-notification-list.ts
 model/paginated-performance-list.ts
+model/paginated-place-list.ts
 model/paginated-program-list.ts
 model/paginated-round-list.ts
 model/paginated-sport-list.ts
@@ -174,6 +177,7 @@ model/patched-message.ts
 model/patched-modality-admin.ts
 model/patched-note.ts
 model/patched-performance.ts
+model/patched-place.ts
 model/patched-program.ts
 model/patched-round.ts
 model/patched-sport-admin.ts
@@ -181,6 +185,9 @@ model/patched-team-join-request.ts
 model/patched-team-membership.ts
 model/patched-team.ts
 model/performance.ts
+model/place-minimal.ts
+model/place-request.ts
+model/place.ts
 model/presign-upload-headers.ts
 model/presign-upload-request.ts
 model/presign-upload-response.ts
