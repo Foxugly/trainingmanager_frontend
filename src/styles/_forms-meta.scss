@@ -91,6 +91,14 @@
   }
 }
 
+// Toggle fields: a lone toggle switch reads better centered in its full-width
+// cell rather than hugging the left edge. The toggle keeps its intrinsic size
+// (it is NOT in the stretch list above), so we only need to center it.
+.meta-value:has(> p-toggleswitch),
+.meta-value:has(> .p-toggleswitch) {
+  justify-content: center;
+}
+
 .meta-hint {
   font-size: 0.8rem;
   color: var(--muted);

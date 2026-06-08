@@ -242,6 +242,7 @@ describe('EventsDetailComponent', () => {
   let energySegmentsMock: { energySegmentsList: ReturnType<typeof vi.fn> };
   let userSig: ReturnType<typeof signal<CustomUserPublic | null>>;
   let routeIdParam: string | null;
+  let routeQueryTab: string | null;
 
   const access = (c: EventsDetailComponent) => c as unknown as ProtectedFields;
 
@@ -250,9 +251,11 @@ describe('EventsDetailComponent', () => {
     eventResult: Event | null = eventNoRounds,
     currentUser: CustomUserPublic = ownerUser,
     teamResult: Team = team,
+    queryTab: string | null = null,
   ) {
     TestBed.resetTestingModule();
     routeIdParam = idParam;
+    routeQueryTab = queryTab;
     eventsMock = {
       eventsRetrieve: vi
         .fn()
@@ -376,7 +379,10 @@ describe('EventsDetailComponent', () => {
         {
           provide: ActivatedRoute,
           useValue: {
-            snapshot: { paramMap: { get: () => routeIdParam } },
+            snapshot: {
+              paramMap: { get: () => routeIdParam },
+              queryParamMap: convertToParamMap(routeQueryTab ? { tab: routeQueryTab } : {}),
+            },
             paramMap: of(convertToParamMap(routeIdParam == null ? {} : { id: routeIdParam })),
           },
         },
@@ -538,6 +544,16 @@ describe('EventsDetailComponent', () => {
   });
 
   it('default active tab on mount is "training"', () => {
+    expect(access(component).activeTab()).toBe('training');
+  });
+
+  it('honors a deep-linked ?tab=attendance query param on init', async () => {
+    await setup('7', eventNoRounds, ownerUser, team, 'attendance');
+    expect(access(component).activeTab()).toBe('attendance');
+  });
+
+  it('ignores an unknown ?tab= value and keeps the default', async () => {
+    await setup('7', eventNoRounds, ownerUser, team, 'bogus');
     expect(access(component).activeTab()).toBe('training');
   });
 

@@ -2,6 +2,27 @@
   @if (loading()) {
     <p class="att-muted">{{ 'common.loading' | transloco }}…</p>
   } @else {
+    @if (canEdit()) {
+      <div class="att-actions">
+        <input
+          #fileInput
+          type="file"
+          class="att-file-input"
+          [accept]="accept"
+          multiple
+          [attr.aria-label]="'attachments.add' | transloco"
+          (change)="onFilesSelected($event)"
+        />
+        <p-button
+          icon="pi pi-plus"
+          severity="success"
+          size="small"
+          [label]="'attachments.add' | transloco"
+          [disabled]="isUploading()"
+          (onClick)="triggerFilePicker(fileInput)"
+        />
+      </div>
+    }
     @if (items().length === 0 && !isUploading()) {
       <app-empty-state icon="paperclip" tone="gray" [title]="'attachments.empty' | transloco" />
     } @else {
@@ -65,28 +86,6 @@
           </li>
         }
       </ul>
-    }
-
-    @if (canEdit()) {
-      <div class="att-actions">
-        <input
-          #fileInput
-          type="file"
-          class="att-file-input"
-          [accept]="accept"
-          multiple
-          [attr.aria-label]="'attachments.add' | transloco"
-          (change)="onFilesSelected($event)"
-        />
-        <p-button
-          icon="pi pi-plus"
-          severity="success"
-          size="small"
-          [label]="'attachments.add' | transloco"
-          [disabled]="isUploading()"
-          (onClick)="triggerFilePicker(fileInput)"
-        />
-      </div>
     }
   }
 </div>

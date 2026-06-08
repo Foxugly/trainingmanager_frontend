@@ -249,13 +249,22 @@
                   <span class="text-xs text-gray-500 ml-2">
                     {{ item.teamName }} · {{ item.programName }}
                   </span>
+                  @if (item.event.place?.name || item.event.location) {
+                    <span class="block text-xs text-gray-500 mt-0.5">
+                      <i class="pi pi-map-marker text-[10px] mr-1" aria-hidden="true"></i>
+                      {{ item.event.place?.name || item.event.location }}
+                    </span>
+                  }
                 </div>
                 <div class="text-sm text-gray-700 shrink-0">
                   @if (item.event.date) {
                     {{ item.event.date | date: 'EEE d MMM' }}
                   }
                   @if (item.event.hour_start) {
-                    · {{ item.event.hour_start.slice(0, 5) }}
+                    · {{ item.event.hour_start.slice(0, 5)
+                    }}@if (item.event.hour_end) {
+                      &nbsp;– {{ item.event.hour_end.slice(0, 5) }}
+                    }
                   }
                 </div>
               </a>
@@ -307,7 +316,7 @@
                   }
                 </span>
               </div>
-              <a [routerLink]="['/events', item.event.id, 'attendance']">
+              <a [routerLink]="['/events', item.event.id]" [queryParams]="{ tab: 'attendance' }">
                 <p-button
                   [label]="'dashboard.attendances_pending.action' | transloco"
                   icon="pi pi-list-check"
@@ -425,13 +434,22 @@
                   <span class="text-xs text-gray-500 ml-2">
                     {{ item.teamName }} · {{ item.programName }}
                   </span>
+                  @if (item.event.place?.name || item.event.location) {
+                    <span class="block text-xs text-gray-500 mt-0.5">
+                      <i class="pi pi-map-marker text-[10px] mr-1" aria-hidden="true"></i>
+                      {{ item.event.place?.name || item.event.location }}
+                    </span>
+                  }
                 </div>
                 <div class="text-sm text-gray-700 shrink-0">
                   @if (item.event.date) {
                     {{ item.event.date | date: 'EEE d MMM' }}
                   }
                   @if (item.event.hour_start) {
-                    · {{ item.event.hour_start.slice(0, 5) }}
+                    · {{ item.event.hour_start.slice(0, 5)
+                    }}@if (item.event.hour_end) {
+                      &nbsp;– {{ item.event.hour_end.slice(0, 5) }}
+                    }
                   }
                 </div>
               </a>
