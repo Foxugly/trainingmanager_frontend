@@ -9,6 +9,7 @@ import {
   inject,
   input,
   signal,
+  untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -75,7 +76,9 @@ export class ProgramsListComponent implements OnInit {
     effect(() => {
       const team = this.teamFilter();
       const archived = this.showArchived();
-      this.load(team ?? undefined, archived);
+      // untracked: the load() data path must not register extra effect deps
+      // (the filters above are the only intended triggers).
+      untracked(() => this.load(team ?? undefined, archived));
     });
   }
 

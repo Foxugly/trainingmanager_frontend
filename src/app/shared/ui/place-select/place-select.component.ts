@@ -3,13 +3,14 @@ import {
   ChangeDetectorRef,
   Component,
   DestroyRef,
-  effect,
   forwardRef,
   inject,
   input,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { of } from 'rxjs';
+import { catchError, distinctUntilChanged, filter, switchMap } from 'rxjs/operators';
 import {
   ControlValueAccessor,
   FormsModule,
@@ -75,8 +76,6 @@ export class PlaceSelectComponent implements ControlValueAccessor {
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly places = signal<Place[]>([]);
-  /** Team id the places list was last loaded for (avoids redundant fetches). */
-  private loadedForTeamId: number | null = null;
 
   // ── Inline create dialog state ──────────────────────────────────────────
   protected readonly dialogVisible = signal(false);
@@ -92,29 +91,24 @@ export class PlaceSelectComponent implements ControlValueAccessor {
   protected onTouched: () => void = () => {};
 
   constructor() {
-    // React to the resolved team id (set asynchronously once the program/team
-    // is known) by loading that team's linked places.
-    effect(() => this.loadForTeam(this.teamId()));
-  }
-
-  /** Load the given team's linked places once; idempotent per team id. */
-  loadForTeam(teamId: number | null | undefined): void {
-    if (teamId == null) return;
-    if (this.loadedForTeamId === teamId) return;
-    this.loadedForTeamId = teamId;
-    this.placesService
-      // Signature: (ordering, page, pageSize, search, sport, team) — ?team filter.
-      .placesList(undefined, undefined, undefined, undefined, undefined, teamId)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (res) => {
-          this.places.set(res.results ?? []);
-          this.cdr.markForCheck();
-        },
-        error: () => {
-          this.loadedForTeamId = null;
-          this.places.set([]);
-        },
+    // Load the team's linked places reactively when [teamId] resolves. A data
+    // stream (not an effect): distinctUntilChanged dedups, switchMap cancels a
+    // stale request if the team changes mid-flight.
+    toObservable(this.teamId)
+      .pipe(
+        filter((id): id is number => id != null),
+        distinctUntilChanged(),
+        switchMap((teamId) =>
+          this.placesService
+            // Signature: (ordering, page, pageSize, search, sport, team) — ?team.
+            .placesList(undefined, undefined, undefined, undefined, undefined, teamId)
+            .pipe(catchError(() => of(null))),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((res) => {
+        this.places.set(res?.results ?? []);
+        this.cdr.markForCheck();
       });
   }
 

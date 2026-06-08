@@ -9,6 +9,7 @@ import {
   input,
   output,
   signal,
+  untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -114,7 +115,9 @@ export class TeamStatsComponent {
       const member = this.memberId();
       const [from, to] = this.range();
       if (!from || !to) return;
-      this.fetch(id, this.fmt(from), this.fmt(to), member ?? undefined);
+      // untracked: team/member/range are the only intended triggers; the fetch
+      // data path must not register extra deps.
+      untracked(() => this.fetch(id, this.fmt(from), this.fmt(to), member ?? undefined));
     });
   }
 

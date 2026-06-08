@@ -4,12 +4,13 @@ import {
   Component,
   DestroyRef,
   computed,
-  effect,
   inject,
   input,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { of } from 'rxjs';
+import { catchError, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import {
   AbstractControl,
   FormArray,
@@ -143,7 +144,36 @@ export class TeamSlotsEditorComponent {
   }
 
   constructor() {
-    effect(() => this.loadSlots(this.teamId()));
+    // Load the team's weekly slots reactively when [teamId] changes — a data
+    // stream (switchMap cancels a stale request) rather than an effect.
+    toObservable(this.teamId)
+      .pipe(
+        distinctUntilChanged(),
+        tap(() => this.templateLoading.set(true)),
+        switchMap((teamId) =>
+          this.teamsService.teamsTrainingSlotsList(teamId).pipe(
+            catchError(() => {
+              this.messageService.add({
+                severity: 'error',
+                summary: this.transloco.translate('common.error'),
+                detail: this.transloco.translate('training_template.error'),
+              });
+              return of(null);
+            }),
+          ),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((list) => {
+        this.templateLoading.set(false);
+        if (list === null) return;
+        this.slots.clear();
+        for (const slot of list ?? []) {
+          this.slots.push(this.buildSlotGroup(slot as TrainingSlot & { id?: number }));
+        }
+        this.editingSlotIndices.set(new Set());
+        this.savingSlotIndices.set(new Set());
+      });
   }
 
   private buildSlotGroup(slot?: TrainingSlot & { id?: number }): SlotFormGroup {
@@ -370,29 +400,4 @@ export class TeamSlotsEditorComponent {
   }
 
   /** Load the team's weekly slots via the per-slot list endpoint. */
-  private loadSlots(teamId: number): void {
-    this.templateLoading.set(true);
-    this.teamsService
-      .teamsTrainingSlotsList(teamId)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (list) => {
-          this.slots.clear();
-          for (const slot of list ?? []) {
-            this.slots.push(this.buildSlotGroup(slot as TrainingSlot & { id?: number }));
-          }
-          this.editingSlotIndices.set(new Set());
-          this.savingSlotIndices.set(new Set());
-          this.templateLoading.set(false);
-        },
-        error: () => {
-          this.templateLoading.set(false);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('training_template.error'),
-          });
-        },
-      });
-  }
 }

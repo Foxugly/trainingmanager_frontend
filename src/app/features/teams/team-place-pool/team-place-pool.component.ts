@@ -8,6 +8,7 @@ import {
   input,
   output,
   signal,
+  untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -121,8 +122,12 @@ export class TeamPlacePoolComponent {
       )
       .subscribe((results) => this.addressSuggestions.set(results));
 
-    // (Re)load the pool whenever the team's sports change.
-    effect(() => this.loadPool(this.sportIds()));
+    // (Re)load the pool whenever the team's sports change. untracked: sportIds
+    // is the only intended trigger; the forkJoin load must not add effect deps.
+    effect(() => {
+      const ids = this.sportIds();
+      untracked(() => this.loadPool(ids));
+    });
   }
 
   protected isDefaultPlace(id: number): boolean {

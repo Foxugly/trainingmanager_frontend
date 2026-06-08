@@ -4,13 +4,14 @@ import {
   Component,
   DestroyRef,
   computed,
-  effect,
   forwardRef,
   inject,
   input,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { of } from 'rxjs';
+import { catchError, distinctUntilChanged, filter, switchMap } from 'rxjs/operators';
 import {
   ControlValueAccessor,
   FormsModule,
@@ -64,8 +65,6 @@ export class EquipmentSelectComponent implements ControlValueAccessor {
    * equipment in team settings first" hint instead of a silently empty field.
    */
   readonly empty = computed(() => this.loaded() && this.items().length === 0);
-  /** Team id the equipment list was last loaded for (avoids redundant fetches). */
-  private loadedForTeamId: number | null = null;
 
   protected value: number[] = [];
   protected disabled = false;
@@ -74,30 +73,24 @@ export class EquipmentSelectComponent implements ControlValueAccessor {
   protected onTouched: () => void = () => {};
 
   constructor() {
-    // React to the resolved team id (set asynchronously once the program/team
-    // is known) by loading that team's enabled equipment subset.
-    effect(() => this.loadForTeam(this.teamId()));
-  }
-
-  /** Load the given team's enabled equipment once; idempotent per team id. */
-  loadForTeam(teamId: number | null | undefined): void {
-    if (teamId == null) return;
-    if (this.loadedForTeamId === teamId) return;
-    this.loadedForTeamId = teamId;
-    this.equipmentService
-      // Signature: (ordering, page, pageSize, search, sport, team) — ?team filter.
-      .equipmentList(undefined, undefined, undefined, undefined, undefined, teamId)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (res) => {
-          this.items.set(res.results ?? []);
-          this.loaded.set(true);
-          this.cdr.markForCheck();
-        },
-        error: () => {
-          this.loadedForTeamId = null;
-          this.items.set([]);
-        },
+    // Load the team's enabled equipment reactively when [teamId] resolves —
+    // a data stream (distinctUntilChanged dedups, switchMap cancels stale).
+    toObservable(this.teamId)
+      .pipe(
+        filter((id): id is number => id != null),
+        distinctUntilChanged(),
+        switchMap((teamId) =>
+          this.equipmentService
+            // Signature: (ordering, page, pageSize, search, sport, team) — ?team.
+            .equipmentList(undefined, undefined, undefined, undefined, undefined, teamId)
+            .pipe(catchError(() => of(null))),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((res) => {
+        this.items.set(res?.results ?? []);
+        this.loaded.set(true);
+        this.cdr.markForCheck();
       });
   }
 
