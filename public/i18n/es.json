@@ -236,7 +236,7 @@
       "vis_rounds": "Detalle de la sesión",
       "vis_help": "Heredado de los ajustes del equipo; modificable para esta sesión.",
       "section_info": "Información",
-        "section_planning": "Planificación",
+      "section_planning": "Planificación",
       "section_visibility": "Visibilidad",
       "location_placeholder": "Piscina, pista o dirección…"
     },
@@ -411,7 +411,23 @@
     "error_create": "No se pudo guardar el lugar.",
     "link_help": "Marca los lugares del deporte para vincularlos a este equipo.",
     "pool_empty": "Aún no hay lugares para este deporte. Añade uno.",
-    "default_empty": "Ningún lugar vinculado"
+    "default_empty": "Ningún lugar vinculado",
+    "table_help": "Lugares vinculados a este equipo. Establece un lugar predeterminado o elimina uno.",
+    "table_empty_subtitle": "Aún no hay ningún lugar vinculado a este equipo.",
+    "col_name": "Nombre",
+    "col_address": "Dirección",
+    "col_default": "Predeterminado",
+    "is_default": "Lugar predeterminado",
+    "set_default": "Establecer como lugar predeterminado",
+    "unlink": "Quitar del equipo",
+    "link_existing": "Vincular un lugar existente",
+    "search_placeholder": "Buscar un lugar…",
+    "search_empty": "Ningún lugar coincide",
+    "create_new": "Crear un nuevo lugar",
+    "address_placeholder": "Introduce una dirección…",
+    "address_empty": "Sin sugerencias",
+    "address_hint": "Escribe al menos 3 caracteres para ver sugerencias, o introduce una dirección libre.",
+    "linked": "Lugar vinculado."
   },
   "equipment": {
     "title_plural": "Material",
@@ -565,7 +581,10 @@
       "vis_athletes_section": "Atletas",
       "manager_remove": "Quitar este manager",
       "managers_empty_title": "Sin managers",
-      "managers_empty_subtitle": "Selecciona o deselecciona managers en la lista de arriba."
+      "managers_empty_subtitle": "Selecciona o deselecciona managers en la lista de arriba.",
+      "manager_add": "Añadir un entrenador",
+      "manager_pick_label": "Persona para añadir como entrenador",
+      "manager_pick_placeholder": "Selecciona una persona"
     },
     "member_dialog": {
       "title": "Añadir un miembro",
@@ -764,7 +783,9 @@
     },
     "edit": "Editar",
     "delete": "Eliminar",
-    "confirm": "Confirmar"
+    "confirm": "Confirmar",
+    "actions": "Acciones",
+    "add": "Añadir"
   },
   "dashboard": {
     "greeting": "Hola {{name}} 👋",

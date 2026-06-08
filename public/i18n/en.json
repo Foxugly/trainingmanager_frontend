@@ -236,7 +236,7 @@
       "vis_rounds": "Session detail",
       "vis_help": "Inherited from the team settings; overridable for this session.",
       "section_info": "Info",
-        "section_planning": "Planning",
+      "section_planning": "Planning",
       "section_visibility": "Visibility",
       "location_placeholder": "Pool, track or address…"
     },
@@ -411,7 +411,23 @@
     "error_create": "Could not save the place.",
     "link_help": "Check the sport venues to link to this team.",
     "pool_empty": "No venue for this sport yet. Add one.",
-    "default_empty": "No linked place"
+    "default_empty": "No linked place",
+    "table_help": "Venues linked to this team. Set a default venue or remove one.",
+    "table_empty_subtitle": "No venue is linked to this team yet.",
+    "col_name": "Name",
+    "col_address": "Address",
+    "col_default": "Default",
+    "is_default": "Default venue",
+    "set_default": "Set as default venue",
+    "unlink": "Remove from team",
+    "link_existing": "Link an existing venue",
+    "search_placeholder": "Search a venue…",
+    "search_empty": "No matching venue",
+    "create_new": "Create a new venue",
+    "address_placeholder": "Enter an address…",
+    "address_empty": "No suggestions",
+    "address_hint": "Type at least 3 characters for suggestions, or enter a free address.",
+    "linked": "Venue linked."
   },
   "equipment": {
     "title_plural": "Equipment",
@@ -565,7 +581,10 @@
       "vis_athletes_section": "Athletes",
       "manager_remove": "Remove this manager",
       "managers_empty_title": "No managers",
-      "managers_empty_subtitle": "Select or deselect managers from the list above."
+      "managers_empty_subtitle": "Select or deselect managers from the list above.",
+      "manager_add": "Add a coach",
+      "manager_pick_label": "Person to add as coach",
+      "manager_pick_placeholder": "Select a person"
     },
     "member_dialog": {
       "title": "Add a member",
@@ -764,7 +783,9 @@
     },
     "edit": "Edit",
     "delete": "Delete",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "actions": "Actions",
+    "add": "Add"
   },
   "dashboard": {
     "greeting": "Hello {{name}} 👋",

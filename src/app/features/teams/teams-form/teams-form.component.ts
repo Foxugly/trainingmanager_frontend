@@ -9,6 +9,8 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import {
   AbstractControl,
   FormArray,
@@ -23,16 +25,16 @@ import {
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { AutoComplete, AutoCompleteCompleteEvent } from 'primeng/autocomplete';
 import { Button } from 'primeng/button';
 import { Checkbox } from 'primeng/checkbox';
+import { TableModule } from 'primeng/table';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { DatePicker } from 'primeng/datepicker';
 import { Dialog } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
-import { MultiSelect } from 'primeng/multiselect';
 import { Select } from 'primeng/select';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
-import { Textarea } from 'primeng/textarea';
 import { ToggleSwitch } from 'primeng/toggleswitch';
 import { Tooltip } from 'primeng/tooltip';
 import { AttendanceStatusesService } from '../../../api/api/attendance-statuses.service';
@@ -58,6 +60,7 @@ import { TrainingTemplate } from '../../../api/model/training-template';
 import { WeekdayEnum } from '../../../api/model/weekday-enum';
 import { VisibilityMode } from '../../../api/model/visibility-mode';
 import { AuthService } from '../../../core/auth/auth.service';
+import { NominatimResult, NominatimService } from '../../../core/geo/nominatim.service';
 import { AVAILABLE_LANGUAGES, LanguageCode } from '../../../core/i18n/available-languages';
 import { type FieldErrors, extractServerError } from '../../../shared/forms/notify-error';
 import { buildVisibilityOptions } from '../../../shared/forms/visibility-options';
@@ -125,12 +128,12 @@ function slotTimeRangeValidator(group: AbstractControl): ValidationErrors | null
     RouterLink,
     InputText,
     Select,
-    MultiSelect,
+    AutoComplete,
+    TableModule,
     Checkbox,
     ToggleSwitch,
     DatePicker,
     Dialog,
-    Textarea,
     Button,
     Tooltip,
     ConfirmDialog,
@@ -163,6 +166,7 @@ export class TeamsFormComponent implements OnInit {
   private readonly equipmentService = inject(EquipmentService);
   private readonly statusesService = inject(AttendanceStatusesService);
   private readonly authService = inject(AuthService);
+  private readonly nominatim = inject(NominatimService);
   private readonly messageService = inject(MessageService);
   private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
@@ -262,16 +266,37 @@ export class TeamsFormComponent implements OnInit {
    */
   protected readonly places = signal<Place[]>([]);
   protected readonly placesLoading = signal(false);
-  /** Inline create dialog state (new place is linked to the team on create). */
+  /**
+   * "Ajouter un lieu" dialog state. The dialog offers two affordances:
+   *  - an autocomplete over the sport pool (existing places not yet linked) to
+   *    link one to the team; and
+   *  - a "create new" mode revealing a name field + a Nominatim-backed address
+   *    autocomplete to create a brand-new venue then link it.
+   */
   protected readonly placeDialogVisible = signal(false);
   protected readonly placeSaving = signal(false);
+  /** Whether the dialog is in "create a new place" mode (vs. link-existing). */
+  protected readonly placeCreateMode = signal(false);
+  /** Bound value of the pool autocomplete (a Place or a typed string). */
+  protected readonly placePoolSelection = signal<Place | string | null>(null);
+  /** Pool autocomplete suggestions (existing, not-yet-linked places). */
+  protected readonly placePoolSuggestions = signal<Place[]>([]);
   protected readonly placeName = signal('');
   protected readonly placeAddress = signal('');
   protected readonly placeNameError = signal<string | null>(null);
+  /** Nominatim address suggestions for the create-new address field. */
+  protected readonly addressSuggestions = signal<NominatimResult[]>([]);
+  /** The `display_name` labels of the current Nominatim suggestions. */
+  protected readonly addressSuggestionLabels = computed<string[]>(() =>
+    this.addressSuggestions().map((r) => r.display_name),
+  );
+
+  /** Pushes raw address-field input into the debounced Nominatim pipeline. */
+  private readonly addressQuery$ = new Subject<string>();
 
   /** Currently-linked place ids, mirrored from the `place_ids` form control. */
   private readonly placeIdsValue = signal<number[]>([]);
-  /** The subset of the pool currently linked to the team (for the default selector). */
+  /** The subset of the pool currently linked to the team (the table rows). */
   protected readonly selectedPlaces = computed<Place[]>(() => {
     const ids = new Set(this.placeIdsValue());
     return this.places().filter((p) => ids.has(p.id));
@@ -371,6 +396,17 @@ export class TeamsFormComponent implements OnInit {
   protected readonly isPublicSharingEnabled = computed(() => this.publicSharingValue() === true);
 
   ngOnInit(): void {
+    // Debounced Nominatim address lookup for the create-new place flow.
+    this.addressQuery$
+      .pipe(
+        debounceTime(350),
+        map((q) => q.trim()),
+        distinctUntilChanged(),
+        switchMap((q) => this.nominatim.search(q, this.transloco.getActiveLang())),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((results) => this.addressSuggestions.set(results));
+
     this.sportsService
       .sportsList(undefined)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -473,6 +509,16 @@ export class TeamsFormComponent implements OnInit {
     return this.availableManagers().filter((m) => ids.has(m.id));
   });
 
+  /** Currently-chosen default place id, mirrored from the form control. */
+  protected readonly defaultPlaceIdValue = toSignal(
+    this.form.controls.default_place_id.valueChanges,
+    { initialValue: this.form.controls.default_place_id.value },
+  );
+  /** True for the team's current default place (drives the star/check column). */
+  protected isDefaultPlace(id: number): boolean {
+    return this.defaultPlaceIdValue() === id;
+  }
+
   /** Two-letter initials for the avatar pill. */
   protected managerInitials(m: CustomUserPublic): string {
     const first = (m.first_name ?? '').trim();
@@ -488,6 +534,43 @@ export class TeamsFormComponent implements OnInit {
     const next = (this.form.controls.managers_ids.value ?? []).filter((mid) => mid !== id);
     this.form.controls.managers_ids.setValue(next);
     this.form.controls.managers_ids.markAsDirty();
+  }
+
+  // ── Encadrement: add-manager picker dialog ──────────────────────────────
+  protected readonly managerDialogVisible = signal(false);
+  protected readonly managerPickId = signal<number | null>(null);
+
+  /** Managers not yet selected — the candidate pool for the add picker. */
+  protected readonly addableManagers = computed<CustomUserPublic[]>(() => {
+    const selected = new Set(this.selectedManagersValue() ?? []);
+    return this.availableManagers().filter((m) => !selected.has(m.id));
+  });
+
+  protected openAddManager(): void {
+    this.managerPickId.set(null);
+    this.managerDialogVisible.set(true);
+  }
+
+  protected closeAddManagerDialog(): void {
+    this.managerDialogVisible.set(false);
+  }
+
+  /** Append the picked candidate to managers_ids and close the dialog. */
+  protected confirmAddManager(): void {
+    const id = this.managerPickId();
+    if (id === null) return;
+    const current = this.form.controls.managers_ids.value ?? [];
+    if (!current.includes(id)) {
+      this.form.controls.managers_ids.setValue([...current, id]);
+      this.form.controls.managers_ids.markAsDirty();
+    }
+    this.managerDialogVisible.set(false);
+  }
+
+  /** Friendly display label for a candidate in the picker. */
+  protected managerLabel(m: CustomUserPublic): string {
+    const name = `${m.first_name ?? ''} ${m.last_name ?? ''}`.trim();
+    return name ? `${name} (@${m.username})` : `@${m.username}`;
   }
 
   /** Read + downscale the chosen image to a small data-URL, set the logo control. */
@@ -897,18 +980,37 @@ export class TeamsFormComponent implements OnInit {
     this.form.controls.place_ids.setValue(next);
     this.form.controls.place_ids.markAsDirty();
     this.placeIdsValue.set(next);
-    // Unchecking the current default clears the default selector.
+    // Unlinking the current default clears the default selector.
     if (!checked && this.form.controls.default_place_id.value === place.id) {
       this.form.controls.default_place_id.setValue(null);
       this.form.controls.default_place_id.markAsDirty();
     }
   }
 
-  /** Open the dialog to create a new place (linked to the team on create). */
-  protected openCreatePlace(): void {
+  /**
+   * Make `place` the team default (star action). Ensures the place is linked
+   * (its id is in `place_ids`) and sets `default_place_id`.
+   */
+  protected setDefaultPlace(place: Place): void {
+    if (!this.isPlaceSelected(place.id)) this.togglePlace(place, true);
+    this.form.controls.default_place_id.setValue(place.id);
+    this.form.controls.default_place_id.markAsDirty();
+  }
+
+  /** Unlink `place` from the team (trash action); clears default if it was it. */
+  protected removePlace(place: Place): void {
+    this.togglePlace(place, false);
+  }
+
+  /** Open the "Ajouter un lieu" dialog in link-existing mode. */
+  protected openAddPlace(): void {
+    this.placeCreateMode.set(false);
+    this.placePoolSelection.set(null);
+    this.placePoolSuggestions.set([]);
     this.placeName.set('');
     this.placeAddress.set('');
     this.placeNameError.set(null);
+    this.addressSuggestions.set([]);
     this.placeDialogVisible.set(true);
   }
 
@@ -916,7 +1018,53 @@ export class TeamsFormComponent implements OnInit {
     this.placeDialogVisible.set(false);
   }
 
-  /** Create a place in the pool, link it to the team, and check it. */
+  /** Reveal the "create a new place" fields inside the dialog. */
+  protected enterCreateMode(): void {
+    this.placeCreateMode.set(true);
+    this.placeNameError.set(null);
+  }
+
+  /**
+   * Pool autocomplete: suggest existing sport-pool places matching the typed
+   * text that are NOT already linked to the team.
+   */
+  protected searchPool(event: AutoCompleteCompleteEvent): void {
+    const q = (event.query ?? '').trim().toLowerCase();
+    const linked = new Set(this.form.controls.place_ids.value ?? []);
+    const matches = this.places().filter(
+      (p) =>
+        !linked.has(p.id) &&
+        (q.length === 0 ||
+          p.name.toLowerCase().includes(q) ||
+          (p.address ?? '').toLowerCase().includes(q)),
+    );
+    this.placePoolSuggestions.set(matches);
+  }
+
+  /** Pool autocomplete selection → link the chosen existing place. */
+  protected onPoolSelect(place: Place): void {
+    this.togglePlace(place, true);
+    this.placeDialogVisible.set(false);
+    this.notifyPlaceToast('place.linked');
+  }
+
+  /** Address field input → push into the debounced Nominatim pipeline. */
+  protected onAddressInput(value: string): void {
+    this.placeAddress.set(value);
+    this.addressQuery$.next(value);
+  }
+
+  /** Address autocomplete: re-emit on each keystroke (debounced downstream). */
+  protected searchAddress(event: AutoCompleteCompleteEvent): void {
+    this.addressQuery$.next(event.query ?? '');
+  }
+
+  /** A Nominatim suggestion was picked → fill the address with its label. */
+  protected onAddressSelect(displayName: string): void {
+    this.placeAddress.set(displayName);
+  }
+
+  /** Create a new place in the pool, link it to the team, and refresh. */
   protected savePlace(): void {
     const teamId = this.teamId();
     const name = this.placeName().trim();
@@ -937,7 +1085,7 @@ export class TeamsFormComponent implements OnInit {
           this.placeSaving.set(false);
           this.placeDialogVisible.set(false);
           this.places.update((cur) => [...cur, created]);
-          // A freshly-created place belongs to the team: check it immediately.
+          // A freshly-created place belongs to the team: link it immediately.
           this.togglePlace(created, true);
           this.notifyPlaceToast('place.created');
         },

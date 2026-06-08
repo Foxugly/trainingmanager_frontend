@@ -417,7 +417,7 @@
 
               <p-tabpanel value="places">
                 <div class="builder-pane">
-                  <!-- Section: Lieux (link a subset of the sport pool) -->
+                  <!-- Section: Lieux — the team's linked venues as a table. -->
                   <div class="flex items-center justify-between mb-2">
                     <h3 class="builder-section-title !mb-0">{{ 'place.title_plural' | transloco }}</h3>
                     <p-button
@@ -426,78 +426,72 @@
                       size="small"
                       icon="pi pi-plus"
                       [label]="'place.add' | transloco"
-                      (onClick)="openCreatePlace()"
+                      (onClick)="openAddPlace()"
                     />
                   </div>
-                  <p class="meta-hint mb-2">{{ 'place.link_help' | transloco }}</p>
+                  <p class="meta-hint mb-2">{{ 'place.table_help' | transloco }}</p>
 
                   @if (placesLoading()) {
                     <p class="meta-hint">{{ 'common.loading' | transloco }}…</p>
-                  } @else if (places().length === 0) {
-                    <p class="meta-hint mb-2">{{ 'place.pool_empty' | transloco }}</p>
+                  } @else if (selectedPlaces().length === 0) {
+                    <app-empty-state
+                      icon="map-marker"
+                      tone="gray"
+                      [title]="'place.none' | transloco"
+                      [subtitle]="'place.table_empty_subtitle' | transloco"
+                    />
                   } @else {
-                    <ul class="status-checklist">
-                      @for (place of places(); track place.id) {
-                        <li class="status-row">
-                          <p-checkbox
-                            [binary]="true"
-                            [inputId]="'place_' + place.id"
-                            [ngModel]="isPlaceSelected(place.id)"
-                            [ngModelOptions]="{ standalone: true }"
-                            (ngModelChange)="togglePlace(place, $event)"
-                          />
-                          <label [attr.for]="'place_' + place.id" class="status-label flex flex-col items-start">
-                            <span>{{ place.name }}</span>
-                            @if (place.address) {
-                              <span class="text-xs text-gray-500">{{ place.address }}</span>
+                    <p-table [value]="selectedPlaces()" styleClass="p-datatable-sm" [tableStyle]="{ 'min-width': '32rem' }">
+                      <ng-template #header>
+                        <tr>
+                          <th>{{ 'place.col_name' | transloco }}</th>
+                          <th>{{ 'place.col_address' | transloco }}</th>
+                          <th class="text-center">{{ 'place.col_default' | transloco }}</th>
+                          <th class="text-right">{{ 'common.actions' | transloco }}</th>
+                        </tr>
+                      </ng-template>
+                      <ng-template #body let-place>
+                        <tr>
+                          <td>{{ place.name }}</td>
+                          <td [class.text-gray-500]="!place.address">{{ place.address || '—' }}</td>
+                          <td class="text-center">
+                            @if (isDefaultPlace(place.id)) {
+                              <i
+                                class="pi pi-check text-emerald-600"
+                                [attr.aria-label]="'place.is_default' | transloco"
+                                [pTooltip]="'place.is_default' | transloco"
+                              ></i>
                             }
-                          </label>
-                        </li>
-                      }
-                    </ul>
+                          </td>
+                          <td class="text-right whitespace-nowrap">
+                            <p-button
+                              type="button"
+                              icon="pi pi-star"
+                              severity="secondary"
+                              [text]="true"
+                              [rounded]="true"
+                              size="small"
+                              [disabled]="isDefaultPlace(place.id)"
+                              [ariaLabel]="'place.set_default' | transloco"
+                              [pTooltip]="'place.set_default' | transloco"
+                              (onClick)="setDefaultPlace(place)"
+                            />
+                            <p-button
+                              type="button"
+                              icon="pi pi-trash"
+                              severity="danger"
+                              [text]="true"
+                              [rounded]="true"
+                              size="small"
+                              [ariaLabel]="'place.unlink' | transloco"
+                              [pTooltip]="'place.unlink' | transloco"
+                              (onClick)="removePlace(place)"
+                            />
+                          </td>
+                        </tr>
+                      </ng-template>
+                    </p-table>
                   }
-
-                  <!-- Default place: picked from the linked subset -->
-                  <div class="meta-grid mt-3">
-                    <app-meta-field
-                      [full]="true"
-                      [label]="'place.default_place' | transloco"
-                      for="default_place_id"
-                    >
-                      <p-select
-                        inputId="default_place_id"
-                        [options]="selectedPlaces()"
-                        [formControl]="form.controls.default_place_id"
-                        optionLabel="name"
-                        optionValue="id"
-                        [filter]="true"
-                        [showClear]="true"
-                        [placeholder]="'place.select_placeholder' | transloco"
-                        [emptyMessage]="'place.default_empty' | transloco"
-                        appendTo="body"
-                        styleClass="w-full"
-                      >
-                        <ng-template let-place #selectedItem>
-                          @if (place) {
-                            <div class="flex flex-col">
-                              <span>{{ place.name }}</span>
-                              @if (place.address) {
-                                <span class="text-xs text-gray-500">{{ place.address }}</span>
-                              }
-                            </div>
-                          }
-                        </ng-template>
-                        <ng-template let-place #item>
-                          <div class="flex flex-col">
-                            <span>{{ place.name }}</span>
-                            @if (place.address) {
-                              <span class="text-xs text-gray-500">{{ place.address }}</span>
-                            }
-                          </div>
-                        </ng-template>
-                      </p-select>
-                    </app-meta-field>
-                  </div>
                 </div>
               </p-tabpanel>
 
@@ -536,24 +530,19 @@
 
               <p-tabpanel value="managers">
                 <div class="builder-pane">
-                  <div class="meta-grid">
-                    <app-meta-field
-                      [full]="true"
-                      [label]="'teams.form.managers' | transloco"
-                      [tooltip]="'teams.form.managers_help' | transloco"
-                    >
-                      <p-multiSelect
-                        [options]="availableManagers()"
-                        formControlName="managers_ids"
-                        optionLabel="username"
-                        optionValue="id"
-                        [placeholder]="'teams.form.managers_placeholder' | transloco"
-                        [filter]="true"
-                        [emptyMessage]="'teams.form.managers_empty' | transloco"
-                        styleClass="w-full"
-                      />
-                    </app-meta-field>
+                  <div class="flex items-center justify-between mb-2">
+                    <h3 class="builder-section-title !mb-0">{{ 'teams.form.managers' | transloco }}</h3>
+                    <p-button
+                      type="button"
+                      severity="success"
+                      size="small"
+                      icon="pi pi-plus"
+                      [label]="'teams.form.manager_add' | transloco"
+                      [disabled]="addableManagers().length === 0"
+                      (onClick)="openAddManager()"
+                    />
                   </div>
+                  <p class="meta-hint mb-2">{{ 'teams.form.managers_help' | transloco }}</p>
 
                   @if (selectedManagers().length > 0) {
                     <ul class="manager-list">
@@ -789,48 +778,99 @@
   <p-confirmDialog />
 
   <p-dialog
-    [header]="'place.new' | transloco"
+    [header]="'place.add' | transloco"
     [visible]="placeDialogVisible()"
     (visibleChange)="placeDialogVisible.set($event)"
     [modal]="true"
     [draggable]="false"
     [resizable]="false"
-    [style]="{ width: '28rem' }"
+    [style]="{ width: '30rem' }"
     appendTo="body"
   >
     <div class="flex flex-col gap-4 pt-1">
+      <!-- Step 1: link an existing pool place via autocomplete. -->
       <div class="flex flex-col gap-1">
-        <label for="place_form_name" class="text-sm font-medium text-gray-700">
-          {{ 'place.name' | transloco }}
+        <label for="place_pool_search" class="text-sm font-medium text-gray-700">
+          {{ 'place.link_existing' | transloco }}
         </label>
-        <input
-          pInputText
-          id="place_form_name"
-          [ngModel]="placeName()"
-          (ngModelChange)="placeName.set($event)"
+        <p-autoComplete
+          inputId="place_pool_search"
+          [ngModel]="placePoolSelection()"
+          (ngModelChange)="placePoolSelection.set($event)"
           [ngModelOptions]="{ standalone: true }"
-          maxlength="255"
-          [attr.aria-invalid]="placeNameError() ? 'true' : null"
+          [suggestions]="placePoolSuggestions()"
+          (completeMethod)="searchPool($event)"
+          (onSelect)="onPoolSelect($event.value)"
+          optionLabel="name"
+          [forceSelection]="true"
+          [dropdown]="true"
+          [placeholder]="'place.search_placeholder' | transloco"
+          [emptyMessage]="'place.search_empty' | transloco"
+          appendTo="body"
+          styleClass="w-full"
+        >
+          <ng-template let-place #item>
+            <div class="flex flex-col">
+              <span>{{ place.name }}</span>
+              @if (place.address) {
+                <span class="text-xs text-gray-500">{{ place.address }}</span>
+              }
+            </div>
+          </ng-template>
+        </p-autoComplete>
+      </div>
+
+      <!-- Step 2: or create a brand-new venue. -->
+      @if (!placeCreateMode()) {
+        <p-button
+          type="button"
+          severity="secondary"
+          [text]="true"
+          size="small"
+          icon="pi pi-plus"
+          [label]="'place.create_new' | transloco"
+          (onClick)="enterCreateMode()"
         />
-        @if (placeNameError()) {
-          <small class="text-red-600">{{ placeNameError() }}</small>
-        }
-      </div>
-      <div class="flex flex-col gap-1">
-        <label for="place_form_address" class="text-sm font-medium text-gray-700">
-          {{ 'place.address' | transloco }}
-        </label>
-        <textarea
-          pTextarea
-          id="place_form_address"
-          [ngModel]="placeAddress()"
-          (ngModelChange)="placeAddress.set($event)"
-          [ngModelOptions]="{ standalone: true }"
-          maxlength="500"
-          rows="2"
-          class="w-full"
-        ></textarea>
-      </div>
+      } @else {
+        <div class="flex flex-col gap-3 border-t border-gray-200 pt-3">
+          <div class="flex flex-col gap-1">
+            <label for="place_form_name" class="text-sm font-medium text-gray-700">
+              {{ 'place.name' | transloco }}
+            </label>
+            <input
+              pInputText
+              id="place_form_name"
+              [ngModel]="placeName()"
+              (ngModelChange)="placeName.set($event)"
+              [ngModelOptions]="{ standalone: true }"
+              maxlength="255"
+              [attr.aria-invalid]="placeNameError() ? 'true' : null"
+            />
+            @if (placeNameError()) {
+              <small class="text-red-600">{{ placeNameError() }}</small>
+            }
+          </div>
+          <div class="flex flex-col gap-1">
+            <label for="place_form_address" class="text-sm font-medium text-gray-700">
+              {{ 'place.address' | transloco }}
+            </label>
+            <p-autoComplete
+              inputId="place_form_address"
+              [ngModel]="placeAddress()"
+              (ngModelChange)="onAddressInput($event)"
+              [ngModelOptions]="{ standalone: true }"
+              [suggestions]="addressSuggestionLabels()"
+              (completeMethod)="searchAddress($event)"
+              (onSelect)="onAddressSelect($event.value)"
+              [placeholder]="'place.address_placeholder' | transloco"
+              [emptyMessage]="'place.address_empty' | transloco"
+              appendTo="body"
+              styleClass="w-full"
+            />
+            <small class="text-xs text-gray-500">{{ 'place.address_hint' | transloco }}</small>
+          </div>
+        </div>
+      }
     </div>
     <ng-template #footer>
       <p-button
@@ -840,12 +880,71 @@
         [label]="'common.cancel' | transloco"
         (onClick)="closePlaceDialog()"
       />
+      @if (placeCreateMode()) {
+        <p-button
+          type="button"
+          icon="pi pi-check"
+          [label]="'common.save' | transloco"
+          [loading]="placeSaving()"
+          (onClick)="savePlace()"
+        />
+      }
+    </ng-template>
+  </p-dialog>
+
+  <!-- Encadrement: pick a candidate to add as manager. -->
+  <p-dialog
+    [header]="'teams.form.manager_add' | transloco"
+    [visible]="managerDialogVisible()"
+    (visibleChange)="managerDialogVisible.set($event)"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [style]="{ width: '26rem' }"
+    appendTo="body"
+  >
+    <div class="flex flex-col gap-1 pt-1">
+      <label for="manager_pick" class="text-sm font-medium text-gray-700">
+        {{ 'teams.form.manager_pick_label' | transloco }}
+      </label>
+      <p-select
+        inputId="manager_pick"
+        [options]="addableManagers()"
+        [ngModel]="managerPickId()"
+        (ngModelChange)="managerPickId.set($event)"
+        [ngModelOptions]="{ standalone: true }"
+        optionValue="id"
+        [filter]="true"
+        filterBy="first_name,last_name,username"
+        [placeholder]="'teams.form.manager_pick_placeholder' | transloco"
+        [emptyMessage]="'teams.form.managers_empty' | transloco"
+        appendTo="body"
+        styleClass="w-full"
+      >
+        <ng-template let-m #selectedItem>
+          @if (m) {
+            <span>{{ managerLabel(m) }}</span>
+          }
+        </ng-template>
+        <ng-template let-m #item>
+          <span>{{ managerLabel(m) }}</span>
+        </ng-template>
+      </p-select>
+    </div>
+    <ng-template #footer>
+      <p-button
+        type="button"
+        severity="secondary"
+        [outlined]="true"
+        [label]="'common.cancel' | transloco"
+        (onClick)="closeAddManagerDialog()"
+      />
       <p-button
         type="button"
         icon="pi pi-check"
-        [label]="'common.save' | transloco"
-        [loading]="placeSaving()"
-        (onClick)="savePlace()"
+        [label]="'common.add' | transloco"
+        [disabled]="managerPickId() === null"
+        (onClick)="confirmAddManager()"
       />
     </ng-template>
   </p-dialog>

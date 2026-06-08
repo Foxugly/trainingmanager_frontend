@@ -236,7 +236,7 @@
       "vis_rounds": "Sessiedetails",
       "vis_help": "Overgenomen van de teaminstellingen; aanpasbaar voor deze sessie.",
       "section_info": "Info",
-        "section_planning": "Planning",
+      "section_planning": "Planning",
       "section_visibility": "Zichtbaarheid",
       "location_placeholder": "Zwembad, baan of adres…"
     },
@@ -411,7 +411,23 @@
     "error_create": "Kan de locatie niet opslaan.",
     "link_help": "Vink de sportlocaties aan om aan dit team te koppelen.",
     "pool_empty": "Nog geen locatie voor deze sport. Voeg er een toe.",
-    "default_empty": "Geen gekoppelde locatie"
+    "default_empty": "Geen gekoppelde locatie",
+    "table_help": "Locaties gekoppeld aan dit team. Stel een standaardlocatie in of verwijder er een.",
+    "table_empty_subtitle": "Er is nog geen locatie aan dit team gekoppeld.",
+    "col_name": "Naam",
+    "col_address": "Adres",
+    "col_default": "Standaard",
+    "is_default": "Standaardlocatie",
+    "set_default": "Instellen als standaardlocatie",
+    "unlink": "Uit team verwijderen",
+    "link_existing": "Bestaande locatie koppelen",
+    "search_placeholder": "Zoek een locatie…",
+    "search_empty": "Geen overeenkomende locatie",
+    "create_new": "Nieuwe locatie aanmaken",
+    "address_placeholder": "Voer een adres in…",
+    "address_empty": "Geen suggesties",
+    "address_hint": "Typ minstens 3 tekens voor suggesties, of voer een vrij adres in.",
+    "linked": "Locatie gekoppeld."
   },
   "equipment": {
     "title_plural": "Materiaal",
@@ -565,7 +581,10 @@
       "vis_athletes_section": "Atleten",
       "manager_remove": "Deze manager verwijderen",
       "managers_empty_title": "Geen managers",
-      "managers_empty_subtitle": "Selecteer of deselecteer managers in de lijst hierboven."
+      "managers_empty_subtitle": "Selecteer of deselecteer managers in de lijst hierboven.",
+      "manager_add": "Begeleider toevoegen",
+      "manager_pick_label": "Persoon om als begeleider toe te voegen",
+      "manager_pick_placeholder": "Selecteer een persoon"
     },
     "member_dialog": {
       "title": "Lid toevoegen",
@@ -764,7 +783,9 @@
     },
     "edit": "Bewerken",
     "delete": "Verwijderen",
-    "confirm": "Bevestigen"
+    "confirm": "Bevestigen",
+    "actions": "Acties",
+    "add": "Toevoegen"
   },
   "dashboard": {
     "greeting": "Hallo {{name}} 👋",

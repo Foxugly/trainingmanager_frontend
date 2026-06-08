@@ -236,7 +236,7 @@
       "vis_rounds": "Détail de la séance",
       "vis_help": "Hérité des réglages de l'équipe ; modifiable pour cette séance.",
       "section_info": "Infos",
-        "section_planning": "Planning",
+      "section_planning": "Planning",
       "section_visibility": "Visibilité",
       "location_placeholder": "Piscine, piste ou adresse…"
     },
@@ -411,7 +411,23 @@
     "error_create": "Impossible d'enregistrer le lieu.",
     "link_help": "Cochez les lieux du sport à associer à cette équipe.",
     "pool_empty": "Aucun lieu pour ce sport. Ajoutez-en un.",
-    "default_empty": "Aucun lieu associé"
+    "default_empty": "Aucun lieu associé",
+    "table_help": "Lieux associés à cette équipe. Définissez un lieu par défaut ou retirez-en un.",
+    "table_empty_subtitle": "Aucun lieu n'est encore associé à cette équipe.",
+    "col_name": "Nom",
+    "col_address": "Adresse",
+    "col_default": "Défaut",
+    "is_default": "Lieu par défaut",
+    "set_default": "Définir comme lieu par défaut",
+    "unlink": "Retirer de l'équipe",
+    "link_existing": "Associer un lieu existant",
+    "search_placeholder": "Rechercher un lieu…",
+    "search_empty": "Aucun lieu correspondant",
+    "create_new": "Créer un nouveau lieu",
+    "address_placeholder": "Saisir une adresse…",
+    "address_empty": "Aucune suggestion",
+    "address_hint": "Saisissez au moins 3 caractères pour les suggestions, ou entrez une adresse libre.",
+    "linked": "Lieu associé."
   },
   "equipment": {
     "title_plural": "Équipements",
@@ -565,7 +581,10 @@
       "vis_athletes_section": "Athlètes",
       "manager_remove": "Retirer ce manager",
       "managers_empty_title": "Aucun manager",
-      "managers_empty_subtitle": "Désélectionnez ou sélectionnez des managers dans la liste ci-dessus."
+      "managers_empty_subtitle": "Désélectionnez ou sélectionnez des managers dans la liste ci-dessus.",
+      "manager_add": "Ajouter un encadrant",
+      "manager_pick_label": "Personne à ajouter comme encadrant",
+      "manager_pick_placeholder": "Sélectionner une personne"
     },
     "member_dialog": {
       "title": "Ajouter un membre",
@@ -764,7 +783,9 @@
     },
     "edit": "Modifier",
     "delete": "Supprimer",
-    "confirm": "Confirmer"
+    "confirm": "Confirmer",
+    "actions": "Actions",
+    "add": "Ajouter"
   },
   "dashboard": {
     "greeting": "Bonjour {{name}} 👋",

@@ -108,10 +108,22 @@ interface ProtectedFields {
   placeAddress(): string;
   placeNameError(): string | null;
   placeDialogVisible(): boolean;
-  openCreatePlace(): void;
+  placeCreateMode(): boolean;
+  addressSuggestionLabels(): string[];
+  openAddPlace(): void;
+  enterCreateMode(): void;
+  onAddressInput(v: string): void;
+  onAddressSelect(v: string): void;
   savePlace(): void;
   isPlaceSelected(id: number): boolean;
+  isDefaultPlace(id: number): boolean;
+  setDefaultPlace(p: Place): void;
+  removePlace(p: Place): void;
   togglePlace(p: Place, checked: boolean): void;
+  addableManagers(): CustomUserPublic[];
+  managerPickId(): number | null;
+  openAddManager(): void;
+  confirmAddManager(): void;
   templateForm: {
     patchValue(v: Record<string, unknown>): void;
     invalid: boolean;
@@ -700,7 +712,8 @@ describe('TeamsFormComponent', () => {
 
   it('savePlace creates a place, links it to the team, and checks it', async () => {
     await setup('5');
-    access(component).openCreatePlace();
+    access(component).openAddPlace();
+    access(component).enterCreateMode();
     (component as unknown as { placeName: { set(v: string): void } }).placeName.set('Nouveau');
     access(component).savePlace();
     expect(placesMock.placesCreate).toHaveBeenCalledWith(
@@ -712,10 +725,46 @@ describe('TeamsFormComponent', () => {
 
   it('savePlace blocks and flags an error when the name is empty', async () => {
     await setup('5');
-    access(component).openCreatePlace();
+    access(component).openAddPlace();
+    access(component).enterCreateMode();
     access(component).savePlace();
     expect(placesMock.placesCreate).not.toHaveBeenCalled();
     expect(access(component).placeNameError()).not.toBeNull();
+  });
+
+  it('openAddPlace opens the dialog in link-existing (not create) mode', async () => {
+    await setup('5');
+    access(component).openAddPlace();
+    expect(access(component).placeDialogVisible()).toBe(true);
+    expect(access(component).placeCreateMode()).toBe(false);
+    access(component).enterCreateMode();
+    expect(access(component).placeCreateMode()).toBe(true);
+  });
+
+  it('setDefaultPlace links the place (if needed) and sets default_place_id', async () => {
+    await setup('5');
+    // Not yet linked; setting it default both links and marks it default.
+    access(component).setDefaultPlace({ id: 9, name: 'Piscine B' } as Place);
+    expect(placeControls(component).place_ids.value).toContain(9);
+    expect(placeControls(component).default_place_id.value).toBe(9);
+    expect(access(component).isDefaultPlace(9)).toBe(true);
+  });
+
+  it('removePlace unlinks the place and clears default if it was the default', async () => {
+    await setup('5', ownerUser, {
+      ...team,
+      places: [{ id: 7, name: 'Piscine olympique', address: '1 rue X' }],
+      default_place: { id: 7, name: 'Piscine olympique', address: '1 rue X' },
+    });
+    access(component).removePlace({ id: 7, name: 'Piscine olympique' } as Place);
+    expect(placeControls(component).place_ids.value).not.toContain(7);
+    expect(placeControls(component).default_place_id.value).toBeNull();
+  });
+
+  it('onAddressSelect fills the address with the picked display_name', async () => {
+    await setup('5');
+    access(component).onAddressSelect('1 Rue de Rivoli, 75001 Paris, France');
+    expect(access(component).placeAddress()).toBe('1 Rue de Rivoli, 75001 Paris, France');
   });
 
   it('submit sends place_ids + default_place_id, with the default forced into place_ids', async () => {
@@ -730,6 +779,30 @@ describe('TeamsFormComponent', () => {
         default_place_id: 7,
       }),
     );
+  });
+
+  // ── Encadrement: add-manager picker ───────────────────────────────────────
+
+  const mgrControls = (c: TeamsFormComponent) =>
+    (c as unknown as { form: { controls: { managers_ids: { value: number[] } } } }).form.controls;
+
+  it('addableManagers excludes already-selected managers', async () => {
+    await setup('5');
+    // The loaded team has manager id 99 selected → not addable.
+    expect(access(component).addableManagers().some((m) => m.id === 99)).toBe(false);
+  });
+
+  it('confirmAddManager appends the picked id to managers_ids', async () => {
+    await setup('5');
+    // Start from a clean managers_ids so the append is observable.
+    mgrControls(component).managers_ids.value.length; // touch
+    (
+      component as unknown as { form: { controls: { managers_ids: { setValue(v: number[]): void } } } }
+    ).form.controls.managers_ids.setValue([]);
+    access(component).openAddManager();
+    (component as unknown as { managerPickId: { set(v: number): void } }).managerPickId.set(99);
+    access(component).confirmAddManager();
+    expect(mgrControls(component).managers_ids.value).toContain(99);
   });
 
   it('slotHasTimeError flags a slot whose end is before its start', async () => {
