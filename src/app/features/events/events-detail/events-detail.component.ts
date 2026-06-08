@@ -49,7 +49,6 @@ import { GenerateTrainingResponse } from '../../../api/model/generate-training-r
 import { LanguageEnum } from '../../../api/model/language-enum';
 import { Modality } from '../../../api/model/modality';
 import { Round } from '../../../api/model/round';
-import { RotiSummary } from '../../../api/model/roti-summary';
 import { RsvpSummary } from '../../../api/model/rsvp-summary';
 import { RsvpStatusEnum } from '../../../api/model/rsvp-status-enum';
 import { Team } from '../../../api/model/team';
@@ -59,10 +58,11 @@ import { type FieldErrors, extractServerError } from '../../../shared/forms/noti
 import { AiErrorMappingService } from '../../ai/ai-error-mapping.service';
 import { TeamRole, computeTeamRole } from '../../teams/teams-list/teams-list.component';
 import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-header.component';
-import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { AttachmentListComponent } from '../../../shared/ui/attachment-list/attachment-list.component';
 import { RoundFormDialogComponent } from '../round-form-dialog/round-form-dialog.component';
 import { AttendanceManagerComponent } from '../attendance-manager/attendance-manager.component';
+import { EventRotiComponent } from '../event-roti/event-roti.component';
+import { EventRsvpComponent } from '../event-rsvp/event-rsvp.component';
 import { RegenerateTrainingDialogComponent } from '../regenerate-training-dialog/regenerate-training-dialog.component';
 import {
   DuplicateEventDialogComponent,
@@ -115,10 +115,11 @@ interface NewExerciseRow {
     Tooltip,
     TranslocoPipe,
     DetailHeaderComponent,
-    EmptyStateComponent,
     AttachmentListComponent,
     RoundFormDialogComponent,
     AttendanceManagerComponent,
+    EventRotiComponent,
+    EventRsvpComponent,
     RegenerateTrainingDialogComponent,
     DuplicateEventDialogComponent,
     ShareEventDialogComponent,
@@ -229,60 +230,18 @@ export class EventsDetailComponent implements OnInit {
     return `${y}-${m}-${d}`;
   }
 
-  // --- ROTI (session difficulty rating) ---
+  // --- ROTI (difficulty) — the tab itself is app-event-roti (self-contained) ---
   protected readonly rotiEnabled = computed(() => this.team()?.roti_enabled === true);
   /** Athlete = a team member who is neither owner nor manager. */
   protected readonly isAthlete = computed(() => this.currentUserRole() === 'member');
-  protected readonly rotiSummary = signal<RotiSummary | null>(null);
-  protected readonly rotiSubmitting = signal(false);
-  protected readonly rotiScores: readonly number[] = [1, 2, 3, 4, 5];
 
-  protected readonly rotiDistribution = computed<{ score: number; count: number }[]>(() => {
-    const dist = this.rotiSummary()?.distribution ?? {};
-    return this.rotiScores.map((score) => ({
-      score,
-      count: Number(dist[String(score)] ?? 0),
-    }));
-  });
-
-  protected readonly rotiMaxCount = computed<number>(() => {
-    const counts = this.rotiDistribution().map((d) => d.count);
-    return counts.length ? Math.max(1, ...counts) : 1;
-  });
-
-  // --- RSVP (availability) ---
+  // --- RSVP (availability) — the tab UI is app-event-rsvp (presentational); the
+  //     summary fetch stays here because the attendance tab consumes rsvpByMember
+  //     regardless of whether the RSVP tab was opened. ---
   protected readonly rsvpEnabled = computed(() => this.team()?.rsvp_enabled === true);
   protected readonly rsvpSummary = signal<RsvpSummary | null>(null);
   protected readonly rsvpSubmitting = signal(false);
   protected readonly rsvpApplying = signal(false);
-  /** Status options for the athlete buttons, ordered going / maybe / not_going. */
-  protected readonly rsvpStatuses: readonly RsvpStatusEnum[] = [
-    RsvpStatusEnum.Going,
-    RsvpStatusEnum.Maybe,
-    RsvpStatusEnum.NotGoing,
-  ];
-
-  /**
-   * True when the caller's own RSVP equals `status`. Compared by string value
-   * because the generator emits a distinct inline enum for `my_status`
-   * (oneOf → RsvpSummaryMyStatusEnum) that shares values with RsvpStatusEnum.
-   */
-  protected isMyStatus(status: RsvpStatusEnum): boolean {
-    const mine = this.rsvpSummary()?.my_status;
-    return mine != null && (mine as string) === (status as string);
-  }
-
-  /** Maps an RSVP status to a PrimeNG button severity (going=success, maybe=warn, not_going=danger). */
-  protected rsvpSeverity(status: RsvpStatusEnum): 'success' | 'warn' | 'danger' {
-    switch (status) {
-      case RsvpStatusEnum.Going:
-        return 'success';
-      case RsvpStatusEnum.Maybe:
-        return 'warn';
-      case RsvpStatusEnum.NotGoing:
-        return 'danger';
-    }
-  }
 
   /**
    * Per-member RSVP availability map (member_id → status), derived from the
@@ -298,13 +257,6 @@ export class EventsDetailComponent implements OnInit {
       }
     }
     return map;
-  });
-
-  /** True when nobody has responded yet (all counts zero). */
-  protected readonly rsvpHasResponses = computed<boolean>(() => {
-    const c = this.rsvpSummary()?.counts;
-    if (!c) return false;
-    return c.going > 0 || c.maybe > 0 || c.not_going > 0;
   });
 
   protected readonly eventTotalDistance = computed<number>(() => {
@@ -409,13 +361,6 @@ export class EventsDetailComponent implements OnInit {
       untracked(() => void this.loadOptions(sportId));
     });
 
-    // Load the ROTI summary once the team (hence roti_enabled) is resolved.
-    effect(() => {
-      this.team();
-      this.eventId();
-      untracked(() => this.maybeLoadRoti());
-    });
-
     // Load the RSVP summary once the team (hence rsvp_enabled) is resolved.
     effect(() => {
       this.team();
@@ -436,66 +381,6 @@ export class EventsDetailComponent implements OnInit {
       this.patchingTotal = true;
       untracked(() => this.patchEventTotal(event.id, computed));
     });
-  }
-
-  private rotiLoadedForEventId: number | null = null;
-
-  /** Load the ROTI summary once the team is known and ROTI is enabled. */
-  private maybeLoadRoti(): void {
-    const eventId = this.eventId();
-    if (eventId == null || !this.rotiEnabled()) {
-      this.rotiSummary.set(null);
-      this.rotiLoadedForEventId = null;
-      return;
-    }
-    if (this.rotiLoadedForEventId === eventId) return;
-    this.rotiLoadedForEventId = eventId;
-    this.loadRoti(eventId);
-  }
-
-  private loadRoti(eventId: number): void {
-    this.eventsService
-      .eventsRotiRetrieve(eventId)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        // The endpoint is typed as an array by the schema; the payload is a
-        // single summary object. Accept either shape defensively.
-        next: (res) => this.rotiSummary.set(this.normalizeRoti(res)),
-        error: () => this.rotiSummary.set(null),
-      });
-  }
-
-  private normalizeRoti(res: RotiSummary | RotiSummary[] | null): RotiSummary | null {
-    if (Array.isArray(res)) return res.length > 0 ? res[0] : null;
-    return res ?? null;
-  }
-
-  protected submitRoti(score: number): void {
-    const eventId = this.eventId();
-    if (eventId == null || this.rotiSubmitting()) return;
-    this.rotiSubmitting.set(true);
-    this.eventsService
-      .eventsRotiUpdate(eventId, { score })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (res) => {
-          this.rotiSummary.set(this.normalizeRoti(res));
-          this.rotiSubmitting.set(false);
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('events.roti.saved'),
-          });
-        },
-        error: () => {
-          this.rotiSubmitting.set(false);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('events.errors.unknown'),
-          });
-        },
-      });
   }
 
   private rsvpLoadedForEventId: number | null = null;

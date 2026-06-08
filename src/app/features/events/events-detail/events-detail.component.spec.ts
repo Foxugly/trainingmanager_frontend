@@ -176,13 +176,10 @@ interface ProtectedFields {
   cancelNewRow(key: string): void;
   saveEditExercise(ex: Exercise): void;
   saveNewRow(row: { key: string; roundId: number }): void;
-  // ROTI
+  // ROTI (fetch/submit live in app-event-roti now)
   rotiEnabled(): boolean;
   isAthlete(): boolean;
-  rotiSummary(): { average: number | null; count: number; distribution: { [k: string]: number }; my_score: number | null } | null;
-  rotiDistribution(): { score: number; count: number }[];
-  submitRoti(score: number): void;
-  // RSVP
+  // RSVP (summary fetch + apply stay here; rendering in app-event-rsvp)
   rsvpEnabled(): boolean;
   rsvpSummary(): {
     counts: { going: number; maybe: number; not_going: number; no_response: number };
@@ -190,8 +187,6 @@ interface ProtectedFields {
     my_status: string | null;
     by_member: { member_id: number; name: string; status: string | null }[];
   } | null;
-  rsvpHasResponses(): boolean;
-  isMyStatus(status: string): boolean;
   submitRsvp(status: string): void;
   confirmApplyRsvpToAttendance(): void;
   // Athlete-side visibility hints
@@ -797,26 +792,12 @@ describe('EventsDetailComponent', () => {
     expect(exercisesMock.exercisesPartialUpdate).not.toHaveBeenCalled();
   });
 
-  // --- ROTI (session difficulty) ---
+  // --- ROTI (session difficulty) — the tab UI + fetch live in app-event-roti
+  //     (covered by event-roti.component.spec); the parent only exposes the
+  //     enabled/athlete gating that mounts + parameterizes it. ---
 
   const rotiTeam: Team = { ...team, roti_enabled: true };
   const athleteUser = otherUser; // not owner, not in managers → 'member' / athlete
-
-  it('does not load ROTI when the team has roti_enabled falsy', () => {
-    expect(access(component).rotiEnabled()).toBe(false);
-    expect(eventsMock.eventsRotiRetrieve).not.toHaveBeenCalled();
-    expect(access(component).rotiSummary()).toBeNull();
-  });
-
-  it('loads the ROTI summary when the team has roti_enabled', async () => {
-    await setup('7', eventNoRounds, ownerUser, rotiTeam);
-    await new Promise((r) => setTimeout(r, 0));
-    expect(access(component).rotiEnabled()).toBe(true);
-    expect(eventsMock.eventsRotiRetrieve).toHaveBeenCalledWith(7);
-    // array payload unwrapped to a single summary
-    expect(access(component).rotiSummary()?.count).toBe(5);
-    expect(access(component).rotiSummary()?.average).toBe(3.4);
-  });
 
   it('isAthlete is true for a member-only user and false for the owner', async () => {
     await setup('7', eventNoRounds, athleteUser, rotiTeam);
@@ -825,23 +806,9 @@ describe('EventsDetailComponent', () => {
     expect(access(component).isAthlete()).toBe(false);
   });
 
-  it('athlete submitRoti PUTs the score then refreshes the summary', async () => {
-    await setup('7', eventNoRounds, athleteUser, rotiTeam);
-    await new Promise((r) => setTimeout(r, 0));
-    access(component).submitRoti(2);
-    expect(eventsMock.eventsRotiUpdate).toHaveBeenCalledWith(7, { score: 2 });
-    expect(access(component).rotiSummary()?.my_score).toBe(2);
-  });
-
-  it('rotiDistribution maps the 1..5 buckets to counts', async () => {
-    await setup('7', eventNoRounds, ownerUser, rotiTeam);
-    await new Promise((r) => setTimeout(r, 0));
-    const dist = access(component).rotiDistribution();
-    expect(dist.map((d) => d.score)).toEqual([1, 2, 3, 4, 5]);
-    expect(dist.map((d) => d.count)).toEqual([0, 1, 2, 1, 1]);
-  });
-
-  // --- RSVP (availability) ---
+  // --- RSVP (availability) — the parent keeps the summary fetch (the attendance
+  //     tab consumes rsvpByMember regardless of the RSVP tab) + the apply flow;
+  //     app-event-rsvp renders it (covered by event-rsvp.component.spec). ---
 
   const rsvpTeam: Team = { ...team, rsvp_enabled: true };
 
@@ -858,17 +825,14 @@ describe('EventsDetailComponent', () => {
     expect(eventsMock.eventsRsvpRetrieve).toHaveBeenCalledWith(7);
     expect(access(component).rsvpSummary()?.counts.going).toBe(2);
     expect(access(component).rsvpSummary()?.total_members).toBe(5);
-    expect(access(component).rsvpHasResponses()).toBe(true);
   });
 
-  it('athlete submitRsvp PUTs the status then refreshes the summary', async () => {
+  it('submitRsvp PUTs the status then refreshes the summary', async () => {
     await setup('7', eventNoRounds, athleteUser, rsvpTeam);
     await new Promise((r) => setTimeout(r, 0));
     access(component).submitRsvp('going');
     expect(eventsMock.eventsRsvpUpdate).toHaveBeenCalledWith(7, { status: 'going' });
     expect(access(component).rsvpSummary()?.my_status).toBe('going');
-    expect(access(component).isMyStatus('going')).toBe(true);
-    expect(access(component).isMyStatus('maybe')).toBe(false);
   });
 
   it('manager apply-to-attendance posts after confirm and reloads the event', async () => {
