@@ -63,6 +63,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { NominatimResult, NominatimService } from '../../../core/geo/nominatim.service';
 import { AVAILABLE_LANGUAGES, LanguageCode } from '../../../core/i18n/available-languages';
 import { type FieldErrors, extractServerError } from '../../../shared/forms/notify-error';
+import { openContactEmail } from '../../../shared/contact';
 import { buildVisibilityOptions } from '../../../shared/forms/visibility-options';
 import {
   ActiveToggleComponent,
@@ -509,6 +510,13 @@ export class TeamsFormComponent implements OnInit {
   /** True for the team's current default place (drives the star/check column). */
   protected isDefaultPlace(id: number): boolean {
     return this.defaultPlaceIdValue() === id;
+  }
+
+  /** Open the user's mail client to request a team-quota increase. Uses the
+   *  shared anti-spam contact util (no plain email in the DOM) + a localized
+   *  subject. */
+  protected requestQuotaIncrease(): void {
+    openContactEmail(this.transloco.translate('teams.quota.email_subject'));
   }
 
   /** Two-letter initials for the avatar pill. */
@@ -1059,6 +1067,7 @@ export class TeamsFormComponent implements OnInit {
         },
         error: () => {
           this.templateLoading.set(false);
+          this.notifyLoadError();
         },
       });
   }
@@ -1080,6 +1089,7 @@ export class TeamsFormComponent implements OnInit {
         error: () => {
           this.places.set([]);
           this.placesLoading.set(false);
+          this.notifyLoadError();
         },
       });
   }
@@ -1228,6 +1238,16 @@ export class TeamsFormComponent implements OnInit {
     });
   }
 
+  /** Error toast for a form-section loader, instead of swallowing the failure
+   *  silently (the section just stays empty otherwise). */
+  private notifyLoadError(): void {
+    this.messageService.add({
+      severity: 'error',
+      summary: this.transloco.translate('common.error'),
+      detail: this.transloco.translate('teams.errors.unknown'),
+    });
+  }
+
   // ── Équipements (enable a subset of the sport catalog) ──────────────────
 
   /** Fetch the full equipment catalog for the team's sport. */
@@ -1245,6 +1265,7 @@ export class TeamsFormComponent implements OnInit {
         error: () => {
           this.equipmentCatalog.set([]);
           this.equipmentLoading.set(false);
+          this.notifyLoadError();
         },
       });
   }

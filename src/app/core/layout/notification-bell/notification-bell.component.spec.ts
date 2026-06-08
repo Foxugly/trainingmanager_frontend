@@ -121,8 +121,14 @@ describe('NotificationBellComponent', () => {
     expect((notifService['refreshUnread'] as ReturnType<typeof vi.fn>)).toHaveBeenCalled();
   });
 
-  it('shortTime returns a compact label', async () => {
+  it('shortTime returns a localized relative label (i18n, not hardcoded English)', async () => {
     await setup();
-    expect(access(fixture.componentInstance).shortTime(new Date().toISOString())).toBe('now');
+    const c = access(fixture.componentInstance);
+    // Test env runs in the default language (fr): output must match Intl, not 'now'/'5m'.
+    const rtf = new Intl.RelativeTimeFormat('fr', { numeric: 'auto', style: 'short' });
+    expect(c.shortTime(new Date().toISOString())).toBe(rtf.format(0, 'second'));
+    const fiveMinAgo = new Date(Date.now() - 5 * 60_000).toISOString();
+    expect(c.shortTime(fiveMinAgo)).toBe(rtf.format(-5, 'minute'));
+    expect(c.shortTime('not-a-date')).toBe('');
   });
 });

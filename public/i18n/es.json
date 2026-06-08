@@ -649,7 +649,8 @@
       "tooltip_legacy": "Gestionas {{used}} equipos, tu cuota es {{max}}. Puedes seguir usándolos pero no crear nuevos.",
       "exceeded_title": "Cuota de equipos alcanzada",
       "view_my_teams": "Ver mis equipos",
-      "request_increase": "Solicitar un aumento de cuota"
+      "request_increase": "Solicitar un aumento de cuota",
+      "email_subject": "Solicitud de aumento de cuota de equipos"
     },
     "magic": {
       "eyebrow": "Solicitud de unión",

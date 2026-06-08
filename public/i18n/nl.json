@@ -649,7 +649,8 @@
       "tooltip_legacy": "Je beheert {{used}} teams, je quota is {{max}}. Je kan ze blijven gebruiken maar geen nieuwe meer aanmaken.",
       "exceeded_title": "Teamquota bereikt",
       "view_my_teams": "Mijn teams bekijken",
-      "request_increase": "Quotaverhoging aanvragen"
+      "request_increase": "Quotaverhoging aanvragen",
+      "email_subject": "Aanvraag verhoging teamquota"
     },
     "magic": {
       "eyebrow": "Aanvraag om lid te worden",

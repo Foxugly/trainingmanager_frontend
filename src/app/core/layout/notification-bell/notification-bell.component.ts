@@ -16,6 +16,7 @@ import { OverlayBadge } from 'primeng/overlaybadge';
 import { filter } from 'rxjs';
 import { Notification } from '../../../api/model/notification';
 import { AuthService } from '../../auth/auth.service';
+import { LanguageService } from '../../i18n/language.service';
 import { NotificationService } from '../../notifications/notification.service';
 
 const POLL_INTERVAL_MS = 60_000;
@@ -31,6 +32,7 @@ export class NotificationBellComponent {
   private readonly notifications = inject(NotificationService);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly languageService = inject(LanguageService);
   private readonly destroyRef = inject(DestroyRef);
 
   private readonly popover = viewChild<Popover>('panel');
@@ -119,18 +121,23 @@ export class NotificationBellComponent {
     this.notifications.markAllRead().subscribe({ error: () => {} });
   }
 
-  /** Compact relative-ish time label for a notification timestamp. */
+  /** Localized relative time label for a notification timestamp.
+   *
+   * Uses Intl.RelativeTimeFormat in the active language (was hardcoded English
+   * now/5m/3h/2d in an fr-default, 5-language app). Falls back to an absolute
+   * localized date past one week. */
   protected shortTime(iso: string): string {
     const then = new Date(iso).getTime();
     if (Number.isNaN(then)) return '';
+    const lang = this.languageService.activeLang();
     const diffSec = Math.round((Date.now() - then) / 1000);
-    if (diffSec < 60) return 'now';
+    if (diffSec >= 7 * 86400) return new Date(then).toLocaleDateString(lang);
+    const rtf = new Intl.RelativeTimeFormat(lang, { numeric: 'auto', style: 'short' });
+    if (diffSec < 60) return rtf.format(0, 'second'); // "now" / "maintenant"
     const min = Math.floor(diffSec / 60);
-    if (min < 60) return `${min}m`;
+    if (min < 60) return rtf.format(-min, 'minute');
     const hr = Math.floor(min / 60);
-    if (hr < 24) return `${hr}h`;
-    const day = Math.floor(hr / 24);
-    if (day < 7) return `${day}d`;
-    return new Date(then).toLocaleDateString();
+    if (hr < 24) return rtf.format(-hr, 'hour');
+    return rtf.format(-Math.floor(hr / 24), 'day');
   }
 }

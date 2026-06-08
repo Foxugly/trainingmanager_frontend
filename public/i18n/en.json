@@ -649,7 +649,8 @@
       "tooltip_legacy": "You manage {{used}} teams, your quota is {{max}}. You can keep using them but cannot create new ones.",
       "exceeded_title": "Team quota reached",
       "view_my_teams": "View my teams",
-      "request_increase": "Request a quota increase"
+      "request_increase": "Request a quota increase",
+      "email_subject": "Team quota increase request"
     },
     "magic": {
       "eyebrow": "Join request",

@@ -22,6 +22,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import * as Sentry from '@sentry/angular';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
@@ -679,7 +680,7 @@ export class EventsDetailComponent implements OnInit {
           fetchedRounds.push(r.value);
         } else {
           roundFailures++;
-          console.warn('roundsRetrieve failed', r.reason);
+          Sentry.captureException(r.reason);
         }
       }
       if (roundFailures > 0) {
@@ -704,7 +705,7 @@ export class EventsDetailComponent implements OnInit {
           if (s.status === 'fulfilled') {
             fulfilled.push(s.value);
           } else {
-            console.warn('exercisesRetrieve failed', s.reason);
+            Sentry.captureException(s.reason);
           }
         }
         const sorted = [...fulfilled].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
@@ -717,7 +718,7 @@ export class EventsDetailComponent implements OnInit {
       }
       this.exercisesByRound.set(map);
     } catch (err) {
-      console.error('Unexpected error in loadRoundsAndExercises', err);
+      Sentry.captureException(err);
       this.roundsLoadError.set({ kind: 'full', count: roundIds.length });
     } finally {
       this.loadingRounds.set(false);

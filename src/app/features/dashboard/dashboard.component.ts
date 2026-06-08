@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -77,7 +77,7 @@ function localTodayParam(): string {
 @Component({
   selector: 'app-dashboard',
   imports: [
-    CommonModule,
+    DatePipe,
     FormsModule,
     RouterLink,
     Button,

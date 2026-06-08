@@ -27,7 +27,10 @@
 
     <div class="notif-list">
       @if (loading() && items().length === 0) {
-        <div class="notif-empty">…</div>
+        <div class="notif-empty">
+          <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
+          <span>{{ 'common.loading' | transloco }}</span>
+        </div>
       } @else if (items().length === 0) {
         <div class="notif-empty">
           <i class="pi pi-inbox" aria-hidden="true"></i>

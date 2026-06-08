@@ -768,16 +768,15 @@
                 [label]="'teams.quota.view_my_teams' | transloco"
               />
             </a>
-            <a href="mailto:admin@trainingmanager.app?subject=Quota%20increase%20request">
-              <p-button
-                type="button"
-                severity="secondary"
-                [outlined]="true"
-                size="small"
-                icon="pi pi-envelope"
-                [label]="'teams.quota.request_increase' | transloco"
-              />
-            </a>
+            <p-button
+              type="button"
+              severity="secondary"
+              [outlined]="true"
+              size="small"
+              icon="pi pi-envelope"
+              [label]="'teams.quota.request_increase' | transloco"
+              (onClick)="requestQuotaIncrease()"
+            />
           </div>
         </div>
       }

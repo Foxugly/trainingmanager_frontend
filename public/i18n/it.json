@@ -649,7 +649,8 @@
       "tooltip_legacy": "Gestisci {{used}} squadre, la tua quota è {{max}}. Puoi continuare a usarle ma non puoi crearne di nuove.",
       "exceeded_title": "Quota di squadre raggiunta",
       "view_my_teams": "Vedi le mie squadre",
-      "request_increase": "Richiedi un aumento di quota"
+      "request_increase": "Richiedi un aumento di quota",
+      "email_subject": "Richiesta di aumento della quota squadre"
     },
     "magic": {
       "eyebrow": "Richiesta di adesione",
