@@ -58,7 +58,33 @@
   } @else {
     <div class="card form-card builder-stack">
       <form [formGroup]="form">
-        <div class="meta-grid cols-2">
+        <!-- Row 1 — Team (full width). Edit: disabled (team is not changeable). -->
+        <div class="meta-grid">
+          <app-meta-field
+            [full]="true"
+            [label]="'programs.form.team' | transloco"
+            for="team_id"
+            [tooltip]="isEditMode() ? ('programs.form.team_locked_help' | transloco) : null"
+            [error]="
+              !isEditMode() && availableTeams().length === 0
+                ? ('programs.form.no_manager_team' | transloco)
+                : fieldError('team_id')
+            "
+          >
+            <p-select
+              inputId="team_id"
+              [options]="availableTeams()"
+              formControlName="team_id"
+              optionLabel="name"
+              optionValue="id"
+              [filter]="true"
+              [placeholder]="'programs.form.team_placeholder' | transloco"
+            />
+          </app-meta-field>
+        </div>
+
+        <!-- Row 2 — Name + start date + end date. -->
+        <div class="meta-grid cols-3">
           <app-meta-field
             [label]="'programs.form.name' | transloco"
             for="name"
@@ -71,27 +97,6 @@
               [placeholder]="'programs.form.name_placeholder' | transloco"
             />
           </app-meta-field>
-          <app-meta-field
-            [label]="'programs.form.frequency' | transloco"
-            for="frequency_per_week"
-            [tooltip]="'programs.form.frequency_help' | transloco"
-            [error]="fieldError('frequency_per_week')"
-          >
-            <p-inputnumber
-              inputId="frequency_per_week"
-              formControlName="frequency_per_week"
-              [min]="0"
-              [max]="14"
-              [showButtons]="true"
-              buttonLayout="horizontal"
-              spinnerMode="horizontal"
-              decrementButtonIcon="pi pi-minus"
-              incrementButtonIcon="pi pi-plus"
-            />
-          </app-meta-field>
-        </div>
-
-        <div class="meta-grid cols-2">
           <app-meta-field
             [label]="'programs.form.date_start' | transloco"
             for="date_start"
@@ -120,47 +125,36 @@
           </app-meta-field>
         </div>
 
-        <div class="meta-grid">
+        <!-- Frequency (kept; not part of the 3 spec rows). -->
+        <div class="meta-grid cols-2">
           <app-meta-field
-            [full]="true"
-            [label]="'programs.form.team' | transloco"
-            for="team_id"
-            [tooltip]="isEditMode() ? ('programs.form.team_locked_help' | transloco) : null"
-            [error]="
-              !isEditMode() && availableTeams().length === 0
-                ? ('programs.form.no_manager_team' | transloco)
-                : fieldError('team_id')
-            "
+            [label]="'programs.form.frequency' | transloco"
+            for="frequency_per_week"
+            [tooltip]="'programs.form.frequency_help' | transloco"
+            [error]="fieldError('frequency_per_week')"
           >
-            @if (isEditMode()) {
-              <input
-                pInputText
-                id="team_id"
-                type="text"
-                [value]="program()?.team?.name ?? ''"
-                disabled
-              />
-            } @else {
-              <p-select
-                inputId="team_id"
-                [options]="availableTeams()"
-                formControlName="team_id"
-                optionLabel="name"
-                optionValue="id"
-                [filter]="true"
-                [placeholder]="'programs.form.team_placeholder' | transloco"
-              />
-            }
+            <p-inputnumber
+              inputId="frequency_per_week"
+              formControlName="frequency_per_week"
+              [min]="0"
+              [max]="14"
+              [showButtons]="true"
+              buttonLayout="horizontal"
+              spinnerMode="horizontal"
+              decrementButtonIcon="pi pi-minus"
+              incrementButtonIcon="pi pi-plus"
+            />
           </app-meta-field>
         </div>
 
+        <!-- Row 3 — Description (rich editor, ~3 lines). -->
         <div class="meta-grid">
           <app-meta-field
             [full]="true"
             [label]="'programs.form.description' | transloco"
             [error]="fieldError('description')"
           >
-            <app-rich-editor formControlName="description" [style]="{ height: '12rem' }" />
+            <app-rich-editor formControlName="description" [style]="{ height: '7rem' }" />
           </app-meta-field>
         </div>
       </form>

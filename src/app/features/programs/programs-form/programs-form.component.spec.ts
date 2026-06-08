@@ -208,6 +208,14 @@ describe('ProgramsFormComponent', () => {
     expect(access(component).form.controls.team_id.disabled).toBe(true);
   });
 
+  it('on edit mode, seeds availableTeams with the program team so the disabled select shows its label', async () => {
+    await setup('7');
+    // Manager-team list is NOT fetched on edit; the select is seeded from the program.
+    expect(teamsMock.teamsList).not.toHaveBeenCalled();
+    expect(access(component).availableTeams()).toHaveLength(1);
+    expect(access(component).availableTeams()[0].id).toBe(4);
+  });
+
   it('on edit mode, seeds activeValue from the loaded program', async () => {
     await setup('7');
     expect(access(component).activeValue()).toBe(true);

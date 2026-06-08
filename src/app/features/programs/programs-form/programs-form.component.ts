@@ -158,6 +158,12 @@ export class ProgramsFormComponent implements OnInit {
         next: (p) => {
           this.program.set(p);
           this.activeValue.set(p.is_active ?? true);
+          // Seed the (disabled) team select with the program's own team so the
+          // p-select can resolve and display its label. Team is not changeable
+          // on update, so we don't load the full managed-teams list here.
+          if (p.team) {
+            this.availableTeams.set([p.team as unknown as Team]);
+          }
           this.form.reset({
             name: p.name,
             team_id: p.team?.id ?? null,
