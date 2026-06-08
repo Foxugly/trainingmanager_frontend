@@ -5,24 +5,19 @@
   </header>
 
   @if (loading()) {
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" aria-hidden="true">
+    <ul class="flex flex-col gap-3" aria-hidden="true">
       @for (_ of [1, 2, 3]; track $index) {
-        <div class="p-4 bg-white border border-gray-200 rounded-lg">
-          <div class="flex items-start gap-3">
-            <p-skeleton width="2.75rem" height="2.75rem" borderRadius="0.75rem" />
-            <div class="flex-1">
-              <p-skeleton width="60%" height="1rem" styleClass="mb-1" />
-              <p-skeleton width="40%" height="0.75rem" />
-            </div>
-          </div>
-        </div>
+        <li class="p-4 bg-white border border-gray-200 rounded-lg">
+          <p-skeleton width="50%" height="1rem" styleClass="mb-2" />
+          <p-skeleton width="30%" height="0.75rem" />
+        </li>
       }
-    </div>
-  } @else if (teams().length === 0) {
+    </ul>
+  } @else if (rows().length === 0) {
     <app-empty-state
       icon="comments"
       [title]="'messages.empty' | transloco"
-      [subtitle]="'messages.subtitle' | transloco"
+      [subtitle]="'messages.empty_subtitle' | transloco"
     >
       <a [routerLink]="['/teams', 'discover']">
         <p-button
@@ -35,37 +30,51 @@
       </a>
     </app-empty-state>
   } @else {
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      @for (team of teams(); track team.id) {
-        <a
-          [routerLink]="['/teams', team.id]"
-          class="group block rounded-xl border border-gray-200 bg-white p-5 transition duration-200 hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md"
-        >
-          <div class="flex items-start gap-3">
-            @if (team.logo) {
-              <img
-                [src]="team.logo"
-                [alt]="team.name"
-                class="shrink-0 size-11 rounded-xl object-cover border border-gray-200"
-              />
-            } @else {
+    <ul class="flex flex-col gap-3">
+      @for (row of rows(); track row.teamId + '-' + row.topic.id) {
+        <li>
+          <button
+            type="button"
+            class="topic-row group w-full text-left rounded-xl border border-gray-200 bg-white p-4 transition duration-200 hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md"
+            (click)="openTopic(row)"
+          >
+            <div class="flex items-start gap-3">
               <div
-                class="shrink-0 size-11 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center"
+                class="shrink-0 size-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center"
               >
                 <i class="pi pi-comments text-lg" aria-hidden="true"></i>
               </div>
-            }
-            <div class="min-w-0 flex-1">
-              <h2 class="text-base font-semibold text-gray-900 truncate">{{ team.name }}</h2>
-              <p class="text-xs text-gray-500 truncate">{{ team.sport.name }}</p>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="text-base font-semibold text-gray-900 truncate">{{
+                    row.topic.title
+                  }}</span>
+                  <p-tag
+                    [value]="
+                      (row.topic.audience === AudienceEnum.Coaches
+                        ? 'teams.discussions.audience_coaches'
+                        : 'teams.discussions.audience_team'
+                      ) | transloco
+                    "
+                    [severity]="row.topic.audience === AudienceEnum.Coaches ? 'warn' : 'info'"
+                  />
+                </div>
+                <p class="text-xs text-gray-500 truncate mt-0.5">{{ row.teamName }}</p>
+                <div class="flex items-center gap-3 text-xs text-gray-400 mt-1">
+                  <span>
+                    <i class="pi pi-comment" aria-hidden="true"></i> {{ row.topic.message_count }}
+                  </span>
+                  <span>{{ row.topic.updated_at | date: 'short' }}</span>
+                </div>
+              </div>
+              <i
+                class="pi pi-arrow-right text-xs text-emerald-700 opacity-0 transition group-hover:opacity-100"
+                aria-hidden="true"
+              ></i>
             </div>
-            <i
-              class="pi pi-arrow-right text-xs text-emerald-700 opacity-0 transition group-hover:opacity-100"
-              aria-hidden="true"
-            ></i>
-          </div>
-        </a>
+          </button>
+        </li>
       }
-    </div>
+    </ul>
   }
 </div>

@@ -51,46 +51,106 @@
               <div class="message-head">
                 <span class="author">{{ authorName(msg.author) }}</span>
                 <span class="time">{{ msg.created_at | date: 'short' }}</span>
-                @if (canDeleteMessage(msg)) {
-                  <p-button
-                    icon="pi pi-trash"
-                    severity="danger"
-                    [text]="true"
-                    [rounded]="true"
-                    size="small"
-                    [ariaLabel]="'common.delete' | transloco"
-                    (onClick)="confirmDeleteMessage(msg)"
-                  />
+                @if (isEdited(msg)) {
+                  <span class="edited">{{ 'teams.discussions.edited' | transloco }}</span>
+                }
+                @if (editingMessageId() !== msg.id) {
+                  <span class="message-actions">
+                    @if (canEditMessage(msg)) {
+                      <p-button
+                        icon="pi pi-pencil"
+                        severity="secondary"
+                        [text]="true"
+                        [rounded]="true"
+                        size="small"
+                        [ariaLabel]="'common.edit' | transloco"
+                        (onClick)="startEdit(msg)"
+                      />
+                    }
+                    @if (canDeleteMessage(msg)) {
+                      <p-button
+                        icon="pi pi-trash"
+                        severity="danger"
+                        [text]="true"
+                        [rounded]="true"
+                        size="small"
+                        [ariaLabel]="'common.delete' | transloco"
+                        (onClick)="confirmDeleteMessage(msg)"
+                      />
+                    }
+                  </span>
                 }
               </div>
-              <div class="message-body" [innerHTML]="msg.content"></div>
-              <app-attachment-list
-                class="message-attachments"
-                targetType="message"
-                [targetId]="msg.id"
-                [canEdit]="canAttachToMessage(msg)"
-              />
+
+              @if (editingMessageId() === msg.id) {
+                <div class="message-edit">
+                  <app-rich-editor [(ngModel)]="editContentModel" [style]="{ height: '6rem' }" />
+                  <div class="editor-toolbar">
+                    <p-button
+                      icon="pi pi-face-smile"
+                      severity="secondary"
+                      [text]="true"
+                      [rounded]="true"
+                      size="small"
+                      [ariaLabel]="'teams.discussions.emoji' | transloco"
+                      (onClick)="openEmojiPicker('edit', $event, emojiPanel)"
+                    />
+                    <span class="spacer"></span>
+                    <p-button
+                      [label]="'common.cancel' | transloco"
+                      severity="secondary"
+                      [text]="true"
+                      size="small"
+                      (onClick)="cancelEdit()"
+                    />
+                    <p-button
+                      [label]="'common.save' | transloco"
+                      icon="pi pi-check"
+                      size="small"
+                      [loading]="savingEdit()"
+                      [disabled]="editIsBlank()"
+                      (onClick)="saveEdit(msg)"
+                    />
+                  </div>
+                </div>
+              } @else {
+                <div class="message-body" [innerHTML]="msg.content"></div>
+                <app-attachment-list
+                  class="message-attachments"
+                  targetType="message"
+                  [targetId]="msg.id"
+                  [canEdit]="canAttachToMessage(msg)"
+                />
+              }
             </div>
           }
         }
       </div>
 
       @if (canReply()) {
+        <!-- TODO: file attachments on messages are pending backend support
+             (the Message model has no attachment field) — no file button here. -->
         <div class="reply-box">
-          <textarea
-            pTextarea
-            [(ngModel)]="replyContentModel"
-            rows="3"
-            [placeholder]="'teams.discussions.reply_placeholder' | transloco"
-            [attr.aria-label]="'teams.discussions.reply_placeholder' | transloco"
-          ></textarea>
-          <p-button
-            [label]="'teams.discussions.send' | transloco"
-            icon="pi pi-send"
-            [loading]="sendingReply()"
-            [disabled]="replyContent().trim().length === 0"
-            (onClick)="sendReply()"
-          />
+          <app-rich-editor [(ngModel)]="replyContentModel" [style]="{ height: '5rem' }" />
+          <div class="editor-toolbar">
+            <p-button
+              icon="pi pi-face-smile"
+              severity="secondary"
+              [text]="true"
+              [rounded]="true"
+              size="small"
+              [ariaLabel]="'teams.discussions.emoji' | transloco"
+              (onClick)="openEmojiPicker('reply', $event, emojiPanel)"
+            />
+            <span class="spacer"></span>
+            <p-button
+              [label]="'teams.discussions.send' | transloco"
+              icon="pi pi-send"
+              [loading]="sendingReply()"
+              [disabled]="replyIsBlank()"
+              (onClick)="sendReply()"
+            />
+          </div>
         </div>
       } @else {
         <p class="muted replies-disabled">
@@ -133,7 +193,9 @@
                 />
               </div>
               <div class="topic-meta">
-                <span><i class="pi pi-comment" aria-hidden="true"></i> {{ topic.message_count }}</span>
+                <span
+                  ><i class="pi pi-comment" aria-hidden="true"></i> {{ topic.message_count }}</span
+                >
                 <span>{{ topic.updated_at | date: 'short' }}</span>
                 <span class="author">{{ authorName(topic.author) }}</span>
               </div>
@@ -216,3 +278,20 @@
     />
   </ng-template>
 </p-dialog>
+
+<!-- SHARED EMOJI PICKER (reply + inline edit) -->
+<p-popover #emojiPanel>
+  <div class="emoji-grid" role="menu" [attr.aria-label]="'teams.discussions.emoji' | transloco">
+    @for (emoji of emojis; track emoji) {
+      <button
+        type="button"
+        class="emoji-btn"
+        role="menuitem"
+        [attr.aria-label]="emoji"
+        (click)="insertEmoji(emoji, emojiPanel)"
+      >
+        {{ emoji }}
+      </button>
+    }
+  </div>
+</p-popover>

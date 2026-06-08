@@ -29,7 +29,8 @@
   "messages": {
     "title": "Messages",
     "subtitle": "Accédez aux discussions de vos équipes.",
-    "empty": "Aucune équipe"
+    "empty": "Aucune équipe",
+    "empty_subtitle": "Aucune discussion dans vos équipes pour le moment."
   },
   "ai": {
     "generating_event": "L'IA prépare votre séance…",
@@ -754,7 +755,10 @@
       "message_count": "{{count}} message(s)",
       "topic_created": "Sujet créé.",
       "topic_deleted": "Sujet supprimé.",
-      "message_deleted": "Message supprimé."
+      "message_deleted": "Message supprimé.",
+      "edited": "modifié",
+      "emoji": "Emoji",
+      "message_updated": "Message modifié."
     }
   },
   "common": {

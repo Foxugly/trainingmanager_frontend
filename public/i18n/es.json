@@ -29,7 +29,8 @@
   "messages": {
     "title": "Mensajes",
     "subtitle": "Accede a las conversaciones de tus equipos.",
-    "empty": "Ningún equipo"
+    "empty": "Ningún equipo",
+    "empty_subtitle": "Aún no hay debates en tus equipos."
   },
   "ai": {
     "generating_event": "La IA está preparando tu sesión…",
@@ -754,7 +755,10 @@
       "message_count": "{{count}} mensaje(s)",
       "topic_created": "Tema creado.",
       "topic_deleted": "Tema eliminado.",
-      "message_deleted": "Mensaje eliminado."
+      "message_deleted": "Mensaje eliminado.",
+      "edited": "editado",
+      "emoji": "Emoji",
+      "message_updated": "Mensaje actualizado."
     }
   },
   "common": {

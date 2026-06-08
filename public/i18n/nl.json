@@ -29,7 +29,8 @@
   "messages": {
     "title": "Berichten",
     "subtitle": "Open de discussies van je teams.",
-    "empty": "Geen team"
+    "empty": "Geen team",
+    "empty_subtitle": "Nog geen discussies in je teams."
   },
   "ai": {
     "generating_event": "De AI bereidt je sessie voor…",
@@ -754,7 +755,10 @@
       "message_count": "{{count}} bericht(en)",
       "topic_created": "Onderwerp aangemaakt.",
       "topic_deleted": "Onderwerp verwijderd.",
-      "message_deleted": "Bericht verwijderd."
+      "message_deleted": "Bericht verwijderd.",
+      "edited": "bewerkt",
+      "emoji": "Emoji",
+      "message_updated": "Bericht bijgewerkt."
     }
   },
   "common": {

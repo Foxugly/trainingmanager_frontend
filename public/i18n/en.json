@@ -29,7 +29,8 @@
   "messages": {
     "title": "Messages",
     "subtitle": "Access your teams' discussions.",
-    "empty": "No team"
+    "empty": "No team",
+    "empty_subtitle": "No discussions in your teams yet."
   },
   "ai": {
     "generating_event": "AI is preparing your session…",
@@ -754,7 +755,10 @@
       "message_count": "{{count}} message(s)",
       "topic_created": "Topic created.",
       "topic_deleted": "Topic deleted.",
-      "message_deleted": "Message deleted."
+      "message_deleted": "Message deleted.",
+      "edited": "edited",
+      "emoji": "Emoji",
+      "message_updated": "Message updated."
     }
   },
   "common": {

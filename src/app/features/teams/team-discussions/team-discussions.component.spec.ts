@@ -65,16 +65,25 @@ interface ProtectedFields {
   canDeleteTopic(t: Topic): boolean;
   canDeleteMessage(m: TopicMessage): boolean;
   isOwnMessage(m: TopicMessage): boolean;
+  canEditMessage(m: TopicMessage): boolean;
+  isEdited(m: TopicMessage): boolean;
   openTopic(t: Topic): void;
   backToList(): void;
   openNewTopic(): void;
   submitNewTopic(): void;
   sendReply(): void;
+  startEdit(m: TopicMessage): void;
+  cancelEdit(): void;
+  saveEdit(m: TopicMessage): void;
+  editingMessageId(): number | null;
+  insertEmoji(emoji: string, popover: { hide(): void }): void;
   confirmDeleteTopic(t: Topic): void;
   confirmDeleteMessage(m: TopicMessage): void;
   newTopicTitle: { set(v: string): void };
   newTopicAudience: { set(v: AudienceEnum): void };
-  replyContent: { set(v: string): void };
+  replyContent: { set(v: string): void; (): string };
+  editContent: { set(v: string): void; (): string };
+  emojiTarget: { set(v: 'reply' | 'edit'): void };
 }
 
 describe('TeamDiscussionsComponent', () => {
@@ -87,18 +96,21 @@ describe('TeamDiscussionsComponent', () => {
     teamsTopicsMessagesList: ReturnType<typeof vi.fn>;
     teamsTopicsMessagesCreate: ReturnType<typeof vi.fn>;
     teamsTopicsMessagesDestroy: ReturnType<typeof vi.fn>;
+    teamsMessagesPartialUpdate: ReturnType<typeof vi.fn>;
   };
   let confirmationService: ConfirmationService;
 
   const access = (c: TeamDiscussionsComponent) => c as unknown as ProtectedFields;
 
-  async function setup(opts: {
-    team?: Team;
-    role?: DiscussionRole;
-    topics?: Topic[];
-    messages?: TopicMessage[];
-    currentUserId?: number;
-  } = {}) {
+  async function setup(
+    opts: {
+      team?: Team;
+      role?: DiscussionRole;
+      topics?: Topic[];
+      messages?: TopicMessage[];
+      currentUserId?: number;
+    } = {},
+  ) {
     TestBed.resetTestingModule();
     const topics = opts.topics ?? [makeTopic()];
     const messages = opts.messages ?? [makeMessage()];
@@ -111,6 +123,11 @@ describe('TeamDiscussionsComponent', () => {
         .mockReturnValue(of({ count: messages.length, results: messages })),
       teamsTopicsMessagesCreate: vi.fn().mockReturnValue(of(makeMessage({ id: 101 }))),
       teamsTopicsMessagesDestroy: vi.fn().mockReturnValue(of(undefined)),
+      teamsMessagesPartialUpdate: vi
+        .fn()
+        .mockReturnValue(
+          of({ id: 100, content: '<p>Edited</p>', edited_at: '2026-01-03T00:00:00Z' }),
+        ),
     };
 
     await TestBed.configureTestingModule({
@@ -221,16 +238,22 @@ describe('TeamDiscussionsComponent', () => {
 
   it('coach can always reply', async () => {
     await setup({ role: 'manager' });
-    access(component).openTopic(makeTopic({ audience: AudienceEnum.Team, allow_athlete_replies: false }));
+    access(component).openTopic(
+      makeTopic({ audience: AudienceEnum.Team, allow_athlete_replies: false }),
+    );
     expect(access(component).canReply()).toBe(true);
   });
 
   it('athlete can reply only on team topic with replies allowed', async () => {
     await setup({ role: 'member' });
-    access(component).openTopic(makeTopic({ audience: AudienceEnum.Team, allow_athlete_replies: true }));
+    access(component).openTopic(
+      makeTopic({ audience: AudienceEnum.Team, allow_athlete_replies: true }),
+    );
     expect(access(component).canReply()).toBe(true);
 
-    access(component).openTopic(makeTopic({ audience: AudienceEnum.Team, allow_athlete_replies: false }));
+    access(component).openTopic(
+      makeTopic({ audience: AudienceEnum.Team, allow_athlete_replies: false }),
+    );
     expect(access(component).canReply()).toBe(false);
   });
 
@@ -245,7 +268,11 @@ describe('TeamDiscussionsComponent', () => {
       30,
       expect.objectContaining({ content: 'Bonjour' }),
     );
-    expect(access(component).messages().some((m) => m.id === 101)).toBe(true);
+    expect(
+      access(component)
+        .messages()
+        .some((m) => m.id === 101),
+    ).toBe(true);
   });
 
   it('sendReply is a no-op when the viewer cannot reply', async () => {
@@ -281,7 +308,11 @@ describe('TeamDiscussionsComponent', () => {
     const topic = access(component).topics()[0];
     access(component).confirmDeleteTopic(topic);
     expect(teamsMock.teamsTopicsDestroy).toHaveBeenCalledWith(topic.id, 7);
-    expect(access(component).topics().some((t) => t.id === topic.id)).toBe(false);
+    expect(
+      access(component)
+        .topics()
+        .some((t) => t.id === topic.id),
+    ).toBe(false);
   });
 
   it('confirmDeleteMessage → destroy removes it from the thread', () => {
@@ -293,11 +324,79 @@ describe('TeamDiscussionsComponent', () => {
     });
     access(component).confirmDeleteMessage(msg);
     expect(teamsMock.teamsTopicsMessagesDestroy).toHaveBeenCalledWith(msg.id, 7, 40);
-    expect(access(component).messages().some((m) => m.id === msg.id)).toBe(false);
+    expect(
+      access(component)
+        .messages()
+        .some((m) => m.id === msg.id),
+    ).toBe(false);
   });
 
   it('isOwnMessage distinguishes the current user', () => {
     expect(access(component).isOwnMessage(makeMessage({ author: me }))).toBe(true);
     expect(access(component).isOwnMessage(makeMessage({ author: other }))).toBe(false);
+  });
+
+  // --- edit gating + flow ---
+
+  it('only the author may edit (even a coach cannot edit others)', async () => {
+    await setup({ role: 'manager', currentUserId: me.id });
+    expect(access(component).canEditMessage(makeMessage({ author: me }))).toBe(true);
+    expect(access(component).canEditMessage(makeMessage({ author: other }))).toBe(false);
+  });
+
+  it('startEdit pre-fills the editor with the message content', () => {
+    access(component).openTopic(makeTopic({ id: 30 }));
+    const msg = makeMessage({ id: 100, content: '<p>Hello</p>', author: me });
+    access(component).startEdit(msg);
+    expect(access(component).editingMessageId()).toBe(100);
+    expect(access(component).editContent()).toBe('<p>Hello</p>');
+  });
+
+  it('saveEdit calls teamsMessagesPartialUpdate and updates the message in place', () => {
+    access(component).openTopic(makeTopic({ id: 30 }));
+    const msg = access(component).messages()[0];
+    access(component).startEdit(msg);
+    access(component).editContent.set('<p>Edited</p>');
+    access(component).saveEdit(msg);
+    expect(teamsMock.teamsMessagesPartialUpdate).toHaveBeenCalledWith(
+      msg.id,
+      7,
+      expect.objectContaining({ content: '<p>Edited</p>' }),
+    );
+    const updated = access(component)
+      .messages()
+      .find((m) => m.id === msg.id);
+    expect(updated?.content).toBe('<p>Edited</p>');
+    expect(access(component).isEdited(updated as TopicMessage)).toBe(true);
+    expect(access(component).editingMessageId()).toBeNull();
+  });
+
+  it('saveEdit is a no-op for blank (empty-html) content', () => {
+    access(component).openTopic(makeTopic({ id: 30 }));
+    const msg = access(component).messages()[0];
+    access(component).startEdit(msg);
+    access(component).editContent.set('<p><br></p>');
+    access(component).saveEdit(msg);
+    expect(teamsMock.teamsMessagesPartialUpdate).not.toHaveBeenCalled();
+  });
+
+  // --- emoji insertion ---
+
+  it('insertEmoji appends to the reply editor when targeting reply', () => {
+    const popover = { hide: vi.fn() };
+    access(component).emojiTarget.set('reply');
+    access(component).replyContent.set('');
+    access(component).insertEmoji('🔥', popover);
+    expect(access(component).replyContent()).toContain('🔥');
+    expect(popover.hide).toHaveBeenCalled();
+  });
+
+  it('insertEmoji appends to the edit editor when targeting edit', () => {
+    const popover = { hide: vi.fn() };
+    access(component).emojiTarget.set('edit');
+    access(component).editContent.set('<p>Hi</p>');
+    access(component).insertEmoji('👍', popover);
+    expect(access(component).editContent()).toContain('👍');
+    expect(access(component).editContent()).toContain('Hi');
   });
 });

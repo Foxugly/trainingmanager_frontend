@@ -143,10 +143,39 @@
   .time {
     color: var(--p-text-muted-color, #6b7280);
   }
+
+  .edited {
+    color: var(--p-text-muted-color, #6b7280);
+    font-style: italic;
+  }
+
+  /* Push the edit/delete actions to the top-right of the post. */
+  .message-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+  }
 }
 
 .message-body {
   word-break: break-word;
+}
+
+.message-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+
+  .spacer {
+    flex: 1;
+  }
 }
 
 .message-attachments {
@@ -158,10 +187,33 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  align-items: flex-end;
 
-  textarea {
+  app-rich-editor {
+    display: block;
     width: 100%;
+  }
+}
+
+/* ---- Emoji picker ---- */
+.emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 0.15rem;
+  max-width: 18rem;
+}
+
+.emoji-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.25rem;
+  line-height: 1;
+  padding: 0.25rem;
+  border-radius: 0.35rem;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--p-content-hover-background, #f3f4f6);
   }
 }
 
