@@ -23,6 +23,7 @@ import { PatchedMessage } from '../model/models';
 import { PatchedNote } from '../model/models';
 import { PatchedTeam } from '../model/models';
 import { PatchedTeamMembership } from '../model/models';
+import { PatchedTopicMessage } from '../model/models';
 import { PatchedTrainingSlot } from '../model/models';
 import { Team } from '../model/models';
 import { TeamMembership } from '../model/models';
@@ -390,6 +391,17 @@ export interface TeamsServiceInterface {
     teamsTopicsMessagesList(teamPk: number, topicPk: number, ordering?: string, page?: number, pageSize?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedTopicMessageList>;
 
     /**
+     * Edit a message (author only)
+     * Messages nested under a topic.  URL: /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
+     * @endpoint patch /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/{id}/
+     * @param id A unique integer value identifying this message.
+     * @param teamPk ID of the parent team.
+     * @param topicPk ID of the parent topic.
+     * @param patchedTopicMessage 
+     */
+    teamsTopicsMessagesPartialUpdate(id: number, teamPk: number, topicPk: number, patchedTopicMessage?: PatchedTopicMessage, extraHttpRequestParams?: any): Observable<TopicMessage>;
+
+    /**
      * Retrieve a message
      * Messages nested under a topic.  URL: /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
      * @endpoint get /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/{id}/
@@ -398,6 +410,26 @@ export interface TeamsServiceInterface {
      * @param topicPk ID of the parent topic.
      */
     teamsTopicsMessagesRetrieve(id: number, teamPk: number, topicPk: number, extraHttpRequestParams?: any): Observable<TopicMessage>;
+
+    /**
+     * Edit a message (author only)
+     * Messages nested under a topic.  URL: /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
+     * @endpoint put /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/{id}/
+     * @param id A unique integer value identifying this message.
+     * @param teamPk ID of the parent team.
+     * @param topicPk ID of the parent topic.
+     * @param topicMessage 
+     */
+    teamsTopicsMessagesUpdate(id: number, teamPk: number, topicPk: number, topicMessage: TopicMessage, extraHttpRequestParams?: any): Observable<TopicMessage>;
+
+    /**
+     * Mark a topic as read up to now (per-user read state)
+     * POST /teams/{team}/topics/{id}/read/ — set the caller\&#39;s last-read marker for this topic to now (so its messages count as read).
+     * @endpoint post /api/v1/teams/{team_pk}/topics/{id}/read/
+     * @param id A unique integer value identifying this topic.
+     * @param teamPk ID of the parent team.
+     */
+    teamsTopicsRead(id: number, teamPk: number, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * Retrieve a topic

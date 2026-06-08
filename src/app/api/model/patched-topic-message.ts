@@ -13,17 +13,17 @@ import { CustomUserPublic } from './custom-user-public';
 /**
  * A single message. ``author`` is the nested public user; ``content`` is sanitized via bleach on every write.
  */
-export interface TopicMessage { 
-    readonly id: number;
+export interface PatchedTopicMessage { 
+    readonly id?: number;
     /**
      * Rich HTML content (sanitized via bleach on save).
      */
-    content: string;
-    readonly author: CustomUserPublic;
+    content?: string;
+    readonly author?: CustomUserPublic;
     /**
      * Set when the message is edited after creation.
      */
-    readonly edited_at: string | null;
-    readonly created_at: string;
+    readonly edited_at?: string | null;
+    readonly created_at?: string;
 }
 

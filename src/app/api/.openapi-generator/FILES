@@ -13,6 +13,8 @@ api/audit-log.service.ts
 api/audit-log.serviceInterface.ts
 api/auth.service.ts
 api/auth.serviceInterface.ts
+api/discussions.service.ts
+api/discussions.serviceInterface.ts
 api/energy-segments.service.ts
 api/energy-segments.serviceInterface.ts
 api/energy-systems.service.ts
@@ -189,6 +191,7 @@ model/patched-sport-admin.ts
 model/patched-team-join-request.ts
 model/patched-team-membership.ts
 model/patched-team.ts
+model/patched-topic-message.ts
 model/patched-training-slot.ts
 model/performance.ts
 model/place-minimal.ts
@@ -245,6 +248,8 @@ model/training-template.ts
 model/type-enum.ts
 model/unit-enum.ts
 model/unread-count.ts
+model/unread-summary.ts
+model/unread-topic.ts
 model/validate-invitation.ts
 model/verified-token-obtain-pair.ts
 model/visibility-mode.ts

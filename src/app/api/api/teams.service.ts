@@ -41,6 +41,8 @@ import { PatchedTeam } from '../model/patched-team';
 // @ts-ignore
 import { PatchedTeamMembership } from '../model/patched-team-membership';
 // @ts-ignore
+import { PatchedTopicMessage } from '../model/patched-topic-message';
+// @ts-ignore
 import { PatchedTrainingSlot } from '../model/patched-training-slot';
 // @ts-ignore
 import { Team } from '../model/team';
@@ -2853,6 +2855,87 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
     }
 
     /**
+     * Edit a message (author only)
+     * Messages nested under a topic.  URL: /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
+     * @endpoint patch /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/{id}/
+     * @param id A unique integer value identifying this message.
+     * @param teamPk ID of the parent team.
+     * @param topicPk ID of the parent topic.
+     * @param patchedTopicMessage 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public teamsTopicsMessagesPartialUpdate(id: number, teamPk: number, topicPk: number, patchedTopicMessage?: PatchedTopicMessage, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TopicMessage>;
+    public teamsTopicsMessagesPartialUpdate(id: number, teamPk: number, topicPk: number, patchedTopicMessage?: PatchedTopicMessage, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TopicMessage>>;
+    public teamsTopicsMessagesPartialUpdate(id: number, teamPk: number, topicPk: number, patchedTopicMessage?: PatchedTopicMessage, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TopicMessage>>;
+    public teamsTopicsMessagesPartialUpdate(id: number, teamPk: number, topicPk: number, patchedTopicMessage?: PatchedTopicMessage, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling teamsTopicsMessagesPartialUpdate.');
+        }
+        if (teamPk === null || teamPk === undefined) {
+            throw new Error('Required parameter teamPk was null or undefined when calling teamsTopicsMessagesPartialUpdate.');
+        }
+        if (topicPk === null || topicPk === undefined) {
+            throw new Error('Required parameter topicPk was null or undefined when calling teamsTopicsMessagesPartialUpdate.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (jwtAuth) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'application/x-www-form-urlencoded',
+            'multipart/form-data'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/teams/${this.configuration.encodeParam({name: "teamPk", value: teamPk, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/topics/${this.configuration.encodeParam({name: "topicPk", value: topicPk, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/messages/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<TopicMessage>('patch', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: patchedTopicMessage,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
      * Retrieve a message
      * Messages nested under a topic.  URL: /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
      * @endpoint get /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/{id}/
@@ -2908,6 +2991,153 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         let localVarPath = `/api/v1/teams/${this.configuration.encodeParam({name: "teamPk", value: teamPk, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/topics/${this.configuration.encodeParam({name: "topicPk", value: topicPk, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/messages/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/`;
         const { basePath, withCredentials } = this.configuration;
         return this.httpClient.request<TopicMessage>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Edit a message (author only)
+     * Messages nested under a topic.  URL: /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
+     * @endpoint put /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/{id}/
+     * @param id A unique integer value identifying this message.
+     * @param teamPk ID of the parent team.
+     * @param topicPk ID of the parent topic.
+     * @param topicMessage 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public teamsTopicsMessagesUpdate(id: number, teamPk: number, topicPk: number, topicMessage: TopicMessage, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TopicMessage>;
+    public teamsTopicsMessagesUpdate(id: number, teamPk: number, topicPk: number, topicMessage: TopicMessage, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TopicMessage>>;
+    public teamsTopicsMessagesUpdate(id: number, teamPk: number, topicPk: number, topicMessage: TopicMessage, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TopicMessage>>;
+    public teamsTopicsMessagesUpdate(id: number, teamPk: number, topicPk: number, topicMessage: TopicMessage, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling teamsTopicsMessagesUpdate.');
+        }
+        if (teamPk === null || teamPk === undefined) {
+            throw new Error('Required parameter teamPk was null or undefined when calling teamsTopicsMessagesUpdate.');
+        }
+        if (topicPk === null || topicPk === undefined) {
+            throw new Error('Required parameter topicPk was null or undefined when calling teamsTopicsMessagesUpdate.');
+        }
+        if (topicMessage === null || topicMessage === undefined) {
+            throw new Error('Required parameter topicMessage was null or undefined when calling teamsTopicsMessagesUpdate.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (jwtAuth) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'application/x-www-form-urlencoded',
+            'multipart/form-data'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/teams/${this.configuration.encodeParam({name: "teamPk", value: teamPk, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/topics/${this.configuration.encodeParam({name: "topicPk", value: topicPk, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/messages/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<TopicMessage>('put', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: topicMessage,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Mark a topic as read up to now (per-user read state)
+     * POST /teams/{team}/topics/{id}/read/ — set the caller\&#39;s last-read marker for this topic to now (so its messages count as read).
+     * @endpoint post /api/v1/teams/{team_pk}/topics/{id}/read/
+     * @param id A unique integer value identifying this topic.
+     * @param teamPk ID of the parent team.
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public teamsTopicsRead(id: number, teamPk: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public teamsTopicsRead(id: number, teamPk: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public teamsTopicsRead(id: number, teamPk: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public teamsTopicsRead(id: number, teamPk: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling teamsTopicsRead.');
+        }
+        if (teamPk === null || teamPk === undefined) {
+            throw new Error('Required parameter teamPk was null or undefined when calling teamsTopicsRead.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (jwtAuth) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/teams/${this.configuration.encodeParam({name: "teamPk", value: teamPk, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/topics/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/read/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<any>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
