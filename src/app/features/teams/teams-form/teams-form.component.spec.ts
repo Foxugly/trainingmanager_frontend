@@ -729,27 +729,17 @@ describe('TeamsFormComponent', () => {
     );
   });
 
-  // ── Encadrement: add-manager picker ───────────────────────────────────────
+  // ── Encadrement: onManagerIdsChange writes back to the form control ────────
+  // (the picker UI itself is covered by team-managers.component.spec)
 
   const mgrControls = (c: TeamsFormComponent) =>
     (c as unknown as { form: { controls: { managers_ids: { value: number[] } } } }).form.controls;
 
-  it('addableManagers excludes already-selected managers', async () => {
+  it('onManagerIdsChange writes the emitted id list to managers_ids', async () => {
     await setup('5');
-    // The loaded team has manager id 99 selected → not addable.
-    expect(access(component).addableManagers().some((m) => m.id === 99)).toBe(false);
-  });
-
-  it('confirmAddManager appends the picked id to managers_ids', async () => {
-    await setup('5');
-    // Start from a clean managers_ids so the append is observable.
-    mgrControls(component).managers_ids.value.length; // touch
-    (
-      component as unknown as { form: { controls: { managers_ids: { setValue(v: number[]): void } } } }
-    ).form.controls.managers_ids.setValue([]);
-    access(component).openAddManager();
-    (component as unknown as { managerPickId: { set(v: number): void } }).managerPickId.set(99);
-    access(component).confirmAddManager();
-    expect(mgrControls(component).managers_ids.value).toContain(99);
+    (access(component) as unknown as { onManagerIdsChange(ids: number[]): void }).onManagerIdsChange([
+      1, 2, 3,
+    ]);
+    expect(mgrControls(component).managers_ids.value).toEqual([1, 2, 3]);
   });
 });

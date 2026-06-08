@@ -60,6 +60,7 @@ import { FormFooterComponent } from '../../../shared/ui/form-footer/form-footer.
 import { MetaFieldComponent } from '../../../shared/ui/meta-field/meta-field.component';
 import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
 import { StatusBadgeComponent } from '../../../shared/ui/status-badge/status-badge.component';
+import { TeamManagersComponent } from '../team-managers/team-managers.component';
 import { TeamSlotsEditorComponent } from '../team-slots-editor/team-slots-editor.component';
 
 @Component({
@@ -90,6 +91,7 @@ import { TeamSlotsEditorComponent } from '../team-slots-editor/team-slots-editor
     MetaFieldComponent,
     FormFooterComponent,
     TeamSlotsEditorComponent,
+    TeamManagersComponent,
     TranslocoPipe,
   ],
   templateUrl: './teams-form.component.html',
@@ -405,15 +407,18 @@ export class TeamsFormComponent implements OnInit {
     return this.fieldErrors()?.[name]?.join(', ') ?? null;
   }
 
-  /** Managers currently selected (id present in the `managers_ids` control). */
+  /** Selected manager ids, mirrored from the `managers_ids` control — passed to
+   *  the app-team-managers editor, which emits changes back via onManagerIdsChange. */
   protected readonly selectedManagersValue = toSignal(
     this.form.controls.managers_ids.valueChanges,
     { initialValue: this.form.controls.managers_ids.value },
   );
-  protected readonly selectedManagers = computed<CustomUserPublic[]>(() => {
-    const ids = new Set(this.selectedManagersValue() ?? []);
-    return this.availableManagers().filter((m) => ids.has(m.id));
-  });
+
+  /** app-team-managers emitted a new id list — write it back to the form control. */
+  protected onManagerIdsChange(ids: number[]): void {
+    this.form.controls.managers_ids.setValue(ids);
+    this.form.controls.managers_ids.markAsDirty();
+  }
 
   /** Currently-chosen default place id, mirrored from the form control. */
   protected readonly defaultPlaceIdValue = toSignal(
@@ -430,60 +435,6 @@ export class TeamsFormComponent implements OnInit {
    *  subject. */
   protected requestQuotaIncrease(): void {
     openContactEmail(this.transloco.translate('teams.quota.email_subject'));
-  }
-
-  /** Two-letter initials for the avatar pill. */
-  protected managerInitials(m: CustomUserPublic): string {
-    const first = (m.first_name ?? '').trim();
-    const last = (m.last_name ?? '').trim();
-    if (first || last) {
-      return `${first.charAt(0)}${last.charAt(0)}`.toUpperCase() || first.charAt(0).toUpperCase();
-    }
-    return (m.username ?? '?').charAt(0).toUpperCase();
-  }
-
-  /** Remove a manager by deselecting its id from the form control. */
-  protected removeManager(id: number): void {
-    const next = (this.form.controls.managers_ids.value ?? []).filter((mid) => mid !== id);
-    this.form.controls.managers_ids.setValue(next);
-    this.form.controls.managers_ids.markAsDirty();
-  }
-
-  // ── Encadrement: add-manager picker dialog ──────────────────────────────
-  protected readonly managerDialogVisible = signal(false);
-  protected readonly managerPickId = signal<number | null>(null);
-
-  /** Managers not yet selected — the candidate pool for the add picker. */
-  protected readonly addableManagers = computed<CustomUserPublic[]>(() => {
-    const selected = new Set(this.selectedManagersValue() ?? []);
-    return this.availableManagers().filter((m) => !selected.has(m.id));
-  });
-
-  protected openAddManager(): void {
-    this.managerPickId.set(null);
-    this.managerDialogVisible.set(true);
-  }
-
-  protected closeAddManagerDialog(): void {
-    this.managerDialogVisible.set(false);
-  }
-
-  /** Append the picked candidate to managers_ids and close the dialog. */
-  protected confirmAddManager(): void {
-    const id = this.managerPickId();
-    if (id === null) return;
-    const current = this.form.controls.managers_ids.value ?? [];
-    if (!current.includes(id)) {
-      this.form.controls.managers_ids.setValue([...current, id]);
-      this.form.controls.managers_ids.markAsDirty();
-    }
-    this.managerDialogVisible.set(false);
-  }
-
-  /** Friendly display label for a candidate in the picker. */
-  protected managerLabel(m: CustomUserPublic): string {
-    const name = `${m.first_name ?? ''} ${m.last_name ?? ''}`.trim();
-    return name ? `${name} (@${m.username})` : `@${m.username}`;
   }
 
   /** Read + downscale the chosen image to a small data-URL, set the logo control. */

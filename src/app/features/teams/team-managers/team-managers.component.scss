@@ -1,0 +1,60 @@
+:host {
+  display: block;
+}
+
+// Section heading inside the builder pane (matches teams-form).
+.builder-section-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  margin: 0 0 0.5rem;
+}
+
+// Encadrement: list of current managers.
+.manager-list {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.manager-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--surface-soft);
+
+  & + & {
+    border-top: 1px solid var(--border);
+  }
+}
+
+.manager-avatar {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--p-primary-color, #10b981) 18%, transparent);
+  color: var(--p-primary-color, #10b981);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.manager-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.92rem;
+  color: var(--text-strong);
+}
+
+.manager-handle {
+  margin-left: 0.4rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
