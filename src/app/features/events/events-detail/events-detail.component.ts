@@ -602,7 +602,23 @@ export class EventsDetailComponent implements OnInit {
       });
   }
 
+  /** Tab values that can be deep-linked via the `?tab=` query param. */
+  private static readonly DEEPLINKABLE_TABS = new Set([
+    'training',
+    'attendance',
+    'difficulty',
+    'rsvp',
+    'attachments',
+  ]);
+
   ngOnInit(): void {
+    // Honor a deep-linked tab (e.g. dashboard "Saisir" → ?tab=attendance).
+    // Read once from the snapshot: the default stays 'training' when absent.
+    const tabParam = this.route.snapshot.queryParamMap.get('tab');
+    if (tabParam && EventsDetailComponent.DEEPLINKABLE_TABS.has(tabParam)) {
+      this.activeTab.set(tabParam);
+    }
+
     // Subscribe to paramMap (not snapshot): navigating between two event
     // detail routes reuses this component instance — e.g. after duplicating
     // a session we navigate to the copy's detail. A one-off snapshot read
