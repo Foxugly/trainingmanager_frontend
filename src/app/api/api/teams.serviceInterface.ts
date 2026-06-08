@@ -514,15 +514,6 @@ export interface TeamsServiceInterface {
     teamsTrainingTemplateRetrieve(id: number, extraHttpRequestParams?: any): Observable<TrainingTemplate>;
 
     /**
-     * Replace the team\&#39;s weekly training template (manager only)
-     * Atomically REPLACES the team\&#39;s training template: deletes the existing weekly slots and recreates them from the payload, and sets default_pool / season_start / season_end on the team. Manager/owner only (else 403). Each slot\&#39;s weekday must be 0..6 and hour_end must be after hour_start (else 400).
-     * @endpoint put /api/v1/teams/{id}/training-template/
-     * @param id A unique integer value identifying this team.
-     * @param trainingTemplate 
-     */
-    teamsTrainingTemplateUpdate(id: number, trainingTemplate: TrainingTemplate, extraHttpRequestParams?: any): Observable<TrainingTemplate>;
-
-    /**
      * 
      * CRUD sur Teams. Liste &#x3D; teams gérées par l\&#39;user + teams publiques actives.
      * @endpoint put /api/v1/teams/{id}/
