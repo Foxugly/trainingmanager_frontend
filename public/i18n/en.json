@@ -30,7 +30,12 @@
     "title": "Messages",
     "subtitle": "Access your teams' discussions.",
     "empty": "No team",
-    "empty_subtitle": "No discussions in your teams yet."
+    "empty_subtitle": "No discussions in your teams yet.",
+    "bell": {
+      "label": "Unread messages",
+      "empty": "No unread messages",
+      "view_all": "View all messages"
+    }
   },
   "ai": {
     "generating_event": "AI is preparing your session…",

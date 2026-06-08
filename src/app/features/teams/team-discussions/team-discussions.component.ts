@@ -23,11 +23,12 @@ import { Select } from 'primeng/select';
 import { Tag } from 'primeng/tag';
 import { TeamsService } from '../../../api/api/teams.service';
 import { AudienceEnum } from '../../../api/model/audience-enum';
-import { PatchedMessage } from '../../../api/model/patched-message';
+import { PatchedTopicMessage } from '../../../api/model/patched-topic-message';
 import { Team } from '../../../api/model/team';
 import { Topic } from '../../../api/model/topic';
 import { TopicCreationEnum } from '../../../api/model/topic-creation-enum';
 import { TopicMessage } from '../../../api/model/topic-message';
+import { MessagesService } from '../../../core/messages/messages.service';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { RichEditorComponent } from '../../../shared/ui/rich-editor/rich-editor.component';
 import { AttachmentListComponent } from '../../../shared/ui/attachment-list/attachment-list.component';
@@ -36,12 +37,8 @@ import { EMOJIS } from './emojis';
 /** owner | manager | member — the viewer's role within this team. */
 export type DiscussionRole = 'owner' | 'manager' | 'member';
 
-/**
- * The nested `TopicMessage` codegen type omits `edited_at` (it lives on the flat
- * `Message`/`PatchedMessage` shape). The backend does return it on the thread,
- * so we read it through this widened view rather than touching generated code.
- */
-type ThreadMessage = TopicMessage & { edited_at?: string | null };
+/** The thread message shape — `edited_at` now lives on the generated TopicMessage. */
+type ThreadMessage = TopicMessage;
 
 /**
  * Team "Discussions" panel: a list of topics + a per-topic message thread.
@@ -82,8 +79,12 @@ export class TeamDiscussionsComponent {
   private readonly teamsService = inject(TeamsService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
+  private readonly messagesService = inject(MessagesService);
   private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
+
+  /** Topic ids already marked read this session (avoid spamming the endpoint). */
+  private readonly markedReadTopicIds = new Set<number>();
 
   readonly teamId = input.required<number>();
   readonly team = input.required<Team>();
@@ -293,6 +294,26 @@ export class TeamDiscussionsComponent {
     this.editingMessageId.set(null);
     this.editContent.set('');
     this.loadMessages(topic);
+    this.markTopicRead(topic);
+  }
+
+  /**
+   * Mark the topic read up to now (once per open), then refresh the topmenu
+   * unread badge so it drops. Best-effort: failures are silent.
+   */
+  private markTopicRead(topic: Topic): void {
+    if (this.markedReadTopicIds.has(topic.id)) return;
+    this.markedReadTopicIds.add(topic.id);
+    this.teamsService
+      .teamsTopicsRead(topic.id, this.teamId())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => this.messagesService.refreshUnread().subscribe({ error: () => {} }),
+        error: () => {
+          // Allow a retry on a later open if the call failed.
+          this.markedReadTopicIds.delete(topic.id);
+        },
+      });
   }
 
   protected backToList(): void {
@@ -436,12 +457,15 @@ export class TeamDiscussionsComponent {
     const content = this.editContent().trim();
     if (this.editingMessageId() !== msg.id || this.isBlankHtml(content)) return;
 
+    const topic = this.selectedTopic();
+    if (!topic) return;
+
     this.savingEdit.set(true);
-    // Edit goes through the flat message endpoint (the nested topics path has no
-    // update verb); it carries `edited_at` back on the response.
-    const payload: PatchedMessage = { content };
+    // Edit the actual topic message via the nested endpoint (author-only); the
+    // response carries `edited_at` back.
+    const payload: PatchedTopicMessage = { content };
     this.teamsService
-      .teamsMessagesPartialUpdate(msg.id, this.teamId(), payload)
+      .teamsTopicsMessagesPartialUpdate(msg.id, this.teamId(), topic.id, payload)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (updated) => {

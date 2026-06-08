@@ -30,7 +30,12 @@
     "title": "Berichten",
     "subtitle": "Open de discussies van je teams.",
     "empty": "Geen team",
-    "empty_subtitle": "Nog geen discussies in je teams."
+    "empty_subtitle": "Nog geen discussies in je teams.",
+    "bell": {
+      "label": "Ongelezen berichten",
+      "empty": "Geen ongelezen berichten",
+      "view_all": "Alle berichten bekijken"
+    }
   },
   "ai": {
     "generating_event": "De AI bereidt je sessie voor…",

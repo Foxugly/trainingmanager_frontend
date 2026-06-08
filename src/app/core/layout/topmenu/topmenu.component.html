@@ -47,13 +47,7 @@
 
   <div class="actions actions--desktop">
     @if (mode() === 'authenticated') {
-      <a
-        class="msg-trigger"
-        [routerLink]="['/messages']"
-        [attr.aria-label]="'topmenu.messages' | transloco"
-      >
-        <i class="pi pi-comments" aria-hidden="true"></i>
-      </a>
+      <app-message-bell />
       <app-notification-bell />
     }
     <app-language-switcher />
@@ -130,14 +124,7 @@
       </nav>
       <div class="actions actions--mobile">
         @if (mode() === 'authenticated') {
-          <a
-            class="msg-trigger"
-            [routerLink]="['/messages']"
-            [attr.aria-label]="'topmenu.messages' | transloco"
-            (click)="closeMobile()"
-          >
-            <i class="pi pi-comments" aria-hidden="true"></i>
-          </a>
+          <app-message-bell />
           <app-notification-bell />
         }
         <app-language-switcher />

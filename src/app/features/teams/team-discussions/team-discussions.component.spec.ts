@@ -11,6 +11,7 @@ import { Team } from '../../../api/model/team';
 import { Topic } from '../../../api/model/topic';
 import { TopicCreationEnum } from '../../../api/model/topic-creation-enum';
 import { TopicMessage } from '../../../api/model/topic-message';
+import { MessagesService } from '../../../core/messages/messages.service';
 import { TeamDiscussionsComponent, DiscussionRole } from './team-discussions.component';
 
 const me: CustomUserPublic = { id: 1, username: 'me', first_name: 'Me', last_name: 'User' };
@@ -96,8 +97,10 @@ describe('TeamDiscussionsComponent', () => {
     teamsTopicsMessagesList: ReturnType<typeof vi.fn>;
     teamsTopicsMessagesCreate: ReturnType<typeof vi.fn>;
     teamsTopicsMessagesDestroy: ReturnType<typeof vi.fn>;
-    teamsMessagesPartialUpdate: ReturnType<typeof vi.fn>;
+    teamsTopicsMessagesPartialUpdate: ReturnType<typeof vi.fn>;
+    teamsTopicsRead: ReturnType<typeof vi.fn>;
   };
+  let messagesMock: { refreshUnread: ReturnType<typeof vi.fn> };
   let confirmationService: ConfirmationService;
 
   const access = (c: TeamDiscussionsComponent) => c as unknown as ProtectedFields;
@@ -123,12 +126,14 @@ describe('TeamDiscussionsComponent', () => {
         .mockReturnValue(of({ count: messages.length, results: messages })),
       teamsTopicsMessagesCreate: vi.fn().mockReturnValue(of(makeMessage({ id: 101 }))),
       teamsTopicsMessagesDestroy: vi.fn().mockReturnValue(of(undefined)),
-      teamsMessagesPartialUpdate: vi
+      teamsTopicsMessagesPartialUpdate: vi
         .fn()
         .mockReturnValue(
           of({ id: 100, content: '<p>Edited</p>', edited_at: '2026-01-03T00:00:00Z' }),
         ),
+      teamsTopicsRead: vi.fn().mockReturnValue(of(undefined)),
     };
+    messagesMock = { refreshUnread: vi.fn().mockReturnValue(of({ count: 0, topics: [] })) };
 
     await TestBed.configureTestingModule({
       imports: [
@@ -143,6 +148,7 @@ describe('TeamDiscussionsComponent', () => {
         MessageService,
         ConfirmationService,
         { provide: TeamsService, useValue: teamsMock },
+        { provide: MessagesService, useValue: messagesMock },
       ],
     })
       .overrideComponent(TeamDiscussionsComponent, { set: { template: '', imports: [] } })
@@ -352,15 +358,16 @@ describe('TeamDiscussionsComponent', () => {
     expect(access(component).editContent()).toBe('<p>Hello</p>');
   });
 
-  it('saveEdit calls teamsMessagesPartialUpdate and updates the message in place', () => {
+  it('saveEdit calls the nested teamsTopicsMessagesPartialUpdate and updates in place', () => {
     access(component).openTopic(makeTopic({ id: 30 }));
     const msg = access(component).messages()[0];
     access(component).startEdit(msg);
     access(component).editContent.set('<p>Edited</p>');
     access(component).saveEdit(msg);
-    expect(teamsMock.teamsMessagesPartialUpdate).toHaveBeenCalledWith(
+    expect(teamsMock.teamsTopicsMessagesPartialUpdate).toHaveBeenCalledWith(
       msg.id,
       7,
+      30,
       expect.objectContaining({ content: '<p>Edited</p>' }),
     );
     const updated = access(component)
@@ -377,7 +384,23 @@ describe('TeamDiscussionsComponent', () => {
     access(component).startEdit(msg);
     access(component).editContent.set('<p><br></p>');
     access(component).saveEdit(msg);
-    expect(teamsMock.teamsMessagesPartialUpdate).not.toHaveBeenCalled();
+    expect(teamsMock.teamsTopicsMessagesPartialUpdate).not.toHaveBeenCalled();
+  });
+
+  // --- mark-read on open ---
+
+  it('opening a topic marks it read and refreshes the unread badge', () => {
+    access(component).openTopic(makeTopic({ id: 55 }));
+    expect(teamsMock.teamsTopicsRead).toHaveBeenCalledWith(55, 7);
+    expect(messagesMock.refreshUnread).toHaveBeenCalled();
+  });
+
+  it('re-opening the same topic does not call mark-read again', () => {
+    const topic = makeTopic({ id: 56 });
+    access(component).openTopic(topic);
+    access(component).backToList();
+    access(component).openTopic(topic);
+    expect(teamsMock.teamsTopicsRead).toHaveBeenCalledTimes(1);
   });
 
   // --- emoji insertion ---

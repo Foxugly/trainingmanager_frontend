@@ -11,6 +11,8 @@ import { AuthService } from '../../auth/auth.service';
 import { LanguageService } from '../../i18n/language.service';
 import { NotificationBellComponent } from '../notification-bell/notification-bell.component';
 import { NotificationService } from '../../notifications/notification.service';
+import { MessageBellComponent } from '../message-bell/message-bell.component';
+import { MessagesService } from '../../messages/messages.service';
 import { TopmenuComponent } from './topmenu.component';
 
 interface ProtectedFields {
@@ -83,10 +85,23 @@ describe('TopmenuComponent', () => {
             reset: () => undefined,
           },
         },
+        {
+          provide: MessagesService,
+          useValue: {
+            unreadCount: signal(0).asReadonly(),
+            topics: signal([]).asReadonly(),
+            refreshUnread: () => ({ subscribe: () => undefined }),
+            loadUnread: () => ({ subscribe: () => undefined }),
+            reset: () => undefined,
+          },
+        },
       ],
     })
       .overrideComponent(NotificationBellComponent, {
         set: { template: '<span class="notif-bell-stub"></span>', imports: [] },
+      })
+      .overrideComponent(MessageBellComponent, {
+        set: { template: '<span class="msg-bell-stub"></span>', imports: [] },
       })
       .compileComponents();
 
@@ -230,29 +245,26 @@ describe('TopmenuComponent', () => {
     expect(fixture.nativeElement.querySelector('app-notification-bell')).toBeTruthy();
   });
 
-  it('renders a messages icon linking to /messages only in authenticated mode', async () => {
+  it('renders the message bell only in authenticated mode', async () => {
     await setup({ mode: 'public' });
-    expect(fixture.nativeElement.querySelector('.msg-trigger')).toBeFalsy();
+    expect(fixture.nativeElement.querySelector('app-message-bell')).toBeFalsy();
 
     await setup({ mode: 'authenticated', user: baseUser });
-    const msg = fixture.nativeElement.querySelector(
-      '.actions--desktop .msg-trigger',
-    ) as HTMLAnchorElement | null;
-    expect(msg).toBeTruthy();
-    expect(msg!.getAttribute('href')).toBe('/messages');
-    expect(msg!.querySelector('i.pi-comments')).toBeTruthy();
+    expect(
+      fixture.nativeElement.querySelector('.actions--desktop app-message-bell'),
+    ).toBeTruthy();
   });
 
   it('orders the desktop actions cluster: messages, bell, language switcher, user menu', async () => {
     await setup({ mode: 'authenticated', user: baseUser });
     const cluster = fixture.nativeElement.querySelector('.actions--desktop') as HTMLElement;
-    const selector = '.msg-trigger, app-notification-bell, app-language-switcher, app-user-menu';
-    const order = Array.from(cluster.querySelectorAll(selector)).map((el) => {
-      const tag = el.tagName.toLowerCase();
-      return tag === 'a' ? 'messages' : tag;
-    });
+    const selector =
+      'app-message-bell, app-notification-bell, app-language-switcher, app-user-menu';
+    const order = Array.from(cluster.querySelectorAll(selector)).map((el) =>
+      el.tagName.toLowerCase(),
+    );
     expect(order).toEqual([
-      'messages',
+      'app-message-bell',
       'app-notification-bell',
       'app-language-switcher',
       'app-user-menu',

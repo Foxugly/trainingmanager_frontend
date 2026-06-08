@@ -30,7 +30,12 @@
     "title": "Messaggi",
     "subtitle": "Accedi alle discussioni delle tue squadre.",
     "empty": "Nessuna squadra",
-    "empty_subtitle": "Ancora nessuna discussione nelle tue squadre."
+    "empty_subtitle": "Ancora nessuna discussione nelle tue squadre.",
+    "bell": {
+      "label": "Messaggi non letti",
+      "empty": "Nessun messaggio non letto",
+      "view_all": "Vedi tutti i messaggi"
+    }
   },
   "ai": {
     "generating_event": "L'IA sta preparando la tua sessione…",

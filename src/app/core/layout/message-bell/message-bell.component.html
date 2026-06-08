@@ -1,0 +1,49 @@
+<button
+  #msgBtn
+  type="button"
+  class="msg-trigger"
+  [attr.aria-label]="'messages.bell.label' | transloco"
+  (click)="toggle($event)"
+>
+  @if (hasUnread()) {
+    <p-overlayBadge [value]="badgeValue()" severity="danger">
+      <i class="pi pi-comments" aria-hidden="true"></i>
+    </p-overlayBadge>
+  } @else {
+    <i class="pi pi-comments" aria-hidden="true"></i>
+  }
+</button>
+
+<p-popover #panel styleClass="msg-popover">
+  <div class="msg-panel">
+    <div class="msg-head">
+      <span class="msg-title">{{ 'messages.bell.label' | transloco }}</span>
+    </div>
+
+    <div class="msg-list">
+      @if (topics().length === 0) {
+        <div class="msg-empty">
+          <i class="pi pi-inbox" aria-hidden="true"></i>
+          <span>{{ 'messages.bell.empty' | transloco }}</span>
+        </div>
+      } @else {
+        @for (topic of topics(); track topic.topic_id) {
+          <button type="button" class="msg-item" (click)="onSelect(topic)">
+            <span class="msg-dot" aria-hidden="true"></span>
+            <span class="msg-body">
+              <span class="msg-item-title">{{ topic.title }}</span>
+              <span class="msg-item-team">{{ topic.team_name }}</span>
+            </span>
+            <span class="msg-item-count">{{ topic.unread_count }}</span>
+          </button>
+        }
+      }
+    </div>
+
+    <div class="msg-foot">
+      <button type="button" class="msg-viewall" (click)="viewAll()">
+        {{ 'messages.bell.view_all' | transloco }}
+      </button>
+    </div>
+  </div>
+</p-popover>

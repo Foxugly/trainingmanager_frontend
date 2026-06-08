@@ -30,7 +30,12 @@
     "title": "Messages",
     "subtitle": "Accédez aux discussions de vos équipes.",
     "empty": "Aucune équipe",
-    "empty_subtitle": "Aucune discussion dans vos équipes pour le moment."
+    "empty_subtitle": "Aucune discussion dans vos équipes pour le moment.",
+    "bell": {
+      "label": "Messages non lus",
+      "empty": "Aucun message non lu",
+      "view_all": "Voir tous les messages"
+    }
   },
   "ai": {
     "generating_event": "L'IA prépare votre séance…",
