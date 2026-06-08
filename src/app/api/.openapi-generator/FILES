@@ -13,6 +13,8 @@ api/audit-log.service.ts
 api/audit-log.serviceInterface.ts
 api/auth.service.ts
 api/auth.serviceInterface.ts
+api/dashboard.service.ts
+api/dashboard.serviceInterface.ts
 api/discussions.service.ts
 api/discussions.serviceInterface.ts
 api/energy-segments.service.ts
@@ -85,6 +87,12 @@ model/complete-invitation.ts
 model/create-invitation.ts
 model/create-join-request.ts
 model/custom-user-public.ts
+model/dashboard-event-item.ts
+model/dashboard-event.ts
+model/dashboard-history-item.ts
+model/dashboard-managed-team.ts
+model/dashboard-member-team.ts
+model/dashboard-summary.ts
 model/duplicate-event-created.ts
 model/duplicate-event-request.ts
 model/duplicate-event-response.ts
