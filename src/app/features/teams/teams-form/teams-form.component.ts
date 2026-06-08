@@ -309,6 +309,13 @@ export class TeamsFormComponent implements OnInit {
     return this.availableSports().filter((s) => ids.has(s.id));
   });
 
+  /** Current default sport id, mirrored from the form control — pre-fills the
+   *  default sport on freshly-added training slots. */
+  protected readonly defaultSportIdValue = toSignal(
+    this.form.controls.default_sport_id.valueChanges,
+    { initialValue: this.form.controls.default_sport_id.value },
+  );
+
   private readonly autoAcceptValue = toSignal(this.form.controls.auto_accept_policy.valueChanges, {
     initialValue: this.form.controls.auto_accept_policy.value,
   });

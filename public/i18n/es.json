@@ -223,6 +223,8 @@
       "goal": "Objetivo",
       "location": "Lugar",
       "location_tooltip": "Dónde se desarrolla la sesión (piscina, pista, dirección)",
+      "sport": "Deporte",
+      "sport_tooltip": "El deporte de esta sesión, entre los deportes del equipo. Determina la generación IA y los catálogos ofrecidos.",
       "equipment": "Material",
       "equipment_tooltip": "Muestra el material activado para el equipo (ajustes del equipo).",
       "equipment_empty_hint": "Primero activa material en los ajustes del equipo.",
@@ -488,7 +490,8 @@
     "slot_saved": "Franja guardada.",
     "slot_deleted": "Franja eliminada.",
     "delete_confirm": "¿Eliminar esta franja?",
-    "place_not_in_team": "Este lugar no está vinculado al equipo."
+    "place_not_in_team": "Este lugar no está vinculado al equipo.",
+    "sport_not_in_team": "Este deporte no es uno de los deportes del equipo."
   },
   "teams": {
     "list": {
@@ -631,6 +634,7 @@
     "fields": {
       "name": "Nombre",
       "sport": "Deporte",
+      "sports": "Deportes",
       "language": "Idioma",
       "owner": "Propietario",
       "managers": "Managers",

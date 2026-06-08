@@ -58,6 +58,8 @@ type SlotFormGroup = FormGroup<{
   hour_end: FormControl<Date | null>;
   /** Linked venue id (one of the team's places), or null for "no place". */
   place_id: FormControl<number | null>;
+  /** Slot sport id (one of the team's sports), or null to default server-side. */
+  sport_id: FormControl<number | null>;
 }>;
 
 /** Per-slot validator: hour_end must be strictly after hour_start. */
@@ -105,6 +107,11 @@ export class TeamSlotsEditorComponent {
   readonly places = input<Place[]>([]);
   /** Default venue id, pre-filled on a freshly-added slot. */
   readonly defaultPlaceId = input<number | null>(null);
+  /** The team's sports, offered in the per-slot sport select (multi-sport).
+   *  Structural ({ id, name }) so either Sport or TeamSportRead fits. */
+  readonly sports = input<{ id: number; name: string }[]>([]);
+  /** Default sport id, pre-filled on a freshly-added slot. */
+  readonly defaultSportId = input<number | null>(null);
 
   protected readonly templateLoading = signal(false);
   /** Indices of slot rows with an in-flight save/delete (per-row spinner). */
@@ -154,15 +161,17 @@ export class TeamSlotsEditorComponent {
           Validators.required,
         ]),
         place_id: this.fb.control<number | null>(slot?.place?.id ?? null),
+        sport_id: this.fb.control<number | null>(slot?.sport?.id ?? null),
       },
       { validators: [slotTimeRangeValidator] },
     ) as SlotFormGroup;
   }
 
-  /** Add a new editable row, defaulting its lieu to the team default place. */
+  /** Add a new editable row, defaulting its lieu + sport to the team defaults. */
   protected addSlot(): void {
     const group = this.buildSlotGroup();
     group.controls.place_id.setValue(this.defaultPlaceId());
+    group.controls.sport_id.setValue(this.defaultSportId());
     this.slots.push(group);
     this.editingSlotIndices.update((cur) => new Set(cur).add(this.slots.length - 1));
   }
@@ -254,6 +263,7 @@ export class TeamSlotsEditorComponent {
       hour_start: toHourMinute(group.controls.hour_start.value) ?? '',
       hour_end: toHourMinute(group.controls.hour_end.value) ?? '',
       place_id: group.controls.place_id.value ?? null,
+      sport_id: group.controls.sport_id.value ?? null,
     };
 
     this.setSlotSaving(index, true);
@@ -275,6 +285,7 @@ export class TeamSlotsEditorComponent {
           hour_start: parseTime(saved.hour_start),
           hour_end: parseTime(saved.hour_end),
           place_id: saved.place?.id ?? null,
+          sport_id: saved.sport?.id ?? null,
         });
         group.markAsPristine();
         this.editingSlotIndices.update((cur) => {
@@ -303,10 +314,15 @@ export class TeamSlotsEditorComponent {
 
   /** Toast a per-slot save error (place_not_in_team / validation / forbidden). */
   private notifySlotError(err: HttpErrorResponse): void {
-    const body = err?.error as { code?: string; place_id?: unknown } | null | undefined;
+    const body = err?.error as
+      | { code?: string; place_id?: unknown; sport_id?: unknown }
+      | null
+      | undefined;
     let detail: string;
     if (body?.code === 'place_not_in_team' || body?.place_id) {
       detail = this.transloco.translate('training_template.place_not_in_team');
+    } else if (body?.code === 'sport_not_in_team' || body?.sport_id) {
+      detail = this.transloco.translate('training_template.sport_not_in_team');
     } else if (err.status === 403) {
       detail = this.transloco.translate('training_template.error_forbidden');
     } else {
@@ -338,6 +354,15 @@ export class TeamSlotsEditorComponent {
     if (placeId == null) return '—';
     return this.places().find((p) => p.id === placeId)?.name ?? '—';
   }
+
+  protected slotSportName(index: number): string {
+    const sportId = this.slots.at(index)?.controls.sport_id.value ?? null;
+    if (sportId == null) return '—';
+    return this.sports().find((s) => s.id === sportId)?.name ?? '—';
+  }
+
+  /** True when the team has several sports — drives the per-slot sport column. */
+  protected readonly showSportColumn = computed(() => this.sports().length > 1);
 
   protected slotHasTimeError(index: number): boolean {
     const group = this.slots.at(index);

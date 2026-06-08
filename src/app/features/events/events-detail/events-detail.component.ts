@@ -397,10 +397,12 @@ export class EventsDetailComponent implements OnInit {
   private optionsSportId: number | null = null;
 
   constructor() {
-    // Load modality + energy-segment option lists once the team's sport is known,
-    // so inline edit/add rows have their selects ready without a per-row fetch.
+    // Load modality + energy-segment option lists once the session's sport is
+    // known, so inline edit/add rows have their selects ready without a per-row
+    // fetch. Multi-sport: scope to the event's own sport, falling back to the
+    // team default for legacy events with no explicit sport.
     effect(() => {
-      const sportId = this.team()?.sport?.id ?? null;
+      const sportId = this.event()?.sport?.id ?? this.team()?.sport?.id ?? null;
       if (sportId == null) return;
       if (this.optionsSportId === sportId) return;
       this.optionsSportId = sportId;

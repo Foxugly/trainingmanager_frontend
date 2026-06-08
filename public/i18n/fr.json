@@ -223,6 +223,8 @@
       "goal": "Objectif",
       "location": "Lieu",
       "location_tooltip": "Où se déroule la séance (piscine, piste, adresse)",
+      "sport": "Sport",
+      "sport_tooltip": "Le sport de cette séance, parmi les sports de l'équipe. Détermine la génération IA et les catalogues proposés.",
       "equipment": "Matériel",
       "equipment_tooltip": "Liste le matériel activé pour l'équipe (réglages de l'équipe).",
       "equipment_empty_hint": "Activez d'abord du matériel dans les réglages de l'équipe.",
@@ -488,7 +490,8 @@
     "slot_saved": "Créneau enregistré.",
     "slot_deleted": "Créneau supprimé.",
     "delete_confirm": "Supprimer ce créneau ?",
-    "place_not_in_team": "Ce lieu n'est pas associé à l'équipe."
+    "place_not_in_team": "Ce lieu n'est pas associé à l'équipe.",
+    "sport_not_in_team": "Ce sport ne fait pas partie des sports de l'équipe."
   },
   "teams": {
     "list": {
@@ -631,6 +634,7 @@
     "fields": {
       "name": "Nom",
       "sport": "Sport",
+      "sports": "Sports",
       "language": "Langue",
       "owner": "Propriétaire",
       "managers": "Managers",

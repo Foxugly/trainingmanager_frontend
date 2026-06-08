@@ -33,6 +33,7 @@ import { TeamsService } from '../../../api/api/teams.service';
 import { Event } from '../../../api/model/event';
 import { PatchedEvent } from '../../../api/model/patched-event';
 import { Program } from '../../../api/model/program';
+import { TeamSportRead } from '../../../api/model/team-sport-read';
 import { VisibilityMode } from '../../../api/model/visibility-mode';
 import { type FieldErrors, extractServerError } from '../../../shared/forms/notify-error';
 import { buildVisibilityOptions } from '../../../shared/forms/visibility-options';
@@ -124,6 +125,10 @@ export class EventsFormComponent implements OnInit {
 
   /** Team id resolved from the selected program, scoping the Place selector. */
   protected readonly selectedTeamId = signal<number | null>(null);
+  /** The resolved team's sports — options for the session's sport select. */
+  protected readonly teamSports = signal<TeamSportRead[]>([]);
+  /** Team id the sports were last fetched for (avoids redundant retrieves). */
+  private loadedSportsForTeamId: number | null = null;
   /**
    * Legacy free-text location carried by an event that has no linked place yet.
    * Shown as a hint under the Lieu selector; selecting/creating a place wins.
@@ -163,6 +168,9 @@ export class EventsFormComponent implements OnInit {
       // goal & equipment now hold rich-text HTML (sanitized server-side); no
       // client length cap on the HTML payload.
       goal: [''],
+      // Multi-sport: the session's sport (one of the team's sports). Optional —
+      // the backend defaults it to the team's default sport when omitted.
+      sport_id: this.fb.nonNullable.control<number | null>(null),
       place_id: this.fb.nonNullable.control<number | null>(null),
       equipment_item_ids: this.fb.nonNullable.control<number[]>([]),
       date: this.fb.nonNullable.control<Date | null>(null, [Validators.required]),
@@ -257,6 +265,30 @@ export class EventsFormComponent implements OnInit {
     const teamId = program?.team_id ?? program?.team?.id ?? null;
     if (teamId == null) return;
     this.selectedTeamId.set(teamId);
+    this.loadTeamSports(teamId);
+  }
+
+  /** Fetch the resolved team's sports and, on create, default the session sport
+   *  to the team's default. No-op if already loaded for this team. */
+  private loadTeamSports(teamId: number): void {
+    if (this.loadedSportsForTeamId === teamId) return;
+    this.loadedSportsForTeamId = teamId;
+    this.teamsService
+      .teamsRetrieve(teamId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (t) => {
+          const sports = t.sports ?? [];
+          this.teamSports.set(sports);
+          // Default only when nothing is chosen yet (preserves an edited event's
+          // own sport, set in loadEvent before the team resolves).
+          if (this.form.controls.sport_id.value == null) {
+            const def = sports.find((s) => s.is_default) ?? sports[0];
+            if (def) this.form.controls.sport_id.setValue(def.id);
+          }
+        },
+        error: () => this.teamSports.set([]),
+      });
   }
 
   private loadAvailablePrograms(): void {
@@ -313,6 +345,7 @@ export class EventsFormComponent implements OnInit {
             name: e.name,
             refer_program_id: e.refer_program?.id ?? null,
             goal: e.goal ?? '',
+            sport_id: e.sport?.id ?? null,
             place_id: e.place?.id ?? null,
             equipment_item_ids: e.equipment_items?.map((i) => i.id) ?? [],
             date: parseDate(e.date),
@@ -373,6 +406,7 @@ export class EventsFormComponent implements OnInit {
         name: value.name,
         refer_program_id: value.refer_program_id,
         goal: value.goal || null,
+        sport_id: value.sport_id ?? null,
         place_id: value.place_id ?? null,
         equipment_item_ids: value.equipment_item_ids ?? [],
         date: toIsoDate(value.date),
@@ -405,6 +439,7 @@ export class EventsFormComponent implements OnInit {
       name: value.name,
       refer_program_id: value.refer_program_id ?? undefined,
       goal: value.goal || undefined,
+      sport_id: value.sport_id ?? undefined,
       place_id: value.place_id ?? null,
       equipment_item_ids: value.equipment_item_ids ?? [],
       date: toIsoDate(value.date) ?? undefined,

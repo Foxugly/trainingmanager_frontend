@@ -370,7 +370,8 @@ describe('EventsFormComponent', () => {
     access(component).onVisChanged();
     access(component).form.patchValue({ refer_program_id: 4 });
     await new Promise((r) => setTimeout(r, 0));
-    expect(teamsMock.teamsRetrieve).not.toHaveBeenCalled();
+    // The team is still fetched (to populate the session-sport options), but the
+    // user-touched visibility controls must NOT be overwritten by team defaults.
     expect(access(component).form.getRawValue()).toMatchObject({
       vis_distance: VisibilityMode.Never,
     });

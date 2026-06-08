@@ -223,6 +223,8 @@
       "goal": "Goal",
       "location": "Location",
       "location_tooltip": "Where the session takes place (pool, track, address)",
+      "sport": "Sport",
+      "sport_tooltip": "This session's sport, among the team's sports. Drives the AI generation and the catalogs offered.",
       "equipment": "Equipment",
       "equipment_tooltip": "Lists the equipment enabled for the team (team settings).",
       "equipment_empty_hint": "First enable some equipment in the team settings.",
@@ -488,7 +490,8 @@
     "slot_saved": "Slot saved.",
     "slot_deleted": "Slot deleted.",
     "delete_confirm": "Delete this slot?",
-    "place_not_in_team": "This place is not linked to the team."
+    "place_not_in_team": "This place is not linked to the team.",
+    "sport_not_in_team": "This sport is not one of the team's sports."
   },
   "teams": {
     "list": {
@@ -631,6 +634,7 @@
     "fields": {
       "name": "Name",
       "sport": "Sport",
+      "sports": "Sports",
       "language": "Language",
       "owner": "Owner",
       "managers": "Managers",

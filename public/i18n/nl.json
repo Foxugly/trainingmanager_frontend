@@ -223,6 +223,8 @@
       "goal": "Doel",
       "location": "Locatie",
       "location_tooltip": "Waar de sessie plaatsvindt (zwembad, baan, adres)",
+      "sport": "Sport",
+      "sport_tooltip": "De sport van deze sessie, een van de sporten van het team. Bepaalt de AI-generatie en de aangeboden catalogi.",
       "equipment": "Materiaal",
       "equipment_tooltip": "Toont het materiaal dat voor het team is ingeschakeld (teaminstellingen).",
       "equipment_empty_hint": "Schakel eerst materiaal in bij de teaminstellingen.",
@@ -488,7 +490,8 @@
     "slot_saved": "Tijdslot opgeslagen.",
     "slot_deleted": "Tijdslot verwijderd.",
     "delete_confirm": "Dit tijdslot verwijderen?",
-    "place_not_in_team": "Deze locatie is niet aan het team gekoppeld."
+    "place_not_in_team": "Deze locatie is niet aan het team gekoppeld.",
+    "sport_not_in_team": "Deze sport is geen van de sporten van het team."
   },
   "teams": {
     "list": {
@@ -631,6 +634,7 @@
     "fields": {
       "name": "Naam",
       "sport": "Sport",
+      "sports": "Sporten",
       "language": "Taal",
       "owner": "Eigenaar",
       "managers": "Managers",

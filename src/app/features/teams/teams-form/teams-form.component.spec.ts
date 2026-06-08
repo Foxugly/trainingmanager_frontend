@@ -310,6 +310,19 @@ describe('TeamsFormComponent', () => {
     });
   });
 
+  it('resets the default sport when it is removed from the selected set', () => {
+    access(component).form.patchValue({ sport_ids: [1, 2] });
+    access(component).form.patchValue({ default_sport_id: 2 });
+    // Drop the current default (2) from the selection: default falls back to 1.
+    access(component).form.patchValue({ sport_ids: [1] });
+    expect(access(component).form.getRawValue()['default_sport_id']).toBe(1);
+  });
+
+  it('auto-picks the only sport as default when a single sport is selected', () => {
+    access(component).form.patchValue({ sport_ids: [7] });
+    expect(access(component).form.getRawValue()['default_sport_id']).toBe(7);
+  });
+
   it('seeds level_id to null when the loaded team has no level', async () => {
     await setup('5', ownerUser, { ...team, level: undefined });
     expect(access(component).form.getRawValue()).toMatchObject({ level_id: null });

@@ -38,6 +38,9 @@
           <th>{{ 'events.form.hour_start' | transloco }}</th>
           <th>{{ 'events.form.hour_end' | transloco }}</th>
           <th>{{ 'training_template.place_label' | transloco }}</th>
+          @if (showSportColumn()) {
+            <th>{{ 'teams.form.sport' | transloco }}</th>
+          }
           <th class="text-right">{{ 'common.actions' | transloco }}</th>
         </tr>
       </ng-template>
@@ -97,6 +100,20 @@
                 [ariaLabel]="'training_template.place_label' | transloco"
               />
             </td>
+            @if (showSportColumn()) {
+              <td>
+                <p-select
+                  [inputId]="'slot_sport_' + i"
+                  [options]="sports()"
+                  formControlName="sport_id"
+                  optionLabel="name"
+                  optionValue="id"
+                  appendTo="body"
+                  styleClass="w-full"
+                  [ariaLabel]="'teams.form.sport' | transloco"
+                />
+              </td>
+            }
             <td class="text-right whitespace-nowrap">
               <p-button
                 type="button"
@@ -131,6 +148,11 @@
             <td [class.text-gray-500]="slotPlaceName(i) === '—'">
               {{ slotPlaceName(i) }}
             </td>
+            @if (showSportColumn()) {
+              <td [class.text-gray-500]="slotSportName(i) === '—'">
+                {{ slotSportName(i) }}
+              </td>
+            }
             <td class="text-right whitespace-nowrap">
               <p-button
                 type="button"

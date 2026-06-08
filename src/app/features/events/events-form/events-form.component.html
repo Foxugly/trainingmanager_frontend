@@ -41,6 +41,28 @@
           </app-meta-field>
         </div>
 
+        <!-- Multi-sport: choose the session's sport (only when the team has
+             several; single-sport teams default it server-side). -->
+        @if (teamSports().length > 1) {
+          <div class="meta-grid cols-2">
+            <app-meta-field
+              [label]="'events.form.sport' | transloco"
+              [tooltip]="'events.form.sport_tooltip' | transloco"
+              for="sport_id"
+              [error]="fieldError('sport_id')"
+            >
+              <p-select
+                inputId="sport_id"
+                [options]="teamSports()"
+                formControlName="sport_id"
+                optionLabel="name"
+                optionValue="id"
+                [filter]="true"
+              />
+            </app-meta-field>
+          </div>
+        }
+
         <div class="meta-grid">
           <app-meta-field [full]="true" [label]="'events.form.goal' | transloco" for="goal" [error]="fieldError('goal')">
             <app-rich-editor formControlName="goal" [style]="{ height: '7rem' }" />

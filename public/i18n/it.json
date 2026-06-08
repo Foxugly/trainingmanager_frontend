@@ -223,6 +223,8 @@
       "goal": "Obiettivo",
       "location": "Luogo",
       "location_tooltip": "Dove si svolge la sessione (piscina, pista, indirizzo)",
+      "sport": "Sport",
+      "sport_tooltip": "Lo sport di questa sessione, tra gli sport della squadra. Determina la generazione IA e i cataloghi proposti.",
       "equipment": "Attrezzatura",
       "equipment_tooltip": "Elenca l'attrezzatura abilitata per la squadra (impostazioni della squadra).",
       "equipment_empty_hint": "Abilita prima dell'attrezzatura nelle impostazioni della squadra.",
@@ -488,7 +490,8 @@
     "slot_saved": "Fascia oraria salvata.",
     "slot_deleted": "Fascia oraria eliminata.",
     "delete_confirm": "Eliminare questa fascia oraria?",
-    "place_not_in_team": "Questo luogo non è associato alla squadra."
+    "place_not_in_team": "Questo luogo non è associato alla squadra.",
+    "sport_not_in_team": "Questo sport non fa parte degli sport della squadra."
   },
   "teams": {
     "list": {
@@ -631,6 +634,7 @@
     "fields": {
       "name": "Nome",
       "sport": "Sport",
+      "sports": "Sport",
       "language": "Lingua",
       "owner": "Proprietario",
       "managers": "Manager",

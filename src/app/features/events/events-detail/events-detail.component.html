@@ -802,7 +802,7 @@
     [mode]="roundDialogMode()"
     [round]="editingRound()"
     [eventId]="e.id"
-    [teamSportId]="team()?.sport?.id ?? null"
+    [teamSportId]="e.sport?.id ?? team()?.sport?.id ?? null"
     [teamLanguage]="team()?.language ?? 'fr'"
     (closed)="onRoundDialogClosed($event)"
   />
