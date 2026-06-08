@@ -475,7 +475,15 @@
       "friday": "Vr",
       "saturday": "Za",
       "sunday": "Zo"
-    }
+    },
+    "slots_help": "Elk tijdslot wordt afzonderlijk opgeslagen (toevoegen, bewerken en verwijderen gaan meteen in).",
+    "slots_empty_subtitle": "Er is nog geen tijdslot gedefinieerd voor dit team.",
+    "place_label": "Locatie",
+    "slot_created": "Tijdslot toegevoegd.",
+    "slot_saved": "Tijdslot opgeslagen.",
+    "slot_deleted": "Tijdslot verwijderd.",
+    "delete_confirm": "Dit tijdslot verwijderen?",
+    "place_not_in_team": "Deze locatie is niet aan het team gekoppeld."
   },
   "teams": {
     "list": {

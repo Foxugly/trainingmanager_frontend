@@ -475,7 +475,15 @@
       "friday": "Ven",
       "saturday": "Sab",
       "sunday": "Dom"
-    }
+    },
+    "slots_help": "Ogni fascia oraria viene salvata singolarmente (aggiunta, modifica ed eliminazione immediate).",
+    "slots_empty_subtitle": "Nessuna fascia oraria è ancora definita per questa squadra.",
+    "place_label": "Luogo",
+    "slot_created": "Fascia oraria aggiunta.",
+    "slot_saved": "Fascia oraria salvata.",
+    "slot_deleted": "Fascia oraria eliminata.",
+    "delete_confirm": "Eliminare questa fascia oraria?",
+    "place_not_in_team": "Questo luogo non è associato alla squadra."
   },
   "teams": {
     "list": {

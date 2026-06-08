@@ -55,8 +55,8 @@ import { PatchedTeam } from '../../../api/model/patched-team';
 import { Sport } from '../../../api/model/sport';
 import { Team } from '../../../api/model/team';
 import { TopicCreationEnum } from '../../../api/model/topic-creation-enum';
+import { PatchedTrainingSlot } from '../../../api/model/patched-training-slot';
 import { TrainingSlot } from '../../../api/model/training-slot';
-import { TrainingTemplate } from '../../../api/model/training-template';
 import { WeekdayEnum } from '../../../api/model/weekday-enum';
 import { VisibilityMode } from '../../../api/model/visibility-mode';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -74,25 +74,11 @@ import { MetaFieldComponent } from '../../../shared/ui/meta-field/meta-field.com
 import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
 import { StatusBadgeComponent } from '../../../shared/ui/status-badge/status-badge.component';
 
-function toIsoDate(d: Date | null | undefined): string | null {
-  if (!d) return null;
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-}
-
 function toHourMinute(d: Date | null | undefined): string | null {
   if (!d) return null;
   const hh = String(d.getHours()).padStart(2, '0');
   const mm = String(d.getMinutes()).padStart(2, '0');
   return `${hh}:${mm}`;
-}
-
-function parseDate(value: string | null | undefined): Date | null {
-  if (!value) return null;
-  const d = new Date(value);
-  return Number.isFinite(d.getTime()) ? d : null;
 }
 
 function parseTime(value: string | null | undefined): Date | null {
@@ -105,9 +91,13 @@ function parseTime(value: string | null | undefined): Date | null {
 }
 
 type SlotFormGroup = FormGroup<{
+  /** Backend id of the persisted slot, or null for a not-yet-saved new row. */
+  id: FormControl<number | null>;
   weekday: FormControl<WeekdayEnum>;
   hour_start: FormControl<Date | null>;
   hour_end: FormControl<Date | null>;
+  /** Linked venue id (one of the team's places), or null for "no place". */
+  place_id: FormControl<number | null>;
 }>;
 
 /** Per-slot validator: hour_end must be strictly after hour_start. */
@@ -168,6 +158,7 @@ export class TeamsFormComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly nominatim = inject(NominatimService);
   private readonly messageService = inject(MessageService);
+  private readonly confirmationService = inject(ConfirmationService);
   private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -247,9 +238,13 @@ export class TeamsFormComponent implements OnInit {
 
   protected readonly isEditMode = computed(() => this.teamId() !== null);
 
-  // ── Planning type (weekly training template) ────────────────────────────
+  // ── Planning type (weekly training slots, saved per-créneau) ─────────────
   protected readonly templateLoading = signal(false);
-  protected readonly templateSaving = signal(false);
+  /**
+   * Indices of slot rows currently busy with a per-slot save/delete request.
+   * Drives the per-row spinner + disables the confirm/delete buttons.
+   */
+  protected readonly savingSlotIndices = signal<ReadonlySet<number>>(new Set());
   /**
    * Indices of slot rows currently shown in inline-edit mode. Existing slots
    * render as a read-only summary line by default; a freshly-added slot starts
@@ -328,9 +323,6 @@ export class TeamsFormComponent implements OnInit {
 
   protected readonly templateForm = this.fb.group({
     slots: this.fb.array<SlotFormGroup>([]),
-    default_pool: this.fb.nonNullable.control<string>(''),
-    season_start: this.fb.nonNullable.control<Date | null>(null),
-    season_end: this.fb.nonNullable.control<Date | null>(null),
   });
 
   protected get slots(): FormArray<SlotFormGroup> {
@@ -434,7 +426,7 @@ export class TeamsFormComponent implements OnInit {
         return;
       }
       this.teamId.set(id);
-      this.loadTemplate(id);
+      this.loadSlots(id);
       this.loading.set(true);
       this.teamsService
         .teamsRetrieve(id)
@@ -835,9 +827,10 @@ export class TeamsFormComponent implements OnInit {
   // ── Planning type (weekly training template) ────────────────────────────
 
   /** Build a slot form group from an optional existing slot. */
-  private buildSlotGroup(slot?: TrainingSlot): SlotFormGroup {
+  private buildSlotGroup(slot?: TrainingSlot & { id?: number }): SlotFormGroup {
     return this.fb.group(
       {
+        id: this.fb.control<number | null>(slot?.id ?? null),
         weekday: this.fb.nonNullable.control<WeekdayEnum>(
           slot?.weekday ?? WeekdayEnum.NUMBER_0,
           [Validators.required],
@@ -848,31 +841,73 @@ export class TeamsFormComponent implements OnInit {
         hour_end: this.fb.nonNullable.control<Date | null>(parseTime(slot?.hour_end), [
           Validators.required,
         ]),
+        place_id: this.fb.control<number | null>(slot?.place?.id ?? null),
       },
       { validators: [slotTimeRangeValidator] },
     ) as SlotFormGroup;
   }
 
+  /** Add a new editable row, defaulting its lieu to the team default place. */
   protected addSlot(): void {
-    this.slots.push(this.buildSlotGroup());
-    this.slots.markAsDirty();
+    const group = this.buildSlotGroup();
+    group.controls.place_id.setValue(this.form.controls.default_place_id.value ?? null);
+    this.slots.push(group);
     // A new slot has no values yet — open it directly in edit mode.
     this.editingSlotIndices.update((cur) => new Set(cur).add(this.slots.length - 1));
   }
 
+  /**
+   * Delete a slot row. A persisted row (has an id) is removed via the per-slot
+   * DELETE endpoint after a confirm dialog; an unsaved new row is just dropped.
+   */
   protected removeSlot(index: number): void {
+    const group = this.slots.at(index);
+    const id = group?.controls.id.value ?? null;
+    const teamId = this.teamId();
+    if (id == null || teamId == null) {
+      this.dropSlotRow(index);
+      return;
+    }
+    this.confirmationService.confirm({
+      message: this.transloco.translate('training_template.delete_confirm'),
+      header: this.transloco.translate('training_template.remove_slot'),
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: this.transloco.translate('common.delete'),
+      rejectLabel: this.transloco.translate('common.cancel'),
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => {
+        this.setSlotSaving(index, true);
+        this.teamsService
+          .teamsTrainingSlotsDestroy(id, teamId)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe({
+            next: () => {
+              this.setSlotSaving(index, false);
+              this.dropSlotRow(index);
+              this.notifyPlaceToast('training_template.slot_deleted');
+            },
+            error: (err: HttpErrorResponse) => {
+              this.setSlotSaving(index, false);
+              this.notifySlotError(err);
+            },
+          });
+      },
+    });
+  }
+
+  /** Remove a row from the FormArray and re-index the edit/saving sets. */
+  private dropSlotRow(index: number): void {
     this.slots.removeAt(index);
-    this.slots.markAsDirty();
-    // Drop the removed index and shift every higher index down by one so the
-    // edit-mode set keeps tracking the right rows after the array re-indexes.
-    this.editingSlotIndices.update((cur) => {
+    const reindex = (cur: ReadonlySet<number>): Set<number> => {
       const next = new Set<number>();
       for (const i of cur) {
         if (i < index) next.add(i);
         else if (i > index) next.add(i - 1);
       }
       return next;
-    });
+    };
+    this.editingSlotIndices.update(reindex);
+    this.savingSlotIndices.update(reindex);
   }
 
   /** Whether the slot row at `index` is currently in inline-edit mode. */
@@ -880,34 +915,123 @@ export class TeamsFormComponent implements OnInit {
     return this.editingSlotIndices().has(index);
   }
 
+  /** Whether the slot row at `index` has an in-flight save/delete request. */
+  protected isSlotSaving(index: number): boolean {
+    return this.savingSlotIndices().has(index);
+  }
+
+  private setSlotSaving(index: number, busy: boolean): void {
+    this.savingSlotIndices.update((cur) => {
+      const next = new Set(cur);
+      if (busy) next.add(index);
+      else next.delete(index);
+      return next;
+    });
+  }
+
   /** Switch a slot row to inline-edit mode. */
   protected editSlot(index: number): void {
     this.editingSlotIndices.update((cur) => new Set(cur).add(index));
   }
 
-  /** Collapse a slot row back to its read-only summary (if it is valid). */
+  /**
+   * Confirm a slot row: persist it on its own. A new row (no id) is POSTed; an
+   * existing row is PATCHed. On success the row collapses to its summary and is
+   * refreshed from the server response. Validation/place errors raise a toast.
+   */
   protected confirmSlot(index: number): void {
     const group = this.slots.at(index);
-    if (group && group.invalid) {
+    const teamId = this.teamId();
+    if (!group || teamId == null) return;
+    if (group.invalid) {
       group.markAllAsTouched();
       return;
     }
-    this.editingSlotIndices.update((cur) => {
-      const next = new Set(cur);
-      next.delete(index);
-      return next;
+
+    const id = group.controls.id.value;
+    const body = {
+      weekday: group.controls.weekday.value,
+      hour_start: toHourMinute(group.controls.hour_start.value) ?? '',
+      hour_end: toHourMinute(group.controls.hour_end.value) ?? '',
+      place_id: group.controls.place_id.value ?? null,
+    };
+
+    this.setSlotSaving(index, true);
+    const request$ =
+      id == null
+        ? this.teamsService.teamsTrainingSlotsCreate(teamId, body as unknown as TrainingSlot)
+        : this.teamsService.teamsTrainingSlotsPartialUpdate(
+            id,
+            teamId,
+            body as unknown as PatchedTrainingSlot,
+          );
+
+    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (saved) => {
+        this.setSlotSaving(index, false);
+        // Refresh the row from the server response (canonical id + place).
+        group.patchValue({
+          id: saved.id ?? id ?? null,
+          weekday: saved.weekday,
+          hour_start: parseTime(saved.hour_start),
+          hour_end: parseTime(saved.hour_end),
+          place_id: saved.place?.id ?? null,
+        });
+        group.markAsPristine();
+        this.editingSlotIndices.update((cur) => {
+          const next = new Set(cur);
+          next.delete(index);
+          return next;
+        });
+        this.notifyPlaceToast(id == null ? 'training_template.slot_created' : 'training_template.slot_saved');
+      },
+      error: (err: HttpErrorResponse) => {
+        this.setSlotSaving(index, false);
+        this.notifySlotError(err);
+      },
     });
   }
 
-  /** Read-only one-line summary for a slot, e.g. "Lundi 18:00 – 19:30". */
-  protected slotSummary(index: number): string {
+  /** Toast a per-slot save error (place_not_in_team / validation / forbidden). */
+  private notifySlotError(err: HttpErrorResponse): void {
+    const body = err?.error as { code?: string; place_id?: unknown } | null | undefined;
+    let detail: string;
+    if (body?.code === 'place_not_in_team' || body?.place_id) {
+      detail = this.transloco.translate('training_template.place_not_in_team');
+    } else if (err.status === 403) {
+      detail = this.transloco.translate('training_template.error_forbidden');
+    } else {
+      detail = this.transloco.translate('training_template.error');
+    }
+    this.messageService.add({
+      severity: 'error',
+      summary: this.transloco.translate('common.error'),
+      detail,
+    });
+  }
+
+  /** Weekday name for a slot row (read-only display). */
+  protected slotWeekdayLabel(index: number): string {
     const group = this.slots.at(index);
     if (!group) return '';
-    const weekday = group.controls.weekday.value;
-    const label = this.weekdayOptions()[weekday]?.label ?? '';
-    const start = toHourMinute(group.controls.hour_start.value) ?? '—';
-    const end = toHourMinute(group.controls.hour_end.value) ?? '—';
-    return `${label} ${start} – ${end}`.trim();
+    return this.weekdayOptions()[group.controls.weekday.value]?.label ?? '';
+  }
+
+  /** Read-only HH:MM display for a slot's start time. */
+  protected slotStart(index: number): string {
+    return toHourMinute(this.slots.at(index)?.controls.hour_start.value) ?? '—';
+  }
+
+  /** Read-only HH:MM display for a slot's end time. */
+  protected slotEnd(index: number): string {
+    return toHourMinute(this.slots.at(index)?.controls.hour_end.value) ?? '—';
+  }
+
+  /** Read-only venue name for a slot row, or "—" when none. */
+  protected slotPlaceName(index: number): string {
+    const placeId = this.slots.at(index)?.controls.place_id.value ?? null;
+    if (placeId == null) return '—';
+    return this.places().find((p) => p.id === placeId)?.name ?? '—';
   }
 
   /** True when the slot at `index` has an end time at or before its start. */
@@ -916,25 +1040,21 @@ export class TeamsFormComponent implements OnInit {
     return !!group && group.errors?.['time_range'] === true;
   }
 
-  private loadTemplate(teamId: number): void {
+  /** Load the team's weekly slots via the per-slot list endpoint. */
+  private loadSlots(teamId: number): void {
     this.templateLoading.set(true);
     this.teamsService
-      .teamsTrainingTemplateRetrieve(teamId)
+      .teamsTrainingSlotsList(teamId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (tpl) => {
+        next: (list) => {
           this.slots.clear();
-          for (const slot of tpl.slots ?? []) {
-            this.slots.push(this.buildSlotGroup(slot));
+          for (const slot of list ?? []) {
+            this.slots.push(this.buildSlotGroup(slot as TrainingSlot & { id?: number }));
           }
           // Existing slots start collapsed (read-only summary).
           this.editingSlotIndices.set(new Set());
-          this.templateForm.patchValue({
-            default_pool: tpl.default_pool ?? '',
-            season_start: parseDate(tpl.season_start),
-            season_end: parseDate(tpl.season_end),
-          });
-          this.templateForm.markAsPristine();
+          this.savingSlotIndices.set(new Set());
           this.templateLoading.set(false);
         },
         error: () => {
@@ -1146,52 +1266,4 @@ export class TeamsFormComponent implements OnInit {
     this.form.controls.equipment_ids.markAsDirty();
   }
 
-  protected saveTemplate(): void {
-    const id = this.teamId();
-    if (id === null || this.templateForm.invalid) return;
-
-    this.templateSaving.set(true);
-    const value = this.templateForm.getRawValue();
-    const slots: TrainingSlot[] = (value.slots ?? []).map((s) => ({
-      weekday: s.weekday as WeekdayEnum,
-      hour_start: toHourMinute(s.hour_start) ?? '',
-      hour_end: toHourMinute(s.hour_end) ?? '',
-    }));
-
-    const payload: TrainingTemplate = {
-      slots,
-      default_pool: value.default_pool || '',
-      season_start: toIsoDate(value.season_start),
-      season_end: toIsoDate(value.season_end),
-    };
-
-    const onTemplateError = (err: HttpErrorResponse) => {
-      this.templateSaving.set(false);
-      const detail =
-        err.status === 403
-          ? this.transloco.translate('training_template.error_forbidden')
-          : this.transloco.translate('training_template.error');
-      this.messageService.add({
-        severity: 'error',
-        summary: this.transloco.translate('common.error'),
-        detail,
-      });
-    };
-
-    this.teamsService
-      .teamsTrainingTemplateUpdate(id, payload)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.templateSaving.set(false);
-          this.templateForm.markAsPristine();
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('training_template.saved'),
-          });
-        },
-        error: onTemplateError,
-      });
-  }
 }

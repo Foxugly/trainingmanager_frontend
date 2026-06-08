@@ -475,7 +475,15 @@
       "friday": "Fri",
       "saturday": "Sat",
       "sunday": "Sun"
-    }
+    },
+    "slots_help": "Each slot is saved on its own (add, edit and delete take effect immediately).",
+    "slots_empty_subtitle": "No slot has been defined for this team yet.",
+    "place_label": "Place",
+    "slot_created": "Slot added.",
+    "slot_saved": "Slot saved.",
+    "slot_deleted": "Slot deleted.",
+    "delete_confirm": "Delete this slot?",
+    "place_not_in_team": "This place is not linked to the team."
   },
   "teams": {
     "list": {

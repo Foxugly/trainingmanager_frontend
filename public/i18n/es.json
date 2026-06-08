@@ -475,7 +475,15 @@
       "friday": "Vie",
       "saturday": "Sáb",
       "sunday": "Dom"
-    }
+    },
+    "slots_help": "Cada franja se guarda por separado (añadir, editar y eliminar surten efecto de inmediato).",
+    "slots_empty_subtitle": "Aún no se ha definido ninguna franja para este equipo.",
+    "place_label": "Lugar",
+    "slot_created": "Franja añadida.",
+    "slot_saved": "Franja guardada.",
+    "slot_deleted": "Franja eliminada.",
+    "delete_confirm": "¿Eliminar esta franja?",
+    "place_not_in_team": "Este lugar no está vinculado al equipo."
   },
   "teams": {
     "list": {

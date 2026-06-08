@@ -475,7 +475,15 @@
       "friday": "Ven",
       "saturday": "Sam",
       "sunday": "Dim"
-    }
+    },
+    "slots_help": "Chaque créneau est enregistré individuellement (ajout, modification et suppression immédiats).",
+    "slots_empty_subtitle": "Aucun créneau n'est encore défini pour cette équipe.",
+    "place_label": "Lieu",
+    "slot_created": "Créneau ajouté.",
+    "slot_saved": "Créneau enregistré.",
+    "slot_deleted": "Créneau supprimé.",
+    "delete_confirm": "Supprimer ce créneau ?",
+    "place_not_in_team": "Ce lieu n'est pas associé à l'équipe."
   },
   "teams": {
     "list": {

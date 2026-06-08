@@ -189,8 +189,8 @@ describe('GenerateEventsDialogComponent', () => {
 
   const richTemplate: TrainingTemplate = {
     slots: [
-      { weekday: 0, hour_start: '18:00:00', hour_end: '19:30:00' },
-      { weekday: 5, hour_start: '10:00:00', hour_end: '12:00:00' },
+      { id: 1, weekday: 0, hour_start: '18:00:00', hour_end: '19:30:00', place: null as never },
+      { id: 2, weekday: 5, hour_start: '10:00:00', hour_end: '12:00:00', place: null as never },
     ],
     default_pool: 'Piscine X',
     season_start: '2026-09-01',

@@ -97,9 +97,12 @@ interface ProtectedFields {
   isSlotEditing(i: number): boolean;
   editSlot(i: number): void;
   confirmSlot(i: number): void;
-  slotSummary(i: number): string;
+  slotWeekdayLabel(i: number): string;
+  slotStart(i: number): string;
+  slotEnd(i: number): string;
+  slotPlaceName(i: number): string;
   slotHasTimeError(i: number): boolean;
-  saveTemplate(): void;
+  isSlotSaving(i: number): boolean;
   weekdayOptions(): Array<{ label: string; value: number }>;
   // Lieux (shared sport pool, M2M)
   places(): Place[];
@@ -147,9 +150,10 @@ describe('TeamsFormComponent', () => {
     teamsRetrieve: ReturnType<typeof vi.fn>;
     teamsCreate: ReturnType<typeof vi.fn>;
     teamsPartialUpdate: ReturnType<typeof vi.fn>;
-    teamsTrainingTemplateRetrieve: ReturnType<typeof vi.fn>;
-    teamsTrainingTemplateUpdate: ReturnType<typeof vi.fn>;
-    teamsPoolsRetrieve: ReturnType<typeof vi.fn>;
+    teamsTrainingSlotsList: ReturnType<typeof vi.fn>;
+    teamsTrainingSlotsCreate: ReturnType<typeof vi.fn>;
+    teamsTrainingSlotsPartialUpdate: ReturnType<typeof vi.fn>;
+    teamsTrainingSlotsDestroy: ReturnType<typeof vi.fn>;
   };
   let sportsMock: { sportsList: ReturnType<typeof vi.fn> };
   let levelsMock: { levelsList: ReturnType<typeof vi.fn> };
@@ -163,7 +167,12 @@ describe('TeamsFormComponent', () => {
 
   const access = (c: TeamsFormComponent) => c as unknown as ProtectedFields;
 
-  async function setup(idParam: string | null = null, currentUser = ownerUser, retrieved: Team | null = team) {
+  async function setup(
+    idParam: string | null = null,
+    currentUser = ownerUser,
+    retrieved: Team | null = team,
+    seedSlots: unknown[] = [],
+  ) {
     TestBed.resetTestingModule();
     routeIdParam = idParam;
     teamsMock = {
@@ -172,13 +181,28 @@ describe('TeamsFormComponent', () => {
         .mockReturnValue(retrieved ? of(retrieved) : throwError(() => new Error('404'))),
       teamsCreate: vi.fn().mockReturnValue(of({ ...team, id: 42 })),
       teamsPartialUpdate: vi.fn().mockReturnValue(of(team)),
-      teamsTrainingTemplateRetrieve: vi
-        .fn()
-        .mockReturnValue(of({ slots: [], default_pool: '', season_start: null, season_end: null })),
-      teamsTrainingTemplateUpdate: vi
-        .fn()
-        .mockImplementation((_id, tpl) => of(tpl)),
-      teamsPoolsRetrieve: vi.fn().mockReturnValue(of({ pools: ['Piscine A', 'Piscine B'] })),
+      // Per-slot CRUD: list returns the seeded slots; create/patch echo back a
+      // canonical slot (with id + nested place); destroy returns void.
+      teamsTrainingSlotsList: vi.fn().mockReturnValue(of(seedSlots)),
+      teamsTrainingSlotsCreate: vi.fn().mockImplementation((_teamPk, body) =>
+        of({
+          id: 101,
+          weekday: body.weekday,
+          hour_start: body.hour_start,
+          hour_end: body.hour_end,
+          place: body.place_id ? { id: body.place_id, name: 'P', address: '' } : null,
+        }),
+      ),
+      teamsTrainingSlotsPartialUpdate: vi.fn().mockImplementation((id, _teamPk, body) =>
+        of({
+          id,
+          weekday: body.weekday,
+          hour_start: body.hour_start,
+          hour_end: body.hour_end,
+          place: body.place_id ? { id: body.place_id, name: 'P', address: '' } : null,
+        }),
+      ),
+      teamsTrainingSlotsDestroy: vi.fn().mockReturnValue(of(undefined)),
     };
     sportsMock = {
       sportsList: vi.fn().mockReturnValue(of({ count: 1, results: [sport] })),
@@ -234,6 +258,15 @@ describe('TeamsFormComponent', () => {
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
     vi.spyOn(router, 'navigate').mockReturnValue(Promise.resolve(true));
+    // Auto-accept confirm dialogs (per-slot delete) so the request fires. The
+    // component provides its OWN ConfirmationService (component-scoped), so spy
+    // on that instance, not the root one.
+    const confirmation = (component as unknown as { confirmationService: ConfirmationService })
+      .confirmationService;
+    vi.spyOn(confirmation, 'confirm').mockImplementation((opts) => {
+      opts.accept?.();
+      return confirmation;
+    });
     fixture.detectChanges();
   }
 
@@ -569,11 +602,23 @@ describe('TeamsFormComponent', () => {
     );
   });
 
-  // ── Planning type (weekly training template) ──────────────────────────────
+  // ── Planning type (per-créneau training slots) ────────────────────────────
 
-  it('loads the team training template + sport venue pool on edit', async () => {
+  const slotAt = (c: TeamsFormComponent, i: number) =>
+    (c as unknown as { slots: { at(i: number): { patchValue(v: unknown): void } } }).slots.at(i);
+
+  /** Patch a row with a valid weekday + 18:00–19:30 time range. */
+  function fillSlot(i: number, weekday = 0, place_id: number | null = null): void {
+    const start = new Date();
+    start.setHours(18, 0, 0, 0);
+    const end = new Date();
+    end.setHours(19, 30, 0, 0);
+    slotAt(component, i).patchValue({ weekday, hour_start: start, hour_end: end, place_id });
+  }
+
+  it('loads the team weekly slots (per-slot list) + sport venue pool on edit', async () => {
     await setup('5');
-    expect(teamsMock.teamsTrainingTemplateRetrieve).toHaveBeenCalledWith(5);
+    expect(teamsMock.teamsTrainingSlotsList).toHaveBeenCalledWith(5);
     // Pool is loaded via ?sport (position 5), not ?team.
     expect(placesMock.placesList).toHaveBeenCalledWith(
       undefined,
@@ -586,88 +631,116 @@ describe('TeamsFormComponent', () => {
     expect(access(component).places()[0].name).toBe('Piscine olympique');
   });
 
-  it('addSlot appends and removeSlot removes a slot row', async () => {
+  it('hydrates existing slot rows from the per-slot list response', async () => {
+    await setup('5', ownerUser, team, [
+      { id: 7, weekday: 1, hour_start: '18:00', hour_end: '19:30', place: null },
+    ]);
+    expect(access(component).slots.length).toBe(1);
+    expect(access(component).isSlotEditing(0)).toBe(false);
+    expect(access(component).slotStart(0)).toBe('18:00');
+    expect(access(component).slotEnd(0)).toBe('19:30');
+  });
+
+  it('addSlot appends an editable row; dropping an unsaved row needs no API call', async () => {
     await setup('5');
     expect(access(component).slots.length).toBe(0);
     access(component).addSlot();
     access(component).addSlot();
     expect(access(component).slots.length).toBe(2);
+    expect(access(component).isSlotEditing(0)).toBe(true);
+    // Removing a brand-new (unsaved, id=null) row just drops it, no DELETE.
     access(component).removeSlot(0);
     expect(access(component).slots.length).toBe(1);
+    expect(teamsMock.teamsTrainingSlotsDestroy).not.toHaveBeenCalled();
   });
 
-  it('addSlot opens the new row in edit mode; confirmSlot collapses a valid row', async () => {
-    await setup('5');
-    access(component).addSlot();
-    // A freshly-added slot starts editable.
-    expect(access(component).isSlotEditing(0)).toBe(true);
-    const start = new Date();
-    start.setHours(18, 0, 0, 0);
-    const end = new Date();
-    end.setHours(19, 30, 0, 0);
-    (access(component).slots as unknown as { at(i: number): { patchValue(v: unknown): void } })
-      .at(0)
-      .patchValue({ weekday: 0, hour_start: start, hour_end: end });
-    access(component).confirmSlot(0);
-    expect(access(component).isSlotEditing(0)).toBe(false);
-    // Summary renders "<weekday> 18:00 – 19:30".
-    expect(access(component).slotSummary(0)).toContain('18:00');
-    expect(access(component).slotSummary(0)).toContain('19:30');
-    // editSlot re-opens the row.
-    access(component).editSlot(0);
-    expect(access(component).isSlotEditing(0)).toBe(true);
-  });
-
-  it('confirmSlot keeps an invalid row editable', async () => {
-    await setup('5');
-    access(component).addSlot();
-    // No times set → invalid → stays in edit mode.
-    access(component).confirmSlot(0);
-    expect(access(component).isSlotEditing(0)).toBe(true);
-  });
-
-  it('removeSlot shifts edit-mode indices of later rows down', async () => {
-    await setup('5');
-    access(component).addSlot();
-    access(component).addSlot();
-    // Both new rows are editable (indices 0 and 1).
-    expect(access(component).isSlotEditing(0)).toBe(true);
-    expect(access(component).isSlotEditing(1)).toBe(true);
-    access(component).removeSlot(0);
-    // The former index-1 row is now index 0 and still editable.
-    expect(access(component).slots.length).toBe(1);
-    expect(access(component).isSlotEditing(0)).toBe(true);
-  });
-
-  it('saveTemplate calls teamsTrainingTemplateUpdate with HH:MM slots + ISO dates', async () => {
-    await setup('5');
-    access(component).addSlot();
-    const start = new Date();
-    start.setHours(18, 0, 0, 0);
-    const end = new Date();
-    end.setHours(19, 30, 0, 0);
-    const season = new Date(2026, 8, 1); // 2026-09-01
-    (access(component).slots as unknown as { at(i: number): { patchValue(v: unknown): void } })
-      .at(0)
-      .patchValue({ weekday: 2, hour_start: start, hour_end: end });
-    access(component).templateForm.patchValue({
-      default_pool: 'Piscine X',
-      season_start: season,
-      season_end: null,
+  it('addSlot defaults the new row lieu to the team default place', async () => {
+    await setup('5', ownerUser, {
+      ...team,
+      places: [{ id: 7, name: 'Piscine olympique', address: '1 rue X' }],
+      default_place: { id: 7, name: 'Piscine olympique', address: '1 rue X' },
     });
-    access(component).saveTemplate();
-    expect(teamsMock.teamsTrainingTemplateUpdate).toHaveBeenCalledTimes(1);
-    const [id, payload] = teamsMock.teamsTrainingTemplateUpdate.mock.calls[0];
-    expect(id).toBe(5);
-    expect(payload.default_pool).toBe('Piscine X');
-    expect(payload.season_start).toBe('2026-09-01');
-    expect(payload.season_end).toBe(null);
-    expect(payload.slots).toEqual([
-      { weekday: 2, hour_start: '18:00', hour_end: '19:30' },
+    access(component).addSlot();
+    expect(
+      (component as unknown as {
+        slots: { at(i: number): { controls: { place_id: { value: number | null } } } };
+      }).slots
+        .at(0)
+        .controls.place_id.value,
+    ).toBe(7);
+  });
+
+  it('confirmSlot on a new row POSTs the créneau and collapses on success', async () => {
+    await setup('5');
+    access(component).addSlot();
+    expect(access(component).isSlotEditing(0)).toBe(true);
+    fillSlot(0, 2, null);
+    access(component).confirmSlot(0);
+    expect(teamsMock.teamsTrainingSlotsCreate).toHaveBeenCalledTimes(1);
+    const [teamPk, body] = teamsMock.teamsTrainingSlotsCreate.mock.calls[0];
+    expect(teamPk).toBe(5);
+    expect(body).toMatchObject({ weekday: 2, hour_start: '18:00', hour_end: '19:30', place_id: null });
+    // Collapses to read-only summary, refreshed from the response.
+    expect(access(component).isSlotEditing(0)).toBe(false);
+    expect(access(component).slotStart(0)).toBe('18:00');
+    expect(access(component).slotEnd(0)).toBe('19:30');
+  });
+
+  it('confirmSlot sends place_id and refreshes the row from the response', async () => {
+    await setup('5');
+    access(component).addSlot();
+    fillSlot(0, 0, 7);
+    access(component).confirmSlot(0);
+    const [, body] = teamsMock.teamsTrainingSlotsCreate.mock.calls[0];
+    expect(body.place_id).toBe(7);
+  });
+
+  it('confirmSlot on an existing row PATCHes by id + teamPk', async () => {
+    await setup('5', ownerUser, team, [
+      { id: 42, weekday: 1, hour_start: '18:00', hour_end: '19:30', place: null },
     ]);
-    // The default place is now a team field, persisted by the main team PATCH
-    // (submit), no longer via a side PATCH from saveTemplate.
-    expect(teamsMock.teamsPartialUpdate).not.toHaveBeenCalled();
+    access(component).editSlot(0);
+    fillSlot(0, 3, null);
+    access(component).confirmSlot(0);
+    expect(teamsMock.teamsTrainingSlotsPartialUpdate).toHaveBeenCalledTimes(1);
+    const [id, teamPk, body] = teamsMock.teamsTrainingSlotsPartialUpdate.mock.calls[0];
+    expect(id).toBe(42);
+    expect(teamPk).toBe(5);
+    expect(body).toMatchObject({ weekday: 3, hour_start: '18:00', hour_end: '19:30' });
+    expect(access(component).isSlotEditing(0)).toBe(false);
+  });
+
+  it('confirmSlot keeps an invalid row editable and makes no request', async () => {
+    await setup('5');
+    access(component).addSlot();
+    // No times set → invalid → stays editable, nothing persisted.
+    access(component).confirmSlot(0);
+    expect(access(component).isSlotEditing(0)).toBe(true);
+    expect(teamsMock.teamsTrainingSlotsCreate).not.toHaveBeenCalled();
+  });
+
+  it('removeSlot on a persisted row confirms then DELETEs by id + teamPk', async () => {
+    await setup('5', ownerUser, team, [
+      { id: 88, weekday: 1, hour_start: '18:00', hour_end: '19:30', place: null },
+    ]);
+    expect(access(component).slots.length).toBe(1);
+    access(component).removeSlot(0);
+    expect(teamsMock.teamsTrainingSlotsDestroy).toHaveBeenCalledWith(88, 5);
+    expect(access(component).slots.length).toBe(0);
+  });
+
+  it('confirmSlot surfaces place_not_in_team as an error toast and stays editable', async () => {
+    await setup('5');
+    const messages = TestBed.inject(MessageService);
+    const addSpy = vi.spyOn(messages, 'add');
+    teamsMock.teamsTrainingSlotsCreate.mockReturnValueOnce(
+      throwError(() => ({ status: 400, error: { code: 'place_not_in_team' } })),
+    );
+    access(component).addSlot();
+    fillSlot(0, 0, 9);
+    access(component).confirmSlot(0);
+    expect(addSpy).toHaveBeenCalledWith(expect.objectContaining({ severity: 'error' }));
+    expect(access(component).isSlotEditing(0)).toBe(true);
   });
 
   // ── Lieux (shared sport pool, M2M) ────────────────────────────────────────
