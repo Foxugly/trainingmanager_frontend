@@ -36,6 +36,7 @@ const fullTeam: Team = {
   name: 'RBP WP Senior',
   sport,
   sport_id: 1,
+  sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0 }],
   owner: ownerUser,
   managers: [],
   language: LanguageEnum.Fr,
@@ -95,7 +96,7 @@ interface ProtectedFields {
 const eventA: Event = {
   id: 100, name: 'Séance A', goal: null, color: '#FF5733',
   date: '2026-06-05', hour_start: '18:00:00', hour_end: '19:30:00', total: 0,
-  refer_program: { id: 7, name: 'Plan IA été' }, refer_program_id: 7,
+  refer_program: { id: 7, name: 'Plan IA été' }, refer_program_id: 7, sport,
   rounds: [], members: [], generated_by_ai: false, ai_response: '',
   ai_generated_at: null, created_at: '', updated_at: '', is_public: false, public_token: null,
 };

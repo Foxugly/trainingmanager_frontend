@@ -9,7 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { Subject } from 'rxjs';
+import { Subject, forkJoin } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -22,6 +22,7 @@ import { TableModule } from 'primeng/table';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Dialog } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
+import { MultiSelect } from 'primeng/multiselect';
 import { Select } from 'primeng/select';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { ToggleSwitch } from 'primeng/toggleswitch';
@@ -71,6 +72,7 @@ import { TeamSlotsEditorComponent } from '../team-slots-editor/team-slots-editor
     RouterLink,
     InputText,
     Select,
+    MultiSelect,
     AutoComplete,
     TableModule,
     Checkbox,
@@ -266,7 +268,10 @@ export class TeamsFormComponent implements OnInit {
 
   protected readonly form = this.fb.nonNullable.group({
     name: ['', [Validators.required]],
-    sport_id: this.fb.nonNullable.control<number | null>(null, [Validators.required]),
+    // Multi-sport: the team's set of sports + which one is the default. The
+    // default must be one of the selected sports (kept in sync in ngOnInit).
+    sport_ids: this.fb.nonNullable.control<number[]>([], [Validators.required]),
+    default_sport_id: this.fb.nonNullable.control<number | null>(null, [Validators.required]),
     level_id: this.fb.nonNullable.control<number | null>(null),
     language: this.fb.nonNullable.control<LanguageCode>('fr', [Validators.required]),
     is_public: [false],
@@ -291,6 +296,17 @@ export class TeamsFormComponent implements OnInit {
     public_show_distance: [true],
     public_show_goal: [false],
     public_show_rounds: [true],
+  });
+
+  /** Selected sport ids, mirrored from the `sport_ids` control. Drives the
+   *  default-sport picker options (default must be one of the selected sports). */
+  private readonly sportIdsValue = toSignal(this.form.controls.sport_ids.valueChanges, {
+    initialValue: this.form.controls.sport_ids.value,
+  });
+  /** The sports currently selected — options for the default-sport picker. */
+  protected readonly selectedSports = computed(() => {
+    const ids = new Set(this.sportIdsValue() ?? []);
+    return this.availableSports().filter((s) => ids.has(s.id));
   });
 
   private readonly autoAcceptValue = toSignal(this.form.controls.auto_accept_policy.valueChanges, {
@@ -320,6 +336,18 @@ export class TeamsFormComponent implements OnInit {
       .sportsList(undefined)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((res) => this.availableSports.set(res.results ?? []));
+
+    // Keep the default sport valid: when the selected set changes, drop a
+    // default that's no longer selected (falling back to the first), and pick
+    // a default automatically when the team has exactly one sport.
+    this.form.controls.sport_ids.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((ids) => {
+        const current = this.form.controls.default_sport_id.value;
+        if (current == null || !ids.includes(current)) {
+          this.form.controls.default_sport_id.setValue(ids[0] ?? null);
+        }
+      });
 
     this.levelsService
       .levelsList()
@@ -354,19 +382,26 @@ export class TeamsFormComponent implements OnInit {
             this.logoValue.set(t.logo ?? '');
             this.availableManagers.set(t.managers ?? []);
             this.partitionStatuses(this.availableStatuses(), t.attendance_statuses ?? null);
-            // Load the sport's equipment catalog + venue pool so the owner can
-            // enable/link a subset of each.
-            const sportId = t.sport?.id;
-            if (sportId != null) {
-              this.loadEquipmentCatalog(sportId);
-              this.loadPlacePool(sportId);
+            // Multi-sport: the team's set of sports + its default.
+            const sportIds = (t.sports ?? []).map((s) => s.id);
+            const defaultSportId =
+              (t.sports ?? []).find((s) => s.is_default)?.id ?? t.sport?.id ?? null;
+            // Equipment stays mono-sport (default sport's catalog); the venue
+            // pool spans every sport the team practises (union).
+            if (defaultSportId != null) {
+              this.loadEquipmentCatalog(defaultSportId);
             } else {
               this.equipmentCatalog.set([]);
+            }
+            if (sportIds.length > 0) {
+              this.loadPlacePool(sportIds);
+            } else {
               this.places.set([]);
             }
             this.form.reset({
               name: t.name,
-              sport_id: t.sport?.id ?? null,
+              sport_ids: sportIds,
+              default_sport_id: defaultSportId,
               level_id: t.level?.id ?? null,
               language: (t.language as LanguageCode) ?? 'fr',
               is_public: t.is_public ?? false,
@@ -540,7 +575,8 @@ export class TeamsFormComponent implements OnInit {
     if (id === null) {
       const createPayload = {
         name: value.name,
-        sport_id: value.sport_id,
+        sport_ids: value.sport_ids,
+        default_sport_id: value.default_sport_id,
         level_id: value.level_id,
         language: value.language as LanguageEnum,
         is_public: value.is_public,
@@ -578,7 +614,8 @@ export class TeamsFormComponent implements OnInit {
 
     const updatePayload: PatchedTeam = {
       name: value.name,
-      sport_id: value.sport_id ?? undefined,
+      sport_ids: value.sport_ids,
+      default_sport_id: value.default_sport_id ?? undefined,
       level_id: value.level_id ?? null,
       language: value.language as LanguageEnum,
       is_public: value.is_public,
@@ -698,16 +735,29 @@ export class TeamsFormComponent implements OnInit {
 
   // ── Lieux (shared sport pool) management ────────────────────────────────
 
-  /** Fetch the whole venue pool for the team's sport (to attach/share). */
-  private loadPlacePool(sportId: number): void {
+  /** Fetch the venue pool spanning every sport the team practises (union, to
+   *  attach/share). The `?sport` filter is per-sport, so we query each and merge
+   *  on id — a multi-sport venue serves several of the team's sports. */
+  private loadPlacePool(sportIds: number[]): void {
+    if (sportIds.length === 0) {
+      this.places.set([]);
+      return;
+    }
     this.placesLoading.set(true);
-    this.placesService
+    forkJoin(
       // Signature: (ordering, page, pageSize, search, sport, team) — ?sport pool.
-      .placesList(undefined, undefined, undefined, undefined, sportId)
+      sportIds.map((id) =>
+        this.placesService.placesList(undefined, undefined, undefined, undefined, id),
+      ),
+    )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (res) => {
-          this.places.set(res.results ?? []);
+        next: (responses) => {
+          const byId = new Map<number, Place>();
+          for (const res of responses) {
+            for (const p of res.results ?? []) byId.set(p.id, p);
+          }
+          this.places.set([...byId.values()]);
           this.placesLoading.set(false);
         },
         error: () => {

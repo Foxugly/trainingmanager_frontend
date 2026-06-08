@@ -8,6 +8,7 @@
  * Do not edit the class manually.
  */
 import { EquipmentMinimal } from './equipment-minimal';
+import { Sport } from './sport';
 import { VisibilityMode } from './visibility-mode';
 import { PlaceMinimal } from './place-minimal';
 import { ProgramMinimal } from './program-minimal';
@@ -36,6 +37,8 @@ export interface PatchedEvent {
     total?: number;
     readonly refer_program?: ProgramMinimal;
     refer_program_id?: number;
+    readonly sport?: Sport;
+    sport_id?: number | null;
     rounds?: Array<number>;
     readonly members?: Array<number>;
     /**

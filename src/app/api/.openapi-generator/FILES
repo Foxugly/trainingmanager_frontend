@@ -241,6 +241,7 @@ model/team-membership.ts
 model/team-minimal.ts
 model/team-pools-response.ts
 model/team-quota-status.ts
+model/team-sport-read.ts
 model/team-stats.ts
 model/team.ts
 model/token-obtain-pair-response.ts

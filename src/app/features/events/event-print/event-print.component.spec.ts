@@ -43,6 +43,7 @@ const eventWithRounds: Event = {
   total: undefined,
   refer_program: { id: 4, name: 'Cycle aérobie' },
   refer_program_id: 4,
+  sport,
   rounds: [11],
   members: [],
   generated_by_ai: false,

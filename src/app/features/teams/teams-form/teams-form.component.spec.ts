@@ -50,8 +50,8 @@ const level: Level = {
 const team: Team = {
   id: 5,
   name: 'Team P9',
+  sports: [{ id: 1, name: 'Natation', slug: 'natation', is_default: true, order: 0 }],
   sport,
-  sport_id: 1,
   level,
   owner: ownerUser,
   managers: [managerUser],
@@ -216,14 +216,14 @@ describe('TeamsFormComponent', () => {
         of({
           count: 2,
           results: [
-            { id: 7, sport: 1, name: 'Piscine olympique', address: '1 rue X' } as Place,
-            { id: 9, sport: 1, name: 'Piscine B', address: '2 rue Y' } as Place,
+            { id: 7, sports: [1], name: 'Piscine olympique', address: '1 rue X' } as Place,
+            { id: 9, sports: [1], name: 'Piscine B', address: '2 rue Y' } as Place,
           ],
         }),
       ),
       placesCreate: vi
         .fn()
-        .mockReturnValue(of({ id: 8, sport: 1, name: 'Nouveau', address: '' } as Place)),
+        .mockReturnValue(of({ id: 8, sports: [1], name: 'Nouveau', address: '' } as Place)),
     };
     userSig = signal<CustomUserPublic | null>(currentUser);
 
@@ -278,7 +278,8 @@ describe('TeamsFormComponent', () => {
     expect(access(component).isEditMode()).toBe(false);
     expect(access(component).form.getRawValue()).toMatchObject({
       name: '',
-      sport_id: null,
+      sport_ids: [],
+      default_sport_id: null,
       level_id: null,
       language: 'fr',
       is_public: false,
@@ -300,7 +301,8 @@ describe('TeamsFormComponent', () => {
     expect(access(component).availableManagers()).toHaveLength(1);
     expect(access(component).form.getRawValue()).toMatchObject({
       name: 'Team P9',
-      sport_id: 1,
+      sport_ids: [1],
+      default_sport_id: 1,
       level_id: 3,
       language: 'fr',
       is_public: false,
@@ -314,10 +316,18 @@ describe('TeamsFormComponent', () => {
   });
 
   it('on create success, navigates to /teams/:id/edit with the new id', async () => {
-    access(component).form.patchValue({ name: 'New', sport_id: 1, level_id: 3, language: 'fr' });
+    access(component).form.patchValue({
+      name: 'New',
+      sport_ids: [1],
+      default_sport_id: 1,
+      level_id: 3,
+      language: 'fr',
+    });
     access(component).submit();
     expect(teamsMock.teamsCreate).toHaveBeenCalledTimes(1);
-    expect(teamsMock.teamsCreate).toHaveBeenCalledWith(expect.objectContaining({ level_id: 3 }));
+    expect(teamsMock.teamsCreate).toHaveBeenCalledWith(
+      expect.objectContaining({ level_id: 3, sport_ids: [1], default_sport_id: 1 }),
+    );
     expect(router.navigate).toHaveBeenCalledWith(['/teams', 42, 'edit']);
   });
 
@@ -349,7 +359,7 @@ describe('TeamsFormComponent', () => {
         error: { code: 'validation_error', fields: { name: [{ code: 'required', detail: 'required' }] } },
       })),
     );
-    access(component).form.patchValue({ name: 'X', sport_id: 1, language: 'fr' });
+    access(component).form.patchValue({ name: 'X', sport_ids: [1], default_sport_id: 1, language: 'fr' });
     access(component).submit();
     expect(access(component).fieldErrors()).not.toBeNull();
   });
@@ -439,7 +449,7 @@ describe('TeamsFormComponent', () => {
       })),
     );
     const authService = TestBed.inject(AuthService) as unknown as { refreshMe: ReturnType<typeof vi.fn> };
-    access(component).form.patchValue({ name: 'X', sport_id: 1, language: 'fr' });
+    access(component).form.patchValue({ name: 'X', sport_ids: [1], default_sport_id: 1, language: 'fr' });
     access(component).submit();
     expect(access(component).quotaExceeded()).toEqual({ used: 3, max: 3 });
     expect(access(component).errorMessage()).toBe('You have reached your team quota.');
@@ -477,7 +487,8 @@ describe('TeamsFormComponent', () => {
   it('create payload includes the logo data-URL', () => {
     access(component).form.patchValue({
       name: 'New',
-      sport_id: 1,
+      sport_ids: [1],
+      default_sport_id: 1,
       language: 'fr',
       logo: 'data:image/png;base64,LOGO',
     });
@@ -555,7 +566,8 @@ describe('TeamsFormComponent', () => {
   it('create payload includes timezone + vis_* defaults', () => {
     access(component).form.patchValue({
       name: 'New',
-      sport_id: 1,
+      sport_ids: [1],
+      default_sport_id: 1,
       language: 'fr',
       timezone: 'UTC',
       vis_distance: VisibilityMode.After,

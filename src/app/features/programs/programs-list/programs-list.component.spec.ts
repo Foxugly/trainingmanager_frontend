@@ -33,6 +33,7 @@ const ownedTeam: Team = {
   name: 'RBP WP Senior',
   sport,
   sport_id: 1,
+  sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0 }],
   owner: ownerUser,
   managers: [],
   language: LanguageEnum.Fr,

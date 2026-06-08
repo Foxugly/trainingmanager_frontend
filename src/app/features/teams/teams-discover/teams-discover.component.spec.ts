@@ -30,6 +30,7 @@ function makeTeam(overrides: Partial<Team>): Team {
     id: 0,
     name: '',
     sport,
+    sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0 }],
     sport_id: 1,
     owner: otherOwner,
     managers: [],

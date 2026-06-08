@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { Sport } from './sport';
 import { PlaceMinimal } from './place-minimal';
 import { WeekdayEnum } from './weekday-enum';
 
@@ -30,6 +31,8 @@ export interface TrainingSlot {
     hour_end: string;
     readonly place: PlaceMinimal;
     place_id?: number | null;
+    readonly sport: Sport;
+    sport_id?: number | null;
 }
 
 

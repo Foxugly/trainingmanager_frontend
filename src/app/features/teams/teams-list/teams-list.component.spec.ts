@@ -31,6 +31,7 @@ function makeTeam(partial: Partial<Team>): Team {
     id: 0,
     name: 'T',
     sport,
+    sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0 }],
     sport_id: 1,
     owner: ownerUser,
     managers: [],

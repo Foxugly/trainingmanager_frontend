@@ -49,18 +49,43 @@
           <p-tabpanels>
             <p-tabpanel value="info">
               <div class="builder-pane">
-                <!-- Row 1: sport / level / public toggle / timezone (4 cols) -->
-                <div class="meta-grid cols-4">
-                  <app-meta-field [label]="'teams.form.sport' | transloco" for="sport_id" [error]="fieldError('sport_id')">
-                    <p-select
-                      inputId="sport_id"
+                <!-- Row 1: sports (multi) / default sport (2 cols) -->
+                <div class="meta-grid cols-2">
+                  <app-meta-field
+                    [label]="'teams.form.sports' | transloco"
+                    for="sport_ids"
+                    [tooltip]="'teams.form.sports_help' | transloco"
+                    [error]="fieldError('sport_ids')"
+                  >
+                    <p-multiSelect
+                      inputId="sport_ids"
                       [options]="availableSports()"
-                      formControlName="sport_id"
+                      formControlName="sport_ids"
+                      optionLabel="name"
+                      optionValue="id"
+                      [filter]="true"
+                      [placeholder]="'teams.form.sports_placeholder' | transloco"
+                    />
+                  </app-meta-field>
+                  <app-meta-field
+                    [label]="'teams.form.default_sport' | transloco"
+                    for="default_sport_id"
+                    [tooltip]="'teams.form.default_sport_help' | transloco"
+                    [error]="fieldError('default_sport_id')"
+                  >
+                    <p-select
+                      inputId="default_sport_id"
+                      [options]="selectedSports()"
+                      formControlName="default_sport_id"
                       optionLabel="name"
                       optionValue="id"
                       [filter]="true"
                     />
                   </app-meta-field>
+                </div>
+
+                <!-- Row 2: level / public toggle / timezone (3 cols) -->
+                <div class="meta-grid cols-3">
                   <app-meta-field
                     [label]="'teams.form.level' | transloco"
                     for="level_id"

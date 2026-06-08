@@ -7914,6 +7914,14 @@ components:
         refer_program_id:
           type: integer
           writeOnly: true
+        sport:
+          allOf:
+          - $ref: '#/components/schemas/Sport'
+          readOnly: true
+        sport_id:
+          type: integer
+          writeOnly: true
+          nullable: true
         rounds:
           type: array
           items:
@@ -7991,6 +7999,7 @@ components:
       - public_token
       - refer_program
       - refer_program_id
+      - sport
       - updated_at
     EventPublic:
       type: object
@@ -9812,6 +9821,14 @@ components:
         refer_program_id:
           type: integer
           writeOnly: true
+        sport:
+          allOf:
+          - $ref: '#/components/schemas/Sport'
+          readOnly: true
+        sport_id:
+          type: integer
+          writeOnly: true
+          nullable: true
         rounds:
           type: array
           items:
@@ -10351,11 +10368,25 @@ components:
         name:
           type: string
           maxLength: 200
+        sports:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeamSportRead'
+          readOnly: true
         sport:
           allOf:
           - $ref: '#/components/schemas/Sport'
           readOnly: true
         sport_id:
+          type: integer
+          writeOnly: true
+        sport_ids:
+          type: array
+          items:
+            type: integer
+            writeOnly: true
+          writeOnly: true
+        default_sport_id:
           type: integer
           writeOnly: true
         level:
@@ -10675,16 +10706,17 @@ components:
 
         A place is shared (M2M ``Team.places``). On create the requester passes the
         ``team`` it is creating the place for (write-only): the view links it and
-        derives the place's ``sport`` from that team. ``sport`` is read-only output.
+        derives the place's ``sports`` from that team. ``sports`` is read-only output.
       properties:
         id:
           type: integer
           readOnly: true
-        sport:
-          type: integer
+        sports:
+          type: array
+          items:
+            type: integer
           readOnly: true
-          nullable: true
-          description: Sport this venue belongs to (e.g. Natation).
+          description: Sports this venue serves.
         name:
           type: string
           description: Display name of the venue (e.g. 'Piscine olympique').
@@ -10708,7 +10740,7 @@ components:
       - created_at
       - id
       - name
-      - sport
+      - sports
       - updated_at
     PlaceMinimal:
       type: object
@@ -11429,11 +11461,25 @@ components:
         name:
           type: string
           maxLength: 200
+        sports:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeamSportRead'
+          readOnly: true
         sport:
           allOf:
           - $ref: '#/components/schemas/Sport'
           readOnly: true
         sport_id:
+          type: integer
+          writeOnly: true
+        sport_ids:
+          type: array
+          items:
+            type: integer
+            writeOnly: true
+          writeOnly: true
+        default_sport_id:
           type: integer
           writeOnly: true
         level:
@@ -11614,7 +11660,7 @@ components:
       - name
       - owner
       - sport
-      - sport_id
+      - sports
       - updated_at
     TeamInvitation:
       type: object
@@ -11916,6 +11962,36 @@ components:
         * `owner` - Owner only
         * `coaches` - Owner and coaches
         * `members` - Everyone (incl. athletes)
+    TeamSportRead:
+      type: object
+      description: |-
+        A sport practised by a team, flattened with its default flag and order.
+
+        The id/name/slug are the SPORT's (not the through row's), so the frontend
+        can treat the list as sports while still knowing which one is the default.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        is_default:
+          type: boolean
+          readOnly: true
+        order:
+          type: integer
+          readOnly: true
+      required:
+      - id
+      - is_default
+      - name
+      - order
+      - slug
     TrainingSlot:
       type: object
       description: |-
@@ -11955,11 +12031,20 @@ components:
           type: integer
           writeOnly: true
           nullable: true
+        sport:
+          allOf:
+          - $ref: '#/components/schemas/Sport'
+          readOnly: true
+        sport_id:
+          type: integer
+          writeOnly: true
+          nullable: true
       required:
       - hour_end
       - hour_start
       - id
       - place
+      - sport
       - weekday
     PatchedTrainingSlot:
       type: object
@@ -11997,6 +12082,14 @@ components:
           - $ref: '#/components/schemas/PlaceMinimal'
           readOnly: true
         place_id:
+          type: integer
+          writeOnly: true
+          nullable: true
+        sport:
+          allOf:
+          - $ref: '#/components/schemas/Sport'
+          readOnly: true
+        sport_id:
           type: integer
           writeOnly: true
           nullable: true
