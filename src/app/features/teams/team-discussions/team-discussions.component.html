@@ -128,8 +128,8 @@
       </div>
 
       @if (canReply()) {
-        <!-- TODO: file attachments on messages are pending backend support
-             (the Message model has no attachment field) — no file button here. -->
+        <!-- Composer stays text-only (Quill + emoji); files are attached to a
+             posted message via its app-attachment-list (see the thread above). -->
         <div class="reply-box">
           <app-rich-editor [(ngModel)]="replyContentModel" [style]="{ height: '5rem' }" />
           <div class="editor-toolbar">

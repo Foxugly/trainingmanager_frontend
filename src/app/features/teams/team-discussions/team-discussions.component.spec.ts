@@ -67,6 +67,7 @@ interface ProtectedFields {
   canDeleteMessage(m: TopicMessage): boolean;
   isOwnMessage(m: TopicMessage): boolean;
   canEditMessage(m: TopicMessage): boolean;
+  canAttachToMessage(m: TopicMessage): boolean;
   isEdited(m: TopicMessage): boolean;
   openTopic(t: Topic): void;
   backToList(): void;
@@ -348,6 +349,19 @@ describe('TeamDiscussionsComponent', () => {
     await setup({ role: 'manager', currentUserId: me.id });
     expect(access(component).canEditMessage(makeMessage({ author: me }))).toBe(true);
     expect(access(component).canEditMessage(makeMessage({ author: other }))).toBe(false);
+  });
+
+  // --- attachment gating (drives app-attachment-list [canEdit]) ---
+
+  it('canAttachToMessage: author or coach only (mirrors backend can_write_target)', async () => {
+    // Athlete viewer: may attach to own message, not to another user's.
+    await setup({ role: 'member', currentUserId: me.id });
+    expect(access(component).canAttachToMessage(makeMessage({ author: me }))).toBe(true);
+    expect(access(component).canAttachToMessage(makeMessage({ author: other }))).toBe(false);
+
+    // Coach viewer: may attach to any message in the thread.
+    await setup({ role: 'manager', currentUserId: me.id });
+    expect(access(component).canAttachToMessage(makeMessage({ author: other }))).toBe(true);
   });
 
   it('startEdit pre-fills the editor with the message content', () => {
