@@ -5,12 +5,13 @@ import {
   Component,
   DestroyRef,
   computed,
-  effect,
   inject,
   input,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { of } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -171,11 +172,28 @@ export class TeamDiscussionsComponent {
   });
 
   constructor() {
-    // Load the topic list once the teamId input is available.
-    effect(() => {
-      const id = this.teamId();
-      this.loadTopics(id);
-    });
+    // Reactively (re)load the topic list whenever the teamId input changes.
+    // switchMap cancels an in-flight request if the team switches mid-load — a
+    // data stream, not a side-effecting effect().
+    toObservable(this.teamId)
+      .pipe(
+        tap(() => this.loadingTopics.set(true)),
+        switchMap((teamId) =>
+          this.teamsService.teamsTopicsList(teamId).pipe(catchError(() => of(null))),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((res) => {
+        this.loadingTopics.set(false);
+        if (res === null) return;
+        const results = res.results ?? [];
+        this.topics.set(results);
+        const target = this.initialTopicId();
+        if (target != null && this.selectedTopic() === null) {
+          const found = results.find((t) => t.id === target);
+          if (found) this.openTopic(found);
+        }
+      });
   }
 
   // --- ngModel bridges (two-way binding over signals) ---
@@ -267,25 +285,6 @@ export class TeamDiscussionsComponent {
     if (!user) return '';
     const full = `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim();
     return full || user.username || '';
-  }
-
-  private loadTopics(teamId: number): void {
-    this.loadingTopics.set(true);
-    this.teamsService
-      .teamsTopicsList(teamId)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (res) => {
-          this.topics.set(res.results ?? []);
-          this.loadingTopics.set(false);
-          const target = this.initialTopicId();
-          if (target != null && this.selectedTopic() === null) {
-            const found = (res.results ?? []).find((t) => t.id === target);
-            if (found) this.openTopic(found);
-          }
-        },
-        error: () => this.loadingTopics.set(false),
-      });
   }
 
   protected openTopic(topic: Topic): void {
@@ -513,14 +512,16 @@ export class TeamDiscussionsComponent {
   private appendEmoji(html: string, emoji: string): string {
     const base = html ?? '';
     if (this.isBlankHtml(base)) return `<p>${emoji}</p>`;
-    // Insert before the trailing closing tag when the content ends in a block,
-    // otherwise just append.
-    const m = base.match(/(<\/(?:p|div|h[1-6]|li|blockquote)>)\s*$/i);
-    if (m) {
-      const idx = base.lastIndexOf(m[1]);
-      return base.slice(0, idx) + emoji + base.slice(idx);
-    }
-    return base + emoji;
+    // Parse with the browser's HTML parser and append the emoji as a text node
+    // inside the last block element (so it lands within the final paragraph,
+    // not after it), serializing back. Robust where the old regex was fragile
+    // with nested/attributed tags, and safe — the emoji is added as text, so
+    // serialization escapes it.
+    const template = document.createElement('template');
+    template.innerHTML = base;
+    const target = template.content.lastElementChild ?? template.content;
+    target.append(document.createTextNode(emoji));
+    return template.innerHTML;
   }
 
   // --- Delete ---

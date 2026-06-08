@@ -9,32 +9,24 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { Subject, forkJoin } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { AutoComplete, AutoCompleteCompleteEvent } from 'primeng/autocomplete';
 import { Button } from 'primeng/button';
 import { Checkbox } from 'primeng/checkbox';
-import { TableModule } from 'primeng/table';
 import { ConfirmDialog } from 'primeng/confirmdialog';
-import { Dialog } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
 import { MultiSelect } from 'primeng/multiselect';
 import { Select } from 'primeng/select';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { ToggleSwitch } from 'primeng/toggleswitch';
-import { Tooltip } from 'primeng/tooltip';
 import { AttendanceStatusesService } from '../../../api/api/attendance-statuses.service';
 import { LevelsService } from '../../../api/api/levels.service';
-import { PlacesService } from '../../../api/api/places.service';
 import { EquipmentService } from '../../../api/api/equipment.service';
 import { SportsService } from '../../../api/api/sports.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { Place } from '../../../api/model/place';
-import { PlaceRequest } from '../../../api/model/place-request';
 import { Equipment } from '../../../api/model/equipment';
 import { AttendanceStatus } from '../../../api/model/attendance-status';
 import { CustomUserPublic } from '../../../api/model/custom-user-public';
@@ -47,7 +39,6 @@ import { Team } from '../../../api/model/team';
 import { TopicCreationEnum } from '../../../api/model/topic-creation-enum';
 import { VisibilityMode } from '../../../api/model/visibility-mode';
 import { AuthService } from '../../../core/auth/auth.service';
-import { NominatimResult, NominatimService } from '../../../core/geo/nominatim.service';
 import { AVAILABLE_LANGUAGES, LanguageCode } from '../../../core/i18n/available-languages';
 import { type FieldErrors, extractServerError } from '../../../shared/forms/notify-error';
 import { openContactEmail } from '../../../shared/contact';
@@ -56,12 +47,12 @@ import {
   ActiveToggleComponent,
   type ActiveToggleLabels,
 } from '../../../shared/ui/active-toggle/active-toggle.component';
-import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { FormFooterComponent } from '../../../shared/ui/form-footer/form-footer.component';
 import { MetaFieldComponent } from '../../../shared/ui/meta-field/meta-field.component';
 import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
 import { StatusBadgeComponent } from '../../../shared/ui/status-badge/status-badge.component';
 import { TeamManagersComponent } from '../team-managers/team-managers.component';
+import { TeamPlacePoolComponent } from '../team-place-pool/team-place-pool.component';
 import { TeamSlotsEditorComponent } from '../team-slots-editor/team-slots-editor.component';
 
 @Component({
@@ -73,13 +64,9 @@ import { TeamSlotsEditorComponent } from '../team-slots-editor/team-slots-editor
     InputText,
     Select,
     MultiSelect,
-    AutoComplete,
-    TableModule,
     Checkbox,
     ToggleSwitch,
-    Dialog,
     Button,
-    Tooltip,
     ConfirmDialog,
     Tabs,
     TabList,
@@ -89,11 +76,11 @@ import { TeamSlotsEditorComponent } from '../team-slots-editor/team-slots-editor
     PageHeaderComponent,
     StatusBadgeComponent,
     ActiveToggleComponent,
-    EmptyStateComponent,
     MetaFieldComponent,
     FormFooterComponent,
     TeamSlotsEditorComponent,
     TeamManagersComponent,
+    TeamPlacePoolComponent,
     TranslocoPipe,
   ],
   templateUrl: './teams-form.component.html',
@@ -108,11 +95,9 @@ export class TeamsFormComponent implements OnInit {
   private readonly teamsService = inject(TeamsService);
   private readonly sportsService = inject(SportsService);
   private readonly levelsService = inject(LevelsService);
-  private readonly placesService = inject(PlacesService);
   private readonly equipmentService = inject(EquipmentService);
   private readonly statusesService = inject(AttendanceStatusesService);
   private readonly authService = inject(AuthService);
-  private readonly nominatim = inject(NominatimService);
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly transloco = inject(TranslocoService);
@@ -194,46 +179,16 @@ export class TeamsFormComponent implements OnInit {
 
   protected readonly isEditMode = computed(() => this.teamId() !== null);
 
-  // ── Lieux (shared sport pool, linked to the team via M2M) ───────────────
-  /**
-   * The whole venue pool for the team's sport (loaded via `?sport`). The owner
-   * links a subset by checking items; the selected ids are persisted via the
-   * `place_ids` write-only field on the team PATCH. The default-place selector
-   * picks from the currently-linked subset.
-   */
+  // ── Lieux (shared sport pool) — managed by app-team-place-pool ──────────
+  /** The team's sport ids, driving the place-pool union fetch in the child. */
+  protected readonly teamSportIds = signal<number[]>([]);
+  /** The venue pool emitted by the place-pool child, kept here so the slots
+   *  editor can resolve the linked Place objects (selectedPlaces). */
   protected readonly places = signal<Place[]>([]);
-  protected readonly placesLoading = signal(false);
-  /**
-   * "Ajouter un lieu" dialog state. The dialog offers two affordances:
-   *  - an autocomplete over the sport pool (existing places not yet linked) to
-   *    link one to the team; and
-   *  - a "create new" mode revealing a name field + a Nominatim-backed address
-   *    autocomplete to create a brand-new venue then link it.
-   */
-  protected readonly placeDialogVisible = signal(false);
-  protected readonly placeSaving = signal(false);
-  /** Whether the dialog is in "create a new place" mode (vs. link-existing). */
-  protected readonly placeCreateMode = signal(false);
-  /** Bound value of the pool autocomplete (a Place or a typed string). */
-  protected readonly placePoolSelection = signal<Place | string | null>(null);
-  /** Pool autocomplete suggestions (existing, not-yet-linked places). */
-  protected readonly placePoolSuggestions = signal<Place[]>([]);
-  protected readonly placeName = signal('');
-  protected readonly placeAddress = signal('');
-  protected readonly placeNameError = signal<string | null>(null);
-  /** Nominatim address suggestions for the create-new address field. */
-  protected readonly addressSuggestions = signal<NominatimResult[]>([]);
-  /** The `display_name` labels of the current Nominatim suggestions. */
-  protected readonly addressSuggestionLabels = computed<string[]>(() =>
-    this.addressSuggestions().map((r) => r.display_name),
-  );
-
-  /** Pushes raw address-field input into the debounced Nominatim pipeline. */
-  private readonly addressQuery$ = new Subject<string>();
-
   /** Currently-linked place ids, mirrored from the `place_ids` form control. */
-  private readonly placeIdsValue = signal<number[]>([]);
-  /** The subset of the pool currently linked to the team (the table rows). */
+  protected readonly placeIdsValue = signal<number[]>([]);
+  /** The subset of the pool currently linked to the team (fed to the slots
+   *  editor's per-slot place select). */
   protected readonly selectedPlaces = computed<Place[]>(() => {
     const ids = new Set(this.placeIdsValue());
     return this.places().filter((p) => ids.has(p.id));
@@ -328,17 +283,6 @@ export class TeamsFormComponent implements OnInit {
   protected readonly isPublicSharingEnabled = computed(() => this.publicSharingValue() === true);
 
   ngOnInit(): void {
-    // Debounced Nominatim address lookup for the create-new place flow.
-    this.addressQuery$
-      .pipe(
-        debounceTime(350),
-        map((q) => q.trim()),
-        distinctUntilChanged(),
-        switchMap((q) => this.nominatim.search(q, this.transloco.getActiveLang())),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((results) => this.addressSuggestions.set(results));
-
     this.sportsService
       .sportsList(undefined)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -394,17 +338,14 @@ export class TeamsFormComponent implements OnInit {
             const defaultSportId =
               (t.sports ?? []).find((s) => s.is_default)?.id ?? t.sport?.id ?? null;
             // Equipment stays mono-sport (default sport's catalog); the venue
-            // pool spans every sport the team practises (union).
+            // pool spans every sport the team practises (union) — loaded by the
+            // place-pool child from teamSportIds.
             if (defaultSportId != null) {
               this.loadEquipmentCatalog(defaultSportId);
             } else {
               this.equipmentCatalog.set([]);
             }
-            if (sportIds.length > 0) {
-              this.loadPlacePool(sportIds);
-            } else {
-              this.places.set([]);
-            }
+            this.teamSportIds.set(sportIds);
             this.form.reset({
               name: t.name,
               sport_ids: sportIds,
@@ -467,9 +408,24 @@ export class TeamsFormComponent implements OnInit {
     this.form.controls.default_place_id.valueChanges,
     { initialValue: this.form.controls.default_place_id.value },
   );
-  /** True for the team's current default place (drives the star/check column). */
-  protected isDefaultPlace(id: number): boolean {
-    return this.defaultPlaceIdValue() === id;
+
+  /** app-team-place-pool emitted a new linked set → write it to the control. */
+  protected onPlaceIdsChange(ids: number[]): void {
+    this.form.controls.place_ids.setValue(ids);
+    this.form.controls.place_ids.markAsDirty();
+    this.placeIdsValue.set(ids);
+  }
+
+  /** app-team-place-pool emitted a new default place → write it to the control. */
+  protected onDefaultPlaceIdChange(id: number | null): void {
+    this.form.controls.default_place_id.setValue(id);
+    this.form.controls.default_place_id.markAsDirty();
+  }
+
+  /** app-team-place-pool fetched/updated the venue pool → mirror it so the slots
+   *  editor can resolve linked Place objects (selectedPlaces). */
+  protected onPoolChange(pool: Place[]): void {
+    this.places.set(pool);
   }
 
   /** Open the user's mail client to request a team-quota increase. Uses the
@@ -738,185 +694,6 @@ export class TeamsFormComponent implements OnInit {
           : this.transloco.translate('teams.errors.unknown'),
       });
     }
-  }
-
-  // ── Lieux (shared sport pool) management ────────────────────────────────
-
-  /** Fetch the venue pool spanning every sport the team practises (union, to
-   *  attach/share). The `?sport` filter is per-sport, so we query each and merge
-   *  on id — a multi-sport venue serves several of the team's sports. */
-  private loadPlacePool(sportIds: number[]): void {
-    if (sportIds.length === 0) {
-      this.places.set([]);
-      return;
-    }
-    this.placesLoading.set(true);
-    forkJoin(
-      // Signature: (ordering, page, pageSize, search, sport, team) — ?sport pool.
-      sportIds.map((id) =>
-        this.placesService.placesList(undefined, undefined, undefined, undefined, id),
-      ),
-    )
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (responses) => {
-          const byId = new Map<number, Place>();
-          for (const res of responses) {
-            for (const p of res.results ?? []) byId.set(p.id, p);
-          }
-          this.places.set([...byId.values()]);
-          this.placesLoading.set(false);
-        },
-        error: () => {
-          this.places.set([]);
-          this.placesLoading.set(false);
-          this.notifyLoadError();
-        },
-      });
-  }
-
-  /** Whether the given pool place is currently linked to the team. */
-  protected isPlaceSelected(id: number): boolean {
-    return (this.form.controls.place_ids.value ?? []).includes(id);
-  }
-
-  /** Link/unlink a pool place to the team via the `place_ids` control. */
-  protected togglePlace(place: Place, checked: boolean): void {
-    const current = this.form.controls.place_ids.value ?? [];
-    const next = checked
-      ? current.includes(place.id)
-        ? current
-        : [...current, place.id]
-      : current.filter((pid) => pid !== place.id);
-    this.form.controls.place_ids.setValue(next);
-    this.form.controls.place_ids.markAsDirty();
-    this.placeIdsValue.set(next);
-    // Unlinking the current default clears the default selector.
-    if (!checked && this.form.controls.default_place_id.value === place.id) {
-      this.form.controls.default_place_id.setValue(null);
-      this.form.controls.default_place_id.markAsDirty();
-    }
-  }
-
-  /**
-   * Make `place` the team default (star action). Ensures the place is linked
-   * (its id is in `place_ids`) and sets `default_place_id`.
-   */
-  protected setDefaultPlace(place: Place): void {
-    if (!this.isPlaceSelected(place.id)) this.togglePlace(place, true);
-    this.form.controls.default_place_id.setValue(place.id);
-    this.form.controls.default_place_id.markAsDirty();
-  }
-
-  /** Unlink `place` from the team (trash action); clears default if it was it. */
-  protected removePlace(place: Place): void {
-    this.togglePlace(place, false);
-  }
-
-  /** Open the "Ajouter un lieu" dialog in link-existing mode. */
-  protected openAddPlace(): void {
-    this.placeCreateMode.set(false);
-    this.placePoolSelection.set(null);
-    this.placePoolSuggestions.set([]);
-    this.placeName.set('');
-    this.placeAddress.set('');
-    this.placeNameError.set(null);
-    this.addressSuggestions.set([]);
-    this.placeDialogVisible.set(true);
-  }
-
-  protected closePlaceDialog(): void {
-    this.placeDialogVisible.set(false);
-  }
-
-  /** Reveal the "create a new place" fields inside the dialog. */
-  protected enterCreateMode(): void {
-    this.placeCreateMode.set(true);
-    this.placeNameError.set(null);
-  }
-
-  /**
-   * Pool autocomplete: suggest existing sport-pool places matching the typed
-   * text that are NOT already linked to the team.
-   */
-  protected searchPool(event: AutoCompleteCompleteEvent): void {
-    const q = (event.query ?? '').trim().toLowerCase();
-    const linked = new Set(this.form.controls.place_ids.value ?? []);
-    const matches = this.places().filter(
-      (p) =>
-        !linked.has(p.id) &&
-        (q.length === 0 ||
-          p.name.toLowerCase().includes(q) ||
-          (p.address ?? '').toLowerCase().includes(q)),
-    );
-    this.placePoolSuggestions.set(matches);
-  }
-
-  /** Pool autocomplete selection → link the chosen existing place. */
-  protected onPoolSelect(place: Place): void {
-    this.togglePlace(place, true);
-    this.placeDialogVisible.set(false);
-    this.notifyPlaceToast('place.linked');
-  }
-
-  /** Address field input → push into the debounced Nominatim pipeline. */
-  protected onAddressInput(value: string): void {
-    this.placeAddress.set(value);
-    this.addressQuery$.next(value);
-  }
-
-  /** Address autocomplete: re-emit on each keystroke (debounced downstream). */
-  protected searchAddress(event: AutoCompleteCompleteEvent): void {
-    this.addressQuery$.next(event.query ?? '');
-  }
-
-  /** A Nominatim suggestion was picked → fill the address with its label. */
-  protected onAddressSelect(displayName: string): void {
-    this.placeAddress.set(displayName);
-  }
-
-  /** Create a new place in the pool, link it to the team, and refresh. */
-  protected savePlace(): void {
-    const teamId = this.teamId();
-    const name = this.placeName().trim();
-    if (teamId === null) return;
-    if (!name) {
-      this.placeNameError.set(this.transloco.translate('place.name_required'));
-      return;
-    }
-    this.placeSaving.set(true);
-    this.placeNameError.set(null);
-    const address = this.placeAddress().trim() || undefined;
-    const payload: PlaceRequest = { team: teamId, name, address };
-    this.placesService
-      .placesCreate(payload)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (created) => {
-          this.placeSaving.set(false);
-          this.placeDialogVisible.set(false);
-          this.places.update((cur) => [...cur, created]);
-          // A freshly-created place belongs to the team: link it immediately.
-          this.togglePlace(created, true);
-          this.notifyPlaceToast('place.created');
-        },
-        error: () => {
-          this.placeSaving.set(false);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('place.error_create'),
-          });
-        },
-      });
-  }
-
-  private notifyPlaceToast(detailKey: string): void {
-    this.messageService.add({
-      severity: 'success',
-      summary: this.transloco.translate('common.success'),
-      detail: this.transloco.translate(detailKey),
-    });
   }
 
   /** Error toast for a form-section loader, instead of swallowing the failure

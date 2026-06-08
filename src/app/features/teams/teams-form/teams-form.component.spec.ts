@@ -104,25 +104,13 @@ interface ProtectedFields {
   slotHasTimeError(i: number): boolean;
   isSlotSaving(i: number): boolean;
   weekdayOptions(): Array<{ label: string; value: number }>;
-  // Lieux (shared sport pool, M2M)
+  // Lieux: the pool itself lives in app-team-place-pool; the parent only keeps
+  // the pool mirror + the child-wiring handlers.
   places(): Place[];
   selectedPlaces(): Place[];
-  placeName(): string;
-  placeAddress(): string;
-  placeNameError(): string | null;
-  placeDialogVisible(): boolean;
-  placeCreateMode(): boolean;
-  addressSuggestionLabels(): string[];
-  openAddPlace(): void;
-  enterCreateMode(): void;
-  onAddressInput(v: string): void;
-  onAddressSelect(v: string): void;
-  savePlace(): void;
-  isPlaceSelected(id: number): boolean;
-  isDefaultPlace(id: number): boolean;
-  setDefaultPlace(p: Place): void;
-  removePlace(p: Place): void;
-  togglePlace(p: Place, checked: boolean): void;
+  onPlaceIdsChange(ids: number[]): void;
+  onDefaultPlaceIdChange(id: number | null): void;
+  onPoolChange(pool: Place[]): void;
   addableManagers(): CustomUserPublic[];
   managerPickId(): number | null;
   openAddManager(): void;
@@ -627,122 +615,46 @@ describe('TeamsFormComponent', () => {
     );
   });
 
-  // ── Venue pool load (slots themselves are covered by team-slots-editor) ────
-
-  it('loads the sport venue pool on edit', async () => {
-    await setup('5');
-    // Pool is loaded via ?sport (position 5), not ?team.
-    expect(placesMock.placesList).toHaveBeenCalledWith(
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      1,
-    );
-    expect(access(component).places()).toHaveLength(2);
-    expect(access(component).places()[0].name).toBe('Piscine olympique');
-  });
-
-  // ── Lieux (shared sport pool, M2M) ────────────────────────────────────────
+  // ── Lieux: place-pool child wiring (the pool UI is covered by
+  //    team-place-pool.component.spec) ───────────────────────────────────────
 
   const placeControls = (c: TeamsFormComponent) => (c as unknown as PlaceControls).form.controls;
 
-  it('pre-checks the team linked places and pre-selects the default on edit', async () => {
+  it('pre-fills linked places + default from the team on edit', async () => {
     await setup('5', ownerUser, {
       ...team,
       places: [{ id: 7, name: 'Piscine olympique', address: '1 rue X' }],
       default_place: { id: 7, name: 'Piscine olympique', address: '1 rue X' },
     });
-    expect(access(component).isPlaceSelected(7)).toBe(true);
-    expect(access(component).isPlaceSelected(9)).toBe(false);
+    expect(placeControls(component).place_ids.value).toContain(7);
     expect(placeControls(component).default_place_id.value).toBe(7);
   });
 
-  it('togglePlace adds/removes the id from place_ids', async () => {
+  it('onPlaceIdsChange writes the emitted linked set to place_ids', async () => {
     await setup('5');
-    access(component).togglePlace({ id: 9, name: 'Piscine B' } as Place, true);
-    expect(placeControls(component).place_ids.value).toContain(9);
-    access(component).togglePlace({ id: 9, name: 'Piscine B' } as Place, false);
-    expect(placeControls(component).place_ids.value).not.toContain(9);
+    access(component).onPlaceIdsChange([7, 9]);
+    expect(placeControls(component).place_ids.value).toEqual([7, 9]);
   });
 
-  it('unchecking the current default clears default_place_id', async () => {
-    await setup('5', ownerUser, {
-      ...team,
-      places: [{ id: 7, name: 'Piscine olympique', address: '1 rue X' }],
-      default_place: { id: 7, name: 'Piscine olympique', address: '1 rue X' },
-    });
-    access(component).togglePlace({ id: 7, name: 'Piscine olympique' } as Place, false);
-    expect(placeControls(component).place_ids.value).not.toContain(7);
-    expect(placeControls(component).default_place_id.value).toBeNull();
+  it('onDefaultPlaceIdChange writes the emitted default to default_place_id', async () => {
+    await setup('5');
+    access(component).onDefaultPlaceIdChange(9);
+    expect(placeControls(component).default_place_id.value).toBe(9);
   });
 
-  it('selectedPlaces reflects the currently-linked subset of the pool', async () => {
+  it('onPoolChange mirrors the pool so selectedPlaces resolves linked objects', async () => {
     await setup('5');
-    access(component).togglePlace({ id: 9, name: 'Piscine B' } as Place, true);
+    access(component).onPoolChange([
+      { id: 7, sports: [1], name: 'P7', address: '' } as Place,
+      { id: 9, sports: [1], name: 'P9', address: '' } as Place,
+    ]);
+    access(component).onPlaceIdsChange([9]);
     expect(access(component).selectedPlaces().map((p) => p.id)).toEqual([9]);
   });
 
-  it('savePlace creates a place, links it to the team, and checks it', async () => {
+  it('submit forces the default place into place_ids', async () => {
     await setup('5');
-    access(component).openAddPlace();
-    access(component).enterCreateMode();
-    (component as unknown as { placeName: { set(v: string): void } }).placeName.set('Nouveau');
-    access(component).savePlace();
-    expect(placesMock.placesCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ team: 5, name: 'Nouveau' }),
-    );
-    expect(access(component).places().some((p) => p.id === 8)).toBe(true);
-    expect(placeControls(component).place_ids.value).toContain(8);
-  });
-
-  it('savePlace blocks and flags an error when the name is empty', async () => {
-    await setup('5');
-    access(component).openAddPlace();
-    access(component).enterCreateMode();
-    access(component).savePlace();
-    expect(placesMock.placesCreate).not.toHaveBeenCalled();
-    expect(access(component).placeNameError()).not.toBeNull();
-  });
-
-  it('openAddPlace opens the dialog in link-existing (not create) mode', async () => {
-    await setup('5');
-    access(component).openAddPlace();
-    expect(access(component).placeDialogVisible()).toBe(true);
-    expect(access(component).placeCreateMode()).toBe(false);
-    access(component).enterCreateMode();
-    expect(access(component).placeCreateMode()).toBe(true);
-  });
-
-  it('setDefaultPlace links the place (if needed) and sets default_place_id', async () => {
-    await setup('5');
-    // Not yet linked; setting it default both links and marks it default.
-    access(component).setDefaultPlace({ id: 9, name: 'Piscine B' } as Place);
-    expect(placeControls(component).place_ids.value).toContain(9);
-    expect(placeControls(component).default_place_id.value).toBe(9);
-    expect(access(component).isDefaultPlace(9)).toBe(true);
-  });
-
-  it('removePlace unlinks the place and clears default if it was the default', async () => {
-    await setup('5', ownerUser, {
-      ...team,
-      places: [{ id: 7, name: 'Piscine olympique', address: '1 rue X' }],
-      default_place: { id: 7, name: 'Piscine olympique', address: '1 rue X' },
-    });
-    access(component).removePlace({ id: 7, name: 'Piscine olympique' } as Place);
-    expect(placeControls(component).place_ids.value).not.toContain(7);
-    expect(placeControls(component).default_place_id.value).toBeNull();
-  });
-
-  it('onAddressSelect fills the address with the picked display_name', async () => {
-    await setup('5');
-    access(component).onAddressSelect('1 Rue de Rivoli, 75001 Paris, France');
-    expect(access(component).placeAddress()).toBe('1 Rue de Rivoli, 75001 Paris, France');
-  });
-
-  it('submit sends place_ids + default_place_id, with the default forced into place_ids', async () => {
-    await setup('5');
-    access(component).togglePlace({ id: 9, name: 'Piscine B' } as Place, true);
+    access(component).onPlaceIdsChange([9]);
     placeControls(component).default_place_id.setValue(7);
     access(component).submit();
     expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(
