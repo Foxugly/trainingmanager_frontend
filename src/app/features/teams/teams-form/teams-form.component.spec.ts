@@ -602,23 +602,10 @@ describe('TeamsFormComponent', () => {
     );
   });
 
-  // ── Planning type (per-créneau training slots) ────────────────────────────
+  // ── Venue pool load (slots themselves are covered by team-slots-editor) ────
 
-  const slotAt = (c: TeamsFormComponent, i: number) =>
-    (c as unknown as { slots: { at(i: number): { patchValue(v: unknown): void } } }).slots.at(i);
-
-  /** Patch a row with a valid weekday + 18:00–19:30 time range. */
-  function fillSlot(i: number, weekday = 0, place_id: number | null = null): void {
-    const start = new Date();
-    start.setHours(18, 0, 0, 0);
-    const end = new Date();
-    end.setHours(19, 30, 0, 0);
-    slotAt(component, i).patchValue({ weekday, hour_start: start, hour_end: end, place_id });
-  }
-
-  it('loads the team weekly slots (per-slot list) + sport venue pool on edit', async () => {
+  it('loads the sport venue pool on edit', async () => {
     await setup('5');
-    expect(teamsMock.teamsTrainingSlotsList).toHaveBeenCalledWith(5);
     // Pool is loaded via ?sport (position 5), not ?team.
     expect(placesMock.placesList).toHaveBeenCalledWith(
       undefined,
@@ -629,118 +616,6 @@ describe('TeamsFormComponent', () => {
     );
     expect(access(component).places()).toHaveLength(2);
     expect(access(component).places()[0].name).toBe('Piscine olympique');
-  });
-
-  it('hydrates existing slot rows from the per-slot list response', async () => {
-    await setup('5', ownerUser, team, [
-      { id: 7, weekday: 1, hour_start: '18:00', hour_end: '19:30', place: null },
-    ]);
-    expect(access(component).slots.length).toBe(1);
-    expect(access(component).isSlotEditing(0)).toBe(false);
-    expect(access(component).slotStart(0)).toBe('18:00');
-    expect(access(component).slotEnd(0)).toBe('19:30');
-  });
-
-  it('addSlot appends an editable row; dropping an unsaved row needs no API call', async () => {
-    await setup('5');
-    expect(access(component).slots.length).toBe(0);
-    access(component).addSlot();
-    access(component).addSlot();
-    expect(access(component).slots.length).toBe(2);
-    expect(access(component).isSlotEditing(0)).toBe(true);
-    // Removing a brand-new (unsaved, id=null) row just drops it, no DELETE.
-    access(component).removeSlot(0);
-    expect(access(component).slots.length).toBe(1);
-    expect(teamsMock.teamsTrainingSlotsDestroy).not.toHaveBeenCalled();
-  });
-
-  it('addSlot defaults the new row lieu to the team default place', async () => {
-    await setup('5', ownerUser, {
-      ...team,
-      places: [{ id: 7, name: 'Piscine olympique', address: '1 rue X' }],
-      default_place: { id: 7, name: 'Piscine olympique', address: '1 rue X' },
-    });
-    access(component).addSlot();
-    expect(
-      (component as unknown as {
-        slots: { at(i: number): { controls: { place_id: { value: number | null } } } };
-      }).slots
-        .at(0)
-        .controls.place_id.value,
-    ).toBe(7);
-  });
-
-  it('confirmSlot on a new row POSTs the créneau and collapses on success', async () => {
-    await setup('5');
-    access(component).addSlot();
-    expect(access(component).isSlotEditing(0)).toBe(true);
-    fillSlot(0, 2, null);
-    access(component).confirmSlot(0);
-    expect(teamsMock.teamsTrainingSlotsCreate).toHaveBeenCalledTimes(1);
-    const [teamPk, body] = teamsMock.teamsTrainingSlotsCreate.mock.calls[0];
-    expect(teamPk).toBe(5);
-    expect(body).toMatchObject({ weekday: 2, hour_start: '18:00', hour_end: '19:30', place_id: null });
-    // Collapses to read-only summary, refreshed from the response.
-    expect(access(component).isSlotEditing(0)).toBe(false);
-    expect(access(component).slotStart(0)).toBe('18:00');
-    expect(access(component).slotEnd(0)).toBe('19:30');
-  });
-
-  it('confirmSlot sends place_id and refreshes the row from the response', async () => {
-    await setup('5');
-    access(component).addSlot();
-    fillSlot(0, 0, 7);
-    access(component).confirmSlot(0);
-    const [, body] = teamsMock.teamsTrainingSlotsCreate.mock.calls[0];
-    expect(body.place_id).toBe(7);
-  });
-
-  it('confirmSlot on an existing row PATCHes by id + teamPk', async () => {
-    await setup('5', ownerUser, team, [
-      { id: 42, weekday: 1, hour_start: '18:00', hour_end: '19:30', place: null },
-    ]);
-    access(component).editSlot(0);
-    fillSlot(0, 3, null);
-    access(component).confirmSlot(0);
-    expect(teamsMock.teamsTrainingSlotsPartialUpdate).toHaveBeenCalledTimes(1);
-    const [id, teamPk, body] = teamsMock.teamsTrainingSlotsPartialUpdate.mock.calls[0];
-    expect(id).toBe(42);
-    expect(teamPk).toBe(5);
-    expect(body).toMatchObject({ weekday: 3, hour_start: '18:00', hour_end: '19:30' });
-    expect(access(component).isSlotEditing(0)).toBe(false);
-  });
-
-  it('confirmSlot keeps an invalid row editable and makes no request', async () => {
-    await setup('5');
-    access(component).addSlot();
-    // No times set → invalid → stays editable, nothing persisted.
-    access(component).confirmSlot(0);
-    expect(access(component).isSlotEditing(0)).toBe(true);
-    expect(teamsMock.teamsTrainingSlotsCreate).not.toHaveBeenCalled();
-  });
-
-  it('removeSlot on a persisted row confirms then DELETEs by id + teamPk', async () => {
-    await setup('5', ownerUser, team, [
-      { id: 88, weekday: 1, hour_start: '18:00', hour_end: '19:30', place: null },
-    ]);
-    expect(access(component).slots.length).toBe(1);
-    access(component).removeSlot(0);
-    expect(teamsMock.teamsTrainingSlotsDestroy).toHaveBeenCalledWith(88, 5);
-    expect(access(component).slots.length).toBe(0);
-  });
-
-  it('confirmSlot surfaces place_not_in_team as an error toast and stays editable', async () => {
-    await setup('5');
-    const messages = TestBed.inject(MessageService);
-    const addSpy = vi.spyOn(messages, 'add');
-    teamsMock.teamsTrainingSlotsCreate.mockReturnValueOnce(
-      throwError(() => ({ status: 400, error: { code: 'place_not_in_team' } })),
-    );
-    access(component).addSlot();
-    fillSlot(0, 0, 9);
-    access(component).confirmSlot(0);
-    expect(addSpy).toHaveBeenCalledWith(expect.objectContaining({ severity: 'error' }));
-    expect(access(component).isSlotEditing(0)).toBe(true);
   });
 
   // ── Lieux (shared sport pool, M2M) ────────────────────────────────────────
@@ -876,19 +751,5 @@ describe('TeamsFormComponent', () => {
     (component as unknown as { managerPickId: { set(v: number): void } }).managerPickId.set(99);
     access(component).confirmAddManager();
     expect(mgrControls(component).managers_ids.value).toContain(99);
-  });
-
-  it('slotHasTimeError flags a slot whose end is before its start', async () => {
-    await setup('5');
-    access(component).addSlot();
-    const start = new Date();
-    start.setHours(19, 0, 0, 0);
-    const end = new Date();
-    end.setHours(18, 0, 0, 0);
-    (access(component).slots as unknown as { at(i: number): { patchValue(v: unknown): void } })
-      .at(0)
-      .patchValue({ weekday: 0, hour_start: start, hour_end: end });
-    expect(access(component).slotHasTimeError(0)).toBe(true);
-    expect(access(component).templateForm.invalid).toBe(true);
   });
 });

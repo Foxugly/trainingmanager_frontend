@@ -1,0 +1,11 @@
+:host {
+  display: block;
+}
+
+// Section heading inside the builder pane (matches teams-form).
+.builder-section-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  margin: 0 0 0.5rem;
+}

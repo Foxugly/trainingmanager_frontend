@@ -1,0 +1,166 @@
+<div class="builder-pane" [formGroup]="templateForm">
+  <!-- Section header + green "add a slot" button. -->
+  <div class="flex items-center justify-between mb-2">
+    <h3 class="builder-section-title !mb-0">
+      {{ 'training_template.slots' | transloco }}
+    </h3>
+    <p-button
+      type="button"
+      severity="success"
+      size="small"
+      icon="pi pi-plus"
+      [label]="'training_template.add_slot' | transloco"
+      (onClick)="addSlot()"
+    />
+  </div>
+  <p class="meta-hint mb-2">{{ 'training_template.slots_help' | transloco }}</p>
+
+  @if (templateLoading()) {
+    <p class="meta-hint">{{ 'common.loading' | transloco }}…</p>
+  } @else if (slots.length === 0) {
+    <app-empty-state
+      icon="calendar"
+      tone="gray"
+      [title]="'training_template.slots_empty' | transloco"
+      [subtitle]="'training_template.slots_empty_subtitle' | transloco"
+    />
+  } @else {
+    <!-- Per-créneau table: each row is saved on its own. -->
+    <p-table
+      [value]="slots.controls"
+      styleClass="p-datatable-sm"
+      [tableStyle]="{ 'min-width': '40rem' }"
+      formArrayName="slots"
+    >
+      <ng-template #header>
+        <tr>
+          <th>{{ 'training_template.weekday_label' | transloco }}</th>
+          <th>{{ 'events.form.hour_start' | transloco }}</th>
+          <th>{{ 'events.form.hour_end' | transloco }}</th>
+          <th>{{ 'training_template.place_label' | transloco }}</th>
+          <th class="text-right">{{ 'common.actions' | transloco }}</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-slot let-i="rowIndex">
+        <tr [formGroupName]="i">
+          @if (isSlotEditing(i)) {
+            <td>
+              <p-select
+                [inputId]="'slot_weekday_' + i"
+                [options]="weekdayOptions()"
+                formControlName="weekday"
+                optionLabel="label"
+                optionValue="value"
+                styleClass="w-full"
+                [ariaLabel]="'training_template.weekday_label' | transloco"
+              />
+            </td>
+            <td>
+              <p-datepicker
+                [inputId]="'slot_start_' + i"
+                formControlName="hour_start"
+                [timeOnly]="true"
+                [showIcon]="true"
+                appendTo="body"
+                styleClass="w-full"
+                [ariaLabel]="'events.form.hour_start' | transloco"
+              />
+            </td>
+            <td>
+              <p-datepicker
+                [inputId]="'slot_end_' + i"
+                formControlName="hour_end"
+                [timeOnly]="true"
+                [showIcon]="true"
+                appendTo="body"
+                styleClass="w-full"
+                [ariaLabel]="'events.form.hour_end' | transloco"
+              />
+              @if (slotHasTimeError(i)) {
+                <small class="text-red-600 block mt-1">
+                  {{ 'training_template.time_range_error' | transloco }}
+                </small>
+              }
+            </td>
+            <td>
+              <p-select
+                [inputId]="'slot_place_' + i"
+                [options]="places()"
+                formControlName="place_id"
+                optionLabel="name"
+                optionValue="id"
+                [showClear]="true"
+                [placeholder]="'place.select_placeholder' | transloco"
+                [emptyMessage]="'place.none' | transloco"
+                appendTo="body"
+                styleClass="w-full"
+                [ariaLabel]="'training_template.place_label' | transloco"
+              />
+            </td>
+            <td class="text-right whitespace-nowrap">
+              <p-button
+                type="button"
+                icon="pi pi-check"
+                severity="success"
+                [text]="true"
+                [rounded]="true"
+                size="small"
+                [loading]="isSlotSaving(i)"
+                [disabled]="isSlotSaving(i)"
+                [ariaLabel]="'training_template.confirm_slot' | transloco"
+                [pTooltip]="'training_template.confirm_slot' | transloco"
+                (onClick)="confirmSlot(i)"
+              />
+              <p-button
+                type="button"
+                icon="pi pi-trash"
+                severity="danger"
+                [text]="true"
+                [rounded]="true"
+                size="small"
+                [disabled]="isSlotSaving(i)"
+                [ariaLabel]="'training_template.remove_slot' | transloco"
+                [pTooltip]="'training_template.remove_slot' | transloco"
+                (onClick)="removeSlot(i)"
+              />
+            </td>
+          } @else {
+            <td>{{ slotWeekdayLabel(i) }}</td>
+            <td>{{ slotStart(i) }}</td>
+            <td>{{ slotEnd(i) }}</td>
+            <td [class.text-gray-500]="slotPlaceName(i) === '—'">
+              {{ slotPlaceName(i) }}
+            </td>
+            <td class="text-right whitespace-nowrap">
+              <p-button
+                type="button"
+                icon="pi pi-pencil"
+                severity="secondary"
+                [text]="true"
+                [rounded]="true"
+                size="small"
+                [disabled]="isSlotSaving(i)"
+                [ariaLabel]="'training_template.edit_slot' | transloco"
+                [pTooltip]="'training_template.edit_slot' | transloco"
+                (onClick)="editSlot(i)"
+              />
+              <p-button
+                type="button"
+                icon="pi pi-trash"
+                severity="danger"
+                [text]="true"
+                [rounded]="true"
+                size="small"
+                [loading]="isSlotSaving(i)"
+                [disabled]="isSlotSaving(i)"
+                [ariaLabel]="'training_template.remove_slot' | transloco"
+                [pTooltip]="'training_template.remove_slot' | transloco"
+                (onClick)="removeSlot(i)"
+              />
+            </td>
+          }
+        </tr>
+      </ng-template>
+    </p-table>
+  }
+</div>
