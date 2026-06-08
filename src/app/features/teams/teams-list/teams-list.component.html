@@ -100,9 +100,9 @@
           class="group block rounded-xl border border-gray-200 bg-white p-5 transition duration-200 hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md"
         >
           <div class="flex items-start gap-3">
-            @if (team.logo) {
+            @if (team.logo_url) {
               <img
-                [src]="team.logo"
+                [src]="team.logo_url"
                 [alt]="team.name"
                 class="shrink-0 size-11 rounded-xl object-cover border border-gray-200"
               />

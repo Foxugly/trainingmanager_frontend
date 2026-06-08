@@ -100,6 +100,14 @@ export interface TeamsServiceInterface {
     teamsList(isActive?: boolean, isPublic?: boolean, language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, pageSize?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedTeamList>;
 
     /**
+     * Team logo image (public)
+     * Returns the team\&#39;s logo as a binary image, decoded from the stored base64 data-URL. Public (no auth); 404 when the team has no logo. The list and detail expose this URL as &#x60;logo_url&#x60; instead of inlining the base64.
+     * @endpoint get /api/v1/teams/{id}/logo/
+     * @param id A unique integer value identifying this team.
+     */
+    teamsLogoRetrieve(id: number, extraHttpRequestParams?: any): Observable<Blob>;
+
+    /**
      * 
      * CRUD on coach notes within a team-member nested context.  URL: /api/v1/teams/{team_pk}/members/{member_pk}/notes/
      * @endpoint post /api/v1/teams/{team_pk}/members/{member_pk}/notes/

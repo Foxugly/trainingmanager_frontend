@@ -43,6 +43,10 @@ export interface PatchedTeam {
      */
     logo?: string;
     /**
+     * Absolute URL of the public logo endpoint (null when no logo). The list drops the inline base64 and exposes this instead.
+     */
+    readonly logo_url?: string | null;
+    /**
      * If True, athletes can submit a per-session difficulty rating (ROTI, 1..5) for the team\'s events.
      */
     roti_enabled?: boolean;

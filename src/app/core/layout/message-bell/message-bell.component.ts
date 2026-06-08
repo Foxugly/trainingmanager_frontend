@@ -66,8 +66,18 @@ export class MessageBellComponent {
       }
     });
 
-    this.destroyRef.onDestroy(() => this.stopPolling());
+    // Don't poll a backgrounded tab; catch up immediately when it returns.
+    document.addEventListener('visibilitychange', this.onVisibilityChange);
+
+    this.destroyRef.onDestroy(() => {
+      this.stopPolling();
+      document.removeEventListener('visibilitychange', this.onVisibilityChange);
+    });
   }
+
+  private readonly onVisibilityChange = (): void => {
+    if (!document.hidden) this.pollIfAuthenticated();
+  };
 
   private startPolling(): void {
     // Immediate refresh at startup/login, then every 60s.
@@ -85,6 +95,7 @@ export class MessageBellComponent {
 
   private pollIfAuthenticated(): void {
     if (this.auth.currentUser() === null) return;
+    if (document.hidden) return; // tab backgrounded — skip the network call
     this.messages.refreshUnread().subscribe({ error: () => {} });
   }
 

@@ -5374,6 +5374,35 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/teams/{id}/logo/:
+    get:
+      operationId: teams_logo_retrieve
+      description: Returns the team's logo as a binary image, decoded from the stored
+        base64 data-URL. Public (no auth); 404 when the team has no logo. The list
+        and detail expose this URL as `logo_url` instead of inlining the base64.
+      summary: Team logo image (public)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this team.
+        required: true
+      tags:
+      - teams
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: string
+                format: binary
+          description: ''
+        '404':
+          description: No logo
   /api/v1/teams/{id}/pools/:
     get:
       operationId: teams_pools_retrieve
@@ -10752,6 +10781,12 @@ components:
           type: string
           description: Small base64 data-URL for the team logo (e.g. 'data:image/png;base64,...').
             Stored inline in the DB; no file storage.
+        logo_url:
+          type: string
+          nullable: true
+          readOnly: true
+          description: Absolute URL of the public logo endpoint (null when no logo).
+            The list drops the inline base64 and exposes this instead.
         roti_enabled:
           type: boolean
           description: If True, athletes can submit a per-session difficulty rating
@@ -11832,6 +11867,12 @@ components:
           type: string
           description: Small base64 data-URL for the team logo (e.g. 'data:image/png;base64,...').
             Stored inline in the DB; no file storage.
+        logo_url:
+          type: string
+          nullable: true
+          readOnly: true
+          description: Absolute URL of the public logo endpoint (null when no logo).
+            The list drops the inline base64 and exposes this instead.
         roti_enabled:
           type: boolean
           description: If True, athletes can submit a per-session difficulty rating
