@@ -22,14 +22,12 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import * as Sentry from '@sentry/angular';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Fieldset } from 'primeng/fieldset';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
-import { Message } from 'primeng/message';
 import { Select } from 'primeng/select';
 import { Tooltip } from 'primeng/tooltip';
 import { firstValueFrom } from 'rxjs';
@@ -102,7 +100,6 @@ export interface TrainingState {
     Fieldset,
     InputNumber,
     InputText,
-    Message,
     Select,
     Tooltip,
     TranslocoPipe,
@@ -137,10 +134,6 @@ export class EventTrainingComponent {
 
   protected readonly rounds = signal<Round[]>([]);
   protected readonly exercisesByRound = signal<Map<number, Exercise[]>>(new Map());
-  protected readonly loadingRounds = signal(false);
-  protected readonly roundsLoadError = signal<{ kind: 'partial' | 'full'; count: number } | null>(
-    null,
-  );
 
   protected readonly showRoundDialog = signal(false);
   protected readonly roundDialogMode = signal<'create' | 'edit'>('create');
@@ -178,7 +171,6 @@ export class EventTrainingComponent {
     if (!this.restrictedViewer()) return false;
     const mode = this.event()?.vis_rounds ?? VisibilityMode.Always;
     if (mode === VisibilityMode.Always) return false;
-    if (this.loadingRounds()) return false;
     return this.rounds().length === 0;
   });
 
@@ -190,15 +182,16 @@ export class EventTrainingComponent {
   private loadedRoundIds: string | null = null;
 
   constructor() {
-    // (Re)load the rounds whenever the event's round id LIST changes. Keying on
-    // the id list (not the whole event) means a total-only patch — which mutates
-    // the event reference — does not trigger a needless reload (and no loop).
+    // Rebuild rounds + exercises whenever the event's round id LIST changes.
+    // The data is embedded in the event (rounds_detail) — no fetch — so this is
+    // synchronous. Keying on the id list (not the whole event) means a
+    // total-only patch, which mutates the event reference, doesn't rebuild.
     effect(() => {
       const ids = this.event().rounds ?? [];
       const key = ids.join(',');
       if (this.loadedRoundIds === key) return;
       this.loadedRoundIds = key;
-      untracked(() => void this.loadRoundsAndExercises(ids));
+      untracked(() => this.rebuildFromEvent());
     });
 
     // Load modality + energy-segment option lists once the session's sport is
@@ -212,9 +205,10 @@ export class EventTrainingComponent {
       untracked(() => void this.loadOptions(sportId));
     });
 
-    // Mirror total distance + loading to the parent.
+    // Mirror total distance to the parent (it owns the header + event.total
+    // auto-patch). Loading is always false now that rounds are embedded.
     effect(() => {
-      this.stateChange.emit({ totalDistance: this.totalDistance(), loading: this.loadingRounds() });
+      this.stateChange.emit({ totalDistance: this.totalDistance(), loading: false });
     });
   }
 
@@ -248,59 +242,34 @@ export class EventTrainingComponent {
     return `${meters} m`;
   }
 
-  // --- Rounds + exercises load ------------------------------------------------
+  // --- Rounds + exercises (built from the event's embedded rounds_detail) -----
 
-  private async loadRoundsAndExercises(roundIds: readonly number[]): Promise<void> {
-    this.roundsLoadError.set(null);
-    if (roundIds.length === 0) {
-      this.rounds.set([]);
-      this.exercisesByRound.set(new Map());
-      return;
+  /** Build the rounds + per-round exercise map from the event's `rounds_detail`
+   *  (embedded by the backend on retrieve). Synchronous — no fetch. After a
+   *  mutation the child emits (reloadRequested); the parent refetches the event
+   *  and feeds a fresh one back, which re-runs this. */
+  private rebuildFromEvent(): void {
+    const detail = this.event().rounds_detail ?? [];
+    const sorted = [...detail].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    this.rounds.set(
+      sorted.map(
+        (rd) =>
+          ({
+            id: rd.id,
+            order: rd.order,
+            count: rd.count,
+            t_start: rd.t_start,
+            t_break: rd.t_break,
+            sport: rd.sport,
+            exercises: rd.exercises.map((e) => e.id),
+          }) as unknown as Round,
+      ),
+    );
+    const map = new Map<number, Exercise[]>();
+    for (const rd of sorted) {
+      map.set(rd.id, [...rd.exercises].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
     }
-    this.loadingRounds.set(true);
-    try {
-      const settledRounds = await Promise.allSettled(
-        roundIds.map((id) => firstValueFrom(this.roundsService.roundsRetrieve(id))),
-      );
-      const fetchedRounds: Round[] = [];
-      let roundFailures = 0;
-      for (const s of settledRounds) {
-        if (s.status === 'fulfilled') fetchedRounds.push(s.value);
-        else {
-          roundFailures++;
-          Sentry.captureException(s.reason);
-        }
-      }
-      if (roundFailures > 0) {
-        this.roundsLoadError.set({ kind: 'partial', count: roundFailures });
-      }
-
-      const sortedRounds = [...fetchedRounds].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-      this.rounds.set(sortedRounds);
-
-      const exerciseFetches = sortedRounds.map(async (round) => {
-        const ids = round.exercises ?? [];
-        const settled = await Promise.allSettled(
-          ids.map((eid) => firstValueFrom(this.exercisesService.exercisesRetrieve(eid))),
-        );
-        const fulfilled: Exercise[] = [];
-        for (const s of settled) {
-          if (s.status === 'fulfilled') fulfilled.push(s.value);
-          else Sentry.captureException(s.reason);
-        }
-        const sorted = [...fulfilled].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-        return [round.id, sorted] as const;
-      });
-      const entries = await Promise.all(exerciseFetches);
-      const map = new Map<number, Exercise[]>();
-      for (const [rid, list] of entries) map.set(rid, list);
-      this.exercisesByRound.set(map);
-    } catch (err) {
-      Sentry.captureException(err);
-      this.roundsLoadError.set({ kind: 'full', count: roundIds.length });
-    } finally {
-      this.loadingRounds.set(false);
-    }
+    this.exercisesByRound.set(map);
   }
 
   // --- Round CRUD + reorder ---------------------------------------------------
@@ -364,25 +333,42 @@ export class EventTrainingComponent {
   protected onExerciseDrop(round: Round, event: CdkDragDrop<Exercise[]>): void {
     if (this.reordering()) return;
     if (event.previousIndex === event.currentIndex) return;
-
-    const original = this.exercisesByRound().get(round.id) ?? [];
-    const reordered = [...original];
+    const reordered = [...(this.exercisesByRound().get(round.id) ?? [])];
     moveItemInArray(reordered, event.previousIndex, event.currentIndex);
-    const renumbered = reordered.map((ex, i) => ({ ...ex, order: i + 1 }));
+    this._persistExerciseReorder(round.id, reordered);
+  }
 
+  /** Keyboard-operable exercise reorder (the ↑/↓ buttons), mirroring moveRound —
+   *  so reordering doesn't depend on drag-drop alone (a11y). */
+  protected moveExercise(round: Round, ex: Exercise, direction: 'up' | 'down'): void {
+    if (this.reordering()) return;
+    const list = this.exercisesByRound().get(round.id) ?? [];
+    const idx = list.findIndex((e) => e.id === ex.id);
+    const targetIdx = direction === 'up' ? idx - 1 : idx + 1;
+    if (idx < 0 || targetIdx < 0 || targetIdx >= list.length) return;
+    const reordered = [...list];
+    [reordered[idx], reordered[targetIdx]] = [reordered[targetIdx], reordered[idx]];
+    this._persistExerciseReorder(round.id, reordered);
+  }
+
+  /** Optimistically apply a new exercise order for a round + persist it; roll
+   *  back on error. Shared by drag-drop and the ↑/↓ buttons. */
+  private _persistExerciseReorder(roundId: number, reordered: Exercise[]): void {
+    const original = this.exercisesByRound().get(roundId) ?? [];
+    const renumbered = reordered.map((ex, i) => ({ ...ex, order: i + 1 }));
     const map = new Map(this.exercisesByRound());
-    map.set(round.id, renumbered);
+    map.set(roundId, renumbered);
     this.exercisesByRound.set(map);
 
     this.reordering.set(true);
     firstValueFrom(
-      this.roundsService.roundsExercisesReorderCreate(round.id, {
+      this.roundsService.roundsExercisesReorderCreate(roundId, {
         exercise_ids: renumbered.map((ex) => ex.id),
       }),
     )
       .catch((err: HttpErrorResponse) => {
         const rollback = new Map(this.exercisesByRound());
-        rollback.set(round.id, original);
+        rollback.set(roundId, original);
         this.exercisesByRound.set(rollback);
         this.notifyReorderError(err);
       })

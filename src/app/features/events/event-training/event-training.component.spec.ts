@@ -30,6 +30,7 @@ interface Protected {
   onRoundDialogClosed(r: Round | null): void;
   confirmDeleteRound(r: Round): void;
   confirmDeleteExercise(ex: Exercise): void;
+  moveExercise(round: Round, ex: Exercise, direction: 'up' | 'down'): void;
   startAddExercise(roundId: number): void;
   startEditExercise(ex: Exercise): void;
   saveNewRow(row: { key: string; roundId: number }): void;
@@ -48,10 +49,25 @@ const exercise1 = { id: 201, order: 1, repetition: 4, distance: 50, modality: { 
 const exercise2 = { id: 202, order: 2, repetition: 4, distance: 100, t_break: '00:30', modality: { id: 1 }, energysegment: { id: 1 } } as unknown as Exercise;
 const round = (id: number): Round =>
   ({ id, order: id - 10, count: 2, exercises: [201, 202] }) as unknown as Round;
+/** A rounds_detail entry as the backend embeds it on the event (retrieve). */
+const roundDetail = (id: number) => ({
+  id,
+  order: id - 10,
+  count: 2,
+  t_start: null,
+  t_break: null,
+  sport: { id: 1 },
+  exercises: [exercise1, exercise2],
+});
 
 const team = { id: 4, language: 'fr', sport: { id: 1 } } as unknown as Team;
-const eventWithRounds = { id: 7, rounds: [11, 12, 13], sport: { id: 1 } } as unknown as Event;
-const eventNoRounds = { id: 7, rounds: [], sport: { id: 1 } } as unknown as Event;
+const eventWithRounds = {
+  id: 7,
+  rounds: [11, 12, 13],
+  rounds_detail: [roundDetail(11), roundDetail(12), roundDetail(13)],
+  sport: { id: 1 },
+} as unknown as Event;
+const eventNoRounds = { id: 7, rounds: [], rounds_detail: [], sport: { id: 1 } } as unknown as Event;
 
 describe('EventTrainingComponent', () => {
   let fixture: ComponentFixture<EventTrainingComponent>;
@@ -153,15 +169,14 @@ describe('EventTrainingComponent', () => {
 
   beforeEach(() => setup());
 
-  it('loads rounds + their exercises from the event round id list', async () => {
-    await tick();
-    await tick();
-    expect(roundsMock.roundsRetrieve).toHaveBeenCalledTimes(3);
+  it('builds rounds + exercises from the embedded event.rounds_detail (no fetch)', () => {
+    expect(roundsMock.roundsRetrieve).not.toHaveBeenCalled();
+    expect(exercisesMock.exercisesRetrieve).not.toHaveBeenCalled();
     expect(access(component).rounds().length).toBe(3);
     expect(access(component).exercisesByRound().get(11)?.length).toBe(2);
   });
 
-  it('does not fetch rounds for an event with none', async () => {
+  it('shows no rounds for an event with empty rounds_detail', async () => {
     await setup(eventNoRounds);
     expect(roundsMock.roundsRetrieve).not.toHaveBeenCalled();
     expect(access(component).rounds()).toEqual([]);
@@ -180,15 +195,19 @@ describe('EventTrainingComponent', () => {
     expect(access(component).formatDistance(200)).toBe('200 m');
   });
 
-  it('emits the computed total distance via stateChange once loaded', async () => {
+  it('computes + emits the total distance to the parent', async () => {
+    // Subscribe before the build so we capture the initial emission.
     const states: TrainingState[] = [];
-    await setup(eventWithRounds);
+    TestBed.resetTestingModule();
+    await setup(eventNoRounds);
     component.stateChange.subscribe((s) => states.push(s));
-    await tick();
-    await tick();
+    // Feed the rounds-bearing event; the rebuild re-emits the new total.
+    fixture.componentRef.setInput('event', eventWithRounds);
+    fixture.detectChanges();
     // each round: count 2 × (200 + 400) = 1200; × 3 rounds = 3600
     expect(access(component).totalDistance()).toBe(3600);
     expect(states.at(-1)?.totalDistance).toBe(3600);
+    expect(states.at(-1)?.loading).toBe(false);
   });
 
   it('openCreateRound opens the dialog in create mode', () => {
@@ -251,6 +270,16 @@ describe('EventTrainingComponent', () => {
     await tick();
     expect(exercisesMock.exercisesPartialUpdate.mock.calls[0][1].repetition).toBe(8);
     expect(access(component).isEditingExercise(exercise1)).toBe(false);
+  });
+
+  it('moveExercise reorders within a round and persists the new order', async () => {
+    await tick();
+    expect(access(component).exercisesByRound().get(11)?.map((e) => e.id)).toEqual([201, 202]);
+    access(component).moveExercise(round(11), exercise1, 'down');
+    expect(access(component).exercisesByRound().get(11)?.map((e) => e.id)).toEqual([202, 201]);
+    expect(roundsMock.roundsExercisesReorderCreate).toHaveBeenCalledWith(11, {
+      exercise_ids: [202, 201],
+    });
   });
 
   it('cancelNewRow drops a fresh row without any API call', async () => {

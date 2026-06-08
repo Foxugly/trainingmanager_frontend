@@ -104,6 +104,8 @@
         "move_round_down": "Blok naar beneden verplaatsen",
         "edit_exercise": "Oefening bewerken",
         "delete_exercise": "Oefening verwijderen",
+        "move_exercise_up": "Oefening naar boven verplaatsen",
+        "move_exercise_down": "Oefening naar beneden verplaatsen",
         "reorder_exercise": "Oefening herschikken",
         "save_exercise": "Oefening opslaan",
         "cancel_exercise": "Annuleren"

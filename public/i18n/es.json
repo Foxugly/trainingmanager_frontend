@@ -104,6 +104,8 @@
         "move_round_down": "Mover el bloque hacia abajo",
         "edit_exercise": "Modificar el ejercicio",
         "delete_exercise": "Eliminar el ejercicio",
+        "move_exercise_up": "Mover el ejercicio hacia arriba",
+        "move_exercise_down": "Mover el ejercicio hacia abajo",
         "reorder_exercise": "Reordenar el ejercicio",
         "save_exercise": "Guardar el ejercicio",
         "cancel_exercise": "Cancelar"

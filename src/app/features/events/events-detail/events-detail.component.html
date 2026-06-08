@@ -38,6 +38,16 @@
       }
 
 
+      @if ((team()?.sports?.length ?? 0) > 1 && e.sport) {
+        <span
+          detailHeaderBadges
+          class="inline-flex items-center gap-1 rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-medium text-indigo-800"
+        >
+          <i class="pi pi-tag text-xs" aria-hidden="true"></i>
+          {{ e.sport.name }}
+        </span>
+      }
+
       @if (e.is_public) {
         <span
           detailHeaderBadges

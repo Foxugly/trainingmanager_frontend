@@ -7926,6 +7926,11 @@ components:
           type: array
           items:
             type: integer
+        rounds_detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventRoundDetail'
+          readOnly: true
         members:
           type: array
           items:
@@ -8070,6 +8075,49 @@ components:
       - rounds
       - team_name
       - total
+    EventRoundDetail:
+      type: object
+      description: |-
+        A round with its exercises fully nested — embedded under an event's
+        ``rounds_detail`` so the client loads a whole session (rounds + exercises)
+        in a single request instead of one fetch per round and per exercise.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        order:
+          type: integer
+          readOnly: true
+        count:
+          type: integer
+          readOnly: true
+        t_start:
+          type: string
+          readOnly: true
+          nullable: true
+          title: Start
+        t_break:
+          type: string
+          readOnly: true
+          nullable: true
+          title: Break
+        sport:
+          allOf:
+          - $ref: '#/components/schemas/Sport'
+          readOnly: true
+        exercises:
+          type: array
+          items:
+            $ref: '#/components/schemas/Exercise'
+          readOnly: true
+      required:
+      - count
+      - exercises
+      - id
+      - order
+      - sport
+      - t_break
+      - t_start
     EventShareRequest:
       type: object
       description: |-
@@ -9833,6 +9881,11 @@ components:
           type: array
           items:
             type: integer
+        rounds_detail:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventRoundDetail'
+          readOnly: true
         members:
           type: array
           items:

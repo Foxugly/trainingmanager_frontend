@@ -43,6 +43,7 @@ export * from './equipment';
 export * from './equipment-minimal';
 export * from './event';
 export * from './event-public';
+export * from './event-round-detail';
 export * from './event-share-request';
 export * from './event-share-response';
 export * from './exercise';

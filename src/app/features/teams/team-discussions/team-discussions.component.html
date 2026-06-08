@@ -280,13 +280,15 @@
 </p-dialog>
 
 <!-- SHARED EMOJI PICKER (reply + inline edit) -->
+<!-- A plain grid of buttons: each emoji is a normal Tab-navigable <button>, so
+     there's no ARIA "menu" promise to honour (which would require arrow-key
+     roving — see the role="menu" a11y contract). -->
 <p-popover #emojiPanel>
-  <div class="emoji-grid" role="menu" [attr.aria-label]="'teams.discussions.emoji' | transloco">
+  <div class="emoji-grid" role="group" [attr.aria-label]="'teams.discussions.emoji' | transloco">
     @for (emoji of emojis; track emoji) {
       <button
         type="button"
         class="emoji-btn"
-        role="menuitem"
         [attr.aria-label]="emoji"
         (click)="insertEmoji(emoji, emojiPanel)"
       >

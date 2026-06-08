@@ -105,6 +105,7 @@ model/energy-system.ts
 model/equipment-minimal.ts
 model/equipment.ts
 model/event-public.ts
+model/event-round-detail.ts
 model/event-share-request.ts
 model/event-share-response.ts
 model/event.ts

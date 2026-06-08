@@ -104,6 +104,8 @@
         "move_round_down": "Move block down",
         "edit_exercise": "Edit exercise",
         "delete_exercise": "Delete exercise",
+        "move_exercise_up": "Move exercise up",
+        "move_exercise_down": "Move exercise down",
         "reorder_exercise": "Reorder exercise",
         "save_exercise": "Save exercise",
         "cancel_exercise": "Cancel"

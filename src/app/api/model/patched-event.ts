@@ -11,6 +11,7 @@ import { EquipmentMinimal } from './equipment-minimal';
 import { Sport } from './sport';
 import { VisibilityMode } from './visibility-mode';
 import { PlaceMinimal } from './place-minimal';
+import { EventRoundDetail } from './event-round-detail';
 import { ProgramMinimal } from './program-minimal';
 
 
@@ -40,6 +41,7 @@ export interface PatchedEvent {
     readonly sport?: Sport;
     sport_id?: number | null;
     rounds?: Array<number>;
+    readonly rounds_detail?: Array<EventRoundDetail>;
     readonly members?: Array<number>;
     /**
      * Visibility of this session\'s total distance to athletes.  * `always` - Always * `after` - After the session * `never` - Never

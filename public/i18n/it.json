@@ -104,6 +104,8 @@
         "move_round_down": "Sposta il blocco in basso",
         "edit_exercise": "Modifica l'esercizio",
         "delete_exercise": "Elimina l'esercizio",
+        "move_exercise_up": "Sposta l'esercizio in alto",
+        "move_exercise_down": "Sposta l'esercizio in basso",
         "reorder_exercise": "Riordina l'esercizio",
         "save_exercise": "Salva l'esercizio",
         "cancel_exercise": "Annulla"
