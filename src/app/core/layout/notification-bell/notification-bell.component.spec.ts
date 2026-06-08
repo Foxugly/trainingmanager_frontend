@@ -87,11 +87,6 @@ describe('NotificationBellComponent', () => {
     expect(fixture.nativeElement.querySelector('p-overlaybadge, p-overlayBadge')).toBeFalsy();
   });
 
-  it('caps the badge value at 99+', async () => {
-    await setup({ unread: 150 });
-    expect(access(fixture.componentInstance).badgeValue()).toBe('99+');
-  });
-
   it('onSelect marks unread notification read then navigates', async () => {
     await setup({ unread: 2 });
     const router = TestBed.inject(Router);

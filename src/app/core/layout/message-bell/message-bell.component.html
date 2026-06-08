@@ -1,20 +1,12 @@
-<button
-  #msgBtn
-  type="button"
-  class="msg-trigger"
-  [attr.aria-label]="'messages.bell.label' | transloco"
-  (click)="toggle($event)"
+<app-bell
+  #bell
+  icon="pi-comments"
+  [label]="'messages.bell.label' | transloco"
+  [count]="unreadCount()"
+  panelClass="msg-popover"
+  (poll)="onPoll()"
+  (reset)="onReset()"
 >
-  @if (hasUnread()) {
-    <p-overlayBadge [value]="badgeValue()" severity="danger">
-      <i class="pi pi-comments" aria-hidden="true"></i>
-    </p-overlayBadge>
-  } @else {
-    <i class="pi pi-comments" aria-hidden="true"></i>
-  }
-</button>
-
-<p-popover #panel styleClass="msg-popover">
   <div class="msg-panel">
     <div class="msg-head">
       <span class="msg-title">{{ 'messages.bell.label' | transloco }}</span>
@@ -46,4 +38,4 @@
       </button>
     </div>
   </div>
-</p-popover>
+</app-bell>

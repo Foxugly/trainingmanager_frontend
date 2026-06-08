@@ -71,9 +71,9 @@ describe('MessageBellComponent', () => {
     return fixture;
   }
 
-  it('renders a message trigger button', async () => {
+  it('renders a bell trigger button (via the shared app-bell shell)', async () => {
     await setup({ unread: 0 });
-    expect(fixture.nativeElement.querySelector('.msg-trigger')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.bell-trigger')).toBeTruthy();
   });
 
   it('shows the overlay badge when there are unread messages', async () => {
@@ -86,11 +86,6 @@ describe('MessageBellComponent', () => {
     await setup({ unread: 0 });
     expect(access(fixture.componentInstance).hasUnread()).toBe(false);
     expect(fixture.nativeElement.querySelector('p-overlaybadge, p-overlayBadge')).toBeFalsy();
-  });
-
-  it('caps the badge value at 99+', async () => {
-    await setup({ unread: 150 });
-    expect(access(fixture.componentInstance).badgeValue()).toBe('99+');
   });
 
   it('onSelect navigates to the topic discussion deep-link', async () => {

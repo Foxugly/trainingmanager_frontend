@@ -1,0 +1,18 @@
+<button
+  type="button"
+  class="bell-trigger"
+  [attr.aria-label]="label()"
+  (click)="panel.toggle($event)"
+>
+  @if (hasUnread()) {
+    <p-overlayBadge [value]="badge()" severity="danger">
+      <i class="pi {{ icon() }}" aria-hidden="true"></i>
+    </p-overlayBadge>
+  } @else {
+    <i class="pi {{ icon() }}" aria-hidden="true"></i>
+  }
+</button>
+
+<p-popover #panel [styleClass]="panelClass()" (onShow)="onShow()">
+  <ng-content />
+</p-popover>

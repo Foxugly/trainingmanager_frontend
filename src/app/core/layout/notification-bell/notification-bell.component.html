@@ -1,20 +1,13 @@
-<button
-  #bellBtn
-  type="button"
-  class="bell-trigger"
-  [attr.aria-label]="'notifications.bell_label' | transloco"
-  (click)="toggle($event)"
+<app-bell
+  #bell
+  icon="pi-bell"
+  [label]="'notifications.bell_label' | transloco"
+  [count]="unreadCount()"
+  panelClass="notif-popover"
+  (poll)="onPoll()"
+  (reset)="onReset()"
+  (opened)="loadRecent()"
 >
-  @if (hasUnread()) {
-    <p-overlayBadge [value]="badgeValue()" severity="danger">
-      <i class="pi pi-bell" aria-hidden="true"></i>
-    </p-overlayBadge>
-  } @else {
-    <i class="pi pi-bell" aria-hidden="true"></i>
-  }
-</button>
-
-<p-popover #panel styleClass="notif-popover">
   <div class="notif-panel">
     <div class="notif-head">
       <span class="notif-title">{{ 'notifications.bell_label' | transloco }}</span>
@@ -59,4 +52,4 @@
       }
     </div>
   </div>
-</p-popover>
+</app-bell>
