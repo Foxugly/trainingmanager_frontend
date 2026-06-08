@@ -256,7 +256,11 @@
 
     @if (newTopicAudience() === AudienceEnum.Team) {
       <label class="field-inline">
-        <input type="checkbox" [(ngModel)]="newTopicAllowRepliesModel" />
+        <p-checkbox
+          [binary]="true"
+          inputId="allow_athlete_replies"
+          [(ngModel)]="newTopicAllowRepliesModel"
+        />
         <span>{{ 'teams.discussions.allow_athlete_replies' | transloco }}</span>
       </label>
     }

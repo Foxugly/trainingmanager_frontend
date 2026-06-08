@@ -163,10 +163,10 @@
                       }
                       <div class="flex-1">
                         <span class="font-medium">
-                          {{ ex.repetition ?? 1 }} × {{ ex.distance ?? 0 }}m
+                          {{ ex.repetition ?? 1 }} × {{ ex.distance ?? 0 }}{{ 'common.units.meters_short' | transloco }}
                           @if ((ex.repetition ?? 1) > 1 && exerciseDistance(ex) > 0) {
                             <span class="text-gray-500 font-normal">
-                              = {{ exerciseDistance(ex) }}m
+                              = {{ exerciseDistance(ex) }}{{ 'common.units.meters_short' | transloco }}
                             </span>
                           }
                         </span>

@@ -62,10 +62,8 @@ export class ProgramsListComponent implements OnInit {
     return this.managerTeamIds().size > 0;
   });
 
-  protected readonly newRouterLink = computed(() => {
-    const t = this.teamFilter();
-    return t ? ['/programs', 'new'] : ['/programs', 'new'];
-  });
+  /** Static "new program" link; the team pre-selection rides in newQueryParams. */
+  protected readonly newRouterLink = ['/programs', 'new'];
 
   protected readonly newQueryParams = computed(() => {
     const t = this.teamFilter();

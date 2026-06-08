@@ -16,5 +16,5 @@ export class EmptyStateComponent {
   readonly title = input.required<string>();
   readonly subtitle = input<string>('');
   /** Tone affects the icon-pill background. */
-  readonly tone = input<'emerald' | 'rose' | 'gray'>('emerald');
+  readonly tone = input<'indigo' | 'emerald' | 'rose' | 'gray'>('emerald');
 }

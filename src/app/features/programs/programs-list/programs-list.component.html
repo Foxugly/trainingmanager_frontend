@@ -10,7 +10,7 @@
           </label>
         }
         @if (canCreate()) {
-          <a [routerLink]="newRouterLink()" [queryParams]="newQueryParams()">
+          <a [routerLink]="newRouterLink" [queryParams]="newQueryParams()">
             <p-button [label]="'programs.actions.new' | transloco" icon="pi pi-plus" severity="success" />
           </a>
         }
@@ -25,7 +25,7 @@
         </label>
       }
       @if (canCreate()) {
-        <a [routerLink]="newRouterLink()" [queryParams]="newQueryParams()">
+        <a [routerLink]="newRouterLink" [queryParams]="newQueryParams()">
           <p-button
             [label]="'programs.actions.new' | transloco"
             icon="pi pi-plus"
@@ -57,7 +57,7 @@
       [subtitle]="'programs.list.empty_subtitle' | transloco"
     >
       @if (canCreate()) {
-        <a [routerLink]="newRouterLink()" [queryParams]="newQueryParams()">
+        <a [routerLink]="newRouterLink" [queryParams]="newQueryParams()">
           <p-button
             [label]="'programs.actions.new' | transloco"
             icon="pi pi-plus"

@@ -16,6 +16,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
+import { Checkbox } from 'primeng/checkbox';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Dialog } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
@@ -60,6 +61,7 @@ type ThreadMessage = TopicMessage;
     DatePipe,
     FormsModule,
     Button,
+    Checkbox,
     ConfirmDialog,
     Dialog,
     InputText,
