@@ -12,14 +12,12 @@ import { HttpHeaders }                                       from '@angular/comm
 import { Observable }                                        from 'rxjs';
 
 import { AIUsageAggregateResponse } from '../model/models';
-import { Message } from '../model/models';
 import { Note } from '../model/models';
 import { PaginatedAIUsageDetailList } from '../model/models';
 import { PaginatedNoteList } from '../model/models';
 import { PaginatedTeamList } from '../model/models';
 import { PaginatedTopicList } from '../model/models';
 import { PaginatedTopicMessageList } from '../model/models';
-import { PatchedMessage } from '../model/models';
 import { PatchedNote } from '../model/models';
 import { PatchedTeam } from '../model/models';
 import { PatchedTeamMembership } from '../model/models';
@@ -238,66 +236,6 @@ export interface TeamsServiceInterface {
      * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
      */
     teamsMembershipsUpdate(id: number, teamPk: number, teamMembership: TeamMembership, includeInactive?: boolean, extraHttpRequestParams?: any): Observable<TeamMembership>;
-
-    /**
-     * 
-     * CRUD on team chat messages with cursor-based pagination.  URL: /api/v1/teams/{team_pk}/messages/
-     * @endpoint post /api/v1/teams/{team_pk}/messages/
-     * @param teamPk 
-     * @param message 
-     */
-    teamsMessagesCreate(teamPk: number, message: Message, extraHttpRequestParams?: any): Observable<Message>;
-
-    /**
-     * 
-     * CRUD on team chat messages with cursor-based pagination.  URL: /api/v1/teams/{team_pk}/messages/
-     * @endpoint delete /api/v1/teams/{team_pk}/messages/{id}/
-     * @param id A unique integer value identifying this message.
-     * @param teamPk 
-     */
-    teamsMessagesDestroy(id: number, teamPk: number, extraHttpRequestParams?: any): Observable<{}>;
-
-    /**
-     * List team chat messages with cursor-based pagination
-     * Three modes: - Initial load: ?limit&#x3D;50 returns the 50 most recent messages (default order: newest first). - Polling: ?since&#x3D;&lt;ISO timestamp&gt; returns messages created strictly after the given timestamp (chronological order). - Historical scroll: ?before&#x3D;&lt;ISO timestamp&gt;&amp;limit&#x3D;50 returns 50 messages older than the given timestamp.  Soft-deleted messages are returned with deleted_at set so the frontend can render a \&#39;message deleted\&#39; placeholder.
-     * @endpoint get /api/v1/teams/{team_pk}/messages/
-     * @param teamPk 
-     * @param before Returns messages created strictly BEFORE this timestamp. Used for historical scroll: pass the timestamp of the oldest message you have.
-     * @param limit Maximum number of messages to return. Default 50, max 200.
-     * @param ordering Which field to use when ordering the results.
-     * @param search A search term.
-     * @param since Returns messages created strictly AFTER this timestamp. Used for polling: pass the timestamp of the most recent message you have.
-     */
-    teamsMessagesList(teamPk: number, before?: string, limit?: number, ordering?: string, search?: string, since?: string, extraHttpRequestParams?: any): Observable<Array<Message>>;
-
-    /**
-     * 
-     * CRUD on team chat messages with cursor-based pagination.  URL: /api/v1/teams/{team_pk}/messages/
-     * @endpoint patch /api/v1/teams/{team_pk}/messages/{id}/
-     * @param id A unique integer value identifying this message.
-     * @param teamPk 
-     * @param patchedMessage 
-     */
-    teamsMessagesPartialUpdate(id: number, teamPk: number, patchedMessage?: PatchedMessage, extraHttpRequestParams?: any): Observable<Message>;
-
-    /**
-     * 
-     * CRUD on team chat messages with cursor-based pagination.  URL: /api/v1/teams/{team_pk}/messages/
-     * @endpoint get /api/v1/teams/{team_pk}/messages/{id}/
-     * @param id A unique integer value identifying this message.
-     * @param teamPk 
-     */
-    teamsMessagesRetrieve(id: number, teamPk: number, extraHttpRequestParams?: any): Observable<Message>;
-
-    /**
-     * 
-     * CRUD on team chat messages with cursor-based pagination.  URL: /api/v1/teams/{team_pk}/messages/
-     * @endpoint put /api/v1/teams/{team_pk}/messages/{id}/
-     * @param id A unique integer value identifying this message.
-     * @param teamPk 
-     * @param message 
-     */
-    teamsMessagesUpdate(id: number, teamPk: number, message: Message, extraHttpRequestParams?: any): Observable<Message>;
 
     /**
      * 

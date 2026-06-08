@@ -80,7 +80,6 @@ model/attendance.ts
 model/audience-enum.ts
 model/audit-log-entry.ts
 model/calendar-token.ts
-model/chat-mode-enum.ts
 model/clone-exercise-request.ts
 model/complete-invitation-response.ts
 model/complete-invitation.ts
@@ -136,7 +135,6 @@ model/magic-link-request-response.ts
 model/magic-link-request.ts
 model/me.ts
 model/member.ts
-model/message.ts
 model/modality-admin.ts
 model/modality.ts
 model/models.ts
@@ -188,7 +186,6 @@ model/patched-exercise.ts
 model/patched-level-admin.ts
 model/patched-me.ts
 model/patched-member.ts
-model/patched-message.ts
 model/patched-modality-admin.ts
 model/patched-note.ts
 model/patched-performance.ts

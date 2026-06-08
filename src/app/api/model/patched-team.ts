@@ -14,7 +14,6 @@ import { TopicCreationEnum } from './topic-creation-enum';
 import { PlaceMinimal } from './place-minimal';
 import { CustomUserPublic } from './custom-user-public';
 import { Level } from './level';
-import { ChatModeEnum } from './chat-mode-enum';
 import { LanguageEnum } from './language-enum';
 import { JoinRequestPolicyEnum } from './join-request-policy-enum';
 
@@ -54,10 +53,6 @@ export interface PatchedTeam {
      * If True, athletes can declare their availability (RSVP: going / maybe / not going) for the team\'s events.
      */
     rsvp_enabled?: boolean;
-    /**
-     * Defines who can post messages in the team chat.  * `all` - All members can post * `coaches_only` - Only coaches can post
-     */
-    chat_mode?: ChatModeEnum;
     /**
      * If True, this team is included in the weekly recap email sent to its owner and managers. Default False (opt-in per team).
      */
