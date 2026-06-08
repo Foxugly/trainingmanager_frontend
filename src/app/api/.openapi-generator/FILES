@@ -189,6 +189,7 @@ model/patched-sport-admin.ts
 model/patched-team-join-request.ts
 model/patched-team-membership.ts
 model/patched-team.ts
+model/patched-training-slot.ts
 model/performance.ts
 model/place-minimal.ts
 model/place-request.ts

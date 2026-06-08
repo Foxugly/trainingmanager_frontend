@@ -23,12 +23,14 @@ import { PatchedMessage } from '../model/models';
 import { PatchedNote } from '../model/models';
 import { PatchedTeam } from '../model/models';
 import { PatchedTeamMembership } from '../model/models';
+import { PatchedTrainingSlot } from '../model/models';
 import { Team } from '../model/models';
 import { TeamMembership } from '../model/models';
 import { TeamPoolsResponse } from '../model/models';
 import { TeamStats } from '../model/models';
 import { Topic } from '../model/models';
 import { TopicMessage } from '../model/models';
+import { TrainingSlot } from '../model/models';
 import { TrainingTemplate } from '../model/models';
 
 
@@ -405,6 +407,63 @@ export interface TeamsServiceInterface {
      * @param teamPk 
      */
     teamsTopicsRetrieve(id: number, teamPk: number, extraHttpRequestParams?: any): Observable<Topic>;
+
+    /**
+     * Add a weekly training slot (manager only)
+     * Per-slot CRUD for a team\&#39;s weekly training template.  URL: /api/v1/teams/{team_pk}/training-slots/  Each slot is saved on its own (add / edit / delete one slot persists immediately) — there is no bulk \&quot;save the template\&quot; step here. A slot carries weekday + hour_start/hour_end + an optional &#x60;&#x60;place&#x60;&#x60; (venue). Read: any strict team member. Write: owner/manager only.
+     * @endpoint post /api/v1/teams/{team_pk}/training-slots/
+     * @param teamPk 
+     * @param trainingSlot 
+     */
+    teamsTrainingSlotsCreate(teamPk: number, trainingSlot: TrainingSlot, extraHttpRequestParams?: any): Observable<TrainingSlot>;
+
+    /**
+     * Delete a weekly training slot (manager only)
+     * Per-slot CRUD for a team\&#39;s weekly training template.  URL: /api/v1/teams/{team_pk}/training-slots/  Each slot is saved on its own (add / edit / delete one slot persists immediately) — there is no bulk \&quot;save the template\&quot; step here. A slot carries weekday + hour_start/hour_end + an optional &#x60;&#x60;place&#x60;&#x60; (venue). Read: any strict team member. Write: owner/manager only.
+     * @endpoint delete /api/v1/teams/{team_pk}/training-slots/{id}/
+     * @param id A unique integer value identifying this training slot.
+     * @param teamPk 
+     */
+    teamsTrainingSlotsDestroy(id: number, teamPk: number, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * List a team\&#39;s weekly training slots
+     * Per-slot CRUD for a team\&#39;s weekly training template.  URL: /api/v1/teams/{team_pk}/training-slots/  Each slot is saved on its own (add / edit / delete one slot persists immediately) — there is no bulk \&quot;save the template\&quot; step here. A slot carries weekday + hour_start/hour_end + an optional &#x60;&#x60;place&#x60;&#x60; (venue). Read: any strict team member. Write: owner/manager only.
+     * @endpoint get /api/v1/teams/{team_pk}/training-slots/
+     * @param teamPk 
+     * @param ordering Which field to use when ordering the results.
+     * @param search A search term.
+     */
+    teamsTrainingSlotsList(teamPk: number, ordering?: string, search?: string, extraHttpRequestParams?: any): Observable<Array<TrainingSlot>>;
+
+    /**
+     * Edit a weekly training slot (manager only)
+     * Per-slot CRUD for a team\&#39;s weekly training template.  URL: /api/v1/teams/{team_pk}/training-slots/  Each slot is saved on its own (add / edit / delete one slot persists immediately) — there is no bulk \&quot;save the template\&quot; step here. A slot carries weekday + hour_start/hour_end + an optional &#x60;&#x60;place&#x60;&#x60; (venue). Read: any strict team member. Write: owner/manager only.
+     * @endpoint patch /api/v1/teams/{team_pk}/training-slots/{id}/
+     * @param id A unique integer value identifying this training slot.
+     * @param teamPk 
+     * @param patchedTrainingSlot 
+     */
+    teamsTrainingSlotsPartialUpdate(id: number, teamPk: number, patchedTrainingSlot?: PatchedTrainingSlot, extraHttpRequestParams?: any): Observable<TrainingSlot>;
+
+    /**
+     * 
+     * Per-slot CRUD for a team\&#39;s weekly training template.  URL: /api/v1/teams/{team_pk}/training-slots/  Each slot is saved on its own (add / edit / delete one slot persists immediately) — there is no bulk \&quot;save the template\&quot; step here. A slot carries weekday + hour_start/hour_end + an optional &#x60;&#x60;place&#x60;&#x60; (venue). Read: any strict team member. Write: owner/manager only.
+     * @endpoint get /api/v1/teams/{team_pk}/training-slots/{id}/
+     * @param id A unique integer value identifying this training slot.
+     * @param teamPk 
+     */
+    teamsTrainingSlotsRetrieve(id: number, teamPk: number, extraHttpRequestParams?: any): Observable<TrainingSlot>;
+
+    /**
+     * Replace a weekly training slot (manager only)
+     * Per-slot CRUD for a team\&#39;s weekly training template.  URL: /api/v1/teams/{team_pk}/training-slots/  Each slot is saved on its own (add / edit / delete one slot persists immediately) — there is no bulk \&quot;save the template\&quot; step here. A slot carries weekday + hour_start/hour_end + an optional &#x60;&#x60;place&#x60;&#x60; (venue). Read: any strict team member. Write: owner/manager only.
+     * @endpoint put /api/v1/teams/{team_pk}/training-slots/{id}/
+     * @param id A unique integer value identifying this training slot.
+     * @param teamPk 
+     * @param trainingSlot 
+     */
+    teamsTrainingSlotsUpdate(id: number, teamPk: number, trainingSlot: TrainingSlot, extraHttpRequestParams?: any): Observable<TrainingSlot>;
 
     /**
      * Read the team\&#39;s weekly training template

@@ -14,21 +14,21 @@ import { WeekdayEnum } from './weekday-enum';
 /**
  * One weekly training slot (weekday + start/end time).  weekday uses Python\'s date.weekday() convention: Monday=0 … Sunday=6.
  */
-export interface TrainingSlot { 
-    readonly id: number;
+export interface PatchedTrainingSlot { 
+    readonly id?: number;
     /**
      * Day of the week (Python convention: Monday=0 … Sunday=6).  * `0` - Monday * `1` - Tuesday * `2` - Wednesday * `3` - Thursday * `4` - Friday * `5` - Saturday * `6` - Sunday
      */
-    weekday: WeekdayEnum;
+    weekday?: WeekdayEnum;
     /**
      * Slot start time (local team time).
      */
-    hour_start: string;
+    hour_start?: string;
     /**
      * Slot end time; must be after hour_start.
      */
-    hour_end: string;
-    readonly place: PlaceMinimal;
+    hour_end?: string;
+    readonly place?: PlaceMinimal;
     place_id?: number | null;
 }
 

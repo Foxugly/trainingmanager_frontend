@@ -41,6 +41,8 @@ import { PatchedTeam } from '../model/patched-team';
 // @ts-ignore
 import { PatchedTeamMembership } from '../model/patched-team-membership';
 // @ts-ignore
+import { PatchedTrainingSlot } from '../model/patched-training-slot';
+// @ts-ignore
 import { Team } from '../model/team';
 // @ts-ignore
 import { TeamMembership } from '../model/team-membership';
@@ -52,6 +54,8 @@ import { TeamStats } from '../model/team-stats';
 import { Topic } from '../model/topic';
 // @ts-ignore
 import { TopicMessage } from '../model/topic-message';
+// @ts-ignore
+import { TrainingSlot } from '../model/training-slot';
 // @ts-ignore
 import { TrainingTemplate } from '../model/training-template';
 
@@ -2970,6 +2974,448 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         return this.httpClient.request<Topic>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Add a weekly training slot (manager only)
+     * Per-slot CRUD for a team\&#39;s weekly training template.  URL: /api/v1/teams/{team_pk}/training-slots/  Each slot is saved on its own (add / edit / delete one slot persists immediately) — there is no bulk \&quot;save the template\&quot; step here. A slot carries weekday + hour_start/hour_end + an optional &#x60;&#x60;place&#x60;&#x60; (venue). Read: any strict team member. Write: owner/manager only.
+     * @endpoint post /api/v1/teams/{team_pk}/training-slots/
+     * @param teamPk 
+     * @param trainingSlot 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public teamsTrainingSlotsCreate(teamPk: number, trainingSlot: TrainingSlot, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TrainingSlot>;
+    public teamsTrainingSlotsCreate(teamPk: number, trainingSlot: TrainingSlot, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TrainingSlot>>;
+    public teamsTrainingSlotsCreate(teamPk: number, trainingSlot: TrainingSlot, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TrainingSlot>>;
+    public teamsTrainingSlotsCreate(teamPk: number, trainingSlot: TrainingSlot, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (teamPk === null || teamPk === undefined) {
+            throw new Error('Required parameter teamPk was null or undefined when calling teamsTrainingSlotsCreate.');
+        }
+        if (trainingSlot === null || trainingSlot === undefined) {
+            throw new Error('Required parameter trainingSlot was null or undefined when calling teamsTrainingSlotsCreate.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (jwtAuth) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'application/x-www-form-urlencoded',
+            'multipart/form-data'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/teams/${this.configuration.encodeParam({name: "teamPk", value: teamPk, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/training-slots/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<TrainingSlot>('post', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: trainingSlot,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Delete a weekly training slot (manager only)
+     * Per-slot CRUD for a team\&#39;s weekly training template.  URL: /api/v1/teams/{team_pk}/training-slots/  Each slot is saved on its own (add / edit / delete one slot persists immediately) — there is no bulk \&quot;save the template\&quot; step here. A slot carries weekday + hour_start/hour_end + an optional &#x60;&#x60;place&#x60;&#x60; (venue). Read: any strict team member. Write: owner/manager only.
+     * @endpoint delete /api/v1/teams/{team_pk}/training-slots/{id}/
+     * @param id A unique integer value identifying this training slot.
+     * @param teamPk 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public teamsTrainingSlotsDestroy(id: number, teamPk: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public teamsTrainingSlotsDestroy(id: number, teamPk: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public teamsTrainingSlotsDestroy(id: number, teamPk: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public teamsTrainingSlotsDestroy(id: number, teamPk: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling teamsTrainingSlotsDestroy.');
+        }
+        if (teamPk === null || teamPk === undefined) {
+            throw new Error('Required parameter teamPk was null or undefined when calling teamsTrainingSlotsDestroy.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (jwtAuth) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/teams/${this.configuration.encodeParam({name: "teamPk", value: teamPk, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/training-slots/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<any>('delete', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * List a team\&#39;s weekly training slots
+     * Per-slot CRUD for a team\&#39;s weekly training template.  URL: /api/v1/teams/{team_pk}/training-slots/  Each slot is saved on its own (add / edit / delete one slot persists immediately) — there is no bulk \&quot;save the template\&quot; step here. A slot carries weekday + hour_start/hour_end + an optional &#x60;&#x60;place&#x60;&#x60; (venue). Read: any strict team member. Write: owner/manager only.
+     * @endpoint get /api/v1/teams/{team_pk}/training-slots/
+     * @param teamPk 
+     * @param ordering Which field to use when ordering the results.
+     * @param search A search term.
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public teamsTrainingSlotsList(teamPk: number, ordering?: string, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<TrainingSlot>>;
+    public teamsTrainingSlotsList(teamPk: number, ordering?: string, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<TrainingSlot>>>;
+    public teamsTrainingSlotsList(teamPk: number, ordering?: string, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<TrainingSlot>>>;
+    public teamsTrainingSlotsList(teamPk: number, ordering?: string, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (teamPk === null || teamPk === undefined) {
+            throw new Error('Required parameter teamPk was null or undefined when calling teamsTrainingSlotsList.');
+        }
+
+        let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'ordering',
+            <any>ordering,
+            QueryParamStyle.Form,
+            true,
+        );
+
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'search',
+            <any>search,
+            QueryParamStyle.Form,
+            true,
+        );
+
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (jwtAuth) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/teams/${this.configuration.encodeParam({name: "teamPk", value: teamPk, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/training-slots/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<Array<TrainingSlot>>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                params: localVarQueryParameters.toHttpParams(),
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Edit a weekly training slot (manager only)
+     * Per-slot CRUD for a team\&#39;s weekly training template.  URL: /api/v1/teams/{team_pk}/training-slots/  Each slot is saved on its own (add / edit / delete one slot persists immediately) — there is no bulk \&quot;save the template\&quot; step here. A slot carries weekday + hour_start/hour_end + an optional &#x60;&#x60;place&#x60;&#x60; (venue). Read: any strict team member. Write: owner/manager only.
+     * @endpoint patch /api/v1/teams/{team_pk}/training-slots/{id}/
+     * @param id A unique integer value identifying this training slot.
+     * @param teamPk 
+     * @param patchedTrainingSlot 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public teamsTrainingSlotsPartialUpdate(id: number, teamPk: number, patchedTrainingSlot?: PatchedTrainingSlot, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TrainingSlot>;
+    public teamsTrainingSlotsPartialUpdate(id: number, teamPk: number, patchedTrainingSlot?: PatchedTrainingSlot, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TrainingSlot>>;
+    public teamsTrainingSlotsPartialUpdate(id: number, teamPk: number, patchedTrainingSlot?: PatchedTrainingSlot, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TrainingSlot>>;
+    public teamsTrainingSlotsPartialUpdate(id: number, teamPk: number, patchedTrainingSlot?: PatchedTrainingSlot, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling teamsTrainingSlotsPartialUpdate.');
+        }
+        if (teamPk === null || teamPk === undefined) {
+            throw new Error('Required parameter teamPk was null or undefined when calling teamsTrainingSlotsPartialUpdate.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (jwtAuth) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'application/x-www-form-urlencoded',
+            'multipart/form-data'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/teams/${this.configuration.encodeParam({name: "teamPk", value: teamPk, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/training-slots/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<TrainingSlot>('patch', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: patchedTrainingSlot,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Per-slot CRUD for a team\&#39;s weekly training template.  URL: /api/v1/teams/{team_pk}/training-slots/  Each slot is saved on its own (add / edit / delete one slot persists immediately) — there is no bulk \&quot;save the template\&quot; step here. A slot carries weekday + hour_start/hour_end + an optional &#x60;&#x60;place&#x60;&#x60; (venue). Read: any strict team member. Write: owner/manager only.
+     * @endpoint get /api/v1/teams/{team_pk}/training-slots/{id}/
+     * @param id A unique integer value identifying this training slot.
+     * @param teamPk 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public teamsTrainingSlotsRetrieve(id: number, teamPk: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TrainingSlot>;
+    public teamsTrainingSlotsRetrieve(id: number, teamPk: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TrainingSlot>>;
+    public teamsTrainingSlotsRetrieve(id: number, teamPk: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TrainingSlot>>;
+    public teamsTrainingSlotsRetrieve(id: number, teamPk: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling teamsTrainingSlotsRetrieve.');
+        }
+        if (teamPk === null || teamPk === undefined) {
+            throw new Error('Required parameter teamPk was null or undefined when calling teamsTrainingSlotsRetrieve.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (jwtAuth) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/teams/${this.configuration.encodeParam({name: "teamPk", value: teamPk, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/training-slots/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<TrainingSlot>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Replace a weekly training slot (manager only)
+     * Per-slot CRUD for a team\&#39;s weekly training template.  URL: /api/v1/teams/{team_pk}/training-slots/  Each slot is saved on its own (add / edit / delete one slot persists immediately) — there is no bulk \&quot;save the template\&quot; step here. A slot carries weekday + hour_start/hour_end + an optional &#x60;&#x60;place&#x60;&#x60; (venue). Read: any strict team member. Write: owner/manager only.
+     * @endpoint put /api/v1/teams/{team_pk}/training-slots/{id}/
+     * @param id A unique integer value identifying this training slot.
+     * @param teamPk 
+     * @param trainingSlot 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public teamsTrainingSlotsUpdate(id: number, teamPk: number, trainingSlot: TrainingSlot, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TrainingSlot>;
+    public teamsTrainingSlotsUpdate(id: number, teamPk: number, trainingSlot: TrainingSlot, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TrainingSlot>>;
+    public teamsTrainingSlotsUpdate(id: number, teamPk: number, trainingSlot: TrainingSlot, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TrainingSlot>>;
+    public teamsTrainingSlotsUpdate(id: number, teamPk: number, trainingSlot: TrainingSlot, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling teamsTrainingSlotsUpdate.');
+        }
+        if (teamPk === null || teamPk === undefined) {
+            throw new Error('Required parameter teamPk was null or undefined when calling teamsTrainingSlotsUpdate.');
+        }
+        if (trainingSlot === null || trainingSlot === undefined) {
+            throw new Error('Required parameter trainingSlot was null or undefined when calling teamsTrainingSlotsUpdate.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (jwtAuth) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'application/x-www-form-urlencoded',
+            'multipart/form-data'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/teams/${this.configuration.encodeParam({name: "teamPk", value: teamPk, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/training-slots/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<TrainingSlot>('put', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: trainingSlot,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
