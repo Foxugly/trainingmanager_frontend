@@ -145,37 +145,11 @@ interface ProtectedFields {
   confirmRegenerate(): void;
   confirmDelete(): void;
   deleting(): boolean;
-  rounds(): Round[];
-  exercisesByRound(): Map<number, Exercise[]>;
-  loadingRounds(): boolean;
   activeTab(): string;
-  exerciseDistance(ex: Exercise): number;
-  roundTotalDistance(round: Round): number;
+  // Training editor (app-event-training) state mirror + total passthrough.
+  onTrainingState(state: { totalDistance: number; loading: boolean }): void;
   eventTotalDistance(): number;
-  formatDistance(meters: number): string;
-  showRoundDialog(): boolean;
-  roundDialogMode(): 'create' | 'edit';
-  editingRound(): Round | null;
-  openCreateRound(): void;
-  openEditRound(r: Round): void;
-  onRoundDialogClosed(r: Round | null): void;
-  confirmDeleteRound(r: Round): void;
-  confirmDeleteExercise(ex: Exercise): void;
-  // Inline exercise editing
-  editingExerciseId(): number | null;
-  newRows(): { key: string; roundId: number }[];
-  modalities(): Modality[];
-  energySegments(): EnergySegment[];
-  rowKeyForExercise(ex: Exercise): string;
-  formFor(key: string): ExerciseRowForm | null;
-  isEditingExercise(ex: Exercise): boolean;
-  newRowsFor(roundId: number): { key: string; roundId: number }[];
-  startEditExercise(ex: Exercise): void;
-  startAddExercise(roundId: number): void;
-  cancelEditExercise(ex: Exercise): void;
-  cancelNewRow(key: string): void;
-  saveEditExercise(ex: Exercise): void;
-  saveNewRow(row: { key: string; roundId: number }): void;
+  reloadEvent(): void;
   // ROTI (fetch/submit live in app-event-roti now)
   rotiEnabled(): boolean;
   isAthlete(): boolean;
@@ -189,14 +163,12 @@ interface ProtectedFields {
   } | null;
   submitRsvp(status: string): void;
   confirmApplyRsvpToAttendance(): void;
-  // Athlete-side visibility hints
+  // Athlete-side visibility hints (rounds hint moved to app-event-training)
   isRestrictedViewer(): boolean;
   distanceHidden(): boolean;
   goalHidden(): boolean;
-  roundsHidden(): boolean;
   distanceHiddenVariant(): 'never' | 'after';
   goalHiddenVariant(): 'never' | 'after';
-  roundsHiddenVariant(): 'never' | 'after';
 }
 
 type ExerciseRowForm = FormGroup<{
@@ -483,30 +455,6 @@ describe('EventsDetailComponent', () => {
     });
   });
 
-  it('skips roundsRetrieve when event has no rounds', () => {
-    expect(roundsMock.roundsRetrieve).not.toHaveBeenCalled();
-    expect(access(component).rounds()).toEqual([]);
-    expect(access(component).exercisesByRound().size).toBe(0);
-  });
-
-  it('fetches rounds + exercises when event has rounds', async () => {
-    await setup('7', eventWithRounds);
-    await new Promise((r) => setTimeout(r, 0));
-    await new Promise((r) => setTimeout(r, 0));
-    expect(roundsMock.roundsRetrieve).toHaveBeenCalledTimes(3);
-    expect(exercisesMock.exercisesRetrieve).toHaveBeenCalled();
-    expect(access(component).rounds().length).toBe(3);
-  });
-
-  it('exposes ordered exercises per round', async () => {
-    await setup('7', eventWithRounds);
-    await new Promise((r) => setTimeout(r, 0));
-    await new Promise((r) => setTimeout(r, 0));
-    const map = access(component).exercisesByRound();
-    const exercises = map.get(11);
-    expect(exercises?.length).toBe(2);
-    expect(exercises?.[0].order).toBeLessThanOrEqual(exercises?.[1].order ?? 999);
-  });
 
   it('canManage is true for owner and false for member-only user', async () => {
     expect(access(component).canManage()).toBe(true);
@@ -560,237 +508,6 @@ describe('EventsDetailComponent', () => {
     expect(access(component).activeTab()).toBe('attendance');
   });
 
-  it('exerciseDistance returns repetition × distance', () => {
-    const ex = { repetition: 4, distance: 50 } as unknown as Exercise;
-    expect(access(component).exerciseDistance(ex)).toBe(200);
-  });
-
-  it('exerciseDistance treats missing repetition as 1 and missing distance as 0', () => {
-    const noRep = { distance: 100 } as unknown as Exercise;
-    const noDist = { repetition: 5 } as unknown as Exercise;
-    expect(access(component).exerciseDistance(noRep)).toBe(100);
-    expect(access(component).exerciseDistance(noDist)).toBe(0);
-  });
-
-  it('roundTotalDistance multiplies count by the sum of exercise distances', async () => {
-    await setup('7', eventWithRounds);
-    await new Promise((r) => setTimeout(r, 0));
-    await new Promise((r) => setTimeout(r, 0));
-    const rounds = access(component).rounds();
-    expect(rounds.length).toBe(3);
-    // each round has count=2, exercises [201 (4×50=200) + 202 (4×100=400)] = 600 per iteration
-    // round total = 2 × 600 = 1200
-    expect(access(component).roundTotalDistance(rounds[0])).toBe(1200);
-  });
-
-  it('eventTotalDistance sums each round.count × Σ(rep × dist) across all rounds', async () => {
-    await setup('7', eventWithRounds);
-    await new Promise((r) => setTimeout(r, 0));
-    await new Promise((r) => setTimeout(r, 0));
-    // 3 rounds × 1200 m = 3600 m
-    expect(access(component).eventTotalDistance()).toBe(3600);
-  });
-
-  it('eventTotalDistance is 0 when the event has no rounds loaded', () => {
-    expect(access(component).eventTotalDistance()).toBe(0);
-  });
-
-  it('formatDistance formats meters as plain "N m" and ≥1000 m as km (no trailing zero)', () => {
-    const fd = (n: number) => access(component).formatDistance(n);
-    expect(fd(0)).toBe('0 m');
-    expect(fd(200)).toBe('200 m');
-    expect(fd(999)).toBe('999 m');
-    expect(fd(1000)).toBe('1 km');
-    expect(fd(1500)).toBe('1.5 km');
-    expect(fd(2000)).toBe('2 km');
-    expect(fd(2500)).toBe('2.5 km');
-  });
-
-  it('openCreateRound opens the dialog in create mode with no editing round', () => {
-    access(component).openCreateRound();
-    expect(access(component).showRoundDialog()).toBe(true);
-    expect(access(component).roundDialogMode()).toBe('create');
-    expect(access(component).editingRound()).toBeNull();
-  });
-
-  it('openEditRound opens the dialog in edit mode with the target round', async () => {
-    await setup('7', eventWithRounds);
-    await new Promise((r) => setTimeout(r, 0));
-    await new Promise((r) => setTimeout(r, 0));
-    const round = access(component).rounds()[0];
-    access(component).openEditRound(round);
-    expect(access(component).showRoundDialog()).toBe(true);
-    expect(access(component).roundDialogMode()).toBe('edit');
-    expect(access(component).editingRound()).toEqual(round);
-  });
-
-  it('confirmDeleteRound triggers ConfirmDialog and on accept calls roundsDestroy + reloads', async () => {
-    await setup('7', eventWithRounds);
-    await new Promise((r) => setTimeout(r, 0));
-    await new Promise((r) => setTimeout(r, 0));
-    const round = access(component).rounds()[0];
-    const confirmation = fixture.debugElement.injector.get(ConfirmationService);
-    vi.spyOn(confirmation, 'confirm').mockImplementation((cfg) => {
-      cfg.accept?.();
-      return confirmation;
-    });
-    eventsMock.eventsRetrieve.mockClear();
-    access(component).confirmDeleteRound(round);
-    expect(roundsMock.roundsDestroy).toHaveBeenCalledWith(round.id);
-    // reload triggers eventsRetrieve a second time
-    expect(eventsMock.eventsRetrieve).toHaveBeenCalledWith(7);
-  });
-
-  it('onRoundDialogClosed with a truthy round closes the dialog and reloads the event', async () => {
-    await setup('7', eventWithRounds);
-    await new Promise((r) => setTimeout(r, 0));
-    eventsMock.eventsRetrieve.mockClear();
-    access(component).openCreateRound();
-    expect(access(component).showRoundDialog()).toBe(true);
-    access(component).onRoundDialogClosed({
-      ...exercise1,
-      id: 999,
-    } as unknown as Round);
-    expect(access(component).showRoundDialog()).toBe(false);
-    expect(access(component).editingRound()).toBeNull();
-    expect(eventsMock.eventsRetrieve).toHaveBeenCalledWith(7);
-  });
-
-  it('onRoundDialogClosed(null) closes without reloading', async () => {
-    await setup('7', eventNoRounds);
-    eventsMock.eventsRetrieve.mockClear();
-    access(component).openCreateRound();
-    access(component).onRoundDialogClosed(null);
-    expect(access(component).showRoundDialog()).toBe(false);
-    expect(eventsMock.eventsRetrieve).not.toHaveBeenCalled();
-  });
-
-  it('confirmDeleteExercise triggers ConfirmDialog and on accept calls exercisesDestroy + reloads', async () => {
-    await setup('7', eventWithRounds);
-    await new Promise((r) => setTimeout(r, 0));
-    await new Promise((r) => setTimeout(r, 0));
-    const ex = exercise1;
-    const confirmation = fixture.debugElement.injector.get(ConfirmationService);
-    vi.spyOn(confirmation, 'confirm').mockImplementation((cfg) => {
-      cfg.accept?.();
-      return confirmation;
-    });
-    eventsMock.eventsRetrieve.mockClear();
-    access(component).confirmDeleteExercise(ex);
-    expect(exercisesMock.exercisesDestroy).toHaveBeenCalledWith(ex.id);
-    expect(eventsMock.eventsRetrieve).toHaveBeenCalledWith(7);
-  });
-
-  // --- Inline exercise editing ---
-
-  it('loads modality + energy-segment options once the team sport is known', async () => {
-    await new Promise((r) => setTimeout(r, 0));
-    expect(sportsMock.sportsModalitiesList).toHaveBeenCalledWith(1);
-    expect(energySegmentsMock.energySegmentsList).toHaveBeenCalled();
-    expect(access(component).modalities().length).toBe(1);
-    expect(access(component).energySegments().length).toBe(1);
-  });
-
-  it('startAddExercise appends a new row pre-filled from the last exercise of the round', async () => {
-    await setup('7', eventWithRounds);
-    await new Promise((r) => setTimeout(r, 0));
-    await new Promise((r) => setTimeout(r, 0));
-    // round 11 has exercise1 (201) + exercise2 (202, distance 100, t_break 00:30)
-    access(component).startAddExercise(11);
-    const rows = access(component).newRowsFor(11);
-    expect(rows.length).toBe(1);
-    const form = access(component).formFor(rows[0].key);
-    expect(form).not.toBeNull();
-    const v = form!.getRawValue();
-    // pre-fill from last exercise (202): modality 1, segment 1, distance 100, t_break 00:30
-    expect(v.modality_id).toBe(1);
-    expect(v.energysegment_id).toBe(1);
-    expect(v.distance).toBe(100);
-    expect(v.t_break).toBe('00:30');
-    // repetition resets to 1, notes empties
-    expect(v.repetition).toBe(1);
-    expect(v.notes).toBe('');
-  });
-
-  it('startAddExercise on an empty round seeds defaults (rep 1, distance 50)', async () => {
-    access(component).startAddExercise(11);
-    const rows = access(component).newRowsFor(11);
-    const v = access(component).formFor(rows[0].key)!.getRawValue();
-    expect(v.repetition).toBe(1);
-    expect(v.distance).toBe(50);
-    expect(v.modality_id).toBeNull();
-  });
-
-  it('saveNewRow calls exercisesCreate with round linkage + payload and clears the row', async () => {
-    await setup('7', eventWithRounds);
-    await new Promise((r) => setTimeout(r, 0));
-    await new Promise((r) => setTimeout(r, 0));
-    access(component).startAddExercise(11);
-    const row = access(component).newRowsFor(11)[0];
-    const form = access(component).formFor(row.key)!;
-    form.controls.modality_id.setValue(1);
-    form.controls.energysegment_id.setValue(1);
-    form.controls.repetition.setValue(6);
-    form.controls.distance.setValue(75);
-    access(component).saveNewRow(row);
-    await new Promise((r) => setTimeout(r, 0));
-    expect(exercisesMock.exercisesCreate).toHaveBeenCalledTimes(1);
-    const payload = exercisesMock.exercisesCreate.mock.calls[0][0];
-    expect(payload.round_id).toBe(11);
-    expect(payload.modality_id).toBe(1);
-    expect(payload.energysegment_id).toBe(1);
-    expect(payload.repetition).toBe(6);
-    expect(payload.distance).toBe(75);
-    // row removed after success, new exercise appended to the round
-    expect(access(component).newRowsFor(11).length).toBe(0);
-    const list = access(component).exercisesByRound().get(11) ?? [];
-    expect(list.some((e) => e.id === 999)).toBe(true);
-  });
-
-  it('startEditExercise then saveEditExercise calls exercisesPartialUpdate and exits edit mode', async () => {
-    await setup('7', eventWithRounds);
-    await new Promise((r) => setTimeout(r, 0));
-    await new Promise((r) => setTimeout(r, 0));
-    access(component).startEditExercise(exercise1);
-    expect(access(component).isEditingExercise(exercise1)).toBe(true);
-    const form = access(component).formFor(access(component).rowKeyForExercise(exercise1))!;
-    form.controls.repetition.setValue(8);
-    access(component).saveEditExercise(exercise1);
-    await new Promise((r) => setTimeout(r, 0));
-    expect(exercisesMock.exercisesPartialUpdate).toHaveBeenCalledTimes(1);
-    expect(exercisesMock.exercisesPartialUpdate.mock.calls[0][0]).toBe(exercise1.id);
-    expect(exercisesMock.exercisesPartialUpdate.mock.calls[0][1].repetition).toBe(8);
-    expect(access(component).editingExerciseId()).toBeNull();
-    // updated row reflected in the round's exercise list
-    const updated = (access(component).exercisesByRound().get(11) ?? []).find(
-      (e) => e.id === exercise1.id,
-    );
-    expect(updated?.repetition).toBe(8);
-  });
-
-  it('cancelNewRow removes a freshly-added row without any API call', async () => {
-    await setup('7', eventWithRounds);
-    await new Promise((r) => setTimeout(r, 0));
-    await new Promise((r) => setTimeout(r, 0));
-    access(component).startAddExercise(11);
-    const row = access(component).newRowsFor(11)[0];
-    access(component).cancelNewRow(row.key);
-    expect(access(component).newRowsFor(11).length).toBe(0);
-    expect(access(component).formFor(row.key)).toBeNull();
-    expect(exercisesMock.exercisesCreate).not.toHaveBeenCalled();
-  });
-
-  it('cancelEditExercise reverts an existing-exercise edit to display mode', async () => {
-    await setup('7', eventWithRounds);
-    await new Promise((r) => setTimeout(r, 0));
-    await new Promise((r) => setTimeout(r, 0));
-    access(component).startEditExercise(exercise1);
-    expect(access(component).isEditingExercise(exercise1)).toBe(true);
-    access(component).cancelEditExercise(exercise1);
-    expect(access(component).editingExerciseId()).toBeNull();
-    expect(access(component).formFor(access(component).rowKeyForExercise(exercise1))).toBeNull();
-    expect(exercisesMock.exercisesPartialUpdate).not.toHaveBeenCalled();
-  });
 
   // --- ROTI (session difficulty) — the tab UI + fetch live in app-event-roti
   //     (covered by event-roti.component.spec); the parent only exposes the
@@ -867,10 +584,8 @@ describe('EventsDetailComponent', () => {
     expect(access(component).isRestrictedViewer()).toBe(true);
     expect(access(component).distanceHidden()).toBe(true);
     expect(access(component).goalHidden()).toBe(true);
-    expect(access(component).roundsHidden()).toBe(true);
     expect(access(component).distanceHiddenVariant()).toBe('after');
     expect(access(component).goalHiddenVariant()).toBe('never');
-    expect(access(component).roundsHiddenVariant()).toBe('after');
   });
 
   it('never shows hidden hints to a manager/owner', async () => {
@@ -879,7 +594,6 @@ describe('EventsDetailComponent', () => {
     expect(access(component).isRestrictedViewer()).toBe(false);
     expect(access(component).distanceHidden()).toBe(false);
     expect(access(component).goalHidden()).toBe(false);
-    expect(access(component).roundsHidden()).toBe(false);
   });
 
   it('does not flag hidden when visibility mode is "always" even for an athlete', async () => {
@@ -895,7 +609,6 @@ describe('EventsDetailComponent', () => {
     await new Promise((r) => setTimeout(r, 0));
     expect(access(component).distanceHidden()).toBe(false);
     expect(access(component).goalHidden()).toBe(false);
-    expect(access(component).roundsHidden()).toBe(false);
   });
 
   it('does not flag goal hidden when the goal is present despite restricted mode', async () => {
@@ -911,14 +624,25 @@ describe('EventsDetailComponent', () => {
 
   it('does not flag distance hidden when the computed distance is non-zero despite restricted mode', async () => {
     const visibleDistanceEvent: Event = {
-      ...eventWithRounds,
+      ...eventNoRounds,
+      total: undefined,
       vis_distance: VisibilityMode.After,
     };
     await setup('7', visibleDistanceEvent, otherUser);
     await new Promise((r) => setTimeout(r, 0));
-    await new Promise((r) => setTimeout(r, 0));
-    // 3 rounds × 1200 m loaded → distance is visible, not hidden.
-    expect(access(component).eventTotalDistance()).toBeGreaterThan(0);
+    // The training editor (app-event-training) computes + emits the total; once
+    // it is non-zero the distance is visible, not hidden.
+    access(component).onTrainingState({ totalDistance: 3600, loading: false });
+    expect(access(component).eventTotalDistance()).toBe(3600);
     expect(access(component).distanceHidden()).toBe(false);
+  });
+
+  it('eventTotalDistance reflects the training editor state, else falls back to event.total', async () => {
+    await setup('7', { ...eventNoRounds, total: 1500 } as Event, ownerUser);
+    // No state emitted yet → falls back to the stored event.total.
+    expect(access(component).eventTotalDistance()).toBe(1500);
+    // Once the editor emits, that wins.
+    access(component).onTrainingState({ totalDistance: 4200, loading: false });
+    expect(access(component).eventTotalDistance()).toBe(4200);
   });
 });
