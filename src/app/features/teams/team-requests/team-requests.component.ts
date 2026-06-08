@@ -1,0 +1,328 @@
+import { DatePipe, KeyValuePipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { Button } from 'primeng/button';
+import { ConfirmDialog } from 'primeng/confirmdialog';
+import { Dialog } from 'primeng/dialog';
+import { InputText } from 'primeng/inputtext';
+import { Message } from 'primeng/message';
+import { Textarea } from 'primeng/textarea';
+import { InvitationsService } from '../../../api/api/invitations.service';
+import { JoinRequestsService } from '../../../api/api/join-requests.service';
+import { CreateInvitation } from '../../../api/model/create-invitation';
+import { InvitationStatusEnum } from '../../../api/model/invitation-status-enum';
+import { JoinRequestStatusEnum } from '../../../api/model/join-request-status-enum';
+import { TeamInvitation } from '../../../api/model/team-invitation';
+import { TeamJoinRequest } from '../../../api/model/team-join-request';
+import { type FieldErrors } from '../../../shared/forms/notify-error';
+import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
+
+/**
+ * The team's manager-facing "Requests & Invitations" tab: pending join requests
+ * (accept / reject) and pending invitations (invite / cancel), plus the invite
+ * and reject dialogs. Self-contained — it owns both lists, their loads and
+ * mutations. Extracted from teams-detail.
+ *
+ * Wiring: takes [teamId]; emits (countChange) so the parent tab badge stays in
+ * sync and (membershipsChanged) when accepting a join request adds a member so
+ * the parent can refresh its membership list.
+ */
+@Component({
+  selector: 'app-team-requests',
+  imports: [
+    DatePipe,
+    KeyValuePipe,
+    ReactiveFormsModule,
+    Button,
+    ConfirmDialog,
+    Dialog,
+    InputText,
+    Message,
+    Textarea,
+    TranslocoPipe,
+    EmptyStateComponent,
+  ],
+  templateUrl: './team-requests.component.html',
+  providers: [ConfirmationService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class TeamRequestsComponent {
+  private readonly invitationsService = inject(InvitationsService);
+  private readonly joinRequestsService = inject(JoinRequestsService);
+  private readonly confirmationService = inject(ConfirmationService);
+  private readonly messageService = inject(MessageService);
+  private readonly transloco = inject(TranslocoService);
+  private readonly fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
+
+  readonly teamId = input.required<number>();
+
+  /** Pending join-requests + invitations total, for the parent's tab badge. */
+  readonly countChange = output<number>();
+  /** A join request was accepted → a member was added; parent should refresh. */
+  readonly membershipsChanged = output<void>();
+
+  protected readonly invitations = signal<TeamInvitation[]>([]);
+  protected readonly loadingInvitations = signal(false);
+  protected readonly showInviteDialog = signal(false);
+  protected readonly inviting = signal(false);
+  protected readonly inviteError = signal<string | null>(null);
+  protected readonly inviteFieldErrors = signal<FieldErrors | null>(null);
+
+  protected readonly joinRequests = signal<TeamJoinRequest[]>([]);
+  protected readonly loadingJoinRequests = signal(false);
+  protected readonly processingRequestId = signal<number | null>(null);
+  protected readonly rejectingRequest = signal<TeamJoinRequest | null>(null);
+  protected readonly rejectMessage = signal('');
+
+  protected readonly inviteForm = this.fb.nonNullable.group({
+    email: ['', [Validators.required, Validators.email]],
+    firstname: ['', [Validators.required]],
+    lastname: ['', [Validators.required]],
+  });
+
+  private loadedForTeamId: number | null = null;
+
+  constructor() {
+    effect(() => {
+      const id = this.teamId();
+      if (this.loadedForTeamId === id) return;
+      this.loadedForTeamId = id;
+      this.loadInvitations(id);
+      this.loadJoinRequests(id);
+    });
+    // Keep the parent's badge in sync with both lists.
+    effect(() => this.countChange.emit(this.joinRequests().length + this.invitations().length));
+  }
+
+  private loadInvitations(id: number): void {
+    this.loadingInvitations.set(true);
+    this.invitationsService
+      .invitationsList(undefined, undefined, undefined, undefined, InvitationStatusEnum.Pending, id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          this.invitations.set(res.results ?? []);
+          this.loadingInvitations.set(false);
+        },
+        error: () => this.loadingInvitations.set(false),
+      });
+  }
+
+  private loadJoinRequests(id: number): void {
+    this.loadingJoinRequests.set(true);
+    this.joinRequestsService
+      .joinRequestsList(undefined, undefined, undefined, undefined, JoinRequestStatusEnum.Pending, id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          this.joinRequests.set(res.results ?? []);
+          this.loadingJoinRequests.set(false);
+        },
+        error: () => this.loadingJoinRequests.set(false),
+      });
+  }
+
+  protected confirmAcceptJoinRequest(req: TeamJoinRequest): void {
+    this.confirmationService.confirm({
+      header: this.transloco.translate('teams.join_requests.accept_confirm_title'),
+      message: this.transloco.translate('teams.join_requests.accept_confirm_message'),
+      acceptLabel: this.transloco.translate('teams.join_requests.accept'),
+      rejectLabel: this.transloco.translate('common.cancel'),
+      accept: () => this.acceptJoinRequest(req),
+    });
+  }
+
+  private acceptJoinRequest(req: TeamJoinRequest): void {
+    const teamId = this.teamId();
+    this.processingRequestId.set(req.id);
+    this.joinRequestsService
+      .joinRequestsPartialUpdate(req.id, { status: JoinRequestStatusEnum.Accepted })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.processingRequestId.set(null);
+          this.messageService.add({
+            severity: 'success',
+            summary: this.transloco.translate('common.success'),
+            detail: this.transloco.translate('teams.join_requests.accepted'),
+          });
+          this.loadJoinRequests(teamId);
+          this.membershipsChanged.emit();
+        },
+        error: () => {
+          this.processingRequestId.set(null);
+          this.notifyError();
+        },
+      });
+  }
+
+  protected openRejectDialog(req: TeamJoinRequest): void {
+    this.rejectMessage.set('');
+    this.rejectingRequest.set(req);
+  }
+
+  protected closeRejectDialog(): void {
+    this.rejectingRequest.set(null);
+    this.rejectMessage.set('');
+  }
+
+  protected submitReject(): void {
+    const req = this.rejectingRequest();
+    if (!req) return;
+    const teamId = this.teamId();
+    const message = this.rejectMessage().trim();
+    this.processingRequestId.set(req.id);
+    this.joinRequestsService
+      .joinRequestsPartialUpdate(req.id, {
+        status: JoinRequestStatusEnum.Rejected,
+        ...(message ? { response_message: message } : {}),
+      })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.processingRequestId.set(null);
+          this.rejectingRequest.set(null);
+          this.rejectMessage.set('');
+          this.messageService.add({
+            severity: 'success',
+            summary: this.transloco.translate('common.success'),
+            detail: this.transloco.translate('teams.join_requests.rejected'),
+          });
+          this.loadJoinRequests(teamId);
+        },
+        error: () => {
+          this.processingRequestId.set(null);
+          this.notifyError();
+        },
+      });
+  }
+
+  protected openInviteDialog(): void {
+    this.inviteForm.reset({ email: '', firstname: '', lastname: '' });
+    this.inviteError.set(null);
+    this.inviteFieldErrors.set(null);
+    this.showInviteDialog.set(true);
+  }
+
+  protected closeInviteDialog(): void {
+    this.showInviteDialog.set(false);
+  }
+
+  protected submitInvite(): void {
+    const id = this.teamId();
+    if (this.inviteForm.invalid) return;
+    this.inviting.set(true);
+    this.inviteError.set(null);
+    this.inviteFieldErrors.set(null);
+
+    const value = this.inviteForm.getRawValue();
+    const payload: CreateInvitation = {
+      team: id,
+      email: value.email,
+      firstname: value.firstname,
+      lastname: value.lastname,
+    };
+    this.invitationsService
+      .invitationsCreate(payload)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: this.transloco.translate('common.success'),
+            detail: this.transloco.translate('teams.invite_dialog.sent'),
+          });
+          this.inviting.set(false);
+          this.showInviteDialog.set(false);
+          this.loadInvitations(id);
+        },
+        error: (err: HttpErrorResponse) => {
+          this.applyInviteError(err);
+          this.inviting.set(false);
+        },
+      });
+  }
+
+  protected confirmCancelInvitation(inv: TeamInvitation): void {
+    this.confirmationService.confirm({
+      header: this.transloco.translate('teams.invitations.cancel_confirm_title'),
+      message: this.transloco.translate('teams.invitations.cancel_confirm_message'),
+      accept: () => this.cancelInvitation(inv),
+    });
+  }
+
+  private cancelInvitation(inv: TeamInvitation): void {
+    const id = this.teamId();
+    this.invitationsService
+      .invitationsDestroy(inv.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: this.transloco.translate('common.success'),
+            detail: this.transloco.translate('teams.invitations.cancelled'),
+          });
+          this.loadInvitations(id);
+        },
+        error: () => this.notifyError(),
+      });
+  }
+
+  private applyInviteError(err: HttpErrorResponse): void {
+    const body = err?.error as
+      | { code?: string; detail?: string; fields?: FieldErrors }
+      | null
+      | undefined;
+
+    const matchKnown = (s: string): string | null => {
+      if (/already_pending|invitation.*exists|already_invited/i.test(s)) {
+        return 'teams.errors.invitation_already_pending';
+      }
+      if (/already_member|email_already_member|already.*member/i.test(s)) {
+        return 'teams.errors.email_already_member';
+      }
+      return null;
+    };
+
+    if (body?.fields && Object.keys(body.fields).length > 0) {
+      const known = matchKnown(JSON.stringify(body.fields));
+      if (known) {
+        this.inviteError.set(known);
+        return;
+      }
+      this.inviteFieldErrors.set(body.fields);
+      return;
+    }
+    if (body?.code) {
+      const known = matchKnown(body.code);
+      if (known) {
+        this.inviteError.set(known);
+        return;
+      }
+    }
+    this.inviteError.set(body?.detail ?? 'teams.errors.unknown');
+  }
+
+  private notifyError(): void {
+    this.messageService.add({
+      severity: 'error',
+      summary: this.transloco.translate('common.error'),
+      detail: this.transloco.translate('teams.errors.unknown'),
+    });
+  }
+}

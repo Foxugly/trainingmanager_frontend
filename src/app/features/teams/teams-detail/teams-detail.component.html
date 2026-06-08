@@ -138,12 +138,8 @@
           <p-tab value="requests">
             <i class="pi pi-inbox mr-2" aria-hidden="true"></i>
             {{ 'teams.detail.tabs.requests_invitations' | transloco }}
-            @if (requestsInvitationsCount() > 0) {
-              <p-badge
-                [value]="requestsInvitationsCount().toString()"
-                severity="info"
-                styleClass="ml-2"
-              />
+            @if (requestsCount() > 0) {
+              <p-badge [value]="requestsCount().toString()" severity="info" styleClass="ml-2" />
             }
           </p-tab>
         }
@@ -369,134 +365,11 @@
         <!-- TAB 3: DEMANDES & INVITATIONS (manager-only) -->
         @if (canManage()) {
           <p-tabpanel value="requests">
-            <div class="flex justify-end mb-3">
-              <p-button
-                [label]="'teams.invitations.invite' | transloco"
-                icon="pi pi-plus"
-                severity="success"
-                size="small"
-                (onClick)="openInviteDialog()"
-              />
-            </div>
-            <section class="mb-8">
-              <h3 class="text-base font-semibold mb-2">
-                {{ 'teams.join_requests.title' | transloco }} ({{ joinRequests().length }})
-              </h3>
-              @if (loadingJoinRequests()) {
-                <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
-              } @else if (joinRequests().length === 0) {
-                <app-empty-state
-                  icon="inbox"
-                  tone="gray"
-                  [title]="'teams.join_requests.empty' | transloco"
-                  [subtitle]="'teams.join_requests.empty_subtitle' | transloco"
-                />
-              } @else {
-                <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
-                  @for (req of joinRequests(); track req.id) {
-                    <li class="p-3 flex flex-col gap-2">
-                      <div class="flex items-start justify-between gap-3 flex-wrap">
-                        <div class="min-w-0 flex-1">
-                          <div class="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-sm">
-                            <i class="pi pi-user text-gray-400 self-center" aria-hidden="true"></i>
-                            <span class="font-medium text-gray-900">
-                              {{ req.user_fullname || req.user_username }}
-                            </span>
-                            @if (req.user_fullname && req.user_username) {
-                              <span class="text-xs text-gray-500"
-                                >&#64;{{ req.user_username }}</span
-                              >
-                            }
-                            <span class="text-xs text-gray-500">
-                              · {{ req.requested_at | date: 'medium' }}
-                            </span>
-                          </div>
-                          @if (req.message) {
-                            <p class="mt-1 text-sm text-gray-700 whitespace-pre-line">
-                              {{ req.message }}
-                            </p>
-                          } @else {
-                            <p class="mt-1 text-xs italic text-gray-400">
-                              {{ 'teams.join_requests.no_message' | transloco }}
-                            </p>
-                          }
-                        </div>
-                        <div class="flex items-center gap-2 shrink-0">
-                          <p-button
-                            [label]="'teams.join_requests.reject' | transloco"
-                            icon="pi pi-times"
-                            severity="secondary"
-                            [outlined]="true"
-                            size="small"
-                            [loading]="processingRequestId() === req.id"
-                            (onClick)="openRejectDialog(req)"
-                          />
-                          <p-button
-                            [label]="'teams.join_requests.accept' | transloco"
-                            icon="pi pi-check"
-                            size="small"
-                            [loading]="processingRequestId() === req.id"
-                            (onClick)="confirmAcceptJoinRequest(req)"
-                          />
-                        </div>
-                      </div>
-                    </li>
-                  }
-                </ul>
-              }
-            </section>
-
-            <section>
-              <h3 class="text-base font-semibold mb-2">
-                {{ 'teams.invitations.title' | transloco }} ({{ invitations().length }})
-              </h3>
-              @if (loadingInvitations()) {
-                <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
-              } @else if (invitations().length === 0) {
-                <app-empty-state
-                  icon="envelope"
-                  tone="gray"
-                  [title]="'teams.invitations.empty' | transloco"
-                  [subtitle]="'teams.invitations.empty_subtitle' | transloco"
-                >
-                  <p-button
-                    [label]="'teams.invitations.invite' | transloco"
-                    icon="pi pi-envelope"
-                    severity="secondary"
-                    [outlined]="true"
-                    size="small"
-                    (onClick)="openInviteDialog()"
-                  />
-                </app-empty-state>
-              } @else {
-                <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
-                  @for (inv of invitations(); track inv.id) {
-                    <li class="p-3 flex justify-between items-center gap-2">
-                      <div>
-                        <div class="font-medium">{{ inv.email }}</div>
-                        <div class="text-xs text-gray-500">
-                          {{ 'teams.invitations.sent_at' | transloco }}
-                          {{ inv.created_at | date: 'mediumDate' }}
-                          @if (inv.expires_at) {
-                            ·
-                            {{ 'teams.invitations.expires_at' | transloco }}
-                            {{ inv.expires_at | date: 'mediumDate' }}
-                          }
-                        </div>
-                      </div>
-                      <p-button
-                        icon="pi pi-times"
-                        severity="danger"
-                        [text]="true"
-                        [rounded]="true"
-                        [ariaLabel]="'teams.invitations.cancel' | transloco"
-                        (onClick)="confirmCancelInvitation(inv)"
-                      />
-                    </li>
-                  }
-                </ul>
-              }
-            </section>
+            <app-team-requests
+              [teamId]="t.id"
+              (countChange)="onRequestsCountChange($event)"
+              (membershipsChanged)="onMembershipsChanged()"
+            />
           </p-tabpanel>
         }
 
@@ -705,66 +578,6 @@
 </p-dialog>
 
 <p-dialog
-  [visible]="showInviteDialog()"
-  (visibleChange)="$event ? null : closeInviteDialog()"
-  [modal]="true"
-  [closable]="!inviting()"
-  [style]="{ width: '32rem' }"
-  [header]="'teams.invite_dialog.title' | transloco"
->
-  <form [formGroup]="inviteForm" (ngSubmit)="submitInvite()" class="flex flex-col gap-4">
-    <div class="flex flex-col gap-2">
-      <label for="invite_email" class="text-sm font-medium text-gray-700">
-        {{ 'teams.invite_dialog.email' | transloco }}
-      </label>
-      <input pInputText id="invite_email" formControlName="email" type="email" class="w-full" />
-    </div>
-    <div class="flex flex-col gap-2">
-      <label for="invite_firstname" class="text-sm font-medium text-gray-700">
-        {{ 'teams.invite_dialog.firstname' | transloco }}
-      </label>
-      <input pInputText id="invite_firstname" formControlName="firstname" class="w-full" />
-    </div>
-    <div class="flex flex-col gap-2">
-      <label for="invite_lastname" class="text-sm font-medium text-gray-700">
-        {{ 'teams.invite_dialog.lastname' | transloco }}
-      </label>
-      <input pInputText id="invite_lastname" formControlName="lastname" class="w-full" />
-    </div>
-
-    @if (inviteError(); as msg) {
-      <p-message severity="error" [text]="msg | transloco" />
-    }
-
-    @if (inviteFieldErrors(); as errors) {
-      <div class="flex flex-col gap-1">
-        @for (entry of errors | keyvalue; track entry.key) {
-          <p-message severity="warn" [text]="entry.key + ': ' + entry.value.join(', ')" />
-        }
-      </div>
-    }
-
-    <div class="flex justify-end gap-2 pt-2">
-      <p-button
-        type="button"
-        severity="secondary"
-        [text]="true"
-        [label]="'teams.invite_dialog.cancel' | transloco"
-        [disabled]="inviting()"
-        (onClick)="closeInviteDialog()"
-      />
-      <p-button
-        type="submit"
-        [label]="'teams.invite_dialog.submit' | transloco"
-        icon="pi pi-send"
-        [loading]="inviting()"
-        [disabled]="inviteForm.invalid"
-      />
-    </div>
-  </form>
-</p-dialog>
-
-<p-dialog
   [visible]="showJoinDialog()"
   (visibleChange)="$event ? null : closeJoinDialog()"
   [modal]="true"
@@ -804,47 +617,6 @@
         icon="pi pi-send"
         [loading]="submittingJoinRequest()"
         (onClick)="submitJoinRequest()"
-      />
-    </div>
-  </div>
-</p-dialog>
-
-<p-dialog
-  [visible]="rejectingRequest() !== null"
-  (visibleChange)="$event ? null : closeRejectDialog()"
-  [modal]="true"
-  [closable]="processingRequestId() === null"
-  [style]="{ width: '32rem' }"
-  [header]="'teams.join_requests.reject_dialog_title' | transloco"
->
-  <div class="flex flex-col gap-3">
-    <p class="text-sm text-gray-700">
-      {{ 'teams.join_requests.reject_dialog_help' | transloco }}
-    </p>
-    <textarea
-      pTextarea
-      rows="3"
-      class="w-full"
-      [value]="rejectMessage()"
-      (input)="rejectMessage.set($any($event.target).value)"
-      [placeholder]="'teams.join_requests.reject_message_placeholder' | transloco"
-    ></textarea>
-    <div class="flex justify-end gap-2 pt-1">
-      <p-button
-        type="button"
-        severity="secondary"
-        [text]="true"
-        [label]="'common.cancel' | transloco"
-        [disabled]="processingRequestId() !== null"
-        (onClick)="closeRejectDialog()"
-      />
-      <p-button
-        type="button"
-        severity="danger"
-        [label]="'teams.join_requests.confirm_reject' | transloco"
-        icon="pi pi-times"
-        [loading]="processingRequestId() !== null"
-        (onClick)="submitReject()"
       />
     </div>
   </div>

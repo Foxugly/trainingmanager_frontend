@@ -25,25 +25,22 @@ import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { Textarea } from 'primeng/textarea';
 import { Tooltip } from 'primeng/tooltip';
 import { AuditLogService } from '../../../api/api/audit-log.service';
-import { InvitationsService } from '../../../api/api/invitations.service';
 import { JoinRequestsService } from '../../../api/api/join-requests.service';
 import { MembersService } from '../../../api/api/members.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { AuditLogEntry } from '../../../api/model/audit-log-entry';
 import { ActionEnum } from '../../../api/model/action-enum';
-import { CreateInvitation } from '../../../api/model/create-invitation';
 import { CreateJoinRequest } from '../../../api/model/create-join-request';
-import { InvitationStatusEnum } from '../../../api/model/invitation-status-enum';
 import { JoinRequestStatusEnum } from '../../../api/model/join-request-status-enum';
 import { PatchedTeam } from '../../../api/model/patched-team';
 import { Team } from '../../../api/model/team';
-import { TeamInvitation } from '../../../api/model/team-invitation';
 import { TeamJoinRequest } from '../../../api/model/team-join-request';
 import { TeamMembership } from '../../../api/model/team-membership';
 import { AuthService } from '../../../core/auth/auth.service';
 import { MemberMembershipService } from '../member-membership.service';
 import { TeamRole } from '../teams-list/teams-list.component';
 import { ProgramsListComponent } from '../../programs/programs-list/programs-list.component';
+import { TeamRequestsComponent } from '../team-requests/team-requests.component';
 import { TeamStatsComponent } from '../team-stats/team-stats.component';
 import { MemberNotesComponent } from '../member-notes/member-notes.component';
 import { PerformancePanelComponent } from '../../../shared/ui/performance-panel/performance-panel.component';
@@ -97,6 +94,7 @@ interface FieldErrors {
     TranslocoPipe,
     ProgramsListComponent,
     TeamStatsComponent,
+    TeamRequestsComponent,
     MemberNotesComponent,
     PerformancePanelComponent,
     TeamDiscussionsComponent,
@@ -114,7 +112,6 @@ export class TeamsDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly teamsService = inject(TeamsService);
-  private readonly invitationsService = inject(InvitationsService);
   private readonly joinRequestsService = inject(JoinRequestsService);
   private readonly membersService = inject(MembersService);
   private readonly auditLogService = inject(AuditLogService);
@@ -154,18 +151,9 @@ export class TeamsDetailComponent implements OnInit {
 
   protected readonly memberFilter = signal<string>('');
 
-  protected readonly invitations = signal<TeamInvitation[]>([]);
-  protected readonly loadingInvitations = signal(false);
-  protected readonly showInviteDialog = signal(false);
-  protected readonly inviting = signal(false);
-  protected readonly inviteError = signal<string | null>(null);
-  protected readonly inviteFieldErrors = signal<FieldErrors | null>(null);
-
-  protected readonly joinRequests = signal<TeamJoinRequest[]>([]);
-  protected readonly loadingJoinRequests = signal(false);
-  protected readonly processingRequestId = signal<number | null>(null);
-  protected readonly rejectingRequest = signal<TeamJoinRequest | null>(null);
-  protected readonly rejectMessage = signal('');
+  /** Pending join-requests + invitations total, emitted by app-team-requests,
+   *  for the "Requests" tab badge. */
+  protected readonly requestsCount = signal(0);
 
   protected readonly myPendingRequest = signal<TeamJoinRequest | null>(null);
   protected readonly loadingMyRequest = signal(false);
@@ -234,9 +222,16 @@ export class TeamsDetailComponent implements OnInit {
 
   protected readonly activeTab = signal<string>('programs');
 
-  protected readonly requestsInvitationsCount = computed(
-    () => this.joinRequests().length + this.invitations().length,
-  );
+  /** app-team-requests emitted its pending count → drives the tab badge. */
+  protected onRequestsCountChange(n: number): void {
+    this.requestsCount.set(n);
+  }
+
+  /** app-team-requests accepted a join request (a member was added) → refresh. */
+  protected onMembershipsChanged(): void {
+    const id = this.teamId();
+    if (id !== null) this.loadMemberships(id);
+  }
 
   protected readonly myMembership = computed(() => {
     const me = this.authService.currentUser();
@@ -423,12 +418,6 @@ export class TeamsDetailComponent implements OnInit {
     phonenumber: [''],
   });
 
-  protected readonly inviteForm = this.fb.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
-    firstname: ['', [Validators.required]],
-    lastname: ['', [Validators.required]],
-  });
-
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
     const id = idParam ? Number(idParam) : NaN;
@@ -449,8 +438,7 @@ export class TeamsDetailComponent implements OnInit {
 
     this.loadTeam(id);
     this.loadMemberships(id);
-    this.loadInvitations(id);
-    this.loadJoinRequests(id);
+    // Invitations + join requests are loaded by app-team-requests.
   }
 
   private loadTeam(id: number): void {
@@ -487,41 +475,6 @@ export class TeamsDetailComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (list) => this.memberships.set(list ?? []),
-      });
-  }
-
-  private loadInvitations(id: number): void {
-    this.loadingInvitations.set(true);
-    this.invitationsService
-      .invitationsList(undefined, undefined, undefined, undefined, InvitationStatusEnum.Pending, id)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (res) => {
-          this.invitations.set(res.results ?? []);
-          this.loadingInvitations.set(false);
-        },
-        error: () => this.loadingInvitations.set(false),
-      });
-  }
-
-  private loadJoinRequests(id: number): void {
-    this.loadingJoinRequests.set(true);
-    this.joinRequestsService
-      .joinRequestsList(
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        JoinRequestStatusEnum.Pending,
-        id,
-      )
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (res) => {
-          this.joinRequests.set(res.results ?? []);
-          this.loadingJoinRequests.set(false);
-        },
-        error: () => this.loadingJoinRequests.set(false),
       });
   }
 
@@ -674,90 +627,6 @@ export class TeamsDetailComponent implements OnInit {
           // Whatever happened (request_already_handled etc.), re-sync.
           this.loadMyPendingRequest(teamId);
           this.loadMemberships(teamId);
-        },
-      });
-  }
-
-  protected confirmAcceptJoinRequest(req: TeamJoinRequest): void {
-    this.confirmationService.confirm({
-      header: this.transloco.translate('teams.join_requests.accept_confirm_title'),
-      message: this.transloco.translate('teams.join_requests.accept_confirm_message'),
-      acceptLabel: this.transloco.translate('teams.join_requests.accept'),
-      rejectLabel: this.transloco.translate('common.cancel'),
-      accept: () => this.acceptJoinRequest(req),
-    });
-  }
-
-  private acceptJoinRequest(req: TeamJoinRequest): void {
-    const teamId = this.teamId();
-    if (teamId === null) return;
-    this.processingRequestId.set(req.id);
-    this.joinRequestsService
-      .joinRequestsPartialUpdate(req.id, { status: JoinRequestStatusEnum.Accepted })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.processingRequestId.set(null);
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('teams.join_requests.accepted'),
-          });
-          this.loadJoinRequests(teamId);
-          this.loadMemberships(teamId);
-        },
-        error: () => {
-          this.processingRequestId.set(null);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('teams.errors.unknown'),
-          });
-        },
-      });
-  }
-
-  protected openRejectDialog(req: TeamJoinRequest): void {
-    this.rejectMessage.set('');
-    this.rejectingRequest.set(req);
-  }
-
-  protected closeRejectDialog(): void {
-    this.rejectingRequest.set(null);
-    this.rejectMessage.set('');
-  }
-
-  protected submitReject(): void {
-    const req = this.rejectingRequest();
-    const teamId = this.teamId();
-    if (!req || teamId === null) return;
-    const message = this.rejectMessage().trim();
-    this.processingRequestId.set(req.id);
-    this.joinRequestsService
-      .joinRequestsPartialUpdate(req.id, {
-        status: JoinRequestStatusEnum.Rejected,
-        ...(message ? { response_message: message } : {}),
-      })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.processingRequestId.set(null);
-          this.rejectingRequest.set(null);
-          this.rejectMessage.set('');
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('teams.join_requests.rejected'),
-          });
-          this.loadJoinRequests(teamId);
-        },
-        error: () => {
-          this.processingRequestId.set(null);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('teams.errors.unknown'),
-          });
         },
       });
   }
@@ -918,125 +787,6 @@ export class TeamsDetailComponent implements OnInit {
           });
         },
       });
-  }
-
-  protected openInviteDialog(): void {
-    this.inviteForm.reset({ email: '', firstname: '', lastname: '' });
-    this.inviteError.set(null);
-    this.inviteFieldErrors.set(null);
-    this.showInviteDialog.set(true);
-  }
-
-  protected closeInviteDialog(): void {
-    this.showInviteDialog.set(false);
-  }
-
-  protected submitInvite(): void {
-    const id = this.teamId();
-    if (id === null || this.inviteForm.invalid) return;
-
-    this.inviting.set(true);
-    this.inviteError.set(null);
-    this.inviteFieldErrors.set(null);
-
-    const value = this.inviteForm.getRawValue();
-    const payload: CreateInvitation = {
-      team: id,
-      email: value.email,
-      firstname: value.firstname,
-      lastname: value.lastname,
-    };
-
-    this.invitationsService
-      .invitationsCreate(payload)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('teams.invite_dialog.sent'),
-          });
-          this.inviting.set(false);
-          this.showInviteDialog.set(false);
-          this.loadInvitations(id);
-        },
-        error: (err: HttpErrorResponse) => {
-          this.applyInviteError(err);
-          this.inviting.set(false);
-        },
-      });
-  }
-
-  protected confirmCancelInvitation(inv: TeamInvitation): void {
-    this.confirmationService.confirm({
-      header: this.transloco.translate('teams.invitations.cancel_confirm_title'),
-      message: this.transloco.translate('teams.invitations.cancel_confirm_message'),
-      accept: () => this.cancelInvitation(inv),
-    });
-  }
-
-  private cancelInvitation(inv: TeamInvitation): void {
-    const id = this.teamId();
-    if (id === null) return;
-    this.invitationsService
-      .invitationsDestroy(inv.id)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('teams.invitations.cancelled'),
-          });
-          this.loadInvitations(id);
-        },
-        error: () => {
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('teams.errors.unknown'),
-          });
-        },
-      });
-  }
-
-  private applyInviteError(err: HttpErrorResponse): void {
-    const body = err?.error as
-      | { code?: string; detail?: string; fields?: FieldErrors }
-      | null
-      | undefined;
-
-    const matchKnown = (s: string): string | null => {
-      if (/already_pending|invitation.*exists|already_invited/i.test(s)) {
-        return 'teams.errors.invitation_already_pending';
-      }
-      if (/already_member|email_already_member|already.*member/i.test(s)) {
-        return 'teams.errors.email_already_member';
-      }
-      return null;
-    };
-
-    if (body?.fields && Object.keys(body.fields).length > 0) {
-      const flat = JSON.stringify(body.fields);
-      const known = matchKnown(flat);
-      if (known) {
-        this.inviteError.set(known);
-        return;
-      }
-      this.inviteFieldErrors.set(body.fields);
-      return;
-    }
-
-    if (body?.code) {
-      const known = matchKnown(body.code);
-      if (known) {
-        this.inviteError.set(known);
-        return;
-      }
-    }
-
-    this.inviteError.set(body?.detail ?? 'teams.errors.unknown');
   }
 
   private applyAddMemberError(err: HttpErrorResponse): void {

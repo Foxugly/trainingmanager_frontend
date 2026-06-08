@@ -123,7 +123,8 @@ interface ProtectedFields {
   canManage(): boolean;
   isOwner(): boolean;
   activeTab(): string;
-  requestsInvitationsCount(): number;
+  requestsCount(): number;
+  onRequestsCountChange(n: number): void;
   myMembership(): TeamMembership | null;
   showAddMemberDialog(): boolean;
   openAddMember(): void;
@@ -134,22 +135,6 @@ interface ProtectedFields {
   activeValue(): boolean;
   patchActive(id: number, value: boolean): unknown;
   addMemberForm: { patchValue(v: Record<string, unknown>): void; invalid: boolean };
-  invitations(): TeamInvitation[];
-  showInviteDialog(): boolean;
-  inviteError(): string | null;
-  openInviteDialog(): void;
-  submitInvite(): void;
-  confirmCancelInvitation(inv: TeamInvitation): void;
-  inviteForm: { patchValue(v: Record<string, unknown>): void; invalid: boolean };
-  joinRequests(): TeamJoinRequest[];
-  loadingJoinRequests(): boolean;
-  processingRequestId(): number | null;
-  rejectingRequest(): TeamJoinRequest | null;
-  rejectMessage(): string;
-  confirmAcceptJoinRequest(req: TeamJoinRequest): void;
-  openRejectDialog(req: TeamJoinRequest): void;
-  closeRejectDialog(): void;
-  submitReject(): void;
   myPendingRequest(): TeamJoinRequest | null;
   canRequestJoin(): boolean;
   isMemberOrAbove(): boolean;
@@ -434,126 +419,9 @@ describe('TeamsDetailComponent', () => {
     expect(serviceMock.teamsPartialUpdate).toHaveBeenCalledWith(4, { is_active: false });
   });
 
-  it('loads invitations on init filtered by team and pending status', () => {
-    expect(invitationsMock.invitationsList).toHaveBeenCalledWith(
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      InvitationStatusEnum.Pending,
-      4,
-    );
-    expect(access(component).invitations()).toHaveLength(1);
-  });
-
   it('non-manager (member) cannot manage and the template hides invitation controls', async () => {
     await setup('4', team, otherUser);
     expect(access(component).canManage()).toBe(false);
-  });
-
-  it('openInviteDialog opens the dialog', () => {
-    access(component).openInviteDialog();
-    expect(access(component).showInviteDialog()).toBe(true);
-  });
-
-  it('submitInvite calls invitationsCreate with team + payload and reloads', () => {
-    access(component).openInviteDialog();
-    access(component).inviteForm.patchValue({
-      email: 'a@b.com',
-      firstname: 'A',
-      lastname: 'B',
-    });
-    access(component).submitInvite();
-    expect(invitationsMock.invitationsCreate).toHaveBeenCalledWith({
-      team: 4,
-      email: 'a@b.com',
-      firstname: 'A',
-      lastname: 'B',
-    });
-    expect(invitationsMock.invitationsList).toHaveBeenCalledTimes(2);
-    expect(access(component).showInviteDialog()).toBe(false);
-  });
-
-  it('submitInvite maps already_pending error to dedicated i18n key', () => {
-    invitationsMock.invitationsCreate.mockReturnValueOnce(
-      throwError(() => ({
-        error: { fields: { email: [{ code: 'invitation_already_pending', detail: 'x' }] } },
-      })),
-    );
-    access(component).openInviteDialog();
-    access(component).inviteForm.patchValue({
-      email: 'dup@b.com',
-      firstname: 'A',
-      lastname: 'B',
-    });
-    access(component).submitInvite();
-    expect(access(component).inviteError()).toBe('teams.errors.invitation_already_pending');
-  });
-
-  it('submitInvite maps email_already_member error to dedicated i18n key', () => {
-    invitationsMock.invitationsCreate.mockReturnValueOnce(
-      throwError(() => ({
-        error: { code: 'email_already_member', detail: 'already' },
-      })),
-    );
-    access(component).openInviteDialog();
-    access(component).inviteForm.patchValue({
-      email: 'm@b.com',
-      firstname: 'A',
-      lastname: 'B',
-    });
-    access(component).submitInvite();
-    expect(access(component).inviteError()).toBe('teams.errors.email_already_member');
-  });
-
-  it('confirmCancelInvitation calls invitationsDestroy on accept', () => {
-    const confirmation = fixture.debugElement.injector.get(ConfirmationService);
-    vi.spyOn(confirmation, 'confirm').mockImplementation((cfg) => {
-      cfg.accept?.();
-      return confirmation;
-    });
-    access(component).confirmCancelInvitation(inv1);
-    expect(invitationsMock.invitationsDestroy).toHaveBeenCalledWith(11);
-  });
-
-  it('loads pending join requests on init filtered by team', () => {
-    expect(joinRequestsMock.joinRequestsList).toHaveBeenCalledWith(
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      JoinRequestStatusEnum.Pending,
-      4,
-    );
-    expect(access(component).joinRequests()).toHaveLength(1);
-  });
-
-  it('confirmAcceptJoinRequest patches status=accepted and reloads list + memberships', () => {
-    const confirmation = fixture.debugElement.injector.get(ConfirmationService);
-    vi.spyOn(confirmation, 'confirm').mockImplementation((cfg) => {
-      cfg.accept?.();
-      return confirmation;
-    });
-    access(component).confirmAcceptJoinRequest(joinReq1);
-    expect(joinRequestsMock.joinRequestsPartialUpdate).toHaveBeenCalledWith(77, {
-      status: JoinRequestStatusEnum.Accepted,
-    });
-    expect(joinRequestsMock.joinRequestsList).toHaveBeenCalledTimes(2);
-    expect(serviceMock.teamsMembershipsList).toHaveBeenCalledTimes(2);
-  });
-
-  it('submitReject sends status=rejected with response_message and clears the dialog', () => {
-    access(component).openRejectDialog(joinReq1);
-    expect(access(component).rejectingRequest()).toEqual(joinReq1);
-    (access(component) as unknown as { rejectMessage: { set(v: string): void } }).rejectMessage.set(
-      'Sorry, full team',
-    );
-    access(component).submitReject();
-    expect(joinRequestsMock.joinRequestsPartialUpdate).toHaveBeenCalledWith(77, {
-      status: JoinRequestStatusEnum.Rejected,
-      response_message: 'Sorry, full team',
-    });
-    expect(access(component).rejectingRequest()).toBeNull();
   });
 
   it('non-member visitor on a public team sees the join CTA', async () => {
@@ -666,17 +534,9 @@ describe('TeamsDetailComponent', () => {
     expect(access(component).activeTab()).toBe('requests');
   });
 
-  it('requestsInvitationsCount sums pending join requests + invitations', () => {
-    // setup() default: 1 pending join request + 1 pending invitation
-    expect(access(component).requestsInvitationsCount()).toBe(2);
-  });
-
-  it('requestsInvitationsCount returns 0 when no pending requests and no invitations', async () => {
-    await setup('4', team, ownerUser, {
-      joinRequestsList: { count: 0, results: [] },
-      invitationsList: { count: 0, results: [] },
-    });
-    expect(access(component).requestsInvitationsCount()).toBe(0);
+  it('onRequestsCountChange drives the requests tab badge count', () => {
+    access(component).onRequestsCountChange(3);
+    expect(access(component).requestsCount()).toBe(3);
   });
 
   it('myMembership resolves to the current user’s membership entry when present', async () => {
