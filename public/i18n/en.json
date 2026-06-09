@@ -810,6 +810,7 @@
     "confirm_deactivate": "Deactivate this item?",
     "update_failed": "Update failed.",
     "load_failed": "Loading failed. Please try again.",
+    "save_failed": "Save failed. Please try again.",
     "retry": "Retry",
     "opens_new_tab": "Opens in a new tab",
     "entity": {

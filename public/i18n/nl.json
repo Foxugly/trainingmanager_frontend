@@ -810,6 +810,7 @@
     "confirm_deactivate": "Dit item deactiveren?",
     "update_failed": "Bijwerken mislukt.",
     "load_failed": "Laden mislukt. Probeer het opnieuw.",
+    "save_failed": "Opslaan mislukt. Probeer opnieuw.",
     "retry": "Opnieuw proberen",
     "opens_new_tab": "Opent in een nieuw tabblad",
     "entity": {

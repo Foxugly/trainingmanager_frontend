@@ -810,6 +810,7 @@
     "confirm_deactivate": "Disattivare questo elemento?",
     "update_failed": "Aggiornamento non riuscito.",
     "load_failed": "Caricamento non riuscito. Riprova.",
+    "save_failed": "Salvataggio non riuscito. Riprova.",
     "retry": "Riprova",
     "opens_new_tab": "Apre in una nuova scheda",
     "entity": {

@@ -810,6 +810,7 @@
     "confirm_deactivate": "Désactiver cet élément ?",
     "update_failed": "La mise à jour a échoué.",
     "load_failed": "Le chargement a échoué. Réessayez.",
+    "save_failed": "L'enregistrement a échoué. Réessayez.",
     "retry": "Réessayer",
     "opens_new_tab": "Ouvre dans un nouvel onglet",
     "entity": {

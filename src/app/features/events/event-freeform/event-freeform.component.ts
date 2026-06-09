@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { MessageService } from 'primeng/api';
 import { EventsService } from '../../../api/api/events.service';
@@ -70,11 +70,14 @@ export class EventFreeformComponent {
         error: () => {
           this.saving.set(false);
           // Resolved lazily so the component constructs even where MessageService
-          // is not provided (logic-only test harness); the error path is the only
-          // consumer.
-          this.injector
-            .get(MessageService)
-            .add({ severity: 'error', detail: 'common.load_failed' });
+          // / TranslocoService are not provided (logic-only test harness); the
+          // error path is the only consumer.
+          const transloco = this.injector.get(TranslocoService);
+          this.injector.get(MessageService).add({
+            severity: 'error',
+            summary: transloco.translate('common.error'),
+            detail: transloco.translate('common.save_failed'),
+          });
         },
       });
   }
