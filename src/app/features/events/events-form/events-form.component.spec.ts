@@ -465,7 +465,7 @@ describe('EventsFormComponent', () => {
       vis_rounds: VisibilityMode.Always,
     });
     access(component).submit();
-    expect(eventsMock.eventsCreate.mock.calls[0][0].event).toMatchObject({
+    expect(eventsMock.eventsCreate.mock.calls[0][0].eventRequest).toMatchObject({
       vis_distance: VisibilityMode.After,
       vis_goal: VisibilityMode.Never,
       vis_rounds: VisibilityMode.Always,

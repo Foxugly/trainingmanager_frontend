@@ -80,7 +80,7 @@
           {{ 'training_template.no_template_hint' | transloco }}
           <a
             class="text-emerald-700 underline"
-            [routerLink]="['/teams', program().team_id, 'edit']"
+            [routerLink]="['/teams', program().team?.id, 'edit']"
             (click)="cancel()"
           >
             {{ 'training_template.no_template_link' | transloco }}
