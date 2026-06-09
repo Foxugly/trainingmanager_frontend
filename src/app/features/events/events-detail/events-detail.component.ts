@@ -12,7 +12,7 @@ import {
   untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -20,6 +20,7 @@ import { Button } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Message } from 'primeng/message';
 import { ProgressSpinner } from 'primeng/progressspinner';
+import { Select } from 'primeng/select';
 import { Skeleton } from 'primeng/skeleton';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { Tooltip } from 'primeng/tooltip';
@@ -33,6 +34,7 @@ import { GenerateTrainingResponse } from '../../../api/model/generate-training-r
 import { RsvpSummary } from '../../../api/model/rsvp-summary';
 import { RsvpStatusEnum } from '../../../api/model/rsvp-status-enum';
 import { Team } from '../../../api/model/team';
+import { TrainingTypeEnum } from '../../../api/model/training-type-enum';
 import { VisibilityMode } from '../../../api/model/visibility-mode';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AiErrorMappingService } from '../../ai/ai-error-mapping.service';
@@ -56,11 +58,13 @@ import { EventShareResponse } from '../../../api/model/event-share-response';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     RouterLink,
     Button,
     ConfirmDialog,
     Message,
     ProgressSpinner,
+    Select,
     Skeleton,
     Tab,
     TabList,
@@ -143,6 +147,26 @@ export class EventsDetailComponent implements OnInit {
   });
 
   protected readonly canRegenerate = this.canManage;
+
+  // --- Training type selector (structured ↔ freeform) ---
+  /** The training-type select model, kept in sync with the loaded event so a
+   *  rejected confirm can revert it. */
+  protected readonly trainingTypeModel = signal<TrainingTypeEnum>(TrainingTypeEnum.Structured);
+
+  /** Select options, re-translated on language change. */
+  protected readonly trainingTypeOptions = computed(() => {
+    this.transloco.getActiveLang();
+    return [
+      {
+        label: this.transloco.translate('events.training.type_structured'),
+        value: TrainingTypeEnum.Structured,
+      },
+      {
+        label: this.transloco.translate('events.training.type_freeform'),
+        value: TrainingTypeEnum.Freeform,
+      },
+    ];
+  });
 
   /**
    * True when the event has a date that is strictly before today (local date,
@@ -417,6 +441,7 @@ export class EventsDetailComponent implements OnInit {
       .subscribe({
         next: (e) => {
           this.event.set(e);
+          this.trainingTypeModel.set(e.training_type ?? TrainingTypeEnum.Structured);
           this.loading.set(false);
           if (e.refer_program?.id != null) {
             this.loadProgramTeam(e.refer_program.id);
@@ -710,6 +735,46 @@ export class EventsDetailComponent implements OnInit {
   protected reloadEvent(): void {
     const id = this.eventId();
     if (id != null) this.loadEvent(id);
+  }
+
+  /**
+   * Manager changed the training-type select. If the session already has
+   * content (rounds or a non-empty freeform richtext) that switching would
+   * orphan, confirm first; otherwise apply directly. A rejected confirm
+   * reverts the select model to the current event type.
+   */
+  protected onTrainingTypeChange(next: TrainingTypeEnum): void {
+    const e = this.event();
+    if (!e || next === (e.training_type ?? TrainingTypeEnum.Structured)) return;
+    const hasContent =
+      (e.rounds?.length ?? 0) > 0 || (e.training_richtext?.trim().length ?? 0) > 0;
+    if (hasContent) {
+      this.confirmationService.confirm({
+        message: this.transloco.translate('events.training.switch_confirm'),
+        accept: () => this.applyTrainingType(e.id, next),
+        reject: () => this.revertTrainingType(),
+      });
+    } else {
+      this.applyTrainingType(e.id, next);
+    }
+  }
+
+  private applyTrainingType(id: number, next: TrainingTypeEnum): void {
+    this.eventsService
+      .eventsPartialUpdate({ id, patchedEvent: { training_type: next } })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => this.reloadEvent(),
+        error: (err: HttpErrorResponse) => {
+          this.revertTrainingType();
+          this.notifyMutationError(err);
+        },
+      });
+  }
+
+  /** Reset the select model back to the loaded event's current type. */
+  private revertTrainingType(): void {
+    this.trainingTypeModel.set(this.event()?.training_type ?? TrainingTypeEnum.Structured);
   }
 
   private notifyMutationError(err: HttpErrorResponse): void {

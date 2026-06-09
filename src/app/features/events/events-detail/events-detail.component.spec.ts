@@ -177,6 +177,9 @@ interface ProtectedFields {
   confirmApplyRsvpToAttendance(): void;
   // Athlete-side visibility hints (rounds hint moved to app-event-training)
   isRestrictedViewer(): boolean;
+  // Training-type selector
+  onTrainingTypeChange(next: TrainingTypeEnum): void;
+  trainingTypeModel(): TrainingTypeEnum;
   distanceHidden(): boolean;
   goalHidden(): boolean;
   distanceHiddenVariant(): 'never' | 'after';
@@ -696,5 +699,61 @@ describe('EventsDetailComponent', () => {
     // Once the editor emits, that wins.
     access(component).onTrainingState({ totalDistance: 4200, loading: false });
     expect(access(component).eventTotalDistance()).toBe(4200);
+  });
+
+  // --- Training-type selector (structured ↔ freeform) ---
+
+  it('switching training_type with existing content asks for confirmation first', async () => {
+    await setup('7', { ...eventWithRounds, training_type: TrainingTypeEnum.Structured });
+    const confirmation = fixture.debugElement.injector.get(ConfirmationService);
+    const confirmSpy = vi.spyOn(confirmation, 'confirm').mockReturnValue(confirmation);
+    access(component).onTrainingTypeChange(TrainingTypeEnum.Freeform);
+    expect(confirmSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ message: 'events.training.switch_confirm' }),
+    );
+    // Not applied until the confirm is accepted.
+    expect(eventsMock.eventsPartialUpdate).not.toHaveBeenCalledWith(
+      expect.objectContaining({ patchedEvent: { training_type: TrainingTypeEnum.Freeform } }),
+    );
+  });
+
+  it('switching training_type on an empty session applies directly (PATCH + reload)', async () => {
+    await setup('7', { ...eventNoRounds, training_type: TrainingTypeEnum.Structured });
+    const retrieveCallsBefore = eventsMock.eventsRetrieve.mock.calls.length;
+    access(component).onTrainingTypeChange(TrainingTypeEnum.Freeform);
+    expect(eventsMock.eventsPartialUpdate).toHaveBeenCalledWith({
+      id: 7,
+      patchedEvent: { training_type: TrainingTypeEnum.Freeform },
+    });
+    // applyTrainingType → reloadEvent() refetches the event.
+    expect(eventsMock.eventsRetrieve.mock.calls.length).toBeGreaterThan(retrieveCallsBefore);
+  });
+
+  it('accepting the confirm applies the training_type change', async () => {
+    await setup('7', { ...eventWithRounds, training_type: TrainingTypeEnum.Structured });
+    const confirmation = fixture.debugElement.injector.get(ConfirmationService);
+    vi.spyOn(confirmation, 'confirm').mockImplementation((cfg) => {
+      cfg.accept?.();
+      return confirmation;
+    });
+    access(component).onTrainingTypeChange(TrainingTypeEnum.Freeform);
+    expect(eventsMock.eventsPartialUpdate).toHaveBeenCalledWith({
+      id: 7,
+      patchedEvent: { training_type: TrainingTypeEnum.Freeform },
+    });
+  });
+
+  it('rejecting the confirm reverts the select model and does not PATCH', async () => {
+    await setup('7', { ...eventWithRounds, training_type: TrainingTypeEnum.Structured });
+    const confirmation = fixture.debugElement.injector.get(ConfirmationService);
+    vi.spyOn(confirmation, 'confirm').mockImplementation((cfg) => {
+      cfg.reject?.();
+      return confirmation;
+    });
+    access(component).onTrainingTypeChange(TrainingTypeEnum.Freeform);
+    expect(eventsMock.eventsPartialUpdate).not.toHaveBeenCalledWith(
+      expect.objectContaining({ patchedEvent: { training_type: TrainingTypeEnum.Freeform } }),
+    );
+    expect(access(component).trainingTypeModel()).toBe(TrainingTypeEnum.Structured);
   });
 });

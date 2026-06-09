@@ -277,6 +277,22 @@
       <p-tabpanels>
         <!-- TAB 1 — TRAINING -->
         <p-tabpanel value="training">
+          @if (canManage()) {
+            <div class="mb-4 flex items-center gap-3">
+              <label for="training_type" class="text-sm font-medium text-gray-600">
+                {{ 'teams.form.training_type_label' | transloco }}
+              </label>
+              <p-select
+                inputId="training_type"
+                [options]="trainingTypeOptions()"
+                [ngModel]="trainingTypeModel()"
+                optionLabel="label"
+                optionValue="value"
+                (onChange)="onTrainingTypeChange($event.value)"
+              />
+            </div>
+          }
+
           @if (e.training_type === 'freeform') {
             <app-event-freeform
               [event]="e"
