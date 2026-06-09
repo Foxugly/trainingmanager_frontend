@@ -148,6 +148,16 @@ h1 {
   color: #6b7280;
 }
 
+.freeform-body {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: #1f2937;
+}
+
+.freeform-body :where(p, ul, ol) {
+  margin: 0 0 0.5rem;
+}
+
 .sheet-footer {
   display: flex;
   justify-content: space-between;

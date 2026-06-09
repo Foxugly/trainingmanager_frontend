@@ -235,4 +235,66 @@ describe('EventPrintComponent', () => {
     expect(fd(1000)).toBe('1 km');
     expect(fd(1500)).toBe('1.5 km');
   });
+
+  // --- Freeform branch: print the richtext, not the (empty) rounds table ---
+
+  const freeformEvent: Event = {
+    ...eventWithRounds,
+    training_type: TrainingTypeEnum.Freeform,
+    training_richtext: '<p>Easy swim, your own pace.</p>',
+    rounds: [],
+  };
+
+  /** Mounts the real template (no override) so we can assert the rendered DOM. */
+  async function setupRendered(eventResult: Event) {
+    TestBed.resetTestingModule();
+    routeIdParam = '7';
+    eventsMock = { eventsRetrieve: vi.fn().mockReturnValue(of(eventResult)) };
+    roundsMock = {
+      roundsRetrieve: vi.fn().mockImplementation((p: { id: number }) => of({ ...round1, id: p.id })),
+    };
+    exercisesMock = {
+      exercisesRetrieve: vi
+        .fn()
+        .mockImplementation((p: { id: number }) => of(p.id === 201 ? exercise1 : exercise2)),
+    };
+    await TestBed.configureTestingModule({
+      imports: [
+        EventPrintComponent,
+        TranslocoTestingModule.forRoot({
+          langs: { fr: { events: { training: { freeform_heading: 'Texte libre' } } } },
+          translocoConfig: { availableLangs: ['fr'], defaultLang: 'fr' },
+        }),
+      ],
+      providers: [
+        provideNoopAnimations(),
+        provideRouter([]),
+        { provide: EventsService, useValue: eventsMock },
+        { provide: RoundsService, useValue: roundsMock },
+        { provide: ExercisesService, useValue: exercisesMock },
+        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => routeIdParam } } } },
+      ],
+    }).compileComponents();
+    fixture = TestBed.createComponent(EventPrintComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  }
+
+  it('renders the freeform richtext (not the rounds table) for a freeform event', async () => {
+    await setupRendered(freeformEvent);
+    await new Promise((r) => setTimeout(r, 0));
+    fixture.detectChanges();
+    const html = (fixture.nativeElement as HTMLElement).innerHTML;
+    expect(html).toContain('Easy swim, your own pace.');
+    // The structured rounds/exercises table must not render for freeform.
+    expect((fixture.nativeElement as HTMLElement).querySelector('table.exercises')).toBeNull();
+  });
+
+  it('renders the rounds table (not freeform) for a structured event', async () => {
+    await setupRendered({ ...eventWithRounds, training_type: TrainingTypeEnum.Structured });
+    await new Promise((r) => setTimeout(r, 0));
+    await new Promise((r) => setTimeout(r, 0));
+    fixture.detectChanges();
+    expect((fixture.nativeElement as HTMLElement).querySelector('table.exercises')).not.toBeNull();
+  });
 });

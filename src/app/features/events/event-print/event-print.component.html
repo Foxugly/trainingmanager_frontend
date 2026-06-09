@@ -65,6 +65,14 @@
       </div>
     </header>
 
+    @if (e.training_type === 'freeform') {
+      <section class="round">
+        <h2 class="round-title">
+          <span>{{ 'events.training.freeform_heading' | transloco }}</span>
+        </h2>
+        <div class="freeform-body" [innerHTML]="e.training_richtext"></div>
+      </section>
+    } @else {
     @for (round of rounds(); track round.id) {
       <section class="round">
         <h2 class="round-title">
@@ -127,6 +135,7 @@
           <p class="muted">{{ 'events.detail.no_exercises' | transloco }}</p>
         }
       </section>
+    }
     }
 
     <footer class="sheet-footer">
