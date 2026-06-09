@@ -54,6 +54,47 @@ it does not break existing call sites by argument-order shift.
 
 See `.claude/CLAUDE.md` for the full conventions (signals, control-flow, a11y, gotchas).
 
+## End-to-end tests (Playwright)
+
+The critical-path suite lives in `e2e/` (config `playwright.config.ts`,
+baseURL from `E2E_BASE_URL`, default `http://localhost:4200`). It needs a
+running backend on `:8000` seeded with the deterministic e2e fixtures, and a
+running frontend on `:4200`.
+
+### Run locally
+
+```bash
+# 1. Backend (in the trainingmanager_server repo): serve + seed on :8000.
+python manage.py migrate
+python manage.py create_e2e_data         # idempotent; seeds the e2e users/team/program/sport
+python manage.py runserver 0.0.0.0:8000
+
+# 2. Frontend (this repo): dev server on :4200 (apiBase already points at :8000).
+npm start
+
+# 3. Run the suite (separate terminal).
+npm run e2e            # or `npm run e2e:ui` for the Playwright UI
+```
+
+Seeded credentials (see `e2e/seed.ts`, kept in sync with the backend command):
+manager `e2e-manager@foxugly.com`, athlete `e2e-athlete@foxugly.com`, password
+`e2e-Passw0rd!`. The `auth.setup.ts` project logs both in and persists their
+storage state under `e2e/.auth/`.
+
+### CI
+
+`.github/workflows/e2e.yml` (job **E2E**) runs the suite on every push and PR.
+It checks out the **backend** repo (`Foxugly/trainingmanager_server`, `main`)
+into `./backend`, installs + migrates + seeds it on SQLite with dummy CI env,
+serves it on `:8000`, then `ng serve`s this frontend on `:4200` and runs
+Playwright. The HTML report is uploaded as the `playwright-report` artifact.
+
+> **Required one-time repo secret:** `E2E_BACKEND_TOKEN` — a token (classic PAT
+> or fine-grained) with **read** (contents) access to
+> `Foxugly/trainingmanager_server`, used for the cross-repo backend checkout.
+> Without it the `Checkout backend` step fails. Add it under
+> *Settings → Secrets and variables → Actions → New repository secret*.
+
 ## Deploy
 
 Edit locally → commit → push to `main`. GitHub Actions (OIDC → AWS SSM) builds
