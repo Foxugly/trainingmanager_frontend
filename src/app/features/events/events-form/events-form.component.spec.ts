@@ -38,6 +38,12 @@ const team: Team = {
   is_active: true,
   is_public: false,
   attendance_statuses: [],
+  level: null,
+  default_pool: '',
+  places: [],
+  default_place: null,
+  equipment: [],
+  logo_url: null,
   vis_distance: VisibilityMode.After,
   vis_goal: VisibilityMode.Never,
   vis_rounds: VisibilityMode.After,
@@ -75,6 +81,9 @@ const eventFromBackend: Event = {
   refer_program: { id: 4, name: 'Cycle aérobie' },
   refer_program_id: 4,
   sport,
+  place: null,
+  equipment_items: [],
+  rounds_detail: [],
   rounds: [],
   members: [],
   generated_by_ai: false,
@@ -223,6 +232,67 @@ describe('EventsFormComponent', () => {
     expect(teamsMock.teamsList).toHaveBeenCalledWith({ isActive: true });
     expect(programsMock.programsList).toHaveBeenCalled();
     expect(access(component).availablePrograms().length).toBeGreaterThan(0);
+  });
+
+  it('toasts a load error when the teams list fails (program dropdown would be empty)', async () => {
+    TestBed.resetTestingModule();
+    routeIdParam = null;
+    routeQueryProgram = null;
+    teamsMock = {
+      teamsList: vi.fn().mockReturnValue(throwError(() => new Error('boom'))),
+      teamsRetrieve: vi.fn().mockReturnValue(of(team)),
+      teamsPoolsRetrieve: vi.fn().mockReturnValue(of({ pools: [] })),
+    };
+    programsMock = { programsList: vi.fn().mockReturnValue(of({ count: 0, results: [] })) };
+    placesMock = {
+      placesList: vi.fn().mockReturnValue(of({ count: 0, results: [] })),
+      placesCreate: vi.fn().mockReturnValue(of({ id: 10, team: 4, name: 'X', address: '' })),
+    };
+
+    await TestBed.configureTestingModule({
+      imports: [
+        EventsFormComponent,
+        TranslocoTestingModule.forRoot({
+          langs: { fr: {} },
+          translocoConfig: { availableLangs: ['fr'], defaultLang: 'fr' },
+        }),
+      ],
+      providers: [
+        provideNoopAnimations(),
+        provideRouter([]),
+        MessageService,
+        { provide: EventsService, useValue: eventsMock },
+        { provide: TeamsService, useValue: teamsMock },
+        { provide: ProgramsService, useValue: programsMock },
+        { provide: PlacesService, useValue: placesMock },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              paramMap: { get: () => null },
+              queryParamMap: { get: () => null },
+            },
+          },
+        },
+      ],
+    })
+      .overrideComponent(EventsFormComponent, { set: { template: '', imports: [] } })
+      .compileComponents();
+
+    fixture = TestBed.createComponent(EventsFormComponent);
+    component = fixture.componentInstance;
+    messageService = TestBed.inject(MessageService);
+    const addSpy = vi.spyOn(messageService, 'add');
+    fixture.detectChanges();
+    await new Promise((r) => setTimeout(r, 0));
+
+    expect(access(component).availablePrograms()).toEqual([]);
+    expect(addSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        severity: 'error',
+        detail: 'events.form.errors.load_programs_failed',
+      }),
+    );
   });
 
   it('preselects + locks refer_program_id when ?program= is provided', async () => {
@@ -439,7 +509,7 @@ describe('EventsFormComponent', () => {
   });
 
   it('shows the legacy location as a hint when the event has no linked place', async () => {
-    await setup('7', { ...eventFromBackend, location: 'Lac libre', place: undefined });
+    await setup('7', { ...eventFromBackend, location: 'Lac libre', place: null });
     expect(access(component).form.getRawValue()).toMatchObject({ place_id: null });
     expect(access(component).legacyLocation()).toBe('Lac libre');
   });

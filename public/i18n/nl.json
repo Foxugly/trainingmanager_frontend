@@ -71,6 +71,8 @@
     "detail": {
       "regenerate": "Sessie opnieuw genereren",
       "regenerate_past_blocked": "Een voorbije sessie kan niet opnieuw worden gegenereerd.",
+      "load_failed": "Kan de sessie niet laden. Probeer het opnieuw.",
+      "team_load_failed": "Kan het team van deze sessie niet laden.",
       "not_found": "Sessie niet gevonden",
       "training_blocks": "Trainingsblokken",
       "block_label": "Blok",
@@ -238,7 +240,8 @@
       "save": "Opslaan",
       "saved": "Sessie opgeslagen",
       "errors": {
-        "time_range": "De eindtijd moet na de starttijd liggen."
+        "time_range": "De eindtijd moet na de starttijd liggen.",
+        "load_programs_failed": "Kan de programma's niet laden. Probeer het opnieuw."
       },
       "tab_visibility": "Zichtbaarheid",
       "vis_distance": "Afstand",
@@ -798,6 +801,8 @@
     "inactive": "Inactief",
     "confirm_deactivate": "Dit item deactiveren?",
     "update_failed": "Bijwerken mislukt.",
+    "load_failed": "Laden mislukt. Probeer het opnieuw.",
+    "retry": "Opnieuw proberen",
     "opens_new_tab": "Opent in een nieuw tabblad",
     "entity": {
       "team": "Team",

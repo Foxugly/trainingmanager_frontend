@@ -201,7 +201,6 @@ model/patched-topic-message.ts
 model/patched-training-slot.ts
 model/performance.ts
 model/place-minimal.ts
-model/place-request.ts
 model/place.ts
 model/presign-upload-headers.ts
 model/presign-upload-request.ts

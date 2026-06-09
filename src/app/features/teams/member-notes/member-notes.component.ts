@@ -7,6 +7,7 @@ import {
   inject,
   input,
   signal,
+  untracked,
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -89,7 +90,7 @@ export class MemberNotesComponent {
       const team = this.teamId();
       const member = this.memberId();
       if (team != null && member != null) {
-        this.load(team, member);
+        untracked(() => this.load(team, member));
       }
     });
   }

@@ -17,7 +17,7 @@ export interface Program {
     date_end?: string | null;
     readonly team: TeamMinimal;
     team_id: number;
-    events?: Array<number>;
+    readonly events: Array<number>;
     frequency_per_week?: number | null;
     description?: string;
     readonly generated_by_ai: boolean;

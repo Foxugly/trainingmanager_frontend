@@ -33,6 +33,7 @@ const ownedTeam: Team = {
   sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0 }],
   sport_id: 1, owner: ownerUser, managers: [],
   language: LanguageEnum.Fr, is_active: true, is_public: false, attendance_statuses: [],
+  level: null, default_pool: '', places: [], default_place: null, equipment: [], logo_url: null,
   created_at: '', updated_at: '',
 };
 

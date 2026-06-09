@@ -25,20 +25,17 @@ export interface Me {
      * Per-user preference for the weekly recap email. Opt-out model: default True. When False, this user receives no weekly recap even for teams they own/manage that have it enabled.
      */
     weekly_recap_opt_in?: boolean;
-    readonly last_login: string | null;
-    readonly date_joined: string;
     /**
      * Designates whether the user can log into this admin site.
      */
     readonly is_staff: boolean;
+    readonly last_login: string | null;
+    readonly date_joined: string;
     readonly team_quota: TeamQuotaStatus;
     /**
      * Unguessable token embedded in the user\'s personal iCal (.ics) subscription URL. The token IS the authentication for that (otherwise anonymous) feed. Rotate it to revoke an old URL.
      */
     readonly calendar_token: string;
-    /**
-     * Id of the user\'s linked athlete Member, or null. Lets the SPA offer athlete self-service (e.g. log own performances).
-     */
     readonly member_id: number | null;
 }
 

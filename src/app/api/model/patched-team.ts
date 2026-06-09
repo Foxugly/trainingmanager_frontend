@@ -27,17 +27,22 @@ export interface PatchedTeam {
     sport_id?: number;
     sport_ids?: Array<number>;
     default_sport_id?: number;
-    readonly level?: Level;
+    readonly level?: Level | null;
     level_id?: number | null;
     readonly owner?: CustomUserPublic;
     readonly managers?: Array<CustomUserPublic>;
     managers_ids?: Array<number>;
+    /**
+     * Default venue/pool for this team\'s sessions (used by the season-plan generator).
+     */
+    readonly default_pool?: string;
     readonly places?: Array<PlaceMinimal>;
     place_ids?: Array<number>;
-    readonly default_place?: PlaceMinimal;
+    readonly default_place?: PlaceMinimal | null;
     default_place_id?: number | null;
     readonly equipment?: Array<EquipmentMinimal>;
     equipment_ids?: Array<number>;
+    readonly logo_url?: string | null;
     language?: LanguageEnum;
     is_active?: boolean;
     is_public?: boolean;
@@ -45,10 +50,6 @@ export interface PatchedTeam {
      * Small base64 data-URL for the team logo (e.g. \'data:image/png;base64,...\'). Stored inline in the DB; no file storage.
      */
     logo?: string;
-    /**
-     * Absolute URL of the public logo endpoint (null when no logo). The list drops the inline base64 and exposes this instead.
-     */
-    readonly logo_url?: string | null;
     /**
      * If True, athletes can submit a per-session difficulty rating (ROTI, 1..5) for the team\'s events.
      */

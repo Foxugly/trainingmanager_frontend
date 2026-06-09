@@ -10,7 +10,7 @@
 
 
 /**
- * Body of POST /api/v1/auth/magic-link/request/.
+ * Body of POST /api/v1/auth/magic-link/request/.  Anti-leak by design — the view always returns the same 200 payload regardless of whether `email` matches a confirmed user. Validation here only enforces the field shape.
  */
 export interface MagicLinkRequest { 
     email: string;

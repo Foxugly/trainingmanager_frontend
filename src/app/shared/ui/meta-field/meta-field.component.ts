@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { Tooltip } from 'primeng/tooltip';
+
+let nextMetaFieldId = 0;
 
 /**
  * Wraps a form control in the shared `.meta-item` shell (label + value +
@@ -32,7 +34,14 @@ import { Tooltip } from 'primeng/tooltip';
       <ng-content />
     </div>
     @if (error()) {
-      <div class="meta-hint meta-hint--error">{{ error() }}</div>
+      <div
+        class="meta-hint meta-hint--error"
+        role="alert"
+        aria-live="assertive"
+        [attr.id]="errorId()"
+      >
+        {{ error() }}
+      </div>
     } @else if (hint()) {
       <div class="meta-hint">{{ hint() }}</div>
     }
@@ -56,4 +65,11 @@ export class MetaFieldComponent {
   readonly error = input<string | null>(null);
   readonly full = input<boolean>(false);
   readonly tooltip = input<string | null>(null);
+
+  // Stable id on the error block so the projected control can reference it via
+  // `aria-describedby` (the control is content-projected, so callers wire this
+  // themselves — e.g. `[attr.aria-describedby]="field.errorId()"` when in error).
+  // Derived from `for()` (the control's id) when available, else a generated id.
+  private readonly uid = `meta-field-${nextMetaFieldId++}`;
+  readonly errorId = computed(() => `${this.for() ?? this.uid}-error`);
 }

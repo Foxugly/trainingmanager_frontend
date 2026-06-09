@@ -71,6 +71,8 @@
     "detail": {
       "regenerate": "Régénérer la séance",
       "regenerate_past_blocked": "Impossible de régénérer une séance passée.",
+      "load_failed": "Impossible de charger la séance. Veuillez réessayer.",
+      "team_load_failed": "Impossible de charger l'équipe de cette séance.",
       "not_found": "Séance introuvable",
       "training_blocks": "Blocs d'entraînement",
       "block_label": "Bloc",
@@ -238,7 +240,8 @@
       "save": "Enregistrer",
       "saved": "Séance enregistrée",
       "errors": {
-        "time_range": "L'heure de fin doit être après l'heure de début."
+        "time_range": "L'heure de fin doit être après l'heure de début.",
+        "load_programs_failed": "Impossible de charger les programmes. Veuillez réessayer."
       },
       "tab_visibility": "Visibilité",
       "vis_distance": "Distance",
@@ -798,6 +801,8 @@
     "inactive": "Inactif",
     "confirm_deactivate": "Désactiver cet élément ?",
     "update_failed": "La mise à jour a échoué.",
+    "load_failed": "Le chargement a échoué. Réessayez.",
+    "retry": "Réessayer",
     "opens_new_tab": "Ouvre dans un nouvel onglet",
     "entity": {
       "team": "Équipe",

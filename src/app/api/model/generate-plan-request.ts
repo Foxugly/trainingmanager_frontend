@@ -13,6 +13,9 @@ import { OverlapStrategyEnum } from './overlap-strategy-enum';
 export interface GeneratePlanRequest { 
     date_start: string;
     date_end: string;
+    /**
+     * Weekly session count. Optional: when the team has a weekly training template, the frequency is derived from the number of slots and any supplied value is ignored. Required (else 400 frequency_required) only when the team has no template.
+     */
     frequency_per_week?: number;
     description?: string;
     additional_prompt?: string;

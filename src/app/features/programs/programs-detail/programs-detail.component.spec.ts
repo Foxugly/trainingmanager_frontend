@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
@@ -43,6 +44,12 @@ const fullTeam: Team = {
   is_active: true,
   is_public: false,
   attendance_statuses: [],
+  level: null,
+  default_pool: '',
+  places: [],
+  default_place: null,
+  equipment: [],
+  logo_url: null,
   created_at: '2026-04-01T00:00:00Z',
   updated_at: '2026-04-01T00:00:00Z',
 };
@@ -74,6 +81,8 @@ interface ProtectedFields {
   program(): Program | null;
   loading(): boolean;
   notFound(): boolean;
+  loadError(): boolean;
+  reloadProgram(): void;
   activeValue(): boolean;
   patchActive(id: number, value: boolean): unknown;
   canManage(): boolean;
@@ -97,6 +106,7 @@ const eventA: Event = {
   id: 100, name: 'Séance A', goal: null, color: '#FF5733',
   date: '2026-06-05', hour_start: '18:00:00', hour_end: '19:30:00', total: 0,
   refer_program: { id: 7, name: 'Plan IA été' }, refer_program_id: 7, sport,
+  place: null, equipment_items: [], rounds_detail: [],
   rounds: [], members: [], generated_by_ai: false, ai_response: '',
   ai_generated_at: null, created_at: '', updated_at: '', is_public: false, public_token: null,
 };
@@ -123,13 +133,18 @@ describe('ProgramsDetailComponent', () => {
     retrieveResult: Program | null = program,
     currentUser: CustomUserPublic = ownerUser,
     eventsList: Event[] = [eventA, eventB, eventOutsideMonth],
+    retrieveErrorStatus = 404,
   ) {
     TestBed.resetTestingModule();
     routeIdParam = idParam;
     serviceMock = {
       programsRetrieve: vi
         .fn()
-        .mockReturnValue(retrieveResult ? of(retrieveResult) : throwError(() => new Error('404'))),
+        .mockReturnValue(
+          retrieveResult
+            ? of(retrieveResult)
+            : throwError(() => new HttpErrorResponse({ status: retrieveErrorStatus })),
+        ),
       programsPartialUpdate: vi.fn().mockReturnValue(of({ ...program, is_active: false })),
     };
     teamsMock = { teamsRetrieve: vi.fn().mockReturnValue(of(fullTeam)) };
@@ -186,10 +201,35 @@ describe('ProgramsDetailComponent', () => {
     expect(access(component).program()?.id).toBe(7);
   });
 
-  it('flags notFound when programsRetrieve fails', async () => {
-    await setup('7', null);
+  it('flags notFound (not loadError) when programsRetrieve fails with 404', async () => {
+    await setup('7', null, ownerUser, [eventA, eventB, eventOutsideMonth], 404);
     expect(access(component).notFound()).toBe(true);
+    expect(access(component).loadError()).toBe(false);
     expect(access(component).program()).toBeNull();
+  });
+
+  it('flags loadError (not notFound) + toasts when programsRetrieve fails with a non-404 status', async () => {
+    await setup();
+    const messageService = fixture.debugElement.injector.get(MessageService);
+    const addSpy = vi.spyOn(messageService, 'add');
+    serviceMock.programsRetrieve.mockReturnValue(
+      throwError(() => new HttpErrorResponse({ status: 500 })),
+    );
+    access(component).reloadProgram();
+    expect(access(component).loadError()).toBe(true);
+    expect(access(component).notFound()).toBe(false);
+    expect(addSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'error', detail: 'common.load_failed' }),
+    );
+  });
+
+  it('reloadProgram re-fetches the program after a transient load error', async () => {
+    await setup('7', null, ownerUser, [eventA, eventB, eventOutsideMonth], 500);
+    expect(access(component).loadError()).toBe(true);
+    serviceMock.programsRetrieve.mockReturnValue(of(program));
+    access(component).reloadProgram();
+    expect(access(component).loadError()).toBe(false);
+    expect(access(component).program()?.id).toBe(7);
   });
 
   it('handles invalid route id without calling the API', async () => {

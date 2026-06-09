@@ -22,7 +22,7 @@ import { Message } from 'primeng/message';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { Tooltip } from 'primeng/tooltip';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, of, switchMap } from 'rxjs';
 import { EventsService } from '../../../api/api/events.service';
 import { ProgramsService } from '../../../api/api/programs.service';
 import { RoundsService } from '../../../api/api/rounds.service';
@@ -100,6 +100,9 @@ export class EventsDetailComponent implements OnInit {
   protected readonly team = signal<Team | null>(null);
   protected readonly loading = signal(false);
   protected readonly notFound = signal(false);
+  /** Set when the event fetch fails with a non-404 status (server/network);
+   *  surfaced as an inline error block with a retry, distinct from notFound. */
+  protected readonly loadError = signal(false);
   protected readonly regenerating = signal(false);
   protected readonly deleting = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
@@ -402,6 +405,8 @@ export class EventsDetailComponent implements OnInit {
 
   private loadEvent(id: number): void {
     this.loading.set(true);
+    this.notFound.set(false);
+    this.loadError.set(false);
     this.eventsService
       .eventsRetrieve({ id })
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -415,9 +420,22 @@ export class EventsDetailComponent implements OnInit {
           // The training editor (app-event-training) loads its own rounds from
           // the event's round id list.
         },
-        error: () => {
-          this.notFound.set(true);
+        error: (err: HttpErrorResponse) => {
           this.loading.set(false);
+          // A genuine 404 means the session doesn't exist (or isn't visible) —
+          // show the dedicated "not found" copy. Any other status (server error,
+          // network failure) is a transient load error: surface it distinctly
+          // with a retry + a toast rather than masquerading as "not found".
+          if (err?.status === 404) {
+            this.notFound.set(true);
+          } else {
+            this.loadError.set(true);
+            this.messageService.add({
+              severity: 'error',
+              summary: this.transloco.translate('common.error'),
+              detail: this.transloco.translate('events.detail.load_failed'),
+            });
+          }
         },
       });
   }
@@ -425,17 +443,25 @@ export class EventsDetailComponent implements OnInit {
   private loadProgramTeam(programId: number): void {
     this.programsService
       .programsRetrieve({ id: programId })
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        switchMap((p) =>
+          p.team?.id != null ? this.teamsService.teamsRetrieve({ id: p.team.id }) : of(null),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe({
-        next: (p) => {
-          if (p.team?.id != null) {
-            this.teamsService
-              .teamsRetrieve({ id: p.team.id })
-              .pipe(takeUntilDestroyed(this.destroyRef))
-              .subscribe({
-                next: (t) => this.team.set(t),
-              });
-          }
+        next: (t) => {
+          if (t) this.team.set(t);
+        },
+        error: () => {
+          // The team drives role/permission gating; if it can't be resolved the
+          // viewer is treated as a restricted (non-manager) viewer. Surface a
+          // toast so a failed fetch isn't completely silent.
+          this.messageService.add({
+            severity: 'warn',
+            summary: this.transloco.translate('common.error'),
+            detail: this.transloco.translate('events.detail.team_load_failed'),
+          });
         },
       });
   }

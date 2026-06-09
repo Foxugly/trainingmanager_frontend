@@ -10,7 +10,7 @@
 
 
 /**
- * Per-team counts for a team the caller manages.
+ * Per-team counts for a team the caller manages. Keyed by team_id so the frontend joins it to the full Team object it already holds.
  */
 export interface DashboardManagedTeam { 
     team_id: number;

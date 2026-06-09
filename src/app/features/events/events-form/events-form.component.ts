@@ -300,6 +300,9 @@ export class EventsFormComponent implements OnInit {
           const teamIds = (res.results ?? []).map((t) => t.id);
           this.fetchProgramsForTeams(teamIds);
         },
+        // Without an error handler the program dropdown silently stays empty,
+        // leaving the user unable to pick a program with no explanation.
+        error: () => this.notifyLoadProgramsError(),
       });
   }
 
@@ -308,19 +311,32 @@ export class EventsFormComponent implements OnInit {
       this.availablePrograms.set([]);
       return;
     }
-    const requests = teamIds.map((teamId) =>
-      firstValueFrom(
-        this.programsService.programsList({ team: teamId }),
-      ),
-    );
-    const responses = await Promise.all(requests);
-    const all: Program[] = responses.flatMap((r) => r.results ?? []);
-    const dedup = new Map<number, Program>();
-    for (const p of all) dedup.set(p.id, p);
-    this.availablePrograms.set(Array.from(dedup.values()));
-    // The program list may arrive after the event/param did; (re)resolve the
-    // team now that team ids are known so the Place selector can load places.
-    this.resolveTeamForProgram(this.form.controls.refer_program_id.value);
+    try {
+      const requests = teamIds.map((teamId) =>
+        firstValueFrom(
+          this.programsService.programsList({ team: teamId }),
+        ),
+      );
+      const responses = await Promise.all(requests);
+      const all: Program[] = responses.flatMap((r) => r.results ?? []);
+      const dedup = new Map<number, Program>();
+      for (const p of all) dedup.set(p.id, p);
+      this.availablePrograms.set(Array.from(dedup.values()));
+      // The program list may arrive after the event/param did; (re)resolve the
+      // team now that team ids are known so the Place selector can load places.
+      this.resolveTeamForProgram(this.form.controls.refer_program_id.value);
+    } catch {
+      // Any failed program fetch leaves the dropdown empty — tell the user.
+      this.notifyLoadProgramsError();
+    }
+  }
+
+  private notifyLoadProgramsError(): void {
+    this.messageService.add({
+      severity: 'error',
+      summary: this.transloco.translate('common.error'),
+      detail: this.transloco.translate('events.form.errors.load_programs_failed'),
+    });
   }
 
   private loadEvent(id: number): void {

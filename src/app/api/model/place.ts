@@ -10,7 +10,7 @@
 
 
 /**
- * Read/write serializer for a venue (Lieu) in the global sport-scoped pool.  A place is shared (M2M ``Team.places``). On create the requester passes the ``team`` it is creating the place for (write-only): the view links it and derives the place\'s ``sports`` from that team. ``sports`` is read-only output.
+ * Read/write serializer for a venue (Lieu) in the global sport-scoped pool.  A place is shared (M2M ``Team.places``). On create the requester passes the ``team`` it is creating the place for (write-only): the view links it and derives the place\'s ``sport`` from that team. ``sport`` is read-only output.
  */
 export interface Place { 
     readonly id: number;

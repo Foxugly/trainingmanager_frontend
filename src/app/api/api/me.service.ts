@@ -99,7 +99,7 @@ export class MeService extends BaseService implements MeServiceInterface {
     }
 
     /**
-     * GET /api/v1/me/export/ — RGPD data portability.  Returns a single JSON document with all personal data we hold about the authenticated caller, as a downloadable attachment. The password hash and the live calendar_token secret are NEVER included.
+     * GET /api/v1/me/export/ — RGPD data portability.  Returns a single JSON document with all personal data we hold about the authenticated caller, as a downloadable attachment. The password hash and the live calendar_token secret are NEVER included.  The export is assembled defensively: each related area is wrapped so a missing app/relation or a user without a linked Member yields an empty list rather than a 500. Imports are kept local to avoid hard-coupling customuser to every other app.
      * @endpoint get /api/v1/me/export/
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.

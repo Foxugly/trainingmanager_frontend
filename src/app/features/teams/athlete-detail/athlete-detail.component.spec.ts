@@ -39,6 +39,12 @@ const team: Team = {
   is_active: true,
   is_public: true,
   attendance_statuses: [],
+  level: null,
+  default_pool: '',
+  places: [],
+  default_place: null,
+  equipment: [],
+  logo_url: null,
   created_at: '2026-04-01T00:00:00Z',
   updated_at: '2026-04-01T00:00:00Z',
 };

@@ -11,10 +11,10 @@
 
 export interface EventShareResponse { 
     is_public: boolean;
-    public_token?: string | null;
+    public_token: string | null;
     /**
      * Frontend route, e.g. /s/e/<token>. Null when not shared.
      */
-    public_url_path?: string | null;
+    public_url_path: string | null;
 }
 

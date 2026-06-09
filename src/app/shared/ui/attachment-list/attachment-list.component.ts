@@ -9,6 +9,7 @@ import {
   inject,
   input,
   signal,
+  untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -67,7 +68,7 @@ export class AttachmentListComponent {
     effect(() => {
       const id = this.targetId();
       const type = this.targetType();
-      this.load(id, type);
+      untracked(() => this.load(id, type));
     });
   }
 

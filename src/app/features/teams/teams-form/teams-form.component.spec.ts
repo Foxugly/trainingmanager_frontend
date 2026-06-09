@@ -60,6 +60,10 @@ const team: Team = {
   is_public: false,
   attendance_statuses: [],
   places: [],
+  default_pool: '',
+  default_place: null,
+  equipment: [],
+  logo_url: null,
   created_at: '2026-04-01T00:00:00Z',
   updated_at: '2026-04-01T00:00:00Z',
 };
@@ -312,7 +316,7 @@ describe('TeamsFormComponent', () => {
   });
 
   it('seeds level_id to null when the loaded team has no level', async () => {
-    await setup('5', ownerUser, { ...team, level: undefined });
+    await setup('5', ownerUser, { ...team, level: null });
     expect(access(component).form.getRawValue()).toMatchObject({ level_id: null });
   });
 

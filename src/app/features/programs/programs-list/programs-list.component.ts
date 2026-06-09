@@ -14,7 +14,8 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { ToggleSwitch } from 'primeng/toggleswitch';
@@ -46,6 +47,8 @@ export class ProgramsListComponent implements OnInit {
   private readonly programsService = inject(ProgramsService);
   private readonly teamsService = inject(TeamsService);
   private readonly authService = inject(AuthService);
+  private readonly messageService = inject(MessageService);
+  private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly teamFilter = input<number | null>(null);
@@ -98,6 +101,15 @@ export class ProgramsListComponent implements OnInit {
             if (role === 'owner' || role === 'manager') ids.add(t.id);
           }
           this.managerTeamIds.set(ids);
+        },
+        error: () => {
+          // Without this, canCreate silently resolves false on failure and the
+          // user loses the "new program" affordance with no explanation.
+          this.messageService.add({
+            severity: 'error',
+            summary: this.transloco.translate('common.error'),
+            detail: this.transloco.translate('common.load_failed'),
+          });
         },
       });
   }

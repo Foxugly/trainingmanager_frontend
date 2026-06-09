@@ -14,7 +14,7 @@ import { DashboardManagedTeam } from './dashboard-managed-team';
 
 
 /**
- * Top-level aggregate payload for GET /dashboard/summary/.
+ * Top-level aggregate payload for GET /dashboard/summary/.  Replaces the previous per-team/per-program/per-event/per-attendance HTTP fan-out (50-100+ requests) with a single call. The frontend still fetches the full Team list once for names/sport and the stats/perf panels; this payload provides every computed count and list the dashboard renders.
  */
 export interface DashboardSummary { 
     coach_teams: Array<DashboardManagedTeam>;

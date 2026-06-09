@@ -37,8 +37,11 @@ The backend is expected at `http://localhost:8000` (configured in
 | `npm run api:gen` | Regenerate the typed API client in `src/app/api/` from `openapi/Training_Manager_API.yaml`. |
 
 The OpenAPI spec is still in flux: after backend changes, re-sync
-`openapi/Training_Manager_API.yaml` then run `npm run api:gen` and audit the
-positional query-param call sites (they shift alphabetically when a filter is added).
+`openapi/Training_Manager_API.yaml` from the backend's `openapi-schema.yaml`,
+then run `npm run api:gen`. The client is generated with
+`useSingleRequestParameter=true`, so every method takes a single typed
+`*RequestParams` object — adding a backend filter just adds an optional field,
+it does not break existing call sites by argument-order shift.
 
 ## Architecture (quick map)
 

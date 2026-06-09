@@ -24,7 +24,6 @@ import { TableModule } from 'primeng/table';
 import { Tooltip } from 'primeng/tooltip';
 import { PlacesService } from '../../../api/api/places.service';
 import { Place } from '../../../api/model/place';
-import { PlaceRequest } from '../../../api/model/place-request';
 import { NominatimResult, NominatimService } from '../../../core/geo/nominatim.service';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 
@@ -229,9 +228,9 @@ export class TeamPlacePoolComponent {
     this.placeSaving.set(true);
     this.placeNameError.set(null);
     const address = this.placeAddress().trim() || undefined;
-    const payload: PlaceRequest = { team: teamId, name, address };
+    const payload = { team: teamId, name, address };
     this.placesService
-      .placesCreate({ placeRequest: payload })
+      .placesCreate({ place: payload as unknown as Place })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (created) => {

@@ -29,7 +29,7 @@ export interface TrainingSlot {
      * Slot end time; must be after hour_start.
      */
     hour_end: string;
-    readonly place: PlaceMinimal;
+    readonly place: PlaceMinimal | null;
     place_id?: number | null;
     readonly sport: Sport;
     sport_id?: number | null;

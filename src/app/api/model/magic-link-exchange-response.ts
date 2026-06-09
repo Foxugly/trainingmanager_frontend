@@ -10,7 +10,7 @@
 
 
 /**
- * Success body of the exchange — the JWT pair for the signed-in user.
+ * Success body of POST /api/v1/auth/magic-link/exchange/ — the JWT pair for the freshly signed-in user.
  */
 export interface MagicLinkExchangeResponse { 
     readonly access: string;

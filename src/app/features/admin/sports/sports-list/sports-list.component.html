@@ -39,9 +39,9 @@
       <td>{{ sport.energy_systems?.length || 0 }}</td>
       <td>
         @if (sport.is_active) {
-          <span class="text-green-600" aria-label="active">●</span>
+          <span class="text-green-600" [attr.aria-label]="'common.active' | transloco">●</span>
         } @else {
-          <span class="text-red-500" aria-label="inactive">●</span>
+          <span class="text-red-500" [attr.aria-label]="'common.inactive' | transloco">●</span>
         }
       </td>
       <td class="flex gap-1">

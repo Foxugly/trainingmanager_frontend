@@ -3,6 +3,17 @@
     <p class="mt-4 text-gray-500">{{ 'common.loading' | transloco }}…</p>
   } @else if (notFound()) {
     <p class="mt-4 text-gray-500">{{ 'teams.detail.not_found' | transloco }}</p>
+  } @else if (loadError()) {
+    <div class="mt-4 flex flex-col items-start gap-3">
+      <p-message severity="error" [text]="'common.load_failed' | transloco" />
+      <p-button
+        icon="pi pi-refresh"
+        [label]="'common.retry' | transloco"
+        severity="secondary"
+        [outlined]="true"
+        (onClick)="reloadTeam()"
+      />
+    </div>
   } @else if (team(); as t) {
     <app-detail-header
       [eyebrow]="'common.entity.team' | transloco"

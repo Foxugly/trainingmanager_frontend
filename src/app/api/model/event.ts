@@ -23,13 +23,13 @@ export interface Event {
      * Where the session takes place (venue, pool, track, address). Always visible to athletes.
      */
     location?: string;
-    readonly place?: PlaceMinimal;
+    readonly place: PlaceMinimal | null;
     place_id?: number | null;
     /**
      * Material/gear athletes should bring. Always visible to athletes.
      */
     equipment?: string;
-    readonly equipment_items?: Array<EquipmentMinimal>;
+    readonly equipment_items: Array<EquipmentMinimal>;
     equipment_item_ids?: Array<number>;
     color?: string;
     date?: string | null;
@@ -40,8 +40,8 @@ export interface Event {
     refer_program_id: number;
     readonly sport: Sport;
     sport_id?: number | null;
-    rounds?: Array<number>;
-    readonly rounds_detail?: Array<EventRoundDetail>;
+    readonly rounds: Array<number>;
+    readonly rounds_detail: Array<EventRoundDetail>;
     readonly members: Array<number>;
     /**
      * Visibility of this session\'s total distance to athletes.  * `always` - Always * `after` - After the session * `never` - Never
@@ -55,11 +55,6 @@ export interface Event {
      * Visibility of this session\'s rounds (and exercises) to athletes.  * `always` - Always * `after` - After the session * `never` - Never
      */
     vis_rounds?: VisibilityMode;
-    readonly generated_by_ai: boolean;
-    readonly ai_response: string;
-    readonly ai_generated_at: string | null;
-    readonly created_at: string;
-    readonly updated_at: string;
     /**
      * Whether this session is currently shared via its public link.
      */
@@ -68,6 +63,11 @@ export interface Event {
      * Unguessable token in the public share URL. Null = never shared. The token authenticates the otherwise-anonymous public view.
      */
     readonly public_token: string | null;
+    readonly generated_by_ai: boolean;
+    readonly ai_response: string;
+    readonly ai_generated_at: string | null;
+    readonly created_at: string;
+    readonly updated_at: string;
 }
 
 

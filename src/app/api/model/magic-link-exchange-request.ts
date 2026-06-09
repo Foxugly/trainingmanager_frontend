@@ -10,7 +10,7 @@
 
 
 /**
- * Body of POST /api/v1/auth/magic-link/exchange/ — the signed token from the magic-link email.
+ * Body of POST /api/v1/auth/magic-link/exchange/.  `token` is the signed string the user received in their magic-link email (the SPA POSTs it back from /auth/magic-link/:token).
  */
 export interface MagicLinkExchangeRequest { 
     token: string;

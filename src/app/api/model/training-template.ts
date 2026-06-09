@@ -11,7 +11,7 @@ import { TrainingSlot } from './training-slot';
 
 
 /**
- * The team\'s reusable weekly training template. PUT atomically REPLACES it (slots recreated; default_pool/season_start/season_end set on team).
+ * The team\'s reusable weekly training template.  Body of PUT and shape of GET on /teams/{id}/training-template/. PUT atomically REPLACES the template: existing slots are deleted and recreated from `slots`, and default_pool/season_start/season_end are set on the team.
  */
 export interface TrainingTemplate { 
     slots: Array<TrainingSlot>;

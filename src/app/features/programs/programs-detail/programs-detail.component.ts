@@ -11,11 +11,13 @@ import {
   untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
+import { Message } from 'primeng/message';
 import { Tooltip } from 'primeng/tooltip';
 import { EventsService } from '../../../api/api/events.service';
 import { ProgramsService } from '../../../api/api/programs.service';
@@ -104,6 +106,7 @@ function eventDateAsDate(e: Event): Date | null {
     Button,
     ConfirmDialog,
     GenerateEventsDialogComponent,
+    Message,
     Tooltip,
     TranslocoPipe,
     DetailHeaderComponent,
@@ -121,6 +124,7 @@ export class ProgramsDetailComponent implements OnInit {
   private readonly eventsService = inject(EventsService);
   private readonly authService = inject(AuthService);
   private readonly languageService = inject(LanguageService);
+  private readonly messageService = inject(MessageService);
   private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -129,6 +133,9 @@ export class ProgramsDetailComponent implements OnInit {
   protected readonly team = signal<Team | null>(null);
   protected readonly loading = signal(false);
   protected readonly notFound = signal(false);
+  /** Set when the program fetch fails with a non-404 status (server/network);
+   *  surfaced as an inline error block with a retry, distinct from notFound. */
+  protected readonly loadError = signal(false);
 
   protected readonly activeValue = signal(false);
   protected readonly patchActive = (id: number, value: boolean) =>
@@ -276,6 +283,8 @@ export class ProgramsDetailComponent implements OnInit {
 
   protected loadProgram(id: number): void {
     this.loading.set(true);
+    this.notFound.set(false);
+    this.loadError.set(false);
     this.programsService
       .programsRetrieve({ id, includeInactive: true })
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -289,11 +298,29 @@ export class ProgramsDetailComponent implements OnInit {
           }
           this.initCalendarMonth(p);
         },
-        error: () => {
-          this.notFound.set(true);
+        error: (err: HttpErrorResponse) => {
           this.loading.set(false);
+          // A genuine 404 means the program doesn't exist (or isn't visible) —
+          // show the dedicated "not found" copy. Any other status (server error,
+          // network failure) is a transient load error: surface it distinctly
+          // with a retry + a toast rather than masquerading as "not found".
+          if (err?.status === 404) {
+            this.notFound.set(true);
+          } else {
+            this.loadError.set(true);
+            this.messageService.add({
+              severity: 'error',
+              summary: this.transloco.translate('common.error'),
+              detail: this.transloco.translate('common.load_failed'),
+            });
+          }
         },
       });
+  }
+
+  protected reloadProgram(): void {
+    const id = this.programId();
+    if (id !== null) this.loadProgram(id);
   }
 
   private loadTeam(teamId: number): void {

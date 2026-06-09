@@ -8,6 +8,7 @@ import {
   effect,
   inject,
   signal,
+  untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -186,9 +187,14 @@ export class EventsCalendarComponent implements OnInit {
     });
 
     effect(() => {
+      // Intended deps: re-fetch when the displayed month or the program filter
+      // changes. Read them first so they register as tracked dependencies.
       this.currentMonth();
       this.selectedProgramIds();
-      this.reloadEvents();
+      // reloadEvents() synchronously reads gridStart()/gridEnd() (derived from
+      // currentMonth); untracked() keeps those out of this effect's dep set so
+      // it doesn't re-run on unrelated signal reads inside the async fetch.
+      untracked(() => this.reloadEvents());
     });
   }
 

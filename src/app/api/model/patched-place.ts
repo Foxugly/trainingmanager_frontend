@@ -15,9 +15,9 @@
 export interface PatchedPlace { 
     readonly id?: number;
     /**
-     * Sport this venue belongs to (e.g. Natation).
+     * Sports this venue serves.
      */
-    readonly sport?: number | null;
+    readonly sports?: Array<number>;
     /**
      * Display name of the venue (e.g. \'Piscine olympique\').
      */

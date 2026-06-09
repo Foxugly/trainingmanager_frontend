@@ -71,6 +71,8 @@
     "detail": {
       "regenerate": "Regenerar la sesión",
       "regenerate_past_blocked": "No se puede regenerar una sesión pasada.",
+      "load_failed": "No se pudo cargar la sesión. Inténtalo de nuevo.",
+      "team_load_failed": "No se pudo cargar el equipo de esta sesión.",
       "not_found": "Sesión no encontrada",
       "training_blocks": "Bloques de entrenamiento",
       "block_label": "Bloque",
@@ -238,7 +240,8 @@
       "save": "Guardar",
       "saved": "Sesión guardada",
       "errors": {
-        "time_range": "La hora de fin debe ser posterior a la hora de inicio."
+        "time_range": "La hora de fin debe ser posterior a la hora de inicio.",
+        "load_programs_failed": "No se pudieron cargar los programas. Inténtalo de nuevo."
       },
       "tab_visibility": "Visibilidad",
       "vis_distance": "Distancia",
@@ -798,6 +801,8 @@
     "inactive": "Inactivo",
     "confirm_deactivate": "¿Desactivar este elemento?",
     "update_failed": "La actualización falló.",
+    "load_failed": "La carga falló. Reinténtalo.",
+    "retry": "Reintentar",
     "opens_new_tab": "Abre en una nueva pestaña",
     "entity": {
       "team": "Equipo",

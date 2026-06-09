@@ -96,7 +96,7 @@ describe('PlaceSelectComponent', () => {
     (component as unknown as { newName: { set(v: string): void } }).newName.set('Nouveau');
     access(component).createPlace();
     expect(placesMock.placesCreate).toHaveBeenCalledWith({
-      placeRequest: expect.objectContaining({ team: 5, name: 'Nouveau' }),
+      place: expect.objectContaining({ team: 5, name: 'Nouveau' }),
     });
     expect(access(component).places().some((p) => p.id === 8)).toBe(true);
     expect(pushed).toBe(8);

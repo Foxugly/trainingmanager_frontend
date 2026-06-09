@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
@@ -49,6 +50,12 @@ const team: Team = {
   is_active: true,
   is_public: true,
   attendance_statuses: [],
+  level: null,
+  default_pool: '',
+  places: [],
+  default_place: null,
+  equipment: [],
+  logo_url: null,
   created_at: '2026-04-01T00:00:00Z',
   updated_at: '2026-04-01T00:00:00Z',
 };
@@ -119,6 +126,8 @@ interface ProtectedFields {
   memberships(): TeamMembership[];
   loading(): boolean;
   notFound(): boolean;
+  loadError(): boolean;
+  reloadTeam(): void;
   currentUserRole(): TeamRole | null;
   canManage(): boolean;
   isOwner(): boolean;
@@ -204,6 +213,7 @@ describe('TeamsDetailComponent', () => {
       invitationsList?: { count: number; results: TeamInvitation[] };
       auditLogList?: { count: number; next: string | null; results: AuditLogEntry[] };
       queryParams?: Record<string, string>;
+      retrieveErrorStatus?: number;
     } = {},
   ) {
     TestBed.resetTestingModule();
@@ -212,7 +222,13 @@ describe('TeamsDetailComponent', () => {
     serviceMock = {
       teamsRetrieve: vi
         .fn()
-        .mockReturnValue(retrieveResult ? of(retrieveResult) : throwError(() => new Error('404'))),
+        .mockReturnValue(
+          retrieveResult
+            ? of(retrieveResult)
+            : throwError(
+                () => new HttpErrorResponse({ status: overrides.retrieveErrorStatus ?? 404 }),
+              ),
+        ),
       teamsMembershipsList: vi.fn().mockReturnValue(of(overrides.memberships ?? [mb1])),
       teamsMembershipsDestroy: vi.fn().mockReturnValue(of(null)),
       teamsPartialUpdate: vi.fn().mockReturnValue(of(team)),
@@ -324,10 +340,47 @@ describe('TeamsDetailComponent', () => {
     expect(access(component).isOwner()).toBe(false);
   });
 
-  it('flags notFound when teamsRetrieve fails', async () => {
-    await setup('4', null);
+  it('flags notFound (not loadError) when teamsRetrieve fails with 404', async () => {
+    await setup('4', null, ownerUser, { retrieveErrorStatus: 404 });
     expect(access(component).notFound()).toBe(true);
+    expect(access(component).loadError()).toBe(false);
     expect(access(component).team()).toBeNull();
+  });
+
+  it('flags loadError (not notFound) + toasts when teamsRetrieve fails with a non-404 status', async () => {
+    await setup();
+    const messageService = fixture.debugElement.injector.get(MessageService);
+    const addSpy = vi.spyOn(messageService, 'add');
+    serviceMock.teamsRetrieve.mockReturnValue(
+      throwError(() => new HttpErrorResponse({ status: 500 })),
+    );
+    access(component).reloadTeam();
+    expect(access(component).loadError()).toBe(true);
+    expect(access(component).notFound()).toBe(false);
+    expect(addSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'error', detail: 'common.load_failed' }),
+    );
+  });
+
+  it('reloadTeam re-fetches the team after a transient load error', async () => {
+    await setup('4', null, ownerUser, { retrieveErrorStatus: 500 });
+    expect(access(component).loadError()).toBe(true);
+    serviceMock.teamsRetrieve.mockReturnValue(of(team));
+    access(component).reloadTeam();
+    expect(access(component).loadError()).toBe(false);
+    expect(access(component).team()?.id).toBe(4);
+  });
+
+  it('toasts a load error when loadMemberships fails (no silent empty roster)', async () => {
+    await setup();
+    const messageService = fixture.debugElement.injector.get(MessageService);
+    const addSpy = vi.spyOn(messageService, 'add');
+    serviceMock.teamsMembershipsList.mockReturnValue(throwError(() => new Error('boom')));
+    // onMembershipsChanged() re-runs loadMemberships for the current team.
+    (component as unknown as { onMembershipsChanged(): void }).onMembershipsChanged();
+    expect(addSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'error', detail: 'common.load_failed' }),
+    );
   });
 
   it('handles invalid route id', async () => {

@@ -500,6 +500,52 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaginatedAuditLogEntryList'
           description: ''
+  /api/v1/auth/account/delete/:
+    post:
+      operationId: auth_account_delete_create
+      description: |-
+        POST /api/v1/auth/account/delete/ — authenticated: delete own account.
+
+        Body: {current_password}. The caller must prove they still know their
+        password before the account is irreversibly removed. On success the user
+        row is deleted (memberships, athlete links, join requests, etc. cascade
+        per their FK on_delete) and 204 No Content is returned.
+
+        Safety guard: a user who still OWNS one or more teams (Team.owner ==
+        user) is REFUSED with 409 (code owns_teams). Team.owner is
+        on_delete=PROTECT, so the DB would raise ProtectedError on delete —
+        we surface a clean, localized error instead and never cascade-delete
+        teams. The guard intentionally counts ALL owned teams, not just
+        is_active ones: a soft-deleted (is_active=False) team still references
+        the user via the protected FK and would block the delete just the same.
+        The user must transfer ownership (or hard-delete those teams) first.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountDelete'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AccountDelete'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AccountDelete'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: Account deleted. No content.
+        '400':
+          description: current_password missing (fields.current_password) or wrong
+            (code=current_password_invalid).
+        '401':
+          description: Access token missing or invalid.
+        '409':
+          description: The user still owns one or more teams (code=owns_teams). Transfer
+            ownership of those teams first; the account is NOT deleted.
   /api/v1/auth/email/confirm/:
     post:
       operationId: auth_email_confirm_create
@@ -605,41 +651,19 @@ paths:
           description: Access token missing or invalid.
         '429':
           description: Too Many Requests (rate limit hit).
-  /api/v1/auth/account/delete/:
-    post:
-      operationId: auth_account_delete_create
-      description: |-
-        POST /api/v1/auth/account/delete/ — authenticated: delete own account.
-        Body: {current_password}. 204 on success. 409 (code owns_teams) when the
-        user still owns teams. No tokens; user row is removed.
-      tags:
-      - auth
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AccountDelete'
-        required: true
-      security:
-      - jwtAuth: []
-      responses:
-        '204':
-          description: Account deleted. No content.
-        '400':
-          description: current_password missing or wrong (code=current_password_invalid).
-        '401':
-          description: Access token missing or invalid.
-        '409':
-          description: The user still owns one or more teams (code=owns_teams).
   /api/v1/auth/magic-link/exchange/:
     post:
       operationId: auth_magic_link_exchange_create
       description: |-
         POST /api/v1/auth/magic-link/exchange/ — public: trade token for JWT.
 
-        Body: {token}. On success returns the JWT pair (access + refresh).
-        Errors: expired -> 410 {"detail":"token_expired"}; invalid/ineligible
-        -> 400 {"detail":"token_invalid"}.
+        Body: {token}. The token is the signed string the user received in
+        their magic-link email. On success returns the JWT pair (access +
+        refresh) for sign-in. Error mapping:
+          - expired token        -> 410 {"detail": "token_expired"}
+          - invalid / tampered   -> 400 {"detail": "token_invalid"}
+          - user no longer eligible (inactive / unconfirmed / deleted)
+                                 -> 400 {"detail": "token_invalid"}
       tags:
       - auth
       requestBody:
@@ -664,8 +688,8 @@ paths:
                 $ref: '#/components/schemas/MagicLinkExchangeResponse'
           description: Token accepted. Returns the JWT pair {access, refresh}.
         '400':
-          description: 'Token invalid/tampered or user no longer eligible. Body: {"detail":
-            "token_invalid"}.'
+          description: 'Token invalid/tampered, or the user is no longer eligible
+            (inactive / email-unconfirmed / deleted). Body: {"detail": "token_invalid"}.'
         '410':
           description: 'Token expired. Body: {"detail": "token_expired"}.'
   /api/v1/auth/magic-link/request/:
@@ -674,9 +698,14 @@ paths:
       description: |-
         POST /api/v1/auth/magic-link/request/ — public: email a sign-in link.
 
-        Always returns 200 with the same body whether or not the email matches
-        an active, email-confirmed account (no user enumeration). Rate-limited
-        to 5 requests per hour per IP.
+        Anti-leak: ALWAYS returns 200 with the same body, whether the email
+        matches an active, email-confirmed User or not. If it does, an email
+        with a 15-minute signed magic-link is dispatched (frontend URL:
+        {FRONTEND_URL}/auth/magic-link/{token}, no trailing slash). If it
+        doesn't, the call is a silent no-op — the response is byte-for-byte
+        identical (no user enumeration, timing-insensitive wording).
+
+        Rate-limited to 5 requests per hour per IP.
       tags:
       - auth
       requestBody:
@@ -699,7 +728,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MagicLinkRequestResponse'
-          description: 'Always 200 with {"detail": "ok"} (anti-leak).'
+          description: 'Always 200 with {"detail": "ok"}. If the email matches an
+            active, email-confirmed account, a sign-in link has been dispatched; otherwise
+            the response is identical (anti-leak).'
         '400':
           description: Body validation error (malformed email).
         '429':
@@ -714,12 +745,21 @@ paths:
         still know `current_password`; `new_password` is validated against
         Django's configured password validators (with the user as context) and
         must differ from the current one. On success the password is updated
-        and a localized {detail} body is returned — NO tokens are issued.
+        and a localized {detail} body is returned — NO tokens are issued. The
+        short-lived access token (and any outstanding refresh) remain valid
+        until they expire; this keeps the flow minimal for a user who is
+        already authenticated and merely rotating their password.
       tags:
       - auth
       requestBody:
         content:
           application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordChange'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordChange'
+          multipart/form-data:
             schema:
               $ref: '#/components/schemas/PasswordChange'
         required: true
@@ -1376,6 +1416,86 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/equipment/:
+    get:
+      operationId: equipment_list
+      description: Returns the active, multilingual equipment catalog (names localized
+        to the active language). Pass ?team=<id> to restrict to the equipment a team
+        has enabled (the requester must be a member of that team).
+      summary: List the global equipment (Matériel) catalog
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: sport
+        schema:
+          type: integer
+        description: Restrict to one sport's catalog.
+      - in: query
+        name: team
+        schema:
+          type: integer
+        description: Restrict to a team's enabled equipment.
+      tags:
+      - equipment
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEquipmentList'
+          description: ''
+  /api/v1/equipment/{id}/:
+    get:
+      operationId: equipment_retrieve
+      description: |-
+        Read-only access to the global equipment catalog.
+
+        The catalog is curated centrally (Django admin + seed migration). Teams
+        enable a subset via ``Team.equipment``; ``?team=<id>`` returns that subset.
+      summary: Retrieve an equipment item
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Equipment.
+        required: true
+      tags:
+      - equipment
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Equipment'
+          description: ''
   /api/v1/events/:
     get:
       operationId: events_list
@@ -2097,7 +2217,10 @@ paths:
         '403':
           description: Not a manager of this event team
         '409':
-          description: Event already has rounds
+          description: 'Conflict. `body.code` is one of: `event_has_rounds` (event
+            already has rounds — remove them before regenerating) or `event_in_past`
+            (the session date is in the past — training can only be generated for
+            a future or unscheduled session).'
         '500':
           description: AI configuration error
         '502':
@@ -3200,6 +3323,11 @@ paths:
         Returns a single JSON document with all personal data we hold about the
         authenticated caller, as a downloadable attachment. The password hash
         and the live calendar_token secret are NEVER included.
+
+        The export is assembled defensively: each related area is wrapped so a
+        missing app/relation or a user without a linked Member yields an empty
+        list rather than a 500. Imports are kept local to avoid hard-coupling
+        customuser to every other app.
       tags:
       - me
       security:
@@ -3834,86 +3962,6 @@ paths:
       responses:
         '204':
           description: No response body
-  /api/v1/equipment/:
-    get:
-      operationId: equipment_list
-      description: Returns the active, multilingual equipment catalog (names localized
-        to the active language). Pass ?team=<id> to restrict to the equipment a team
-        has enabled (the requester must be a member of that team).
-      summary: List the global equipment (Matériel) catalog
-      parameters:
-      - name: ordering
-        required: false
-        in: query
-        description: Which field to use when ordering the results.
-        schema:
-          type: string
-      - name: page
-        required: false
-        in: query
-        description: A page number within the paginated result set.
-        schema:
-          type: integer
-      - name: page_size
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - name: search
-        required: false
-        in: query
-        description: A search term.
-        schema:
-          type: string
-      - in: query
-        name: sport
-        schema:
-          type: integer
-        description: Restrict to one sport's catalog.
-      - in: query
-        name: team
-        schema:
-          type: integer
-        description: Restrict to a team's enabled equipment.
-      tags:
-      - equipment
-      security:
-      - jwtAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedEquipmentList'
-          description: ''
-  /api/v1/equipment/{id}/:
-    get:
-      operationId: equipment_retrieve
-      description: |-
-        Read-only access to the global equipment catalog.
-
-        The catalog is curated centrally (Django admin + seed migration). Teams
-        enable a subset via ``Team.equipment``; ``?team=<id>`` returns that subset.
-      summary: Retrieve an equipment item
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this Equipment.
-        required: true
-      tags:
-      - equipment
-      security:
-      - jwtAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Equipment'
-          description: ''
   /api/v1/places/:
     get:
       operationId: places_list
@@ -3979,13 +4027,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PlaceRequest'
+              $ref: '#/components/schemas/Place'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PlaceRequest'
+              $ref: '#/components/schemas/Place'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PlaceRequest'
+              $ref: '#/components/schemas/Place'
         required: true
       security:
       - jwtAuth: []
@@ -4000,10 +4048,11 @@ paths:
     get:
       operationId: places_retrieve
       description: |-
-        CRUD on the managed team venue (Lieu).
+        CRUD on the shared, sport-scoped venue pool (Lieu).
 
-        Read: any strict member of the place's team. Write (create/update/delete):
-        owner or manager of the team only.
+        Read: members see places linked to their teams, or a whole sport's pool via
+        ?sport. Write: create links a new place to a team the requester manages;
+        update/delete require managing a team the place is linked to.
       summary: Retrieve a place
       parameters:
       - in: path
@@ -4026,11 +4075,12 @@ paths:
     put:
       operationId: places_update
       description: |-
-        CRUD on the managed team venue (Lieu).
+        CRUD on the shared, sport-scoped venue pool (Lieu).
 
-        Read: any strict member of the place's team. Write (create/update/delete):
-        owner or manager of the team only.
-      summary: Update a place (manager only)
+        Read: members see places linked to their teams, or a whole sport's pool via
+        ?sport. Write: create links a new place to a team the requester manages;
+        update/delete require managing a team the place is linked to.
+      summary: Update a place (manager of a linked team)
       parameters:
       - in: path
         name: id
@@ -4044,13 +4094,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PlaceRequest'
+              $ref: '#/components/schemas/Place'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PlaceRequest'
+              $ref: '#/components/schemas/Place'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PlaceRequest'
+              $ref: '#/components/schemas/Place'
         required: true
       security:
       - jwtAuth: []
@@ -4064,11 +4114,12 @@ paths:
     patch:
       operationId: places_partial_update
       description: |-
-        CRUD on the managed team venue (Lieu).
+        CRUD on the shared, sport-scoped venue pool (Lieu).
 
-        Read: any strict member of the place's team. Write (create/update/delete):
-        owner or manager of the team only.
-      summary: Patch a place (manager only)
+        Read: members see places linked to their teams, or a whole sport's pool via
+        ?sport. Write: create links a new place to a team the requester manages;
+        update/delete require managing a team the place is linked to.
+      summary: Patch a place (manager of a linked team)
       parameters:
       - in: path
         name: id
@@ -4100,9 +4151,9 @@ paths:
           description: ''
     delete:
       operationId: places_destroy
-      description: Hard-deletes the venue. Events referencing it keep their free-text
-        `location` (their `place` FK is SET_NULL).
-      summary: Delete a place (manager only)
+      description: Hard-deletes the venue across all teams that linked it. Events
+        referencing it keep their free-text location (place FK is SET_NULL).
+      summary: Delete a place (manager of a linked team)
       parameters:
       - in: path
         name: id
@@ -5378,8 +5429,9 @@ paths:
     get:
       operationId: teams_logo_retrieve
       description: Returns the team's logo as a binary image, decoded from the stored
-        base64 data-URL. Public (no auth); 404 when the team has no logo. The list
-        and detail expose this URL as `logo_url` instead of inlining the base64.
+        base64 data-URL. Public (no auth) so it can be used directly as an <img> src;
+        returns 404 when the team has no logo. The team list and detail expose this
+        URL as `logo_url` instead of inlining the base64.
       summary: Team logo image (public)
       parameters:
       - in: path
@@ -5480,10 +5532,11 @@ paths:
   /api/v1/teams/{id}/training-template/:
     get:
       operationId: teams_training_template_retrieve
-      description: "Returns the team's reusable weekly training template: the list\
-        \ of weekly slots (weekday Monday=0…Sunday=6 + hour_start/hour_end), the default\
-        \ pool/venue, and the default season dates. Any member of the team may read\
-        \ it; non-members get 404."
+      description: 'Returns the team''s reusable weekly training template: the list
+        of weekly slots (weekday Monday=0…Sunday=6 + hour_start/hour_end), the default
+        pool/venue, and the default season dates. Any member of the team (owner, manager,
+        or active athlete) may read it; non-members get 404. Read-only: slots are
+        written via the per-slot CRUD under `teams/{id}/training-slots/`.'
       summary: Read the team's weekly training template
       parameters:
       - in: path
@@ -5503,250 +5556,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/TrainingTemplate'
           description: ''
-  /api/v1/teams/{team_pk}/training-slots/:
-    get:
-      operationId: teams_training_slots_list
-      description: |-
-        Per-slot CRUD for a team's weekly training template.
-
-        URL: /api/v1/teams/{team_pk}/training-slots/
-
-        Each slot is saved on its own (add / edit / delete one slot persists
-        immediately) — there is no bulk "save the template" step here. A slot
-        carries weekday + hour_start/hour_end + an optional ``place`` (venue).
-        Read: any strict team member. Write: owner/manager only.
-      summary: List a team's weekly training slots
-      parameters:
-      - name: ordering
-        required: false
-        in: query
-        description: Which field to use when ordering the results.
-        schema:
-          type: string
-      - name: search
-        required: false
-        in: query
-        description: A search term.
-        schema:
-          type: string
-      - in: path
-        name: team_pk
-        schema:
-          type: integer
-        required: true
-      tags:
-      - teams
-      security:
-      - jwtAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TrainingSlot'
-          description: ''
-    post:
-      operationId: teams_training_slots_create
-      description: |-
-        Per-slot CRUD for a team's weekly training template.
-
-        URL: /api/v1/teams/{team_pk}/training-slots/
-
-        Each slot is saved on its own (add / edit / delete one slot persists
-        immediately) — there is no bulk "save the template" step here. A slot
-        carries weekday + hour_start/hour_end + an optional ``place`` (venue).
-        Read: any strict team member. Write: owner/manager only.
-      summary: Add a weekly training slot (manager only)
-      parameters:
-      - in: path
-        name: team_pk
-        schema:
-          type: integer
-        required: true
-      tags:
-      - teams
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TrainingSlot'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/TrainingSlot'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/TrainingSlot'
-        required: true
-      security:
-      - jwtAuth: []
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TrainingSlot'
-          description: ''
-  /api/v1/teams/{team_pk}/training-slots/{id}/:
-    get:
-      operationId: teams_training_slots_retrieve
-      description: |-
-        Per-slot CRUD for a team's weekly training template.
-
-        URL: /api/v1/teams/{team_pk}/training-slots/
-
-        Each slot is saved on its own (add / edit / delete one slot persists
-        immediately) — there is no bulk "save the template" step here. A slot
-        carries weekday + hour_start/hour_end + an optional ``place`` (venue).
-        Read: any strict team member. Write: owner/manager only.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this training slot.
-        required: true
-      - in: path
-        name: team_pk
-        schema:
-          type: integer
-        required: true
-      tags:
-      - teams
-      security:
-      - jwtAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TrainingSlot'
-          description: ''
-    put:
-      operationId: teams_training_slots_update
-      description: |-
-        Per-slot CRUD for a team's weekly training template.
-
-        URL: /api/v1/teams/{team_pk}/training-slots/
-
-        Each slot is saved on its own (add / edit / delete one slot persists
-        immediately) — there is no bulk "save the template" step here. A slot
-        carries weekday + hour_start/hour_end + an optional ``place`` (venue).
-        Read: any strict team member. Write: owner/manager only.
-      summary: Replace a weekly training slot (manager only)
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this training slot.
-        required: true
-      - in: path
-        name: team_pk
-        schema:
-          type: integer
-        required: true
-      tags:
-      - teams
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TrainingSlot'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/TrainingSlot'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/TrainingSlot'
-        required: true
-      security:
-      - jwtAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TrainingSlot'
-          description: ''
-    patch:
-      operationId: teams_training_slots_partial_update
-      description: |-
-        Per-slot CRUD for a team's weekly training template.
-
-        URL: /api/v1/teams/{team_pk}/training-slots/
-
-        Each slot is saved on its own (add / edit / delete one slot persists
-        immediately) — there is no bulk "save the template" step here. A slot
-        carries weekday + hour_start/hour_end + an optional ``place`` (venue).
-        Read: any strict team member. Write: owner/manager only.
-      summary: Edit a weekly training slot (manager only)
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this training slot.
-        required: true
-      - in: path
-        name: team_pk
-        schema:
-          type: integer
-        required: true
-      tags:
-      - teams
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedTrainingSlot'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedTrainingSlot'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedTrainingSlot'
-      security:
-      - jwtAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TrainingSlot'
-          description: ''
-    delete:
-      operationId: teams_training_slots_destroy
-      description: |-
-        Per-slot CRUD for a team's weekly training template.
-
-        URL: /api/v1/teams/{team_pk}/training-slots/
-
-        Each slot is saved on its own (add / edit / delete one slot persists
-        immediately) — there is no bulk "save the template" step here. A slot
-        carries weekday + hour_start/hour_end + an optional ``place`` (venue).
-        Read: any strict team member. Write: owner/manager only.
-      summary: Delete a weekly training slot (manager only)
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this training slot.
-        required: true
-      - in: path
-        name: team_pk
-        schema:
-          type: integer
-        required: true
-      tags:
-      - teams
-      security:
-      - jwtAuth: []
-      responses:
-        '204':
-          description: No response body
   /api/v1/teams/{team_id}/ai-usage/:
     get:
       operationId: teams_ai_usage_retrieve
@@ -6853,175 +6662,252 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/teams/{team_pk}/training-slots/:
+    get:
+      operationId: teams_training_slots_list
+      description: |-
+        Per-slot CRUD for a team's weekly training template.
+
+        URL: /api/v1/teams/{team_pk}/training-slots/
+
+        Each slot is saved on its own (add / edit / delete one slot persists
+        immediately) — there is no bulk "save the template" step here. A slot
+        carries weekday + hour_start/hour_end + an optional ``place`` (venue).
+        Read: any strict team member. Write: owner/manager only.
+      summary: List a team's weekly training slots
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: path
+        name: team_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - teams
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrainingSlot'
+          description: ''
+    post:
+      operationId: teams_training_slots_create
+      description: |-
+        Per-slot CRUD for a team's weekly training template.
+
+        URL: /api/v1/teams/{team_pk}/training-slots/
+
+        Each slot is saved on its own (add / edit / delete one slot persists
+        immediately) — there is no bulk "save the template" step here. A slot
+        carries weekday + hour_start/hour_end + an optional ``place`` (venue).
+        Read: any strict team member. Write: owner/manager only.
+      summary: Add a weekly training slot (manager only)
+      parameters:
+      - in: path
+        name: team_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - teams
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrainingSlot'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TrainingSlot'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TrainingSlot'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrainingSlot'
+          description: ''
+  /api/v1/teams/{team_pk}/training-slots/{id}/:
+    get:
+      operationId: teams_training_slots_retrieve
+      description: |-
+        Per-slot CRUD for a team's weekly training template.
+
+        URL: /api/v1/teams/{team_pk}/training-slots/
+
+        Each slot is saved on its own (add / edit / delete one slot persists
+        immediately) — there is no bulk "save the template" step here. A slot
+        carries weekday + hour_start/hour_end + an optional ``place`` (venue).
+        Read: any strict team member. Write: owner/manager only.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this training slot.
+        required: true
+      - in: path
+        name: team_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - teams
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrainingSlot'
+          description: ''
+    put:
+      operationId: teams_training_slots_update
+      description: |-
+        Per-slot CRUD for a team's weekly training template.
+
+        URL: /api/v1/teams/{team_pk}/training-slots/
+
+        Each slot is saved on its own (add / edit / delete one slot persists
+        immediately) — there is no bulk "save the template" step here. A slot
+        carries weekday + hour_start/hour_end + an optional ``place`` (venue).
+        Read: any strict team member. Write: owner/manager only.
+      summary: Replace a weekly training slot (manager only)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this training slot.
+        required: true
+      - in: path
+        name: team_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - teams
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrainingSlot'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TrainingSlot'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TrainingSlot'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrainingSlot'
+          description: ''
+    patch:
+      operationId: teams_training_slots_partial_update
+      description: |-
+        Per-slot CRUD for a team's weekly training template.
+
+        URL: /api/v1/teams/{team_pk}/training-slots/
+
+        Each slot is saved on its own (add / edit / delete one slot persists
+        immediately) — there is no bulk "save the template" step here. A slot
+        carries weekday + hour_start/hour_end + an optional ``place`` (venue).
+        Read: any strict team member. Write: owner/manager only.
+      summary: Edit a weekly training slot (manager only)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this training slot.
+        required: true
+      - in: path
+        name: team_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - teams
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedTrainingSlot'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedTrainingSlot'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedTrainingSlot'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrainingSlot'
+          description: ''
+    delete:
+      operationId: teams_training_slots_destroy
+      description: |-
+        Per-slot CRUD for a team's weekly training template.
+
+        URL: /api/v1/teams/{team_pk}/training-slots/
+
+        Each slot is saved on its own (add / edit / delete one slot persists
+        immediately) — there is no bulk "save the template" step here. A slot
+        carries weekday + hour_start/hour_end + an optional ``place`` (venue).
+        Read: any strict team member. Write: owner/manager only.
+      summary: Delete a weekly training slot (manager only)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this training slot.
+        required: true
+      - in: path
+        name: team_pk
+        schema:
+          type: integer
+        required: true
+      tags:
+      - teams
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
 components:
   schemas:
-    DashboardSummary:
-      type: object
-      description: Top-level aggregate payload for GET /dashboard/summary/.
-      properties:
-        coach_teams:
-          type: array
-          items:
-            $ref: '#/components/schemas/DashboardManagedTeam'
-        member_teams:
-          type: array
-          items:
-            $ref: '#/components/schemas/DashboardMemberTeam'
-        coach_upcoming:
-          type: array
-          items:
-            $ref: '#/components/schemas/DashboardEventItem'
-        coach_upcoming_total:
-          type: integer
-        coach_attendance_pending:
-          type: array
-          items:
-            $ref: '#/components/schemas/DashboardEventItem'
-        coach_pending_truncated:
-          type: boolean
-        member_upcoming:
-          type: array
-          items:
-            $ref: '#/components/schemas/DashboardEventItem'
-        member_upcoming_total:
-          type: integer
-        member_attendance_history:
-          type: array
-          items:
-            $ref: '#/components/schemas/DashboardHistoryItem'
-        member_history_truncated:
-          type: boolean
-      required:
-      - coach_attendance_pending
-      - coach_pending_truncated
-      - coach_teams
-      - coach_upcoming
-      - coach_upcoming_total
-      - member_attendance_history
-      - member_history_truncated
-      - member_teams
-      - member_upcoming
-      - member_upcoming_total
-    DashboardManagedTeam:
-      type: object
-      description: Per-team counts for a team the caller manages.
-      properties:
-        team_id:
-          type: integer
-        programs_active:
-          type: integer
-        events_next_7d:
-          type: integer
-        members_count:
-          type: integer
-      required:
-      - events_next_7d
-      - members_count
-      - programs_active
-      - team_id
-    DashboardMemberTeam:
-      type: object
-      description: Per-team counts for a team the caller is an athlete-member of.
-      properties:
-        team_id:
-          type: integer
-        members_count:
-          type: integer
-        my_member_id:
-          type: integer
-          nullable: true
-          description: The caller's athlete Member id in this team (null if unresolved).
-      required:
-      - members_count
-      - my_member_id
-      - team_id
-    DashboardEvent:
-      type: object
-      description: The minimal Event shape the dashboard lists render.
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        date:
-          type: string
-          format: date
-          nullable: true
-        hour_start:
-          type: string
-          format: time
-          nullable: true
-        hour_end:
-          type: string
-          format: time
-          nullable: true
-        location:
-          type: string
-        place:
-          allOf:
-          - $ref: '#/components/schemas/PlaceMinimal'
-          nullable: true
-      required:
-      - date
-      - hour_end
-      - hour_start
-      - id
-      - location
-      - name
-      - place
-    DashboardEventItem:
-      type: object
-      description: An event row with its denormalized team/program names.
-      properties:
-        event:
-          $ref: '#/components/schemas/DashboardEvent'
-        team_id:
-          type: integer
-        team_name:
-          type: string
-        program_id:
-          type: integer
-          nullable: true
-        program_name:
-          type: string
-      required:
-      - event
-      - program_id
-      - program_name
-      - team_id
-      - team_name
-    DashboardHistoryItem:
-      type: object
-      description: One past event the caller has an attendance row for.
-      properties:
-        event:
-          $ref: '#/components/schemas/DashboardEvent'
-        team_id:
-          type: integer
-        team_name:
-          type: string
-        program_id:
-          type: integer
-          nullable: true
-        program_name:
-          type: string
-        attendance_id:
-          type: integer
-        status_code:
-          type: string
-        status:
-          allOf:
-          - $ref: '#/components/schemas/AttendanceStatus'
-          nullable: true
-      required:
-      - attendance_id
-      - event
-      - program_id
-      - program_name
-      - status
-      - status_code
-      - team_id
-      - team_name
     AIPingRequest:
       type: object
       properties:
@@ -7134,6 +7020,39 @@ components:
       - output_tokens
       - total_tokens
       - username
+    AccountDelete:
+      type: object
+      description: |-
+        Body of POST /api/v1/auth/account/delete/ (authenticated).
+
+        The caller proves they still know `current_password` before their
+        account is irreversibly deleted. The view performs the `check_password`
+        comparison and the owned-teams safety guard — the serializer only
+        enforces that the confirmation password is present.
+      properties:
+        current_password:
+          type: string
+          writeOnly: true
+      required:
+      - current_password
+    ActionEnum:
+      enum:
+      - member_anonymized
+      - member_removed
+      - account_deleted
+      - session_shared
+      - session_unshared
+      - attachment_deleted
+      - team_config_updated
+      type: string
+      description: |-
+        * `member_anonymized` - Member anonymized
+        * `member_removed` - Member removed from team
+        * `account_deleted` - Account deleted
+        * `session_shared` - Session shared publicly
+        * `session_unshared` - Session sharing disabled
+        * `attachment_deleted` - Attachment deleted
+        * `team_config_updated` - Team configuration updated
     ActionProposedEnum:
       enum:
       - accept
@@ -7205,179 +7124,6 @@ components:
       description: |-
         * `pending` - pending
         * `ready` - ready
-    PaginatedAttachmentList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=4
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=2
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Attachment'
-    PresignUploadHeaders:
-      type: object
-      properties:
-        Content-Type:
-          type: string
-      required:
-      - Content-Type
-    PresignUploadRequest:
-      type: object
-      description: Body for POST /attachments/presign/.
-      properties:
-        target_type:
-          $ref: '#/components/schemas/TargetTypeEnum'
-        target_id:
-          type: integer
-          minimum: 1
-        filename:
-          type: string
-          maxLength: 255
-          minLength: 1
-        content_type:
-          type: string
-          maxLength: 150
-        size:
-          type: integer
-          minimum: 1
-      required:
-      - content_type
-      - filename
-      - size
-      - target_id
-      - target_type
-    PresignUploadResponse:
-      type: object
-      properties:
-        attachment_id:
-          type: integer
-        upload_url:
-          type: string
-        s3_key:
-          type: string
-        headers:
-          $ref: '#/components/schemas/PresignUploadHeaders'
-      required:
-      - attachment_id
-      - headers
-      - s3_key
-      - upload_url
-    TargetTypeEnum:
-      enum:
-      - event
-      - message
-      type: string
-      description: |-
-        * `event` - event
-        * `message` - message
-    ActionEnum:
-      enum:
-      - member_anonymized
-      - member_removed
-      - account_deleted
-      - session_shared
-      - session_unshared
-      - attachment_deleted
-      - team_config_updated
-      type: string
-      description: |-
-        * `member_anonymized` - Member anonymized
-        * `member_removed` - Member removed from team
-        * `account_deleted` - Account deleted
-        * `session_shared` - Session shared publicly
-        * `session_unshared` - Session sharing disabled
-        * `attachment_deleted` - Attachment deleted
-        * `team_config_updated` - Team configuration updated
-    AuditLogEntry:
-      type: object
-      description: |-
-        Read-only view of an audit log entry for coaches.
-
-        ``action_display`` is the localized human label for the stable ``action``
-        code. All fields are read-only — the log is append-only.
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        actor:
-          type: integer
-          readOnly: true
-          nullable: true
-          description: The user who performed the action. NULL = system/anonymous.
-        actor_label:
-          type: string
-          readOnly: true
-          description: Snapshot of the actor's username/display at the time.
-        action:
-          allOf:
-          - $ref: '#/components/schemas/ActionEnum'
-          readOnly: true
-        action_display:
-          type: string
-          readOnly: true
-        team:
-          type: integer
-          readOnly: true
-          nullable: true
-          description: Team the action is scoped to. NULL = not team-scoped.
-        target_repr:
-          type: string
-          readOnly: true
-          description: Human-readable description of the target.
-        metadata:
-          readOnly: true
-          description: Small structured extra context.
-        created_at:
-          type: string
-          format: date-time
-          readOnly: true
-      required:
-      - action
-      - action_display
-      - actor
-      - actor_label
-      - created_at
-      - id
-      - metadata
-      - target_repr
-      - team
-    PaginatedAuditLogEntryList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=4
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=2
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/AuditLogEntry'
     Attendance:
       type: object
       properties:
@@ -7539,6 +7285,72 @@ components:
       description: |-
         * `team` - Whole team
         * `coaches` - Coaches only
+    AuditLogEntry:
+      type: object
+      description: |-
+        Read-only view of an audit log entry for coaches.
+
+        ``action_display`` is the localized human label for the stable ``action``
+        code. All fields are read-only — the log is append-only and only written
+        via ``audit.services.record``.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        actor:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: The user who performed the action. NULL = system/anonymous.
+        actor_label:
+          type: string
+          readOnly: true
+          description: Snapshot of the actor's username/display at the time. Survives
+            actor deletion or anonymization (when the FK is SET_NULL).
+        action:
+          allOf:
+          - $ref: '#/components/schemas/ActionEnum'
+          readOnly: true
+          description: |-
+            Stable code identifying the audited action.
+
+            * `member_anonymized` - Member anonymized
+            * `member_removed` - Member removed from team
+            * `account_deleted` - Account deleted
+            * `session_shared` - Session shared publicly
+            * `session_unshared` - Session sharing disabled
+            * `attachment_deleted` - Attachment deleted
+            * `team_config_updated` - Team configuration updated
+        action_display:
+          type: string
+          readOnly: true
+        team:
+          type: integer
+          readOnly: true
+          nullable: true
+          description: Team the action is scoped to (used for read scoping). NULL
+            = not team-scoped, e.g. an account self-delete.
+        target_repr:
+          type: string
+          readOnly: true
+          description: Human-readable description of the target.
+        metadata:
+          readOnly: true
+          description: Small structured extra context (no unnecessary PII).
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - action
+      - action_display
+      - actor
+      - actor_label
+      - created_at
+      - id
+      - metadata
+      - target_repr
+      - team
     CalendarToken:
       type: object
       description: |-
@@ -7653,6 +7465,182 @@ components:
       - id
       - last_name
       - username
+    DashboardEvent:
+      type: object
+      description: The minimal Event shape the dashboard lists render.
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        date:
+          type: string
+          format: date
+          nullable: true
+        hour_start:
+          type: string
+          format: time
+          nullable: true
+        hour_end:
+          type: string
+          format: time
+          nullable: true
+        location:
+          type: string
+        place:
+          allOf:
+          - $ref: '#/components/schemas/PlaceMinimal'
+          nullable: true
+      required:
+      - date
+      - hour_end
+      - hour_start
+      - id
+      - location
+      - name
+      - place
+    DashboardEventItem:
+      type: object
+      description: An event row with its denormalized team/program names (no client
+        join).
+      properties:
+        event:
+          $ref: '#/components/schemas/DashboardEvent'
+        team_id:
+          type: integer
+        team_name:
+          type: string
+        program_id:
+          type: integer
+          nullable: true
+        program_name:
+          type: string
+      required:
+      - event
+      - program_id
+      - program_name
+      - team_id
+      - team_name
+    DashboardHistoryItem:
+      type: object
+      description: One past event the caller has an attendance row for.
+      properties:
+        event:
+          $ref: '#/components/schemas/DashboardEvent'
+        team_id:
+          type: integer
+        team_name:
+          type: string
+        program_id:
+          type: integer
+          nullable: true
+        program_name:
+          type: string
+        attendance_id:
+          type: integer
+        status_code:
+          type: string
+        status:
+          allOf:
+          - $ref: '#/components/schemas/AttendanceStatus'
+          nullable: true
+      required:
+      - attendance_id
+      - event
+      - program_id
+      - program_name
+      - status
+      - status_code
+      - team_id
+      - team_name
+    DashboardManagedTeam:
+      type: object
+      description: |-
+        Per-team counts for a team the caller manages. Keyed by team_id so the
+        frontend joins it to the full Team object it already holds.
+      properties:
+        team_id:
+          type: integer
+        programs_active:
+          type: integer
+        events_next_7d:
+          type: integer
+        members_count:
+          type: integer
+      required:
+      - events_next_7d
+      - members_count
+      - programs_active
+      - team_id
+    DashboardMemberTeam:
+      type: object
+      description: Per-team counts for a team the caller is an athlete-member of.
+      properties:
+        team_id:
+          type: integer
+        members_count:
+          type: integer
+        my_member_id:
+          type: integer
+          nullable: true
+          description: The caller's athlete Member id in this team (null if unresolved).
+      required:
+      - members_count
+      - my_member_id
+      - team_id
+    DashboardSummary:
+      type: object
+      description: |-
+        Top-level aggregate payload for GET /dashboard/summary/.
+
+        Replaces the previous per-team/per-program/per-event/per-attendance HTTP
+        fan-out (50-100+ requests) with a single call. The frontend still fetches
+        the full Team list once for names/sport and the stats/perf panels; this
+        payload provides every computed count and list the dashboard renders.
+      properties:
+        coach_teams:
+          type: array
+          items:
+            $ref: '#/components/schemas/DashboardManagedTeam'
+        member_teams:
+          type: array
+          items:
+            $ref: '#/components/schemas/DashboardMemberTeam'
+        coach_upcoming:
+          type: array
+          items:
+            $ref: '#/components/schemas/DashboardEventItem'
+        coach_upcoming_total:
+          type: integer
+        coach_attendance_pending:
+          type: array
+          items:
+            $ref: '#/components/schemas/DashboardEventItem'
+        coach_pending_truncated:
+          type: boolean
+        member_upcoming:
+          type: array
+          items:
+            $ref: '#/components/schemas/DashboardEventItem'
+        member_upcoming_total:
+          type: integer
+        member_attendance_history:
+          type: array
+          items:
+            $ref: '#/components/schemas/DashboardHistoryItem'
+        member_history_truncated:
+          type: boolean
+      required:
+      - coach_attendance_pending
+      - coach_pending_truncated
+      - coach_teams
+      - coach_upcoming
+      - coach_upcoming_total
+      - member_attendance_history
+      - member_history_truncated
+      - member_teams
+      - member_upcoming
+      - member_upcoming_total
     DuplicateEventCreated:
       type: object
       properties:
@@ -7847,6 +7835,38 @@ components:
           type: boolean
       required:
       - id
+    Equipment:
+      type: object
+      description: |-
+        Read serializer for the global equipment catalog.
+
+        ``name`` is auto-localized to the active language by modeltranslation. The
+        catalog is curated centrally (admin + seed), so the API is read-only.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+          description: Display name of the equipment (e.g. 'Pull-buoy').
+      required:
+      - id
+      - name
+    EquipmentMinimal:
+      type: object
+      description: Compact nested read shape for Team.equipment / Event.equipment_items.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+          description: Display name of the equipment (e.g. 'Pull-buoy').
+      required:
+      - id
+      - name
     Event:
       type: object
       properties:
@@ -7859,7 +7879,6 @@ components:
         goal:
           type: string
           nullable: true
-          maxLength: 100
         location:
           type: string
           description: Where the session takes place (venue, pool, track, address).
@@ -7869,6 +7888,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/PlaceMinimal'
           readOnly: true
+          nullable: true
         place_id:
           type: integer
           writeOnly: true
@@ -7926,6 +7946,7 @@ components:
           type: array
           items:
             type: integer
+          readOnly: true
         rounds_detail:
           type: array
           items:
@@ -7963,6 +7984,16 @@ components:
             * `always` - Always
             * `after` - After the session
             * `never` - Never
+        is_public:
+          type: boolean
+          readOnly: true
+          description: Whether this session is currently shared via its public link.
+        public_token:
+          type: string
+          readOnly: true
+          nullable: true
+          description: Unguessable token in the public share URL. Null = never shared.
+            The token authenticates the otherwise-anonymous public view.
         generated_by_ai:
           type: boolean
           readOnly: true
@@ -7982,28 +8013,22 @@ components:
           type: string
           format: date-time
           readOnly: true
-        is_public:
-          type: boolean
-          readOnly: true
-          description: Whether this session is currently shared via its public link.
-        public_token:
-          type: string
-          readOnly: true
-          nullable: true
-          description: Unguessable token in the public share URL. Null = never shared.
-            The token authenticates the otherwise-anonymous public view.
       required:
       - ai_generated_at
       - ai_response
       - created_at
+      - equipment_items
       - generated_by_ai
       - id
       - is_public
       - members
       - name
+      - place
       - public_token
       - refer_program
       - refer_program_id
+      - rounds
+      - rounds_detail
       - sport
       - updated_at
     EventPublic:
@@ -8145,6 +8170,8 @@ components:
           description: Frontend route, e.g. /s/e/<token>. Null when not shared.
       required:
       - is_public
+      - public_token
+      - public_url_path
     Exercise:
       type: object
       properties:
@@ -8198,10 +8225,12 @@ components:
         round_id:
           type: integer
           writeOnly: true
-          description: Optional. If provided on POST, the newly created Exercise is
-            atomically attached to this Round. The request user must manage at least
-            one team of at least one Event linked to this Round (library rounds with
-            no events are accepted as-is). Ignored on PATCH/PUT.
+          description: 'Optional. On POST, the newly created Exercise is atomically
+            attached to this Round. On PATCH/PUT, if the Exercise is shared by several
+            Rounds (usage_count > 1), it is forked: a clone with the changes is swapped
+            into THIS Round and the shared original is left untouched. The request
+            user must manage at least one team of an Event linked to this Round (library
+            rounds with no events are accepted as-is).'
         language:
           $ref: '#/components/schemas/LanguageEnum'
         usage_count:
@@ -8236,6 +8265,10 @@ components:
           type: integer
           maximum: 14
           minimum: 1
+          description: 'Weekly session count. Optional: when the team has a weekly
+            training template, the frequency is derived from the number of slots and
+            any supplied value is ignored. Required (else 400 frequency_required)
+            only when the team has no template.'
         description:
           type: string
           default: ''
@@ -8412,16 +8445,6 @@ components:
       description: |-
         * `manual` - Manual — managers accept/reject each request
         * `auto` - Auto-accept — every join request is accepted immediately
-    VisibilityMode:
-      enum:
-      - always
-      - after
-      - never
-      type: string
-      description: |-
-        * `always` - Always
-        * `after` - After the session
-        * `never` - Never
     JoinRequestStatusEnum:
       enum:
       - pending
@@ -8567,8 +8590,11 @@ components:
       - refresh
     MagicLinkExchangeRequest:
       type: object
-      description: Body of POST /api/v1/auth/magic-link/exchange/ — the signed
-        token from the magic-link email.
+      description: |-
+        Body of POST /api/v1/auth/magic-link/exchange/.
+
+        `token` is the signed string the user received in their magic-link
+        email (the SPA POSTs it back from /auth/magic-link/:token).
       properties:
         token:
           type: string
@@ -8576,7 +8602,9 @@ components:
       - token
     MagicLinkExchangeResponse:
       type: object
-      description: Success body of the exchange — the JWT pair for the signed-in user.
+      description: |-
+        Success body of POST /api/v1/auth/magic-link/exchange/ — the JWT
+        pair for the freshly signed-in user.
       properties:
         access:
           type: string
@@ -8589,7 +8617,12 @@ components:
       - refresh
     MagicLinkRequest:
       type: object
-      description: Body of POST /api/v1/auth/magic-link/request/.
+      description: |-
+        Body of POST /api/v1/auth/magic-link/request/.
+
+        Anti-leak by design — the view always returns the same 200 payload
+        regardless of whether `email` matches a confirmed user. Validation
+        here only enforces the field shape.
       properties:
         email:
           type: string
@@ -8632,6 +8665,11 @@ components:
           description: 'Per-user preference for the weekly recap email. Opt-out model:
             default True. When False, this user receives no weekly recap even for
             teams they own/manage that have it enabled.'
+        is_staff:
+          type: boolean
+          readOnly: true
+          title: Staff status
+          description: Designates whether the user can log into this admin site.
         last_login:
           type: string
           format: date-time
@@ -8641,11 +8679,6 @@ components:
           type: string
           format: date-time
           readOnly: true
-        is_staff:
-          type: boolean
-          readOnly: true
-          title: Staff status
-          description: Designates whether the user can log into this admin site.
         team_quota:
           allOf:
           - $ref: '#/components/schemas/TeamQuotaStatus'
@@ -8660,8 +8693,6 @@ components:
           type: integer
           nullable: true
           readOnly: true
-          description: Id of the user's linked athlete Member, or null. Lets the SPA
-            offer athlete self-service (e.g. log own performances).
       required:
       - calendar_token
       - date_joined
@@ -8691,7 +8722,7 @@ components:
           type: string
           format: email
           nullable: true
-          maxLength: 50
+          maxLength: 254
         phonenumber:
           type: string
           nullable: true
@@ -8950,6 +8981,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AIUsageDetail'
+    PaginatedAttachmentList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
     PaginatedAttendanceList:
       type: object
       required:
@@ -8996,6 +9050,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AttendanceStatus'
+    PaginatedAuditLogEntryList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogEntry'
     PaginatedEnergySegmentList:
       type: object
       required:
@@ -9042,6 +9119,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/EnergySystem'
+    PaginatedEquipmentList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Equipment'
     PaginatedEventList:
       type: object
       required:
@@ -9226,129 +9326,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Performance'
-    PatchedPerformance:
+    PaginatedPlaceList:
       type: object
-      description: |-
-        Read/write serializer for a single Performance row.
-
-        `team` and `member` are writable PrimaryKeyRelatedFields on create; on
-        update they are ignored (a performance never moves to another member or
-        team — the view drops them from validated_data in update()). `created_by`
-        is set by the view from request.user and is read-only here.
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        team:
-          type: integer
-        member:
-          type: integer
-        label:
-          type: string
-          description: Discipline / test name, e.g. '100m freestyle' or 'Cooper test'.
-          maxLength: 120
-        value:
-          type: string
-          format: decimal
-          pattern: ^-?\d{0,7}(?:\.\d{0,3})?$
-          description: Numeric result, interpreted by unit (seconds for time, meters
-            for distance, etc.).
-        unit:
-          $ref: '#/components/schemas/UnitEnum'
-        is_lower_better:
-          type: boolean
-          readOnly: true
-        recorded_on:
-          type: string
-          format: date
-          description: Date the performance was achieved.
-        notes:
-          type: string
-        created_by:
-          type: integer
-          readOnly: true
-        created_at:
-          type: string
-          format: date-time
-          readOnly: true
-        updated_at:
-          type: string
-          format: date-time
-          readOnly: true
-    Performance:
-      type: object
-      description: |-
-        Read/write serializer for a single Performance row.
-
-        `team` and `member` are writable PrimaryKeyRelatedFields on create; on
-        update they are ignored (a performance never moves to another member or
-        team — the view drops them from validated_data in update()). `created_by`
-        is set by the view from request.user and is read-only here.
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        team:
-          type: integer
-        member:
-          type: integer
-        label:
-          type: string
-          description: Discipline / test name, e.g. '100m freestyle' or 'Cooper test'.
-          maxLength: 120
-        value:
-          type: string
-          format: decimal
-          pattern: ^-?\d{0,7}(?:\.\d{0,3})?$
-          description: Numeric result, interpreted by unit (seconds for time, meters
-            for distance, etc.).
-        unit:
-          $ref: '#/components/schemas/UnitEnum'
-        is_lower_better:
-          type: boolean
-          readOnly: true
-        recorded_on:
-          type: string
-          format: date
-          description: Date the performance was achieved.
-        notes:
-          type: string
-        created_by:
-          type: integer
-          readOnly: true
-        created_at:
-          type: string
-          format: date-time
-          readOnly: true
-        updated_at:
-          type: string
-          format: date-time
-          readOnly: true
       required:
-      - created_at
-      - created_by
-      - id
-      - is_lower_better
-      - label
-      - member
-      - recorded_on
-      - team
-      - updated_at
-      - value
-    UnitEnum:
-      enum:
-      - s
-      - m
-      - reps
-      - kg
-      - pts
-      type: string
-      description: |-
-        * `s` - Seconds
-        * `m` - Meters
-        * `reps` - Repetitions
-        * `kg` - Kilograms
-        * `pts` - Points
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Place'
     PaginatedProgramList:
       type: object
       required:
@@ -9533,16 +9533,16 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TopicMessage'
-    AccountDelete:
-      type: object
-      properties:
-        current_password:
-          type: string
-          writeOnly: true
-      required:
-      - current_password
     PasswordChange:
       type: object
+      description: |-
+        Body of POST /api/v1/auth/password/change/ (authenticated).
+
+        The caller proves they still know `current_password` and supplies a
+        `new_password` validated against Django's configured validators with
+        the authenticated user as context. The view performs the
+        `check_password` comparison and the equality check — the serializer
+        only enforces field shapes and the password strength rules.
       properties:
         current_password:
           type: string
@@ -9814,7 +9814,6 @@ components:
         goal:
           type: string
           nullable: true
-          maxLength: 100
         location:
           type: string
           description: Where the session takes place (venue, pool, track, address).
@@ -9824,6 +9823,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/PlaceMinimal'
           readOnly: true
+          nullable: true
         place_id:
           type: integer
           writeOnly: true
@@ -9881,6 +9881,7 @@ components:
           type: array
           items:
             type: integer
+          readOnly: true
         rounds_detail:
           type: array
           items:
@@ -9918,6 +9919,16 @@ components:
             * `always` - Always
             * `after` - After the session
             * `never` - Never
+        is_public:
+          type: boolean
+          readOnly: true
+          description: Whether this session is currently shared via its public link.
+        public_token:
+          type: string
+          readOnly: true
+          nullable: true
+          description: Unguessable token in the public share URL. Null = never shared.
+            The token authenticates the otherwise-anonymous public view.
         generated_by_ai:
           type: boolean
           readOnly: true
@@ -9990,10 +10001,12 @@ components:
         round_id:
           type: integer
           writeOnly: true
-          description: Optional. If provided on POST, the newly created Exercise is
-            atomically attached to this Round. The request user must manage at least
-            one team of at least one Event linked to this Round (library rounds with
-            no events are accepted as-is). Ignored on PATCH/PUT.
+          description: 'Optional. On POST, the newly created Exercise is atomically
+            attached to this Round. On PATCH/PUT, if the Exercise is shared by several
+            Rounds (usage_count > 1), it is forked: a clone with the changes is swapped
+            into THIS Round and the shared original is left untouched. The request
+            user must manage at least one team of an Event linked to this Round (library
+            rounds with no events are accepted as-is).'
         language:
           $ref: '#/components/schemas/LanguageEnum'
         usage_count:
@@ -10007,6 +10020,73 @@ components:
           type: string
           format: date-time
           readOnly: true
+    PatchedLevelAdmin:
+      type: object
+      description: 'Admin flavor: exposes per-language name/description variants.'
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        code:
+          type: string
+          maxLength: 50
+        name_fr:
+          type: string
+          nullable: true
+          title: Name [fr]
+          maxLength: 100
+        name_nl:
+          type: string
+          nullable: true
+          title: Name [nl]
+          maxLength: 100
+        name_en:
+          type: string
+          nullable: true
+          title: Name [en]
+          maxLength: 100
+        name_it:
+          type: string
+          nullable: true
+          title: Name [it]
+          maxLength: 100
+        name_es:
+          type: string
+          nullable: true
+          title: Name [es]
+          maxLength: 100
+        description_fr:
+          type: string
+          nullable: true
+          title: Description [fr]
+          maxLength: 255
+        description_nl:
+          type: string
+          nullable: true
+          title: Description [nl]
+          maxLength: 255
+        description_en:
+          type: string
+          nullable: true
+          title: Description [en]
+          maxLength: 255
+        description_it:
+          type: string
+          nullable: true
+          title: Description [it]
+          maxLength: 255
+        description_es:
+          type: string
+          nullable: true
+          title: Description [es]
+          maxLength: 255
+        order:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        is_active:
+          type: boolean
     PatchedMe:
       type: object
       properties:
@@ -10036,6 +10116,11 @@ components:
           description: 'Per-user preference for the weekly recap email. Opt-out model:
             default True. When False, this user receives no weekly recap even for
             teams they own/manage that have it enabled.'
+        is_staff:
+          type: boolean
+          readOnly: true
+          title: Staff status
+          description: Designates whether the user can log into this admin site.
         last_login:
           type: string
           format: date-time
@@ -10045,15 +10130,16 @@ components:
           type: string
           format: date-time
           readOnly: true
-        is_staff:
-          type: boolean
-          readOnly: true
-          title: Staff status
-          description: Designates whether the user can log into this admin site.
         team_quota:
           allOf:
           - $ref: '#/components/schemas/TeamQuotaStatus'
           readOnly: true
+        calendar_token:
+          type: string
+          readOnly: true
+          description: Unguessable token embedded in the user's personal iCal (.ics)
+            subscription URL. The token IS the authentication for that (otherwise
+            anonymous) feed. Rotate it to revoke an old URL.
         member_id:
           type: integer
           nullable: true
@@ -10077,7 +10163,7 @@ components:
           type: string
           format: email
           nullable: true
-          maxLength: 50
+          maxLength: 254
         phonenumber:
           type: string
           nullable: true
@@ -10184,6 +10270,92 @@ components:
           type: string
           format: date-time
           readOnly: true
+    PatchedPerformance:
+      type: object
+      description: |-
+        Read/write serializer for a single Performance row.
+
+        `team` and `member` are writable PrimaryKeyRelatedFields on create; on
+        update they are ignored (a performance never moves to another member or
+        team — the view drops them from validated_data in update()). `created_by`
+        is set by the view from request.user and is read-only here.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        team:
+          type: integer
+        member:
+          type: integer
+        label:
+          type: string
+          description: Discipline / test name, e.g. '100m freestyle' or 'Cooper test'.
+          maxLength: 120
+        value:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,7}(?:\.\d{0,3})?$
+          description: Numeric result, interpreted by unit (seconds for time, meters
+            for distance, etc.).
+        unit:
+          $ref: '#/components/schemas/UnitEnum'
+        is_lower_better:
+          type: boolean
+          readOnly: true
+        recorded_on:
+          type: string
+          format: date
+          description: Date the performance was achieved.
+        notes:
+          type: string
+        created_by:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedPlace:
+      type: object
+      description: |-
+        Read/write serializer for a venue (Lieu) in the global sport-scoped pool.
+
+        A place is shared (M2M ``Team.places``). On create the requester passes the
+        ``team`` it is creating the place for (write-only): the view links it and
+        derives the place's ``sport`` from that team. ``sport`` is read-only output.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        sports:
+          type: array
+          items:
+            type: integer
+          readOnly: true
+          description: Sports this venue serves.
+        name:
+          type: string
+          description: Display name of the venue (e.g. 'Piscine olympique').
+          maxLength: 255
+        address:
+          type: string
+          description: Optional postal address / directions for the venue.
+          maxLength: 500
+        team:
+          type: integer
+          writeOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
     PatchedProgram:
       type: object
       properties:
@@ -10212,6 +10384,7 @@ components:
           type: array
           items:
             type: integer
+          readOnly: true
         frequency_per_week:
           type: integer
           maximum: 9223372036854775807
@@ -10345,73 +10518,6 @@ components:
           type: string
           format: date-time
           readOnly: true
-    PatchedLevelAdmin:
-      type: object
-      description: 'Admin flavor: exposes per-language name/description variants.'
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        code:
-          type: string
-          maxLength: 50
-        name_fr:
-          type: string
-          nullable: true
-          title: Name [fr]
-          maxLength: 100
-        name_nl:
-          type: string
-          nullable: true
-          title: Name [nl]
-          maxLength: 100
-        name_en:
-          type: string
-          nullable: true
-          title: Name [en]
-          maxLength: 100
-        name_it:
-          type: string
-          nullable: true
-          title: Name [it]
-          maxLength: 100
-        name_es:
-          type: string
-          nullable: true
-          title: Name [es]
-          maxLength: 100
-        description_fr:
-          type: string
-          nullable: true
-          title: Description [fr]
-          maxLength: 255
-        description_nl:
-          type: string
-          nullable: true
-          title: Description [nl]
-          maxLength: 255
-        description_en:
-          type: string
-          nullable: true
-          title: Description [en]
-          maxLength: 255
-        description_it:
-          type: string
-          nullable: true
-          title: Description [it]
-          maxLength: 255
-        description_es:
-          type: string
-          nullable: true
-          title: Description [es]
-          maxLength: 255
-        order:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: 0
-          format: int64
-        is_active:
-          type: boolean
     PatchedTeam:
       type: object
       properties:
@@ -10446,6 +10552,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/Level'
           readOnly: true
+          nullable: true
         level_id:
           type: integer
           writeOnly: true
@@ -10465,6 +10572,11 @@ components:
             type: integer
             writeOnly: true
           writeOnly: true
+        default_pool:
+          type: string
+          readOnly: true
+          description: Default venue/pool for this team's sessions (used by the season-plan
+            generator).
         places:
           type: array
           items:
@@ -10480,6 +10592,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/PlaceMinimal'
           readOnly: true
+          nullable: true
         default_place_id:
           type: integer
           writeOnly: true
@@ -10495,6 +10608,10 @@ components:
             type: integer
             writeOnly: true
           writeOnly: true
+        logo_url:
+          type: string
+          nullable: true
+          readOnly: true
         language:
           $ref: '#/components/schemas/LanguageEnum'
         is_active:
@@ -10505,12 +10622,6 @@ components:
           type: string
           description: Small base64 data-URL for the team logo (e.g. 'data:image/png;base64,...').
             Stored inline in the DB; no file storage.
-        logo_url:
-          type: string
-          nullable: true
-          readOnly: true
-          description: Absolute URL of the public logo endpoint (null when no logo).
-            The list drops the inline base64 and exposes this instead.
         roti_enabled:
           type: boolean
           description: If True, athletes can submit a per-session difficulty rating
@@ -10697,61 +10808,142 @@ components:
           type: string
           format: date-time
           readOnly: true
-    Equipment:
+    PatchedTopicMessage:
       type: object
       description: |-
-        Read serializer for the global equipment catalog.
+        A single message. ``author`` is the nested public user; ``content``
+        is sanitized via bleach on every write.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        content:
+          type: string
+          description: Rich HTML content (sanitized via bleach on save).
+        author:
+          allOf:
+          - $ref: '#/components/schemas/CustomUserPublic'
+          readOnly: true
+        edited_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          description: Set when the message is edited after creation.
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedTrainingSlot:
+      type: object
+      description: |-
+        One weekly training slot (weekday + start/end time).
 
-        ``name`` is auto-localized to the active language by modeltranslation. The
-        catalog is curated centrally (admin + seed), so the API is read-only.
+        weekday uses Python's date.weekday() convention: Monday=0 … Sunday=6.
       properties:
         id:
           type: integer
           readOnly: true
-        name:
+        weekday:
+          allOf:
+          - $ref: '#/components/schemas/WeekdayEnum'
+          description: |-
+            Day of the week (Python convention: Monday=0 … Sunday=6).
+
+            * `0` - Monday
+            * `1` - Tuesday
+            * `2` - Wednesday
+            * `3` - Thursday
+            * `4` - Friday
+            * `5` - Saturday
+            * `6` - Sunday
+          minimum: 0
+          maximum: 9223372036854775807
+        hour_start:
           type: string
+          format: time
+          description: Slot start time (local team time).
+        hour_end:
+          type: string
+          format: time
+          description: Slot end time; must be after hour_start.
+        place:
+          allOf:
+          - $ref: '#/components/schemas/PlaceMinimal'
           readOnly: true
-          description: Display name of the equipment (e.g. 'Pull-buoy').
-      required:
-      - id
-      - name
-    EquipmentMinimal:
+          nullable: true
+        place_id:
+          type: integer
+          writeOnly: true
+          nullable: true
+        sport:
+          allOf:
+          - $ref: '#/components/schemas/Sport'
+          readOnly: true
+        sport_id:
+          type: integer
+          writeOnly: true
+          nullable: true
+    Performance:
       type: object
-      description: Compact nested read shape for Team.equipment / Event.equipment_items.
+      description: |-
+        Read/write serializer for a single Performance row.
+
+        `team` and `member` are writable PrimaryKeyRelatedFields on create; on
+        update they are ignored (a performance never moves to another member or
+        team — the view drops them from validated_data in update()). `created_by`
+        is set by the view from request.user and is read-only here.
       properties:
         id:
           type: integer
           readOnly: true
-        name:
-          type: string
-          readOnly: true
-          description: Display name of the equipment (e.g. 'Pull-buoy').
-      required:
-      - id
-      - name
-    PaginatedEquipmentList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
+        team:
           type: integer
-          example: 123
-        next:
+        member:
+          type: integer
+        label:
           type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=4
-        previous:
+          description: Discipline / test name, e.g. '100m freestyle' or 'Cooper test'.
+          maxLength: 120
+        value:
           type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=2
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Equipment'
+          format: decimal
+          pattern: ^-?\d{0,7}(?:\.\d{0,3})?$
+          description: Numeric result, interpreted by unit (seconds for time, meters
+            for distance, etc.).
+        unit:
+          $ref: '#/components/schemas/UnitEnum'
+        is_lower_better:
+          type: boolean
+          readOnly: true
+        recorded_on:
+          type: string
+          format: date
+          description: Date the performance was achieved.
+        notes:
+          type: string
+        created_by:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - created_by
+      - id
+      - is_lower_better
+      - label
+      - member
+      - recorded_on
+      - team
+      - updated_at
+      - value
     Place:
       type: object
       description: |-
@@ -10759,7 +10951,7 @@ components:
 
         A place is shared (M2M ``Team.places``). On create the requester passes the
         ``team`` it is creating the place for (write-only): the view links it and
-        derives the place's ``sports`` from that team. ``sports`` is read-only output.
+        derives the place's ``sport`` from that team. ``sport`` is read-only output.
       properties:
         id:
           type: integer
@@ -10815,87 +11007,54 @@ components:
       - address
       - id
       - name
-    PlaceRequest:
+    PresignUploadHeaders:
       type: object
-      description: |-
-        Write payload for creating/updating a venue (Lieu) in the sport pool.
-
-        On create the requester passes the ``team`` it is creating the place for
-        (write-only): the view links it and derives the place's ``sport`` from
-        that team.
       properties:
-        name:
+        Content-Type:
           type: string
-          description: Display name of the venue (e.g. 'Piscine olympique').
-          maxLength: 255
-        address:
-          type: string
-          description: Optional postal address / directions for the venue.
-          maxLength: 500
-        team:
-          type: integer
-          writeOnly: true
       required:
-      - name
-    PatchedPlace:
+      - Content-Type
+    PresignUploadRequest:
       type: object
-      description: |-
-        Read/write serializer for a venue (Lieu) in the global sport-scoped pool.
-
-        A place is shared (M2M ``Team.places``). On create the requester passes the
-        ``team`` it is creating the place for (write-only): the view links it and
-        derives the place's ``sport`` from that team. ``sport`` is read-only output.
+      description: Body for POST /attachments/presign/.
       properties:
-        id:
+        target_type:
+          $ref: '#/components/schemas/TargetTypeEnum'
+        target_id:
           type: integer
-          readOnly: true
-        sport:
-          type: integer
-          readOnly: true
-          nullable: true
-          description: Sport this venue belongs to (e.g. Natation).
-        name:
+          minimum: 1
+        filename:
           type: string
-          description: Display name of the venue (e.g. 'Piscine olympique').
           maxLength: 255
-        address:
+          minLength: 1
+        content_type:
           type: string
-          description: Optional postal address / directions for the venue.
-          maxLength: 500
-        team:
+          maxLength: 150
+        size:
           type: integer
-          writeOnly: true
-        created_at:
-          type: string
-          format: date-time
-          readOnly: true
-        updated_at:
-          type: string
-          format: date-time
-          readOnly: true
-    PaginatedPlaceList:
-      type: object
+          minimum: 1
       required:
-      - count
-      - results
+      - content_type
+      - filename
+      - size
+      - target_id
+      - target_type
+    PresignUploadResponse:
+      type: object
       properties:
-        count:
+        attachment_id:
           type: integer
-          example: 123
-        next:
+        upload_url:
           type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=4
-        previous:
+        s3_key:
           type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=2
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Place'
+        headers:
+          $ref: '#/components/schemas/PresignUploadHeaders'
+      required:
+      - attachment_id
+      - headers
+      - s3_key
+      - upload_url
     Program:
       type: object
       properties:
@@ -10924,6 +11083,7 @@ components:
           type: array
           items:
             type: integer
+          readOnly: true
         frequency_per_week:
           type: integer
           maximum: 9223372036854775807
@@ -10957,6 +11117,7 @@ components:
       - ai_generated_at
       - ai_response
       - created_at
+      - events
       - generated_by_ai
       - id
       - name
@@ -11505,6 +11666,14 @@ components:
       required:
       - distance
       - week_start
+    TargetTypeEnum:
+      enum:
+      - event
+      - message
+      type: string
+      description: |-
+        * `event` - event
+        * `message` - message
     Team:
       type: object
       properties:
@@ -11539,6 +11708,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/Level'
           readOnly: true
+          nullable: true
         level_id:
           type: integer
           writeOnly: true
@@ -11558,6 +11728,11 @@ components:
             type: integer
             writeOnly: true
           writeOnly: true
+        default_pool:
+          type: string
+          readOnly: true
+          description: Default venue/pool for this team's sessions (used by the season-plan
+            generator).
         places:
           type: array
           items:
@@ -11573,6 +11748,7 @@ components:
           allOf:
           - $ref: '#/components/schemas/PlaceMinimal'
           readOnly: true
+          nullable: true
         default_place_id:
           type: integer
           writeOnly: true
@@ -11588,6 +11764,10 @@ components:
             type: integer
             writeOnly: true
           writeOnly: true
+        logo_url:
+          type: string
+          nullable: true
+          readOnly: true
         language:
           $ref: '#/components/schemas/LanguageEnum'
         is_active:
@@ -11598,12 +11778,6 @@ components:
           type: string
           description: Small base64 data-URL for the team logo (e.g. 'data:image/png;base64,...').
             Stored inline in the DB; no file storage.
-        logo_url:
-          type: string
-          nullable: true
-          readOnly: true
-          description: Absolute URL of the public logo endpoint (null when no logo).
-            The list drops the inline base64 and exposes this instead.
         roti_enabled:
           type: boolean
           description: If True, athletes can submit a per-session difficulty rating
@@ -11708,10 +11882,16 @@ components:
           readOnly: true
       required:
       - created_at
+      - default_place
+      - default_pool
+      - equipment
       - id
+      - level
+      - logo_url
       - managers
       - name
       - owner
+      - places
       - sport
       - sports
       - updated_at
@@ -11917,6 +12097,20 @@ components:
       - id
       - language
       - name
+    TeamPoolsResponse:
+      type: object
+      description: |-
+        Response of GET /teams/{id}/pools/.
+
+        The distinct, non-empty session locations ("piscines") used across the
+        team's events, for the frontend's location autocomplete.
+      properties:
+        pools:
+          type: array
+          items:
+            type: string
+      required:
+      - pools
     TeamQuotaStatus:
       type: object
       description: |-
@@ -11937,20 +12131,36 @@ components:
       - can_create
       - max
       - used
-    TeamPoolsResponse:
+    TeamSportRead:
       type: object
       description: |-
-        Response of GET /teams/{id}/pools/.
+        A sport practised by a team, flattened with its default flag and order.
 
-        The distinct, non-empty session locations ("piscines") used across the
-        team's events, for the frontend's location autocomplete.
+        The id/name/slug are the SPORT's (not the through row's), so the frontend
+        can treat the list as sports while still knowing which one is the default.
       properties:
-        pools:
-          type: array
-          items:
-            type: string
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        is_default:
+          type: boolean
+          readOnly: true
+        order:
+          type: integer
+          readOnly: true
       required:
-      - pools
+      - id
+      - is_default
+      - name
+      - order
+      - slug
     TeamStats:
       type: object
       description: |-
@@ -12005,189 +12215,6 @@ components:
       required:
       - access
       - refresh
-    TopicCreationEnum:
-      enum:
-      - owner
-      - coaches
-      - members
-      type: string
-      description: |-
-        * `owner` - Owner only
-        * `coaches` - Owner and coaches
-        * `members` - Everyone (incl. athletes)
-    TeamSportRead:
-      type: object
-      description: |-
-        A sport practised by a team, flattened with its default flag and order.
-
-        The id/name/slug are the SPORT's (not the through row's), so the frontend
-        can treat the list as sports while still knowing which one is the default.
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        name:
-          type: string
-          readOnly: true
-        slug:
-          type: string
-          readOnly: true
-          pattern: ^[-a-zA-Z0-9_]+$
-        is_default:
-          type: boolean
-          readOnly: true
-        order:
-          type: integer
-          readOnly: true
-      required:
-      - id
-      - is_default
-      - name
-      - order
-      - slug
-    TrainingSlot:
-      type: object
-      description: |-
-        One weekly training slot (weekday + start/end time).
-
-        weekday uses Python's date.weekday() convention: Monday=0 … Sunday=6.
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        weekday:
-          allOf:
-          - $ref: '#/components/schemas/WeekdayEnum'
-          description: |-
-            Day of the week (Python convention: Monday=0 … Sunday=6).
-
-            * `0` - Monday
-            * `1` - Tuesday
-            * `2` - Wednesday
-            * `3` - Thursday
-            * `4` - Friday
-            * `5` - Saturday
-            * `6` - Sunday
-        hour_start:
-          type: string
-          format: time
-          description: Slot start time (local team time).
-        hour_end:
-          type: string
-          format: time
-          description: Slot end time; must be after hour_start.
-        place:
-          allOf:
-          - $ref: '#/components/schemas/PlaceMinimal'
-          readOnly: true
-        place_id:
-          type: integer
-          writeOnly: true
-          nullable: true
-        sport:
-          allOf:
-          - $ref: '#/components/schemas/Sport'
-          readOnly: true
-        sport_id:
-          type: integer
-          writeOnly: true
-          nullable: true
-      required:
-      - hour_end
-      - hour_start
-      - id
-      - place
-      - sport
-      - weekday
-    PatchedTrainingSlot:
-      type: object
-      description: |-
-        One weekly training slot (weekday + start/end time).
-
-        weekday uses Python's date.weekday() convention: Monday=0 … Sunday=6.
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        weekday:
-          allOf:
-          - $ref: '#/components/schemas/WeekdayEnum'
-          description: |-
-            Day of the week (Python convention: Monday=0 … Sunday=6).
-
-            * `0` - Monday
-            * `1` - Tuesday
-            * `2` - Wednesday
-            * `3` - Thursday
-            * `4` - Friday
-            * `5` - Saturday
-            * `6` - Sunday
-        hour_start:
-          type: string
-          format: time
-          description: Slot start time (local team time).
-        hour_end:
-          type: string
-          format: time
-          description: Slot end time; must be after hour_start.
-        place:
-          allOf:
-          - $ref: '#/components/schemas/PlaceMinimal'
-          readOnly: true
-        place_id:
-          type: integer
-          writeOnly: true
-          nullable: true
-        sport:
-          allOf:
-          - $ref: '#/components/schemas/Sport'
-          readOnly: true
-        sport_id:
-          type: integer
-          writeOnly: true
-          nullable: true
-    TrainingTemplate:
-      type: object
-      description: |-
-        The team's reusable weekly training template. PUT atomically REPLACES
-        it (slots recreated; default_pool/season_start/season_end set on team).
-      properties:
-        slots:
-          type: array
-          items:
-            $ref: '#/components/schemas/TrainingSlot'
-        default_pool:
-          type: string
-          default: ''
-          maxLength: 255
-        season_start:
-          type: string
-          format: date
-          nullable: true
-        season_end:
-          type: string
-          format: date
-          nullable: true
-      required:
-      - slots
-    WeekdayEnum:
-      enum:
-      - 0
-      - 1
-      - 2
-      - 3
-      - 4
-      - 5
-      - 6
-      type: integer
-      description: |-
-        * `0` - Monday
-        * `1` - Tuesday
-        * `2` - Wednesday
-        * `3` - Thursday
-        * `4` - Friday
-        * `5` - Saturday
-        * `6` - Sunday
     Topic:
       type: object
       description: |-
@@ -12236,32 +12263,16 @@ components:
       - message_count
       - title
       - updated_at
-    PatchedTopicMessage:
-      type: object
+    TopicCreationEnum:
+      enum:
+      - owner
+      - coaches
+      - members
+      type: string
       description: |-
-        A single message. ``author`` is the nested public user; ``content``
-        is sanitized via bleach on every write.
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        content:
-          type: string
-          description: Rich HTML content (sanitized via bleach on save).
-        author:
-          allOf:
-          - $ref: '#/components/schemas/CustomUserPublic'
-          readOnly: true
-        edited_at:
-          type: string
-          format: date-time
-          readOnly: true
-          nullable: true
-          description: Set when the message is edited after creation.
-        created_at:
-          type: string
-          format: date-time
-          readOnly: true
+        * `owner` - Owner only
+        * `coaches` - Owner and coaches
+        * `members` - Everyone (incl. athletes)
     TopicMessage:
       type: object
       description: |-
@@ -12294,6 +12305,91 @@ components:
       - created_at
       - edited_at
       - id
+    TrainingSlot:
+      type: object
+      description: |-
+        One weekly training slot (weekday + start/end time).
+
+        weekday uses Python's date.weekday() convention: Monday=0 … Sunday=6.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        weekday:
+          allOf:
+          - $ref: '#/components/schemas/WeekdayEnum'
+          description: |-
+            Day of the week (Python convention: Monday=0 … Sunday=6).
+
+            * `0` - Monday
+            * `1` - Tuesday
+            * `2` - Wednesday
+            * `3` - Thursday
+            * `4` - Friday
+            * `5` - Saturday
+            * `6` - Sunday
+          minimum: 0
+          maximum: 9223372036854775807
+        hour_start:
+          type: string
+          format: time
+          description: Slot start time (local team time).
+        hour_end:
+          type: string
+          format: time
+          description: Slot end time; must be after hour_start.
+        place:
+          allOf:
+          - $ref: '#/components/schemas/PlaceMinimal'
+          readOnly: true
+          nullable: true
+        place_id:
+          type: integer
+          writeOnly: true
+          nullable: true
+        sport:
+          allOf:
+          - $ref: '#/components/schemas/Sport'
+          readOnly: true
+        sport_id:
+          type: integer
+          writeOnly: true
+          nullable: true
+      required:
+      - hour_end
+      - hour_start
+      - id
+      - place
+      - sport
+      - weekday
+    TrainingTemplate:
+      type: object
+      description: |-
+        The team's reusable weekly training template.
+
+        Body of PUT and shape of GET on /teams/{id}/training-template/. PUT
+        atomically REPLACES the template: existing slots are deleted and
+        recreated from `slots`, and default_pool/season_start/season_end are
+        set on the team.
+      properties:
+        slots:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrainingSlot'
+        default_pool:
+          type: string
+          default: ''
+          maxLength: 255
+        season_start:
+          type: string
+          format: date
+          nullable: true
+        season_end:
+          type: string
+          format: date
+          nullable: true
+      required:
+      - slots
     TypeEnum:
       enum:
       - note_for_coach
@@ -12312,6 +12408,20 @@ components:
         * `performance_logged` - A performance was logged for you
         * `plan_generated` - A new training plan was scheduled
         * `session_reminder` - You have a session tomorrow
+    UnitEnum:
+      enum:
+      - s
+      - m
+      - reps
+      - kg
+      - pts
+      type: string
+      description: |-
+        * `s` - Seconds
+        * `m` - Meters
+        * `reps` - Repetitions
+        * `kg` - Kilograms
+        * `pts` - Points
     UnreadCount:
       type: object
       description: Response shape for GET /notifications/unread_count/.
@@ -12409,6 +12519,34 @@ components:
       required:
       - password
       - username
+    VisibilityMode:
+      enum:
+      - always
+      - after
+      - never
+      type: string
+      description: |-
+        * `always` - Always
+        * `after` - After the session
+        * `never` - Never
+    WeekdayEnum:
+      enum:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      type: integer
+      description: |-
+        * `0` - Monday
+        * `1` - Tuesday
+        * `2` - Wednesday
+        * `3` - Thursday
+        * `4` - Friday
+        * `5` - Saturday
+        * `6` - Sunday
     _MagicActionJoinRequest:
       type: object
       description: |-

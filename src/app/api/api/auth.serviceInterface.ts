@@ -89,7 +89,7 @@ export interface AuthServiceInterface {
 
     /**
      * 
-     * POST /api/v1/auth/account/delete/ — authenticated: delete own account. Body: {current_password}. 204 on success. 409 (code owns_teams) when the user still owns teams. No tokens; user row is removed.
+     * POST /api/v1/auth/account/delete/ — authenticated: delete own account.  Body: {current_password}. The caller must prove they still know their password before the account is irreversibly removed. On success the user row is deleted (memberships, athlete links, join requests, etc. cascade per their FK on_delete) and 204 No Content is returned.  Safety guard: a user who still OWNS one or more teams (Team.owner &#x3D;&#x3D; user) is REFUSED with 409 (code owns_teams). Team.owner is on_delete&#x3D;PROTECT, so the DB would raise ProtectedError on delete — we surface a clean, localized error instead and never cascade-delete teams. The guard intentionally counts ALL owned teams, not just is_active ones: a soft-deleted (is_active&#x3D;False) team still references the user via the protected FK and would block the delete just the same. The user must transfer ownership (or hard-delete those teams) first.
      * @endpoint post /api/v1/auth/account/delete/
 * @param requestParameters
      */
@@ -121,7 +121,7 @@ export interface AuthServiceInterface {
 
     /**
      * 
-     * POST /api/v1/auth/magic-link/exchange/ — public: trade token for JWT.  Body: {token}. On success returns the JWT pair (access + refresh). Errors: expired -&gt; 410 {\&quot;detail\&quot;:\&quot;token_expired\&quot;}; invalid/ineligible -&gt; 400 {\&quot;detail\&quot;:\&quot;token_invalid\&quot;}.
+     * POST /api/v1/auth/magic-link/exchange/ — public: trade token for JWT.  Body: {token}. The token is the signed string the user received in their magic-link email. On success returns the JWT pair (access + refresh) for sign-in. Error mapping:   - expired token        -&gt; 410 {\&quot;detail\&quot;: \&quot;token_expired\&quot;}   - invalid / tampered   -&gt; 400 {\&quot;detail\&quot;: \&quot;token_invalid\&quot;}   - user no longer eligible (inactive / unconfirmed / deleted)                          -&gt; 400 {\&quot;detail\&quot;: \&quot;token_invalid\&quot;}
      * @endpoint post /api/v1/auth/magic-link/exchange/
 * @param requestParameters
      */
@@ -129,7 +129,7 @@ export interface AuthServiceInterface {
 
     /**
      * 
-     * POST /api/v1/auth/magic-link/request/ — public: email a sign-in link.  Always returns 200 with the same body whether or not the email matches an active, email-confirmed account (no user enumeration). Rate-limited to 5 requests per hour per IP.
+     * POST /api/v1/auth/magic-link/request/ — public: email a sign-in link.  Anti-leak: ALWAYS returns 200 with the same body, whether the email matches an active, email-confirmed User or not. If it does, an email with a 15-minute signed magic-link is dispatched (frontend URL: {FRONTEND_URL}/auth/magic-link/{token}, no trailing slash). If it doesn\&#39;t, the call is a silent no-op — the response is byte-for-byte identical (no user enumeration, timing-insensitive wording).  Rate-limited to 5 requests per hour per IP.
      * @endpoint post /api/v1/auth/magic-link/request/
 * @param requestParameters
      */
@@ -137,7 +137,7 @@ export interface AuthServiceInterface {
 
     /**
      * 
-     * POST /api/v1/auth/password/change/ — authenticated: change own password.  Body: {current_password, new_password}. The caller must prove they still know &#x60;current_password&#x60;; &#x60;new_password&#x60; is validated against Django\&#39;s configured password validators (with the user as context) and must differ from the current one. On success the password is updated and a localized {detail} body is returned — NO tokens are issued.
+     * POST /api/v1/auth/password/change/ — authenticated: change own password.  Body: {current_password, new_password}. The caller must prove they still know &#x60;current_password&#x60;; &#x60;new_password&#x60; is validated against Django\&#39;s configured password validators (with the user as context) and must differ from the current one. On success the password is updated and a localized {detail} body is returned — NO tokens are issued. The short-lived access token (and any outstanding refresh) remain valid until they expire; this keeps the flow minimal for a user who is already authenticated and merely rotating their password.
      * @endpoint post /api/v1/auth/password/change/
 * @param requestParameters
      */

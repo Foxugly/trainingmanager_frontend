@@ -53,6 +53,12 @@ const team: Team = {
   is_active: true,
   is_public: false,
   attendance_statuses: [],
+  level: null,
+  default_pool: '',
+  places: [],
+  default_place: null,
+  equipment: [],
+  logo_url: null,
   created_at: '2026-04-01T00:00:00Z',
   updated_at: '2026-04-01T00:00:00Z',
 };
@@ -86,6 +92,9 @@ const eventNoRounds: Event = {
   refer_program: { id: 4, name: 'Cycle aérobie' },
   refer_program_id: 4,
   sport,
+  place: null,
+  equipment_items: [],
+  rounds_detail: [],
   rounds: [],
   members: [],
   generated_by_ai: false,
@@ -138,6 +147,7 @@ interface ProtectedFields {
   event(): Event | null;
   loading(): boolean;
   notFound(): boolean;
+  loadError(): boolean;
   canRegenerate(): boolean;
   canManage(): boolean;
   isPastEvent(): boolean;
@@ -228,7 +238,11 @@ describe('EventsDetailComponent', () => {
     eventsMock = {
       eventsRetrieve: vi
         .fn()
-        .mockReturnValue(eventResult ? of(eventResult) : throwError(() => new Error('404'))),
+        .mockReturnValue(
+          eventResult
+            ? of(eventResult)
+            : throwError(() => new HttpErrorResponse({ status: 404 })),
+        ),
       eventsGenerateTrainingCreate: vi.fn().mockReturnValue(
         of({
           rounds_created: 4,
@@ -379,9 +393,40 @@ describe('EventsDetailComponent', () => {
     expect(access(component).canRegenerate()).toBe(true);
   });
 
-  it('flags notFound when eventsRetrieve fails', async () => {
+  it('flags notFound (not loadError) when eventsRetrieve fails with 404', async () => {
     await setup('7', null);
     expect(access(component).notFound()).toBe(true);
+    expect(access(component).loadError()).toBe(false);
+  });
+
+  it('flags loadError (not notFound) + toasts when eventsRetrieve fails with a non-404 status', async () => {
+    await setup();
+    const messageService = fixture.debugElement.injector.get(MessageService);
+    const addSpy = vi.spyOn(messageService, 'add');
+    eventsMock.eventsRetrieve.mockReturnValue(
+      throwError(() => new HttpErrorResponse({ status: 500 })),
+    );
+    access(component).reloadEvent();
+    expect(access(component).loadError()).toBe(true);
+    expect(access(component).notFound()).toBe(false);
+    expect(addSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'error', detail: 'events.detail.load_failed' }),
+    );
+  });
+
+  it('toasts a warning when the program/team fetch fails (piped chain error handler)', async () => {
+    TestBed.resetTestingModule();
+    await setup();
+    const messageService = fixture.debugElement.injector.get(MessageService);
+    const addSpy = vi.spyOn(messageService, 'add');
+    teamsMock.teamsRetrieve.mockReturnValue(
+      throwError(() => new HttpErrorResponse({ status: 500 })),
+    );
+    access(component).reloadEvent();
+    await new Promise((r) => setTimeout(r, 0));
+    expect(addSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'warn', detail: 'events.detail.team_load_failed' }),
+    );
   });
 
   it('hides regenerate for member-only users', async () => {

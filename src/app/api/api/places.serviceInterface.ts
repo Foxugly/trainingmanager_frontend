@@ -14,14 +14,13 @@ import { Observable }                                        from 'rxjs';
 import { PaginatedPlaceList } from '../model/models';
 import { PatchedPlace } from '../model/models';
 import { Place } from '../model/models';
-import { PlaceRequest } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
 
 
 export interface PlacesCreateRequestParams {
-    placeRequest: PlaceRequest;
+    place: Place;
 }
 
 export interface PlacesDestroyRequestParams {
@@ -48,7 +47,7 @@ export interface PlacesRetrieveRequestParams {
 
 export interface PlacesUpdateRequestParams {
     id: number;
-    placeRequest: PlaceRequest;
+    place: Place;
 }
 
 
@@ -65,8 +64,8 @@ export interface PlacesServiceInterface {
     placesCreate(requestParameters: PlacesCreateRequestParams, extraHttpRequestParams?: any): Observable<Place>;
 
     /**
-     * Delete a place (manager only)
-     * Hard-deletes the venue. Events referencing it keep their free-text &#x60;location&#x60; (their &#x60;place&#x60; FK is SET_NULL).
+     * Delete a place (manager of a linked team)
+     * Hard-deletes the venue across all teams that linked it. Events referencing it keep their free-text location (place FK is SET_NULL).
      * @endpoint delete /api/v1/places/{id}/
 * @param requestParameters
      */
@@ -81,8 +80,8 @@ export interface PlacesServiceInterface {
     placesList(requestParameters: PlacesListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedPlaceList>;
 
     /**
-     * Patch a place (manager only)
-     * CRUD on the managed team venue (Lieu).  Read: any strict member of the place\&#39;s team. Write (create/update/delete): owner or manager of the team only.
+     * Patch a place (manager of a linked team)
+     * CRUD on the shared, sport-scoped venue pool (Lieu).  Read: members see places linked to their teams, or a whole sport\&#39;s pool via ?sport. Write: create links a new place to a team the requester manages; update/delete require managing a team the place is linked to.
      * @endpoint patch /api/v1/places/{id}/
 * @param requestParameters
      */
@@ -90,15 +89,15 @@ export interface PlacesServiceInterface {
 
     /**
      * Retrieve a place
-     * CRUD on the managed team venue (Lieu).  Read: any strict member of the place\&#39;s team. Write (create/update/delete): owner or manager of the team only.
+     * CRUD on the shared, sport-scoped venue pool (Lieu).  Read: members see places linked to their teams, or a whole sport\&#39;s pool via ?sport. Write: create links a new place to a team the requester manages; update/delete require managing a team the place is linked to.
      * @endpoint get /api/v1/places/{id}/
 * @param requestParameters
      */
     placesRetrieve(requestParameters: PlacesRetrieveRequestParams, extraHttpRequestParams?: any): Observable<Place>;
 
     /**
-     * Update a place (manager only)
-     * CRUD on the managed team venue (Lieu).  Read: any strict member of the place\&#39;s team. Write (create/update/delete): owner or manager of the team only.
+     * Update a place (manager of a linked team)
+     * CRUD on the shared, sport-scoped venue pool (Lieu).  Read: members see places linked to their teams, or a whole sport\&#39;s pool via ?sport. Write: create links a new place to a team the requester manages; update/delete require managing a team the place is linked to.
      * @endpoint put /api/v1/places/{id}/
 * @param requestParameters
      */

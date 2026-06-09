@@ -138,7 +138,6 @@ export * from './patched-training-slot';
 export * from './performance';
 export * from './place';
 export * from './place-minimal';
-export * from './place-request';
 export * from './presign-upload-headers';
 export * from './presign-upload-request';
 export * from './presign-upload-response';

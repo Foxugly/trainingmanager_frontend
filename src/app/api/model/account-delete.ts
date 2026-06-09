@@ -9,6 +9,9 @@
  */
 
 
+/**
+ * Body of POST /api/v1/auth/account/delete/ (authenticated).  The caller proves they still know `current_password` before their account is irreversibly deleted. The view performs the `check_password` comparison and the owned-teams safety guard — the serializer only enforces that the confirmation password is present.
+ */
 export interface AccountDelete { 
     current_password: string;
 }

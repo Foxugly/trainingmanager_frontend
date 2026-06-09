@@ -96,9 +96,10 @@ import { Event } from '../../api/model/event';
   add `@extend_schema(responses=…)` (preferred) or declare a local
   interface + `as unknown as Observable<…>` cast as a temporary bridge.
   See historical TokenPair / password-reset cleanups.
-- Positional params on list endpoints shift alphabetically when the
-  backend adds a new query filter. Treat the order as backend-driven —
-  re-check after each `api:gen`.
+- List endpoints take a single typed `*RequestParams` object
+  (`useSingleRequestParameter=true`), e.g. `eventsList({ dateGte, referProgram })`.
+  Adding a backend filter just adds an optional field — no argument-order shift,
+  no call-site breakage.
 - Enums are string-valued (`stringEnums=true`): match exact strings.
 
 ### i18n
@@ -177,7 +178,7 @@ Prettier: 100-col, single quotes, Angular parser for `*.html`. 2-space indent (`
 - **Windows LF→CRLF** git warnings on every commit are noise, not errors.
 - **Reset password URL**: `/auth/reset-password/:key` (no trailing slash). `:key` is `uid-token` with a dash — treat as opaque.
 - **Magic-link URL**: `/team-join-requests/magic-action/:token` (frontend route) ≠ `/api/v1/join-magic/:token/` (API endpoint). Don't conflate.
-- **Codegen positional params**: `npm run api:gen` produces method signatures with positional query-param args (`eventsList(color, date, dateGte, ...)`). Adding a new query filter on the backend reorders these alphabetically and silently breaks every existing caller. Mitigation : use named-args mode (`useSingleRequestParameter=true`) when migrating, or audit every call site after each `api:gen`.
+- **Codegen single-request-parameter**: the client is generated with `useSingleRequestParameter=true`, so every method takes one typed `*RequestParams` object (`eventsList({ dateGte, referProgram })`, `teamsPartialUpdate({ id, patchedTeam })`). Adding a backend query filter just adds an optional field to the params interface — no argument-order shift, no call-site breakage. Field names come from the `*RequestParams` interfaces in `src/app/api/api/*.serviceInterface.ts`.
 - **Accept-Language**: `languageInterceptor` (`src/app/core/i18n/`) attaches `Accept-Language: <activeLang>` on every API call so the backend can localize translatable model fields (modality.name, status.label, etc.).
 - **Hamburger breakpoint = 960 px** (not Tailwind's `md:` 768 px) — convention from QuizOnline-style layout. Use CSS `@media (max-width: 960px)`, not Tailwind utilities, for the topmenu hamburger toggle.
 - **Dark-mode parity**: PrimeNG dark mode is `.dark-mode` on `<html>`. New surfaces must include `:host-context(.dark-mode) { ... }` overrides — see `footer.component.scss`, `contribute-page.component.scss`, `about-page.component.scss` for the pattern.

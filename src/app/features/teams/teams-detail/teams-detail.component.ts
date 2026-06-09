@@ -127,6 +127,9 @@ export class TeamsDetailComponent implements OnInit {
   protected readonly memberships = signal<TeamMembership[]>([]);
   protected readonly loading = signal(false);
   protected readonly notFound = signal(false);
+  /** Set when the team fetch fails with a non-404 status (server/network);
+   *  surfaced as an inline error block with a retry, distinct from notFound. */
+  protected readonly loadError = signal(false);
 
   protected readonly activeValue = signal(false);
   protected readonly patchActive = (id: number, value: boolean) =>
@@ -443,6 +446,8 @@ export class TeamsDetailComponent implements OnInit {
 
   private loadTeam(id: number): void {
     this.loading.set(true);
+    this.notFound.set(false);
+    this.loadError.set(false);
     this.teamsService
       .teamsRetrieve({ id })
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -453,11 +458,29 @@ export class TeamsDetailComponent implements OnInit {
           this.loading.set(false);
           this.maybeLoadMyPendingRequest(t, id);
         },
-        error: () => {
-          this.notFound.set(true);
+        error: (err: HttpErrorResponse) => {
           this.loading.set(false);
+          // A genuine 404 means the team doesn't exist (or isn't visible) —
+          // show the dedicated "not found" copy. Any other status (server error,
+          // network failure) is a transient load error: surface it distinctly
+          // with a retry + a toast rather than masquerading as "not found".
+          if (err?.status === 404) {
+            this.notFound.set(true);
+          } else {
+            this.loadError.set(true);
+            this.messageService.add({
+              severity: 'error',
+              summary: this.transloco.translate('common.error'),
+              detail: this.transloco.translate('common.load_failed'),
+            });
+          }
         },
       });
+  }
+
+  protected reloadTeam(): void {
+    const id = this.teamId();
+    if (id !== null) this.loadTeam(id);
   }
 
   private maybeLoadMyPendingRequest(t: Team, teamId: number): void {
@@ -475,6 +498,14 @@ export class TeamsDetailComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (list) => this.memberships.set(list ?? []),
+        error: () => {
+          // Don't silently leave a stale/empty roster — tell the user it failed.
+          this.messageService.add({
+            severity: 'error',
+            summary: this.transloco.translate('common.error'),
+            detail: this.transloco.translate('common.load_failed'),
+          });
+        },
       });
   }
 

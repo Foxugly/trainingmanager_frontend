@@ -40,4 +40,13 @@ describe('MetaFieldComponent', () => {
     const el = fixture.nativeElement as HTMLElement;
     expect(el.querySelector('.meta-hint--error')?.textContent).toContain('Requis');
   });
+
+  it('announces the error to screen readers and gives it a stable id derived from `for`', () => {
+    fixture.componentInstance.error.set('Requis');
+    fixture.detectChanges();
+    const err = (fixture.nativeElement as HTMLElement).querySelector('.meta-hint--error');
+    expect(err?.getAttribute('role')).toBe('alert');
+    expect(err?.getAttribute('aria-live')).toBe('assertive');
+    expect(err?.getAttribute('id')).toBe('name-error');
+  });
 });

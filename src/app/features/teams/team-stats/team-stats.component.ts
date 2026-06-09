@@ -9,9 +9,10 @@ import {
   input,
   output,
   signal,
-  untracked,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { of } from 'rxjs';
+import { catchError, distinctUntilChanged, filter, switchMap, tap } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
@@ -28,6 +29,14 @@ import { buildStatsCsv } from './stats-csv';
 interface ChartConfig {
   data: unknown;
   options: unknown;
+}
+
+/** Resolved fetch trigger: team/member scope + the formatted YYYY-MM-DD range. */
+interface FetchParams {
+  id: number;
+  from: string;
+  to: string;
+  member: number | undefined;
 }
 
 /** Distinct, readable (light-mode) palette for intensity segments / generic series. */
@@ -94,6 +103,18 @@ export class TeamStatsComponent {
 
   protected readonly isAggregate = computed(() => this.memberId() === null);
 
+  /**
+   * The fetch trigger as a [id, from, to, member] tuple, or null while the
+   * range bounds haven't both resolved. Recomputes on teamId/memberId/range.
+   */
+  private readonly fetchParams = computed<FetchParams | null>(() => {
+    const id = this.teamId();
+    const member = this.memberId();
+    const [from, to] = this.range();
+    if (!from || !to) return null;
+    return { id, from: this.fmt(from), to: this.fmt(to), member: member ?? undefined };
+  });
+
   constructor() {
     // Seed the range from initialFrom/initialTo (print route query params) once
     // both inputs have resolved. Runs before the fetch effect reads range().
@@ -109,16 +130,28 @@ export class TeamStatsComponent {
       this.range.set([from, to]);
     });
 
-    // Refetch whenever team, member, or range changes.
-    effect(() => {
-      const id = this.teamId();
-      const member = this.memberId();
-      const [from, to] = this.range();
-      if (!from || !to) return;
-      // untracked: team/member/range are the only intended triggers; the fetch
-      // data path must not register extra deps.
-      untracked(() => this.fetch(id, this.fmt(from), this.fmt(to), member ?? undefined));
-    });
+    // Refetch whenever team, member, or range changes. A data stream (not a
+    // side-effecting effect): distinctUntilChanged dedups the [id, from, to,
+    // member] tuple and switchMap cancels a stale request if any of them change
+    // mid-flight, so overlapping responses can never land out of order.
+    toObservable(this.fetchParams)
+      .pipe(
+        filter((p): p is FetchParams => p !== null),
+        distinctUntilChanged(
+          (a, b) => a.id === b.id && a.from === b.from && a.to === b.to && a.member === b.member,
+        ),
+        tap(() => this.loading.set(true)),
+        switchMap((p) =>
+          this.teamsService
+            .teamsStatsRetrieve({ id: p.id, from: p.from, member: p.member, to: p.to })
+            .pipe(catchError(() => of(null))),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((stats) => {
+        this.stats.set(stats);
+        this.loading.set(false);
+      });
   }
 
   /** Parse a YYYY-MM-DD string into a local-time Date, or null if invalid. */
@@ -142,23 +175,6 @@ export class TeamStatsComponent {
     const m = `${d.getMonth() + 1}`.padStart(2, '0');
     const day = `${d.getDate()}`.padStart(2, '0');
     return `${y}-${m}-${day}`;
-  }
-
-  private fetch(id: number, from: string, to: string, member?: number): void {
-    this.loading.set(true);
-    this.teamsService
-      .teamsStatsRetrieve({ id, from, member, to })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (s) => {
-          this.stats.set(s);
-          this.loading.set(false);
-        },
-        error: () => {
-          this.stats.set(null);
-          this.loading.set(false);
-        },
-      });
   }
 
   protected setPreset(weeks: number | 'all'): void {

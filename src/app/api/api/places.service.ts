@@ -22,8 +22,6 @@ import { PaginatedPlaceList } from '../model/paginated-place-list';
 import { PatchedPlace } from '../model/patched-place';
 // @ts-ignore
 import { Place } from '../model/place';
-// @ts-ignore
-import { PlaceRequest } from '../model/place-request';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -63,9 +61,9 @@ export class PlacesService extends BaseService implements PlacesServiceInterface
     public placesCreate(requestParameters: PlacesCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Place>>;
     public placesCreate(requestParameters: PlacesCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Place>>;
     public placesCreate(requestParameters: PlacesCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const placeRequest = requestParameters?.placeRequest;
-        if (placeRequest === null || placeRequest === undefined) {
-            throw new Error('Required parameter placeRequest was null or undefined when calling placesCreate.');
+        const place = requestParameters?.place;
+        if (place === null || place === undefined) {
+            throw new Error('Required parameter place was null or undefined when calling placesCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -112,7 +110,7 @@ export class PlacesService extends BaseService implements PlacesServiceInterface
         return this.httpClient.request<Place>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: placeRequest,
+                body: place,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -124,8 +122,8 @@ export class PlacesService extends BaseService implements PlacesServiceInterface
     }
 
     /**
-     * Delete a place (manager only)
-     * Hard-deletes the venue. Events referencing it keep their free-text &#x60;location&#x60; (their &#x60;place&#x60; FK is SET_NULL).
+     * Delete a place (manager of a linked team)
+     * Hard-deletes the venue across all teams that linked it. Events referencing it keep their free-text location (place FK is SET_NULL).
      * @endpoint delete /api/v1/places/{id}/
      * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
@@ -304,8 +302,8 @@ export class PlacesService extends BaseService implements PlacesServiceInterface
     }
 
     /**
-     * Patch a place (manager only)
-     * CRUD on the managed team venue (Lieu).  Read: any strict member of the place\&#39;s team. Write (create/update/delete): owner or manager of the team only.
+     * Patch a place (manager of a linked team)
+     * CRUD on the shared, sport-scoped venue pool (Lieu).  Read: members see places linked to their teams, or a whole sport\&#39;s pool via ?sport. Write: create links a new place to a team the requester manages; update/delete require managing a team the place is linked to.
      * @endpoint patch /api/v1/places/{id}/
      * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
@@ -379,7 +377,7 @@ export class PlacesService extends BaseService implements PlacesServiceInterface
 
     /**
      * Retrieve a place
-     * CRUD on the managed team venue (Lieu).  Read: any strict member of the place\&#39;s team. Write (create/update/delete): owner or manager of the team only.
+     * CRUD on the shared, sport-scoped venue pool (Lieu).  Read: members see places linked to their teams, or a whole sport\&#39;s pool via ?sport. Write: create links a new place to a team the requester manages; update/delete require managing a team the place is linked to.
      * @endpoint get /api/v1/places/{id}/
      * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
@@ -439,8 +437,8 @@ export class PlacesService extends BaseService implements PlacesServiceInterface
     }
 
     /**
-     * Update a place (manager only)
-     * CRUD on the managed team venue (Lieu).  Read: any strict member of the place\&#39;s team. Write (create/update/delete): owner or manager of the team only.
+     * Update a place (manager of a linked team)
+     * CRUD on the shared, sport-scoped venue pool (Lieu).  Read: members see places linked to their teams, or a whole sport\&#39;s pool via ?sport. Write: create links a new place to a team the requester manages; update/delete require managing a team the place is linked to.
      * @endpoint put /api/v1/places/{id}/
      * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
@@ -455,9 +453,9 @@ export class PlacesService extends BaseService implements PlacesServiceInterface
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling placesUpdate.');
         }
-        const placeRequest = requestParameters?.placeRequest;
-        if (placeRequest === null || placeRequest === undefined) {
-            throw new Error('Required parameter placeRequest was null or undefined when calling placesUpdate.');
+        const place = requestParameters?.place;
+        if (place === null || place === undefined) {
+            throw new Error('Required parameter place was null or undefined when calling placesUpdate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -504,7 +502,7 @@ export class PlacesService extends BaseService implements PlacesServiceInterface
         return this.httpClient.request<Place>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: placeRequest,
+                body: place,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

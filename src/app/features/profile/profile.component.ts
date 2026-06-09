@@ -1,11 +1,13 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   OnInit,
   computed,
   inject,
   signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -80,6 +82,7 @@ export class ProfileComponent implements OnInit {
   private readonly languageService = inject(LanguageService);
   private readonly transloco = inject(TranslocoService);
   private readonly messageService = inject(MessageService);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly languages = AVAILABLE_LANGUAGES;
 
@@ -140,22 +143,28 @@ export class ProfileComponent implements OnInit {
     if (current) {
       this.hydrate(current);
     } else {
-      this.authService.fetchMe().subscribe({
-        next: (me) => this.hydrate(me),
-      });
+      this.authService
+        .fetchMe()
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (me) => this.hydrate(me),
+        });
     }
     this.loadPreferences();
   }
 
   private loadPreferences(): void {
     this.prefsLoading.set(true);
-    this.notificationsApi.notificationsPreferencesRetrieve().subscribe({
-      next: (rows) => {
-        this.prefs.set(rows);
-        this.prefsLoading.set(false);
-      },
-      error: () => this.prefsLoading.set(false),
-    });
+    this.notificationsApi
+      .notificationsPreferencesRetrieve()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (rows) => {
+          this.prefs.set(rows);
+          this.prefsLoading.set(false);
+        },
+        error: () => this.prefsLoading.set(false),
+      });
   }
 
   protected toggleChannel(index: number, channel: 'in_app' | 'email', value: boolean): void {
@@ -174,6 +183,7 @@ export class ProfileComponent implements OnInit {
     }));
     this.notificationsApi
       .notificationsPreferencesUpdate({ notificationPreferenceUpdate: { preferences } })
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (rows) => {
           this.prefs.set(rows);
@@ -201,7 +211,10 @@ export class ProfileComponent implements OnInit {
   protected downloadMyData(): void {
     if (this.exporting()) return;
     this.exporting.set(true);
-    this.meService.meExportRetrieve().subscribe({
+    this.meService
+      .meExportRetrieve()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: (data) => {
         try {
           const blob = new Blob([JSON.stringify(data, null, 2)], {
@@ -255,7 +268,10 @@ export class ProfileComponent implements OnInit {
       return;
     }
     this.calendarRotating.set(true);
-    this.meService.meCalendarTokenRotate().subscribe({
+    this.meService
+      .meCalendarTokenRotate()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: (res) => {
         this.calendarToken.set(res.calendar_token);
         const current = this.user();
@@ -312,7 +328,10 @@ export class ProfileComponent implements OnInit {
       weekly_recap_opt_in: value.weekly_recap_opt_in,
     };
 
-    this.meService.mePartialUpdate({ patchedMe: payload }).subscribe({
+    this.meService
+      .mePartialUpdate({ patchedMe: payload })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: (updated) => {
         const previousLang = this.transloco.getActiveLang() as LanguageCode;
         if (value.language !== previousLang) {
@@ -387,7 +406,10 @@ export class ProfileComponent implements OnInit {
       current_password: value.current_password,
       new_password: value.new_password,
     };
-    this.authApi.authPasswordChangeCreate({ passwordChange: payload }).subscribe({
+    this.authApi
+      .authPasswordChangeCreate({ passwordChange: payload })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: () => {
         this.changePwLoading.set(false);
         this.changePwOpen.set(false);
@@ -463,7 +485,10 @@ export class ProfileComponent implements OnInit {
     const payload: AccountDelete = {
       current_password: this.deleteForm.getRawValue().current_password,
     };
-    this.authApi.authAccountDeleteCreate({ accountDelete: payload }).subscribe({
+    this.authApi
+      .authAccountDeleteCreate({ accountDelete: payload })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: () => {
         this.deleteLoading.set(false);
         this.deleteOpen.set(false);

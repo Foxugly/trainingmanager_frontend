@@ -71,6 +71,8 @@
     "detail": {
       "regenerate": "Regenerate session",
       "regenerate_past_blocked": "Cannot regenerate a past session.",
+      "load_failed": "Could not load the session. Please try again.",
+      "team_load_failed": "Could not load this session's team.",
       "not_found": "Session not found",
       "training_blocks": "Training blocks",
       "block_label": "Block",
@@ -238,7 +240,8 @@
       "save": "Save",
       "saved": "Session saved",
       "errors": {
-        "time_range": "End time must be after start time."
+        "time_range": "End time must be after start time.",
+        "load_programs_failed": "Could not load programs. Please try again."
       },
       "tab_visibility": "Visibility",
       "vis_distance": "Distance",
@@ -798,6 +801,8 @@
     "inactive": "Inactive",
     "confirm_deactivate": "Deactivate this item?",
     "update_failed": "Update failed.",
+    "load_failed": "Loading failed. Please try again.",
+    "retry": "Retry",
     "opens_new_tab": "Opens in a new tab",
     "entity": {
       "team": "Team",

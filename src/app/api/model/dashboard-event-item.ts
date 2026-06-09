@@ -11,7 +11,7 @@ import { DashboardEvent } from './dashboard-event';
 
 
 /**
- * An event row with its denormalized team/program names.
+ * An event row with its denormalized team/program names (no client join).
  */
 export interface DashboardEventItem { 
     event: DashboardEvent;

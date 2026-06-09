@@ -338,7 +338,7 @@ export interface TeamsServiceInterface {
 
     /**
      * Team logo image (public)
-     * Returns the team\&#39;s logo as a binary image, decoded from the stored base64 data-URL. Public (no auth); 404 when the team has no logo. The list and detail expose this URL as &#x60;logo_url&#x60; instead of inlining the base64.
+     * Returns the team\&#39;s logo as a binary image, decoded from the stored base64 data-URL. Public (no auth) so it can be used directly as an &lt;img&gt; src; returns 404 when the team has no logo. The team list and detail expose this URL as &#x60;logo_url&#x60; instead of inlining the base64.
      * @endpoint get /api/v1/teams/{id}/logo/
 * @param requestParameters
      */
@@ -610,7 +610,7 @@ export interface TeamsServiceInterface {
 
     /**
      * Read the team\&#39;s weekly training template
-     * Returns the team\&#39;s reusable weekly training template: the list of weekly slots (weekday Monday&#x3D;0…Sunday&#x3D;6 + hour_start/hour_end), the default pool/venue, and the default season dates. Any member of the team may read it; non-members get 404.
+     * Returns the team\&#39;s reusable weekly training template: the list of weekly slots (weekday Monday&#x3D;0…Sunday&#x3D;6 + hour_start/hour_end), the default pool/venue, and the default season dates. Any member of the team (owner, manager, or active athlete) may read it; non-members get 404. Read-only: slots are written via the per-slot CRUD under &#x60;teams/{id}/training-slots/&#x60;.
      * @endpoint get /api/v1/teams/{id}/training-template/
 * @param requestParameters
      */

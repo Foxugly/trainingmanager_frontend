@@ -3,7 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { of } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ProgramsService } from '../../../api/api/programs.service';
 import { TeamsService } from '../../../api/api/teams.service';
@@ -40,6 +41,12 @@ const ownedTeam: Team = {
   is_active: true,
   is_public: false,
   attendance_statuses: [],
+  level: null,
+  default_pool: '',
+  places: [],
+  default_place: null,
+  equipment: [],
+  logo_url: null,
   created_at: '2026-04-01T00:00:00Z',
   updated_at: '2026-04-01T00:00:00Z',
 };
@@ -98,6 +105,7 @@ describe('ProgramsListComponent', () => {
   let component: ProgramsListComponent;
   let serviceMock: { programsList: ReturnType<typeof vi.fn> };
   let teamsMock: { teamsList: ReturnType<typeof vi.fn> };
+  let messageMock: { add: ReturnType<typeof vi.fn> };
   let userSig: ReturnType<typeof signal<Me | null>>;
 
   const access = (c: ProgramsListComponent) => c as unknown as ProtectedFields;
@@ -108,6 +116,7 @@ describe('ProgramsListComponent', () => {
     user?: CustomUserPublic | null;
     isStaff?: boolean;
     teams?: Team[];
+    teamsListError?: boolean;
   }) {
     const teamFilter = opts?.teamFilter ?? null;
     const results = opts?.results ?? programs;
@@ -120,8 +129,11 @@ describe('ProgramsListComponent', () => {
       programsList: vi.fn().mockReturnValue(of({ count: results.length, results })),
     };
     teamsMock = {
-      teamsList: vi.fn().mockReturnValue(of({ count: teams.length, results: teams })),
+      teamsList: opts?.teamsListError
+        ? vi.fn().mockReturnValue(throwError(() => new Error('boom')))
+        : vi.fn().mockReturnValue(of({ count: teams.length, results: teams })),
     };
+    messageMock = { add: vi.fn() };
     const meLike = user ? ({ ...(user as object), is_staff: isStaff } as Me) : null;
     userSig = signal<Me | null>(meLike);
 
@@ -138,6 +150,7 @@ describe('ProgramsListComponent', () => {
         provideRouter([]),
         { provide: ProgramsService, useValue: serviceMock },
         { provide: TeamsService, useValue: teamsMock },
+        { provide: MessageService, useValue: messageMock },
         { provide: AuthService, useValue: { currentUser: userSig.asReadonly() } },
       ],
     })
@@ -206,5 +219,14 @@ describe('ProgramsListComponent', () => {
   it('canShowArchivedToggle is false for member-only non-staff users', async () => {
     await setup({ user: memberUser, teams: [memberOnlyTeam], isStaff: false });
     expect(access(component).canShowArchivedToggle()).toBe(false);
+  });
+
+  it('toasts a load error when loading manager team ids fails', async () => {
+    await setup({ teamsListError: true });
+    expect(messageMock.add).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'error' }),
+    );
+    // canCreate silently stays false, but the failure is now surfaced.
+    expect(access(component).canCreate()).toBe(false);
   });
 });

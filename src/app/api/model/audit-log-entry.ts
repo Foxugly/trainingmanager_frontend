@@ -11,7 +11,7 @@ import { ActionEnum } from './action-enum';
 
 
 /**
- * Read-only view of an audit log entry for coaches.  ``action_display`` is the localized human label for the stable ``action`` code. All fields are read-only — the log is append-only.
+ * Read-only view of an audit log entry for coaches.  ``action_display`` is the localized human label for the stable ``action`` code. All fields are read-only — the log is append-only and only written via ``audit.services.record``.
  */
 export interface AuditLogEntry { 
     readonly id: number;
@@ -20,13 +20,16 @@ export interface AuditLogEntry {
      */
     readonly actor: number | null;
     /**
-     * Snapshot of the actor\'s username/display at the time.
+     * Snapshot of the actor\'s username/display at the time. Survives actor deletion or anonymization (when the FK is SET_NULL).
      */
     readonly actor_label: string;
+    /**
+     * Stable code identifying the audited action.  * `member_anonymized` - Member anonymized * `member_removed` - Member removed from team * `account_deleted` - Account deleted * `session_shared` - Session shared publicly * `session_unshared` - Session sharing disabled * `attachment_deleted` - Attachment deleted * `team_config_updated` - Team configuration updated
+     */
     readonly action: ActionEnum;
     readonly action_display: string;
     /**
-     * Team the action is scoped to. NULL = not team-scoped.
+     * Team the action is scoped to (used for read scoping). NULL = not team-scoped, e.g. an account self-delete.
      */
     readonly team: number | null;
     /**
@@ -34,7 +37,7 @@ export interface AuditLogEntry {
      */
     readonly target_repr: string;
     /**
-     * Small structured extra context.
+     * Small structured extra context (no unnecessary PII).
      */
     readonly metadata: any | null;
     readonly created_at: string;
