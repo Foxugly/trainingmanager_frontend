@@ -16,7 +16,6 @@ const member: Member = {
   phonenumber: null,
   teams: [],
   user: null as never,
-  user_id: null,
   created_at: '2026-04-29T00:00:00Z',
   updated_at: '2026-04-29T00:00:00Z',
 };
@@ -65,11 +64,11 @@ describe('MemberMembershipService', () => {
     });
 
     expect(membersMock.membersCreate).toHaveBeenCalledWith({
-      member: { firstname: 'Mike', lastname: 'Doe' },
+      memberRequest: { firstname: 'Mike', lastname: 'Doe' },
     });
     expect(teamsMock.teamsMembershipsCreate).toHaveBeenCalledWith({
       teamPk: 5,
-      teamMembership: { member: 42 },
+      teamMembershipRequest: { member: 42 },
     });
     expect(result.member.id).toBe(42);
     expect(result.membership.id).toBe(7);

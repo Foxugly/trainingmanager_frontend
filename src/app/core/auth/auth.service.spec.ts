@@ -67,7 +67,7 @@ describe('AuthService', () => {
     const emitted = await new Promise<Me>((resolve) => service.login('alice', 'pw').subscribe(resolve));
 
     expect(apiAuth.authTokenCreate).toHaveBeenCalledWith({
-      verifiedTokenObtainPair: {
+      verifiedTokenObtainPairRequest: {
         username: 'alice',
         password: 'pw',
         remember: false,
@@ -116,7 +116,7 @@ describe('AuthService', () => {
     await new Promise((resolve) => service.refresh().subscribe(resolve));
 
     expect(apiAuth.authTokenRefreshCreate).toHaveBeenCalledWith({
-      tokenRefresh: { refresh: 'old-refresh' },
+      tokenRefreshRequest: { refresh: 'old-refresh' },
     });
     expect(tokenStorage.getAccess()).toBe('new-access');
   });
@@ -175,7 +175,7 @@ describe('AuthService', () => {
     );
 
     expect(apiAuth.authTokenCreate).toHaveBeenCalledWith({
-      verifiedTokenObtainPair: {
+      verifiedTokenObtainPairRequest: {
         username: 'alice',
         password: 'pw',
         remember: true,
@@ -195,7 +195,7 @@ describe('AuthService', () => {
     );
 
     expect(apiAuth.authPasswordResetCreate).toHaveBeenCalledWith({
-      passwordResetRequest: {
+      passwordResetRequestRequest: {
         email: 'a@b.com',
         turnstile_token: 'tok',
       },
@@ -214,7 +214,7 @@ describe('AuthService', () => {
     );
 
     expect(apiAuth.authPasswordResetConfirmCreate).toHaveBeenCalledWith({
-      passwordResetConfirm: {
+      passwordResetConfirmRequest: {
         key: '7-tok',
         new_password: 'longenough',
       },

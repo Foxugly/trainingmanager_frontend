@@ -94,7 +94,7 @@ describe('LanguageService', () => {
 
     expect(translocoMock.setActiveLang).toHaveBeenCalledWith('nl');
     expect(service.activeLang()).toBe('nl');
-    expect(meMock.mePartialUpdate).toHaveBeenCalledWith({ patchedMe: { language: 'nl' } });
+    expect(meMock.mePartialUpdate).toHaveBeenCalledWith({ patchedMeRequest: { language: 'nl' } });
     expect(authMock.setCurrentUser).toHaveBeenCalledWith(updatedMe);
     expect(emitted).toEqual(updatedMe);
   });

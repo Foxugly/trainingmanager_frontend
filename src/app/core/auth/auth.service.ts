@@ -4,19 +4,19 @@ import { Observable, catchError, map, of, switchMap, tap, throwError } from 'rxj
 import { TokenStorage } from './token.storage';
 import { AuthService as ApiAuthService } from '../../api/api/auth.service';
 import { MeService } from '../../api/api/me.service';
-import { EmailConfirm } from '../../api/model/email-confirm';
-import { EmailResend } from '../../api/model/email-resend';
-import { MagicLinkExchangeRequest } from '../../api/model/magic-link-exchange-request';
-import { MagicLinkRequest } from '../../api/model/magic-link-request';
+import { EmailConfirmRequest } from '../../api/model/email-confirm-request';
+import { EmailResendRequest } from '../../api/model/email-resend-request';
+import { MagicLinkExchangeRequestRequest } from '../../api/model/magic-link-exchange-request-request';
+import { MagicLinkRequestRequest } from '../../api/model/magic-link-request-request';
 import { MagicLinkRequestResponse } from '../../api/model/magic-link-request-response';
 import { Me } from '../../api/model/me';
-import { PasswordResetConfirm } from '../../api/model/password-reset-confirm';
+import { PasswordResetConfirmRequest } from '../../api/model/password-reset-confirm-request';
 import { PasswordResetConfirmResponse } from '../../api/model/password-reset-confirm-response';
 import { PasswordResetRequest } from '../../api/model/password-reset-request';
 import { PasswordResetRequestResponse } from '../../api/model/password-reset-request-response';
 import { Register } from '../../api/model/register';
 import { TokenRefresh } from '../../api/model/token-refresh';
-import { VerifiedTokenObtainPair } from '../../api/model/verified-token-obtain-pair';
+import { VerifiedTokenObtainPairRequest } from '../../api/model/verified-token-obtain-pair-request';
 
 export interface RegisterResponse {
   readonly detail: string;
@@ -63,8 +63,8 @@ export class AuthService {
   }
 
   login(username: string, password: string, remember = false): Observable<Me> {
-    const payload: VerifiedTokenObtainPair = { username, password, remember };
-    return this.apiAuth.authTokenCreate({ verifiedTokenObtainPair: payload }).pipe(
+    const payload: VerifiedTokenObtainPairRequest = { username, password, remember };
+    return this.apiAuth.authTokenCreate({ verifiedTokenObtainPairRequest: payload }).pipe(
       tap((tokens) => this.tokenStorage.setTokens(tokens.access, tokens.refresh)),
       switchMap(() => this.fetchMe()),
     );
@@ -86,8 +86,8 @@ export class AuthService {
     if (!refreshToken) {
       return throwError(() => new Error('NO_REFRESH_TOKEN'));
     }
-    const payload = { refresh: refreshToken } as unknown as TokenRefresh;
-    return this.apiAuth.authTokenRefreshCreate({ tokenRefresh: payload }).pipe(
+    const payload = { refresh: refreshToken };
+    return this.apiAuth.authTokenRefreshCreate({ tokenRefreshRequest: payload }).pipe(
       tap((tokens) => {
         if (tokens.access) {
           this.tokenStorage.setAccess(tokens.access);
@@ -118,29 +118,29 @@ export class AuthService {
   }
 
   register(payload: Register): Observable<RegisterResponse> {
-    return this.apiAuth.authRegisterCreate({ register: payload }) as unknown as Observable<RegisterResponse>;
+    return this.apiAuth.authRegisterCreate({ registerRequest: payload }) as unknown as Observable<RegisterResponse>;
   }
 
   confirmEmail(key: string): Observable<Me> {
-    const payload: EmailConfirm = { key };
-    return (this.apiAuth.authEmailConfirmCreate({ emailConfirm: payload }) as unknown as Observable<EmailConfirmResponse>).pipe(
+    const payload: EmailConfirmRequest = { key };
+    return (this.apiAuth.authEmailConfirmCreate({ emailConfirmRequest: payload }) as unknown as Observable<EmailConfirmResponse>).pipe(
       switchMap((res) => this.loginWithTokens(res.access, res.refresh)),
     );
   }
 
   resendEmail(email: string): Observable<EmailResendResponse> {
-    const payload: EmailResend = { email };
-    return this.apiAuth.authEmailResendCreate({ emailResend: payload }) as unknown as Observable<EmailResendResponse>;
+    const payload: EmailResendRequest = { email };
+    return this.apiAuth.authEmailResendCreate({ emailResendRequest: payload }) as unknown as Observable<EmailResendResponse>;
   }
 
   requestPasswordReset(payload: PasswordResetRequest): Observable<PasswordResetRequestResponse> {
-    return this.apiAuth.authPasswordResetCreate({ passwordResetRequest: payload });
+    return this.apiAuth.authPasswordResetCreate({ passwordResetRequestRequest: payload });
   }
 
   confirmPasswordReset(key: string, newPassword: string): Observable<Me> {
-    const payload: PasswordResetConfirm = { key, new_password: newPassword };
+    const payload: PasswordResetConfirmRequest = { key, new_password: newPassword };
     return this.apiAuth
-      .authPasswordResetConfirmCreate({ passwordResetConfirm: payload })
+      .authPasswordResetConfirmCreate({ passwordResetConfirmRequest: payload })
       .pipe(switchMap((res) => this.loginWithTokens(res.access, res.refresh)));
   }
 
@@ -149,8 +149,8 @@ export class AuthService {
    * the same body (no user enumeration); the caller shows a neutral message.
    */
   requestMagicLink(email: string): Observable<MagicLinkRequestResponse> {
-    const payload: MagicLinkRequest = { email };
-    return this.apiAuth.authMagicLinkRequestCreate({ magicLinkRequest: payload });
+    const payload: MagicLinkRequestRequest = { email };
+    return this.apiAuth.authMagicLinkRequestCreate({ magicLinkRequestRequest: payload });
   }
 
   /**
@@ -159,9 +159,9 @@ export class AuthService {
    * state is indistinguishable from a regular sign-in.
    */
   exchangeMagicLink(token: string): Observable<Me> {
-    const payload: MagicLinkExchangeRequest = { token };
+    const payload: MagicLinkExchangeRequestRequest = { token };
     return this.apiAuth
-      .authMagicLinkExchangeCreate({ magicLinkExchangeRequest: payload })
+      .authMagicLinkExchangeCreate({ magicLinkExchangeRequestRequest: payload })
       .pipe(switchMap((res) => this.loginWithTokens(res.access, res.refresh)));
   }
 }

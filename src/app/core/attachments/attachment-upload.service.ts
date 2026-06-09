@@ -33,7 +33,7 @@ export class AttachmentUploadService {
   ): Promise<Attachment> {
     const presign = await firstValueFrom(
       this.attachments.attachmentsPresignCreate({
-        presignUploadRequest: {
+        presignUploadRequestRequest: {
           target_type: targetType as TargetTypeEnum,
           target_id: targetId,
           filename: file.name,

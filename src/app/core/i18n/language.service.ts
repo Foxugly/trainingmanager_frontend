@@ -4,7 +4,7 @@ import { PrimeNG } from 'primeng/config';
 import { Observable, catchError, tap, throwError } from 'rxjs';
 import { LanguageEnum } from '../../api/model/language-enum';
 import { Me } from '../../api/model/me';
-import { PatchedMe } from '../../api/model/patched-me';
+import { PatchedMeRequest } from '../../api/model/patched-me-request';
 import { MeService } from '../../api/api/me.service';
 import { AuthService } from '../auth/auth.service';
 import { LanguageCode } from './available-languages';
@@ -47,8 +47,8 @@ export class LanguageService {
     const previous = this._activeLang();
     this.applyToTranslocoOnly(code);
 
-    const payload: PatchedMe = { language: code as LanguageEnum };
-    return this.meService.mePartialUpdate({ patchedMe: payload }).pipe(
+    const payload: PatchedMeRequest = { language: code as LanguageEnum };
+    return this.meService.mePartialUpdate({ patchedMeRequest: payload }).pipe(
       tap((updated) => this.authService.setCurrentUser(updated)),
       catchError((err) => {
         this.applyToTranslocoOnly(previous);
