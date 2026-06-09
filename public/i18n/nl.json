@@ -798,6 +798,8 @@
     }
   },
   "common": {
+    "restore": "Herstellen",
+    "skip_to_content": "Naar inhoud gaan",
     "print": "Afdrukken",
     "save": "Opslaan",
     "cancel": "Annuleren",

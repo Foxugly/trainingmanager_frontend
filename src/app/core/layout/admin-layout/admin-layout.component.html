@@ -32,7 +32,9 @@
       </a>
     </nav>
   </aside>
-  <main class="flex-1 p-6 overflow-x-auto">
+  <!-- Not a <main>: this shell nests inside MainLayout's <main>; a second one
+       would be an invalid duplicate landmark. A labelled <section> instead. -->
+  <section class="flex-1 p-6 overflow-x-auto" [attr.aria-label]="'admin.title' | transloco">
     <router-outlet />
-  </main>
+  </section>
 </div>

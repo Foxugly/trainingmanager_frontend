@@ -798,6 +798,8 @@
     }
   },
   "common": {
+    "restore": "Ripristina",
+    "skip_to_content": "Vai al contenuto",
     "print": "Stampa",
     "save": "Salva",
     "cancel": "Annulla",
