@@ -33,10 +33,10 @@ import { CustomUserPublic } from '../../../api/model/custom-user-public';
 import { JoinRequestPolicyEnum } from '../../../api/model/join-request-policy-enum';
 import { LanguageEnum } from '../../../api/model/language-enum';
 import { Level } from '../../../api/model/level';
-import { PatchedTeam } from '../../../api/model/patched-team';
+import { PatchedTeamRequest } from '../../../api/model/patched-team-request';
 import { Sport } from '../../../api/model/sport';
 import { Team } from '../../../api/model/team';
-import { SportTrainingTypeWriteTrainingTypeEnum } from '../../../api/model/sport-training-type-write';
+import { SportTrainingTypeWriteRequestTrainingTypeEnum } from '../../../api/model/sport-training-type-write-request';
 import { TopicCreationEnum } from '../../../api/model/topic-creation-enum';
 import { VisibilityMode } from '../../../api/model/visibility-mode';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -207,7 +207,7 @@ export class TeamsFormComponent implements OnInit {
   protected readonly equipmentLoading = signal(false);
 
   protected readonly patchActive = (id: number, value: boolean) =>
-    this.teamsService.teamsPartialUpdate({ id, patchedTeam: { is_active: value } as PatchedTeam });
+    this.teamsService.teamsPartialUpdate({ id, patchedTeamRequest: { is_active: value } });
 
   protected readonly activeLabels = computed<ActiveToggleLabels>(() => ({
     active: this.transloco.translate('common.active'),
@@ -271,7 +271,7 @@ export class TeamsFormComponent implements OnInit {
   /** Map of sport id → its training-type override (null = inherit the sport's
    *  default). Seeded from the loaded team's sports[].training_type in edit
    *  mode; written to the team payload as sport_training_types on submit. */
-  protected readonly sportTrainingTypes = signal<Map<number, SportTrainingTypeWriteTrainingTypeEnum | null>>(new Map());
+  protected readonly sportTrainingTypes = signal<Map<number, SportTrainingTypeWriteRequestTrainingTypeEnum | null>>(new Map());
 
   /** Per-sport training-type select options, re-translated on language change.
    *  The first option (inherit) maps to null. */
@@ -280,26 +280,26 @@ export class TeamsFormComponent implements OnInit {
     return [
       {
         label: this.transloco.translate('teams.form.training_type_inherit'),
-        value: null as SportTrainingTypeWriteTrainingTypeEnum | null,
+        value: null as SportTrainingTypeWriteRequestTrainingTypeEnum | null,
       },
       {
         label: this.transloco.translate('events.training.type_structured'),
-        value: SportTrainingTypeWriteTrainingTypeEnum.Structured as SportTrainingTypeWriteTrainingTypeEnum | null,
+        value: SportTrainingTypeWriteRequestTrainingTypeEnum.Structured as SportTrainingTypeWriteRequestTrainingTypeEnum | null,
       },
       {
         label: this.transloco.translate('events.training.type_freeform'),
-        value: SportTrainingTypeWriteTrainingTypeEnum.Freeform as SportTrainingTypeWriteTrainingTypeEnum | null,
+        value: SportTrainingTypeWriteRequestTrainingTypeEnum.Freeform as SportTrainingTypeWriteRequestTrainingTypeEnum | null,
       },
     ];
   });
 
   /** Current override for a sport (null = inherit), read by the template select. */
-  protected sportTrainingType(sportId: number): SportTrainingTypeWriteTrainingTypeEnum | null {
+  protected sportTrainingType(sportId: number): SportTrainingTypeWriteRequestTrainingTypeEnum | null {
     return this.sportTrainingTypes().get(sportId) ?? null;
   }
 
   /** Set (or clear, when value is null) a sport's training-type override. */
-  protected setSportTrainingType(sportId: number, value: SportTrainingTypeWriteTrainingTypeEnum | null): void {
+  protected setSportTrainingType(sportId: number, value: SportTrainingTypeWriteRequestTrainingTypeEnum | null): void {
     this.sportTrainingTypes.update((cur) => {
       const next = new Map(cur);
       next.set(sportId, value);
@@ -399,11 +399,11 @@ export class TeamsFormComponent implements OnInit {
             }
             this.teamSportIds.set(sportIds);
             // Seed the per-sport training-type overrides from the read model.
-            const overrides = new Map<number, SportTrainingTypeWriteTrainingTypeEnum | null>();
+            const overrides = new Map<number, SportTrainingTypeWriteRequestTrainingTypeEnum | null>();
             for (const s of t.sports ?? []) {
               overrides.set(
                 s.id,
-                (s.training_type as unknown as SportTrainingTypeWriteTrainingTypeEnum | null) ?? null,
+                (s.training_type as unknown as SportTrainingTypeWriteRequestTrainingTypeEnum | null) ?? null,
               );
             }
             this.sportTrainingTypes.set(overrides);
@@ -607,7 +607,7 @@ export class TeamsFormComponent implements OnInit {
       const createPayload = {
         name: value.name,
         sport_ids: value.sport_ids,
-        default_sport_id: value.default_sport_id,
+        default_sport_id: value.default_sport_id ?? undefined,
         sport_training_types: sportTrainingTypes,
         level_id: value.level_id,
         language: value.language as LanguageEnum,
@@ -619,7 +619,7 @@ export class TeamsFormComponent implements OnInit {
         vis_rounds: value.vis_rounds,
       };
       this.teamsService
-        .teamsCreate({ team: createPayload as unknown as Team })
+        .teamsCreate({ teamRequest: createPayload })
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (created) => {
@@ -644,7 +644,7 @@ export class TeamsFormComponent implements OnInit {
         ? [...value.place_ids, defaultPlaceId]
         : value.place_ids;
 
-    const updatePayload: PatchedTeam = {
+    const updatePayload: PatchedTeamRequest = {
       name: value.name,
       sport_ids: value.sport_ids,
       default_sport_id: value.default_sport_id ?? undefined,
@@ -679,7 +679,7 @@ export class TeamsFormComponent implements OnInit {
     };
 
     this.teamsService
-      .teamsPartialUpdate({ id, patchedTeam: updatePayload })
+      .teamsPartialUpdate({ id, patchedTeamRequest: updatePayload })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

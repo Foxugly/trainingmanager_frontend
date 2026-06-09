@@ -7,7 +7,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { JoinMagicService } from '../../../api/api/join-magic.service';
 import { ActionProposedEnum } from '../../../api/model/action-proposed-enum';
 import { JoinMagicCancelledResponseCodeEnum } from '../../../api/model/join-magic-cancelled-response-code-enum';
-import { MagicActionJoinRequestStatusEnum } from '../../../api/model/magic-action-join-request-status-enum';
+import { MagicActionJoinStatusEnum } from '../../../api/model/magic-action-join-status-enum';
 import { TeamJoinRequestMagicActionResponse } from '../../../api/model/team-join-request-magic-action-response';
 import { MagicActionComponent } from './magic-action.component';
 
@@ -24,7 +24,7 @@ function makePreview(
       requester_email: 'alice@example.com',
       message: 'Hi coach',
       requested_at: '2026-05-01T10:00:00Z',
-      status: MagicActionJoinRequestStatusEnum.Pending,
+      status: MagicActionJoinStatusEnum.Pending,
       responded_at: null,
       responded_by: null,
       ...overrides,
@@ -126,7 +126,7 @@ describe('MagicActionComponent', () => {
   it('confirmationCase = accepted_reject_reverse + isReversal=true for accepted+reject+would_change', async () => {
     await setup({
       previewResult: makePreview(
-        { status: MagicActionJoinRequestStatusEnum.Accepted, responded_by: 'bob' },
+        { status: MagicActionJoinStatusEnum.Accepted, responded_by: 'bob' },
         { action_proposed: ActionProposedEnum.Reject, would_change_decision: true },
       ),
     });
@@ -137,7 +137,7 @@ describe('MagicActionComponent', () => {
 
   it('confirmationCase = accepted_accept_idle, canExecute=false (no-op already accepted)', async () => {
     await setup({
-      previewResult: makePreview({ status: MagicActionJoinRequestStatusEnum.Accepted }),
+      previewResult: makePreview({ status: MagicActionJoinStatusEnum.Accepted }),
     });
     expect(access(component).confirmationCase()).toBe('accepted_accept_idle');
     expect(access(component).canExecute()).toBe(false);
@@ -146,7 +146,7 @@ describe('MagicActionComponent', () => {
   it('confirmationCase = cancelled_any when can_act=false', async () => {
     await setup({
       previewResult: makePreview(
-        { status: MagicActionJoinRequestStatusEnum.Cancelled },
+        { status: MagicActionJoinStatusEnum.Cancelled },
         { can_act: false },
       ),
     });
@@ -156,22 +156,22 @@ describe('MagicActionComponent', () => {
 
   it('execute() POSTs the token and reflects new status from response', async () => {
     magicMock.joinMagicCreate.mockReturnValue(
-      of(makePreview({ status: MagicActionJoinRequestStatusEnum.Accepted, responded_by: 'me' })),
+      of(makePreview({ status: MagicActionJoinStatusEnum.Accepted, responded_by: 'me' })),
     );
     access(component).execute();
     expect(magicMock.joinMagicCreate).toHaveBeenCalledWith({
-      teamJoinRequestMagicActionPost: { token: 'tok-abc' },
+      teamJoinRequestMagicActionPostRequest: { token: 'tok-abc' },
     });
     expect(access(component).executed()).toBe(true);
     expect(access(component).data()?.join_request.status).toBe(
-      MagicActionJoinRequestStatusEnum.Accepted,
+      MagicActionJoinStatusEnum.Accepted,
     );
   });
 
   it('execute() handles 409 by hydrating cancelledSnapshot from the response body', () => {
     const cancelledBody = {
       ...makePreview(
-        { status: MagicActionJoinRequestStatusEnum.Cancelled },
+        { status: MagicActionJoinStatusEnum.Cancelled },
         { can_act: false },
       ),
       code: JoinMagicCancelledResponseCodeEnum.RequestCancelled,
@@ -182,7 +182,7 @@ describe('MagicActionComponent', () => {
     );
     access(component).execute();
     expect(access(component).data()?.join_request.status).toBe(
-      MagicActionJoinRequestStatusEnum.Cancelled,
+      MagicActionJoinStatusEnum.Cancelled,
     );
     expect(access(component).confirmationCase()).toBe('cancelled_any');
   });

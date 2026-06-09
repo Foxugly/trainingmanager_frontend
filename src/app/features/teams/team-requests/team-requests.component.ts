@@ -22,7 +22,7 @@ import { Message } from 'primeng/message';
 import { Textarea } from 'primeng/textarea';
 import { InvitationsService } from '../../../api/api/invitations.service';
 import { JoinRequestsService } from '../../../api/api/join-requests.service';
-import { CreateInvitation } from '../../../api/model/create-invitation';
+import { CreateInvitationRequest } from '../../../api/model/create-invitation-request';
 import { InvitationStatusEnum } from '../../../api/model/invitation-status-enum';
 import { JoinRequestStatusEnum } from '../../../api/model/join-request-status-enum';
 import { TeamInvitation } from '../../../api/model/team-invitation';
@@ -152,7 +152,7 @@ export class TeamRequestsComponent {
     this.joinRequestsService
       .joinRequestsPartialUpdate({
         id: req.id,
-        patchedTeamJoinRequest: { status: JoinRequestStatusEnum.Accepted },
+        patchedTeamJoinRequestRequest: { status: JoinRequestStatusEnum.Accepted },
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -192,7 +192,7 @@ export class TeamRequestsComponent {
     this.joinRequestsService
       .joinRequestsPartialUpdate({
         id: req.id,
-        patchedTeamJoinRequest: {
+        patchedTeamJoinRequestRequest: {
           status: JoinRequestStatusEnum.Rejected,
           ...(message ? { response_message: message } : {}),
         },
@@ -236,14 +236,14 @@ export class TeamRequestsComponent {
     this.inviteFieldErrors.set(null);
 
     const value = this.inviteForm.getRawValue();
-    const payload: CreateInvitation = {
+    const payload: CreateInvitationRequest = {
       team: id,
       email: value.email,
       firstname: value.firstname,
       lastname: value.lastname,
     };
     this.invitationsService
-      .invitationsCreate({ createInvitation: payload })
+      .invitationsCreate({ createInvitationRequest: payload })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

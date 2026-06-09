@@ -146,7 +146,7 @@ describe('TeamRequestsComponent', () => {
     access(component).inviteForm.patchValue({ email: 'a@b.com', firstname: 'A', lastname: 'B' });
     access(component).submitInvite();
     expect(invitationsMock.invitationsCreate).toHaveBeenCalledWith({
-      createInvitation: {
+      createInvitationRequest: {
         team: 4,
         email: 'a@b.com',
         firstname: 'A',
@@ -180,7 +180,7 @@ describe('TeamRequestsComponent', () => {
     access(component).confirmAcceptJoinRequest(joinReq1);
     expect(joinRequestsMock.joinRequestsPartialUpdate).toHaveBeenCalledWith({
       id: 77,
-      patchedTeamJoinRequest: { status: JoinRequestStatusEnum.Accepted },
+      patchedTeamJoinRequestRequest: { status: JoinRequestStatusEnum.Accepted },
     });
     expect(joinRequestsMock.joinRequestsList).toHaveBeenCalledTimes(2);
     expect(membershipsChanged).toHaveBeenCalled();
@@ -193,7 +193,7 @@ describe('TeamRequestsComponent', () => {
     access(component).submitReject();
     expect(joinRequestsMock.joinRequestsPartialUpdate).toHaveBeenCalledWith({
       id: 77,
-      patchedTeamJoinRequest: {
+      patchedTeamJoinRequestRequest: {
         status: JoinRequestStatusEnum.Rejected,
         response_message: 'full team',
       },

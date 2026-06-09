@@ -64,13 +64,13 @@ describe('TeamSlotsEditorComponent', () => {
       teamsTrainingSlotsList: vi.fn().mockReturnValue(of(opts.slots ?? [])),
       teamsTrainingSlotsCreate: vi
         .fn()
-        .mockImplementation((p: { trainingSlot: { place_id?: number | null } }) =>
-          of(echo(100, p.trainingSlot)),
+        .mockImplementation((p: { trainingSlotRequest: { place_id?: number | null } }) =>
+          of(echo(100, p.trainingSlotRequest)),
         ),
       teamsTrainingSlotsPartialUpdate: vi
         .fn()
-        .mockImplementation((p: { id: number; patchedTrainingSlot: { place_id?: number | null } }) =>
-          of(echo(p.id, p.patchedTrainingSlot)),
+        .mockImplementation((p: { id: number; patchedTrainingSlotRequest: { place_id?: number | null } }) =>
+          of(echo(p.id, p.patchedTrainingSlotRequest)),
         ),
       teamsTrainingSlotsDestroy: vi.fn().mockReturnValue(of(undefined)),
     };
@@ -143,7 +143,7 @@ describe('TeamSlotsEditorComponent', () => {
     fillSlot(0, 2, null);
     access(component).confirmSlot(0);
     expect(teamsMock.teamsTrainingSlotsCreate).toHaveBeenCalledTimes(1);
-    const { teamPk, trainingSlot: body } = teamsMock.teamsTrainingSlotsCreate.mock.calls[0][0];
+    const { teamPk, trainingSlotRequest: body } = teamsMock.teamsTrainingSlotsCreate.mock.calls[0][0];
     expect(teamPk).toBe(5);
     expect(body).toMatchObject({ weekday: 2, hour_start: '18:00', hour_end: '19:30', place_id: null });
     expect(access(component).isSlotEditing(0)).toBe(false);
@@ -153,7 +153,7 @@ describe('TeamSlotsEditorComponent', () => {
     access(component).addSlot();
     fillSlot(0, 0, 7);
     access(component).confirmSlot(0);
-    expect(teamsMock.teamsTrainingSlotsCreate.mock.calls[0][0].trainingSlot.place_id).toBe(7);
+    expect(teamsMock.teamsTrainingSlotsCreate.mock.calls[0][0].trainingSlotRequest.place_id).toBe(7);
   });
 
   it('confirmSlot on an existing row PATCHes by id + teamPk', async () => {
@@ -165,7 +165,7 @@ describe('TeamSlotsEditorComponent', () => {
     const {
       id,
       teamPk,
-      patchedTrainingSlot: body,
+      patchedTrainingSlotRequest: body,
     } = teamsMock.teamsTrainingSlotsPartialUpdate.mock.calls[0][0];
     expect(id).toBe(42);
     expect(teamPk).toBe(5);

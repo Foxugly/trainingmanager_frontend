@@ -41,7 +41,6 @@ const team: Team = {
   id: 4,
   name: 'RBP WP Senior',
   sport,
-  sport_id: 1,
   sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null }],
   owner: ownerUser,
   managers: [],
@@ -416,7 +415,7 @@ describe('TeamsDetailComponent', () => {
     access(component).confirmDeactivate();
     expect(serviceMock.teamsPartialUpdate).toHaveBeenCalledWith({
       id: 4,
-      patchedTeam: { is_active: false },
+      patchedTeamRequest: { is_active: false },
     });
     expect(router.navigate).toHaveBeenCalledWith(['/teams']);
   });
@@ -430,7 +429,7 @@ describe('TeamsDetailComponent', () => {
     access(component).patchActive(4, false);
     expect(serviceMock.teamsPartialUpdate).toHaveBeenCalledWith({
       id: 4,
-      patchedTeam: { is_active: false },
+      patchedTeamRequest: { is_active: false },
     });
   });
 
@@ -470,8 +469,7 @@ describe('TeamsDetailComponent', () => {
     );
     access(component).submitJoinRequest();
     expect(joinRequestsMock.joinRequestsCreate).toHaveBeenCalledWith({
-      createJoinRequest: {
-        id: 0,
+      createJoinRequestRequest: {
         team: 4,
         message: 'Hi, swimmer here',
       },
@@ -527,7 +525,7 @@ describe('TeamsDetailComponent', () => {
     access(component).confirmCancelMyRequest();
     expect(joinRequestsMock.joinRequestsPartialUpdate).toHaveBeenCalledWith({
       id: 77,
-      patchedTeamJoinRequest: { status: JoinRequestStatusEnum.Cancelled },
+      patchedTeamJoinRequestRequest: { status: JoinRequestStatusEnum.Cancelled },
     });
     expect(access(component).myPendingRequest()).toBeNull();
   });

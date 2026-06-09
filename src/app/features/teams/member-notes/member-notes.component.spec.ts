@@ -116,7 +116,7 @@ describe('MemberNotesComponent', () => {
     expect(teamsMock.teamsMembersNotesCreate).toHaveBeenCalledWith({
       memberPk: 3,
       teamPk: 7,
-      note: expect.objectContaining({ content: '<p>Nouvelle</p>', visible_to_athlete: true }),
+      noteRequest: expect.objectContaining({ content: '<p>Nouvelle</p>', visible_to_athlete: true }),
     });
     expect(access(component).notes()[0].id).toBe(2);
     expect(access(component).notes().length).toBe(2);
@@ -142,7 +142,7 @@ describe('MemberNotesComponent', () => {
       id: existing.id,
       memberPk: 3,
       teamPk: 7,
-      patchedNote: expect.objectContaining({ content: '<p>MAJ</p>', visible_to_athlete: true }),
+      patchedNoteRequest: expect.objectContaining({ content: '<p>MAJ</p>', visible_to_athlete: true }),
     });
     expect(access(component).notes()[0].visible_to_athlete).toBe(true);
     expect(access(component).editingId()).toBeNull();

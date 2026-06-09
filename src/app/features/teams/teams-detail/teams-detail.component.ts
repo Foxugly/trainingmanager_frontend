@@ -27,9 +27,8 @@ import { Tooltip } from 'primeng/tooltip';
 import { JoinRequestsService } from '../../../api/api/join-requests.service';
 import { MembersService } from '../../../api/api/members.service';
 import { TeamsService } from '../../../api/api/teams.service';
-import { CreateJoinRequest } from '../../../api/model/create-join-request';
+import { CreateJoinRequestRequest } from '../../../api/model/create-join-request-request';
 import { JoinRequestStatusEnum } from '../../../api/model/join-request-status-enum';
-import { PatchedTeam } from '../../../api/model/patched-team';
 import { Team } from '../../../api/model/team';
 import { TeamJoinRequest } from '../../../api/model/team-join-request';
 import { TeamMembership } from '../../../api/model/team-membership';
@@ -121,7 +120,7 @@ export class TeamsDetailComponent implements OnInit {
 
   protected readonly activeValue = signal(false);
   protected readonly patchActive = (id: number, value: boolean) =>
-    this.teamsService.teamsPartialUpdate({ id, patchedTeam: { is_active: value } as PatchedTeam });
+    this.teamsService.teamsPartialUpdate({ id, patchedTeamRequest: { is_active: value } });
   protected readonly activeLabels = computed<ActiveToggleLabels>(() => ({
     active: this.transloco.translate('common.active'),
     inactive: this.transloco.translate('common.inactive'),
@@ -459,13 +458,12 @@ export class TeamsDetailComponent implements OnInit {
     this.submittingJoinRequest.set(true);
     this.joinError.set(null);
     const message = this.joinMessage().trim();
-    const payload: CreateJoinRequest = {
-      id: 0,
+    const payload: CreateJoinRequestRequest = {
       team: teamId,
       ...(message ? { message } : {}),
     };
     this.joinRequestsService
-      .joinRequestsCreate({ createJoinRequest: payload })
+      .joinRequestsCreate({ createJoinRequestRequest: payload })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (created) => {
@@ -550,7 +548,7 @@ export class TeamsDetailComponent implements OnInit {
     this.joinRequestsService
       .joinRequestsPartialUpdate({
         id: req.id,
-        patchedTeamJoinRequest: { status: JoinRequestStatusEnum.Cancelled },
+        patchedTeamJoinRequestRequest: { status: JoinRequestStatusEnum.Cancelled },
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -642,7 +640,7 @@ export class TeamsDetailComponent implements OnInit {
 
     const newManagerIds = [...(t.managers ?? []).map((m) => m.id), memberId];
     this.teamsService
-      .teamsPartialUpdate({ id, patchedTeam: { managers_ids: newManagerIds } })
+      .teamsPartialUpdate({ id, patchedTeamRequest: { managers_ids: newManagerIds } })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (updated) => {
@@ -708,7 +706,7 @@ export class TeamsDetailComponent implements OnInit {
 
   private deactivate(id: number): void {
     this.teamsService
-      .teamsPartialUpdate({ id, patchedTeam: { is_active: false } })
+      .teamsPartialUpdate({ id, patchedTeamRequest: { is_active: false } })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

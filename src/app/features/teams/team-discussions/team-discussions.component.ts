@@ -25,7 +25,7 @@ import { Select } from 'primeng/select';
 import { Tag } from 'primeng/tag';
 import { TeamsService } from '../../../api/api/teams.service';
 import { AudienceEnum } from '../../../api/model/audience-enum';
-import { PatchedTopicMessage } from '../../../api/model/patched-topic-message';
+import { PatchedTopicMessageRequest } from '../../../api/model/patched-topic-message-request';
 import { Team } from '../../../api/model/team';
 import { Topic } from '../../../api/model/topic';
 import { TopicCreationEnum } from '../../../api/model/topic-creation-enum';
@@ -365,10 +365,10 @@ export class TeamDiscussionsComponent {
       title,
       audience,
       allow_athlete_replies: allowReplies,
-    } as unknown as Topic;
+    };
 
     this.teamsService
-      .teamsTopicsCreate({ teamPk: this.teamId(), topic: payload })
+      .teamsTopicsCreate({ teamPk: this.teamId(), topicRequest: payload })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (created) => {
@@ -402,9 +402,13 @@ export class TeamDiscussionsComponent {
     if (!topic || this.isBlankHtml(content) || !this.canReply()) return;
 
     this.sendingReply.set(true);
-    const payload = { content } as unknown as TopicMessage;
+    const payload = { content };
     this.teamsService
-      .teamsTopicsMessagesCreate({ teamPk: this.teamId(), topicPk: topic.id, topicMessage: payload })
+      .teamsTopicsMessagesCreate({
+        teamPk: this.teamId(),
+        topicPk: topic.id,
+        topicMessageRequest: payload,
+      })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (created) => {
@@ -464,13 +468,13 @@ export class TeamDiscussionsComponent {
     this.savingEdit.set(true);
     // Edit the actual topic message via the nested endpoint (author-only); the
     // response carries `edited_at` back.
-    const payload: PatchedTopicMessage = { content };
+    const payload: PatchedTopicMessageRequest = { content };
     this.teamsService
       .teamsTopicsMessagesPartialUpdate({
         id: msg.id,
         teamPk: this.teamId(),
         topicPk: topic.id,
-        patchedTopicMessage: payload,
+        patchedTopicMessageRequest: payload,
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({

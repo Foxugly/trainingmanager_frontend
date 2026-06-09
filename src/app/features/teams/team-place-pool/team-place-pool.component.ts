@@ -230,7 +230,7 @@ export class TeamPlacePoolComponent {
     const address = this.placeAddress().trim() || undefined;
     const payload = { team: teamId, name, address };
     this.placesService
-      .placesCreate({ place: payload as unknown as Place })
+      .placesCreate({ placeRequest: payload })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (created) => {

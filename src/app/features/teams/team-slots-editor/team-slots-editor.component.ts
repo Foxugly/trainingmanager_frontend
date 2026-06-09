@@ -29,7 +29,6 @@ import { Select } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { Tooltip } from 'primeng/tooltip';
 import { TeamsService } from '../../../api/api/teams.service';
-import { PatchedTrainingSlot } from '../../../api/model/patched-training-slot';
 import { Place } from '../../../api/model/place';
 import { TrainingSlot } from '../../../api/model/training-slot';
 import { WeekdayEnum } from '../../../api/model/weekday-enum';
@@ -301,12 +300,12 @@ export class TeamSlotsEditorComponent {
       id == null
         ? this.teamsService.teamsTrainingSlotsCreate({
             teamPk: teamId,
-            trainingSlot: body as unknown as TrainingSlot,
+            trainingSlotRequest: body,
           })
         : this.teamsService.teamsTrainingSlotsPartialUpdate({
             id,
             teamPk: teamId,
-            patchedTrainingSlot: body as unknown as PatchedTrainingSlot,
+            patchedTrainingSlotRequest: body,
           });
 
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({

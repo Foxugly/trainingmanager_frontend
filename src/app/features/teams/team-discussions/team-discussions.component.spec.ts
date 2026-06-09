@@ -206,7 +206,7 @@ describe('TeamDiscussionsComponent', () => {
     access(component).submitNewTopic();
     expect(teamsMock.teamsTopicsCreate).toHaveBeenCalledWith({
       teamPk: 7,
-      topic: expect.objectContaining({ title: 'Sujet A', audience: AudienceEnum.Coaches }),
+      topicRequest: expect.objectContaining({ title: 'Sujet A', audience: AudienceEnum.Coaches }),
     });
   });
 
@@ -217,7 +217,7 @@ describe('TeamDiscussionsComponent', () => {
     access(component).submitNewTopic();
     expect(teamsMock.teamsTopicsCreate).toHaveBeenCalledWith({
       teamPk: 7,
-      topic: expect.objectContaining({ audience: AudienceEnum.Team }),
+      topicRequest: expect.objectContaining({ audience: AudienceEnum.Team }),
     });
   });
 
@@ -273,7 +273,7 @@ describe('TeamDiscussionsComponent', () => {
     expect(teamsMock.teamsTopicsMessagesCreate).toHaveBeenCalledWith({
       teamPk: 7,
       topicPk: 30,
-      topicMessage: expect.objectContaining({ content: 'Bonjour' }),
+      topicMessageRequest: expect.objectContaining({ content: 'Bonjour' }),
     });
     expect(
       access(component)
@@ -386,7 +386,7 @@ describe('TeamDiscussionsComponent', () => {
       id: msg.id,
       teamPk: 7,
       topicPk: 30,
-      patchedTopicMessage: expect.objectContaining({ content: '<p>Edited</p>' }),
+      patchedTopicMessageRequest: expect.objectContaining({ content: '<p>Edited</p>' }),
     });
     const updated = access(component)
       .messages()

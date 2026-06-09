@@ -16,7 +16,7 @@ import { Button } from 'primeng/button';
 import { JoinMagicService } from '../../../api/api/join-magic.service';
 import { ActionProposedEnum } from '../../../api/model/action-proposed-enum';
 import { JoinMagicCancelledResponse } from '../../../api/model/join-magic-cancelled-response';
-import { MagicActionJoinRequestStatusEnum } from '../../../api/model/magic-action-join-request-status-enum';
+import { MagicActionJoinStatusEnum } from '../../../api/model/magic-action-join-status-enum';
 import { TeamJoinRequestMagicActionResponse } from '../../../api/model/team-join-request-magic-action-response';
 
 type MagicErrorState = 'invalid_token' | 'forbidden' | 'not_found' | 'unknown' | null;
@@ -50,7 +50,7 @@ export class MagicActionComponent implements OnInit {
   protected readonly cancelledSnapshot = signal<JoinMagicCancelledResponse | null>(null);
   protected readonly errorState = signal<MagicErrorState>(null);
 
-  protected readonly StatusEnum = MagicActionJoinRequestStatusEnum;
+  protected readonly StatusEnum = MagicActionJoinStatusEnum;
   protected readonly ActionEnum = ActionProposedEnum;
 
   protected readonly confirmationCase = computed<ConfirmationCase | null>(() => {
@@ -61,15 +61,15 @@ export class MagicActionComponent implements OnInit {
     const wouldChange = d.would_change_decision;
     const canAct = d.can_act;
     if (!canAct) return 'cancelled_any';
-    if (status === MagicActionJoinRequestStatusEnum.Cancelled) return 'cancelled_any';
-    if (status === MagicActionJoinRequestStatusEnum.Pending) {
+    if (status === MagicActionJoinStatusEnum.Cancelled) return 'cancelled_any';
+    if (status === MagicActionJoinStatusEnum.Pending) {
       return action === ActionProposedEnum.Accept ? 'pending_accept' : 'pending_reject';
     }
-    if (status === MagicActionJoinRequestStatusEnum.Accepted) {
+    if (status === MagicActionJoinStatusEnum.Accepted) {
       if (action === ActionProposedEnum.Accept) return 'accepted_accept_idle';
       return wouldChange ? 'accepted_reject_reverse' : 'accepted_accept_idle';
     }
-    if (status === MagicActionJoinRequestStatusEnum.Rejected) {
+    if (status === MagicActionJoinStatusEnum.Rejected) {
       if (action === ActionProposedEnum.Reject) return 'rejected_reject_idle';
       return wouldChange ? 'rejected_accept_reverse' : 'rejected_reject_idle';
     }
@@ -128,7 +128,7 @@ export class MagicActionComponent implements OnInit {
     if (!token) return;
     this.executing.set(true);
     this.magicService
-      .joinMagicCreate({ teamJoinRequestMagicActionPost: { token } })
+      .joinMagicCreate({ teamJoinRequestMagicActionPostRequest: { token } })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {

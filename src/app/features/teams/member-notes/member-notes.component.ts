@@ -22,7 +22,8 @@ import { ToggleSwitch } from 'primeng/toggleswitch';
 import { Tooltip } from 'primeng/tooltip';
 import { TeamsService } from '../../../api/api/teams.service';
 import { Note } from '../../../api/model/note';
-import { PatchedNote } from '../../../api/model/patched-note';
+import { NoteRequest } from '../../../api/model/note-request';
+import { PatchedNoteRequest } from '../../../api/model/patched-note-request';
 import { MetaFieldComponent } from '../../../shared/ui/meta-field/meta-field.component';
 import { RichEditorComponent } from '../../../shared/ui/rich-editor/rich-editor.component';
 
@@ -136,7 +137,7 @@ export class MemberNotesComponent {
     const editingId = this.editingId();
 
     if (editingId !== null) {
-      const payload: PatchedNote = {
+      const payload: PatchedNoteRequest = {
         content: value.content,
         visible_to_athlete: value.visible_to_athlete,
       };
@@ -145,7 +146,7 @@ export class MemberNotesComponent {
           id: editingId,
           memberPk: member,
           teamPk: team,
-          patchedNote: payload,
+          patchedNoteRequest: payload,
         })
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
@@ -158,12 +159,12 @@ export class MemberNotesComponent {
       return;
     }
 
-    const note: Note = {
+    const noteRequest: NoteRequest = {
       content: value.content,
       visible_to_athlete: value.visible_to_athlete,
-    } as Note;
+    };
     this.teamsService
-      .teamsMembersNotesCreate({ memberPk: member, teamPk: team, note })
+      .teamsMembersNotesCreate({ memberPk: member, teamPk: team, noteRequest })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (created) => {

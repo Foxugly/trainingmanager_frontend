@@ -156,7 +156,7 @@ describe('TeamPlacePoolComponent', () => {
     access(component).placeName.set('Nouveau');
     access(component).savePlace();
     expect(placesMock.placesCreate).toHaveBeenCalledWith({
-      place: expect.objectContaining({ team: 5, name: 'Nouveau' }),
+      placeRequest: expect.objectContaining({ team: 5, name: 'Nouveau' }),
     });
     expect(pool?.some((p) => p.id === 8)).toBe(true);
     expect(linked).toContain(8);

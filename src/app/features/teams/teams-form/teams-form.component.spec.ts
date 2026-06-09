@@ -347,7 +347,7 @@ describe('TeamsFormComponent', () => {
     access(component).submit();
     expect(teamsMock.teamsCreate).toHaveBeenCalledTimes(1);
     expect(teamsMock.teamsCreate).toHaveBeenCalledWith({
-      team: expect.objectContaining({ level_id: 3, sport_ids: [1], default_sport_id: 1 }),
+      teamRequest: expect.objectContaining({ level_id: 3, sport_ids: [1], default_sport_id: 1 }),
     });
     expect(router.navigate).toHaveBeenCalledWith(['/teams', 42, 'edit']);
   });
@@ -362,7 +362,7 @@ describe('TeamsFormComponent', () => {
     access(component).setSportTrainingType(1, TrainingTypeEnum.Freeform);
     access(component).submit();
     expect(teamsMock.teamsCreate).toHaveBeenCalledWith({
-      team: expect.objectContaining({
+      teamRequest: expect.objectContaining({
         sport_training_types: [{ sport_id: 1, training_type: TrainingTypeEnum.Freeform }],
       }),
     });
@@ -375,7 +375,7 @@ describe('TeamsFormComponent', () => {
     access(component).submit();
     expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith({
       id: 5,
-      patchedTeam: expect.objectContaining({
+      patchedTeamRequest: expect.objectContaining({
         sport_training_types: [{ sport_id: 1, training_type: TrainingTypeEnum.Freeform }],
       }),
     });
@@ -388,7 +388,7 @@ describe('TeamsFormComponent', () => {
     expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledTimes(1);
     expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith({
       id: 5,
-      patchedTeam: expect.objectContaining({ level_id: 3 }),
+      patchedTeamRequest: expect.objectContaining({ level_id: 3 }),
     });
     expect(router.navigate).toHaveBeenCalledWith(['/teams', 5]);
   });
@@ -399,7 +399,7 @@ describe('TeamsFormComponent', () => {
     access(component).submit();
     expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith({
       id: 5,
-      patchedTeam: expect.objectContaining({ level_id: null }),
+      patchedTeamRequest: expect.objectContaining({ level_id: null }),
     });
   });
 
@@ -427,7 +427,7 @@ describe('TeamsFormComponent', () => {
     access(component).patchActive(5, false);
     expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith({
       id: 5,
-      patchedTeam: { is_active: false },
+      patchedTeamRequest: { is_active: false },
     });
   });
 
@@ -453,7 +453,7 @@ describe('TeamsFormComponent', () => {
     access(component).submit();
     expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith({
       id: 5,
-      patchedTeam: expect.objectContaining({
+      patchedTeamRequest: expect.objectContaining({
         join_request_policy: JoinRequestPolicyEnum.Auto,
         notify_managers_on_join_request: false,
       }),
@@ -481,7 +481,7 @@ describe('TeamsFormComponent', () => {
     access(component).submit();
     expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith({
       id: 5,
-      patchedTeam: expect.objectContaining({
+      patchedTeamRequest: expect.objectContaining({
         notify_coaches_on_note: false,
         notify_athlete_on_visible_note: true,
       }),
@@ -547,7 +547,7 @@ describe('TeamsFormComponent', () => {
     });
     access(component).submit();
     expect(teamsMock.teamsCreate).toHaveBeenCalledWith({
-      team: expect.objectContaining({ logo: 'data:image/png;base64,LOGO' }),
+      teamRequest: expect.objectContaining({ logo: 'data:image/png;base64,LOGO' }),
     });
   });
 
@@ -557,7 +557,7 @@ describe('TeamsFormComponent', () => {
     access(component).submit();
     expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith({
       id: 5,
-      patchedTeam: expect.objectContaining({ logo: 'data:image/png;base64,X', roti_enabled: true }),
+      patchedTeamRequest: expect.objectContaining({ logo: 'data:image/png;base64,X', roti_enabled: true }),
     });
   });
 
@@ -572,7 +572,7 @@ describe('TeamsFormComponent', () => {
     access(component).submit();
     expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith({
       id: 5,
-      patchedTeam: expect.objectContaining({ rsvp_enabled: true }),
+      patchedTeamRequest: expect.objectContaining({ rsvp_enabled: true }),
     });
   });
 
@@ -587,7 +587,7 @@ describe('TeamsFormComponent', () => {
     access(component).submit();
     expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith({
       id: 5,
-      patchedTeam: expect.objectContaining({ weekly_recap_enabled: true }),
+      patchedTeamRequest: expect.objectContaining({ weekly_recap_enabled: true }),
     });
   });
 
@@ -627,7 +627,7 @@ describe('TeamsFormComponent', () => {
     });
     access(component).submit();
     expect(teamsMock.teamsCreate).toHaveBeenCalledWith({
-      team: expect.objectContaining({ timezone: 'UTC', vis_distance: VisibilityMode.After }),
+      teamRequest: expect.objectContaining({ timezone: 'UTC', vis_distance: VisibilityMode.After }),
     });
   });
 
@@ -647,7 +647,7 @@ describe('TeamsFormComponent', () => {
     access(component).submit();
     expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith({
       id: 5,
-      patchedTeam: expect.objectContaining({ topic_creation: 'members' }),
+      patchedTeamRequest: expect.objectContaining({ topic_creation: 'members' }),
     });
   });
 
@@ -660,7 +660,7 @@ describe('TeamsFormComponent', () => {
     access(component).submit();
     expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith({
       id: 5,
-      patchedTeam: expect.objectContaining({
+      patchedTeamRequest: expect.objectContaining({
         timezone: 'America/New_York',
         vis_rounds: VisibilityMode.Never,
       }),
@@ -711,7 +711,7 @@ describe('TeamsFormComponent', () => {
     access(component).submit();
     expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith({
       id: 5,
-      patchedTeam: expect.objectContaining({
+      patchedTeamRequest: expect.objectContaining({
         place_ids: expect.arrayContaining([9, 7]),
         default_place_id: 7,
       }),
