@@ -19,7 +19,7 @@ import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { Password } from 'primeng/password';
 import { InvitationsService } from '../../../api/api/invitations.service';
-import { CompleteInvitation } from '../../../api/model/complete-invitation';
+import { CompleteInvitationRequest } from '../../../api/model/complete-invitation-request';
 import { InvitationStatusEnum } from '../../../api/model/invitation-status-enum';
 import { ValidateInvitation } from '../../../api/model/validate-invitation';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -123,13 +123,13 @@ export class InvitationAcceptComponent implements OnInit {
     this.fieldErrors.set(null);
 
     const value = this.form.getRawValue();
-    const payload: CompleteInvitation = {
+    const payload: CompleteInvitationRequest = {
       username: value.username,
       password: value.password,
     };
 
     this.invitationsService
-      .invitationsLookupCreate({ token, completeInvitation: payload })
+      .invitationsLookupCreate({ token, completeInvitationRequest: payload })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {

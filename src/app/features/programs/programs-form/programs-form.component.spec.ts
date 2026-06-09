@@ -33,7 +33,6 @@ const ownedTeam: Team = {
   id: 4,
   name: 'RBP WP Senior',
   sport,
-  sport_id: 1,
   sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null }],
   owner: ownerUser,
   managers: [],
@@ -59,7 +58,6 @@ const program: Program = {
   date_start: '2026-06-01',
   date_end: '2026-08-31',
   team: teamMinimal,
-  team_id: 4,
   events: [],
   frequency_per_week: 3,
   description: 'Existant',
@@ -240,7 +238,7 @@ describe('ProgramsFormComponent', () => {
     access(component).patchActive(7, false);
     expect(programsMock.programsPartialUpdate).toHaveBeenCalledWith({
       id: 7,
-      patchedProgram: { is_active: false },
+      patchedProgramRequest: { is_active: false },
     });
   });
 

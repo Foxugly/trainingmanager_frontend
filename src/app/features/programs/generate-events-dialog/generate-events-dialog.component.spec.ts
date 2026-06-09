@@ -22,7 +22,6 @@ const program: Program = {
   date_start: '2026-05-01',
   date_end: '2026-08-31',
   team,
-  team_id: 4,
   events: [],
   frequency_per_week: 3,
   description: 'Programme de test',
@@ -131,7 +130,7 @@ describe('GenerateEventsDialogComponent', () => {
   it('submits an ISO-formatted payload and emits generated on success', () => {
     access(component).submit();
     expect(serviceMock.programsGenerateEventsCreate).toHaveBeenCalledTimes(1);
-    const { id, generatePlanRequest: payload } =
+    const { id, generatePlanRequestRequest: payload } =
       serviceMock.programsGenerateEventsCreate.mock.calls[0][0];
     expect(id).toBe(4);
     expect(payload.date_start).toBe('2026-05-01');
@@ -183,7 +182,7 @@ describe('GenerateEventsDialogComponent', () => {
     expect(access(component).hasTemplate()).toBe(false);
     const payload = (() => {
       access(component).submit();
-      return serviceMock.programsGenerateEventsCreate.mock.calls[0][0].generatePlanRequest;
+      return serviceMock.programsGenerateEventsCreate.mock.calls[0][0].generatePlanRequestRequest;
     })();
     expect(payload.frequency_per_week).toBe(3);
   });
@@ -202,7 +201,8 @@ describe('GenerateEventsDialogComponent', () => {
     await setup(true, richTemplate);
     expect(access(component).hasTemplate()).toBe(true);
     access(component).submit();
-    const payload = serviceMock.programsGenerateEventsCreate.mock.calls[0][0].generatePlanRequest;
+    const payload =
+      serviceMock.programsGenerateEventsCreate.mock.calls[0][0].generatePlanRequestRequest;
     expect(payload.frequency_per_week).toBeUndefined();
   });
 

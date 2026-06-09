@@ -22,7 +22,8 @@ import { Select } from 'primeng/select';
 import { Tooltip } from 'primeng/tooltip';
 import { ProgramsService } from '../../../api/api/programs.service';
 import { TeamsService } from '../../../api/api/teams.service';
-import { PatchedProgram } from '../../../api/model/patched-program';
+import { PatchedProgramRequest } from '../../../api/model/patched-program-request';
+import { ProgramRequest } from '../../../api/model/program-request';
 import { Program } from '../../../api/model/program';
 import { Team } from '../../../api/model/team';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -108,9 +109,9 @@ export class ProgramsFormComponent implements OnInit {
   protected readonly patchActive = (id: number, value: boolean) =>
     this.programsService.programsPartialUpdate({
       id,
-      patchedProgram: {
+      patchedProgramRequest: {
         is_active: value,
-      } as PatchedProgram,
+      },
     });
 
   protected readonly activeLabels = computed<ActiveToggleLabels>(() => ({
@@ -222,16 +223,18 @@ export class ProgramsFormComponent implements OnInit {
     const id = this.programId();
 
     if (id === null) {
-      const createPayload = {
+      // team_id is guaranteed non-null here: the field is `Validators.required`
+      // and `submit()` bails on an invalid form above.
+      const createPayload: ProgramRequest = {
         name: value.name,
-        team_id: value.team_id,
+        team_id: value.team_id!,
         date_start: toIsoDate(value.date_start),
         date_end: toIsoDate(value.date_end),
         frequency_per_week: value.frequency_per_week,
         description: value.description,
       };
       this.programsService
-        .programsCreate({ program: createPayload as unknown as Program })
+        .programsCreate({ programRequest: createPayload })
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (created) => {
@@ -247,7 +250,7 @@ export class ProgramsFormComponent implements OnInit {
       return;
     }
 
-    const patch: PatchedProgram = {
+    const patch: PatchedProgramRequest = {
       name: value.name,
       date_start: toIsoDate(value.date_start),
       date_end: toIsoDate(value.date_end),
@@ -255,7 +258,7 @@ export class ProgramsFormComponent implements OnInit {
       description: value.description,
     };
     this.programsService
-      .programsPartialUpdate({ id, patchedProgram: patch })
+      .programsPartialUpdate({ id, patchedProgramRequest: patch })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

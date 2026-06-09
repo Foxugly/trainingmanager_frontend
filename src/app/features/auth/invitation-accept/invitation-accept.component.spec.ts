@@ -165,7 +165,7 @@ describe('InvitationAcceptComponent', () => {
     access(component).submit();
     expect(invitationsMock.invitationsLookupCreate).toHaveBeenCalledWith({
       token: 'tok-abc',
-      completeInvitation: {
+      completeInvitationRequest: {
         username: 'newathlete',
         password: 'StrongPass1!',
       },

@@ -25,7 +25,7 @@ import { Textarea } from 'primeng/textarea';
 import { RouterLink } from '@angular/router';
 import { ProgramsService } from '../../../api/api/programs.service';
 import { TeamsService } from '../../../api/api/teams.service';
-import { GeneratePlanRequest } from '../../../api/model/generate-plan-request';
+import { GeneratePlanRequestRequest } from '../../../api/model/generate-plan-request-request';
 import { OverlapStrategyEnum } from '../../../api/model/overlap-strategy-enum';
 import { Program } from '../../../api/model/program';
 import { TrainingTemplate } from '../../../api/model/training-template';
@@ -165,7 +165,7 @@ export class GenerateEventsDialogComponent {
    * season window when present.
    */
   private loadTemplate(program: Program): void {
-    const teamId = program.team_id ?? program.team?.id ?? null;
+    const teamId = program.team?.id ?? null;
     if (teamId == null) return;
     if (this.templateLoadedForTeamId === teamId && this.template() !== null) {
       this.applyTemplate(this.template());
@@ -212,18 +212,23 @@ export class GenerateEventsDialogComponent {
     this.errorMessage.set(null);
 
     const value = this.form.getRawValue();
-    const payload: GeneratePlanRequest = {
+    const payload: GeneratePlanRequestRequest = {
       date_start: toIsoDate(value.date_start),
       date_end: toIsoDate(value.date_end),
       // When the team has a weekly template, the backend derives the frequency
       // from its slots — omit frequency_per_week entirely.
       ...(this.hasTemplate() ? {} : { frequency_per_week: value.frequency_per_week }),
       description: value.description || undefined,
-      overlap_strategy: value.overlap_strategy as unknown as OverlapStrategyEnum,
+      // The form control is constrained to the enum's string values; narrow to
+      // the enum type (the values are identical strings).
+      overlap_strategy: value.overlap_strategy as OverlapStrategyEnum,
     };
 
     this.programsService
-      .programsGenerateEventsCreate({ id: this.program().id, generatePlanRequest: payload })
+      .programsGenerateEventsCreate({
+        id: this.program().id,
+        generatePlanRequestRequest: payload,
+      })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {

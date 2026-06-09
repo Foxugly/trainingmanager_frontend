@@ -25,11 +25,12 @@ import { AuthService as AuthApi } from '../../api/api/auth.service';
 import { MeService } from '../../api/api/me.service';
 import { NotificationsService } from '../../api/api/notifications.service';
 import { NotificationPreference } from '../../api/model/notification-preference';
-import { AccountDelete } from '../../api/model/account-delete';
+import { NotificationPreferenceRequest } from '../../api/model/notification-preference-request';
+import { AccountDeleteRequest } from '../../api/model/account-delete-request';
 import { LanguageEnum } from '../../api/model/language-enum';
 import { Me } from '../../api/model/me';
-import { PasswordChange } from '../../api/model/password-change';
-import { PatchedMe } from '../../api/model/patched-me';
+import { PasswordChangeRequest } from '../../api/model/password-change-request';
+import { PatchedMeRequest } from '../../api/model/patched-me-request';
 import { AuthService } from '../../core/auth/auth.service';
 import { getRuntimeConfig } from '../../core/runtime-config';
 import { AVAILABLE_LANGUAGES, LanguageCode } from '../../core/i18n/available-languages';
@@ -177,14 +178,14 @@ export class ProfileComponent implements OnInit {
 
   protected savePreferences(): void {
     this.prefsSaving.set(true);
-    const preferences: NotificationPreference[] = this.prefs().map((p) => ({
+    // `label` is server-derived (read-only) and excluded from the request type.
+    const preferences: NotificationPreferenceRequest[] = this.prefs().map((p) => ({
       type: p.type,
-      label: p.label,
       in_app: p.in_app,
       email: p.email,
     }));
     this.notificationsApi
-      .notificationsPreferencesUpdate({ notificationPreferenceUpdate: { preferences } })
+      .notificationsPreferencesUpdate({ notificationPreferenceUpdateRequest: { preferences } })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (rows) => {
@@ -323,7 +324,7 @@ export class ProfileComponent implements OnInit {
     this.fieldErrors.set(null);
 
     const value = this.form.getRawValue() as ProfileFormValue;
-    const payload: PatchedMe = {
+    const payload: PatchedMeRequest = {
       first_name: value.first_name,
       last_name: value.last_name,
       language: value.language as LanguageEnum,
@@ -331,7 +332,7 @@ export class ProfileComponent implements OnInit {
     };
 
     this.meService
-      .mePartialUpdate({ patchedMe: payload })
+      .mePartialUpdate({ patchedMeRequest: payload })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
       next: (updated) => {
@@ -404,12 +405,12 @@ export class ProfileComponent implements OnInit {
     this.changePwLoading.set(true);
     this.changePwErrors.set(null);
 
-    const payload: PasswordChange = {
+    const payload: PasswordChangeRequest = {
       current_password: value.current_password,
       new_password: value.new_password,
     };
     this.authApi
-      .authPasswordChangeCreate({ passwordChange: payload })
+      .authPasswordChangeCreate({ passwordChangeRequest: payload })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
       next: () => {
@@ -484,11 +485,11 @@ export class ProfileComponent implements OnInit {
     this.deleteLoading.set(true);
     this.deleteErrors.set(null);
 
-    const payload: AccountDelete = {
+    const payload: AccountDeleteRequest = {
       current_password: this.deleteForm.getRawValue().current_password,
     };
     this.authApi
-      .authAccountDeleteCreate({ accountDelete: payload })
+      .authAccountDeleteCreate({ accountDeleteRequest: payload })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
       next: () => {

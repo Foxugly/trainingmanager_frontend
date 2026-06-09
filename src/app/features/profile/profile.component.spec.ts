@@ -204,7 +204,7 @@ describe('ProfileComponent', () => {
     access(component).submit();
 
     expect(meMock.mePartialUpdate).toHaveBeenCalledWith({
-      patchedMe: {
+      patchedMeRequest: {
         first_name: 'Alicia',
         last_name: 'Anderson',
         language: 'fr',
@@ -238,7 +238,7 @@ describe('ProfileComponent', () => {
     access(component).submit();
 
     expect(meMock.mePartialUpdate).toHaveBeenCalledWith({
-      patchedMe: expect.objectContaining({ weekly_recap_opt_in: false }),
+      patchedMeRequest: expect.objectContaining({ weekly_recap_opt_in: false }),
     });
   });
 
@@ -295,7 +295,7 @@ describe('ProfileComponent', () => {
     access(component).submitChangePassword();
 
     expect(authApiMock.authPasswordChangeCreate).toHaveBeenCalledWith({
-      passwordChange: {
+      passwordChangeRequest: {
         current_password: 'old',
         new_password: 'newpass1',
       },
@@ -365,7 +365,7 @@ describe('ProfileComponent', () => {
     access(component).submitDelete();
 
     expect(authApiMock.authAccountDeleteCreate).toHaveBeenCalledWith({
-      accountDelete: { current_password: 'pw' },
+      accountDeleteRequest: { current_password: 'pw' },
     });
     expect(authMock.logout).toHaveBeenCalled();
     expect(messageService.add).toHaveBeenCalledWith(
@@ -420,10 +420,10 @@ describe('ProfileComponent', () => {
     access(component).savePreferences();
 
     expect(notifMock.notificationsPreferencesUpdate).toHaveBeenCalledWith({
-      notificationPreferenceUpdate: {
+      notificationPreferenceUpdateRequest: {
         preferences: [
-          { type: 'note_for_coach', label: 'Note added', in_app: false, email: true },
-          { type: 'message_new_reply', label: 'New reply', in_app: true, email: false },
+          { type: 'note_for_coach', in_app: false, email: true },
+          { type: 'message_new_reply', in_app: true, email: false },
         ],
       },
     });

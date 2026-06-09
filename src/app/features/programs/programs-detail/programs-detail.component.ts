@@ -24,7 +24,6 @@ import { EventsService } from '../../../api/api/events.service';
 import { ProgramsService } from '../../../api/api/programs.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { Event } from '../../../api/model/event';
-import { PatchedProgram } from '../../../api/model/patched-program';
 import { Program } from '../../../api/model/program';
 import { Team } from '../../../api/model/team';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -143,7 +142,7 @@ export class ProgramsDetailComponent implements OnInit {
   protected readonly patchActive = (id: number, value: boolean) =>
     this.programsService.programsPartialUpdate({
       id,
-      patchedProgram: { is_active: value } as PatchedProgram,
+      patchedProgramRequest: { is_active: value },
     });
   protected readonly activeLabels = computed<ActiveToggleLabels>(() => ({
     active: this.transloco.translate('common.active'),

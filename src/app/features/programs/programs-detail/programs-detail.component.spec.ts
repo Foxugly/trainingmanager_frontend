@@ -38,7 +38,6 @@ const fullTeam: Team = {
   id: 4,
   name: 'RBP WP Senior',
   sport,
-  sport_id: 1,
   sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null }],
   owner: ownerUser,
   managers: [],
@@ -64,7 +63,6 @@ const program: Program = {
   date_start: '2026-06-01',
   date_end: '2026-08-31',
   team: teamMinimal,
-  team_id: 4,
   events: [10, 11, 12],
   frequency_per_week: 4,
   description: 'Cycle estival généré par IA.',
@@ -107,7 +105,7 @@ interface ProtectedFields {
 const eventA: Event = {
   id: 100, name: 'Séance A', goal: null, color: '#FF5733',
   date: '2026-06-05', hour_start: '18:00:00', hour_end: '19:30:00', total: 0,
-  refer_program: { id: 7, name: 'Plan IA été' }, refer_program_id: 7, sport,
+  refer_program: { id: 7, name: 'Plan IA été' }, sport,
   place: null, equipment_items: [], rounds_detail: [],
   rounds: [], members: [], generated_by_ai: false, ai_response: '',
   ai_generated_at: null, created_at: '', updated_at: '', is_public: false, public_token: null,
@@ -285,7 +283,7 @@ describe('ProgramsDetailComponent', () => {
     access(component).patchActive(7, false);
     expect(serviceMock.programsPartialUpdate).toHaveBeenCalledWith({
       id: 7,
-      patchedProgram: { is_active: false },
+      patchedProgramRequest: { is_active: false },
     });
   });
 
