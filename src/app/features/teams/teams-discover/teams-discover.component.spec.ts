@@ -9,6 +9,7 @@ import { TeamsService } from '../../../api/api/teams.service';
 import { CustomUserPublic } from '../../../api/model/custom-user-public';
 import { LanguageEnum } from '../../../api/model/language-enum';
 import { Sport } from '../../../api/model/sport';
+import { TrainingTypeEnum } from '../../../api/model/training-type-enum';
 import { Team } from '../../../api/model/team';
 import { AuthService } from '../../../core/auth/auth.service';
 import { TeamsDiscoverComponent } from './teams-discover.component';
@@ -23,6 +24,7 @@ const sport: Sport = {
   is_active: true,
   energy_systems: [],
   created_at: '2026-04-01T00:00:00Z',
+  default_training_type: TrainingTypeEnum.Structured,
 };
 
 function makeTeam(overrides: Partial<Team>): Team {
@@ -30,7 +32,7 @@ function makeTeam(overrides: Partial<Team>): Team {
     id: 0,
     name: '',
     sport,
-    sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0 }],
+    sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null }],
     sport_id: 1,
     owner: otherOwner,
     managers: [],

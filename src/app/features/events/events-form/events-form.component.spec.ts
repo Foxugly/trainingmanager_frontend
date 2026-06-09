@@ -13,6 +13,7 @@ import { Event } from '../../../api/model/event';
 import { LanguageEnum } from '../../../api/model/language-enum';
 import { Program } from '../../../api/model/program';
 import { Sport } from '../../../api/model/sport';
+import { TrainingTypeEnum } from '../../../api/model/training-type-enum';
 import { Team } from '../../../api/model/team';
 import { VisibilityMode } from '../../../api/model/visibility-mode';
 import { EventsFormComponent } from './events-form.component';
@@ -24,13 +25,14 @@ const sport: Sport = {
   is_active: true,
   energy_systems: [],
   created_at: '2026-04-01T00:00:00Z',
+  default_training_type: TrainingTypeEnum.Structured,
 };
 
 const team: Team = {
   id: 4,
   name: 'RBP WP Senior',
   sport,
-  sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0 }],
+  sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null }],
   sport_id: 1,
   owner: { id: 17, username: 'owner', first_name: '', last_name: '' },
   managers: [],

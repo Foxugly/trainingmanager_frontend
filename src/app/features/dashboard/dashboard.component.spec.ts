@@ -16,6 +16,7 @@ import { DashboardHistoryItem } from '../../api/model/dashboard-history-item';
 import { DashboardSummary } from '../../api/model/dashboard-summary';
 import { LanguageEnum } from '../../api/model/language-enum';
 import { Sport } from '../../api/model/sport';
+import { TrainingTypeEnum } from '../../api/model/training-type-enum';
 import { Team } from '../../api/model/team';
 import { AuthService } from '../../core/auth/auth.service';
 import { DashboardComponent } from './dashboard.component';
@@ -26,11 +27,12 @@ const athleteUser = { id: 88, username: 'athlete' } as CustomUserPublic;
 const sport: Sport = {
   id: 1, name: 'Natation', slug: 'natation', is_active: true, energy_systems: [],
   created_at: '2026-04-01T00:00:00Z',
+  default_training_type: TrainingTypeEnum.Structured,
 };
 
 const ownedTeam: Team = {
   id: 4, name: 'Coach Team', sport,
-  sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0 }],
+  sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null }],
   sport_id: 1, owner: ownerUser, managers: [],
   language: LanguageEnum.Fr, is_active: true, is_public: false, attendance_statuses: [],
   level: null, default_pool: '', places: [], default_place: null, equipment: [], logo_url: null,

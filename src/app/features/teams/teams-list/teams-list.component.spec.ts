@@ -10,6 +10,7 @@ import { CustomUserPublic } from '../../../api/model/custom-user-public';
 import { LanguageEnum } from '../../../api/model/language-enum';
 import { Me } from '../../../api/model/me';
 import { Sport } from '../../../api/model/sport';
+import { TrainingTypeEnum } from '../../../api/model/training-type-enum';
 import { Team } from '../../../api/model/team';
 import { TeamQuotaStatus } from '../../../api/model/team-quota-status';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -24,6 +25,7 @@ const sport: Sport = {
   is_active: true,
   energy_systems: [],
   created_at: '2026-04-01T00:00:00Z',
+  default_training_type: TrainingTypeEnum.Structured,
 };
 
 function makeTeam(partial: Partial<Team>): Team {
@@ -31,7 +33,7 @@ function makeTeam(partial: Partial<Team>): Team {
     id: 0,
     name: 'T',
     sport,
-    sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0 }],
+    sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null }],
     sport_id: 1,
     owner: ownerUser,
     managers: [],

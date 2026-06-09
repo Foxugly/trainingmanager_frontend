@@ -18,6 +18,7 @@ import { JoinRequestPolicyEnum } from '../../../api/model/join-request-policy-en
 import { LanguageEnum } from '../../../api/model/language-enum';
 import { Level } from '../../../api/model/level';
 import { Sport } from '../../../api/model/sport';
+import { TrainingTypeEnum } from '../../../api/model/training-type-enum';
 import { Team } from '../../../api/model/team';
 import { VisibilityMode } from '../../../api/model/visibility-mode';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -38,6 +39,7 @@ const sport: Sport = {
   is_active: true,
   energy_systems: [],
   created_at: '2026-04-01T00:00:00Z',
+  default_training_type: TrainingTypeEnum.Structured,
 };
 
 const level: Level = {
@@ -52,7 +54,7 @@ const level: Level = {
 const team: Team = {
   id: 5,
   name: 'Team P9',
-  sports: [{ id: 1, name: 'Natation', slug: 'natation', is_default: true, order: 0 }],
+  sports: [{ id: 1, name: 'Natation', slug: 'natation', is_default: true, order: 0, training_type: null }],
   sport,
   level,
   owner: ownerUser,

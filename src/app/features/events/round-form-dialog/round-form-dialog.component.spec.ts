@@ -8,6 +8,7 @@ import { RoundsService } from '../../../api/api/rounds.service';
 import { LanguageEnum } from '../../../api/model/language-enum';
 import { Round } from '../../../api/model/round';
 import { Sport } from '../../../api/model/sport';
+import { TrainingTypeEnum } from '../../../api/model/training-type-enum';
 import { RoundFormDialogComponent } from './round-form-dialog.component';
 
 const sport: Sport = {
@@ -17,6 +18,7 @@ const sport: Sport = {
   is_active: true,
   energy_systems: [],
   created_at: '2026-04-01T00:00:00Z',
+  default_training_type: TrainingTypeEnum.Structured,
 };
 
 const seedRound: Round = {

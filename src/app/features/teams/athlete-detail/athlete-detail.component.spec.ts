@@ -11,6 +11,7 @@ import { CustomUserPublic } from '../../../api/model/custom-user-public';
 import { LanguageEnum } from '../../../api/model/language-enum';
 import { Member } from '../../../api/model/member';
 import { Sport } from '../../../api/model/sport';
+import { TrainingTypeEnum } from '../../../api/model/training-type-enum';
 import { Team } from '../../../api/model/team';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AthleteDetailComponent } from './athlete-detail.component';
@@ -25,6 +26,7 @@ const sport: Sport = {
   is_active: true,
   energy_systems: [],
   created_at: '2026-04-01T00:00:00Z',
+  default_training_type: TrainingTypeEnum.Structured,
 };
 
 const team: Team = {
@@ -32,7 +34,7 @@ const team: Team = {
   name: 'RBP WP Senior',
   sport,
   sport_id: 1,
-  sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0 }],
+  sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null }],
   owner: ownerUser,
   managers: [],
   language: LanguageEnum.Fr,

@@ -22,6 +22,7 @@ import { SportsService } from '../../../../api/api/sports.service';
 import { ModalityAdmin } from '../../../../api/model/modality-admin';
 import { PatchedModalityAdmin } from '../../../../api/model/patched-modality-admin';
 import { Sport } from '../../../../api/model/sport';
+import { TrainingTypeEnum } from '../../../../api/model/training-type-enum';
 import { type FieldErrors, extractServerError } from '../../../../shared/forms/notify-error';
 import {
   ActiveToggleComponent,
@@ -132,6 +133,7 @@ export class ModalitiesFormComponent implements OnInit {
             is_active: s.is_active ?? true,
             energy_systems: s.energy_systems ?? [],
             created_at: s.created_at,
+            default_training_type: TrainingTypeEnum.Structured,
           }),
       });
 

@@ -20,6 +20,7 @@ import { catchError, finalize, of, tap } from 'rxjs';
 import { SportsService } from '../../../../api/api/sports.service';
 import { Modality } from '../../../../api/model/modality';
 import { Sport } from '../../../../api/model/sport';
+import { TrainingTypeEnum } from '../../../../api/model/training-type-enum';
 
 @Component({
   selector: 'app-modalities-list',
@@ -76,6 +77,7 @@ export class ModalitiesListComponent implements OnInit {
             is_active: s.is_active ?? true,
             energy_systems: s.energy_systems ?? [],
             created_at: s.created_at,
+            default_training_type: TrainingTypeEnum.Structured,
           }),
       });
 

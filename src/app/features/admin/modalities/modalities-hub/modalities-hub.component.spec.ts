@@ -6,6 +6,7 @@ import { of } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SportsService } from '../../../../api/api/sports.service';
 import { Sport } from '../../../../api/model/sport';
+import { TrainingTypeEnum } from '../../../../api/model/training-type-enum';
 import { ModalitiesHubComponent } from './modalities-hub.component';
 
 const sport1: Sport = {
@@ -15,6 +16,7 @@ const sport1: Sport = {
   is_active: true,
   energy_systems: [10, 20],
   created_at: '2026-04-01T00:00:00Z',
+  default_training_type: TrainingTypeEnum.Structured,
 };
 
 interface ProtectedFields {

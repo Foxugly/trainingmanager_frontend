@@ -8,6 +8,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SportsService } from '../../../../api/api/sports.service';
 import { Modality } from '../../../../api/model/modality';
 import { Sport } from '../../../../api/model/sport';
+import { TrainingTypeEnum } from '../../../../api/model/training-type-enum';
 import { ModalitiesListComponent } from './modalities-list.component';
 
 const parentSport: Sport = {
@@ -17,6 +18,7 @@ const parentSport: Sport = {
   is_active: true,
   energy_systems: [],
   created_at: '2026-04-01T00:00:00Z',
+  default_training_type: TrainingTypeEnum.Structured,
 };
 
 const sportAdminPayload = {

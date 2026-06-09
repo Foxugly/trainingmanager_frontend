@@ -8,6 +8,7 @@ import { TeamsService } from '../../api/api/teams.service';
 import { AudienceEnum } from '../../api/model/audience-enum';
 import { LanguageEnum } from '../../api/model/language-enum';
 import { Sport } from '../../api/model/sport';
+import { TrainingTypeEnum } from '../../api/model/training-type-enum';
 import { Team } from '../../api/model/team';
 import { Topic } from '../../api/model/topic';
 import { MessagesComponent, TopicRow } from './messages.component';
@@ -19,6 +20,7 @@ const sport: Sport = {
   is_active: true,
   energy_systems: [],
   created_at: '2026-04-01T00:00:00Z',
+  default_training_type: TrainingTypeEnum.Structured,
 };
 
 function makeTeam(partial: Partial<Team>): Team {
