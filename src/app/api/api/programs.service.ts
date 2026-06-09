@@ -32,7 +32,14 @@ import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables'
 import { Configuration }                                     from '../configuration';
 import { BaseService } from '../api.base.service';
 import {
-    ProgramsServiceInterface
+    ProgramsServiceInterface,
+    ProgramsCreateRequestParams,
+    ProgramsDestroyRequestParams,
+    ProgramsGenerateEventsCreateRequestParams,
+    ProgramsListRequestParams,
+    ProgramsPartialUpdateRequestParams,
+    ProgramsRetrieveRequestParams,
+    ProgramsUpdateRequestParams
 } from './programs.serviceInterface';
 
 
@@ -49,15 +56,16 @@ export class ProgramsService extends BaseService implements ProgramsServiceInter
     /**
      * CRUD complet pour Program, scopé par team.  Soft-delete convention: DELETE flips is_active&#x3D;False (no hard delete). Default queryset hides is_active&#x3D;False. ?include_inactive&#x3D;true is honored for staff (sees all inactives across visible teams) and for managers (sees inactives of teams they manage).
      * @endpoint post /api/v1/programs/
-     * @param program 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public programsCreate(program: Program, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Program>;
-    public programsCreate(program: Program, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Program>>;
-    public programsCreate(program: Program, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Program>>;
-    public programsCreate(program: Program, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public programsCreate(requestParameters: ProgramsCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Program>;
+    public programsCreate(requestParameters: ProgramsCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Program>>;
+    public programsCreate(requestParameters: ProgramsCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Program>>;
+    public programsCreate(requestParameters: ProgramsCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const program = requestParameters?.program;
         if (program === null || program === undefined) {
             throw new Error('Required parameter program was null or undefined when calling programsCreate.');
         }
@@ -121,15 +129,16 @@ export class ProgramsService extends BaseService implements ProgramsServiceInter
      * Soft delete program (manager of team only)
      * Sets is_active&#x3D;False; does not hard delete.
      * @endpoint delete /api/v1/programs/{id}/
-     * @param id A unique integer value identifying this Program.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public programsDestroy(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public programsDestroy(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public programsDestroy(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public programsDestroy(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public programsDestroy(requestParameters: ProgramsDestroyRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public programsDestroy(requestParameters: ProgramsDestroyRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public programsDestroy(requestParameters: ProgramsDestroyRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public programsDestroy(requestParameters: ProgramsDestroyRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling programsDestroy.');
         }
@@ -179,19 +188,20 @@ export class ProgramsService extends BaseService implements ProgramsServiceInter
     /**
      * Generate a training plan with AI for the given Program.
      * @endpoint post /api/v1/programs/{id}/generate-events/
-     * @param id A unique integer value identifying this Program.
-     * @param generatePlanRequest 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public programsGenerateEventsCreate(id: number, generatePlanRequest: GeneratePlanRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<GeneratePlanResponse>;
-    public programsGenerateEventsCreate(id: number, generatePlanRequest: GeneratePlanRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<GeneratePlanResponse>>;
-    public programsGenerateEventsCreate(id: number, generatePlanRequest: GeneratePlanRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<GeneratePlanResponse>>;
-    public programsGenerateEventsCreate(id: number, generatePlanRequest: GeneratePlanRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public programsGenerateEventsCreate(requestParameters: ProgramsGenerateEventsCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<GeneratePlanResponse>;
+    public programsGenerateEventsCreate(requestParameters: ProgramsGenerateEventsCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<GeneratePlanResponse>>;
+    public programsGenerateEventsCreate(requestParameters: ProgramsGenerateEventsCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<GeneratePlanResponse>>;
+    public programsGenerateEventsCreate(requestParameters: ProgramsGenerateEventsCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling programsGenerateEventsCreate.');
         }
+        const generatePlanRequest = requestParameters?.generatePlanRequest;
         if (generatePlanRequest === null || generatePlanRequest === undefined) {
             throw new Error('Required parameter generatePlanRequest was null or undefined when calling programsGenerateEventsCreate.');
         }
@@ -254,24 +264,25 @@ export class ProgramsService extends BaseService implements ProgramsServiceInter
     /**
      * CRUD complet pour Program, scopé par team.  Soft-delete convention: DELETE flips is_active&#x3D;False (no hard delete). Default queryset hides is_active&#x3D;False. ?include_inactive&#x3D;true is honored for staff (sees all inactives across visible teams) and for managers (sees inactives of teams they manage).
      * @endpoint get /api/v1/programs/
-     * @param dateEnd 
-     * @param dateStart 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
-     * @param isActive 
-     * @param name 
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
-     * @param team 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public programsList(dateEnd?: string, dateStart?: string, includeInactive?: boolean, isActive?: boolean, name?: string, ordering?: string, page?: number, pageSize?: number, search?: string, team?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedProgramList>;
-    public programsList(dateEnd?: string, dateStart?: string, includeInactive?: boolean, isActive?: boolean, name?: string, ordering?: string, page?: number, pageSize?: number, search?: string, team?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedProgramList>>;
-    public programsList(dateEnd?: string, dateStart?: string, includeInactive?: boolean, isActive?: boolean, name?: string, ordering?: string, page?: number, pageSize?: number, search?: string, team?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedProgramList>>;
-    public programsList(dateEnd?: string, dateStart?: string, includeInactive?: boolean, isActive?: boolean, name?: string, ordering?: string, page?: number, pageSize?: number, search?: string, team?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public programsList(requestParameters?: ProgramsListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedProgramList>;
+    public programsList(requestParameters?: ProgramsListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedProgramList>>;
+    public programsList(requestParameters?: ProgramsListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedProgramList>>;
+    public programsList(requestParameters?: ProgramsListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const dateEnd = requestParameters?.dateEnd;
+        const dateStart = requestParameters?.dateStart;
+        const includeInactive = requestParameters?.includeInactive;
+        const isActive = requestParameters?.isActive;
+        const name = requestParameters?.name;
+        const ordering = requestParameters?.ordering;
+        const page = requestParameters?.page;
+        const pageSize = requestParameters?.pageSize;
+        const search = requestParameters?.search;
+        const team = requestParameters?.team;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -412,20 +423,21 @@ export class ProgramsService extends BaseService implements ProgramsServiceInter
     /**
      * CRUD complet pour Program, scopé par team.  Soft-delete convention: DELETE flips is_active&#x3D;False (no hard delete). Default queryset hides is_active&#x3D;False. ?include_inactive&#x3D;true is honored for staff (sees all inactives across visible teams) and for managers (sees inactives of teams they manage).
      * @endpoint patch /api/v1/programs/{id}/
-     * @param id A unique integer value identifying this Program.
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
-     * @param patchedProgram 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public programsPartialUpdate(id: number, includeInactive?: boolean, patchedProgram?: PatchedProgram, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Program>;
-    public programsPartialUpdate(id: number, includeInactive?: boolean, patchedProgram?: PatchedProgram, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Program>>;
-    public programsPartialUpdate(id: number, includeInactive?: boolean, patchedProgram?: PatchedProgram, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Program>>;
-    public programsPartialUpdate(id: number, includeInactive?: boolean, patchedProgram?: PatchedProgram, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public programsPartialUpdate(requestParameters: ProgramsPartialUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Program>;
+    public programsPartialUpdate(requestParameters: ProgramsPartialUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Program>>;
+    public programsPartialUpdate(requestParameters: ProgramsPartialUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Program>>;
+    public programsPartialUpdate(requestParameters: ProgramsPartialUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling programsPartialUpdate.');
         }
+        const includeInactive = requestParameters?.includeInactive;
+        const patchedProgram = requestParameters?.patchedProgram;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -497,19 +509,20 @@ export class ProgramsService extends BaseService implements ProgramsServiceInter
     /**
      * CRUD complet pour Program, scopé par team.  Soft-delete convention: DELETE flips is_active&#x3D;False (no hard delete). Default queryset hides is_active&#x3D;False. ?include_inactive&#x3D;true is honored for staff (sees all inactives across visible teams) and for managers (sees inactives of teams they manage).
      * @endpoint get /api/v1/programs/{id}/
-     * @param id A unique integer value identifying this Program.
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public programsRetrieve(id: number, includeInactive?: boolean, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Program>;
-    public programsRetrieve(id: number, includeInactive?: boolean, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Program>>;
-    public programsRetrieve(id: number, includeInactive?: boolean, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Program>>;
-    public programsRetrieve(id: number, includeInactive?: boolean, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public programsRetrieve(requestParameters: ProgramsRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Program>;
+    public programsRetrieve(requestParameters: ProgramsRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Program>>;
+    public programsRetrieve(requestParameters: ProgramsRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Program>>;
+    public programsRetrieve(requestParameters: ProgramsRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling programsRetrieve.');
         }
+        const includeInactive = requestParameters?.includeInactive;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -569,23 +582,24 @@ export class ProgramsService extends BaseService implements ProgramsServiceInter
     /**
      * CRUD complet pour Program, scopé par team.  Soft-delete convention: DELETE flips is_active&#x3D;False (no hard delete). Default queryset hides is_active&#x3D;False. ?include_inactive&#x3D;true is honored for staff (sees all inactives across visible teams) and for managers (sees inactives of teams they manage).
      * @endpoint put /api/v1/programs/{id}/
-     * @param id A unique integer value identifying this Program.
-     * @param program 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public programsUpdate(id: number, program: Program, includeInactive?: boolean, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Program>;
-    public programsUpdate(id: number, program: Program, includeInactive?: boolean, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Program>>;
-    public programsUpdate(id: number, program: Program, includeInactive?: boolean, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Program>>;
-    public programsUpdate(id: number, program: Program, includeInactive?: boolean, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public programsUpdate(requestParameters: ProgramsUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Program>;
+    public programsUpdate(requestParameters: ProgramsUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Program>>;
+    public programsUpdate(requestParameters: ProgramsUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Program>>;
+    public programsUpdate(requestParameters: ProgramsUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling programsUpdate.');
         }
+        const program = requestParameters?.program;
         if (program === null || program === undefined) {
             throw new Error('Required parameter program was null or undefined when calling programsUpdate.');
         }
+        const includeInactive = requestParameters?.includeInactive;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 

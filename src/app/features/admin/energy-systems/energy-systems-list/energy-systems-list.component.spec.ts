@@ -75,7 +75,7 @@ describe('EnergySystemsListComponent', () => {
 
   it('loads active energy systems on init (no includeInactive)', () => {
     expect(serviceMock.energySystemsList).toHaveBeenCalledTimes(1);
-    expect(serviceMock.energySystemsList.mock.calls[0][0]).toBeUndefined();
+    expect(serviceMock.energySystemsList.mock.calls[0][0].includeInactive).toBeUndefined();
     expect(access(component).energySystems()).toEqual([es1]);
   });
 
@@ -85,7 +85,7 @@ describe('EnergySystemsListComponent', () => {
     fixture.detectChanges();
 
     expect(serviceMock.energySystemsList).toHaveBeenCalledTimes(2);
-    expect(serviceMock.energySystemsList.mock.calls[1][0]).toBe(true);
+    expect(serviceMock.energySystemsList.mock.calls[1][0].includeInactive).toBe(true);
     expect(access(component).energySystems()).toEqual([es1, es2]);
   });
 
@@ -96,7 +96,7 @@ describe('EnergySystemsListComponent', () => {
     const opts = confirmMock.confirm.mock.calls[0][0] as { accept: () => void };
     opts.accept();
 
-    expect(serviceMock.energySystemsDestroy).toHaveBeenCalledWith(es1.id);
+    expect(serviceMock.energySystemsDestroy).toHaveBeenCalledWith({ id: es1.id });
     expect(messageMock.add).toHaveBeenCalledTimes(1);
     expect(messageMock.add.mock.calls[0][0].severity).toBe('success');
   });
@@ -105,8 +105,10 @@ describe('EnergySystemsListComponent', () => {
     serviceMock.energySystemsList.mockClear();
     access(component).restore(es2);
 
-    expect(serviceMock.energySystemsPartialUpdate).toHaveBeenCalledWith(es2.id, true, {
-      is_active: true,
+    expect(serviceMock.energySystemsPartialUpdate).toHaveBeenCalledWith({
+      id: es2.id,
+      includeInactive: true,
+      patchedEnergySystemAdmin: { is_active: true },
     });
     expect(messageMock.add).toHaveBeenCalledTimes(1);
     expect(serviceMock.energySystemsList).toHaveBeenCalled();

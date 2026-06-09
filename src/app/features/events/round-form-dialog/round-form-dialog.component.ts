@@ -115,7 +115,7 @@ export class RoundFormDialogComponent {
         t_break: value.t_break || null,
       };
       this.roundsService
-        .roundsCreate(payload as unknown as Round)
+        .roundsCreate({ round: payload as unknown as Round })
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (created) => {
@@ -135,10 +135,13 @@ export class RoundFormDialogComponent {
         return;
       }
       this.roundsService
-        .roundsPartialUpdate(r.id, {
-          count: value.count,
-          t_start: value.t_start || null,
-          t_break: value.t_break || null,
+        .roundsPartialUpdate({
+          id: r.id,
+          patchedRound: {
+            count: value.count,
+            t_start: value.t_start || null,
+            t_break: value.t_break || null,
+          },
         })
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({

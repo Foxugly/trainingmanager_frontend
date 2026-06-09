@@ -71,9 +71,12 @@ export class EnergySystemsFormComponent implements OnInit {
   protected readonly activeValue = signal(true);
 
   protected readonly patchActive = (id: number, value: boolean) =>
-    this.energySystemsService.energySystemsPartialUpdate(id, undefined, {
-      is_active: value,
-    } as PatchedEnergySystemAdmin);
+    this.energySystemsService.energySystemsPartialUpdate({
+      id,
+      patchedEnergySystemAdmin: {
+        is_active: value,
+      } as PatchedEnergySystemAdmin,
+    });
 
   protected readonly activeLabels = computed<ActiveToggleLabels>(() => ({
     active: this.transloco.translate('common.active'),
@@ -98,7 +101,7 @@ export class EnergySystemsFormComponent implements OnInit {
       this.esId.set(id);
       this.loading.set(true);
       this.energySystemsService
-        .energySystemsRetrieve(id, true)
+        .energySystemsRetrieve({ id, includeInactive: true })
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (es) => {
@@ -147,12 +150,13 @@ export class EnergySystemsFormComponent implements OnInit {
     };
 
     const request$ = id
-      ? this.energySystemsService.energySystemsPartialUpdate(
+      ? this.energySystemsService.energySystemsPartialUpdate({
           id,
-          undefined,
-          payload as PatchedEnergySystemAdmin,
-        )
-      : this.energySystemsService.energySystemsCreate(payload as EnergySystemAdmin);
+          patchedEnergySystemAdmin: payload as PatchedEnergySystemAdmin,
+        })
+      : this.energySystemsService.energySystemsCreate({
+          energySystemAdmin: payload as EnergySystemAdmin,
+        });
 
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {

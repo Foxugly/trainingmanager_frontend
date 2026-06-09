@@ -132,7 +132,10 @@ export class ProgramsDetailComponent implements OnInit {
 
   protected readonly activeValue = signal(false);
   protected readonly patchActive = (id: number, value: boolean) =>
-    this.programsService.programsPartialUpdate(id, undefined, { is_active: value } as PatchedProgram);
+    this.programsService.programsPartialUpdate({
+      id,
+      patchedProgram: { is_active: value } as PatchedProgram,
+    });
   protected readonly activeLabels = computed<ActiveToggleLabels>(() => ({
     active: this.transloco.translate('common.active'),
     inactive: this.transloco.translate('common.inactive'),
@@ -274,7 +277,7 @@ export class ProgramsDetailComponent implements OnInit {
   protected loadProgram(id: number): void {
     this.loading.set(true);
     this.programsService
-      .programsRetrieve(id, true)
+      .programsRetrieve({ id, includeInactive: true })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (p) => {
@@ -295,7 +298,7 @@ export class ProgramsDetailComponent implements OnInit {
 
   private loadTeam(teamId: number): void {
     this.teamsService
-      .teamsRetrieve(teamId)
+      .teamsRetrieve({ id: teamId })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (t) => this.team.set(t),
@@ -324,16 +327,12 @@ export class ProgramsDetailComponent implements OnInit {
     }
     this.loadingEvents.set(true);
     this.eventsService
-      .eventsList(
-        undefined,
-        undefined,
-        isoDate(gridStart),
-        isoDate(gridEnd),
-        'date',
-        undefined,
-        programId,
-        undefined,
-      )
+      .eventsList({
+        dateGte: isoDate(gridStart),
+        dateLte: isoDate(gridEnd),
+        ordering: 'date',
+        referProgram: programId,
+      })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {

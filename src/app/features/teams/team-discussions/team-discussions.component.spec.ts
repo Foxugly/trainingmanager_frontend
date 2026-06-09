@@ -170,7 +170,7 @@ describe('TeamDiscussionsComponent', () => {
   });
 
   it('loads topics for the team on init', () => {
-    expect(teamsMock.teamsTopicsList).toHaveBeenCalledWith(7);
+    expect(teamsMock.teamsTopicsList).toHaveBeenCalledWith({ teamPk: 7 });
     expect(access(component).topics().length).toBe(1);
   });
 
@@ -204,10 +204,10 @@ describe('TeamDiscussionsComponent', () => {
     access(component).newTopicTitle.set('Sujet A');
     access(component).newTopicAudience.set(AudienceEnum.Coaches);
     access(component).submitNewTopic();
-    expect(teamsMock.teamsTopicsCreate).toHaveBeenCalledWith(
-      7,
-      expect.objectContaining({ title: 'Sujet A', audience: AudienceEnum.Coaches }),
-    );
+    expect(teamsMock.teamsTopicsCreate).toHaveBeenCalledWith({
+      teamPk: 7,
+      topic: expect.objectContaining({ title: 'Sujet A', audience: AudienceEnum.Coaches }),
+    });
   });
 
   it('athlete create is forced to audience=team regardless of state', async () => {
@@ -215,10 +215,10 @@ describe('TeamDiscussionsComponent', () => {
     access(component).newTopicTitle.set('Sujet B');
     access(component).newTopicAudience.set(AudienceEnum.Coaches); // should be ignored
     access(component).submitNewTopic();
-    expect(teamsMock.teamsTopicsCreate).toHaveBeenCalledWith(
-      7,
-      expect.objectContaining({ audience: AudienceEnum.Team }),
-    );
+    expect(teamsMock.teamsTopicsCreate).toHaveBeenCalledWith({
+      teamPk: 7,
+      topic: expect.objectContaining({ audience: AudienceEnum.Team }),
+    });
   });
 
   it('create prepends the created topic to the list', async () => {
@@ -239,7 +239,7 @@ describe('TeamDiscussionsComponent', () => {
   it('opening a topic loads its messages with (teamId, topicId)', () => {
     const topic = makeTopic({ id: 22 });
     access(component).openTopic(topic);
-    expect(teamsMock.teamsTopicsMessagesList).toHaveBeenCalledWith(7, 22);
+    expect(teamsMock.teamsTopicsMessagesList).toHaveBeenCalledWith({ teamPk: 7, topicPk: 22 });
     expect(access(component).messages().length).toBe(1);
   });
 
@@ -270,11 +270,11 @@ describe('TeamDiscussionsComponent', () => {
     access(component).openTopic(makeTopic({ id: 30 }));
     access(component).replyContent.set('Bonjour');
     access(component).sendReply();
-    expect(teamsMock.teamsTopicsMessagesCreate).toHaveBeenCalledWith(
-      7,
-      30,
-      expect.objectContaining({ content: 'Bonjour' }),
-    );
+    expect(teamsMock.teamsTopicsMessagesCreate).toHaveBeenCalledWith({
+      teamPk: 7,
+      topicPk: 30,
+      topicMessage: expect.objectContaining({ content: 'Bonjour' }),
+    });
     expect(
       access(component)
         .messages()
@@ -314,7 +314,7 @@ describe('TeamDiscussionsComponent', () => {
     });
     const topic = access(component).topics()[0];
     access(component).confirmDeleteTopic(topic);
-    expect(teamsMock.teamsTopicsDestroy).toHaveBeenCalledWith(topic.id, 7);
+    expect(teamsMock.teamsTopicsDestroy).toHaveBeenCalledWith({ id: topic.id, teamPk: 7 });
     expect(
       access(component)
         .topics()
@@ -330,7 +330,11 @@ describe('TeamDiscussionsComponent', () => {
       return confirmationService;
     });
     access(component).confirmDeleteMessage(msg);
-    expect(teamsMock.teamsTopicsMessagesDestroy).toHaveBeenCalledWith(msg.id, 7, 40);
+    expect(teamsMock.teamsTopicsMessagesDestroy).toHaveBeenCalledWith({
+      id: msg.id,
+      teamPk: 7,
+      topicPk: 40,
+    });
     expect(
       access(component)
         .messages()
@@ -378,12 +382,12 @@ describe('TeamDiscussionsComponent', () => {
     access(component).startEdit(msg);
     access(component).editContent.set('<p>Edited</p>');
     access(component).saveEdit(msg);
-    expect(teamsMock.teamsTopicsMessagesPartialUpdate).toHaveBeenCalledWith(
-      msg.id,
-      7,
-      30,
-      expect.objectContaining({ content: '<p>Edited</p>' }),
-    );
+    expect(teamsMock.teamsTopicsMessagesPartialUpdate).toHaveBeenCalledWith({
+      id: msg.id,
+      teamPk: 7,
+      topicPk: 30,
+      patchedTopicMessage: expect.objectContaining({ content: '<p>Edited</p>' }),
+    });
     const updated = access(component)
       .messages()
       .find((m) => m.id === msg.id);
@@ -405,7 +409,7 @@ describe('TeamDiscussionsComponent', () => {
 
   it('opening a topic marks it read and refreshes the unread badge', () => {
     access(component).openTopic(makeTopic({ id: 55 }));
-    expect(teamsMock.teamsTopicsRead).toHaveBeenCalledWith(55, 7);
+    expect(teamsMock.teamsTopicsRead).toHaveBeenCalledWith({ id: 55, teamPk: 7 });
     expect(messagesMock.refreshUnread).toHaveBeenCalled();
   });
 

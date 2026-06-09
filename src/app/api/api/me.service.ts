@@ -28,7 +28,8 @@ import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables'
 import { Configuration }                                     from '../configuration';
 import { BaseService } from '../api.base.service';
 import {
-    MeServiceInterface
+    MeServiceInterface,
+    MePartialUpdateRequestParams
 } from './me.serviceInterface';
 
 
@@ -154,15 +155,16 @@ export class MeService extends BaseService implements MeServiceInterface {
     /**
      * GET/PATCH du profil de l\&#39;utilisateur connecté.  PUT is intentionally disabled to prevent partial bodies from resetting unspecified writable fields (first_name, last_name, language) to their defaults. Use PATCH for any update.  &#x60;email&#x60; is read-only here; changing the email requires admin intervention in v1 (a verified change-email flow is deferred to v2).
      * @endpoint patch /api/v1/me/
-     * @param patchedMe 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public mePartialUpdate(patchedMe?: PatchedMe, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Me>;
-    public mePartialUpdate(patchedMe?: PatchedMe, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Me>>;
-    public mePartialUpdate(patchedMe?: PatchedMe, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Me>>;
-    public mePartialUpdate(patchedMe?: PatchedMe, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public mePartialUpdate(requestParameters?: MePartialUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Me>;
+    public mePartialUpdate(requestParameters?: MePartialUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Me>>;
+    public mePartialUpdate(requestParameters?: MePartialUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Me>>;
+    public mePartialUpdate(requestParameters?: MePartialUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const patchedMe = requestParameters?.patchedMe;
 
         let localVarHeaders = this.defaultHeaders;
 

@@ -97,7 +97,7 @@ export class MemberNotesComponent {
   private load(team: number, member: number): void {
     this.loading.set(true);
     this.teamsService
-      .teamsMembersNotesList(member, team)
+      .teamsMembersNotesList({ memberPk: member, teamPk: team })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
@@ -140,7 +140,12 @@ export class MemberNotesComponent {
         visible_to_athlete: value.visible_to_athlete,
       };
       this.teamsService
-        .teamsMembersNotesPartialUpdate(editingId, member, team, undefined, payload)
+        .teamsMembersNotesPartialUpdate({
+          id: editingId,
+          memberPk: member,
+          teamPk: team,
+          patchedNote: payload,
+        })
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (updated) => {
@@ -157,7 +162,7 @@ export class MemberNotesComponent {
       visible_to_athlete: value.visible_to_athlete,
     } as Note;
     this.teamsService
-      .teamsMembersNotesCreate(member, team, note)
+      .teamsMembersNotesCreate({ memberPk: member, teamPk: team, note })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (created) => {
@@ -202,7 +207,7 @@ export class MemberNotesComponent {
     const team = this.teamId();
     const member = this.memberId();
     this.teamsService
-      .teamsMembersNotesDestroy(note.id, member, team)
+      .teamsMembersNotesDestroy({ id: note.id, memberPk: member, teamPk: team })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

@@ -32,7 +32,12 @@ import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables'
 import { Configuration }                                     from '../configuration';
 import { BaseService } from '../api.base.service';
 import {
-    AttachmentsServiceInterface
+    AttachmentsServiceInterface,
+    AttachmentsCompleteCreateRequestParams,
+    AttachmentsDestroyRequestParams,
+    AttachmentsDownloadRetrieveRequestParams,
+    AttachmentsListRequestParams,
+    AttachmentsPresignCreateRequestParams
 } from './attachments.serviceInterface';
 
 
@@ -49,15 +54,16 @@ export class AttachmentsService extends BaseService implements AttachmentsServic
     /**
      * Finalize an upload: HEAD the S3 object, record its real size, and flip the Attachment to &#x60;ready&#x60;. Caller must be the uploader or able to write the target.
      * @endpoint post /api/v1/attachments/{id}/complete/
-     * @param id A unique integer value identifying this attachment.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public attachmentsCompleteCreate(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Attachment>;
-    public attachmentsCompleteCreate(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Attachment>>;
-    public attachmentsCompleteCreate(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Attachment>>;
-    public attachmentsCompleteCreate(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public attachmentsCompleteCreate(requestParameters: AttachmentsCompleteCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Attachment>;
+    public attachmentsCompleteCreate(requestParameters: AttachmentsCompleteCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Attachment>>;
+    public attachmentsCompleteCreate(requestParameters: AttachmentsCompleteCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Attachment>>;
+    public attachmentsCompleteCreate(requestParameters: AttachmentsCompleteCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling attachmentsCompleteCreate.');
         }
@@ -108,15 +114,16 @@ export class AttachmentsService extends BaseService implements AttachmentsServic
     /**
      * Delete an attachment: best-effort removal of the S3 object then the row. Caller must be the uploader or able to write the target.
      * @endpoint delete /api/v1/attachments/{id}/
-     * @param id A unique integer value identifying this attachment.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public attachmentsDestroy(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public attachmentsDestroy(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public attachmentsDestroy(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public attachmentsDestroy(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public attachmentsDestroy(requestParameters: AttachmentsDestroyRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public attachmentsDestroy(requestParameters: AttachmentsDestroyRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public attachmentsDestroy(requestParameters: AttachmentsDestroyRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public attachmentsDestroy(requestParameters: AttachmentsDestroyRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling attachmentsDestroy.');
         }
@@ -166,15 +173,16 @@ export class AttachmentsService extends BaseService implements AttachmentsServic
     /**
      * Mint a short-lived presigned GET URL to download a ready attachment. Caller must be able to read the target.
      * @endpoint get /api/v1/attachments/{id}/download/
-     * @param id A unique integer value identifying this attachment.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public attachmentsDownloadRetrieve(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AttachmentDownloadResponse>;
-    public attachmentsDownloadRetrieve(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AttachmentDownloadResponse>>;
-    public attachmentsDownloadRetrieve(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AttachmentDownloadResponse>>;
-    public attachmentsDownloadRetrieve(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public attachmentsDownloadRetrieve(requestParameters: AttachmentsDownloadRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AttachmentDownloadResponse>;
+    public attachmentsDownloadRetrieve(requestParameters: AttachmentsDownloadRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AttachmentDownloadResponse>>;
+    public attachmentsDownloadRetrieve(requestParameters: AttachmentsDownloadRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AttachmentDownloadResponse>>;
+    public attachmentsDownloadRetrieve(requestParameters: AttachmentsDownloadRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling attachmentsDownloadRetrieve.');
         }
@@ -225,26 +233,27 @@ export class AttachmentsService extends BaseService implements AttachmentsServic
     /**
      * List the READY attachments for a target the caller can read. Both &#x60;target_type&#x60; and &#x60;target_id&#x60; are required query params.
      * @endpoint get /api/v1/attachments/
-     * @param targetId 
-     * @param targetType 
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public attachmentsList(targetId: number, targetType: 'event' | 'message', ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedAttachmentList>;
-    public attachmentsList(targetId: number, targetType: 'event' | 'message', ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedAttachmentList>>;
-    public attachmentsList(targetId: number, targetType: 'event' | 'message', ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedAttachmentList>>;
-    public attachmentsList(targetId: number, targetType: 'event' | 'message', ordering?: string, page?: number, pageSize?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public attachmentsList(requestParameters: AttachmentsListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedAttachmentList>;
+    public attachmentsList(requestParameters: AttachmentsListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedAttachmentList>>;
+    public attachmentsList(requestParameters: AttachmentsListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedAttachmentList>>;
+    public attachmentsList(requestParameters: AttachmentsListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const targetId = requestParameters?.targetId;
         if (targetId === null || targetId === undefined) {
             throw new Error('Required parameter targetId was null or undefined when calling attachmentsList.');
         }
+        const targetType = requestParameters?.targetType;
         if (targetType === null || targetType === undefined) {
             throw new Error('Required parameter targetType was null or undefined when calling attachmentsList.');
         }
+        const ordering = requestParameters?.ordering;
+        const page = requestParameters?.page;
+        const pageSize = requestParameters?.pageSize;
+        const search = requestParameters?.search;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -349,15 +358,16 @@ export class AttachmentsService extends BaseService implements AttachmentsServic
     /**
      * Request a presigned S3 PUT URL to upload a file and create a &#x60;pending&#x60; Attachment for an Event or Message target. Validates the MIME allow-list and the size cap, and that the caller may write to the target (event-team manager / message author or coach).
      * @endpoint post /api/v1/attachments/presign/
-     * @param presignUploadRequest 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public attachmentsPresignCreate(presignUploadRequest: PresignUploadRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PresignUploadResponse>;
-    public attachmentsPresignCreate(presignUploadRequest: PresignUploadRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PresignUploadResponse>>;
-    public attachmentsPresignCreate(presignUploadRequest: PresignUploadRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PresignUploadResponse>>;
-    public attachmentsPresignCreate(presignUploadRequest: PresignUploadRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public attachmentsPresignCreate(requestParameters: AttachmentsPresignCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PresignUploadResponse>;
+    public attachmentsPresignCreate(requestParameters: AttachmentsPresignCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PresignUploadResponse>>;
+    public attachmentsPresignCreate(requestParameters: AttachmentsPresignCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PresignUploadResponse>>;
+    public attachmentsPresignCreate(requestParameters: AttachmentsPresignCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const presignUploadRequest = requestParameters?.presignUploadRequest;
         if (presignUploadRequest === null || presignUploadRequest === undefined) {
             throw new Error('Required parameter presignUploadRequest was null or undefined when calling attachmentsPresignCreate.');
         }

@@ -19,6 +19,10 @@ import { PatchedMe } from '../model/models';
 import { Configuration }                                     from '../configuration';
 
 
+export interface MePartialUpdateRequestParams {
+    patchedMe?: PatchedMe;
+}
+
 
 export interface MeServiceInterface {
     defaultHeaders: HttpHeaders;
@@ -28,29 +32,29 @@ export interface MeServiceInterface {
      * 
      * POST /api/v1/me/calendar-token/rotate/ — rotate the caller\&#39;s token.  Generates a brand-new &#x60;&#x60;calendar_token&#x60;&#x60; for the authenticated user, which immediately invalidates the previous .ics subscription URL, and returns the new token so the SPA can rebuild the URL.
      * @endpoint post /api/v1/me/calendar-token/rotate/
-     */
+*/
     meCalendarTokenRotate(extraHttpRequestParams?: any): Observable<CalendarToken>;
 
     /**
      * 
      * GET /api/v1/me/export/ — RGPD data portability.  Returns a single JSON document with all personal data we hold about the authenticated caller, as a downloadable attachment. The password hash and the live calendar_token secret are NEVER included.
      * @endpoint get /api/v1/me/export/
-     */
+*/
     meExportRetrieve(extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * 
      * GET/PATCH du profil de l\&#39;utilisateur connecté.  PUT is intentionally disabled to prevent partial bodies from resetting unspecified writable fields (first_name, last_name, language) to their defaults. Use PATCH for any update.  &#x60;email&#x60; is read-only here; changing the email requires admin intervention in v1 (a verified change-email flow is deferred to v2).
      * @endpoint patch /api/v1/me/
-     * @param patchedMe 
+* @param requestParameters
      */
-    mePartialUpdate(patchedMe?: PatchedMe, extraHttpRequestParams?: any): Observable<Me>;
+    mePartialUpdate(requestParameters: MePartialUpdateRequestParams, extraHttpRequestParams?: any): Observable<Me>;
 
     /**
      * 
      * GET/PATCH du profil de l\&#39;utilisateur connecté.  PUT is intentionally disabled to prevent partial bodies from resetting unspecified writable fields (first_name, last_name, language) to their defaults. Use PATCH for any update.  &#x60;email&#x60; is read-only here; changing the email requires admin intervention in v1 (a verified change-email flow is deferred to v2).
      * @endpoint get /api/v1/me/
-     */
+*/
     meRetrieve(extraHttpRequestParams?: any): Observable<Me>;
 
 }

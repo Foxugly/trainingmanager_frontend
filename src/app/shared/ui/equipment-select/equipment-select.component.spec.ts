@@ -60,15 +60,7 @@ describe('EquipmentSelectComponent', () => {
   });
 
   it("loads the team's enabled equipment subset via the ?team filter", () => {
-    // Signature: (ordering, page, pageSize, search, sport, team) — team is 6th.
-    expect(equipmentMock.equipmentList).toHaveBeenCalledWith(
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      5,
-    );
+    expect(equipmentMock.equipmentList).toHaveBeenCalledWith({ team: 5 });
     expect(access(component).items()).toHaveLength(1);
   });
 

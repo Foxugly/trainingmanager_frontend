@@ -19,6 +19,41 @@ import { PatchedEnergySystemAdmin } from '../model/models';
 import { Configuration }                                     from '../configuration';
 
 
+export interface EnergySystemsCreateRequestParams {
+    energySystemAdmin?: EnergySystemAdmin;
+}
+
+export interface EnergySystemsDestroyRequestParams {
+    id: number;
+}
+
+export interface EnergySystemsListRequestParams {
+    includeInactive?: boolean;
+    isActive?: boolean;
+    name?: string;
+    ordering?: string;
+    page?: number;
+    pageSize?: number;
+    search?: string;
+}
+
+export interface EnergySystemsPartialUpdateRequestParams {
+    id: number;
+    includeInactive?: boolean;
+    patchedEnergySystemAdmin?: PatchedEnergySystemAdmin;
+}
+
+export interface EnergySystemsRetrieveRequestParams {
+    id: number;
+    includeInactive?: boolean;
+}
+
+export interface EnergySystemsUpdateRequestParams {
+    id: number;
+    includeInactive?: boolean;
+    energySystemAdmin?: EnergySystemAdmin;
+}
+
 
 export interface EnergySystemsServiceInterface {
     defaultHeaders: HttpHeaders;
@@ -28,59 +63,48 @@ export interface EnergySystemsServiceInterface {
      * Create energy system (staff only)
      * CRUD on EnergySystem referential.
      * @endpoint post /api/v1/energy-systems/
-     * @param energySystemAdmin 
+* @param requestParameters
      */
-    energySystemsCreate(energySystemAdmin?: EnergySystemAdmin, extraHttpRequestParams?: any): Observable<EnergySystemAdmin>;
+    energySystemsCreate(requestParameters: EnergySystemsCreateRequestParams, extraHttpRequestParams?: any): Observable<EnergySystemAdmin>;
 
     /**
      * Soft delete energy system (staff only)
      * CRUD on EnergySystem referential.
      * @endpoint delete /api/v1/energy-systems/{id}/
-     * @param id A unique integer value identifying this energy system.
+* @param requestParameters
      */
-    energySystemsDestroy(id: number, extraHttpRequestParams?: any): Observable<{}>;
+    energySystemsDestroy(requestParameters: EnergySystemsDestroyRequestParams, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * List energy systems (public flavor)
      * CRUD on EnergySystem referential.
      * @endpoint get /api/v1/energy-systems/
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
-     * @param isActive 
-     * @param name 
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
+* @param requestParameters
      */
-    energySystemsList(includeInactive?: boolean, isActive?: boolean, name?: string, ordering?: string, page?: number, pageSize?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedEnergySystemList>;
+    energySystemsList(requestParameters: EnergySystemsListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedEnergySystemList>;
 
     /**
      * 
      * CRUD on EnergySystem referential.
      * @endpoint patch /api/v1/energy-systems/{id}/
-     * @param id A unique integer value identifying this energy system.
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
-     * @param patchedEnergySystemAdmin 
+* @param requestParameters
      */
-    energySystemsPartialUpdate(id: number, includeInactive?: boolean, patchedEnergySystemAdmin?: PatchedEnergySystemAdmin, extraHttpRequestParams?: any): Observable<EnergySystemAdmin>;
+    energySystemsPartialUpdate(requestParameters: EnergySystemsPartialUpdateRequestParams, extraHttpRequestParams?: any): Observable<EnergySystemAdmin>;
 
     /**
      * Retrieve energy system (admin flavor for staff)
      * CRUD on EnergySystem referential.
      * @endpoint get /api/v1/energy-systems/{id}/
-     * @param id A unique integer value identifying this energy system.
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+* @param requestParameters
      */
-    energySystemsRetrieve(id: number, includeInactive?: boolean, extraHttpRequestParams?: any): Observable<EnergySystemAdmin>;
+    energySystemsRetrieve(requestParameters: EnergySystemsRetrieveRequestParams, extraHttpRequestParams?: any): Observable<EnergySystemAdmin>;
 
     /**
      * 
      * CRUD on EnergySystem referential.
      * @endpoint put /api/v1/energy-systems/{id}/
-     * @param id A unique integer value identifying this energy system.
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
-     * @param energySystemAdmin 
+* @param requestParameters
      */
-    energySystemsUpdate(id: number, includeInactive?: boolean, energySystemAdmin?: EnergySystemAdmin, extraHttpRequestParams?: any): Observable<EnergySystemAdmin>;
+    energySystemsUpdate(requestParameters: EnergySystemsUpdateRequestParams, extraHttpRequestParams?: any): Observable<EnergySystemAdmin>;
 
 }

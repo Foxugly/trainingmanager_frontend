@@ -24,7 +24,8 @@ import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables'
 import { Configuration }                                     from '../configuration';
 import { BaseService } from '../api.base.service';
 import {
-    DashboardServiceInterface
+    DashboardServiceInterface,
+    DashboardSummaryRetrieveRequestParams
 } from './dashboard.serviceInterface';
 
 
@@ -42,15 +43,16 @@ export class DashboardService extends BaseService implements DashboardServiceInt
      * Aggregate dashboard payload (replaces the per-resource fan-out)
      * GET /api/v1/dashboard/summary/ — one-shot aggregate for the dashboard.
      * @endpoint get /api/v1/dashboard/summary/
-     * @param today Caller\&#39;s local date (YYYY-MM-DD) for the date windows; defaults to the server\&#39;s local date.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public dashboardSummaryRetrieve(today?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<DashboardSummary>;
-    public dashboardSummaryRetrieve(today?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<DashboardSummary>>;
-    public dashboardSummaryRetrieve(today?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<DashboardSummary>>;
-    public dashboardSummaryRetrieve(today?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public dashboardSummaryRetrieve(requestParameters?: DashboardSummaryRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<DashboardSummary>;
+    public dashboardSummaryRetrieve(requestParameters?: DashboardSummaryRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<DashboardSummary>>;
+    public dashboardSummaryRetrieve(requestParameters?: DashboardSummaryRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<DashboardSummary>>;
+    public dashboardSummaryRetrieve(requestParameters?: DashboardSummaryRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const today = requestParameters?.today;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 

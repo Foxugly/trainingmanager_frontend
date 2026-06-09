@@ -66,7 +66,7 @@ export class TeamsDiscoverComponent implements OnInit {
   ngOnInit(): void {
     this.loading.set(true);
     this.teamsService
-      .teamsList(true)
+      .teamsList({ isActive: true })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {

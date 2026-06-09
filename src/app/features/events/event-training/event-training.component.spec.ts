@@ -102,8 +102,8 @@ describe('EventTrainingComponent', () => {
       exercisesCreate: vi.fn().mockReturnValue(of({ ...exercise1, id: 999 })),
       exercisesPartialUpdate: vi
         .fn()
-        .mockImplementation((id: number, b: { repetition?: number }) =>
-          of({ ...exercise1, id, repetition: b.repetition ?? 4 }),
+        .mockImplementation((p: { id: number; patchedExercise?: { repetition?: number } }) =>
+          of({ ...exercise1, id: p.id, repetition: p.patchedExercise?.repetition ?? 4 }),
         ),
       exercisesDestroy: vi.fn().mockReturnValue(of(undefined)),
     };
@@ -184,7 +184,7 @@ describe('EventTrainingComponent', () => {
 
   it('loads modality + energy-segment options from the event sport', async () => {
     await tick();
-    expect(sportsMock.sportsModalitiesList).toHaveBeenCalledWith(1);
+    expect(sportsMock.sportsModalitiesList).toHaveBeenCalledWith({ sportPk: 1 });
     expect(access(component).modalities().length).toBe(1);
     expect(access(component).energySegments().length).toBe(1);
   });
@@ -229,7 +229,7 @@ describe('EventTrainingComponent', () => {
     let reloads = 0;
     component.reloadRequested.subscribe(() => reloads++);
     access(component).confirmDeleteRound(round(11));
-    expect(roundsMock.roundsDestroy).toHaveBeenCalledWith(11);
+    expect(roundsMock.roundsDestroy).toHaveBeenCalledWith({ id: 11 });
     expect(reloads).toBe(1);
   });
 
@@ -239,7 +239,7 @@ describe('EventTrainingComponent', () => {
     let reloads = 0;
     component.reloadRequested.subscribe(() => reloads++);
     access(component).confirmDeleteExercise(exercise1);
-    expect(exercisesMock.exercisesDestroy).toHaveBeenCalledWith(201);
+    expect(exercisesMock.exercisesDestroy).toHaveBeenCalledWith({ id: 201 });
     expect(reloads).toBe(1);
   });
 
@@ -254,7 +254,7 @@ describe('EventTrainingComponent', () => {
     access(component).saveNewRow(row);
     await tick();
     expect(exercisesMock.exercisesCreate).toHaveBeenCalledTimes(1);
-    expect(exercisesMock.exercisesCreate.mock.calls[0][0].round_id).toBe(11);
+    expect(exercisesMock.exercisesCreate.mock.calls[0][0].exercise.round_id).toBe(11);
     expect(access(component).newRowsFor(11).length).toBe(0);
     expect((access(component).exercisesByRound().get(11) ?? []).some((e) => e.id === 999)).toBe(true);
   });
@@ -268,7 +268,7 @@ describe('EventTrainingComponent', () => {
     form.controls['repetition'].setValue(8);
     access(component).saveEditExercise(exercise1);
     await tick();
-    expect(exercisesMock.exercisesPartialUpdate.mock.calls[0][1].repetition).toBe(8);
+    expect(exercisesMock.exercisesPartialUpdate.mock.calls[0][0].patchedExercise.repetition).toBe(8);
     expect(access(component).isEditingExercise(exercise1)).toBe(false);
   });
 
@@ -277,8 +277,9 @@ describe('EventTrainingComponent', () => {
     expect(access(component).exercisesByRound().get(11)?.map((e) => e.id)).toEqual([201, 202]);
     access(component).moveExercise(round(11), exercise1, 'down');
     expect(access(component).exercisesByRound().get(11)?.map((e) => e.id)).toEqual([202, 201]);
-    expect(roundsMock.roundsExercisesReorderCreate).toHaveBeenCalledWith(11, {
-      exercise_ids: [202, 201],
+    expect(roundsMock.roundsExercisesReorderCreate).toHaveBeenCalledWith({
+      id: 11,
+      reorderExercisesRequest: { exercise_ids: [202, 201] },
     });
   });
 

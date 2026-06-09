@@ -19,6 +19,40 @@ import { PatchedLevelAdmin } from '../model/models';
 import { Configuration }                                     from '../configuration';
 
 
+export interface LevelsCreateRequestParams {
+    levelAdmin: LevelAdmin;
+}
+
+export interface LevelsDestroyRequestParams {
+    id: number;
+}
+
+export interface LevelsListRequestParams {
+    includeInactive?: boolean;
+    isActive?: boolean;
+    ordering?: string;
+    page?: number;
+    pageSize?: number;
+    search?: string;
+}
+
+export interface LevelsPartialUpdateRequestParams {
+    id: number;
+    includeInactive?: boolean;
+    patchedLevelAdmin?: PatchedLevelAdmin;
+}
+
+export interface LevelsRetrieveRequestParams {
+    id: number;
+    includeInactive?: boolean;
+}
+
+export interface LevelsUpdateRequestParams {
+    id: number;
+    levelAdmin: LevelAdmin;
+    includeInactive?: boolean;
+}
+
 
 export interface LevelsServiceInterface {
     defaultHeaders: HttpHeaders;
@@ -28,58 +62,48 @@ export interface LevelsServiceInterface {
      * Create level (staff only)
      * Accepts the admin flavor with name_*_/description_* variants.
      * @endpoint post /api/v1/levels/
-     * @param levelAdmin 
+* @param requestParameters
      */
-    levelsCreate(levelAdmin: LevelAdmin, extraHttpRequestParams?: any): Observable<LevelAdmin>;
+    levelsCreate(requestParameters: LevelsCreateRequestParams, extraHttpRequestParams?: any): Observable<LevelAdmin>;
 
     /**
      * Soft delete level (staff only)
      * Sets is_active&#x3D;False; does not hard delete.
      * @endpoint delete /api/v1/levels/{id}/
-     * @param id A unique integer value identifying this level.
+* @param requestParameters
      */
-    levelsDestroy(id: number, extraHttpRequestParams?: any): Observable<{}>;
+    levelsDestroy(requestParameters: LevelsDestroyRequestParams, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * List levels (public flavor)
      * Returns the public Level serializer with localized \&#39;name\&#39; and \&#39;description\&#39;. Available to all authenticated users. Pass ?include_inactive&#x3D;true (staff only) to include soft-deleted rows.
      * @endpoint get /api/v1/levels/
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
-     * @param isActive 
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
+* @param requestParameters
      */
-    levelsList(includeInactive?: boolean, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedLevelList>;
+    levelsList(requestParameters: LevelsListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedLevelList>;
 
     /**
      * 
      * CRUD on the Level referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete bumps updated_at.
      * @endpoint patch /api/v1/levels/{id}/
-     * @param id A unique integer value identifying this level.
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
-     * @param patchedLevelAdmin 
+* @param requestParameters
      */
-    levelsPartialUpdate(id: number, includeInactive?: boolean, patchedLevelAdmin?: PatchedLevelAdmin, extraHttpRequestParams?: any): Observable<LevelAdmin>;
+    levelsPartialUpdate(requestParameters: LevelsPartialUpdateRequestParams, extraHttpRequestParams?: any): Observable<LevelAdmin>;
 
     /**
      * Retrieve level (admin flavor for staff)
      * Returns the admin flavor with name_*_/description_* per-language variants when called by a staff user, otherwise the public flavor.
      * @endpoint get /api/v1/levels/{id}/
-     * @param id A unique integer value identifying this level.
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+* @param requestParameters
      */
-    levelsRetrieve(id: number, includeInactive?: boolean, extraHttpRequestParams?: any): Observable<LevelAdmin>;
+    levelsRetrieve(requestParameters: LevelsRetrieveRequestParams, extraHttpRequestParams?: any): Observable<LevelAdmin>;
 
     /**
      * 
      * CRUD on the Level referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete bumps updated_at.
      * @endpoint put /api/v1/levels/{id}/
-     * @param id A unique integer value identifying this level.
-     * @param levelAdmin 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+* @param requestParameters
      */
-    levelsUpdate(id: number, levelAdmin: LevelAdmin, includeInactive?: boolean, extraHttpRequestParams?: any): Observable<LevelAdmin>;
+    levelsUpdate(requestParameters: LevelsUpdateRequestParams, extraHttpRequestParams?: any): Observable<LevelAdmin>;
 
 }

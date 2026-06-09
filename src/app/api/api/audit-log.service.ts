@@ -24,7 +24,8 @@ import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables'
 import { Configuration }                                     from '../configuration';
 import { BaseService } from '../api.base.service';
 import {
-    AuditLogServiceInterface
+    AuditLogServiceInterface,
+    AuditLogListRequestParams
 } from './audit-log.serviceInterface';
 
 
@@ -42,19 +43,20 @@ export class AuditLogService extends BaseService implements AuditLogServiceInter
      * List audit log entries for teams you manage
      * GET /api/v1/audit-log/ — review security-sensitive actions.  Team owners and managers see audit entries scoped to teams they manage (&#x60;&#x60;team.queries.managed_teams&#x60;&#x60;). Superusers see all entries. The optional &#x60;&#x60;?team&#x3D;&lt;id&gt;&#x60;&#x60; filter narrows to a single managed team (403 otherwise). Ordered newest-first and paginated like other list endpoints.
      * @endpoint get /api/v1/audit-log/
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
-     * @param team Restrict to a single team you manage. A team you do not manage yields 403.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public auditLogList(ordering?: string, page?: number, pageSize?: number, search?: string, team?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedAuditLogEntryList>;
-    public auditLogList(ordering?: string, page?: number, pageSize?: number, search?: string, team?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedAuditLogEntryList>>;
-    public auditLogList(ordering?: string, page?: number, pageSize?: number, search?: string, team?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedAuditLogEntryList>>;
-    public auditLogList(ordering?: string, page?: number, pageSize?: number, search?: string, team?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public auditLogList(requestParameters?: AuditLogListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedAuditLogEntryList>;
+    public auditLogList(requestParameters?: AuditLogListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedAuditLogEntryList>>;
+    public auditLogList(requestParameters?: AuditLogListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedAuditLogEntryList>>;
+    public auditLogList(requestParameters?: AuditLogListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const ordering = requestParameters?.ordering;
+        const page = requestParameters?.page;
+        const pageSize = requestParameters?.pageSize;
+        const search = requestParameters?.search;
+        const team = requestParameters?.team;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 

@@ -147,7 +147,7 @@ export class TeamStatsComponent {
   private fetch(id: number, from: string, to: string, member?: number): void {
     this.loading.set(true);
     this.teamsService
-      .teamsStatsRetrieve(id, from, member, to)
+      .teamsStatsRetrieve({ id, from, member, to })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (s) => {

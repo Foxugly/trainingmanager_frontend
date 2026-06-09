@@ -28,7 +28,13 @@ import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables'
 import { Configuration }                                     from '../configuration';
 import { BaseService } from '../api.base.service';
 import {
-    AttendanceStatusesServiceInterface
+    AttendanceStatusesServiceInterface,
+    AttendanceStatusesCreateRequestParams,
+    AttendanceStatusesDestroyRequestParams,
+    AttendanceStatusesListRequestParams,
+    AttendanceStatusesPartialUpdateRequestParams,
+    AttendanceStatusesRetrieveRequestParams,
+    AttendanceStatusesUpdateRequestParams
 } from './attendance-statuses.serviceInterface';
 
 
@@ -46,15 +52,16 @@ export class AttendanceStatusesService extends BaseService implements Attendance
      * Create attendance status (staff only)
      * CRUD on the AttendanceStatus referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete bumps updated_at.
      * @endpoint post /api/v1/attendance-statuses/
-     * @param attendanceStatusAdmin 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public attendanceStatusesCreate(attendanceStatusAdmin: AttendanceStatusAdmin, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AttendanceStatusAdmin>;
-    public attendanceStatusesCreate(attendanceStatusAdmin: AttendanceStatusAdmin, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AttendanceStatusAdmin>>;
-    public attendanceStatusesCreate(attendanceStatusAdmin: AttendanceStatusAdmin, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AttendanceStatusAdmin>>;
-    public attendanceStatusesCreate(attendanceStatusAdmin: AttendanceStatusAdmin, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public attendanceStatusesCreate(requestParameters: AttendanceStatusesCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AttendanceStatusAdmin>;
+    public attendanceStatusesCreate(requestParameters: AttendanceStatusesCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AttendanceStatusAdmin>>;
+    public attendanceStatusesCreate(requestParameters: AttendanceStatusesCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AttendanceStatusAdmin>>;
+    public attendanceStatusesCreate(requestParameters: AttendanceStatusesCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const attendanceStatusAdmin = requestParameters?.attendanceStatusAdmin;
         if (attendanceStatusAdmin === null || attendanceStatusAdmin === undefined) {
             throw new Error('Required parameter attendanceStatusAdmin was null or undefined when calling attendanceStatusesCreate.');
         }
@@ -118,15 +125,16 @@ export class AttendanceStatusesService extends BaseService implements Attendance
      * Soft delete attendance status (staff only)
      * Sets is_active&#x3D;False; does not hard delete.
      * @endpoint delete /api/v1/attendance-statuses/{id}/
-     * @param id A unique integer value identifying this attendance status.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public attendanceStatusesDestroy(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public attendanceStatusesDestroy(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public attendanceStatusesDestroy(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public attendanceStatusesDestroy(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public attendanceStatusesDestroy(requestParameters: AttendanceStatusesDestroyRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public attendanceStatusesDestroy(requestParameters: AttendanceStatusesDestroyRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public attendanceStatusesDestroy(requestParameters: AttendanceStatusesDestroyRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public attendanceStatusesDestroy(requestParameters: AttendanceStatusesDestroyRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling attendanceStatusesDestroy.');
         }
@@ -177,21 +185,22 @@ export class AttendanceStatusesService extends BaseService implements Attendance
      * List attendance statuses (public flavor)
      * Returns the public AttendanceStatus serializer with localized \&#39;label\&#39;. Available to all authenticated users. Pass ?include_inactive&#x3D;true (staff only) to include soft-deleted rows.
      * @endpoint get /api/v1/attendance-statuses/
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
-     * @param isActive 
-     * @param isDefault 
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public attendanceStatusesList(includeInactive?: boolean, isActive?: boolean, isDefault?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedAttendanceStatusList>;
-    public attendanceStatusesList(includeInactive?: boolean, isActive?: boolean, isDefault?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedAttendanceStatusList>>;
-    public attendanceStatusesList(includeInactive?: boolean, isActive?: boolean, isDefault?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedAttendanceStatusList>>;
-    public attendanceStatusesList(includeInactive?: boolean, isActive?: boolean, isDefault?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public attendanceStatusesList(requestParameters?: AttendanceStatusesListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedAttendanceStatusList>;
+    public attendanceStatusesList(requestParameters?: AttendanceStatusesListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedAttendanceStatusList>>;
+    public attendanceStatusesList(requestParameters?: AttendanceStatusesListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedAttendanceStatusList>>;
+    public attendanceStatusesList(requestParameters?: AttendanceStatusesListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const includeInactive = requestParameters?.includeInactive;
+        const isActive = requestParameters?.isActive;
+        const isDefault = requestParameters?.isDefault;
+        const ordering = requestParameters?.ordering;
+        const page = requestParameters?.page;
+        const pageSize = requestParameters?.pageSize;
+        const search = requestParameters?.search;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -305,20 +314,21 @@ export class AttendanceStatusesService extends BaseService implements Attendance
     /**
      * CRUD on the AttendanceStatus referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete bumps updated_at.
      * @endpoint patch /api/v1/attendance-statuses/{id}/
-     * @param id A unique integer value identifying this attendance status.
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
-     * @param patchedAttendanceStatusAdmin 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public attendanceStatusesPartialUpdate(id: number, includeInactive?: boolean, patchedAttendanceStatusAdmin?: PatchedAttendanceStatusAdmin, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AttendanceStatusAdmin>;
-    public attendanceStatusesPartialUpdate(id: number, includeInactive?: boolean, patchedAttendanceStatusAdmin?: PatchedAttendanceStatusAdmin, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AttendanceStatusAdmin>>;
-    public attendanceStatusesPartialUpdate(id: number, includeInactive?: boolean, patchedAttendanceStatusAdmin?: PatchedAttendanceStatusAdmin, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AttendanceStatusAdmin>>;
-    public attendanceStatusesPartialUpdate(id: number, includeInactive?: boolean, patchedAttendanceStatusAdmin?: PatchedAttendanceStatusAdmin, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public attendanceStatusesPartialUpdate(requestParameters: AttendanceStatusesPartialUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AttendanceStatusAdmin>;
+    public attendanceStatusesPartialUpdate(requestParameters: AttendanceStatusesPartialUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AttendanceStatusAdmin>>;
+    public attendanceStatusesPartialUpdate(requestParameters: AttendanceStatusesPartialUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AttendanceStatusAdmin>>;
+    public attendanceStatusesPartialUpdate(requestParameters: AttendanceStatusesPartialUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling attendanceStatusesPartialUpdate.');
         }
+        const includeInactive = requestParameters?.includeInactive;
+        const patchedAttendanceStatusAdmin = requestParameters?.patchedAttendanceStatusAdmin;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -391,19 +401,20 @@ export class AttendanceStatusesService extends BaseService implements Attendance
      * Retrieve attendance status (admin flavor for staff)
      * CRUD on the AttendanceStatus referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete bumps updated_at.
      * @endpoint get /api/v1/attendance-statuses/{id}/
-     * @param id A unique integer value identifying this attendance status.
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public attendanceStatusesRetrieve(id: number, includeInactive?: boolean, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AttendanceStatusAdmin>;
-    public attendanceStatusesRetrieve(id: number, includeInactive?: boolean, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AttendanceStatusAdmin>>;
-    public attendanceStatusesRetrieve(id: number, includeInactive?: boolean, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AttendanceStatusAdmin>>;
-    public attendanceStatusesRetrieve(id: number, includeInactive?: boolean, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public attendanceStatusesRetrieve(requestParameters: AttendanceStatusesRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AttendanceStatusAdmin>;
+    public attendanceStatusesRetrieve(requestParameters: AttendanceStatusesRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AttendanceStatusAdmin>>;
+    public attendanceStatusesRetrieve(requestParameters: AttendanceStatusesRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AttendanceStatusAdmin>>;
+    public attendanceStatusesRetrieve(requestParameters: AttendanceStatusesRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling attendanceStatusesRetrieve.');
         }
+        const includeInactive = requestParameters?.includeInactive;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -463,23 +474,24 @@ export class AttendanceStatusesService extends BaseService implements Attendance
     /**
      * CRUD on the AttendanceStatus referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete bumps updated_at.
      * @endpoint put /api/v1/attendance-statuses/{id}/
-     * @param id A unique integer value identifying this attendance status.
-     * @param attendanceStatusAdmin 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public attendanceStatusesUpdate(id: number, attendanceStatusAdmin: AttendanceStatusAdmin, includeInactive?: boolean, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AttendanceStatusAdmin>;
-    public attendanceStatusesUpdate(id: number, attendanceStatusAdmin: AttendanceStatusAdmin, includeInactive?: boolean, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AttendanceStatusAdmin>>;
-    public attendanceStatusesUpdate(id: number, attendanceStatusAdmin: AttendanceStatusAdmin, includeInactive?: boolean, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AttendanceStatusAdmin>>;
-    public attendanceStatusesUpdate(id: number, attendanceStatusAdmin: AttendanceStatusAdmin, includeInactive?: boolean, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public attendanceStatusesUpdate(requestParameters: AttendanceStatusesUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AttendanceStatusAdmin>;
+    public attendanceStatusesUpdate(requestParameters: AttendanceStatusesUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AttendanceStatusAdmin>>;
+    public attendanceStatusesUpdate(requestParameters: AttendanceStatusesUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AttendanceStatusAdmin>>;
+    public attendanceStatusesUpdate(requestParameters: AttendanceStatusesUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling attendanceStatusesUpdate.');
         }
+        const attendanceStatusAdmin = requestParameters?.attendanceStatusAdmin;
         if (attendanceStatusAdmin === null || attendanceStatusAdmin === undefined) {
             throw new Error('Required parameter attendanceStatusAdmin was null or undefined when calling attendanceStatusesUpdate.');
         }
+        const includeInactive = requestParameters?.includeInactive;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 

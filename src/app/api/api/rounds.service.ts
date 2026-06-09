@@ -34,7 +34,16 @@ import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables'
 import { Configuration }                                     from '../configuration';
 import { BaseService } from '../api.base.service';
 import {
-    RoundsServiceInterface
+    RoundsServiceInterface,
+    RoundsCloneCreateRequestParams,
+    RoundsCloneExerciseCreateRequestParams,
+    RoundsCreateRequestParams,
+    RoundsDestroyRequestParams,
+    RoundsExercisesReorderCreateRequestParams,
+    RoundsListRequestParams,
+    RoundsPartialUpdateRequestParams,
+    RoundsRetrieveRequestParams,
+    RoundsUpdateRequestParams
 } from './rounds.serviceInterface';
 
 
@@ -51,15 +60,16 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
     /**
      * Clone this Round (scalar fields + M2M exercises). Returns the new Round.
      * @endpoint post /api/v1/rounds/{id}/clone/
-     * @param id A unique integer value identifying this Round.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public roundsCloneCreate(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Round>;
-    public roundsCloneCreate(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Round>>;
-    public roundsCloneCreate(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Round>>;
-    public roundsCloneCreate(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public roundsCloneCreate(requestParameters: RoundsCloneCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Round>;
+    public roundsCloneCreate(requestParameters: RoundsCloneCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Round>>;
+    public roundsCloneCreate(requestParameters: RoundsCloneCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Round>>;
+    public roundsCloneCreate(requestParameters: RoundsCloneCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling roundsCloneCreate.');
         }
@@ -110,19 +120,20 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
     /**
      * Clone an Exercise and attach the copy to this Round.
      * @endpoint post /api/v1/rounds/{id}/clone-exercise/
-     * @param id A unique integer value identifying this Round.
-     * @param cloneExerciseRequest 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public roundsCloneExerciseCreate(id: number, cloneExerciseRequest: CloneExerciseRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Exercise>;
-    public roundsCloneExerciseCreate(id: number, cloneExerciseRequest: CloneExerciseRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Exercise>>;
-    public roundsCloneExerciseCreate(id: number, cloneExerciseRequest: CloneExerciseRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Exercise>>;
-    public roundsCloneExerciseCreate(id: number, cloneExerciseRequest: CloneExerciseRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public roundsCloneExerciseCreate(requestParameters: RoundsCloneExerciseCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Exercise>;
+    public roundsCloneExerciseCreate(requestParameters: RoundsCloneExerciseCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Exercise>>;
+    public roundsCloneExerciseCreate(requestParameters: RoundsCloneExerciseCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Exercise>>;
+    public roundsCloneExerciseCreate(requestParameters: RoundsCloneExerciseCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling roundsCloneExerciseCreate.');
         }
+        const cloneExerciseRequest = requestParameters?.cloneExerciseRequest;
         if (cloneExerciseRequest === null || cloneExerciseRequest === undefined) {
             throw new Error('Required parameter cloneExerciseRequest was null or undefined when calling roundsCloneExerciseCreate.');
         }
@@ -185,15 +196,16 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
     /**
      * CRUD complet pour Round.
      * @endpoint post /api/v1/rounds/
-     * @param round 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public roundsCreate(round: Round, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Round>;
-    public roundsCreate(round: Round, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Round>>;
-    public roundsCreate(round: Round, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Round>>;
-    public roundsCreate(round: Round, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public roundsCreate(requestParameters: RoundsCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Round>;
+    public roundsCreate(requestParameters: RoundsCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Round>>;
+    public roundsCreate(requestParameters: RoundsCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Round>>;
+    public roundsCreate(requestParameters: RoundsCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const round = requestParameters?.round;
         if (round === null || round === undefined) {
             throw new Error('Required parameter round was null or undefined when calling roundsCreate.');
         }
@@ -256,15 +268,16 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
     /**
      * CRUD complet pour Round.
      * @endpoint delete /api/v1/rounds/{id}/
-     * @param id A unique integer value identifying this Round.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public roundsDestroy(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public roundsDestroy(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public roundsDestroy(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public roundsDestroy(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public roundsDestroy(requestParameters: RoundsDestroyRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public roundsDestroy(requestParameters: RoundsDestroyRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public roundsDestroy(requestParameters: RoundsDestroyRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public roundsDestroy(requestParameters: RoundsDestroyRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling roundsDestroy.');
         }
@@ -314,19 +327,20 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
     /**
      * Atomically reorder the Exercises attached to this Round. &#x60;exercise_ids&#x60; must contain exactly the IDs of the Exercises currently attached, in the desired final order. Exercise.order is set to 1..N matching list position, in a single transaction.
      * @endpoint post /api/v1/rounds/{id}/exercises/reorder/
-     * @param id A unique integer value identifying this Round.
-     * @param reorderExercisesRequest 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public roundsExercisesReorderCreate(id: number, reorderExercisesRequest: ReorderExercisesRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public roundsExercisesReorderCreate(id: number, reorderExercisesRequest: ReorderExercisesRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public roundsExercisesReorderCreate(id: number, reorderExercisesRequest: ReorderExercisesRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public roundsExercisesReorderCreate(id: number, reorderExercisesRequest: ReorderExercisesRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public roundsExercisesReorderCreate(requestParameters: RoundsExercisesReorderCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public roundsExercisesReorderCreate(requestParameters: RoundsExercisesReorderCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public roundsExercisesReorderCreate(requestParameters: RoundsExercisesReorderCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public roundsExercisesReorderCreate(requestParameters: RoundsExercisesReorderCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling roundsExercisesReorderCreate.');
         }
+        const reorderExercisesRequest = requestParameters?.reorderExercisesRequest;
         if (reorderExercisesRequest === null || reorderExercisesRequest === undefined) {
             throw new Error('Required parameter reorderExercisesRequest was null or undefined when calling roundsExercisesReorderCreate.');
         }
@@ -388,20 +402,21 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
     /**
      * CRUD complet pour Round.
      * @endpoint get /api/v1/rounds/
-     * @param language * &#x60;fr&#x60; - Français * &#x60;nl&#x60; - Nederlands * &#x60;en&#x60; - English * &#x60;it&#x60; - Italiano * &#x60;es&#x60; - Español
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
-     * @param sport 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public roundsList(language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, pageSize?: number, search?: string, sport?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedRoundList>;
-    public roundsList(language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, pageSize?: number, search?: string, sport?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedRoundList>>;
-    public roundsList(language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, pageSize?: number, search?: string, sport?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedRoundList>>;
-    public roundsList(language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, pageSize?: number, search?: string, sport?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public roundsList(requestParameters?: RoundsListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedRoundList>;
+    public roundsList(requestParameters?: RoundsListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedRoundList>>;
+    public roundsList(requestParameters?: RoundsListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedRoundList>>;
+    public roundsList(requestParameters?: RoundsListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const language = requestParameters?.language;
+        const ordering = requestParameters?.ordering;
+        const page = requestParameters?.page;
+        const pageSize = requestParameters?.pageSize;
+        const search = requestParameters?.search;
+        const sport = requestParameters?.sport;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -506,19 +521,20 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
     /**
      * CRUD complet pour Round.
      * @endpoint patch /api/v1/rounds/{id}/
-     * @param id A unique integer value identifying this Round.
-     * @param patchedRound 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public roundsPartialUpdate(id: number, patchedRound?: PatchedRound, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Round>;
-    public roundsPartialUpdate(id: number, patchedRound?: PatchedRound, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Round>>;
-    public roundsPartialUpdate(id: number, patchedRound?: PatchedRound, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Round>>;
-    public roundsPartialUpdate(id: number, patchedRound?: PatchedRound, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public roundsPartialUpdate(requestParameters: RoundsPartialUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Round>;
+    public roundsPartialUpdate(requestParameters: RoundsPartialUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Round>>;
+    public roundsPartialUpdate(requestParameters: RoundsPartialUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Round>>;
+    public roundsPartialUpdate(requestParameters: RoundsPartialUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling roundsPartialUpdate.');
         }
+        const patchedRound = requestParameters?.patchedRound;
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -578,15 +594,16 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
     /**
      * CRUD complet pour Round.
      * @endpoint get /api/v1/rounds/{id}/
-     * @param id A unique integer value identifying this Round.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public roundsRetrieve(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Round>;
-    public roundsRetrieve(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Round>>;
-    public roundsRetrieve(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Round>>;
-    public roundsRetrieve(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public roundsRetrieve(requestParameters: RoundsRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Round>;
+    public roundsRetrieve(requestParameters: RoundsRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Round>>;
+    public roundsRetrieve(requestParameters: RoundsRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Round>>;
+    public roundsRetrieve(requestParameters: RoundsRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling roundsRetrieve.');
         }
@@ -637,19 +654,20 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
     /**
      * CRUD complet pour Round.
      * @endpoint put /api/v1/rounds/{id}/
-     * @param id A unique integer value identifying this Round.
-     * @param round 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public roundsUpdate(id: number, round: Round, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Round>;
-    public roundsUpdate(id: number, round: Round, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Round>>;
-    public roundsUpdate(id: number, round: Round, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Round>>;
-    public roundsUpdate(id: number, round: Round, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public roundsUpdate(requestParameters: RoundsUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Round>;
+    public roundsUpdate(requestParameters: RoundsUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Round>>;
+    public roundsUpdate(requestParameters: RoundsUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Round>>;
+    public roundsUpdate(requestParameters: RoundsUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling roundsUpdate.');
         }
+        const round = requestParameters?.round;
         if (round === null || round === undefined) {
             throw new Error('Required parameter round was null or undefined when calling roundsUpdate.');
         }

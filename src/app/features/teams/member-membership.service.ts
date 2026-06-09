@@ -27,10 +27,13 @@ export class MemberMembershipService {
     input: CreateMemberAndAttachInput,
     teamId: number,
   ): Observable<CreateMemberAndAttachResult> {
-    return this.membersService.membersCreate(input as unknown as Member).pipe(
+    return this.membersService.membersCreate({ member: input as unknown as Member }).pipe(
       switchMap((member) =>
         this.teamsService
-          .teamsMembershipsCreate(teamId, { member: member.id } as unknown as TeamMembership)
+          .teamsMembershipsCreate({
+            teamPk: teamId,
+            teamMembership: { member: member.id } as unknown as TeamMembership,
+          })
           .pipe(map((membership) => ({ member, membership }))),
       ),
     );

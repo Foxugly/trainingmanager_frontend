@@ -18,6 +18,10 @@ import { AIPingResponse } from '../model/models';
 import { Configuration }                                     from '../configuration';
 
 
+export interface AiPingCreateRequestParams {
+    aIPingRequest?: AIPingRequest;
+}
+
 
 export interface AiServiceInterface {
     defaultHeaders: HttpHeaders;
@@ -27,8 +31,8 @@ export interface AiServiceInterface {
      * 
      * Diagnostic ping to the Anthropic API.
      * @endpoint post /api/v1/ai/ping/
-     * @param aIPingRequest 
+* @param requestParameters
      */
-    aiPingCreate(aIPingRequest?: AIPingRequest, extraHttpRequestParams?: any): Observable<AIPingResponse>;
+    aiPingCreate(requestParameters: AiPingCreateRequestParams, extraHttpRequestParams?: any): Observable<AIPingResponse>;
 
 }

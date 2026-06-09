@@ -106,7 +106,7 @@ describe('AttachmentListComponent', () => {
   });
 
   it('lists ready attachments for the target (positional targetId, targetType)', () => {
-    expect(attachmentsMock.attachmentsList).toHaveBeenCalledWith(10, 'message');
+    expect(attachmentsMock.attachmentsList).toHaveBeenCalledWith({ targetId: 10, targetType: 'message' });
     expect(access(component).items().length).toBe(1);
   });
 
@@ -144,7 +144,7 @@ describe('AttachmentListComponent', () => {
       });
     access(component).confirmDelete(makeAttachment({ id: 7 }));
     expect(confirmSpy).toHaveBeenCalled();
-    expect(attachmentsMock.attachmentsDestroy).toHaveBeenCalledWith(7);
+    expect(attachmentsMock.attachmentsDestroy).toHaveBeenCalledWith({ id: 7 });
     expect(access(component).items().length).toBe(0);
   });
 
@@ -152,6 +152,6 @@ describe('AttachmentListComponent', () => {
     attachmentsMock.attachmentsList.mockClear();
     fixture.componentRef.setInput('targetId', 42);
     fixture.detectChanges();
-    expect(attachmentsMock.attachmentsList).toHaveBeenCalledWith(42, 'message');
+    expect(attachmentsMock.attachmentsList).toHaveBeenCalledWith({ targetId: 42, targetType: 'message' });
   });
 });

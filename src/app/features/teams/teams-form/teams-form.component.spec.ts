@@ -326,9 +326,9 @@ describe('TeamsFormComponent', () => {
     });
     access(component).submit();
     expect(teamsMock.teamsCreate).toHaveBeenCalledTimes(1);
-    expect(teamsMock.teamsCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ level_id: 3, sport_ids: [1], default_sport_id: 1 }),
-    );
+    expect(teamsMock.teamsCreate).toHaveBeenCalledWith({
+      team: expect.objectContaining({ level_id: 3, sport_ids: [1], default_sport_id: 1 }),
+    });
     expect(router.navigate).toHaveBeenCalledWith(['/teams', 42, 'edit']);
   });
 
@@ -337,10 +337,10 @@ describe('TeamsFormComponent', () => {
     access(component).form.patchValue({ name: 'Renamed' });
     access(component).submit();
     expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledTimes(1);
-    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(
-      5,
-      expect.objectContaining({ level_id: 3 }),
-    );
+    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith({
+      id: 5,
+      patchedTeam: expect.objectContaining({ level_id: 3 }),
+    });
     expect(router.navigate).toHaveBeenCalledWith(['/teams', 5]);
   });
 
@@ -348,10 +348,10 @@ describe('TeamsFormComponent', () => {
     await setup('5');
     access(component).form.patchValue({ level_id: null });
     access(component).submit();
-    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(
-      5,
-      expect.objectContaining({ level_id: null }),
-    );
+    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith({
+      id: 5,
+      patchedTeam: expect.objectContaining({ level_id: null }),
+    });
   });
 
   it('maps server field errors into fieldErrors signal', () => {
@@ -376,7 +376,10 @@ describe('TeamsFormComponent', () => {
   it('patchActive calls teamsPartialUpdate with the is_active body as 2nd arg', async () => {
     await setup('5');
     access(component).patchActive(5, false);
-    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(5, { is_active: false });
+    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith({
+      id: 5,
+      patchedTeam: { is_active: false },
+    });
   });
 
   it('pre-fills auto_accept_policy + notify_managers from team policy fields', async () => {
@@ -399,13 +402,13 @@ describe('TeamsFormComponent', () => {
       notify_managers_on_join_request: false,
     });
     access(component).submit();
-    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(
-      5,
-      expect.objectContaining({
+    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith({
+      id: 5,
+      patchedTeam: expect.objectContaining({
         join_request_policy: JoinRequestPolicyEnum.Auto,
         notify_managers_on_join_request: false,
       }),
-    );
+    });
   });
 
   it('pre-fills the note-notify toggles from the team', async () => {
@@ -427,13 +430,13 @@ describe('TeamsFormComponent', () => {
       notify_athlete_on_visible_note: true,
     });
     access(component).submit();
-    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(
-      5,
-      expect.objectContaining({
+    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith({
+      id: 5,
+      patchedTeam: expect.objectContaining({
         notify_coaches_on_note: false,
         notify_athlete_on_visible_note: true,
       }),
-    );
+    });
   });
 
   it('on create 403 team_quota_exceeded → quotaExceeded set, no navigation, refreshMe called', async () => {
@@ -494,19 +497,19 @@ describe('TeamsFormComponent', () => {
       logo: 'data:image/png;base64,LOGO',
     });
     access(component).submit();
-    expect(teamsMock.teamsCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ logo: 'data:image/png;base64,LOGO' }),
-    );
+    expect(teamsMock.teamsCreate).toHaveBeenCalledWith({
+      team: expect.objectContaining({ logo: 'data:image/png;base64,LOGO' }),
+    });
   });
 
   it('update payload includes logo + roti_enabled', async () => {
     await setup('5');
     access(component).form.patchValue({ logo: 'data:image/png;base64,X', roti_enabled: true });
     access(component).submit();
-    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(
-      5,
-      expect.objectContaining({ logo: 'data:image/png;base64,X', roti_enabled: true }),
-    );
+    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith({
+      id: 5,
+      patchedTeam: expect.objectContaining({ logo: 'data:image/png;base64,X', roti_enabled: true }),
+    });
   });
 
   it('seeds rsvp_enabled from the loaded team on edit', async () => {
@@ -518,10 +521,10 @@ describe('TeamsFormComponent', () => {
     await setup('5');
     access(component).form.patchValue({ rsvp_enabled: true });
     access(component).submit();
-    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(
-      5,
-      expect.objectContaining({ rsvp_enabled: true }),
-    );
+    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith({
+      id: 5,
+      patchedTeam: expect.objectContaining({ rsvp_enabled: true }),
+    });
   });
 
   it('seeds weekly_recap_enabled from the loaded team on edit', async () => {
@@ -533,10 +536,10 @@ describe('TeamsFormComponent', () => {
     await setup('5');
     access(component).form.patchValue({ weekly_recap_enabled: true });
     access(component).submit();
-    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(
-      5,
-      expect.objectContaining({ weekly_recap_enabled: true }),
-    );
+    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith({
+      id: 5,
+      patchedTeam: expect.objectContaining({ weekly_recap_enabled: true }),
+    });
   });
 
   it('defaults visibility controls to "always" and timezone to Europe/Brussels on create', () => {
@@ -574,9 +577,9 @@ describe('TeamsFormComponent', () => {
       vis_distance: VisibilityMode.After,
     });
     access(component).submit();
-    expect(teamsMock.teamsCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ timezone: 'UTC', vis_distance: VisibilityMode.After }),
-    );
+    expect(teamsMock.teamsCreate).toHaveBeenCalledWith({
+      team: expect.objectContaining({ timezone: 'UTC', vis_distance: VisibilityMode.After }),
+    });
   });
 
   it('pre-fills topic_creation from the loaded team on edit', async () => {
@@ -593,10 +596,10 @@ describe('TeamsFormComponent', () => {
     await setup('5');
     access(component).form.patchValue({ topic_creation: 'members' });
     access(component).submit();
-    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(
-      5,
-      expect.objectContaining({ topic_creation: 'members' }),
-    );
+    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith({
+      id: 5,
+      patchedTeam: expect.objectContaining({ topic_creation: 'members' }),
+    });
   });
 
   it('update payload includes timezone + vis_*', async () => {
@@ -606,13 +609,13 @@ describe('TeamsFormComponent', () => {
       vis_rounds: VisibilityMode.Never,
     });
     access(component).submit();
-    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(
-      5,
-      expect.objectContaining({
+    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith({
+      id: 5,
+      patchedTeam: expect.objectContaining({
         timezone: 'America/New_York',
         vis_rounds: VisibilityMode.Never,
       }),
-    );
+    });
   });
 
   // ── Lieux: place-pool child wiring (the pool UI is covered by
@@ -657,13 +660,13 @@ describe('TeamsFormComponent', () => {
     access(component).onPlaceIdsChange([9]);
     placeControls(component).default_place_id.setValue(7);
     access(component).submit();
-    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith(
-      5,
-      expect.objectContaining({
+    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith({
+      id: 5,
+      patchedTeam: expect.objectContaining({
         place_ids: expect.arrayContaining([9, 7]),
         default_place_id: 7,
       }),
-    );
+    });
   });
 
   // ── Encadrement: onManagerIdsChange writes back to the form control ────────

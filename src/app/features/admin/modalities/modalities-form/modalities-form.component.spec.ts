@@ -122,7 +122,7 @@ describe('ModalitiesFormComponent', () => {
   it('reads sportId from route, loads sport for the title (create mode)', () => {
     expect(access(component).sportId()).toBe(1);
     expect(access(component).modalityId()).toBeNull();
-    expect(serviceMock.sportsRetrieve).toHaveBeenCalledWith(1, true);
+    expect(serviceMock.sportsRetrieve).toHaveBeenCalledWith({ id: 1, includeInactive: true });
     expect(access(component).form.valid).toBe(true);
   });
 
@@ -134,7 +134,11 @@ describe('ModalitiesFormComponent', () => {
     await setup('11');
 
     expect(access(component).modalityId()).toBe(11);
-    expect(serviceMock.sportsModalitiesRetrieve).toHaveBeenCalledWith(11, 1, true);
+    expect(serviceMock.sportsModalitiesRetrieve).toHaveBeenCalledWith({
+      id: 11,
+      sportPk: 1,
+      includeInactive: true,
+    });
     expect(access(component).activeValue()).toBe(true);
     expect(access(component).form.value).toMatchObject({
       name_fr: 'Crawl',
@@ -153,8 +157,11 @@ describe('ModalitiesFormComponent', () => {
   it('patchActive calls sportsModalitiesPartialUpdate(id, sportPk, true, {is_active})', async () => {
     await setup('11');
     access(component).patchActive(11, false);
-    expect(serviceMock.sportsModalitiesPartialUpdate).toHaveBeenCalledWith(11, 1, true, {
-      is_active: false,
+    expect(serviceMock.sportsModalitiesPartialUpdate).toHaveBeenCalledWith({
+      id: 11,
+      sportPk: 1,
+      includeInactive: true,
+      patchedModalityAdmin: { is_active: false },
     });
   });
 
@@ -165,9 +172,9 @@ describe('ModalitiesFormComponent', () => {
     access(component).submit();
 
     expect(serviceMock.sportsModalitiesCreate).toHaveBeenCalledTimes(1);
-    const [sportPk, payload] = serviceMock.sportsModalitiesCreate.mock.calls[0];
+    const { sportPk, modalityAdmin } = serviceMock.sportsModalitiesCreate.mock.calls[0][0];
     expect(sportPk).toBe(1);
-    expect(payload).toMatchObject({ name_fr: 'Papillon', sport: 1 });
+    expect(modalityAdmin).toMatchObject({ name_fr: 'Papillon', sport: 1 });
     expect(navigate).toHaveBeenCalledWith(['/admin/sports', 1, 'modalities']);
   });
 
@@ -179,12 +186,12 @@ describe('ModalitiesFormComponent', () => {
     access(component).submit();
 
     expect(serviceMock.sportsModalitiesPartialUpdate).toHaveBeenCalledTimes(1);
-    const [id, sportPk, includeInactive, payload] =
-      serviceMock.sportsModalitiesPartialUpdate.mock.calls[0];
+    const { id, sportPk, includeInactive, patchedModalityAdmin } =
+      serviceMock.sportsModalitiesPartialUpdate.mock.calls[0][0];
     expect(id).toBe(11);
     expect(sportPk).toBe(1);
     expect(includeInactive).toBeUndefined();
-    expect(payload).toMatchObject({ name_nl: 'Crawl NL', sport: 1 });
+    expect(patchedModalityAdmin).toMatchObject({ name_nl: 'Crawl NL', sport: 1 });
     expect(navigate).toHaveBeenCalledWith(['/admin/sports', 1, 'modalities']);
   });
 

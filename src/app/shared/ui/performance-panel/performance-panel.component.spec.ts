@@ -112,15 +112,7 @@ describe('PerformancePanelComponent', () => {
   });
 
   it('loads performances for the (member, team) scope on init', () => {
-    expect(perfMock.performancesList).toHaveBeenCalledWith(
-      undefined,
-      3,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      7,
-    );
+    expect(perfMock.performancesList).toHaveBeenCalledWith({ member: 3, team: 7 });
     expect(access(component).items().length).toBe(1);
     expect(access(component).loading()).toBe(false);
   });
@@ -221,8 +213,8 @@ describe('PerformancePanelComponent', () => {
     });
     access(component).submit();
 
-    expect(perfMock.performancesCreate).toHaveBeenCalledWith(
-      expect.objectContaining({
+    expect(perfMock.performancesCreate).toHaveBeenCalledWith({
+      performance: expect.objectContaining({
         team: 7,
         member: 3,
         label: 'Squat',
@@ -230,7 +222,7 @@ describe('PerformancePanelComponent', () => {
         unit: UnitEnum.Kg,
         recorded_on: '2026-01-15',
       }),
-    );
+    });
     expect(access(component).items()[0].id).toBe(99);
   });
 });

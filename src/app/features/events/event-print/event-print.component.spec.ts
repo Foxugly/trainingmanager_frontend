@@ -131,12 +131,14 @@ describe('EventPrintComponent', () => {
         .mockReturnValue(eventResult ? of(eventResult) : throwError(() => new Error('404'))),
     };
     roundsMock = {
-      roundsRetrieve: vi.fn().mockImplementation((id: number) => of({ ...round1, id })),
+      roundsRetrieve: vi
+        .fn()
+        .mockImplementation((p: { id: number }) => of({ ...round1, id: p.id })),
     };
     exercisesMock = {
       exercisesRetrieve: vi
         .fn()
-        .mockImplementation((id: number) => of(id === 201 ? exercise1 : exercise2)),
+        .mockImplementation((p: { id: number }) => of(p.id === 201 ? exercise1 : exercise2)),
     };
 
     await TestBed.configureTestingModule({
@@ -190,7 +192,7 @@ describe('EventPrintComponent', () => {
   });
 
   it('loads the event for the route :id', () => {
-    expect(eventsMock.eventsRetrieve).toHaveBeenCalledWith(7);
+    expect(eventsMock.eventsRetrieve).toHaveBeenCalledWith({ id: 7 });
     expect(access(component).event()?.id).toBe(7);
   });
 
@@ -208,7 +210,7 @@ describe('EventPrintComponent', () => {
   it('loads rounds and their ordered exercises', async () => {
     await new Promise((r) => setTimeout(r, 0));
     await new Promise((r) => setTimeout(r, 0));
-    expect(roundsMock.roundsRetrieve).toHaveBeenCalledWith(11);
+    expect(roundsMock.roundsRetrieve).toHaveBeenCalledWith({ id: 11 });
     expect(access(component).rounds().length).toBe(1);
     const exercises = access(component).exercisesByRound().get(11);
     expect(exercises?.length).toBe(2);

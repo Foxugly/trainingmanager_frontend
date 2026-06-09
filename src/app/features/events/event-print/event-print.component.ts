@@ -114,7 +114,7 @@ export class EventPrintComponent implements OnInit {
   private loadEvent(id: number): void {
     this.loading.set(true);
     this.eventsService
-      .eventsRetrieve(id)
+      .eventsRetrieve({ id })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (e) => {
@@ -137,7 +137,7 @@ export class EventPrintComponent implements OnInit {
     }
     try {
       const roundResults = await Promise.allSettled(
-        roundIds.map((rid) => firstValueFrom(this.roundsService.roundsRetrieve(rid))),
+        roundIds.map((rid) => firstValueFrom(this.roundsService.roundsRetrieve({ id: rid }))),
       );
       const fetchedRounds: Round[] = [];
       for (const r of roundResults) {
@@ -149,7 +149,7 @@ export class EventPrintComponent implements OnInit {
       const exerciseFetches = sortedRounds.map(async (round) => {
         const ids = round.exercises ?? [];
         const settled = await Promise.allSettled(
-          ids.map((eid) => firstValueFrom(this.exercisesService.exercisesRetrieve(eid))),
+          ids.map((eid) => firstValueFrom(this.exercisesService.exercisesRetrieve({ id: eid }))),
         );
         const fulfilled: Exercise[] = [];
         for (const s of settled) {

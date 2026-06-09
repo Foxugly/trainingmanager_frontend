@@ -20,6 +20,14 @@ import { TeamJoinRequestMagicActionResponse } from '../model/models';
 import { Configuration }                                     from '../configuration';
 
 
+export interface JoinMagicCreateRequestParams {
+    teamJoinRequestMagicActionPost: TeamJoinRequestMagicActionPost;
+}
+
+export interface JoinMagicRetrieveRequestParams {
+    token: string;
+}
+
 
 export interface JoinMagicServiceInterface {
     defaultHeaders: HttpHeaders;
@@ -29,16 +37,16 @@ export interface JoinMagicServiceInterface {
      * 
      * POST /api/v1/join-magic/ {token} — executes the encoded action.  Reversal support (E-b semantic):   - pending  + accept -&gt; accepted (creates TeamMembership)   - pending  + reject -&gt; rejected (no membership)   - accepted + reject -&gt; rejected (revokes membership: sets left_at)   - rejected + accept -&gt; accepted (creates membership again)   - cancelled + *    -&gt; 409 conflict (requester withdrew, irreversible) responded_by is updated to the manager who made the latest call. Idempotent when the request is already in the target status.
      * @endpoint post /api/v1/join-magic/
-     * @param teamJoinRequestMagicActionPost 
+* @param requestParameters
      */
-    joinMagicCreate(teamJoinRequestMagicActionPost: TeamJoinRequestMagicActionPost, extraHttpRequestParams?: any): Observable<TeamJoinRequestMagicActionResponse>;
+    joinMagicCreate(requestParameters: JoinMagicCreateRequestParams, extraHttpRequestParams?: any): Observable<TeamJoinRequestMagicActionResponse>;
 
     /**
      * 
      * GET /api/v1/join-magic/&lt;token&gt;/ — preview only. No state change.  Safe for email link previewers (Outlook safe-links, Gmail bots). Returns the join request + action proposed by the token + current status + whether the action would reverse a previous decision + whether the action can still be performed (false if cancelled).
      * @endpoint get /api/v1/join-magic/{token}/
-     * @param token 
+* @param requestParameters
      */
-    joinMagicRetrieve(token: string, extraHttpRequestParams?: any): Observable<TeamJoinRequestMagicActionResponse>;
+    joinMagicRetrieve(requestParameters: JoinMagicRetrieveRequestParams, extraHttpRequestParams?: any): Observable<TeamJoinRequestMagicActionResponse>;
 
 }

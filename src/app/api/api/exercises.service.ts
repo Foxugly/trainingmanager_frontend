@@ -28,7 +28,14 @@ import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables'
 import { Configuration }                                     from '../configuration';
 import { BaseService } from '../api.base.service';
 import {
-    ExercisesServiceInterface
+    ExercisesServiceInterface,
+    ExercisesCloneCreateRequestParams,
+    ExercisesCreateRequestParams,
+    ExercisesDestroyRequestParams,
+    ExercisesListRequestParams,
+    ExercisesPartialUpdateRequestParams,
+    ExercisesRetrieveRequestParams,
+    ExercisesUpdateRequestParams
 } from './exercises.serviceInterface';
 
 
@@ -45,15 +52,16 @@ export class ExercisesService extends BaseService implements ExercisesServiceInt
     /**
      * Clone this Exercise. Returns the new Exercise.
      * @endpoint post /api/v1/exercises/{id}/clone/
-     * @param id A unique integer value identifying this Exercise.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public exercisesCloneCreate(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Exercise>;
-    public exercisesCloneCreate(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Exercise>>;
-    public exercisesCloneCreate(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Exercise>>;
-    public exercisesCloneCreate(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public exercisesCloneCreate(requestParameters: ExercisesCloneCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Exercise>;
+    public exercisesCloneCreate(requestParameters: ExercisesCloneCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Exercise>>;
+    public exercisesCloneCreate(requestParameters: ExercisesCloneCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Exercise>>;
+    public exercisesCloneCreate(requestParameters: ExercisesCloneCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling exercisesCloneCreate.');
         }
@@ -104,15 +112,16 @@ export class ExercisesService extends BaseService implements ExercisesServiceInt
     /**
      * CRUD complet pour Exercise.
      * @endpoint post /api/v1/exercises/
-     * @param exercise 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public exercisesCreate(exercise: Exercise, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Exercise>;
-    public exercisesCreate(exercise: Exercise, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Exercise>>;
-    public exercisesCreate(exercise: Exercise, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Exercise>>;
-    public exercisesCreate(exercise: Exercise, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public exercisesCreate(requestParameters: ExercisesCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Exercise>;
+    public exercisesCreate(requestParameters: ExercisesCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Exercise>>;
+    public exercisesCreate(requestParameters: ExercisesCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Exercise>>;
+    public exercisesCreate(requestParameters: ExercisesCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const exercise = requestParameters?.exercise;
         if (exercise === null || exercise === undefined) {
             throw new Error('Required parameter exercise was null or undefined when calling exercisesCreate.');
         }
@@ -175,15 +184,16 @@ export class ExercisesService extends BaseService implements ExercisesServiceInt
     /**
      * CRUD complet pour Exercise.
      * @endpoint delete /api/v1/exercises/{id}/
-     * @param id A unique integer value identifying this Exercise.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public exercisesDestroy(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public exercisesDestroy(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public exercisesDestroy(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public exercisesDestroy(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public exercisesDestroy(requestParameters: ExercisesDestroyRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public exercisesDestroy(requestParameters: ExercisesDestroyRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public exercisesDestroy(requestParameters: ExercisesDestroyRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public exercisesDestroy(requestParameters: ExercisesDestroyRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling exercisesDestroy.');
         }
@@ -233,21 +243,22 @@ export class ExercisesService extends BaseService implements ExercisesServiceInt
     /**
      * CRUD complet pour Exercise.
      * @endpoint get /api/v1/exercises/
-     * @param energysegment 
-     * @param language * &#x60;fr&#x60; - Français * &#x60;nl&#x60; - Nederlands * &#x60;en&#x60; - English * &#x60;it&#x60; - Italiano * &#x60;es&#x60; - Español
-     * @param modality 
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public exercisesList(energysegment?: number, language?: 'en' | 'es' | 'fr' | 'it' | 'nl', modality?: number, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedExerciseList>;
-    public exercisesList(energysegment?: number, language?: 'en' | 'es' | 'fr' | 'it' | 'nl', modality?: number, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedExerciseList>>;
-    public exercisesList(energysegment?: number, language?: 'en' | 'es' | 'fr' | 'it' | 'nl', modality?: number, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedExerciseList>>;
-    public exercisesList(energysegment?: number, language?: 'en' | 'es' | 'fr' | 'it' | 'nl', modality?: number, ordering?: string, page?: number, pageSize?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public exercisesList(requestParameters?: ExercisesListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedExerciseList>;
+    public exercisesList(requestParameters?: ExercisesListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedExerciseList>>;
+    public exercisesList(requestParameters?: ExercisesListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedExerciseList>>;
+    public exercisesList(requestParameters?: ExercisesListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const energysegment = requestParameters?.energysegment;
+        const language = requestParameters?.language;
+        const modality = requestParameters?.modality;
+        const ordering = requestParameters?.ordering;
+        const page = requestParameters?.page;
+        const pageSize = requestParameters?.pageSize;
+        const search = requestParameters?.search;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -361,19 +372,20 @@ export class ExercisesService extends BaseService implements ExercisesServiceInt
     /**
      * CRUD complet pour Exercise.
      * @endpoint patch /api/v1/exercises/{id}/
-     * @param id A unique integer value identifying this Exercise.
-     * @param patchedExercise 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public exercisesPartialUpdate(id: number, patchedExercise?: PatchedExercise, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Exercise>;
-    public exercisesPartialUpdate(id: number, patchedExercise?: PatchedExercise, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Exercise>>;
-    public exercisesPartialUpdate(id: number, patchedExercise?: PatchedExercise, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Exercise>>;
-    public exercisesPartialUpdate(id: number, patchedExercise?: PatchedExercise, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public exercisesPartialUpdate(requestParameters: ExercisesPartialUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Exercise>;
+    public exercisesPartialUpdate(requestParameters: ExercisesPartialUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Exercise>>;
+    public exercisesPartialUpdate(requestParameters: ExercisesPartialUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Exercise>>;
+    public exercisesPartialUpdate(requestParameters: ExercisesPartialUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling exercisesPartialUpdate.');
         }
+        const patchedExercise = requestParameters?.patchedExercise;
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -433,15 +445,16 @@ export class ExercisesService extends BaseService implements ExercisesServiceInt
     /**
      * CRUD complet pour Exercise.
      * @endpoint get /api/v1/exercises/{id}/
-     * @param id A unique integer value identifying this Exercise.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public exercisesRetrieve(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Exercise>;
-    public exercisesRetrieve(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Exercise>>;
-    public exercisesRetrieve(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Exercise>>;
-    public exercisesRetrieve(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public exercisesRetrieve(requestParameters: ExercisesRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Exercise>;
+    public exercisesRetrieve(requestParameters: ExercisesRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Exercise>>;
+    public exercisesRetrieve(requestParameters: ExercisesRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Exercise>>;
+    public exercisesRetrieve(requestParameters: ExercisesRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling exercisesRetrieve.');
         }
@@ -492,19 +505,20 @@ export class ExercisesService extends BaseService implements ExercisesServiceInt
     /**
      * CRUD complet pour Exercise.
      * @endpoint put /api/v1/exercises/{id}/
-     * @param id A unique integer value identifying this Exercise.
-     * @param exercise 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public exercisesUpdate(id: number, exercise: Exercise, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Exercise>;
-    public exercisesUpdate(id: number, exercise: Exercise, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Exercise>>;
-    public exercisesUpdate(id: number, exercise: Exercise, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Exercise>>;
-    public exercisesUpdate(id: number, exercise: Exercise, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public exercisesUpdate(requestParameters: ExercisesUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Exercise>;
+    public exercisesUpdate(requestParameters: ExercisesUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Exercise>>;
+    public exercisesUpdate(requestParameters: ExercisesUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Exercise>>;
+    public exercisesUpdate(requestParameters: ExercisesUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling exercisesUpdate.');
         }
+        const exercise = requestParameters?.exercise;
         if (exercise === null || exercise === undefined) {
             throw new Error('Required parameter exercise was null or undefined when calling exercisesUpdate.');
         }

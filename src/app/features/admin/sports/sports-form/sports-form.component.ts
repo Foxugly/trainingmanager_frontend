@@ -79,7 +79,10 @@ export class SportsFormComponent implements OnInit {
   protected readonly activeValue = signal(true);
 
   protected readonly patchActive = (id: number, value: boolean) =>
-    this.sportsService.sportsPartialUpdate(id, undefined, { is_active: value } as PatchedSportAdmin);
+    this.sportsService.sportsPartialUpdate({
+      id,
+      patchedSportAdmin: { is_active: value } as PatchedSportAdmin,
+    });
 
   protected readonly activeLabels = computed<ActiveToggleLabels>(() => ({
     active: this.transloco.translate('common.active'),
@@ -112,7 +115,7 @@ export class SportsFormComponent implements OnInit {
       this.sportId.set(id);
       this.loading.set(true);
       this.sportsService
-        .sportsRetrieve(id, true)
+        .sportsRetrieve({ id, includeInactive: true })
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (sport) => {
@@ -165,8 +168,8 @@ export class SportsFormComponent implements OnInit {
     };
 
     const request$ = id
-      ? this.sportsService.sportsPartialUpdate(id, undefined, payload as PatchedSportAdmin)
-      : this.sportsService.sportsCreate(payload as unknown as SportAdmin);
+      ? this.sportsService.sportsPartialUpdate({ id, patchedSportAdmin: payload as PatchedSportAdmin })
+      : this.sportsService.sportsCreate({ sportAdmin: payload as unknown as SportAdmin });
 
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {

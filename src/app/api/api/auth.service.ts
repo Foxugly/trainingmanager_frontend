@@ -58,7 +58,19 @@ import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables'
 import { Configuration }                                     from '../configuration';
 import { BaseService } from '../api.base.service';
 import {
-    AuthServiceInterface
+    AuthServiceInterface,
+    AuthAccountDeleteCreateRequestParams,
+    AuthEmailConfirmCreateRequestParams,
+    AuthEmailResendCreateRequestParams,
+    AuthLogoutCreateRequestParams,
+    AuthMagicLinkExchangeCreateRequestParams,
+    AuthMagicLinkRequestCreateRequestParams,
+    AuthPasswordChangeCreateRequestParams,
+    AuthPasswordResetConfirmCreateRequestParams,
+    AuthPasswordResetCreateRequestParams,
+    AuthRegisterCreateRequestParams,
+    AuthTokenCreateRequestParams,
+    AuthTokenRefreshCreateRequestParams
 } from './auth.serviceInterface';
 
 
@@ -75,15 +87,16 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     /**
      * POST /api/v1/auth/account/delete/ — authenticated: delete own account. Body: {current_password}. 204 on success. 409 (code owns_teams) when the user still owns teams. No tokens; user row is removed.
      * @endpoint post /api/v1/auth/account/delete/
-     * @param accountDelete 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public authAccountDeleteCreate(accountDelete: AccountDelete, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public authAccountDeleteCreate(accountDelete: AccountDelete, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public authAccountDeleteCreate(accountDelete: AccountDelete, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public authAccountDeleteCreate(accountDelete: AccountDelete, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public authAccountDeleteCreate(requestParameters: AuthAccountDeleteCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public authAccountDeleteCreate(requestParameters: AuthAccountDeleteCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public authAccountDeleteCreate(requestParameters: AuthAccountDeleteCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public authAccountDeleteCreate(requestParameters: AuthAccountDeleteCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const accountDelete = requestParameters?.accountDelete;
         if (accountDelete === null || accountDelete === undefined) {
             throw new Error('Required parameter accountDelete was null or undefined when calling authAccountDeleteCreate.');
         }
@@ -143,15 +156,16 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     /**
      * POST /api/v1/auth/email/confirm/ — finalize signup with the key received by email. Returns JWT tokens for auto-login.
      * @endpoint post /api/v1/auth/email/confirm/
-     * @param emailConfirm 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public authEmailConfirmCreate(emailConfirm: EmailConfirm, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public authEmailConfirmCreate(emailConfirm: EmailConfirm, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public authEmailConfirmCreate(emailConfirm: EmailConfirm, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public authEmailConfirmCreate(emailConfirm: EmailConfirm, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public authEmailConfirmCreate(requestParameters: AuthEmailConfirmCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public authEmailConfirmCreate(requestParameters: AuthEmailConfirmCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public authEmailConfirmCreate(requestParameters: AuthEmailConfirmCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public authEmailConfirmCreate(requestParameters: AuthEmailConfirmCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const emailConfirm = requestParameters?.emailConfirm;
         if (emailConfirm === null || emailConfirm === undefined) {
             throw new Error('Required parameter emailConfirm was null or undefined when calling authEmailConfirmCreate.');
         }
@@ -210,15 +224,16 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     /**
      * POST /api/v1/auth/email/resend/ — re-send confirmation link.  Anti-leak: always returns 200 regardless of whether the email exists, so an attacker cannot enumerate registered emails. The fact that no email is sent for unknown addresses must remain invisible to the client.  Rate-limited to 3 requests per hour per IP (anti-enumeration + anti-mail-spam).
      * @endpoint post /api/v1/auth/email/resend/
-     * @param emailResend 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public authEmailResendCreate(emailResend: EmailResend, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public authEmailResendCreate(emailResend: EmailResend, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public authEmailResendCreate(emailResend: EmailResend, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public authEmailResendCreate(emailResend: EmailResend, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public authEmailResendCreate(requestParameters: AuthEmailResendCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public authEmailResendCreate(requestParameters: AuthEmailResendCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public authEmailResendCreate(requestParameters: AuthEmailResendCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public authEmailResendCreate(requestParameters: AuthEmailResendCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const emailResend = requestParameters?.emailResend;
         if (emailResend === null || emailResend === undefined) {
             throw new Error('Required parameter emailResend was null or undefined when calling authEmailResendCreate.');
         }
@@ -277,15 +292,16 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     /**
      * POST /api/v1/auth/logout/ — revoke a refresh token.  The caller authenticates with their access token and posts the refresh they want revoked. On success (204), that refresh — and any rotation descendants produced by /auth/token/refresh/ — can no longer be used. The access token itself is short-lived and not invalidated here; it naturally expires within ACCESS_TOKEN_LIFETIME.  Ownership is verified before blacklisting: a holder of someone else\&#39;s refresh string cannot use this endpoint to revoke it. We respond with a generic invalid_token to avoid signalling whether the token exists or only doesn\&#39;t belong to the caller.
      * @endpoint post /api/v1/auth/logout/
-     * @param logout 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public authLogoutCreate(logout: Logout, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public authLogoutCreate(logout: Logout, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public authLogoutCreate(logout: Logout, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public authLogoutCreate(logout: Logout, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public authLogoutCreate(requestParameters: AuthLogoutCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public authLogoutCreate(requestParameters: AuthLogoutCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public authLogoutCreate(requestParameters: AuthLogoutCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public authLogoutCreate(requestParameters: AuthLogoutCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const logout = requestParameters?.logout;
         if (logout === null || logout === undefined) {
             throw new Error('Required parameter logout was null or undefined when calling authLogoutCreate.');
         }
@@ -347,15 +363,16 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     /**
      * POST /api/v1/auth/magic-link/exchange/ — public: trade token for JWT.  Body: {token}. On success returns the JWT pair (access + refresh). Errors: expired -&gt; 410 {\&quot;detail\&quot;:\&quot;token_expired\&quot;}; invalid/ineligible -&gt; 400 {\&quot;detail\&quot;:\&quot;token_invalid\&quot;}.
      * @endpoint post /api/v1/auth/magic-link/exchange/
-     * @param magicLinkExchangeRequest 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public authMagicLinkExchangeCreate(magicLinkExchangeRequest: MagicLinkExchangeRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<MagicLinkExchangeResponse>;
-    public authMagicLinkExchangeCreate(magicLinkExchangeRequest: MagicLinkExchangeRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<MagicLinkExchangeResponse>>;
-    public authMagicLinkExchangeCreate(magicLinkExchangeRequest: MagicLinkExchangeRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<MagicLinkExchangeResponse>>;
-    public authMagicLinkExchangeCreate(magicLinkExchangeRequest: MagicLinkExchangeRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public authMagicLinkExchangeCreate(requestParameters: AuthMagicLinkExchangeCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<MagicLinkExchangeResponse>;
+    public authMagicLinkExchangeCreate(requestParameters: AuthMagicLinkExchangeCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<MagicLinkExchangeResponse>>;
+    public authMagicLinkExchangeCreate(requestParameters: AuthMagicLinkExchangeCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<MagicLinkExchangeResponse>>;
+    public authMagicLinkExchangeCreate(requestParameters: AuthMagicLinkExchangeCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const magicLinkExchangeRequest = requestParameters?.magicLinkExchangeRequest;
         if (magicLinkExchangeRequest === null || magicLinkExchangeRequest === undefined) {
             throw new Error('Required parameter magicLinkExchangeRequest was null or undefined when calling authMagicLinkExchangeCreate.');
         }
@@ -415,15 +432,16 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     /**
      * POST /api/v1/auth/magic-link/request/ — public: email a sign-in link.  Always returns 200 with the same body whether or not the email matches an active, email-confirmed account (no user enumeration). Rate-limited to 5 requests per hour per IP.
      * @endpoint post /api/v1/auth/magic-link/request/
-     * @param magicLinkRequest 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public authMagicLinkRequestCreate(magicLinkRequest: MagicLinkRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<MagicLinkRequestResponse>;
-    public authMagicLinkRequestCreate(magicLinkRequest: MagicLinkRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<MagicLinkRequestResponse>>;
-    public authMagicLinkRequestCreate(magicLinkRequest: MagicLinkRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<MagicLinkRequestResponse>>;
-    public authMagicLinkRequestCreate(magicLinkRequest: MagicLinkRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public authMagicLinkRequestCreate(requestParameters: AuthMagicLinkRequestCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<MagicLinkRequestResponse>;
+    public authMagicLinkRequestCreate(requestParameters: AuthMagicLinkRequestCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<MagicLinkRequestResponse>>;
+    public authMagicLinkRequestCreate(requestParameters: AuthMagicLinkRequestCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<MagicLinkRequestResponse>>;
+    public authMagicLinkRequestCreate(requestParameters: AuthMagicLinkRequestCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const magicLinkRequest = requestParameters?.magicLinkRequest;
         if (magicLinkRequest === null || magicLinkRequest === undefined) {
             throw new Error('Required parameter magicLinkRequest was null or undefined when calling authMagicLinkRequestCreate.');
         }
@@ -483,15 +501,16 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     /**
      * POST /api/v1/auth/password/change/ — authenticated: change own password.  Body: {current_password, new_password}. The caller must prove they still know &#x60;current_password&#x60;; &#x60;new_password&#x60; is validated against Django\&#39;s configured password validators (with the user as context) and must differ from the current one. On success the password is updated and a localized {detail} body is returned — NO tokens are issued.
      * @endpoint post /api/v1/auth/password/change/
-     * @param passwordChange 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public authPasswordChangeCreate(passwordChange: PasswordChange, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PasswordChangeResponse>;
-    public authPasswordChangeCreate(passwordChange: PasswordChange, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PasswordChangeResponse>>;
-    public authPasswordChangeCreate(passwordChange: PasswordChange, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PasswordChangeResponse>>;
-    public authPasswordChangeCreate(passwordChange: PasswordChange, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public authPasswordChangeCreate(requestParameters: AuthPasswordChangeCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PasswordChangeResponse>;
+    public authPasswordChangeCreate(requestParameters: AuthPasswordChangeCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PasswordChangeResponse>>;
+    public authPasswordChangeCreate(requestParameters: AuthPasswordChangeCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PasswordChangeResponse>>;
+    public authPasswordChangeCreate(requestParameters: AuthPasswordChangeCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const passwordChange = requestParameters?.passwordChange;
         if (passwordChange === null || passwordChange === undefined) {
             throw new Error('Required parameter passwordChange was null or undefined when calling authPasswordChangeCreate.');
         }
@@ -552,15 +571,16 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     /**
      * POST /api/v1/auth/password/reset/confirm/ — public: finalize a reset.  Body: {key, new_password}. The key is the {uid}-{token} string the user received in their email. Returns the JWT pair on success (auto-login after reset).
      * @endpoint post /api/v1/auth/password/reset/confirm/
-     * @param passwordResetConfirm 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public authPasswordResetConfirmCreate(passwordResetConfirm: PasswordResetConfirm, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PasswordResetConfirmResponse>;
-    public authPasswordResetConfirmCreate(passwordResetConfirm: PasswordResetConfirm, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PasswordResetConfirmResponse>>;
-    public authPasswordResetConfirmCreate(passwordResetConfirm: PasswordResetConfirm, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PasswordResetConfirmResponse>>;
-    public authPasswordResetConfirmCreate(passwordResetConfirm: PasswordResetConfirm, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public authPasswordResetConfirmCreate(requestParameters: AuthPasswordResetConfirmCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PasswordResetConfirmResponse>;
+    public authPasswordResetConfirmCreate(requestParameters: AuthPasswordResetConfirmCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PasswordResetConfirmResponse>>;
+    public authPasswordResetConfirmCreate(requestParameters: AuthPasswordResetConfirmCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PasswordResetConfirmResponse>>;
+    public authPasswordResetConfirmCreate(requestParameters: AuthPasswordResetConfirmCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const passwordResetConfirm = requestParameters?.passwordResetConfirm;
         if (passwordResetConfirm === null || passwordResetConfirm === undefined) {
             throw new Error('Required parameter passwordResetConfirm was null or undefined when calling authPasswordResetConfirmCreate.');
         }
@@ -620,15 +640,16 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     /**
      * POST /api/v1/auth/password/reset/ — public: request a password reset.  Anti-leak: ALWAYS returns 200 with the same body, whether the email matches a User or not. If it does, an email with a reset link is dispatched (frontend URL: {FRONTEND_URL}/auth/reset-password/{key}, no trailing slash). If it doesn\&#39;t, the call is a silent no-op.  Rate-limited to 3 requests per hour per IP. Turnstile required.
      * @endpoint post /api/v1/auth/password/reset/
-     * @param passwordResetRequest 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public authPasswordResetCreate(passwordResetRequest: PasswordResetRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PasswordResetRequestResponse>;
-    public authPasswordResetCreate(passwordResetRequest: PasswordResetRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PasswordResetRequestResponse>>;
-    public authPasswordResetCreate(passwordResetRequest: PasswordResetRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PasswordResetRequestResponse>>;
-    public authPasswordResetCreate(passwordResetRequest: PasswordResetRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public authPasswordResetCreate(requestParameters: AuthPasswordResetCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PasswordResetRequestResponse>;
+    public authPasswordResetCreate(requestParameters: AuthPasswordResetCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PasswordResetRequestResponse>>;
+    public authPasswordResetCreate(requestParameters: AuthPasswordResetCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PasswordResetRequestResponse>>;
+    public authPasswordResetCreate(requestParameters: AuthPasswordResetCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const passwordResetRequest = requestParameters?.passwordResetRequest;
         if (passwordResetRequest === null || passwordResetRequest === undefined) {
             throw new Error('Required parameter passwordResetRequest was null or undefined when calling authPasswordResetCreate.');
         }
@@ -688,15 +709,16 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     /**
      * POST /api/v1/auth/register/ — public self-signup.  Creates a CustomUser (is_active&#x3D;True) plus an unverified EmailAddress via allauth, then sends a confirmation email. No JWT is returned — the caller must verify their email before obtaining tokens.  Rate-limited to 5 requests per hour per IP (anti-bot signup).
      * @endpoint post /api/v1/auth/register/
-     * @param register 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public authRegisterCreate(register: Register, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public authRegisterCreate(register: Register, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public authRegisterCreate(register: Register, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public authRegisterCreate(register: Register, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public authRegisterCreate(requestParameters: AuthRegisterCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public authRegisterCreate(requestParameters: AuthRegisterCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public authRegisterCreate(requestParameters: AuthRegisterCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public authRegisterCreate(requestParameters: AuthRegisterCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const register = requestParameters?.register;
         if (register === null || register === undefined) {
             throw new Error('Required parameter register was null or undefined when calling authRegisterCreate.');
         }
@@ -755,15 +777,16 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     /**
      * Drop-in replacement for SimpleJWT\&#39;s TokenObtainPairView that refuses login when the user\&#39;s primary email is unverified.  Rate-limited to 10 requests per minute per IP (anti-bruteforce).  The @extend_schema(responses&#x3D;...) above is required because SimpleJWT\&#39;s TokenObtainPairSerializer describes the *input* shape ({username, password}) and drf-spectacular would otherwise reuse it for the response — leading to a wrong codegen on the frontend (Observable&lt;{username, password}&gt; instead of Observable&lt;{access, refresh}&gt;).
      * @endpoint post /api/v1/auth/token/
-     * @param verifiedTokenObtainPair 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public authTokenCreate(verifiedTokenObtainPair: VerifiedTokenObtainPair, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TokenObtainPairResponse>;
-    public authTokenCreate(verifiedTokenObtainPair: VerifiedTokenObtainPair, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TokenObtainPairResponse>>;
-    public authTokenCreate(verifiedTokenObtainPair: VerifiedTokenObtainPair, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TokenObtainPairResponse>>;
-    public authTokenCreate(verifiedTokenObtainPair: VerifiedTokenObtainPair, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public authTokenCreate(requestParameters: AuthTokenCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TokenObtainPairResponse>;
+    public authTokenCreate(requestParameters: AuthTokenCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TokenObtainPairResponse>>;
+    public authTokenCreate(requestParameters: AuthTokenCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TokenObtainPairResponse>>;
+    public authTokenCreate(requestParameters: AuthTokenCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const verifiedTokenObtainPair = requestParameters?.verifiedTokenObtainPair;
         if (verifiedTokenObtainPair === null || verifiedTokenObtainPair === undefined) {
             throw new Error('Required parameter verifiedTokenObtainPair was null or undefined when calling authTokenCreate.');
         }
@@ -823,15 +846,16 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     /**
      * Takes a refresh type JSON web token and returns an access type JSON web token if the refresh token is valid.
      * @endpoint post /api/v1/auth/token/refresh/
-     * @param tokenRefresh 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public authTokenRefreshCreate(tokenRefresh: TokenRefresh, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TokenRefresh>;
-    public authTokenRefreshCreate(tokenRefresh: TokenRefresh, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TokenRefresh>>;
-    public authTokenRefreshCreate(tokenRefresh: TokenRefresh, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TokenRefresh>>;
-    public authTokenRefreshCreate(tokenRefresh: TokenRefresh, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public authTokenRefreshCreate(requestParameters: AuthTokenRefreshCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TokenRefresh>;
+    public authTokenRefreshCreate(requestParameters: AuthTokenRefreshCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TokenRefresh>>;
+    public authTokenRefreshCreate(requestParameters: AuthTokenRefreshCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TokenRefresh>>;
+    public authTokenRefreshCreate(requestParameters: AuthTokenRefreshCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const tokenRefresh = requestParameters?.tokenRefresh;
         if (tokenRefresh === null || tokenRefresh === undefined) {
             throw new Error('Required parameter tokenRefresh was null or undefined when calling authTokenRefreshCreate.');
         }

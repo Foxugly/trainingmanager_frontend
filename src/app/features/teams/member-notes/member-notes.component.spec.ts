@@ -96,7 +96,7 @@ describe('MemberNotesComponent', () => {
   });
 
   it('loads the notes for the (member, team) scope on init', () => {
-    expect(teamsMock.teamsMembersNotesList).toHaveBeenCalledWith(3, 7);
+    expect(teamsMock.teamsMembersNotesList).toHaveBeenCalledWith({ memberPk: 3, teamPk: 7 });
     expect(access(component).notes().length).toBe(1);
     expect(access(component).loading()).toBe(false);
   });
@@ -113,11 +113,11 @@ describe('MemberNotesComponent', () => {
 
     access(component).submit();
 
-    expect(teamsMock.teamsMembersNotesCreate).toHaveBeenCalledWith(
-      3,
-      7,
-      expect.objectContaining({ content: '<p>Nouvelle</p>', visible_to_athlete: true }),
-    );
+    expect(teamsMock.teamsMembersNotesCreate).toHaveBeenCalledWith({
+      memberPk: 3,
+      teamPk: 7,
+      note: expect.objectContaining({ content: '<p>Nouvelle</p>', visible_to_athlete: true }),
+    });
     expect(access(component).notes()[0].id).toBe(2);
     expect(access(component).notes().length).toBe(2);
   });
@@ -138,13 +138,12 @@ describe('MemberNotesComponent', () => {
     access(component).form.patchValue({ content: '<p>MAJ</p>', visible_to_athlete: true });
     access(component).submit();
 
-    expect(teamsMock.teamsMembersNotesPartialUpdate).toHaveBeenCalledWith(
-      existing.id,
-      3,
-      7,
-      undefined,
-      expect.objectContaining({ content: '<p>MAJ</p>', visible_to_athlete: true }),
-    );
+    expect(teamsMock.teamsMembersNotesPartialUpdate).toHaveBeenCalledWith({
+      id: existing.id,
+      memberPk: 3,
+      teamPk: 7,
+      patchedNote: expect.objectContaining({ content: '<p>MAJ</p>', visible_to_athlete: true }),
+    });
     expect(access(component).notes()[0].visible_to_athlete).toBe(true);
     expect(access(component).editingId()).toBeNull();
   });
@@ -158,7 +157,7 @@ describe('MemberNotesComponent', () => {
 
     access(component).confirmDelete(makeNote());
 
-    expect(teamsMock.teamsMembersNotesDestroy).toHaveBeenCalledWith(1, 3, 7);
+    expect(teamsMock.teamsMembersNotesDestroy).toHaveBeenCalledWith({ id: 1, memberPk: 3, teamPk: 7 });
     expect(access(component).notes().length).toBe(0);
   });
 

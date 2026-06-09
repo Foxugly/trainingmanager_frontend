@@ -275,7 +275,7 @@ export class EventsDetailComponent implements OnInit {
 
   private loadRsvp(eventId: number): void {
     this.eventsService
-      .eventsRsvpRetrieve(eventId)
+      .eventsRsvpRetrieve({ eventPk: eventId })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => this.rsvpSummary.set(res),
@@ -288,7 +288,7 @@ export class EventsDetailComponent implements OnInit {
     if (eventId == null || this.rsvpSubmitting()) return;
     this.rsvpSubmitting.set(true);
     this.eventsService
-      .eventsRsvpUpdate(eventId, { status })
+      .eventsRsvpUpdate({ eventPk: eventId, rsvpUpsert: { status } })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
@@ -326,7 +326,7 @@ export class EventsDetailComponent implements OnInit {
   private applyRsvpToAttendance(eventId: number): void {
     this.rsvpApplying.set(true);
     this.eventsService
-      .eventsRsvpApplyToAttendance(eventId)
+      .eventsRsvpApplyToAttendance({ eventPk: eventId })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
@@ -352,7 +352,7 @@ export class EventsDetailComponent implements OnInit {
 
   private patchEventTotal(eventId: number, total: number): void {
     this.eventsService
-      .eventsPartialUpdate(eventId, { total })
+      .eventsPartialUpdate({ id: eventId, patchedEvent: { total } })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (updated) => {
@@ -403,7 +403,7 @@ export class EventsDetailComponent implements OnInit {
   private loadEvent(id: number): void {
     this.loading.set(true);
     this.eventsService
-      .eventsRetrieve(id)
+      .eventsRetrieve({ id })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (e) => {
@@ -424,13 +424,13 @@ export class EventsDetailComponent implements OnInit {
 
   private loadProgramTeam(programId: number): void {
     this.programsService
-      .programsRetrieve(programId)
+      .programsRetrieve({ id: programId })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (p) => {
           if (p.team?.id != null) {
             this.teamsService
-              .teamsRetrieve(p.team.id)
+              .teamsRetrieve({ id: p.team.id })
               .pipe(takeUntilDestroyed(this.destroyRef))
               .subscribe({
                 next: (t) => this.team.set(t),
@@ -463,7 +463,7 @@ export class EventsDetailComponent implements OnInit {
     try {
       const ids = event.rounds ?? [];
       for (const roundId of ids) {
-        await firstValueFrom(this.roundsService.roundsDestroy(roundId));
+        await firstValueFrom(this.roundsService.roundsDestroy({ id: roundId }));
       }
       await this.regenerateAsync(event.id, additionalPrompt);
     } catch (err) {
@@ -479,7 +479,10 @@ export class EventsDetailComponent implements OnInit {
     this.errorMessage.set(null);
     this.lastResult.set(null);
     this.eventsService
-      .eventsGenerateTrainingCreate(event.id, { additional_prompt: additionalPrompt })
+      .eventsGenerateTrainingCreate({
+        id: event.id,
+        generateTrainingRequest: { additional_prompt: additionalPrompt },
+      })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
@@ -498,8 +501,9 @@ export class EventsDetailComponent implements OnInit {
 
   private async regenerateAsync(eventId: number, additionalPrompt: string): Promise<void> {
     const res = await firstValueFrom(
-      this.eventsService.eventsGenerateTrainingCreate(eventId, {
-        additional_prompt: additionalPrompt,
+      this.eventsService.eventsGenerateTrainingCreate({
+        id: eventId,
+        generateTrainingRequest: { additional_prompt: additionalPrompt },
       }),
     );
     this.lastResult.set(res);
@@ -525,10 +529,13 @@ export class EventsDetailComponent implements OnInit {
     if (eventId == null || this.duplicating()) return;
     this.duplicating.set(true);
     this.eventsService
-      .eventsDuplicateCreate(eventId, {
-        date: payload.date,
-        repeat_weekly: payload.repeat_weekly,
-        occurrences: payload.occurrences,
+      .eventsDuplicateCreate({
+        id: eventId,
+        duplicateEventRequest: {
+          date: payload.date,
+          repeat_weekly: payload.repeat_weekly,
+          occurrences: payload.occurrences,
+        },
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -567,7 +574,7 @@ export class EventsDetailComponent implements OnInit {
     if (eventId == null || this.sharing()) return;
     this.sharing.set(true);
     this.eventsService
-      .eventsShareCreate(eventId, { is_public: isPublic })
+      .eventsShareCreate({ id: eventId, eventShareRequest: { is_public: isPublic } })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res: EventShareResponse) => {
@@ -618,7 +625,7 @@ export class EventsDetailComponent implements OnInit {
     const programId = event.refer_program?.id ?? null;
     this.deleting.set(true);
     this.eventsService
-      .eventsDestroy(event.id)
+      .eventsDestroy({ id: event.id })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

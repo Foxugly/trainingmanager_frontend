@@ -19,6 +19,41 @@ import { PatchedAttendanceStatusAdmin } from '../model/models';
 import { Configuration }                                     from '../configuration';
 
 
+export interface AttendanceStatusesCreateRequestParams {
+    attendanceStatusAdmin: AttendanceStatusAdmin;
+}
+
+export interface AttendanceStatusesDestroyRequestParams {
+    id: number;
+}
+
+export interface AttendanceStatusesListRequestParams {
+    includeInactive?: boolean;
+    isActive?: boolean;
+    isDefault?: boolean;
+    ordering?: string;
+    page?: number;
+    pageSize?: number;
+    search?: string;
+}
+
+export interface AttendanceStatusesPartialUpdateRequestParams {
+    id: number;
+    includeInactive?: boolean;
+    patchedAttendanceStatusAdmin?: PatchedAttendanceStatusAdmin;
+}
+
+export interface AttendanceStatusesRetrieveRequestParams {
+    id: number;
+    includeInactive?: boolean;
+}
+
+export interface AttendanceStatusesUpdateRequestParams {
+    id: number;
+    attendanceStatusAdmin: AttendanceStatusAdmin;
+    includeInactive?: boolean;
+}
+
 
 export interface AttendanceStatusesServiceInterface {
     defaultHeaders: HttpHeaders;
@@ -28,59 +63,48 @@ export interface AttendanceStatusesServiceInterface {
      * Create attendance status (staff only)
      * CRUD on the AttendanceStatus referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete bumps updated_at.
      * @endpoint post /api/v1/attendance-statuses/
-     * @param attendanceStatusAdmin 
+* @param requestParameters
      */
-    attendanceStatusesCreate(attendanceStatusAdmin: AttendanceStatusAdmin, extraHttpRequestParams?: any): Observable<AttendanceStatusAdmin>;
+    attendanceStatusesCreate(requestParameters: AttendanceStatusesCreateRequestParams, extraHttpRequestParams?: any): Observable<AttendanceStatusAdmin>;
 
     /**
      * Soft delete attendance status (staff only)
      * Sets is_active&#x3D;False; does not hard delete.
      * @endpoint delete /api/v1/attendance-statuses/{id}/
-     * @param id A unique integer value identifying this attendance status.
+* @param requestParameters
      */
-    attendanceStatusesDestroy(id: number, extraHttpRequestParams?: any): Observable<{}>;
+    attendanceStatusesDestroy(requestParameters: AttendanceStatusesDestroyRequestParams, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * List attendance statuses (public flavor)
      * Returns the public AttendanceStatus serializer with localized \&#39;label\&#39;. Available to all authenticated users. Pass ?include_inactive&#x3D;true (staff only) to include soft-deleted rows.
      * @endpoint get /api/v1/attendance-statuses/
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
-     * @param isActive 
-     * @param isDefault 
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
+* @param requestParameters
      */
-    attendanceStatusesList(includeInactive?: boolean, isActive?: boolean, isDefault?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedAttendanceStatusList>;
+    attendanceStatusesList(requestParameters: AttendanceStatusesListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedAttendanceStatusList>;
 
     /**
      * 
      * CRUD on the AttendanceStatus referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete bumps updated_at.
      * @endpoint patch /api/v1/attendance-statuses/{id}/
-     * @param id A unique integer value identifying this attendance status.
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
-     * @param patchedAttendanceStatusAdmin 
+* @param requestParameters
      */
-    attendanceStatusesPartialUpdate(id: number, includeInactive?: boolean, patchedAttendanceStatusAdmin?: PatchedAttendanceStatusAdmin, extraHttpRequestParams?: any): Observable<AttendanceStatusAdmin>;
+    attendanceStatusesPartialUpdate(requestParameters: AttendanceStatusesPartialUpdateRequestParams, extraHttpRequestParams?: any): Observable<AttendanceStatusAdmin>;
 
     /**
      * Retrieve attendance status (admin flavor for staff)
      * CRUD on the AttendanceStatus referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete bumps updated_at.
      * @endpoint get /api/v1/attendance-statuses/{id}/
-     * @param id A unique integer value identifying this attendance status.
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+* @param requestParameters
      */
-    attendanceStatusesRetrieve(id: number, includeInactive?: boolean, extraHttpRequestParams?: any): Observable<AttendanceStatusAdmin>;
+    attendanceStatusesRetrieve(requestParameters: AttendanceStatusesRetrieveRequestParams, extraHttpRequestParams?: any): Observable<AttendanceStatusAdmin>;
 
     /**
      * 
      * CRUD on the AttendanceStatus referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete bumps updated_at.
      * @endpoint put /api/v1/attendance-statuses/{id}/
-     * @param id A unique integer value identifying this attendance status.
-     * @param attendanceStatusAdmin 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+* @param requestParameters
      */
-    attendanceStatusesUpdate(id: number, attendanceStatusAdmin: AttendanceStatusAdmin, includeInactive?: boolean, extraHttpRequestParams?: any): Observable<AttendanceStatusAdmin>;
+    attendanceStatusesUpdate(requestParameters: AttendanceStatusesUpdateRequestParams, extraHttpRequestParams?: any): Observable<AttendanceStatusAdmin>;
 
 }

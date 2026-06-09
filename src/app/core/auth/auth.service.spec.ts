@@ -67,9 +67,11 @@ describe('AuthService', () => {
     const emitted = await new Promise<Me>((resolve) => service.login('alice', 'pw').subscribe(resolve));
 
     expect(apiAuth.authTokenCreate).toHaveBeenCalledWith({
-      username: 'alice',
-      password: 'pw',
-      remember: false,
+      verifiedTokenObtainPair: {
+        username: 'alice',
+        password: 'pw',
+        remember: false,
+      },
     });
     expect(tokenStorage.getAccess()).toBe('a1');
     expect(tokenStorage.getRefresh()).toBe('r1');
@@ -113,7 +115,9 @@ describe('AuthService', () => {
 
     await new Promise((resolve) => service.refresh().subscribe(resolve));
 
-    expect(apiAuth.authTokenRefreshCreate).toHaveBeenCalledWith({ refresh: 'old-refresh' });
+    expect(apiAuth.authTokenRefreshCreate).toHaveBeenCalledWith({
+      tokenRefresh: { refresh: 'old-refresh' },
+    });
     expect(tokenStorage.getAccess()).toBe('new-access');
   });
 
@@ -171,9 +175,11 @@ describe('AuthService', () => {
     );
 
     expect(apiAuth.authTokenCreate).toHaveBeenCalledWith({
-      username: 'alice',
-      password: 'pw',
-      remember: true,
+      verifiedTokenObtainPair: {
+        username: 'alice',
+        password: 'pw',
+        remember: true,
+      },
     });
   });
 
@@ -189,8 +195,10 @@ describe('AuthService', () => {
     );
 
     expect(apiAuth.authPasswordResetCreate).toHaveBeenCalledWith({
-      email: 'a@b.com',
-      turnstile_token: 'tok',
+      passwordResetRequest: {
+        email: 'a@b.com',
+        turnstile_token: 'tok',
+      },
     });
     expect(res).toEqual({ detail: 'ok', code: 'password_reset_processed' });
   });
@@ -206,8 +214,10 @@ describe('AuthService', () => {
     );
 
     expect(apiAuth.authPasswordResetConfirmCreate).toHaveBeenCalledWith({
-      key: '7-tok',
-      new_password: 'longenough',
+      passwordResetConfirm: {
+        key: '7-tok',
+        new_password: 'longenough',
+      },
     });
     expect(tokenStorage.getAccess()).toBe('a-new');
     expect(tokenStorage.getRefresh()).toBe('r-new');

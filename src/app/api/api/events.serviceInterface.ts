@@ -35,6 +35,126 @@ import { RsvpUpsert } from '../model/models';
 import { Configuration }                                     from '../configuration';
 
 
+export interface EventsAttendanceBulkCreateRequestParams {
+    eventPk: number;
+    attendanceBulk: AttendanceBulk;
+}
+
+export interface EventsAttendanceCreateRequestParams {
+    eventPk: number;
+    attendance: Attendance;
+}
+
+export interface EventsAttendanceDestroyRequestParams {
+    eventPk: number;
+    id: number;
+}
+
+export interface EventsAttendanceListRequestParams {
+    eventPk: number;
+    ordering?: string;
+    page?: number;
+    pageSize?: number;
+    search?: string;
+}
+
+export interface EventsAttendancePartialUpdateRequestParams {
+    eventPk: number;
+    id: number;
+    patchedAttendance?: PatchedAttendance;
+}
+
+export interface EventsAttendanceRetrieveRequestParams {
+    eventPk: number;
+    id: number;
+}
+
+export interface EventsAttendanceUpdateRequestParams {
+    eventPk: number;
+    id: number;
+    attendance: Attendance;
+}
+
+export interface EventsCreateRequestParams {
+    event: Event;
+}
+
+export interface EventsDestroyRequestParams {
+    id: number;
+}
+
+export interface EventsDuplicateCreateRequestParams {
+    id: number;
+    duplicateEventRequest: DuplicateEventRequest;
+}
+
+export interface EventsGenerateTrainingCreateRequestParams {
+    id: number;
+    generateTrainingRequest?: GenerateTrainingRequest;
+}
+
+export interface EventsListRequestParams {
+    color?: string;
+    date?: string;
+    dateGte?: string;
+    dateLte?: string;
+    ordering?: string;
+    page?: number;
+    pageSize?: number;
+    referProgram?: number;
+    search?: string;
+}
+
+export interface EventsPartialUpdateRequestParams {
+    id: number;
+    patchedEvent?: PatchedEvent;
+}
+
+export interface EventsRetrieveRequestParams {
+    id: number;
+}
+
+export interface EventsRotiRetrieveRequestParams {
+    eventPk: number;
+}
+
+export interface EventsRotiSummaryRequestParams {
+    eventPk: number;
+}
+
+export interface EventsRotiUpdateRequestParams {
+    eventPk: number;
+    rotiUpsert: RotiUpsert;
+}
+
+export interface EventsRoundsReorderCreateRequestParams {
+    id: number;
+    reorderRoundsRequest: ReorderRoundsRequest;
+}
+
+export interface EventsRsvpApplyToAttendanceRequestParams {
+    eventPk: number;
+}
+
+export interface EventsRsvpRetrieveRequestParams {
+    eventPk: number;
+}
+
+export interface EventsRsvpUpdateRequestParams {
+    eventPk: number;
+    rsvpUpsert: RsvpUpsert;
+}
+
+export interface EventsShareCreateRequestParams {
+    id: number;
+    eventShareRequest: EventShareRequest;
+}
+
+export interface EventsUpdateRequestParams {
+    id: number;
+    event: Event;
+}
+
 
 export interface EventsServiceInterface {
     defaultHeaders: HttpHeaders;
@@ -44,212 +164,184 @@ export interface EventsServiceInterface {
      * Bulk set attendances for an event
      * Creates or updates multiple attendance rows in a single atomic call. For each item: if (event, member) exists, update status; otherwise, create new. Members not in the payload are NOT touched. All-or-nothing: any validation error rolls back the entire batch.
      * @endpoint post /api/v1/events/{event_pk}/attendance/bulk/
-     * @param eventPk 
-     * @param attendanceBulk 
+* @param requestParameters
      */
-    eventsAttendanceBulkCreate(eventPk: number, attendanceBulk: AttendanceBulk, extraHttpRequestParams?: any): Observable<PaginatedAttendanceList>;
+    eventsAttendanceBulkCreate(requestParameters: EventsAttendanceBulkCreateRequestParams, extraHttpRequestParams?: any): Observable<PaginatedAttendanceList>;
 
     /**
      * Create an attendance row (coach only)
      * Member must be in the team via an active TeamMembership. Returns 400 if a row already exists for (event, member) — use PATCH.
      * @endpoint post /api/v1/events/{event_pk}/attendance/
-     * @param eventPk 
-     * @param attendance 
+* @param requestParameters
      */
-    eventsAttendanceCreate(eventPk: number, attendance: Attendance, extraHttpRequestParams?: any): Observable<Attendance>;
+    eventsAttendanceCreate(requestParameters: EventsAttendanceCreateRequestParams, extraHttpRequestParams?: any): Observable<Attendance>;
 
     /**
      * Delete an attendance row (coach only)
      * CRUD on event attendance.  URL: /api/v1/events/{event_pk}/attendance/
      * @endpoint delete /api/v1/events/{event_pk}/attendance/{id}/
-     * @param eventPk 
-     * @param id A unique integer value identifying this attendance.
+* @param requestParameters
      */
-    eventsAttendanceDestroy(eventPk: number, id: number, extraHttpRequestParams?: any): Observable<{}>;
+    eventsAttendanceDestroy(requestParameters: EventsAttendanceDestroyRequestParams, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * List attendance for an event
      * Returns all attendance rows. Coaches see everyone; athletes see only their own row.
      * @endpoint get /api/v1/events/{event_pk}/attendance/
-     * @param eventPk 
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
+* @param requestParameters
      */
-    eventsAttendanceList(eventPk: number, ordering?: string, page?: number, pageSize?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedAttendanceList>;
+    eventsAttendanceList(requestParameters: EventsAttendanceListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedAttendanceList>;
 
     /**
      * Update attendance status (coach only)
      * Update one or more fields of an attendance row. &#x60;member&#x60; is read-only after create and is silently ignored — to reassign attendance, DELETE the row and create a new one.
      * @endpoint patch /api/v1/events/{event_pk}/attendance/{id}/
-     * @param eventPk 
-     * @param id A unique integer value identifying this attendance.
-     * @param patchedAttendance 
+* @param requestParameters
      */
-    eventsAttendancePartialUpdate(eventPk: number, id: number, patchedAttendance?: PatchedAttendance, extraHttpRequestParams?: any): Observable<Attendance>;
+    eventsAttendancePartialUpdate(requestParameters: EventsAttendancePartialUpdateRequestParams, extraHttpRequestParams?: any): Observable<Attendance>;
 
     /**
      * Retrieve a single attendance row
      * CRUD on event attendance.  URL: /api/v1/events/{event_pk}/attendance/
      * @endpoint get /api/v1/events/{event_pk}/attendance/{id}/
-     * @param eventPk 
-     * @param id A unique integer value identifying this attendance.
+* @param requestParameters
      */
-    eventsAttendanceRetrieve(eventPk: number, id: number, extraHttpRequestParams?: any): Observable<Attendance>;
+    eventsAttendanceRetrieve(requestParameters: EventsAttendanceRetrieveRequestParams, extraHttpRequestParams?: any): Observable<Attendance>;
 
     /**
      * Replace attendance row (coach only)
      * Replace an attendance row. &#x60;member&#x60; is read-only after create and is silently ignored on update — to reassign attendance, DELETE the row and create a new one.
      * @endpoint put /api/v1/events/{event_pk}/attendance/{id}/
-     * @param eventPk 
-     * @param id A unique integer value identifying this attendance.
-     * @param attendance 
+* @param requestParameters
      */
-    eventsAttendanceUpdate(eventPk: number, id: number, attendance: Attendance, extraHttpRequestParams?: any): Observable<Attendance>;
+    eventsAttendanceUpdate(requestParameters: EventsAttendanceUpdateRequestParams, extraHttpRequestParams?: any): Observable<Attendance>;
 
     /**
      * 
      * CRUD complet pour Event, scopé par team du program.
      * @endpoint post /api/v1/events/
-     * @param event 
+* @param requestParameters
      */
-    eventsCreate(event: Event, extraHttpRequestParams?: any): Observable<Event>;
+    eventsCreate(requestParameters: EventsCreateRequestParams, extraHttpRequestParams?: any): Observable<Event>;
 
     /**
      * 
      * CRUD complet pour Event, scopé par team du program.
      * @endpoint delete /api/v1/events/{id}/
-     * @param id A unique integer value identifying this event.
+* @param requestParameters
      */
-    eventsDestroy(id: number, extraHttpRequestParams?: any): Observable<{}>;
+    eventsDestroy(requestParameters: EventsDestroyRequestParams, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * 
      * Duplicate this training session onto a new date, optionally repeating weekly. The copy deep-copies the source\&#39;s Rounds into fresh Round rows (re-linking the shared Exercise library) so each session is fully independent; per-session members are NOT copied. With &#x60;repeat_weekly&#x3D;true&#x60; and &#x60;occurrences&#x3D;N&#x60;, N sessions are created on &#x60;date&#x60;, &#x60;date&#x60;+7d, ..., &#x60;date&#x60;+7*(N-1)d. With &#x60;repeat_weekly&#x3D;false&#x60; exactly one copy is created (occurrences is forced to 1). Manager/owner of the event\&#39;s team only.
      * @endpoint post /api/v1/events/{id}/duplicate/
-     * @param id A unique integer value identifying this event.
-     * @param duplicateEventRequest 
+* @param requestParameters
      */
-    eventsDuplicateCreate(id: number, duplicateEventRequest: DuplicateEventRequest, extraHttpRequestParams?: any): Observable<DuplicateEventResponse>;
+    eventsDuplicateCreate(requestParameters: EventsDuplicateCreateRequestParams, extraHttpRequestParams?: any): Observable<DuplicateEventResponse>;
 
     /**
      * 
      * Generate detailed Rounds and Exercises with AI for an Event. Optionally accepts an &#x60;additional_prompt&#x60; (max 2000 chars) appended to the LLM user prompt after the structured context.
      * @endpoint post /api/v1/events/{id}/generate-training/
-     * @param id A unique integer value identifying this event.
-     * @param generateTrainingRequest 
+* @param requestParameters
      */
-    eventsGenerateTrainingCreate(id: number, generateTrainingRequest?: GenerateTrainingRequest, extraHttpRequestParams?: any): Observable<GenerateTrainingResponse>;
+    eventsGenerateTrainingCreate(requestParameters: EventsGenerateTrainingCreateRequestParams, extraHttpRequestParams?: any): Observable<GenerateTrainingResponse>;
 
     /**
      * 
      * CRUD complet pour Event, scopé par team du program.
      * @endpoint get /api/v1/events/
-     * @param color 
-     * @param date 
-     * @param dateGte 
-     * @param dateLte 
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param referProgram 
-     * @param search A search term.
+* @param requestParameters
      */
-    eventsList(color?: string, date?: string, dateGte?: string, dateLte?: string, ordering?: string, page?: number, pageSize?: number, referProgram?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedEventList>;
+    eventsList(requestParameters: EventsListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedEventList>;
 
     /**
      * 
      * CRUD complet pour Event, scopé par team du program.
      * @endpoint patch /api/v1/events/{id}/
-     * @param id A unique integer value identifying this event.
-     * @param patchedEvent 
+* @param requestParameters
      */
-    eventsPartialUpdate(id: number, patchedEvent?: PatchedEvent, extraHttpRequestParams?: any): Observable<Event>;
+    eventsPartialUpdate(requestParameters: EventsPartialUpdateRequestParams, extraHttpRequestParams?: any): Observable<Event>;
 
     /**
      * 
      * CRUD complet pour Event, scopé par team du program.
      * @endpoint get /api/v1/events/{id}/
-     * @param id A unique integer value identifying this event.
+* @param requestParameters
      */
-    eventsRetrieve(id: number, extraHttpRequestParams?: any): Observable<Event>;
+    eventsRetrieve(requestParameters: EventsRetrieveRequestParams, extraHttpRequestParams?: any): Observable<Event>;
 
     /**
      * Get ROTI summary for an event (incl. my_score)
      * Returns the aggregate ROTI for the event (average, count, distribution) plus the caller\&#39;s own score (my_score). Coaches and athlete-members of the team may read.
      * @endpoint get /api/v1/events/{event_pk}/roti/
-     * @param eventPk 
+* @param requestParameters
      */
-    eventsRotiRetrieve(eventPk: number, extraHttpRequestParams?: any): Observable<Array<RotiSummary>>;
+    eventsRotiRetrieve(requestParameters: EventsRotiRetrieveRequestParams, extraHttpRequestParams?: any): Observable<Array<RotiSummary>>;
 
     /**
      * ROTI aggregate summary for an event (managers)
      * Same shape as GET .../roti/. Provided as an explicit endpoint for the manager dashboard.
      * @endpoint get /api/v1/events/{event_pk}/roti/summary/
-     * @param eventPk 
+* @param requestParameters
      */
-    eventsRotiSummary(eventPk: number, extraHttpRequestParams?: any): Observable<RotiSummary>;
+    eventsRotiSummary(requestParameters: EventsRotiSummaryRequestParams, extraHttpRequestParams?: any): Observable<RotiSummary>;
 
     /**
      * Upsert the caller\&#39;s own ROTI score (1..5)
      * Athlete-only: resolves the caller\&#39;s Member within the event\&#39;s team and update_or_creates their Roti(event, member) with the given score. Returns 403 if the team has roti_enabled&#x3D;False or the caller is not an athlete-member; 400 if the score is out of range.
      * @endpoint put /api/v1/events/{event_pk}/roti/
-     * @param eventPk 
-     * @param rotiUpsert 
+* @param requestParameters
      */
-    eventsRotiUpdate(eventPk: number, rotiUpsert: RotiUpsert, extraHttpRequestParams?: any): Observable<RotiSummary>;
+    eventsRotiUpdate(requestParameters: EventsRotiUpdateRequestParams, extraHttpRequestParams?: any): Observable<RotiSummary>;
 
     /**
      * 
      * Atomically reorder the Rounds attached to this Event. &#x60;round_ids&#x60; must contain exactly the IDs of the Rounds currently attached, in the desired final order. Round.order is set to 1..N matching list position, in a single transaction.
      * @endpoint post /api/v1/events/{id}/rounds/reorder/
-     * @param id A unique integer value identifying this event.
-     * @param reorderRoundsRequest 
+* @param requestParameters
      */
-    eventsRoundsReorderCreate(id: number, reorderRoundsRequest: ReorderRoundsRequest, extraHttpRequestParams?: any): Observable<{}>;
+    eventsRoundsReorderCreate(requestParameters: EventsRoundsReorderCreateRequestParams, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * Pre-fill attendance from RSVPs (managers only)
      * Managers/owner only. For each member with an RSVP on the event, upserts their Attendance: GOING -&gt; the \&#39;present\&#39; AttendanceStatus, NOT_GOING -&gt; \&#39;absent\&#39;. MAYBE is skipped (attendance left untouched). RSVPs whose target status code is not seeded are also skipped. Returns how many rows were applied and skipped.
      * @endpoint post /api/v1/events/{event_pk}/rsvp/apply_to_attendance/
-     * @param eventPk 
+* @param requestParameters
      */
-    eventsRsvpApplyToAttendance(eventPk: number, extraHttpRequestParams?: any): Observable<RsvpApplyToAttendanceResult>;
+    eventsRsvpApplyToAttendance(requestParameters: EventsRsvpApplyToAttendanceRequestParams, extraHttpRequestParams?: any): Observable<RsvpApplyToAttendanceResult>;
 
     /**
      * Get RSVP summary for an event (incl. my_status)
      * Returns the aggregate availability for the event (counts, total_members) plus the caller\&#39;s own status (my_status). Managers additionally get the per-member breakdown (by_member); athletes get an empty by_member. Coaches and athlete-members of the team may read.
      * @endpoint get /api/v1/events/{event_pk}/rsvp/
-     * @param eventPk 
+* @param requestParameters
      */
-    eventsRsvpRetrieve(eventPk: number, extraHttpRequestParams?: any): Observable<RsvpSummary>;
+    eventsRsvpRetrieve(requestParameters: EventsRsvpRetrieveRequestParams, extraHttpRequestParams?: any): Observable<RsvpSummary>;
 
     /**
      * Upsert the caller\&#39;s own RSVP (going/maybe/not_going)
      * Athlete-only: resolves the caller\&#39;s Member within the event\&#39;s team and update_or_creates their Rsvp(event, member) with the given status. Returns 403 if the team has rsvp_enabled&#x3D;False or the caller is not an athlete-member; 400 if the status is invalid.
      * @endpoint put /api/v1/events/{event_pk}/rsvp/
-     * @param eventPk 
-     * @param rsvpUpsert 
+* @param requestParameters
      */
-    eventsRsvpUpdate(eventPk: number, rsvpUpsert: RsvpUpsert, extraHttpRequestParams?: any): Observable<RsvpSummary>;
+    eventsRsvpUpdate(requestParameters: EventsRsvpUpdateRequestParams, extraHttpRequestParams?: any): Observable<RsvpSummary>;
 
     /**
      * 
      * Toggle the public read-only share link for this session. Enabling (is_public&#x3D;true) requires the event\&#39;s team to have public_sharing_enabled&#x3D;true (else 409 public_sharing_disabled) and mints an unguessable token if absent. Disabling (is_public&#x3D;false) keeps the token so re-enabling reuses the same URL. Manager/owner of the event\&#39;s team only.
      * @endpoint post /api/v1/events/{id}/share/
-     * @param id A unique integer value identifying this event.
-     * @param eventShareRequest 
+* @param requestParameters
      */
-    eventsShareCreate(id: number, eventShareRequest: EventShareRequest, extraHttpRequestParams?: any): Observable<EventShareResponse>;
+    eventsShareCreate(requestParameters: EventsShareCreateRequestParams, extraHttpRequestParams?: any): Observable<EventShareResponse>;
 
     /**
      * 
      * CRUD complet pour Event, scopé par team du program.
      * @endpoint put /api/v1/events/{id}/
-     * @param id A unique integer value identifying this event.
-     * @param event 
+* @param requestParameters
      */
-    eventsUpdate(id: number, event: Event, extraHttpRequestParams?: any): Observable<Event>;
+    eventsUpdate(requestParameters: EventsUpdateRequestParams, extraHttpRequestParams?: any): Observable<Event>;
 
 }

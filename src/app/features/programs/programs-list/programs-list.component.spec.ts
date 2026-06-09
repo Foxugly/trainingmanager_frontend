@@ -159,26 +159,23 @@ describe('ProgramsListComponent', () => {
   });
 
   it('loads programs without team filter when teamFilter is null', () => {
-    expect(serviceMock.programsList).toHaveBeenCalledWith(
-      undefined, undefined, undefined, undefined, undefined, '-date_start', undefined, undefined, undefined, undefined,
-    );
+    expect(serviceMock.programsList).toHaveBeenCalledWith({ ordering: '-date_start' });
     expect(access(component).programs()).toHaveLength(2);
   });
 
   it('passes the team filter to the API when teamFilter input is set', async () => {
     await setup({ teamFilter: 4 });
-    expect(serviceMock.programsList).toHaveBeenCalledWith(
-      undefined, undefined, undefined, undefined, undefined, '-date_start', undefined, undefined, undefined, 4,
-    );
+    expect(serviceMock.programsList).toHaveBeenCalledWith({ ordering: '-date_start', team: 4 });
   });
 
   it('reloads with includeInactive=true when showArchived is toggled on', () => {
     serviceMock.programsList.mockClear();
     (component as unknown as { showArchived: { set: (v: boolean) => void } }).showArchived.set(true);
     fixture.detectChanges();
-    expect(serviceMock.programsList).toHaveBeenLastCalledWith(
-      undefined, undefined, true, undefined, undefined, '-date_start', undefined, undefined, undefined, undefined,
-    );
+    expect(serviceMock.programsList).toHaveBeenLastCalledWith({
+      includeInactive: true,
+      ordering: '-date_start',
+    });
   });
 
   it('shows empty state when results is empty', async () => {

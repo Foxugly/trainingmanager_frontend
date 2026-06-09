@@ -17,6 +17,10 @@ import { EventPublic } from '../model/models';
 import { Configuration }                                     from '../configuration';
 
 
+export interface PublicEventsRetrieveRequestParams {
+    token: string;
+}
+
 
 export interface PublicServiceInterface {
     defaultHeaders: HttpHeaders;
@@ -26,8 +30,8 @@ export interface PublicServiceInterface {
      * 
      * Public read-only view of a session shared via its unguessable token. Sensitive aspects (distance / goal / rounds) are revealed only when the team\&#39;s public_show_* config allows; name, date, time, location, equipment, program and team name are always shown.
      * @endpoint get /api/v1/public/events/{token}/
-     * @param token 
+* @param requestParameters
      */
-    publicEventsRetrieve(token: string, extraHttpRequestParams?: any): Observable<EventPublic>;
+    publicEventsRetrieve(requestParameters: PublicEventsRetrieveRequestParams, extraHttpRequestParams?: any): Observable<EventPublic>;
 
 }

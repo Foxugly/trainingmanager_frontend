@@ -114,7 +114,7 @@ describe('TeamStatsComponent', () => {
 
   it('fetches stats with YYYY-MM-DD formatted dates on init (aggregate: no member)', () => {
     expect(teamsMock.teamsStatsRetrieve).toHaveBeenCalledTimes(1);
-    const [id, from, member, to] = teamsMock.teamsStatsRetrieve.mock.calls[0];
+    const { id, from, member, to } = teamsMock.teamsStatsRetrieve.mock.calls[0][0];
     expect(id).toBe(4);
     expect(from).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     expect(to).toMatch(/^\d{4}-\d{2}-\d{2}$/);
@@ -123,7 +123,7 @@ describe('TeamStatsComponent', () => {
 
   it('passes the member id positionally when scoped to an athlete', async () => {
     await setup(23);
-    const [id, , member] = teamsMock.teamsStatsRetrieve.mock.calls[0];
+    const { id, member } = teamsMock.teamsStatsRetrieve.mock.calls[0][0];
     expect(id).toBe(4);
     expect(member).toBe(23);
     expect(access(component).isAggregate()).toBe(false);
@@ -227,9 +227,9 @@ describe('TeamStatsComponent', () => {
     fixture.componentRef.setInput('initialFrom', '2026-01-01');
     fixture.componentRef.setInput('initialTo', '2026-02-01');
     fixture.detectChanges();
-    const call = teamsMock.teamsStatsRetrieve.mock.calls.at(-1)!;
-    expect(call[1]).toBe('2026-01-01');
-    expect(call[3]).toBe('2026-02-01');
+    const call = teamsMock.teamsStatsRetrieve.mock.calls.at(-1)![0];
+    expect(call.from).toBe('2026-01-01');
+    expect(call.to).toBe('2026-02-01');
   });
 
   it('exportCsv triggers a Blob download with a scoped filename', () => {

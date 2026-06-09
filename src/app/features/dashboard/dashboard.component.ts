@@ -248,8 +248,8 @@ export class DashboardComponent implements OnInit {
    */
   private bootstrap(): void {
     forkJoin({
-      teams: this.teamsService.teamsList(true),
-      summary: this.dashboardService.dashboardSummaryRetrieve(localTodayParam()),
+      teams: this.teamsService.teamsList({ isActive: true }),
+      summary: this.dashboardService.dashboardSummaryRetrieve({ today: localTodayParam() }),
     })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({

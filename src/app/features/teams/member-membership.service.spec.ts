@@ -64,8 +64,13 @@ describe('MemberMembershipService', () => {
         .subscribe(resolve);
     });
 
-    expect(membersMock.membersCreate).toHaveBeenCalledWith({ firstname: 'Mike', lastname: 'Doe' });
-    expect(teamsMock.teamsMembershipsCreate).toHaveBeenCalledWith(5, { member: 42 });
+    expect(membersMock.membersCreate).toHaveBeenCalledWith({
+      member: { firstname: 'Mike', lastname: 'Doe' },
+    });
+    expect(teamsMock.teamsMembershipsCreate).toHaveBeenCalledWith({
+      teamPk: 5,
+      teamMembership: { member: 42 },
+    });
     expect(result.member.id).toBe(42);
     expect(result.membership.id).toBe(7);
   });

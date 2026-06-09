@@ -82,7 +82,7 @@ export class EquipmentSelectComponent implements ControlValueAccessor {
         switchMap((teamId) =>
           this.equipmentService
             // Signature: (ordering, page, pageSize, search, sport, team) — ?team.
-            .equipmentList(undefined, undefined, undefined, undefined, undefined, teamId)
+            .equipmentList({ team: teamId })
             .pipe(catchError(() => of(null))),
         ),
         takeUntilDestroyed(this.destroyRef),

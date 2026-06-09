@@ -138,7 +138,7 @@ export class PublicSessionComponent implements OnInit {
       return;
     }
     this.publicService
-      .publicEventsRetrieve(token)
+      .publicEventsRetrieve({ token })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {

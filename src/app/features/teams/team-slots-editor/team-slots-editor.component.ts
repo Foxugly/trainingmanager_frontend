@@ -151,7 +151,7 @@ export class TeamSlotsEditorComponent {
         distinctUntilChanged(),
         tap(() => this.templateLoading.set(true)),
         switchMap((teamId) =>
-          this.teamsService.teamsTrainingSlotsList(teamId).pipe(
+          this.teamsService.teamsTrainingSlotsList({ teamPk: teamId }).pipe(
             catchError(() => {
               this.messageService.add({
                 severity: 'error',
@@ -225,7 +225,7 @@ export class TeamSlotsEditorComponent {
       accept: () => {
         this.setSlotSaving(index, true);
         this.teamsService
-          .teamsTrainingSlotsDestroy(id, teamId)
+          .teamsTrainingSlotsDestroy({ id, teamPk: teamId })
           .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe({
             next: () => {
@@ -299,12 +299,15 @@ export class TeamSlotsEditorComponent {
     this.setSlotSaving(index, true);
     const request$ =
       id == null
-        ? this.teamsService.teamsTrainingSlotsCreate(teamId, body as unknown as TrainingSlot)
-        : this.teamsService.teamsTrainingSlotsPartialUpdate(
+        ? this.teamsService.teamsTrainingSlotsCreate({
+            teamPk: teamId,
+            trainingSlot: body as unknown as TrainingSlot,
+          })
+        : this.teamsService.teamsTrainingSlotsPartialUpdate({
             id,
-            teamId,
-            body as unknown as PatchedTrainingSlot,
-          );
+            teamPk: teamId,
+            patchedTrainingSlot: body as unknown as PatchedTrainingSlot,
+          });
 
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (saved) => {

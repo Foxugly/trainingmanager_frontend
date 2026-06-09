@@ -172,25 +172,27 @@ export class ProfileComponent implements OnInit {
       in_app: p.in_app,
       email: p.email,
     }));
-    this.notificationsApi.notificationsPreferencesUpdate({ preferences }).subscribe({
-      next: (rows) => {
-        this.prefs.set(rows);
-        this.prefsSaving.set(false);
-        this.messageService.add({
-          severity: 'success',
-          summary: this.transloco.translate('common.success'),
-          detail: this.transloco.translate('notifications.prefs_saved'),
-        });
-      },
-      error: () => {
-        this.prefsSaving.set(false);
-        this.messageService.add({
-          severity: 'error',
-          summary: this.transloco.translate('common.error'),
-          detail: this.transloco.translate('profile.errors.unknown'),
-        });
-      },
-    });
+    this.notificationsApi
+      .notificationsPreferencesUpdate({ notificationPreferenceUpdate: { preferences } })
+      .subscribe({
+        next: (rows) => {
+          this.prefs.set(rows);
+          this.prefsSaving.set(false);
+          this.messageService.add({
+            severity: 'success',
+            summary: this.transloco.translate('common.success'),
+            detail: this.transloco.translate('notifications.prefs_saved'),
+          });
+        },
+        error: () => {
+          this.prefsSaving.set(false);
+          this.messageService.add({
+            severity: 'error',
+            summary: this.transloco.translate('common.error'),
+            detail: this.transloco.translate('profile.errors.unknown'),
+          });
+        },
+      });
   }
 
   // --- RGPD data export ---
@@ -310,7 +312,7 @@ export class ProfileComponent implements OnInit {
       weekly_recap_opt_in: value.weekly_recap_opt_in,
     };
 
-    this.meService.mePartialUpdate(payload).subscribe({
+    this.meService.mePartialUpdate({ patchedMe: payload }).subscribe({
       next: (updated) => {
         const previousLang = this.transloco.getActiveLang() as LanguageCode;
         if (value.language !== previousLang) {
@@ -385,7 +387,7 @@ export class ProfileComponent implements OnInit {
       current_password: value.current_password,
       new_password: value.new_password,
     };
-    this.authApi.authPasswordChangeCreate(payload).subscribe({
+    this.authApi.authPasswordChangeCreate({ passwordChange: payload }).subscribe({
       next: () => {
         this.changePwLoading.set(false);
         this.changePwOpen.set(false);
@@ -461,7 +463,7 @@ export class ProfileComponent implements OnInit {
     const payload: AccountDelete = {
       current_password: this.deleteForm.getRawValue().current_password,
     };
-    this.authApi.authAccountDeleteCreate(payload).subscribe({
+    this.authApi.authAccountDeleteCreate({ accountDelete: payload }).subscribe({
       next: () => {
         this.deleteLoading.set(false);
         this.deleteOpen.set(false);

@@ -204,10 +204,12 @@ describe('ProfileComponent', () => {
     access(component).submit();
 
     expect(meMock.mePartialUpdate).toHaveBeenCalledWith({
-      first_name: 'Alicia',
-      last_name: 'Anderson',
-      language: 'fr',
-      weekly_recap_opt_in: true,
+      patchedMe: {
+        first_name: 'Alicia',
+        last_name: 'Anderson',
+        language: 'fr',
+        weekly_recap_opt_in: true,
+      },
     });
     expect(authMock.setCurrentUser).toHaveBeenCalled();
     expect(messageService.add).toHaveBeenCalledWith(
@@ -235,9 +237,9 @@ describe('ProfileComponent', () => {
 
     access(component).submit();
 
-    expect(meMock.mePartialUpdate).toHaveBeenCalledWith(
-      expect.objectContaining({ weekly_recap_opt_in: false }),
-    );
+    expect(meMock.mePartialUpdate).toHaveBeenCalledWith({
+      patchedMe: expect.objectContaining({ weekly_recap_opt_in: false }),
+    });
   });
 
   it('submit() maps field-level validation errors from DRF into fieldErrors', () => {
@@ -293,8 +295,10 @@ describe('ProfileComponent', () => {
     access(component).submitChangePassword();
 
     expect(authApiMock.authPasswordChangeCreate).toHaveBeenCalledWith({
-      current_password: 'old',
-      new_password: 'newpass1',
+      passwordChange: {
+        current_password: 'old',
+        new_password: 'newpass1',
+      },
     });
     expect(access(component).changePwOpen()).toBe(false);
     expect(messageService.add).toHaveBeenCalledWith(
@@ -360,7 +364,9 @@ describe('ProfileComponent', () => {
 
     access(component).submitDelete();
 
-    expect(authApiMock.authAccountDeleteCreate).toHaveBeenCalledWith({ current_password: 'pw' });
+    expect(authApiMock.authAccountDeleteCreate).toHaveBeenCalledWith({
+      accountDelete: { current_password: 'pw' },
+    });
     expect(authMock.logout).toHaveBeenCalled();
     expect(messageService.add).toHaveBeenCalledWith(
       expect.objectContaining({ severity: 'success' }),
@@ -414,10 +420,12 @@ describe('ProfileComponent', () => {
     access(component).savePreferences();
 
     expect(notifMock.notificationsPreferencesUpdate).toHaveBeenCalledWith({
-      preferences: [
-        { type: 'note_for_coach', label: 'Note added', in_app: false, email: true },
-        { type: 'message_new_reply', label: 'New reply', in_app: true, email: false },
-      ],
+      notificationPreferenceUpdate: {
+        preferences: [
+          { type: 'note_for_coach', label: 'Note added', in_app: false, email: true },
+          { type: 'message_new_reply', label: 'New reply', in_app: true, email: false },
+        ],
+      },
     });
     expect(access(component).prefsSaving()).toBe(false);
     expect(messageService.add).toHaveBeenCalledWith(

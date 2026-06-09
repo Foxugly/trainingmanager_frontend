@@ -231,7 +231,7 @@ export class TeamPlacePoolComponent {
     const address = this.placeAddress().trim() || undefined;
     const payload: PlaceRequest = { team: teamId, name, address };
     this.placesService
-      .placesCreate(payload)
+      .placesCreate({ placeRequest: payload })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (created) => {
@@ -266,7 +266,7 @@ export class TeamPlacePoolComponent {
     forkJoin(
       // Signature: (ordering, page, pageSize, search, sport, team) — ?sport pool.
       sportIds.map((id) =>
-        this.placesService.placesList(undefined, undefined, undefined, undefined, id),
+        this.placesService.placesList({ sport: id }),
       ),
     )
       .pipe(takeUntilDestroyed(this.destroyRef))

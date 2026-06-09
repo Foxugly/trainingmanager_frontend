@@ -111,7 +111,7 @@ export class TeamRequestsComponent {
   private loadInvitations(id: number): void {
     this.loadingInvitations.set(true);
     this.invitationsService
-      .invitationsList(undefined, undefined, undefined, undefined, InvitationStatusEnum.Pending, id)
+      .invitationsList({ status: InvitationStatusEnum.Pending, team: id })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
@@ -125,7 +125,7 @@ export class TeamRequestsComponent {
   private loadJoinRequests(id: number): void {
     this.loadingJoinRequests.set(true);
     this.joinRequestsService
-      .joinRequestsList(undefined, undefined, undefined, undefined, JoinRequestStatusEnum.Pending, id)
+      .joinRequestsList({ status: JoinRequestStatusEnum.Pending, team: id })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
@@ -150,7 +150,10 @@ export class TeamRequestsComponent {
     const teamId = this.teamId();
     this.processingRequestId.set(req.id);
     this.joinRequestsService
-      .joinRequestsPartialUpdate(req.id, { status: JoinRequestStatusEnum.Accepted })
+      .joinRequestsPartialUpdate({
+        id: req.id,
+        patchedTeamJoinRequest: { status: JoinRequestStatusEnum.Accepted },
+      })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
@@ -187,9 +190,12 @@ export class TeamRequestsComponent {
     const message = this.rejectMessage().trim();
     this.processingRequestId.set(req.id);
     this.joinRequestsService
-      .joinRequestsPartialUpdate(req.id, {
-        status: JoinRequestStatusEnum.Rejected,
-        ...(message ? { response_message: message } : {}),
+      .joinRequestsPartialUpdate({
+        id: req.id,
+        patchedTeamJoinRequest: {
+          status: JoinRequestStatusEnum.Rejected,
+          ...(message ? { response_message: message } : {}),
+        },
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -237,7 +243,7 @@ export class TeamRequestsComponent {
       lastname: value.lastname,
     };
     this.invitationsService
-      .invitationsCreate(payload)
+      .invitationsCreate({ createInvitation: payload })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
@@ -268,7 +274,7 @@ export class TeamRequestsComponent {
   private cancelInvitation(inv: TeamInvitation): void {
     const id = this.teamId();
     this.invitationsService
-      .invitationsDestroy(inv.id)
+      .invitationsDestroy({ id: inv.id })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

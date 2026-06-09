@@ -130,7 +130,7 @@ export class TeamsDetailComponent implements OnInit {
 
   protected readonly activeValue = signal(false);
   protected readonly patchActive = (id: number, value: boolean) =>
-    this.teamsService.teamsPartialUpdate(id, { is_active: value } as PatchedTeam);
+    this.teamsService.teamsPartialUpdate({ id, patchedTeam: { is_active: value } as PatchedTeam });
   protected readonly activeLabels = computed<ActiveToggleLabels>(() => ({
     active: this.transloco.translate('common.active'),
     inactive: this.transloco.translate('common.inactive'),
@@ -293,7 +293,7 @@ export class TeamsDetailComponent implements OnInit {
     this.loadingAudit.set(true);
     // auditLogList(ordering, page, pageSize, search, team) — newest-first by default.
     this.auditLogService
-      .auditLogList(undefined, page, undefined, undefined, id)
+      .auditLogList({ page, team: id })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
@@ -380,7 +380,7 @@ export class TeamsDetailComponent implements OnInit {
     if (id === null || !this.canManage()) return;
     this.anonymizing.set(true);
     this.membersService
-      .membersAnonymize(mb.member)
+      .membersAnonymize({ id: mb.member })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
@@ -444,7 +444,7 @@ export class TeamsDetailComponent implements OnInit {
   private loadTeam(id: number): void {
     this.loading.set(true);
     this.teamsService
-      .teamsRetrieve(id)
+      .teamsRetrieve({ id })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (t) => {
@@ -471,7 +471,7 @@ export class TeamsDetailComponent implements OnInit {
 
   private loadMemberships(id: number): void {
     this.teamsService
-      .teamsMembershipsList(id)
+      .teamsMembershipsList({ teamPk: id })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (list) => this.memberships.set(list ?? []),
@@ -483,14 +483,10 @@ export class TeamsDetailComponent implements OnInit {
     if (!me) return;
     this.loadingMyRequest.set(true);
     this.joinRequestsService
-      .joinRequestsList(
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        JoinRequestStatusEnum.Pending,
-        teamId,
-      )
+      .joinRequestsList({
+        status: JoinRequestStatusEnum.Pending,
+        team: teamId,
+      })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
@@ -527,7 +523,7 @@ export class TeamsDetailComponent implements OnInit {
       ...(message ? { message } : {}),
     };
     this.joinRequestsService
-      .joinRequestsCreate(payload)
+      .joinRequestsCreate({ createJoinRequest: payload })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (created) => {
@@ -610,7 +606,10 @@ export class TeamsDetailComponent implements OnInit {
     if (!req || teamId === null) return;
     this.cancellingMyRequest.set(true);
     this.joinRequestsService
-      .joinRequestsPartialUpdate(req.id, { status: JoinRequestStatusEnum.Cancelled })
+      .joinRequestsPartialUpdate({
+        id: req.id,
+        patchedTeamJoinRequest: { status: JoinRequestStatusEnum.Cancelled },
+      })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
@@ -701,7 +700,7 @@ export class TeamsDetailComponent implements OnInit {
 
     const newManagerIds = [...(t.managers ?? []).map((m) => m.id), memberId];
     this.teamsService
-      .teamsPartialUpdate(id, { managers_ids: newManagerIds })
+      .teamsPartialUpdate({ id, patchedTeam: { managers_ids: newManagerIds } })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (updated) => {
@@ -734,7 +733,7 @@ export class TeamsDetailComponent implements OnInit {
     const id = this.teamId();
     if (id === null) return;
     this.teamsService
-      .teamsMembershipsDestroy(mb.id, id)
+      .teamsMembershipsDestroy({ id: mb.id, teamPk: id })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
@@ -767,7 +766,7 @@ export class TeamsDetailComponent implements OnInit {
 
   private deactivate(id: number): void {
     this.teamsService
-      .teamsPartialUpdate(id, { is_active: false })
+      .teamsPartialUpdate({ id, patchedTeam: { is_active: false } })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

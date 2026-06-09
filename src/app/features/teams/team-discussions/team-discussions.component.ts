@@ -181,7 +181,7 @@ export class TeamDiscussionsComponent {
       .pipe(
         tap(() => this.loadingTopics.set(true)),
         switchMap((teamId) =>
-          this.teamsService.teamsTopicsList(teamId).pipe(catchError(() => of(null))),
+          this.teamsService.teamsTopicsList({ teamPk: teamId }).pipe(catchError(() => of(null))),
         ),
         takeUntilDestroyed(this.destroyRef),
       )
@@ -306,7 +306,7 @@ export class TeamDiscussionsComponent {
     if (this.markedReadTopicIds.has(topic.id)) return;
     this.markedReadTopicIds.add(topic.id);
     this.teamsService
-      .teamsTopicsRead(topic.id, this.teamId())
+      .teamsTopicsRead({ id: topic.id, teamPk: this.teamId() })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.messagesService.refreshUnread().subscribe({ error: () => {} }),
@@ -327,7 +327,7 @@ export class TeamDiscussionsComponent {
   private loadMessages(topic: Topic): void {
     this.loadingMessages.set(true);
     this.teamsService
-      .teamsTopicsMessagesList(this.teamId(), topic.id)
+      .teamsTopicsMessagesList({ teamPk: this.teamId(), topicPk: topic.id })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
@@ -368,7 +368,7 @@ export class TeamDiscussionsComponent {
     } as unknown as Topic;
 
     this.teamsService
-      .teamsTopicsCreate(this.teamId(), payload)
+      .teamsTopicsCreate({ teamPk: this.teamId(), topic: payload })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (created) => {
@@ -404,7 +404,7 @@ export class TeamDiscussionsComponent {
     this.sendingReply.set(true);
     const payload = { content } as unknown as TopicMessage;
     this.teamsService
-      .teamsTopicsMessagesCreate(this.teamId(), topic.id, payload)
+      .teamsTopicsMessagesCreate({ teamPk: this.teamId(), topicPk: topic.id, topicMessage: payload })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (created) => {
@@ -466,7 +466,12 @@ export class TeamDiscussionsComponent {
     // response carries `edited_at` back.
     const payload: PatchedTopicMessage = { content };
     this.teamsService
-      .teamsTopicsMessagesPartialUpdate(msg.id, this.teamId(), topic.id, payload)
+      .teamsTopicsMessagesPartialUpdate({
+        id: msg.id,
+        teamPk: this.teamId(),
+        topicPk: topic.id,
+        patchedTopicMessage: payload,
+      })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (updated) => {
@@ -539,7 +544,7 @@ export class TeamDiscussionsComponent {
 
   private deleteTopic(topic: Topic): void {
     this.teamsService
-      .teamsTopicsDestroy(topic.id, this.teamId())
+      .teamsTopicsDestroy({ id: topic.id, teamPk: this.teamId() })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
@@ -568,7 +573,7 @@ export class TeamDiscussionsComponent {
     const topic = this.selectedTopic();
     if (!topic) return;
     this.teamsService
-      .teamsTopicsMessagesDestroy(msg.id, this.teamId(), topic.id)
+      .teamsTopicsMessagesDestroy({ id: msg.id, teamPk: this.teamId(), topicPk: topic.id })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

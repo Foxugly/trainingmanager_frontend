@@ -204,7 +204,7 @@ export class TeamsFormComponent implements OnInit {
   protected readonly equipmentLoading = signal(false);
 
   protected readonly patchActive = (id: number, value: boolean) =>
-    this.teamsService.teamsPartialUpdate(id, { is_active: value } as PatchedTeam);
+    this.teamsService.teamsPartialUpdate({ id, patchedTeam: { is_active: value } as PatchedTeam });
 
   protected readonly activeLabels = computed<ActiveToggleLabels>(() => ({
     active: this.transloco.translate('common.active'),
@@ -324,7 +324,7 @@ export class TeamsFormComponent implements OnInit {
       this.teamId.set(id);
       this.loading.set(true);
       this.teamsService
-        .teamsRetrieve(id)
+        .teamsRetrieve({ id })
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (t) => {
@@ -550,7 +550,7 @@ export class TeamsFormComponent implements OnInit {
         vis_rounds: value.vis_rounds,
       };
       this.teamsService
-        .teamsCreate(createPayload as unknown as Team)
+        .teamsCreate({ team: createPayload as unknown as Team })
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (created) => {
@@ -609,7 +609,7 @@ export class TeamsFormComponent implements OnInit {
     };
 
     this.teamsService
-      .teamsPartialUpdate(id, updatePayload)
+      .teamsPartialUpdate({ id, patchedTeam: updatePayload })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
@@ -713,7 +713,7 @@ export class TeamsFormComponent implements OnInit {
     this.equipmentLoading.set(true);
     this.equipmentService
       // Signature: (ordering, page, pageSize, search, sport, team)
-      .equipmentList(undefined, undefined, undefined, undefined, sportId)
+      .equipmentList({ sport: sportId })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {

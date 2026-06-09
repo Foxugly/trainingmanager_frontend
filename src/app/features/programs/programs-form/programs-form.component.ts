@@ -104,9 +104,12 @@ export class ProgramsFormComponent implements OnInit {
   protected readonly hasLinkedEvents = computed(() => (this.program()?.events?.length ?? 0) > 0);
 
   protected readonly patchActive = (id: number, value: boolean) =>
-    this.programsService.programsPartialUpdate(id, undefined, {
-      is_active: value,
-    } as PatchedProgram);
+    this.programsService.programsPartialUpdate({
+      id,
+      patchedProgram: {
+        is_active: value,
+      } as PatchedProgram,
+    });
 
   protected readonly activeLabels = computed<ActiveToggleLabels>(() => ({
     active: this.transloco.translate('common.active'),
@@ -152,7 +155,7 @@ export class ProgramsFormComponent implements OnInit {
   private loadProgram(id: number): void {
     this.loading.set(true);
     this.programsService
-      .programsRetrieve(id, true)
+      .programsRetrieve({ id, includeInactive: true })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (p) => {
@@ -186,7 +189,7 @@ export class ProgramsFormComponent implements OnInit {
     const userId = this.authService.currentUser()?.id;
     if (userId == null) return;
     this.teamsService
-      .teamsList(true)
+      .teamsList({ isActive: true })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
@@ -226,7 +229,7 @@ export class ProgramsFormComponent implements OnInit {
         description: value.description,
       };
       this.programsService
-        .programsCreate(createPayload as unknown as Program)
+        .programsCreate({ program: createPayload as unknown as Program })
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (created) => {
@@ -250,7 +253,7 @@ export class ProgramsFormComponent implements OnInit {
       description: value.description,
     };
     this.programsService
-      .programsPartialUpdate(id, undefined, patch)
+      .programsPartialUpdate({ id, patchedProgram: patch })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
@@ -282,7 +285,7 @@ export class ProgramsFormComponent implements OnInit {
     this.saving.set(true);
     const teamId = this.program()?.team?.id ?? null;
     this.programsService
-      .programsDestroy(id)
+      .programsDestroy({ id })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

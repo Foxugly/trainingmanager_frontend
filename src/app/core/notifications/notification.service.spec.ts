@@ -50,7 +50,7 @@ describe('NotificationService', () => {
   it('loadRecent populates the items signal', () => {
     service.loadRecent().subscribe();
     expect(service.items().length).toBe(2);
-    expect(api.notificationsList).toHaveBeenCalledWith(undefined, undefined, 1);
+    expect(api.notificationsList).toHaveBeenCalledWith({ page: 1 });
   });
 
   it('markRead flips the item to read and decrements the count', () => {
@@ -59,7 +59,7 @@ describe('NotificationService', () => {
     expect(service.unreadCount()).toBe(3);
 
     service.markRead(1).subscribe();
-    expect(api.notificationsReadCreate).toHaveBeenCalledWith(1);
+    expect(api.notificationsReadCreate).toHaveBeenCalledWith({ id: 1 });
     expect(service.items().find((n) => n.id === 1)?.is_read).toBe(true);
     expect(service.unreadCount()).toBe(2);
   });

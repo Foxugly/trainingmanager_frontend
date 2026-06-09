@@ -89,7 +89,7 @@ describe('SportsListComponent', () => {
 
   it('loads active sports on init (no includeInactive)', () => {
     expect(sportsServiceMock.sportsList).toHaveBeenCalledTimes(1);
-    expect(sportsServiceMock.sportsList.mock.calls[0][0]).toBeUndefined();
+    expect(sportsServiceMock.sportsList.mock.calls[0][0].includeInactive).toBeUndefined();
     expect(access(component).sports()).toEqual([sport1]);
   });
 
@@ -99,7 +99,7 @@ describe('SportsListComponent', () => {
     fixture.detectChanges();
 
     expect(sportsServiceMock.sportsList).toHaveBeenCalledTimes(2);
-    expect(sportsServiceMock.sportsList.mock.calls[1][0]).toBe(true);
+    expect(sportsServiceMock.sportsList.mock.calls[1][0].includeInactive).toBe(true);
     expect(access(component).sports()).toEqual([sport1, sport2]);
   });
 
@@ -110,7 +110,7 @@ describe('SportsListComponent', () => {
     const opts = confirmMock.confirm.mock.calls[0][0] as { accept: () => void };
     opts.accept();
 
-    expect(sportsServiceMock.sportsDestroy).toHaveBeenCalledWith(sport1.id);
+    expect(sportsServiceMock.sportsDestroy).toHaveBeenCalledWith({ id: sport1.id });
     expect(messageMock.add).toHaveBeenCalledTimes(1);
     expect(messageMock.add.mock.calls[0][0].severity).toBe('success');
   });
@@ -119,8 +119,10 @@ describe('SportsListComponent', () => {
     sportsServiceMock.sportsList.mockClear();
     access(component).restore(sport2);
 
-    expect(sportsServiceMock.sportsPartialUpdate).toHaveBeenCalledWith(sport2.id, true, {
-      is_active: true,
+    expect(sportsServiceMock.sportsPartialUpdate).toHaveBeenCalledWith({
+      id: sport2.id,
+      includeInactive: true,
+      patchedSportAdmin: { is_active: true },
     });
     expect(messageMock.add).toHaveBeenCalledTimes(1);
     expect(sportsServiceMock.sportsList).toHaveBeenCalled();

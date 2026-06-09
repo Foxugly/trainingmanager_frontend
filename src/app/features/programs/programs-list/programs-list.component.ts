@@ -88,7 +88,7 @@ export class ProgramsListComponent implements OnInit {
     const userId = this.authService.currentUser()?.id;
     if (userId == null) return;
     this.teamsService
-      .teamsList(true)
+      .teamsList({ isActive: true })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
@@ -105,18 +105,11 @@ export class ProgramsListComponent implements OnInit {
   private load(team: number | undefined, includeArchived: boolean): void {
     this.loading.set(true);
     this.programsService
-      .programsList(
-        undefined,
-        undefined,
-        includeArchived || undefined,
-        undefined,
-        undefined,
-        '-date_start',
-        undefined,
-        undefined,
-        undefined,
+      .programsList({
+        includeInactive: includeArchived || undefined,
+        ordering: '-date_start',
         team,
-      )
+      })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {

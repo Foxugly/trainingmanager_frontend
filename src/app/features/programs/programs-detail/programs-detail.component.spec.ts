@@ -182,7 +182,7 @@ describe('ProgramsDetailComponent', () => {
   });
 
   it('loads the program for the route :id on init with includeInactive=true', () => {
-    expect(serviceMock.programsRetrieve).toHaveBeenCalledWith(7, true);
+    expect(serviceMock.programsRetrieve).toHaveBeenCalledWith({ id: 7, includeInactive: true });
     expect(access(component).program()?.id).toBe(7);
   });
 
@@ -204,7 +204,7 @@ describe('ProgramsDetailComponent', () => {
   });
 
   it('canManage and canGenerate are true for owner', () => {
-    expect(teamsMock.teamsRetrieve).toHaveBeenCalledWith(4);
+    expect(teamsMock.teamsRetrieve).toHaveBeenCalledWith({ id: 4 });
     expect(access(component).canManage()).toBe(true);
     expect(access(component).canGenerate()).toBe(true);
   });
@@ -241,7 +241,10 @@ describe('ProgramsDetailComponent', () => {
   it('patchActive calls programsPartialUpdate with is_active as the 3rd arg (undefined 2nd)', () => {
     serviceMock.programsPartialUpdate.mockClear();
     access(component).patchActive(7, false);
-    expect(serviceMock.programsPartialUpdate).toHaveBeenCalledWith(7, undefined, { is_active: false });
+    expect(serviceMock.programsPartialUpdate).toHaveBeenCalledWith({
+      id: 7,
+      patchedProgram: { is_active: false },
+    });
   });
 
   it('isArchived reflects is_active=false', async () => {
@@ -251,12 +254,12 @@ describe('ProgramsDetailComponent', () => {
 
   it('loads events for the program via eventsList(refer_program=id) with month bounds', () => {
     expect(eventsMock.eventsList).toHaveBeenCalledTimes(1);
-    const call = eventsMock.eventsList.mock.calls[0];
-    // signature: color, date, dateGte, dateLte, ordering, page, referProgram, search
-    expect(call[2]).toMatch(/^\d{4}-\d{2}-\d{2}$/); // dateGte
-    expect(call[3]).toMatch(/^\d{4}-\d{2}-\d{2}$/); // dateLte
-    expect(call[4]).toBe('date'); // ordering ASC for calendar
-    expect(call[6]).toBe(7); // referProgram
+    const params = eventsMock.eventsList.mock.calls[0][0];
+    // single-object RequestParams: { dateGte, dateLte, ordering, referProgram }
+    expect(params.dateGte).toMatch(/^\d{4}-\d{2}-\d{2}$/); // dateGte
+    expect(params.dateLte).toMatch(/^\d{4}-\d{2}-\d{2}$/); // dateLte
+    expect(params.ordering).toBe('date'); // ordering ASC for calendar
+    expect(params.referProgram).toBe(7); // referProgram
     expect(access(component).events()).toHaveLength(3);
   });
 

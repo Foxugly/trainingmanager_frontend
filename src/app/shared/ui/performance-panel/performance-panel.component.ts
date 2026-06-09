@@ -197,15 +197,7 @@ export class PerformancePanelComponent {
   private load(team: number | null, member: number | null): void {
     this.loading.set(true);
     this.performancesService
-      .performancesList(
-        undefined,
-        member ?? undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        team ?? undefined,
-      )
+      .performancesList({ member: member ?? undefined, team: team ?? undefined })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
@@ -350,7 +342,7 @@ export class PerformancePanelComponent {
         notes: raw.notes,
       };
       this.performancesService
-        .performancesPartialUpdate(editingId, payload)
+        .performancesPartialUpdate({ id: editingId, patchedPerformance: payload })
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (updated) => {
@@ -378,7 +370,7 @@ export class PerformancePanelComponent {
       notes: raw.notes,
     } as Performance;
     this.performancesService
-      .performancesCreate(performance)
+      .performancesCreate({ performance })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (created) => {
@@ -421,7 +413,7 @@ export class PerformancePanelComponent {
 
   private deleteEntry(entry: Performance): void {
     this.performancesService
-      .performancesDestroy(entry.id)
+      .performancesDestroy({ id: entry.id })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

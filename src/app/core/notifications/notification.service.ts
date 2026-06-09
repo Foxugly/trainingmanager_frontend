@@ -30,13 +30,13 @@ export class NotificationService {
   /** Load the first page of recent notifications for the overlay panel. */
   loadRecent(): Observable<{ results?: Notification[] }> {
     return this.api
-      .notificationsList(undefined, undefined, 1)
+      .notificationsList({ page: 1 })
       .pipe(tap((res) => this._items.set(res.results ?? [])));
   }
 
   /** Mark one notification as read, updating local state optimistically. */
   markRead(id: number): Observable<Notification> {
-    return this.api.notificationsReadCreate(id).pipe(
+    return this.api.notificationsReadCreate({ id }).pipe(
       tap(() => {
         let changed = false;
         this._items.update((items) =>

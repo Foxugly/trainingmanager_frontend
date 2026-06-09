@@ -65,7 +65,7 @@ export class ModalitiesListComponent implements OnInit {
     if (!Number.isFinite(sportId)) return;
 
     this.sportsService
-      .sportsRetrieve(sportId, true)
+      .sportsRetrieve({ id: sportId, includeInactive: true })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (s) =>
@@ -85,7 +85,7 @@ export class ModalitiesListComponent implements OnInit {
   private load(sportId: number, includeInactive: boolean): void {
     this.loading.set(true);
     this.sportsService
-      .sportsModalitiesList(sportId, includeInactive || undefined)
+      .sportsModalitiesList({ sportPk: sportId, includeInactive: includeInactive || undefined })
       .pipe(
         tap((res) => this.modalities.set(res.results ?? [])),
         catchError(() => {
@@ -111,7 +111,7 @@ export class ModalitiesListComponent implements OnInit {
     const sportId = this.sportId();
     if (sportId == null) return;
     this.sportsService
-      .sportsModalitiesDestroy(modality.id, sportId)
+      .sportsModalitiesDestroy({ id: modality.id, sportPk: sportId })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
@@ -130,7 +130,12 @@ export class ModalitiesListComponent implements OnInit {
     const sportId = this.sportId();
     if (sportId == null) return;
     this.sportsService
-      .sportsModalitiesPartialUpdate(modality.id, sportId, true, { is_active: true })
+      .sportsModalitiesPartialUpdate({
+        id: modality.id,
+        sportPk: sportId,
+        includeInactive: true,
+        patchedModalityAdmin: { is_active: true },
+      })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

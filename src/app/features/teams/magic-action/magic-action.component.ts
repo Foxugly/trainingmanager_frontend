@@ -109,7 +109,7 @@ export class MagicActionComponent implements OnInit {
   private loadPreview(token: string): void {
     this.loading.set(true);
     this.magicService
-      .joinMagicRetrieve(token)
+      .joinMagicRetrieve({ token })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
@@ -128,7 +128,7 @@ export class MagicActionComponent implements OnInit {
     if (!token) return;
     this.executing.set(true);
     this.magicService
-      .joinMagicCreate({ token })
+      .joinMagicCreate({ teamJoinRequestMagicActionPost: { token } })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {

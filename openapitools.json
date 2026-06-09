@@ -13,7 +13,8 @@
           "providedIn": "root",
           "withInterfaces": true,
           "fileNaming": "kebab-case",
-          "stringEnums": true
+          "stringEnums": true,
+          "useSingleRequestParameter": true
         }
       }
     }

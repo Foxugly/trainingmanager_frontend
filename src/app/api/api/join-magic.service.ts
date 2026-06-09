@@ -30,7 +30,9 @@ import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables'
 import { Configuration }                                     from '../configuration';
 import { BaseService } from '../api.base.service';
 import {
-    JoinMagicServiceInterface
+    JoinMagicServiceInterface,
+    JoinMagicCreateRequestParams,
+    JoinMagicRetrieveRequestParams
 } from './join-magic.serviceInterface';
 
 
@@ -47,15 +49,16 @@ export class JoinMagicService extends BaseService implements JoinMagicServiceInt
     /**
      * POST /api/v1/join-magic/ {token} — executes the encoded action.  Reversal support (E-b semantic):   - pending  + accept -&gt; accepted (creates TeamMembership)   - pending  + reject -&gt; rejected (no membership)   - accepted + reject -&gt; rejected (revokes membership: sets left_at)   - rejected + accept -&gt; accepted (creates membership again)   - cancelled + *    -&gt; 409 conflict (requester withdrew, irreversible) responded_by is updated to the manager who made the latest call. Idempotent when the request is already in the target status.
      * @endpoint post /api/v1/join-magic/
-     * @param teamJoinRequestMagicActionPost 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public joinMagicCreate(teamJoinRequestMagicActionPost: TeamJoinRequestMagicActionPost, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamJoinRequestMagicActionResponse>;
-    public joinMagicCreate(teamJoinRequestMagicActionPost: TeamJoinRequestMagicActionPost, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamJoinRequestMagicActionResponse>>;
-    public joinMagicCreate(teamJoinRequestMagicActionPost: TeamJoinRequestMagicActionPost, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamJoinRequestMagicActionResponse>>;
-    public joinMagicCreate(teamJoinRequestMagicActionPost: TeamJoinRequestMagicActionPost, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public joinMagicCreate(requestParameters: JoinMagicCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamJoinRequestMagicActionResponse>;
+    public joinMagicCreate(requestParameters: JoinMagicCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamJoinRequestMagicActionResponse>>;
+    public joinMagicCreate(requestParameters: JoinMagicCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamJoinRequestMagicActionResponse>>;
+    public joinMagicCreate(requestParameters: JoinMagicCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const teamJoinRequestMagicActionPost = requestParameters?.teamJoinRequestMagicActionPost;
         if (teamJoinRequestMagicActionPost === null || teamJoinRequestMagicActionPost === undefined) {
             throw new Error('Required parameter teamJoinRequestMagicActionPost was null or undefined when calling joinMagicCreate.');
         }
@@ -118,15 +121,16 @@ export class JoinMagicService extends BaseService implements JoinMagicServiceInt
     /**
      * GET /api/v1/join-magic/&lt;token&gt;/ — preview only. No state change.  Safe for email link previewers (Outlook safe-links, Gmail bots). Returns the join request + action proposed by the token + current status + whether the action would reverse a previous decision + whether the action can still be performed (false if cancelled).
      * @endpoint get /api/v1/join-magic/{token}/
-     * @param token 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public joinMagicRetrieve(token: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamJoinRequestMagicActionResponse>;
-    public joinMagicRetrieve(token: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamJoinRequestMagicActionResponse>>;
-    public joinMagicRetrieve(token: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamJoinRequestMagicActionResponse>>;
-    public joinMagicRetrieve(token: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public joinMagicRetrieve(requestParameters: JoinMagicRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamJoinRequestMagicActionResponse>;
+    public joinMagicRetrieve(requestParameters: JoinMagicRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamJoinRequestMagicActionResponse>>;
+    public joinMagicRetrieve(requestParameters: JoinMagicRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamJoinRequestMagicActionResponse>>;
+    public joinMagicRetrieve(requestParameters: JoinMagicRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const token = requestParameters?.token;
         if (token === null || token === undefined) {
             throw new Error('Required parameter token was null or undefined when calling joinMagicRetrieve.');
         }

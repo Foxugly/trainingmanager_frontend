@@ -20,6 +20,37 @@ import { PlaceRequest } from '../model/models';
 import { Configuration }                                     from '../configuration';
 
 
+export interface PlacesCreateRequestParams {
+    placeRequest: PlaceRequest;
+}
+
+export interface PlacesDestroyRequestParams {
+    id: number;
+}
+
+export interface PlacesListRequestParams {
+    ordering?: string;
+    page?: number;
+    pageSize?: number;
+    search?: string;
+    sport?: number;
+    team?: number;
+}
+
+export interface PlacesPartialUpdateRequestParams {
+    id: number;
+    patchedPlace?: PatchedPlace;
+}
+
+export interface PlacesRetrieveRequestParams {
+    id: number;
+}
+
+export interface PlacesUpdateRequestParams {
+    id: number;
+    placeRequest: PlaceRequest;
+}
+
 
 export interface PlacesServiceInterface {
     defaultHeaders: HttpHeaders;
@@ -29,55 +60,48 @@ export interface PlacesServiceInterface {
      * Create a place and link it to a team (manager only)
      * Creates a venue in the pool and links it to the given team (the requester must manage that team); the place\&#39;s sport is the team\&#39;s sport.
      * @endpoint post /api/v1/places/
-     * @param placeRequest 
+* @param requestParameters
      */
-    placesCreate(placeRequest: PlaceRequest, extraHttpRequestParams?: any): Observable<Place>;
+    placesCreate(requestParameters: PlacesCreateRequestParams, extraHttpRequestParams?: any): Observable<Place>;
 
     /**
      * Delete a place (manager only)
      * Hard-deletes the venue. Events referencing it keep their free-text &#x60;location&#x60; (their &#x60;place&#x60; FK is SET_NULL).
      * @endpoint delete /api/v1/places/{id}/
-     * @param id A unique integer value identifying this place.
+* @param requestParameters
      */
-    placesDestroy(id: number, extraHttpRequestParams?: any): Observable<{}>;
+    placesDestroy(requestParameters: PlacesDestroyRequestParams, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * List venues (Lieux) from the sport pool
      * Returns venues from the global, sport-scoped pool. ?team&#x3D;&lt;id&gt; restricts to a team\&#39;s linked places (members only); ?sport&#x3D;&lt;id&gt; returns the whole pool for a sport (to attach/share). Without filters, returns places linked to the requester\&#39;s member teams.
      * @endpoint get /api/v1/places/
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
-     * @param sport Return the whole pool for a sport.
-     * @param team Restrict to a team\&#39;s linked places.
+* @param requestParameters
      */
-    placesList(ordering?: string, page?: number, pageSize?: number, search?: string, sport?: number, team?: number, extraHttpRequestParams?: any): Observable<PaginatedPlaceList>;
+    placesList(requestParameters: PlacesListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedPlaceList>;
 
     /**
      * Patch a place (manager only)
      * CRUD on the managed team venue (Lieu).  Read: any strict member of the place\&#39;s team. Write (create/update/delete): owner or manager of the team only.
      * @endpoint patch /api/v1/places/{id}/
-     * @param id A unique integer value identifying this place.
-     * @param patchedPlace 
+* @param requestParameters
      */
-    placesPartialUpdate(id: number, patchedPlace?: PatchedPlace, extraHttpRequestParams?: any): Observable<Place>;
+    placesPartialUpdate(requestParameters: PlacesPartialUpdateRequestParams, extraHttpRequestParams?: any): Observable<Place>;
 
     /**
      * Retrieve a place
      * CRUD on the managed team venue (Lieu).  Read: any strict member of the place\&#39;s team. Write (create/update/delete): owner or manager of the team only.
      * @endpoint get /api/v1/places/{id}/
-     * @param id A unique integer value identifying this place.
+* @param requestParameters
      */
-    placesRetrieve(id: number, extraHttpRequestParams?: any): Observable<Place>;
+    placesRetrieve(requestParameters: PlacesRetrieveRequestParams, extraHttpRequestParams?: any): Observable<Place>;
 
     /**
      * Update a place (manager only)
      * CRUD on the managed team venue (Lieu).  Read: any strict member of the place\&#39;s team. Write (create/update/delete): owner or manager of the team only.
      * @endpoint put /api/v1/places/{id}/
-     * @param id A unique integer value identifying this place.
-     * @param placeRequest 
+* @param requestParameters
      */
-    placesUpdate(id: number, placeRequest: PlaceRequest, extraHttpRequestParams?: any): Observable<Place>;
+    placesUpdate(requestParameters: PlacesUpdateRequestParams, extraHttpRequestParams?: any): Observable<Place>;
 
 }

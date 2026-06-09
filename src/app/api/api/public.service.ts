@@ -24,7 +24,8 @@ import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables'
 import { Configuration }                                     from '../configuration';
 import { BaseService } from '../api.base.service';
 import {
-    PublicServiceInterface
+    PublicServiceInterface,
+    PublicEventsRetrieveRequestParams
 } from './public.serviceInterface';
 
 
@@ -41,15 +42,16 @@ export class PublicService extends BaseService implements PublicServiceInterface
     /**
      * Public read-only view of a session shared via its unguessable token. Sensitive aspects (distance / goal / rounds) are revealed only when the team\&#39;s public_show_* config allows; name, date, time, location, equipment, program and team name are always shown.
      * @endpoint get /api/v1/public/events/{token}/
-     * @param token 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public publicEventsRetrieve(token: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<EventPublic>;
-    public publicEventsRetrieve(token: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EventPublic>>;
-    public publicEventsRetrieve(token: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EventPublic>>;
-    public publicEventsRetrieve(token: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public publicEventsRetrieve(requestParameters: PublicEventsRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<EventPublic>;
+    public publicEventsRetrieve(requestParameters: PublicEventsRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EventPublic>>;
+    public publicEventsRetrieve(requestParameters: PublicEventsRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EventPublic>>;
+    public publicEventsRetrieve(requestParameters: PublicEventsRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const token = requestParameters?.token;
         if (token === null || token === undefined) {
             throw new Error('Required parameter token was null or undefined when calling publicEventsRetrieve.');
         }

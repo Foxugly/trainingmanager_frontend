@@ -62,7 +62,48 @@ import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables'
 import { Configuration }                                     from '../configuration';
 import { BaseService } from '../api.base.service';
 import {
-    TeamsServiceInterface
+    TeamsServiceInterface,
+    TeamsAiUsageDetailsListRequestParams,
+    TeamsAiUsageRetrieveRequestParams,
+    TeamsCreateRequestParams,
+    TeamsDestroyRequestParams,
+    TeamsListRequestParams,
+    TeamsLogoRetrieveRequestParams,
+    TeamsMembersNotesCreateRequestParams,
+    TeamsMembersNotesDestroyRequestParams,
+    TeamsMembersNotesListRequestParams,
+    TeamsMembersNotesPartialUpdateRequestParams,
+    TeamsMembersNotesRetrieveRequestParams,
+    TeamsMembersNotesUpdateRequestParams,
+    TeamsMembershipsCreateRequestParams,
+    TeamsMembershipsDestroyRequestParams,
+    TeamsMembershipsListRequestParams,
+    TeamsMembershipsPartialUpdateRequestParams,
+    TeamsMembershipsRetrieveRequestParams,
+    TeamsMembershipsUpdateRequestParams,
+    TeamsPartialUpdateRequestParams,
+    TeamsPoolsRetrieveRequestParams,
+    TeamsRetrieveRequestParams,
+    TeamsStatsRetrieveRequestParams,
+    TeamsTopicsCreateRequestParams,
+    TeamsTopicsDestroyRequestParams,
+    TeamsTopicsListRequestParams,
+    TeamsTopicsMessagesCreateRequestParams,
+    TeamsTopicsMessagesDestroyRequestParams,
+    TeamsTopicsMessagesListRequestParams,
+    TeamsTopicsMessagesPartialUpdateRequestParams,
+    TeamsTopicsMessagesRetrieveRequestParams,
+    TeamsTopicsMessagesUpdateRequestParams,
+    TeamsTopicsReadRequestParams,
+    TeamsTopicsRetrieveRequestParams,
+    TeamsTrainingSlotsCreateRequestParams,
+    TeamsTrainingSlotsDestroyRequestParams,
+    TeamsTrainingSlotsListRequestParams,
+    TeamsTrainingSlotsPartialUpdateRequestParams,
+    TeamsTrainingSlotsRetrieveRequestParams,
+    TeamsTrainingSlotsUpdateRequestParams,
+    TeamsTrainingTemplateRetrieveRequestParams,
+    TeamsUpdateRequestParams
 } from './teams.serviceInterface';
 
 
@@ -80,24 +121,25 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
      * AI usage detailed rows for a team
      * GET /api/v1/teams/ai-usage/{team_id}/details/?since&#x3D;2026-04-01
      * @endpoint get /api/v1/teams/{team_id}/ai-usage/details/
-     * @param teamId 
-     * @param endpoint 
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
-     * @param since 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsAiUsageDetailsList(teamId: number, endpoint?: string, ordering?: string, page?: number, pageSize?: number, search?: string, since?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedAIUsageDetailList>;
-    public teamsAiUsageDetailsList(teamId: number, endpoint?: string, ordering?: string, page?: number, pageSize?: number, search?: string, since?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedAIUsageDetailList>>;
-    public teamsAiUsageDetailsList(teamId: number, endpoint?: string, ordering?: string, page?: number, pageSize?: number, search?: string, since?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedAIUsageDetailList>>;
-    public teamsAiUsageDetailsList(teamId: number, endpoint?: string, ordering?: string, page?: number, pageSize?: number, search?: string, since?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsAiUsageDetailsList(requestParameters: TeamsAiUsageDetailsListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedAIUsageDetailList>;
+    public teamsAiUsageDetailsList(requestParameters: TeamsAiUsageDetailsListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedAIUsageDetailList>>;
+    public teamsAiUsageDetailsList(requestParameters: TeamsAiUsageDetailsListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedAIUsageDetailList>>;
+    public teamsAiUsageDetailsList(requestParameters: TeamsAiUsageDetailsListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const teamId = requestParameters?.teamId;
         if (teamId === null || teamId === undefined) {
             throw new Error('Required parameter teamId was null or undefined when calling teamsAiUsageDetailsList.');
         }
+        const endpoint = requestParameters?.endpoint;
+        const ordering = requestParameters?.ordering;
+        const page = requestParameters?.page;
+        const pageSize = requestParameters?.pageSize;
+        const search = requestParameters?.search;
+        const since = requestParameters?.since;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -203,22 +245,23 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
      * AI usage aggregated by period for a team
      * GET /api/v1/teams/ai-usage/{team_id}/?period&#x3D;month
      * @endpoint get /api/v1/teams/{team_id}/ai-usage/
-     * @param teamId 
-     * @param end 
-     * @param excludePing Exclude /ai/ping/ from aggregates (default true).
-     * @param period One of: day, week, month, year (default: month).
-     * @param start 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsAiUsageRetrieve(teamId: number, end?: string, excludePing?: boolean, period?: string, start?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AIUsageAggregateResponse>;
-    public teamsAiUsageRetrieve(teamId: number, end?: string, excludePing?: boolean, period?: string, start?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AIUsageAggregateResponse>>;
-    public teamsAiUsageRetrieve(teamId: number, end?: string, excludePing?: boolean, period?: string, start?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AIUsageAggregateResponse>>;
-    public teamsAiUsageRetrieve(teamId: number, end?: string, excludePing?: boolean, period?: string, start?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsAiUsageRetrieve(requestParameters: TeamsAiUsageRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AIUsageAggregateResponse>;
+    public teamsAiUsageRetrieve(requestParameters: TeamsAiUsageRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AIUsageAggregateResponse>>;
+    public teamsAiUsageRetrieve(requestParameters: TeamsAiUsageRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AIUsageAggregateResponse>>;
+    public teamsAiUsageRetrieve(requestParameters: TeamsAiUsageRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const teamId = requestParameters?.teamId;
         if (teamId === null || teamId === undefined) {
             throw new Error('Required parameter teamId was null or undefined when calling teamsAiUsageRetrieve.');
         }
+        const end = requestParameters?.end;
+        const excludePing = requestParameters?.excludePing;
+        const period = requestParameters?.period;
+        const start = requestParameters?.start;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -305,15 +348,16 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
     /**
      * CRUD sur Teams. Liste &#x3D; teams gérées par l\&#39;user + teams publiques actives.
      * @endpoint post /api/v1/teams/
-     * @param team 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsCreate(team: Team, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Team>;
-    public teamsCreate(team: Team, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Team>>;
-    public teamsCreate(team: Team, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Team>>;
-    public teamsCreate(team: Team, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsCreate(requestParameters: TeamsCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Team>;
+    public teamsCreate(requestParameters: TeamsCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Team>>;
+    public teamsCreate(requestParameters: TeamsCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Team>>;
+    public teamsCreate(requestParameters: TeamsCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const team = requestParameters?.team;
         if (team === null || team === undefined) {
             throw new Error('Required parameter team was null or undefined when calling teamsCreate.');
         }
@@ -376,15 +420,16 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
     /**
      * CRUD sur Teams. Liste &#x3D; teams gérées par l\&#39;user + teams publiques actives.
      * @endpoint delete /api/v1/teams/{id}/
-     * @param id A unique integer value identifying this team.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsDestroy(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public teamsDestroy(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public teamsDestroy(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public teamsDestroy(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsDestroy(requestParameters: TeamsDestroyRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public teamsDestroy(requestParameters: TeamsDestroyRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public teamsDestroy(requestParameters: TeamsDestroyRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public teamsDestroy(requestParameters: TeamsDestroyRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsDestroy.');
         }
@@ -434,21 +479,22 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
     /**
      * CRUD sur Teams. Liste &#x3D; teams gérées par l\&#39;user + teams publiques actives.
      * @endpoint get /api/v1/teams/
-     * @param isActive 
-     * @param isPublic 
-     * @param language * &#x60;fr&#x60; - Français * &#x60;nl&#x60; - Nederlands * &#x60;en&#x60; - English * &#x60;it&#x60; - Italiano * &#x60;es&#x60; - Español
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsList(isActive?: boolean, isPublic?: boolean, language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedTeamList>;
-    public teamsList(isActive?: boolean, isPublic?: boolean, language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedTeamList>>;
-    public teamsList(isActive?: boolean, isPublic?: boolean, language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedTeamList>>;
-    public teamsList(isActive?: boolean, isPublic?: boolean, language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, pageSize?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsList(requestParameters?: TeamsListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedTeamList>;
+    public teamsList(requestParameters?: TeamsListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedTeamList>>;
+    public teamsList(requestParameters?: TeamsListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedTeamList>>;
+    public teamsList(requestParameters?: TeamsListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const isActive = requestParameters?.isActive;
+        const isPublic = requestParameters?.isPublic;
+        const language = requestParameters?.language;
+        const ordering = requestParameters?.ordering;
+        const page = requestParameters?.page;
+        const pageSize = requestParameters?.pageSize;
+        const search = requestParameters?.search;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -563,15 +609,16 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
      * Team logo image (public)
      * Returns the team\&#39;s logo as a binary image, decoded from the stored base64 data-URL. Public (no auth); 404 when the team has no logo. The list and detail expose this URL as &#x60;logo_url&#x60; instead of inlining the base64.
      * @endpoint get /api/v1/teams/{id}/logo/
-     * @param id A unique integer value identifying this team.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsLogoRetrieve(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Blob>;
-    public teamsLogoRetrieve(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Blob>>;
-    public teamsLogoRetrieve(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Blob>>;
-    public teamsLogoRetrieve(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsLogoRetrieve(requestParameters: TeamsLogoRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Blob>;
+    public teamsLogoRetrieve(requestParameters: TeamsLogoRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Blob>>;
+    public teamsLogoRetrieve(requestParameters: TeamsLogoRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Blob>>;
+    public teamsLogoRetrieve(requestParameters: TeamsLogoRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsLogoRetrieve.');
         }
@@ -611,23 +658,24 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
     /**
      * CRUD on coach notes within a team-member nested context.  URL: /api/v1/teams/{team_pk}/members/{member_pk}/notes/
      * @endpoint post /api/v1/teams/{team_pk}/members/{member_pk}/notes/
-     * @param memberPk 
-     * @param teamPk 
-     * @param note 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsMembersNotesCreate(memberPk: number, teamPk: number, note: Note, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Note>;
-    public teamsMembersNotesCreate(memberPk: number, teamPk: number, note: Note, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Note>>;
-    public teamsMembersNotesCreate(memberPk: number, teamPk: number, note: Note, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Note>>;
-    public teamsMembersNotesCreate(memberPk: number, teamPk: number, note: Note, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsMembersNotesCreate(requestParameters: TeamsMembersNotesCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Note>;
+    public teamsMembersNotesCreate(requestParameters: TeamsMembersNotesCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Note>>;
+    public teamsMembersNotesCreate(requestParameters: TeamsMembersNotesCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Note>>;
+    public teamsMembersNotesCreate(requestParameters: TeamsMembersNotesCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const memberPk = requestParameters?.memberPk;
         if (memberPk === null || memberPk === undefined) {
             throw new Error('Required parameter memberPk was null or undefined when calling teamsMembersNotesCreate.');
         }
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsMembersNotesCreate.');
         }
+        const note = requestParameters?.note;
         if (note === null || note === undefined) {
             throw new Error('Required parameter note was null or undefined when calling teamsMembersNotesCreate.');
         }
@@ -690,23 +738,24 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
     /**
      * CRUD on coach notes within a team-member nested context.  URL: /api/v1/teams/{team_pk}/members/{member_pk}/notes/
      * @endpoint delete /api/v1/teams/{team_pk}/members/{member_pk}/notes/{id}/
-     * @param id A unique integer value identifying this note.
-     * @param memberPk 
-     * @param teamPk 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsMembersNotesDestroy(id: number, memberPk: number, teamPk: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public teamsMembersNotesDestroy(id: number, memberPk: number, teamPk: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public teamsMembersNotesDestroy(id: number, memberPk: number, teamPk: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public teamsMembersNotesDestroy(id: number, memberPk: number, teamPk: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsMembersNotesDestroy(requestParameters: TeamsMembersNotesDestroyRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public teamsMembersNotesDestroy(requestParameters: TeamsMembersNotesDestroyRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public teamsMembersNotesDestroy(requestParameters: TeamsMembersNotesDestroyRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public teamsMembersNotesDestroy(requestParameters: TeamsMembersNotesDestroyRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsMembersNotesDestroy.');
         }
+        const memberPk = requestParameters?.memberPk;
         if (memberPk === null || memberPk === undefined) {
             throw new Error('Required parameter memberPk was null or undefined when calling teamsMembersNotesDestroy.');
         }
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsMembersNotesDestroy.');
         }
@@ -757,27 +806,28 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
      * List coach notes for a member in a team
      * CRUD on coach notes within a team-member nested context.  URL: /api/v1/teams/{team_pk}/members/{member_pk}/notes/
      * @endpoint get /api/v1/teams/{team_pk}/members/{member_pk}/notes/
-     * @param memberPk 
-     * @param teamPk 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsMembersNotesList(memberPk: number, teamPk: number, includeInactive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedNoteList>;
-    public teamsMembersNotesList(memberPk: number, teamPk: number, includeInactive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedNoteList>>;
-    public teamsMembersNotesList(memberPk: number, teamPk: number, includeInactive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedNoteList>>;
-    public teamsMembersNotesList(memberPk: number, teamPk: number, includeInactive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsMembersNotesList(requestParameters: TeamsMembersNotesListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedNoteList>;
+    public teamsMembersNotesList(requestParameters: TeamsMembersNotesListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedNoteList>>;
+    public teamsMembersNotesList(requestParameters: TeamsMembersNotesListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedNoteList>>;
+    public teamsMembersNotesList(requestParameters: TeamsMembersNotesListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const memberPk = requestParameters?.memberPk;
         if (memberPk === null || memberPk === undefined) {
             throw new Error('Required parameter memberPk was null or undefined when calling teamsMembersNotesList.');
         }
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsMembersNotesList.');
         }
+        const includeInactive = requestParameters?.includeInactive;
+        const ordering = requestParameters?.ordering;
+        const page = requestParameters?.page;
+        const pageSize = requestParameters?.pageSize;
+        const search = requestParameters?.search;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -873,28 +923,29 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
     /**
      * CRUD on coach notes within a team-member nested context.  URL: /api/v1/teams/{team_pk}/members/{member_pk}/notes/
      * @endpoint patch /api/v1/teams/{team_pk}/members/{member_pk}/notes/{id}/
-     * @param id A unique integer value identifying this note.
-     * @param memberPk 
-     * @param teamPk 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
-     * @param patchedNote 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsMembersNotesPartialUpdate(id: number, memberPk: number, teamPk: number, includeInactive?: boolean, patchedNote?: PatchedNote, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Note>;
-    public teamsMembersNotesPartialUpdate(id: number, memberPk: number, teamPk: number, includeInactive?: boolean, patchedNote?: PatchedNote, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Note>>;
-    public teamsMembersNotesPartialUpdate(id: number, memberPk: number, teamPk: number, includeInactive?: boolean, patchedNote?: PatchedNote, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Note>>;
-    public teamsMembersNotesPartialUpdate(id: number, memberPk: number, teamPk: number, includeInactive?: boolean, patchedNote?: PatchedNote, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsMembersNotesPartialUpdate(requestParameters: TeamsMembersNotesPartialUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Note>;
+    public teamsMembersNotesPartialUpdate(requestParameters: TeamsMembersNotesPartialUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Note>>;
+    public teamsMembersNotesPartialUpdate(requestParameters: TeamsMembersNotesPartialUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Note>>;
+    public teamsMembersNotesPartialUpdate(requestParameters: TeamsMembersNotesPartialUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsMembersNotesPartialUpdate.');
         }
+        const memberPk = requestParameters?.memberPk;
         if (memberPk === null || memberPk === undefined) {
             throw new Error('Required parameter memberPk was null or undefined when calling teamsMembersNotesPartialUpdate.');
         }
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsMembersNotesPartialUpdate.');
         }
+        const includeInactive = requestParameters?.includeInactive;
+        const patchedNote = requestParameters?.patchedNote;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -966,27 +1017,28 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
     /**
      * CRUD on coach notes within a team-member nested context.  URL: /api/v1/teams/{team_pk}/members/{member_pk}/notes/
      * @endpoint get /api/v1/teams/{team_pk}/members/{member_pk}/notes/{id}/
-     * @param id A unique integer value identifying this note.
-     * @param memberPk 
-     * @param teamPk 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsMembersNotesRetrieve(id: number, memberPk: number, teamPk: number, includeInactive?: boolean, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Note>;
-    public teamsMembersNotesRetrieve(id: number, memberPk: number, teamPk: number, includeInactive?: boolean, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Note>>;
-    public teamsMembersNotesRetrieve(id: number, memberPk: number, teamPk: number, includeInactive?: boolean, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Note>>;
-    public teamsMembersNotesRetrieve(id: number, memberPk: number, teamPk: number, includeInactive?: boolean, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsMembersNotesRetrieve(requestParameters: TeamsMembersNotesRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Note>;
+    public teamsMembersNotesRetrieve(requestParameters: TeamsMembersNotesRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Note>>;
+    public teamsMembersNotesRetrieve(requestParameters: TeamsMembersNotesRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Note>>;
+    public teamsMembersNotesRetrieve(requestParameters: TeamsMembersNotesRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsMembersNotesRetrieve.');
         }
+        const memberPk = requestParameters?.memberPk;
         if (memberPk === null || memberPk === undefined) {
             throw new Error('Required parameter memberPk was null or undefined when calling teamsMembersNotesRetrieve.');
         }
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsMembersNotesRetrieve.');
         }
+        const includeInactive = requestParameters?.includeInactive;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -1046,31 +1098,32 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
     /**
      * CRUD on coach notes within a team-member nested context.  URL: /api/v1/teams/{team_pk}/members/{member_pk}/notes/
      * @endpoint put /api/v1/teams/{team_pk}/members/{member_pk}/notes/{id}/
-     * @param id A unique integer value identifying this note.
-     * @param memberPk 
-     * @param teamPk 
-     * @param note 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsMembersNotesUpdate(id: number, memberPk: number, teamPk: number, note: Note, includeInactive?: boolean, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Note>;
-    public teamsMembersNotesUpdate(id: number, memberPk: number, teamPk: number, note: Note, includeInactive?: boolean, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Note>>;
-    public teamsMembersNotesUpdate(id: number, memberPk: number, teamPk: number, note: Note, includeInactive?: boolean, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Note>>;
-    public teamsMembersNotesUpdate(id: number, memberPk: number, teamPk: number, note: Note, includeInactive?: boolean, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsMembersNotesUpdate(requestParameters: TeamsMembersNotesUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Note>;
+    public teamsMembersNotesUpdate(requestParameters: TeamsMembersNotesUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Note>>;
+    public teamsMembersNotesUpdate(requestParameters: TeamsMembersNotesUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Note>>;
+    public teamsMembersNotesUpdate(requestParameters: TeamsMembersNotesUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsMembersNotesUpdate.');
         }
+        const memberPk = requestParameters?.memberPk;
         if (memberPk === null || memberPk === undefined) {
             throw new Error('Required parameter memberPk was null or undefined when calling teamsMembersNotesUpdate.');
         }
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsMembersNotesUpdate.');
         }
+        const note = requestParameters?.note;
         if (note === null || note === undefined) {
             throw new Error('Required parameter note was null or undefined when calling teamsMembersNotesUpdate.');
         }
+        const includeInactive = requestParameters?.includeInactive;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -1142,23 +1195,24 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
     /**
      * Manage team memberships.  URL: /api/v1/teams/{team_pk}/memberships/  - GET (list): active memberships of the team. Pass ?include_inactive&#x3D;true   to also see historical (left_at IS NOT NULL) rows. - POST: add a member to the team (manager-only). Idempotent: rejects with   400 already_member if an active membership already exists for the same   (team, member) pair. - DELETE /{id}/: end a membership (sets left_at &#x3D; now). Allowed for the   member herself or a team manager. The team owner cannot leave their own   team via this endpoint.
      * @endpoint post /api/v1/teams/{team_pk}/memberships/
-     * @param teamPk 
-     * @param teamMembership 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsMembershipsCreate(teamPk: number, teamMembership: TeamMembership, includeInactive?: boolean, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamMembership>;
-    public teamsMembershipsCreate(teamPk: number, teamMembership: TeamMembership, includeInactive?: boolean, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamMembership>>;
-    public teamsMembershipsCreate(teamPk: number, teamMembership: TeamMembership, includeInactive?: boolean, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamMembership>>;
-    public teamsMembershipsCreate(teamPk: number, teamMembership: TeamMembership, includeInactive?: boolean, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsMembershipsCreate(requestParameters: TeamsMembershipsCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamMembership>;
+    public teamsMembershipsCreate(requestParameters: TeamsMembershipsCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamMembership>>;
+    public teamsMembershipsCreate(requestParameters: TeamsMembershipsCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamMembership>>;
+    public teamsMembershipsCreate(requestParameters: TeamsMembershipsCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsMembershipsCreate.');
         }
+        const teamMembership = requestParameters?.teamMembership;
         if (teamMembership === null || teamMembership === undefined) {
             throw new Error('Required parameter teamMembership was null or undefined when calling teamsMembershipsCreate.');
         }
+        const includeInactive = requestParameters?.includeInactive;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -1230,23 +1284,24 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
     /**
      * Manage team memberships.  URL: /api/v1/teams/{team_pk}/memberships/  - GET (list): active memberships of the team. Pass ?include_inactive&#x3D;true   to also see historical (left_at IS NOT NULL) rows. - POST: add a member to the team (manager-only). Idempotent: rejects with   400 already_member if an active membership already exists for the same   (team, member) pair. - DELETE /{id}/: end a membership (sets left_at &#x3D; now). Allowed for the   member herself or a team manager. The team owner cannot leave their own   team via this endpoint.
      * @endpoint delete /api/v1/teams/{team_pk}/memberships/{id}/
-     * @param id A unique integer value identifying this team membership.
-     * @param teamPk 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsMembershipsDestroy(id: number, teamPk: number, includeInactive?: boolean, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public teamsMembershipsDestroy(id: number, teamPk: number, includeInactive?: boolean, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public teamsMembershipsDestroy(id: number, teamPk: number, includeInactive?: boolean, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public teamsMembershipsDestroy(id: number, teamPk: number, includeInactive?: boolean, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsMembershipsDestroy(requestParameters: TeamsMembershipsDestroyRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public teamsMembershipsDestroy(requestParameters: TeamsMembershipsDestroyRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public teamsMembershipsDestroy(requestParameters: TeamsMembershipsDestroyRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public teamsMembershipsDestroy(requestParameters: TeamsMembershipsDestroyRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsMembershipsDestroy.');
         }
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsMembershipsDestroy.');
         }
+        const includeInactive = requestParameters?.includeInactive;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -1305,21 +1360,22 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
     /**
      * Manage team memberships.  URL: /api/v1/teams/{team_pk}/memberships/  - GET (list): active memberships of the team. Pass ?include_inactive&#x3D;true   to also see historical (left_at IS NOT NULL) rows. - POST: add a member to the team (manager-only). Idempotent: rejects with   400 already_member if an active membership already exists for the same   (team, member) pair. - DELETE /{id}/: end a membership (sets left_at &#x3D; now). Allowed for the   member herself or a team manager. The team owner cannot leave their own   team via this endpoint.
      * @endpoint get /api/v1/teams/{team_pk}/memberships/
-     * @param teamPk 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
-     * @param ordering Which field to use when ordering the results.
-     * @param search A search term.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsMembershipsList(teamPk: number, includeInactive?: boolean, ordering?: string, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<TeamMembership>>;
-    public teamsMembershipsList(teamPk: number, includeInactive?: boolean, ordering?: string, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<TeamMembership>>>;
-    public teamsMembershipsList(teamPk: number, includeInactive?: boolean, ordering?: string, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<TeamMembership>>>;
-    public teamsMembershipsList(teamPk: number, includeInactive?: boolean, ordering?: string, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsMembershipsList(requestParameters: TeamsMembershipsListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<TeamMembership>>;
+    public teamsMembershipsList(requestParameters: TeamsMembershipsListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<TeamMembership>>>;
+    public teamsMembershipsList(requestParameters: TeamsMembershipsListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<TeamMembership>>>;
+    public teamsMembershipsList(requestParameters: TeamsMembershipsListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsMembershipsList.');
         }
+        const includeInactive = requestParameters?.includeInactive;
+        const ordering = requestParameters?.ordering;
+        const search = requestParameters?.search;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -1397,24 +1453,25 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
     /**
      * Manage team memberships.  URL: /api/v1/teams/{team_pk}/memberships/  - GET (list): active memberships of the team. Pass ?include_inactive&#x3D;true   to also see historical (left_at IS NOT NULL) rows. - POST: add a member to the team (manager-only). Idempotent: rejects with   400 already_member if an active membership already exists for the same   (team, member) pair. - DELETE /{id}/: end a membership (sets left_at &#x3D; now). Allowed for the   member herself or a team manager. The team owner cannot leave their own   team via this endpoint.
      * @endpoint patch /api/v1/teams/{team_pk}/memberships/{id}/
-     * @param id A unique integer value identifying this team membership.
-     * @param teamPk 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
-     * @param patchedTeamMembership 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsMembershipsPartialUpdate(id: number, teamPk: number, includeInactive?: boolean, patchedTeamMembership?: PatchedTeamMembership, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamMembership>;
-    public teamsMembershipsPartialUpdate(id: number, teamPk: number, includeInactive?: boolean, patchedTeamMembership?: PatchedTeamMembership, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamMembership>>;
-    public teamsMembershipsPartialUpdate(id: number, teamPk: number, includeInactive?: boolean, patchedTeamMembership?: PatchedTeamMembership, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamMembership>>;
-    public teamsMembershipsPartialUpdate(id: number, teamPk: number, includeInactive?: boolean, patchedTeamMembership?: PatchedTeamMembership, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsMembershipsPartialUpdate(requestParameters: TeamsMembershipsPartialUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamMembership>;
+    public teamsMembershipsPartialUpdate(requestParameters: TeamsMembershipsPartialUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamMembership>>;
+    public teamsMembershipsPartialUpdate(requestParameters: TeamsMembershipsPartialUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamMembership>>;
+    public teamsMembershipsPartialUpdate(requestParameters: TeamsMembershipsPartialUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsMembershipsPartialUpdate.');
         }
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsMembershipsPartialUpdate.');
         }
+        const includeInactive = requestParameters?.includeInactive;
+        const patchedTeamMembership = requestParameters?.patchedTeamMembership;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -1486,23 +1543,24 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
     /**
      * Manage team memberships.  URL: /api/v1/teams/{team_pk}/memberships/  - GET (list): active memberships of the team. Pass ?include_inactive&#x3D;true   to also see historical (left_at IS NOT NULL) rows. - POST: add a member to the team (manager-only). Idempotent: rejects with   400 already_member if an active membership already exists for the same   (team, member) pair. - DELETE /{id}/: end a membership (sets left_at &#x3D; now). Allowed for the   member herself or a team manager. The team owner cannot leave their own   team via this endpoint.
      * @endpoint get /api/v1/teams/{team_pk}/memberships/{id}/
-     * @param id A unique integer value identifying this team membership.
-     * @param teamPk 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsMembershipsRetrieve(id: number, teamPk: number, includeInactive?: boolean, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamMembership>;
-    public teamsMembershipsRetrieve(id: number, teamPk: number, includeInactive?: boolean, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamMembership>>;
-    public teamsMembershipsRetrieve(id: number, teamPk: number, includeInactive?: boolean, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamMembership>>;
-    public teamsMembershipsRetrieve(id: number, teamPk: number, includeInactive?: boolean, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsMembershipsRetrieve(requestParameters: TeamsMembershipsRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamMembership>;
+    public teamsMembershipsRetrieve(requestParameters: TeamsMembershipsRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamMembership>>;
+    public teamsMembershipsRetrieve(requestParameters: TeamsMembershipsRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamMembership>>;
+    public teamsMembershipsRetrieve(requestParameters: TeamsMembershipsRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsMembershipsRetrieve.');
         }
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsMembershipsRetrieve.');
         }
+        const includeInactive = requestParameters?.includeInactive;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -1562,27 +1620,28 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
     /**
      * Manage team memberships.  URL: /api/v1/teams/{team_pk}/memberships/  - GET (list): active memberships of the team. Pass ?include_inactive&#x3D;true   to also see historical (left_at IS NOT NULL) rows. - POST: add a member to the team (manager-only). Idempotent: rejects with   400 already_member if an active membership already exists for the same   (team, member) pair. - DELETE /{id}/: end a membership (sets left_at &#x3D; now). Allowed for the   member herself or a team manager. The team owner cannot leave their own   team via this endpoint.
      * @endpoint put /api/v1/teams/{team_pk}/memberships/{id}/
-     * @param id A unique integer value identifying this team membership.
-     * @param teamPk 
-     * @param teamMembership 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsMembershipsUpdate(id: number, teamPk: number, teamMembership: TeamMembership, includeInactive?: boolean, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamMembership>;
-    public teamsMembershipsUpdate(id: number, teamPk: number, teamMembership: TeamMembership, includeInactive?: boolean, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamMembership>>;
-    public teamsMembershipsUpdate(id: number, teamPk: number, teamMembership: TeamMembership, includeInactive?: boolean, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamMembership>>;
-    public teamsMembershipsUpdate(id: number, teamPk: number, teamMembership: TeamMembership, includeInactive?: boolean, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsMembershipsUpdate(requestParameters: TeamsMembershipsUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamMembership>;
+    public teamsMembershipsUpdate(requestParameters: TeamsMembershipsUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamMembership>>;
+    public teamsMembershipsUpdate(requestParameters: TeamsMembershipsUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamMembership>>;
+    public teamsMembershipsUpdate(requestParameters: TeamsMembershipsUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsMembershipsUpdate.');
         }
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsMembershipsUpdate.');
         }
+        const teamMembership = requestParameters?.teamMembership;
         if (teamMembership === null || teamMembership === undefined) {
             throw new Error('Required parameter teamMembership was null or undefined when calling teamsMembershipsUpdate.');
         }
+        const includeInactive = requestParameters?.includeInactive;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -1654,19 +1713,20 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
     /**
      * CRUD sur Teams. Liste &#x3D; teams gérées par l\&#39;user + teams publiques actives.
      * @endpoint patch /api/v1/teams/{id}/
-     * @param id A unique integer value identifying this team.
-     * @param patchedTeam 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsPartialUpdate(id: number, patchedTeam?: PatchedTeam, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Team>;
-    public teamsPartialUpdate(id: number, patchedTeam?: PatchedTeam, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Team>>;
-    public teamsPartialUpdate(id: number, patchedTeam?: PatchedTeam, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Team>>;
-    public teamsPartialUpdate(id: number, patchedTeam?: PatchedTeam, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsPartialUpdate(requestParameters: TeamsPartialUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Team>;
+    public teamsPartialUpdate(requestParameters: TeamsPartialUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Team>>;
+    public teamsPartialUpdate(requestParameters: TeamsPartialUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Team>>;
+    public teamsPartialUpdate(requestParameters: TeamsPartialUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsPartialUpdate.');
         }
+        const patchedTeam = requestParameters?.patchedTeam;
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -1727,15 +1787,16 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
      * Distinct session locations (pools) for autocomplete
      * Read-only list of the distinct, non-empty &#x60;location&#x60; values used across this team\&#39;s events, ordered alphabetically. Intended for the session-editor location (\&#39;piscine\&#39;) autocomplete. Any member of the team (owner, manager, or active athlete) may read it; non-members get 404 (the team is not in their visible scope).
      * @endpoint get /api/v1/teams/{id}/pools/
-     * @param id A unique integer value identifying this team.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsPoolsRetrieve(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamPoolsResponse>;
-    public teamsPoolsRetrieve(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamPoolsResponse>>;
-    public teamsPoolsRetrieve(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamPoolsResponse>>;
-    public teamsPoolsRetrieve(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsPoolsRetrieve(requestParameters: TeamsPoolsRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamPoolsResponse>;
+    public teamsPoolsRetrieve(requestParameters: TeamsPoolsRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamPoolsResponse>>;
+    public teamsPoolsRetrieve(requestParameters: TeamsPoolsRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamPoolsResponse>>;
+    public teamsPoolsRetrieve(requestParameters: TeamsPoolsRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsPoolsRetrieve.');
         }
@@ -1786,15 +1847,16 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
     /**
      * CRUD sur Teams. Liste &#x3D; teams gérées par l\&#39;user + teams publiques actives.
      * @endpoint get /api/v1/teams/{id}/
-     * @param id A unique integer value identifying this team.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsRetrieve(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Team>;
-    public teamsRetrieve(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Team>>;
-    public teamsRetrieve(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Team>>;
-    public teamsRetrieve(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsRetrieve(requestParameters: TeamsRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Team>;
+    public teamsRetrieve(requestParameters: TeamsRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Team>>;
+    public teamsRetrieve(requestParameters: TeamsRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Team>>;
+    public teamsRetrieve(requestParameters: TeamsRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsRetrieve.');
         }
@@ -1846,21 +1908,22 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
      * Team statistics (attendance, volume, intensity)
      * Read-only aggregated statistics for the team\&#39;s events whose &#x60;date&#x60; falls in the window [&#x60;from&#x60;, &#x60;to&#x60;] (both inclusive). Defaults to the last 12 weeks (&#x60;to&#x60; &#x3D; today, &#x60;from&#x60; &#x3D; today - 84 days) when both are absent; a single bound fills the other (&#x60;to&#x60; defaults to today, &#x60;from&#x60; defaults to &#x60;to&#x60; - 84 days). The span is clamped to a maximum of 2 years.  Without &#x60;member&#x60; the payload is the **team aggregate** (owner/manager only). With &#x60;member&#x3D;&lt;id&gt;&#x60; the payload is **scoped to that athlete**: allowed for the team\&#39;s owner/managers for any member, or for the athlete viewing their OWN member record.
      * @endpoint get /api/v1/teams/{id}/stats/
-     * @param id A unique integer value identifying this team.
-     * @param from Window start (inclusive, ISO YYYY-MM-DD). Defaults to &#x60;to&#x60; - 84 days.
-     * @param member Optional member id. When set, scopes the whole payload to that athlete. Owner/managers may request any member of the team; an athlete may only request their own member id (otherwise 403). Member not in the team -&gt; 404.
-     * @param to Window end (inclusive, ISO YYYY-MM-DD). Defaults to today.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsStatsRetrieve(id: number, from?: string, member?: number, to?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamStats>;
-    public teamsStatsRetrieve(id: number, from?: string, member?: number, to?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamStats>>;
-    public teamsStatsRetrieve(id: number, from?: string, member?: number, to?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamStats>>;
-    public teamsStatsRetrieve(id: number, from?: string, member?: number, to?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsStatsRetrieve(requestParameters: TeamsStatsRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamStats>;
+    public teamsStatsRetrieve(requestParameters: TeamsStatsRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamStats>>;
+    public teamsStatsRetrieve(requestParameters: TeamsStatsRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamStats>>;
+    public teamsStatsRetrieve(requestParameters: TeamsStatsRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsStatsRetrieve.');
         }
+        const from = requestParameters?.from;
+        const member = requestParameters?.member;
+        const to = requestParameters?.to;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -1939,19 +2002,20 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
      * Create a topic (coach only)
      * Topics nested under a team.  URL: /api/v1/teams/{team_pk}/topics/
      * @endpoint post /api/v1/teams/{team_pk}/topics/
-     * @param teamPk 
-     * @param topic 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsTopicsCreate(teamPk: number, topic: Topic, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Topic>;
-    public teamsTopicsCreate(teamPk: number, topic: Topic, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Topic>>;
-    public teamsTopicsCreate(teamPk: number, topic: Topic, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Topic>>;
-    public teamsTopicsCreate(teamPk: number, topic: Topic, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsTopicsCreate(requestParameters: TeamsTopicsCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Topic>;
+    public teamsTopicsCreate(requestParameters: TeamsTopicsCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Topic>>;
+    public teamsTopicsCreate(requestParameters: TeamsTopicsCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Topic>>;
+    public teamsTopicsCreate(requestParameters: TeamsTopicsCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsTopicsCreate.');
         }
+        const topic = requestParameters?.topic;
         if (topic === null || topic === undefined) {
             throw new Error('Required parameter topic was null or undefined when calling teamsTopicsCreate.');
         }
@@ -2015,19 +2079,20 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
      * Delete a topic (author or coach)
      * Topics nested under a team.  URL: /api/v1/teams/{team_pk}/topics/
      * @endpoint delete /api/v1/teams/{team_pk}/topics/{id}/
-     * @param id A unique integer value identifying this topic.
-     * @param teamPk 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsTopicsDestroy(id: number, teamPk: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public teamsTopicsDestroy(id: number, teamPk: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public teamsTopicsDestroy(id: number, teamPk: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public teamsTopicsDestroy(id: number, teamPk: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsTopicsDestroy(requestParameters: TeamsTopicsDestroyRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public teamsTopicsDestroy(requestParameters: TeamsTopicsDestroyRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public teamsTopicsDestroy(requestParameters: TeamsTopicsDestroyRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public teamsTopicsDestroy(requestParameters: TeamsTopicsDestroyRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsTopicsDestroy.');
         }
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsTopicsDestroy.');
         }
@@ -2078,22 +2143,23 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
      * List visible topics for a team (newest activity first)
      * Topics nested under a team.  URL: /api/v1/teams/{team_pk}/topics/
      * @endpoint get /api/v1/teams/{team_pk}/topics/
-     * @param teamPk 
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsTopicsList(teamPk: number, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedTopicList>;
-    public teamsTopicsList(teamPk: number, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedTopicList>>;
-    public teamsTopicsList(teamPk: number, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedTopicList>>;
-    public teamsTopicsList(teamPk: number, ordering?: string, page?: number, pageSize?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsTopicsList(requestParameters: TeamsTopicsListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedTopicList>;
+    public teamsTopicsList(requestParameters: TeamsTopicsListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedTopicList>>;
+    public teamsTopicsList(requestParameters: TeamsTopicsListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedTopicList>>;
+    public teamsTopicsList(requestParameters: TeamsTopicsListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsTopicsList.');
         }
+        const ordering = requestParameters?.ordering;
+        const page = requestParameters?.page;
+        const pageSize = requestParameters?.pageSize;
+        const search = requestParameters?.search;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -2181,23 +2247,24 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
      * Post a message in a topic
      * Messages nested under a topic.  URL: /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
      * @endpoint post /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
-     * @param teamPk ID of the parent team.
-     * @param topicPk ID of the parent topic.
-     * @param topicMessage 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsTopicsMessagesCreate(teamPk: number, topicPk: number, topicMessage: TopicMessage, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TopicMessage>;
-    public teamsTopicsMessagesCreate(teamPk: number, topicPk: number, topicMessage: TopicMessage, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TopicMessage>>;
-    public teamsTopicsMessagesCreate(teamPk: number, topicPk: number, topicMessage: TopicMessage, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TopicMessage>>;
-    public teamsTopicsMessagesCreate(teamPk: number, topicPk: number, topicMessage: TopicMessage, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsTopicsMessagesCreate(requestParameters: TeamsTopicsMessagesCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TopicMessage>;
+    public teamsTopicsMessagesCreate(requestParameters: TeamsTopicsMessagesCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TopicMessage>>;
+    public teamsTopicsMessagesCreate(requestParameters: TeamsTopicsMessagesCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TopicMessage>>;
+    public teamsTopicsMessagesCreate(requestParameters: TeamsTopicsMessagesCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsTopicsMessagesCreate.');
         }
+        const topicPk = requestParameters?.topicPk;
         if (topicPk === null || topicPk === undefined) {
             throw new Error('Required parameter topicPk was null or undefined when calling teamsTopicsMessagesCreate.');
         }
+        const topicMessage = requestParameters?.topicMessage;
         if (topicMessage === null || topicMessage === undefined) {
             throw new Error('Required parameter topicMessage was null or undefined when calling teamsTopicsMessagesCreate.');
         }
@@ -2261,23 +2328,24 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
      * Delete a message (author or coach)
      * Messages nested under a topic.  URL: /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
      * @endpoint delete /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/{id}/
-     * @param id A unique integer value identifying this message.
-     * @param teamPk ID of the parent team.
-     * @param topicPk ID of the parent topic.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsTopicsMessagesDestroy(id: number, teamPk: number, topicPk: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public teamsTopicsMessagesDestroy(id: number, teamPk: number, topicPk: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public teamsTopicsMessagesDestroy(id: number, teamPk: number, topicPk: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public teamsTopicsMessagesDestroy(id: number, teamPk: number, topicPk: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsTopicsMessagesDestroy(requestParameters: TeamsTopicsMessagesDestroyRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public teamsTopicsMessagesDestroy(requestParameters: TeamsTopicsMessagesDestroyRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public teamsTopicsMessagesDestroy(requestParameters: TeamsTopicsMessagesDestroyRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public teamsTopicsMessagesDestroy(requestParameters: TeamsTopicsMessagesDestroyRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsTopicsMessagesDestroy.');
         }
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsTopicsMessagesDestroy.');
         }
+        const topicPk = requestParameters?.topicPk;
         if (topicPk === null || topicPk === undefined) {
             throw new Error('Required parameter topicPk was null or undefined when calling teamsTopicsMessagesDestroy.');
         }
@@ -2328,26 +2396,27 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
      * List messages in a topic (oldest first)
      * Messages nested under a topic.  URL: /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
      * @endpoint get /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
-     * @param teamPk ID of the parent team.
-     * @param topicPk ID of the parent topic.
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsTopicsMessagesList(teamPk: number, topicPk: number, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedTopicMessageList>;
-    public teamsTopicsMessagesList(teamPk: number, topicPk: number, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedTopicMessageList>>;
-    public teamsTopicsMessagesList(teamPk: number, topicPk: number, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedTopicMessageList>>;
-    public teamsTopicsMessagesList(teamPk: number, topicPk: number, ordering?: string, page?: number, pageSize?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsTopicsMessagesList(requestParameters: TeamsTopicsMessagesListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedTopicMessageList>;
+    public teamsTopicsMessagesList(requestParameters: TeamsTopicsMessagesListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedTopicMessageList>>;
+    public teamsTopicsMessagesList(requestParameters: TeamsTopicsMessagesListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedTopicMessageList>>;
+    public teamsTopicsMessagesList(requestParameters: TeamsTopicsMessagesListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsTopicsMessagesList.');
         }
+        const topicPk = requestParameters?.topicPk;
         if (topicPk === null || topicPk === undefined) {
             throw new Error('Required parameter topicPk was null or undefined when calling teamsTopicsMessagesList.');
         }
+        const ordering = requestParameters?.ordering;
+        const page = requestParameters?.page;
+        const pageSize = requestParameters?.pageSize;
+        const search = requestParameters?.search;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -2435,27 +2504,28 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
      * Edit a message (author only)
      * Messages nested under a topic.  URL: /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
      * @endpoint patch /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/{id}/
-     * @param id A unique integer value identifying this message.
-     * @param teamPk ID of the parent team.
-     * @param topicPk ID of the parent topic.
-     * @param patchedTopicMessage 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsTopicsMessagesPartialUpdate(id: number, teamPk: number, topicPk: number, patchedTopicMessage?: PatchedTopicMessage, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TopicMessage>;
-    public teamsTopicsMessagesPartialUpdate(id: number, teamPk: number, topicPk: number, patchedTopicMessage?: PatchedTopicMessage, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TopicMessage>>;
-    public teamsTopicsMessagesPartialUpdate(id: number, teamPk: number, topicPk: number, patchedTopicMessage?: PatchedTopicMessage, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TopicMessage>>;
-    public teamsTopicsMessagesPartialUpdate(id: number, teamPk: number, topicPk: number, patchedTopicMessage?: PatchedTopicMessage, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsTopicsMessagesPartialUpdate(requestParameters: TeamsTopicsMessagesPartialUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TopicMessage>;
+    public teamsTopicsMessagesPartialUpdate(requestParameters: TeamsTopicsMessagesPartialUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TopicMessage>>;
+    public teamsTopicsMessagesPartialUpdate(requestParameters: TeamsTopicsMessagesPartialUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TopicMessage>>;
+    public teamsTopicsMessagesPartialUpdate(requestParameters: TeamsTopicsMessagesPartialUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsTopicsMessagesPartialUpdate.');
         }
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsTopicsMessagesPartialUpdate.');
         }
+        const topicPk = requestParameters?.topicPk;
         if (topicPk === null || topicPk === undefined) {
             throw new Error('Required parameter topicPk was null or undefined when calling teamsTopicsMessagesPartialUpdate.');
         }
+        const patchedTopicMessage = requestParameters?.patchedTopicMessage;
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -2516,23 +2586,24 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
      * Retrieve a message
      * Messages nested under a topic.  URL: /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
      * @endpoint get /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/{id}/
-     * @param id A unique integer value identifying this message.
-     * @param teamPk ID of the parent team.
-     * @param topicPk ID of the parent topic.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsTopicsMessagesRetrieve(id: number, teamPk: number, topicPk: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TopicMessage>;
-    public teamsTopicsMessagesRetrieve(id: number, teamPk: number, topicPk: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TopicMessage>>;
-    public teamsTopicsMessagesRetrieve(id: number, teamPk: number, topicPk: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TopicMessage>>;
-    public teamsTopicsMessagesRetrieve(id: number, teamPk: number, topicPk: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsTopicsMessagesRetrieve(requestParameters: TeamsTopicsMessagesRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TopicMessage>;
+    public teamsTopicsMessagesRetrieve(requestParameters: TeamsTopicsMessagesRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TopicMessage>>;
+    public teamsTopicsMessagesRetrieve(requestParameters: TeamsTopicsMessagesRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TopicMessage>>;
+    public teamsTopicsMessagesRetrieve(requestParameters: TeamsTopicsMessagesRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsTopicsMessagesRetrieve.');
         }
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsTopicsMessagesRetrieve.');
         }
+        const topicPk = requestParameters?.topicPk;
         if (topicPk === null || topicPk === undefined) {
             throw new Error('Required parameter topicPk was null or undefined when calling teamsTopicsMessagesRetrieve.');
         }
@@ -2584,27 +2655,28 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
      * Edit a message (author only)
      * Messages nested under a topic.  URL: /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
      * @endpoint put /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/{id}/
-     * @param id A unique integer value identifying this message.
-     * @param teamPk ID of the parent team.
-     * @param topicPk ID of the parent topic.
-     * @param topicMessage 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsTopicsMessagesUpdate(id: number, teamPk: number, topicPk: number, topicMessage: TopicMessage, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TopicMessage>;
-    public teamsTopicsMessagesUpdate(id: number, teamPk: number, topicPk: number, topicMessage: TopicMessage, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TopicMessage>>;
-    public teamsTopicsMessagesUpdate(id: number, teamPk: number, topicPk: number, topicMessage: TopicMessage, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TopicMessage>>;
-    public teamsTopicsMessagesUpdate(id: number, teamPk: number, topicPk: number, topicMessage: TopicMessage, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsTopicsMessagesUpdate(requestParameters: TeamsTopicsMessagesUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TopicMessage>;
+    public teamsTopicsMessagesUpdate(requestParameters: TeamsTopicsMessagesUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TopicMessage>>;
+    public teamsTopicsMessagesUpdate(requestParameters: TeamsTopicsMessagesUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TopicMessage>>;
+    public teamsTopicsMessagesUpdate(requestParameters: TeamsTopicsMessagesUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsTopicsMessagesUpdate.');
         }
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsTopicsMessagesUpdate.');
         }
+        const topicPk = requestParameters?.topicPk;
         if (topicPk === null || topicPk === undefined) {
             throw new Error('Required parameter topicPk was null or undefined when calling teamsTopicsMessagesUpdate.');
         }
+        const topicMessage = requestParameters?.topicMessage;
         if (topicMessage === null || topicMessage === undefined) {
             throw new Error('Required parameter topicMessage was null or undefined when calling teamsTopicsMessagesUpdate.');
         }
@@ -2668,19 +2740,20 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
      * Mark a topic as read up to now (per-user read state)
      * POST /teams/{team}/topics/{id}/read/ — set the caller\&#39;s last-read marker for this topic to now (so its messages count as read).
      * @endpoint post /api/v1/teams/{team_pk}/topics/{id}/read/
-     * @param id A unique integer value identifying this topic.
-     * @param teamPk ID of the parent team.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsTopicsRead(id: number, teamPk: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public teamsTopicsRead(id: number, teamPk: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public teamsTopicsRead(id: number, teamPk: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public teamsTopicsRead(id: number, teamPk: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsTopicsRead(requestParameters: TeamsTopicsReadRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public teamsTopicsRead(requestParameters: TeamsTopicsReadRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public teamsTopicsRead(requestParameters: TeamsTopicsReadRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public teamsTopicsRead(requestParameters: TeamsTopicsReadRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsTopicsRead.');
         }
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsTopicsRead.');
         }
@@ -2731,19 +2804,20 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
      * Retrieve a topic
      * Topics nested under a team.  URL: /api/v1/teams/{team_pk}/topics/
      * @endpoint get /api/v1/teams/{team_pk}/topics/{id}/
-     * @param id A unique integer value identifying this topic.
-     * @param teamPk 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsTopicsRetrieve(id: number, teamPk: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Topic>;
-    public teamsTopicsRetrieve(id: number, teamPk: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Topic>>;
-    public teamsTopicsRetrieve(id: number, teamPk: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Topic>>;
-    public teamsTopicsRetrieve(id: number, teamPk: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsTopicsRetrieve(requestParameters: TeamsTopicsRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Topic>;
+    public teamsTopicsRetrieve(requestParameters: TeamsTopicsRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Topic>>;
+    public teamsTopicsRetrieve(requestParameters: TeamsTopicsRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Topic>>;
+    public teamsTopicsRetrieve(requestParameters: TeamsTopicsRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsTopicsRetrieve.');
         }
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsTopicsRetrieve.');
         }
@@ -2795,19 +2869,20 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
      * Add a weekly training slot (manager only)
      * Per-slot CRUD for a team\&#39;s weekly training template.  URL: /api/v1/teams/{team_pk}/training-slots/  Each slot is saved on its own (add / edit / delete one slot persists immediately) — there is no bulk \&quot;save the template\&quot; step here. A slot carries weekday + hour_start/hour_end + an optional &#x60;&#x60;place&#x60;&#x60; (venue). Read: any strict team member. Write: owner/manager only.
      * @endpoint post /api/v1/teams/{team_pk}/training-slots/
-     * @param teamPk 
-     * @param trainingSlot 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsTrainingSlotsCreate(teamPk: number, trainingSlot: TrainingSlot, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TrainingSlot>;
-    public teamsTrainingSlotsCreate(teamPk: number, trainingSlot: TrainingSlot, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TrainingSlot>>;
-    public teamsTrainingSlotsCreate(teamPk: number, trainingSlot: TrainingSlot, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TrainingSlot>>;
-    public teamsTrainingSlotsCreate(teamPk: number, trainingSlot: TrainingSlot, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsTrainingSlotsCreate(requestParameters: TeamsTrainingSlotsCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TrainingSlot>;
+    public teamsTrainingSlotsCreate(requestParameters: TeamsTrainingSlotsCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TrainingSlot>>;
+    public teamsTrainingSlotsCreate(requestParameters: TeamsTrainingSlotsCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TrainingSlot>>;
+    public teamsTrainingSlotsCreate(requestParameters: TeamsTrainingSlotsCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsTrainingSlotsCreate.');
         }
+        const trainingSlot = requestParameters?.trainingSlot;
         if (trainingSlot === null || trainingSlot === undefined) {
             throw new Error('Required parameter trainingSlot was null or undefined when calling teamsTrainingSlotsCreate.');
         }
@@ -2871,19 +2946,20 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
      * Delete a weekly training slot (manager only)
      * Per-slot CRUD for a team\&#39;s weekly training template.  URL: /api/v1/teams/{team_pk}/training-slots/  Each slot is saved on its own (add / edit / delete one slot persists immediately) — there is no bulk \&quot;save the template\&quot; step here. A slot carries weekday + hour_start/hour_end + an optional &#x60;&#x60;place&#x60;&#x60; (venue). Read: any strict team member. Write: owner/manager only.
      * @endpoint delete /api/v1/teams/{team_pk}/training-slots/{id}/
-     * @param id A unique integer value identifying this training slot.
-     * @param teamPk 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsTrainingSlotsDestroy(id: number, teamPk: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public teamsTrainingSlotsDestroy(id: number, teamPk: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public teamsTrainingSlotsDestroy(id: number, teamPk: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public teamsTrainingSlotsDestroy(id: number, teamPk: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsTrainingSlotsDestroy(requestParameters: TeamsTrainingSlotsDestroyRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public teamsTrainingSlotsDestroy(requestParameters: TeamsTrainingSlotsDestroyRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public teamsTrainingSlotsDestroy(requestParameters: TeamsTrainingSlotsDestroyRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public teamsTrainingSlotsDestroy(requestParameters: TeamsTrainingSlotsDestroyRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsTrainingSlotsDestroy.');
         }
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsTrainingSlotsDestroy.');
         }
@@ -2934,20 +3010,21 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
      * List a team\&#39;s weekly training slots
      * Per-slot CRUD for a team\&#39;s weekly training template.  URL: /api/v1/teams/{team_pk}/training-slots/  Each slot is saved on its own (add / edit / delete one slot persists immediately) — there is no bulk \&quot;save the template\&quot; step here. A slot carries weekday + hour_start/hour_end + an optional &#x60;&#x60;place&#x60;&#x60; (venue). Read: any strict team member. Write: owner/manager only.
      * @endpoint get /api/v1/teams/{team_pk}/training-slots/
-     * @param teamPk 
-     * @param ordering Which field to use when ordering the results.
-     * @param search A search term.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsTrainingSlotsList(teamPk: number, ordering?: string, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<TrainingSlot>>;
-    public teamsTrainingSlotsList(teamPk: number, ordering?: string, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<TrainingSlot>>>;
-    public teamsTrainingSlotsList(teamPk: number, ordering?: string, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<TrainingSlot>>>;
-    public teamsTrainingSlotsList(teamPk: number, ordering?: string, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsTrainingSlotsList(requestParameters: TeamsTrainingSlotsListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<TrainingSlot>>;
+    public teamsTrainingSlotsList(requestParameters: TeamsTrainingSlotsListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<TrainingSlot>>>;
+    public teamsTrainingSlotsList(requestParameters: TeamsTrainingSlotsListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<TrainingSlot>>>;
+    public teamsTrainingSlotsList(requestParameters: TeamsTrainingSlotsListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsTrainingSlotsList.');
         }
+        const ordering = requestParameters?.ordering;
+        const search = requestParameters?.search;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -3017,23 +3094,24 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
      * Edit a weekly training slot (manager only)
      * Per-slot CRUD for a team\&#39;s weekly training template.  URL: /api/v1/teams/{team_pk}/training-slots/  Each slot is saved on its own (add / edit / delete one slot persists immediately) — there is no bulk \&quot;save the template\&quot; step here. A slot carries weekday + hour_start/hour_end + an optional &#x60;&#x60;place&#x60;&#x60; (venue). Read: any strict team member. Write: owner/manager only.
      * @endpoint patch /api/v1/teams/{team_pk}/training-slots/{id}/
-     * @param id A unique integer value identifying this training slot.
-     * @param teamPk 
-     * @param patchedTrainingSlot 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsTrainingSlotsPartialUpdate(id: number, teamPk: number, patchedTrainingSlot?: PatchedTrainingSlot, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TrainingSlot>;
-    public teamsTrainingSlotsPartialUpdate(id: number, teamPk: number, patchedTrainingSlot?: PatchedTrainingSlot, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TrainingSlot>>;
-    public teamsTrainingSlotsPartialUpdate(id: number, teamPk: number, patchedTrainingSlot?: PatchedTrainingSlot, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TrainingSlot>>;
-    public teamsTrainingSlotsPartialUpdate(id: number, teamPk: number, patchedTrainingSlot?: PatchedTrainingSlot, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsTrainingSlotsPartialUpdate(requestParameters: TeamsTrainingSlotsPartialUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TrainingSlot>;
+    public teamsTrainingSlotsPartialUpdate(requestParameters: TeamsTrainingSlotsPartialUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TrainingSlot>>;
+    public teamsTrainingSlotsPartialUpdate(requestParameters: TeamsTrainingSlotsPartialUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TrainingSlot>>;
+    public teamsTrainingSlotsPartialUpdate(requestParameters: TeamsTrainingSlotsPartialUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsTrainingSlotsPartialUpdate.');
         }
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsTrainingSlotsPartialUpdate.');
         }
+        const patchedTrainingSlot = requestParameters?.patchedTrainingSlot;
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -3093,19 +3171,20 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
     /**
      * Per-slot CRUD for a team\&#39;s weekly training template.  URL: /api/v1/teams/{team_pk}/training-slots/  Each slot is saved on its own (add / edit / delete one slot persists immediately) — there is no bulk \&quot;save the template\&quot; step here. A slot carries weekday + hour_start/hour_end + an optional &#x60;&#x60;place&#x60;&#x60; (venue). Read: any strict team member. Write: owner/manager only.
      * @endpoint get /api/v1/teams/{team_pk}/training-slots/{id}/
-     * @param id A unique integer value identifying this training slot.
-     * @param teamPk 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsTrainingSlotsRetrieve(id: number, teamPk: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TrainingSlot>;
-    public teamsTrainingSlotsRetrieve(id: number, teamPk: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TrainingSlot>>;
-    public teamsTrainingSlotsRetrieve(id: number, teamPk: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TrainingSlot>>;
-    public teamsTrainingSlotsRetrieve(id: number, teamPk: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsTrainingSlotsRetrieve(requestParameters: TeamsTrainingSlotsRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TrainingSlot>;
+    public teamsTrainingSlotsRetrieve(requestParameters: TeamsTrainingSlotsRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TrainingSlot>>;
+    public teamsTrainingSlotsRetrieve(requestParameters: TeamsTrainingSlotsRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TrainingSlot>>;
+    public teamsTrainingSlotsRetrieve(requestParameters: TeamsTrainingSlotsRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsTrainingSlotsRetrieve.');
         }
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsTrainingSlotsRetrieve.');
         }
@@ -3157,23 +3236,24 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
      * Replace a weekly training slot (manager only)
      * Per-slot CRUD for a team\&#39;s weekly training template.  URL: /api/v1/teams/{team_pk}/training-slots/  Each slot is saved on its own (add / edit / delete one slot persists immediately) — there is no bulk \&quot;save the template\&quot; step here. A slot carries weekday + hour_start/hour_end + an optional &#x60;&#x60;place&#x60;&#x60; (venue). Read: any strict team member. Write: owner/manager only.
      * @endpoint put /api/v1/teams/{team_pk}/training-slots/{id}/
-     * @param id A unique integer value identifying this training slot.
-     * @param teamPk 
-     * @param trainingSlot 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsTrainingSlotsUpdate(id: number, teamPk: number, trainingSlot: TrainingSlot, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TrainingSlot>;
-    public teamsTrainingSlotsUpdate(id: number, teamPk: number, trainingSlot: TrainingSlot, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TrainingSlot>>;
-    public teamsTrainingSlotsUpdate(id: number, teamPk: number, trainingSlot: TrainingSlot, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TrainingSlot>>;
-    public teamsTrainingSlotsUpdate(id: number, teamPk: number, trainingSlot: TrainingSlot, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsTrainingSlotsUpdate(requestParameters: TeamsTrainingSlotsUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TrainingSlot>;
+    public teamsTrainingSlotsUpdate(requestParameters: TeamsTrainingSlotsUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TrainingSlot>>;
+    public teamsTrainingSlotsUpdate(requestParameters: TeamsTrainingSlotsUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TrainingSlot>>;
+    public teamsTrainingSlotsUpdate(requestParameters: TeamsTrainingSlotsUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsTrainingSlotsUpdate.');
         }
+        const teamPk = requestParameters?.teamPk;
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsTrainingSlotsUpdate.');
         }
+        const trainingSlot = requestParameters?.trainingSlot;
         if (trainingSlot === null || trainingSlot === undefined) {
             throw new Error('Required parameter trainingSlot was null or undefined when calling teamsTrainingSlotsUpdate.');
         }
@@ -3237,15 +3317,16 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
      * Read the team\&#39;s weekly training template
      * Returns the team\&#39;s reusable weekly training template: the list of weekly slots (weekday Monday&#x3D;0…Sunday&#x3D;6 + hour_start/hour_end), the default pool/venue, and the default season dates. Any member of the team may read it; non-members get 404.
      * @endpoint get /api/v1/teams/{id}/training-template/
-     * @param id A unique integer value identifying this team.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsTrainingTemplateRetrieve(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TrainingTemplate>;
-    public teamsTrainingTemplateRetrieve(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TrainingTemplate>>;
-    public teamsTrainingTemplateRetrieve(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TrainingTemplate>>;
-    public teamsTrainingTemplateRetrieve(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsTrainingTemplateRetrieve(requestParameters: TeamsTrainingTemplateRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TrainingTemplate>;
+    public teamsTrainingTemplateRetrieve(requestParameters: TeamsTrainingTemplateRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TrainingTemplate>>;
+    public teamsTrainingTemplateRetrieve(requestParameters: TeamsTrainingTemplateRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TrainingTemplate>>;
+    public teamsTrainingTemplateRetrieve(requestParameters: TeamsTrainingTemplateRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsTrainingTemplateRetrieve.');
         }
@@ -3296,19 +3377,20 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
     /**
      * CRUD sur Teams. Liste &#x3D; teams gérées par l\&#39;user + teams publiques actives.
      * @endpoint put /api/v1/teams/{id}/
-     * @param id A unique integer value identifying this team.
-     * @param team 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public teamsUpdate(id: number, team: Team, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Team>;
-    public teamsUpdate(id: number, team: Team, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Team>>;
-    public teamsUpdate(id: number, team: Team, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Team>>;
-    public teamsUpdate(id: number, team: Team, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public teamsUpdate(requestParameters: TeamsUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Team>;
+    public teamsUpdate(requestParameters: TeamsUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Team>>;
+    public teamsUpdate(requestParameters: TeamsUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Team>>;
+    public teamsUpdate(requestParameters: TeamsUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsUpdate.');
         }
+        const team = requestParameters?.team;
         if (team === null || team === undefined) {
             throw new Error('Required parameter team was null or undefined when calling teamsUpdate.');
         }

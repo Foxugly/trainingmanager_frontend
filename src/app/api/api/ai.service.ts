@@ -26,7 +26,8 @@ import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables'
 import { Configuration }                                     from '../configuration';
 import { BaseService } from '../api.base.service';
 import {
-    AiServiceInterface
+    AiServiceInterface,
+    AiPingCreateRequestParams
 } from './ai.serviceInterface';
 
 
@@ -43,15 +44,16 @@ export class AiService extends BaseService implements AiServiceInterface {
     /**
      * Diagnostic ping to the Anthropic API.
      * @endpoint post /api/v1/ai/ping/
-     * @param aIPingRequest 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public aiPingCreate(aIPingRequest?: AIPingRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AIPingResponse>;
-    public aiPingCreate(aIPingRequest?: AIPingRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AIPingResponse>>;
-    public aiPingCreate(aIPingRequest?: AIPingRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AIPingResponse>>;
-    public aiPingCreate(aIPingRequest?: AIPingRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public aiPingCreate(requestParameters?: AiPingCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<AIPingResponse>;
+    public aiPingCreate(requestParameters?: AiPingCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AIPingResponse>>;
+    public aiPingCreate(requestParameters?: AiPingCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AIPingResponse>>;
+    public aiPingCreate(requestParameters?: AiPingCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const aIPingRequest = requestParameters?.aIPingRequest;
 
         let localVarHeaders = this.defaultHeaders;
 

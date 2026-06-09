@@ -77,9 +77,14 @@ export class ModalitiesFormComponent implements OnInit {
   protected readonly patchActive = (id: number, value: boolean): Observable<unknown> => {
     const sportId = this.sportId();
     if (sportId == null) return EMPTY;
-    return this.sportsService.sportsModalitiesPartialUpdate(id, sportId, true, {
-      is_active: value,
-    } as PatchedModalityAdmin);
+    return this.sportsService.sportsModalitiesPartialUpdate({
+      id,
+      sportPk: sportId,
+      includeInactive: true,
+      patchedModalityAdmin: {
+        is_active: value,
+      } as PatchedModalityAdmin,
+    });
   };
 
   protected readonly pageTitle = computed<string>(() => {
@@ -116,7 +121,7 @@ export class ModalitiesFormComponent implements OnInit {
     this.sportId.set(sportId);
 
     this.sportsService
-      .sportsRetrieve(sportId, true)
+      .sportsRetrieve({ id: sportId, includeInactive: true })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (s) =>
@@ -136,7 +141,7 @@ export class ModalitiesFormComponent implements OnInit {
       this.modalityId.set(modalityId);
       this.loading.set(true);
       this.sportsService
-        .sportsModalitiesRetrieve(modalityId, sportId, true)
+        .sportsModalitiesRetrieve({ id: modalityId, sportPk: sportId, includeInactive: true })
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (m) => {
@@ -187,13 +192,15 @@ export class ModalitiesFormComponent implements OnInit {
     };
 
     const request$ = modalityId
-      ? this.sportsService.sportsModalitiesPartialUpdate(
-          modalityId,
-          sportId,
-          undefined,
-          payload as PatchedModalityAdmin,
-        )
-      : this.sportsService.sportsModalitiesCreate(sportId, payload as ModalityAdmin);
+      ? this.sportsService.sportsModalitiesPartialUpdate({
+          id: modalityId,
+          sportPk: sportId,
+          patchedModalityAdmin: payload as PatchedModalityAdmin,
+        })
+      : this.sportsService.sportsModalitiesCreate({
+          sportPk: sportId,
+          modalityAdmin: payload as ModalityAdmin,
+        });
 
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {

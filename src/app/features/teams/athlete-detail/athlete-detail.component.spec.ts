@@ -140,8 +140,8 @@ describe('AthleteDetailComponent', () => {
   it('reads teamId/memberId from the route and loads the team + member', () => {
     expect(access(component).teamId()).toBe(4);
     expect(access(component).memberId()).toBe(23);
-    expect(teamsMock.teamsRetrieve).toHaveBeenCalledWith(4);
-    expect(membersMock.membersRetrieve).toHaveBeenCalledWith(23);
+    expect(teamsMock.teamsRetrieve).toHaveBeenCalledWith({ id: 4 });
+    expect(membersMock.membersRetrieve).toHaveBeenCalledWith({ id: 23 });
     expect(access(component).athleteName()).toBe('Renaud Vilain');
   });
 

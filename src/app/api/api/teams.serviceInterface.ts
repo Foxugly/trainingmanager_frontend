@@ -36,6 +36,261 @@ import { TrainingTemplate } from '../model/models';
 import { Configuration }                                     from '../configuration';
 
 
+export interface TeamsAiUsageDetailsListRequestParams {
+    teamId: number;
+    endpoint?: string;
+    ordering?: string;
+    page?: number;
+    pageSize?: number;
+    search?: string;
+    since?: string;
+}
+
+export interface TeamsAiUsageRetrieveRequestParams {
+    teamId: number;
+    end?: string;
+    excludePing?: boolean;
+    period?: string;
+    start?: string;
+}
+
+export interface TeamsCreateRequestParams {
+    team: Team;
+}
+
+export interface TeamsDestroyRequestParams {
+    id: number;
+}
+
+export interface TeamsListRequestParams {
+    isActive?: boolean;
+    isPublic?: boolean;
+    language?: 'en' | 'es' | 'fr' | 'it' | 'nl';
+    ordering?: string;
+    page?: number;
+    pageSize?: number;
+    search?: string;
+}
+
+export interface TeamsLogoRetrieveRequestParams {
+    id: number;
+}
+
+export interface TeamsMembersNotesCreateRequestParams {
+    memberPk: number;
+    teamPk: number;
+    note: Note;
+}
+
+export interface TeamsMembersNotesDestroyRequestParams {
+    id: number;
+    memberPk: number;
+    teamPk: number;
+}
+
+export interface TeamsMembersNotesListRequestParams {
+    memberPk: number;
+    teamPk: number;
+    includeInactive?: boolean;
+    ordering?: string;
+    page?: number;
+    pageSize?: number;
+    search?: string;
+}
+
+export interface TeamsMembersNotesPartialUpdateRequestParams {
+    id: number;
+    memberPk: number;
+    teamPk: number;
+    includeInactive?: boolean;
+    patchedNote?: PatchedNote;
+}
+
+export interface TeamsMembersNotesRetrieveRequestParams {
+    id: number;
+    memberPk: number;
+    teamPk: number;
+    includeInactive?: boolean;
+}
+
+export interface TeamsMembersNotesUpdateRequestParams {
+    id: number;
+    memberPk: number;
+    teamPk: number;
+    note: Note;
+    includeInactive?: boolean;
+}
+
+export interface TeamsMembershipsCreateRequestParams {
+    teamPk: number;
+    teamMembership: TeamMembership;
+    includeInactive?: boolean;
+}
+
+export interface TeamsMembershipsDestroyRequestParams {
+    id: number;
+    teamPk: number;
+    includeInactive?: boolean;
+}
+
+export interface TeamsMembershipsListRequestParams {
+    teamPk: number;
+    includeInactive?: boolean;
+    ordering?: string;
+    search?: string;
+}
+
+export interface TeamsMembershipsPartialUpdateRequestParams {
+    id: number;
+    teamPk: number;
+    includeInactive?: boolean;
+    patchedTeamMembership?: PatchedTeamMembership;
+}
+
+export interface TeamsMembershipsRetrieveRequestParams {
+    id: number;
+    teamPk: number;
+    includeInactive?: boolean;
+}
+
+export interface TeamsMembershipsUpdateRequestParams {
+    id: number;
+    teamPk: number;
+    teamMembership: TeamMembership;
+    includeInactive?: boolean;
+}
+
+export interface TeamsPartialUpdateRequestParams {
+    id: number;
+    patchedTeam?: PatchedTeam;
+}
+
+export interface TeamsPoolsRetrieveRequestParams {
+    id: number;
+}
+
+export interface TeamsRetrieveRequestParams {
+    id: number;
+}
+
+export interface TeamsStatsRetrieveRequestParams {
+    id: number;
+    from?: string;
+    member?: number;
+    to?: string;
+}
+
+export interface TeamsTopicsCreateRequestParams {
+    teamPk: number;
+    topic: Topic;
+}
+
+export interface TeamsTopicsDestroyRequestParams {
+    id: number;
+    teamPk: number;
+}
+
+export interface TeamsTopicsListRequestParams {
+    teamPk: number;
+    ordering?: string;
+    page?: number;
+    pageSize?: number;
+    search?: string;
+}
+
+export interface TeamsTopicsMessagesCreateRequestParams {
+    teamPk: number;
+    topicPk: number;
+    topicMessage: TopicMessage;
+}
+
+export interface TeamsTopicsMessagesDestroyRequestParams {
+    id: number;
+    teamPk: number;
+    topicPk: number;
+}
+
+export interface TeamsTopicsMessagesListRequestParams {
+    teamPk: number;
+    topicPk: number;
+    ordering?: string;
+    page?: number;
+    pageSize?: number;
+    search?: string;
+}
+
+export interface TeamsTopicsMessagesPartialUpdateRequestParams {
+    id: number;
+    teamPk: number;
+    topicPk: number;
+    patchedTopicMessage?: PatchedTopicMessage;
+}
+
+export interface TeamsTopicsMessagesRetrieveRequestParams {
+    id: number;
+    teamPk: number;
+    topicPk: number;
+}
+
+export interface TeamsTopicsMessagesUpdateRequestParams {
+    id: number;
+    teamPk: number;
+    topicPk: number;
+    topicMessage: TopicMessage;
+}
+
+export interface TeamsTopicsReadRequestParams {
+    id: number;
+    teamPk: number;
+}
+
+export interface TeamsTopicsRetrieveRequestParams {
+    id: number;
+    teamPk: number;
+}
+
+export interface TeamsTrainingSlotsCreateRequestParams {
+    teamPk: number;
+    trainingSlot: TrainingSlot;
+}
+
+export interface TeamsTrainingSlotsDestroyRequestParams {
+    id: number;
+    teamPk: number;
+}
+
+export interface TeamsTrainingSlotsListRequestParams {
+    teamPk: number;
+    ordering?: string;
+    search?: string;
+}
+
+export interface TeamsTrainingSlotsPartialUpdateRequestParams {
+    id: number;
+    teamPk: number;
+    patchedTrainingSlot?: PatchedTrainingSlot;
+}
+
+export interface TeamsTrainingSlotsRetrieveRequestParams {
+    id: number;
+    teamPk: number;
+}
+
+export interface TeamsTrainingSlotsUpdateRequestParams {
+    id: number;
+    teamPk: number;
+    trainingSlot: TrainingSlot;
+}
+
+export interface TeamsTrainingTemplateRetrieveRequestParams {
+    id: number;
+}
+
+export interface TeamsUpdateRequestParams {
+    id: number;
+    team: Team;
+}
+
 
 export interface TeamsServiceInterface {
     defaultHeaders: HttpHeaders;
@@ -45,419 +300,328 @@ export interface TeamsServiceInterface {
      * AI usage detailed rows for a team
      * GET /api/v1/teams/ai-usage/{team_id}/details/?since&#x3D;2026-04-01
      * @endpoint get /api/v1/teams/{team_id}/ai-usage/details/
-     * @param teamId 
-     * @param endpoint 
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
-     * @param since 
+* @param requestParameters
      */
-    teamsAiUsageDetailsList(teamId: number, endpoint?: string, ordering?: string, page?: number, pageSize?: number, search?: string, since?: string, extraHttpRequestParams?: any): Observable<PaginatedAIUsageDetailList>;
+    teamsAiUsageDetailsList(requestParameters: TeamsAiUsageDetailsListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedAIUsageDetailList>;
 
     /**
      * AI usage aggregated by period for a team
      * GET /api/v1/teams/ai-usage/{team_id}/?period&#x3D;month
      * @endpoint get /api/v1/teams/{team_id}/ai-usage/
-     * @param teamId 
-     * @param end 
-     * @param excludePing Exclude /ai/ping/ from aggregates (default true).
-     * @param period One of: day, week, month, year (default: month).
-     * @param start 
+* @param requestParameters
      */
-    teamsAiUsageRetrieve(teamId: number, end?: string, excludePing?: boolean, period?: string, start?: string, extraHttpRequestParams?: any): Observable<AIUsageAggregateResponse>;
+    teamsAiUsageRetrieve(requestParameters: TeamsAiUsageRetrieveRequestParams, extraHttpRequestParams?: any): Observable<AIUsageAggregateResponse>;
 
     /**
      * 
      * CRUD sur Teams. Liste &#x3D; teams gérées par l\&#39;user + teams publiques actives.
      * @endpoint post /api/v1/teams/
-     * @param team 
+* @param requestParameters
      */
-    teamsCreate(team: Team, extraHttpRequestParams?: any): Observable<Team>;
+    teamsCreate(requestParameters: TeamsCreateRequestParams, extraHttpRequestParams?: any): Observable<Team>;
 
     /**
      * 
      * CRUD sur Teams. Liste &#x3D; teams gérées par l\&#39;user + teams publiques actives.
      * @endpoint delete /api/v1/teams/{id}/
-     * @param id A unique integer value identifying this team.
+* @param requestParameters
      */
-    teamsDestroy(id: number, extraHttpRequestParams?: any): Observable<{}>;
+    teamsDestroy(requestParameters: TeamsDestroyRequestParams, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * 
      * CRUD sur Teams. Liste &#x3D; teams gérées par l\&#39;user + teams publiques actives.
      * @endpoint get /api/v1/teams/
-     * @param isActive 
-     * @param isPublic 
-     * @param language * &#x60;fr&#x60; - Français * &#x60;nl&#x60; - Nederlands * &#x60;en&#x60; - English * &#x60;it&#x60; - Italiano * &#x60;es&#x60; - Español
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
+* @param requestParameters
      */
-    teamsList(isActive?: boolean, isPublic?: boolean, language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, pageSize?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedTeamList>;
+    teamsList(requestParameters: TeamsListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedTeamList>;
 
     /**
      * Team logo image (public)
      * Returns the team\&#39;s logo as a binary image, decoded from the stored base64 data-URL. Public (no auth); 404 when the team has no logo. The list and detail expose this URL as &#x60;logo_url&#x60; instead of inlining the base64.
      * @endpoint get /api/v1/teams/{id}/logo/
-     * @param id A unique integer value identifying this team.
+* @param requestParameters
      */
-    teamsLogoRetrieve(id: number, extraHttpRequestParams?: any): Observable<Blob>;
+    teamsLogoRetrieve(requestParameters: TeamsLogoRetrieveRequestParams, extraHttpRequestParams?: any): Observable<Blob>;
 
     /**
      * 
      * CRUD on coach notes within a team-member nested context.  URL: /api/v1/teams/{team_pk}/members/{member_pk}/notes/
      * @endpoint post /api/v1/teams/{team_pk}/members/{member_pk}/notes/
-     * @param memberPk 
-     * @param teamPk 
-     * @param note 
+* @param requestParameters
      */
-    teamsMembersNotesCreate(memberPk: number, teamPk: number, note: Note, extraHttpRequestParams?: any): Observable<Note>;
+    teamsMembersNotesCreate(requestParameters: TeamsMembersNotesCreateRequestParams, extraHttpRequestParams?: any): Observable<Note>;
 
     /**
      * 
      * CRUD on coach notes within a team-member nested context.  URL: /api/v1/teams/{team_pk}/members/{member_pk}/notes/
      * @endpoint delete /api/v1/teams/{team_pk}/members/{member_pk}/notes/{id}/
-     * @param id A unique integer value identifying this note.
-     * @param memberPk 
-     * @param teamPk 
+* @param requestParameters
      */
-    teamsMembersNotesDestroy(id: number, memberPk: number, teamPk: number, extraHttpRequestParams?: any): Observable<{}>;
+    teamsMembersNotesDestroy(requestParameters: TeamsMembersNotesDestroyRequestParams, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * List coach notes for a member in a team
      * CRUD on coach notes within a team-member nested context.  URL: /api/v1/teams/{team_pk}/members/{member_pk}/notes/
      * @endpoint get /api/v1/teams/{team_pk}/members/{member_pk}/notes/
-     * @param memberPk 
-     * @param teamPk 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
+* @param requestParameters
      */
-    teamsMembersNotesList(memberPk: number, teamPk: number, includeInactive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedNoteList>;
+    teamsMembersNotesList(requestParameters: TeamsMembersNotesListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedNoteList>;
 
     /**
      * 
      * CRUD on coach notes within a team-member nested context.  URL: /api/v1/teams/{team_pk}/members/{member_pk}/notes/
      * @endpoint patch /api/v1/teams/{team_pk}/members/{member_pk}/notes/{id}/
-     * @param id A unique integer value identifying this note.
-     * @param memberPk 
-     * @param teamPk 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
-     * @param patchedNote 
+* @param requestParameters
      */
-    teamsMembersNotesPartialUpdate(id: number, memberPk: number, teamPk: number, includeInactive?: boolean, patchedNote?: PatchedNote, extraHttpRequestParams?: any): Observable<Note>;
+    teamsMembersNotesPartialUpdate(requestParameters: TeamsMembersNotesPartialUpdateRequestParams, extraHttpRequestParams?: any): Observable<Note>;
 
     /**
      * 
      * CRUD on coach notes within a team-member nested context.  URL: /api/v1/teams/{team_pk}/members/{member_pk}/notes/
      * @endpoint get /api/v1/teams/{team_pk}/members/{member_pk}/notes/{id}/
-     * @param id A unique integer value identifying this note.
-     * @param memberPk 
-     * @param teamPk 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+* @param requestParameters
      */
-    teamsMembersNotesRetrieve(id: number, memberPk: number, teamPk: number, includeInactive?: boolean, extraHttpRequestParams?: any): Observable<Note>;
+    teamsMembersNotesRetrieve(requestParameters: TeamsMembersNotesRetrieveRequestParams, extraHttpRequestParams?: any): Observable<Note>;
 
     /**
      * 
      * CRUD on coach notes within a team-member nested context.  URL: /api/v1/teams/{team_pk}/members/{member_pk}/notes/
      * @endpoint put /api/v1/teams/{team_pk}/members/{member_pk}/notes/{id}/
-     * @param id A unique integer value identifying this note.
-     * @param memberPk 
-     * @param teamPk 
-     * @param note 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+* @param requestParameters
      */
-    teamsMembersNotesUpdate(id: number, memberPk: number, teamPk: number, note: Note, includeInactive?: boolean, extraHttpRequestParams?: any): Observable<Note>;
+    teamsMembersNotesUpdate(requestParameters: TeamsMembersNotesUpdateRequestParams, extraHttpRequestParams?: any): Observable<Note>;
 
     /**
      * 
      * Manage team memberships.  URL: /api/v1/teams/{team_pk}/memberships/  - GET (list): active memberships of the team. Pass ?include_inactive&#x3D;true   to also see historical (left_at IS NOT NULL) rows. - POST: add a member to the team (manager-only). Idempotent: rejects with   400 already_member if an active membership already exists for the same   (team, member) pair. - DELETE /{id}/: end a membership (sets left_at &#x3D; now). Allowed for the   member herself or a team manager. The team owner cannot leave their own   team via this endpoint.
      * @endpoint post /api/v1/teams/{team_pk}/memberships/
-     * @param teamPk 
-     * @param teamMembership 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+* @param requestParameters
      */
-    teamsMembershipsCreate(teamPk: number, teamMembership: TeamMembership, includeInactive?: boolean, extraHttpRequestParams?: any): Observable<TeamMembership>;
+    teamsMembershipsCreate(requestParameters: TeamsMembershipsCreateRequestParams, extraHttpRequestParams?: any): Observable<TeamMembership>;
 
     /**
      * 
      * Manage team memberships.  URL: /api/v1/teams/{team_pk}/memberships/  - GET (list): active memberships of the team. Pass ?include_inactive&#x3D;true   to also see historical (left_at IS NOT NULL) rows. - POST: add a member to the team (manager-only). Idempotent: rejects with   400 already_member if an active membership already exists for the same   (team, member) pair. - DELETE /{id}/: end a membership (sets left_at &#x3D; now). Allowed for the   member herself or a team manager. The team owner cannot leave their own   team via this endpoint.
      * @endpoint delete /api/v1/teams/{team_pk}/memberships/{id}/
-     * @param id A unique integer value identifying this team membership.
-     * @param teamPk 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+* @param requestParameters
      */
-    teamsMembershipsDestroy(id: number, teamPk: number, includeInactive?: boolean, extraHttpRequestParams?: any): Observable<{}>;
+    teamsMembershipsDestroy(requestParameters: TeamsMembershipsDestroyRequestParams, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * 
      * Manage team memberships.  URL: /api/v1/teams/{team_pk}/memberships/  - GET (list): active memberships of the team. Pass ?include_inactive&#x3D;true   to also see historical (left_at IS NOT NULL) rows. - POST: add a member to the team (manager-only). Idempotent: rejects with   400 already_member if an active membership already exists for the same   (team, member) pair. - DELETE /{id}/: end a membership (sets left_at &#x3D; now). Allowed for the   member herself or a team manager. The team owner cannot leave their own   team via this endpoint.
      * @endpoint get /api/v1/teams/{team_pk}/memberships/
-     * @param teamPk 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
-     * @param ordering Which field to use when ordering the results.
-     * @param search A search term.
+* @param requestParameters
      */
-    teamsMembershipsList(teamPk: number, includeInactive?: boolean, ordering?: string, search?: string, extraHttpRequestParams?: any): Observable<Array<TeamMembership>>;
+    teamsMembershipsList(requestParameters: TeamsMembershipsListRequestParams, extraHttpRequestParams?: any): Observable<Array<TeamMembership>>;
 
     /**
      * 
      * Manage team memberships.  URL: /api/v1/teams/{team_pk}/memberships/  - GET (list): active memberships of the team. Pass ?include_inactive&#x3D;true   to also see historical (left_at IS NOT NULL) rows. - POST: add a member to the team (manager-only). Idempotent: rejects with   400 already_member if an active membership already exists for the same   (team, member) pair. - DELETE /{id}/: end a membership (sets left_at &#x3D; now). Allowed for the   member herself or a team manager. The team owner cannot leave their own   team via this endpoint.
      * @endpoint patch /api/v1/teams/{team_pk}/memberships/{id}/
-     * @param id A unique integer value identifying this team membership.
-     * @param teamPk 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
-     * @param patchedTeamMembership 
+* @param requestParameters
      */
-    teamsMembershipsPartialUpdate(id: number, teamPk: number, includeInactive?: boolean, patchedTeamMembership?: PatchedTeamMembership, extraHttpRequestParams?: any): Observable<TeamMembership>;
+    teamsMembershipsPartialUpdate(requestParameters: TeamsMembershipsPartialUpdateRequestParams, extraHttpRequestParams?: any): Observable<TeamMembership>;
 
     /**
      * 
      * Manage team memberships.  URL: /api/v1/teams/{team_pk}/memberships/  - GET (list): active memberships of the team. Pass ?include_inactive&#x3D;true   to also see historical (left_at IS NOT NULL) rows. - POST: add a member to the team (manager-only). Idempotent: rejects with   400 already_member if an active membership already exists for the same   (team, member) pair. - DELETE /{id}/: end a membership (sets left_at &#x3D; now). Allowed for the   member herself or a team manager. The team owner cannot leave their own   team via this endpoint.
      * @endpoint get /api/v1/teams/{team_pk}/memberships/{id}/
-     * @param id A unique integer value identifying this team membership.
-     * @param teamPk 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+* @param requestParameters
      */
-    teamsMembershipsRetrieve(id: number, teamPk: number, includeInactive?: boolean, extraHttpRequestParams?: any): Observable<TeamMembership>;
+    teamsMembershipsRetrieve(requestParameters: TeamsMembershipsRetrieveRequestParams, extraHttpRequestParams?: any): Observable<TeamMembership>;
 
     /**
      * 
      * Manage team memberships.  URL: /api/v1/teams/{team_pk}/memberships/  - GET (list): active memberships of the team. Pass ?include_inactive&#x3D;true   to also see historical (left_at IS NOT NULL) rows. - POST: add a member to the team (manager-only). Idempotent: rejects with   400 already_member if an active membership already exists for the same   (team, member) pair. - DELETE /{id}/: end a membership (sets left_at &#x3D; now). Allowed for the   member herself or a team manager. The team owner cannot leave their own   team via this endpoint.
      * @endpoint put /api/v1/teams/{team_pk}/memberships/{id}/
-     * @param id A unique integer value identifying this team membership.
-     * @param teamPk 
-     * @param teamMembership 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+* @param requestParameters
      */
-    teamsMembershipsUpdate(id: number, teamPk: number, teamMembership: TeamMembership, includeInactive?: boolean, extraHttpRequestParams?: any): Observable<TeamMembership>;
+    teamsMembershipsUpdate(requestParameters: TeamsMembershipsUpdateRequestParams, extraHttpRequestParams?: any): Observable<TeamMembership>;
 
     /**
      * 
      * CRUD sur Teams. Liste &#x3D; teams gérées par l\&#39;user + teams publiques actives.
      * @endpoint patch /api/v1/teams/{id}/
-     * @param id A unique integer value identifying this team.
-     * @param patchedTeam 
+* @param requestParameters
      */
-    teamsPartialUpdate(id: number, patchedTeam?: PatchedTeam, extraHttpRequestParams?: any): Observable<Team>;
+    teamsPartialUpdate(requestParameters: TeamsPartialUpdateRequestParams, extraHttpRequestParams?: any): Observable<Team>;
 
     /**
      * Distinct session locations (pools) for autocomplete
      * Read-only list of the distinct, non-empty &#x60;location&#x60; values used across this team\&#39;s events, ordered alphabetically. Intended for the session-editor location (\&#39;piscine\&#39;) autocomplete. Any member of the team (owner, manager, or active athlete) may read it; non-members get 404 (the team is not in their visible scope).
      * @endpoint get /api/v1/teams/{id}/pools/
-     * @param id A unique integer value identifying this team.
+* @param requestParameters
      */
-    teamsPoolsRetrieve(id: number, extraHttpRequestParams?: any): Observable<TeamPoolsResponse>;
+    teamsPoolsRetrieve(requestParameters: TeamsPoolsRetrieveRequestParams, extraHttpRequestParams?: any): Observable<TeamPoolsResponse>;
 
     /**
      * 
      * CRUD sur Teams. Liste &#x3D; teams gérées par l\&#39;user + teams publiques actives.
      * @endpoint get /api/v1/teams/{id}/
-     * @param id A unique integer value identifying this team.
+* @param requestParameters
      */
-    teamsRetrieve(id: number, extraHttpRequestParams?: any): Observable<Team>;
+    teamsRetrieve(requestParameters: TeamsRetrieveRequestParams, extraHttpRequestParams?: any): Observable<Team>;
 
     /**
      * Team statistics (attendance, volume, intensity)
      * Read-only aggregated statistics for the team\&#39;s events whose &#x60;date&#x60; falls in the window [&#x60;from&#x60;, &#x60;to&#x60;] (both inclusive). Defaults to the last 12 weeks (&#x60;to&#x60; &#x3D; today, &#x60;from&#x60; &#x3D; today - 84 days) when both are absent; a single bound fills the other (&#x60;to&#x60; defaults to today, &#x60;from&#x60; defaults to &#x60;to&#x60; - 84 days). The span is clamped to a maximum of 2 years.  Without &#x60;member&#x60; the payload is the **team aggregate** (owner/manager only). With &#x60;member&#x3D;&lt;id&gt;&#x60; the payload is **scoped to that athlete**: allowed for the team\&#39;s owner/managers for any member, or for the athlete viewing their OWN member record.
      * @endpoint get /api/v1/teams/{id}/stats/
-     * @param id A unique integer value identifying this team.
-     * @param from Window start (inclusive, ISO YYYY-MM-DD). Defaults to &#x60;to&#x60; - 84 days.
-     * @param member Optional member id. When set, scopes the whole payload to that athlete. Owner/managers may request any member of the team; an athlete may only request their own member id (otherwise 403). Member not in the team -&gt; 404.
-     * @param to Window end (inclusive, ISO YYYY-MM-DD). Defaults to today.
+* @param requestParameters
      */
-    teamsStatsRetrieve(id: number, from?: string, member?: number, to?: string, extraHttpRequestParams?: any): Observable<TeamStats>;
+    teamsStatsRetrieve(requestParameters: TeamsStatsRetrieveRequestParams, extraHttpRequestParams?: any): Observable<TeamStats>;
 
     /**
      * Create a topic (coach only)
      * Topics nested under a team.  URL: /api/v1/teams/{team_pk}/topics/
      * @endpoint post /api/v1/teams/{team_pk}/topics/
-     * @param teamPk 
-     * @param topic 
+* @param requestParameters
      */
-    teamsTopicsCreate(teamPk: number, topic: Topic, extraHttpRequestParams?: any): Observable<Topic>;
+    teamsTopicsCreate(requestParameters: TeamsTopicsCreateRequestParams, extraHttpRequestParams?: any): Observable<Topic>;
 
     /**
      * Delete a topic (author or coach)
      * Topics nested under a team.  URL: /api/v1/teams/{team_pk}/topics/
      * @endpoint delete /api/v1/teams/{team_pk}/topics/{id}/
-     * @param id A unique integer value identifying this topic.
-     * @param teamPk 
+* @param requestParameters
      */
-    teamsTopicsDestroy(id: number, teamPk: number, extraHttpRequestParams?: any): Observable<{}>;
+    teamsTopicsDestroy(requestParameters: TeamsTopicsDestroyRequestParams, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * List visible topics for a team (newest activity first)
      * Topics nested under a team.  URL: /api/v1/teams/{team_pk}/topics/
      * @endpoint get /api/v1/teams/{team_pk}/topics/
-     * @param teamPk 
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
+* @param requestParameters
      */
-    teamsTopicsList(teamPk: number, ordering?: string, page?: number, pageSize?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedTopicList>;
+    teamsTopicsList(requestParameters: TeamsTopicsListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedTopicList>;
 
     /**
      * Post a message in a topic
      * Messages nested under a topic.  URL: /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
      * @endpoint post /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
-     * @param teamPk ID of the parent team.
-     * @param topicPk ID of the parent topic.
-     * @param topicMessage 
+* @param requestParameters
      */
-    teamsTopicsMessagesCreate(teamPk: number, topicPk: number, topicMessage: TopicMessage, extraHttpRequestParams?: any): Observable<TopicMessage>;
+    teamsTopicsMessagesCreate(requestParameters: TeamsTopicsMessagesCreateRequestParams, extraHttpRequestParams?: any): Observable<TopicMessage>;
 
     /**
      * Delete a message (author or coach)
      * Messages nested under a topic.  URL: /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
      * @endpoint delete /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/{id}/
-     * @param id A unique integer value identifying this message.
-     * @param teamPk ID of the parent team.
-     * @param topicPk ID of the parent topic.
+* @param requestParameters
      */
-    teamsTopicsMessagesDestroy(id: number, teamPk: number, topicPk: number, extraHttpRequestParams?: any): Observable<{}>;
+    teamsTopicsMessagesDestroy(requestParameters: TeamsTopicsMessagesDestroyRequestParams, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * List messages in a topic (oldest first)
      * Messages nested under a topic.  URL: /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
      * @endpoint get /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
-     * @param teamPk ID of the parent team.
-     * @param topicPk ID of the parent topic.
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
+* @param requestParameters
      */
-    teamsTopicsMessagesList(teamPk: number, topicPk: number, ordering?: string, page?: number, pageSize?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedTopicMessageList>;
+    teamsTopicsMessagesList(requestParameters: TeamsTopicsMessagesListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedTopicMessageList>;
 
     /**
      * Edit a message (author only)
      * Messages nested under a topic.  URL: /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
      * @endpoint patch /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/{id}/
-     * @param id A unique integer value identifying this message.
-     * @param teamPk ID of the parent team.
-     * @param topicPk ID of the parent topic.
-     * @param patchedTopicMessage 
+* @param requestParameters
      */
-    teamsTopicsMessagesPartialUpdate(id: number, teamPk: number, topicPk: number, patchedTopicMessage?: PatchedTopicMessage, extraHttpRequestParams?: any): Observable<TopicMessage>;
+    teamsTopicsMessagesPartialUpdate(requestParameters: TeamsTopicsMessagesPartialUpdateRequestParams, extraHttpRequestParams?: any): Observable<TopicMessage>;
 
     /**
      * Retrieve a message
      * Messages nested under a topic.  URL: /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
      * @endpoint get /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/{id}/
-     * @param id A unique integer value identifying this message.
-     * @param teamPk ID of the parent team.
-     * @param topicPk ID of the parent topic.
+* @param requestParameters
      */
-    teamsTopicsMessagesRetrieve(id: number, teamPk: number, topicPk: number, extraHttpRequestParams?: any): Observable<TopicMessage>;
+    teamsTopicsMessagesRetrieve(requestParameters: TeamsTopicsMessagesRetrieveRequestParams, extraHttpRequestParams?: any): Observable<TopicMessage>;
 
     /**
      * Edit a message (author only)
      * Messages nested under a topic.  URL: /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/
      * @endpoint put /api/v1/teams/{team_pk}/topics/{topic_pk}/messages/{id}/
-     * @param id A unique integer value identifying this message.
-     * @param teamPk ID of the parent team.
-     * @param topicPk ID of the parent topic.
-     * @param topicMessage 
+* @param requestParameters
      */
-    teamsTopicsMessagesUpdate(id: number, teamPk: number, topicPk: number, topicMessage: TopicMessage, extraHttpRequestParams?: any): Observable<TopicMessage>;
+    teamsTopicsMessagesUpdate(requestParameters: TeamsTopicsMessagesUpdateRequestParams, extraHttpRequestParams?: any): Observable<TopicMessage>;
 
     /**
      * Mark a topic as read up to now (per-user read state)
      * POST /teams/{team}/topics/{id}/read/ — set the caller\&#39;s last-read marker for this topic to now (so its messages count as read).
      * @endpoint post /api/v1/teams/{team_pk}/topics/{id}/read/
-     * @param id A unique integer value identifying this topic.
-     * @param teamPk ID of the parent team.
+* @param requestParameters
      */
-    teamsTopicsRead(id: number, teamPk: number, extraHttpRequestParams?: any): Observable<{}>;
+    teamsTopicsRead(requestParameters: TeamsTopicsReadRequestParams, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * Retrieve a topic
      * Topics nested under a team.  URL: /api/v1/teams/{team_pk}/topics/
      * @endpoint get /api/v1/teams/{team_pk}/topics/{id}/
-     * @param id A unique integer value identifying this topic.
-     * @param teamPk 
+* @param requestParameters
      */
-    teamsTopicsRetrieve(id: number, teamPk: number, extraHttpRequestParams?: any): Observable<Topic>;
+    teamsTopicsRetrieve(requestParameters: TeamsTopicsRetrieveRequestParams, extraHttpRequestParams?: any): Observable<Topic>;
 
     /**
      * Add a weekly training slot (manager only)
      * Per-slot CRUD for a team\&#39;s weekly training template.  URL: /api/v1/teams/{team_pk}/training-slots/  Each slot is saved on its own (add / edit / delete one slot persists immediately) — there is no bulk \&quot;save the template\&quot; step here. A slot carries weekday + hour_start/hour_end + an optional &#x60;&#x60;place&#x60;&#x60; (venue). Read: any strict team member. Write: owner/manager only.
      * @endpoint post /api/v1/teams/{team_pk}/training-slots/
-     * @param teamPk 
-     * @param trainingSlot 
+* @param requestParameters
      */
-    teamsTrainingSlotsCreate(teamPk: number, trainingSlot: TrainingSlot, extraHttpRequestParams?: any): Observable<TrainingSlot>;
+    teamsTrainingSlotsCreate(requestParameters: TeamsTrainingSlotsCreateRequestParams, extraHttpRequestParams?: any): Observable<TrainingSlot>;
 
     /**
      * Delete a weekly training slot (manager only)
      * Per-slot CRUD for a team\&#39;s weekly training template.  URL: /api/v1/teams/{team_pk}/training-slots/  Each slot is saved on its own (add / edit / delete one slot persists immediately) — there is no bulk \&quot;save the template\&quot; step here. A slot carries weekday + hour_start/hour_end + an optional &#x60;&#x60;place&#x60;&#x60; (venue). Read: any strict team member. Write: owner/manager only.
      * @endpoint delete /api/v1/teams/{team_pk}/training-slots/{id}/
-     * @param id A unique integer value identifying this training slot.
-     * @param teamPk 
+* @param requestParameters
      */
-    teamsTrainingSlotsDestroy(id: number, teamPk: number, extraHttpRequestParams?: any): Observable<{}>;
+    teamsTrainingSlotsDestroy(requestParameters: TeamsTrainingSlotsDestroyRequestParams, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * List a team\&#39;s weekly training slots
      * Per-slot CRUD for a team\&#39;s weekly training template.  URL: /api/v1/teams/{team_pk}/training-slots/  Each slot is saved on its own (add / edit / delete one slot persists immediately) — there is no bulk \&quot;save the template\&quot; step here. A slot carries weekday + hour_start/hour_end + an optional &#x60;&#x60;place&#x60;&#x60; (venue). Read: any strict team member. Write: owner/manager only.
      * @endpoint get /api/v1/teams/{team_pk}/training-slots/
-     * @param teamPk 
-     * @param ordering Which field to use when ordering the results.
-     * @param search A search term.
+* @param requestParameters
      */
-    teamsTrainingSlotsList(teamPk: number, ordering?: string, search?: string, extraHttpRequestParams?: any): Observable<Array<TrainingSlot>>;
+    teamsTrainingSlotsList(requestParameters: TeamsTrainingSlotsListRequestParams, extraHttpRequestParams?: any): Observable<Array<TrainingSlot>>;
 
     /**
      * Edit a weekly training slot (manager only)
      * Per-slot CRUD for a team\&#39;s weekly training template.  URL: /api/v1/teams/{team_pk}/training-slots/  Each slot is saved on its own (add / edit / delete one slot persists immediately) — there is no bulk \&quot;save the template\&quot; step here. A slot carries weekday + hour_start/hour_end + an optional &#x60;&#x60;place&#x60;&#x60; (venue). Read: any strict team member. Write: owner/manager only.
      * @endpoint patch /api/v1/teams/{team_pk}/training-slots/{id}/
-     * @param id A unique integer value identifying this training slot.
-     * @param teamPk 
-     * @param patchedTrainingSlot 
+* @param requestParameters
      */
-    teamsTrainingSlotsPartialUpdate(id: number, teamPk: number, patchedTrainingSlot?: PatchedTrainingSlot, extraHttpRequestParams?: any): Observable<TrainingSlot>;
+    teamsTrainingSlotsPartialUpdate(requestParameters: TeamsTrainingSlotsPartialUpdateRequestParams, extraHttpRequestParams?: any): Observable<TrainingSlot>;
 
     /**
      * 
      * Per-slot CRUD for a team\&#39;s weekly training template.  URL: /api/v1/teams/{team_pk}/training-slots/  Each slot is saved on its own (add / edit / delete one slot persists immediately) — there is no bulk \&quot;save the template\&quot; step here. A slot carries weekday + hour_start/hour_end + an optional &#x60;&#x60;place&#x60;&#x60; (venue). Read: any strict team member. Write: owner/manager only.
      * @endpoint get /api/v1/teams/{team_pk}/training-slots/{id}/
-     * @param id A unique integer value identifying this training slot.
-     * @param teamPk 
+* @param requestParameters
      */
-    teamsTrainingSlotsRetrieve(id: number, teamPk: number, extraHttpRequestParams?: any): Observable<TrainingSlot>;
+    teamsTrainingSlotsRetrieve(requestParameters: TeamsTrainingSlotsRetrieveRequestParams, extraHttpRequestParams?: any): Observable<TrainingSlot>;
 
     /**
      * Replace a weekly training slot (manager only)
      * Per-slot CRUD for a team\&#39;s weekly training template.  URL: /api/v1/teams/{team_pk}/training-slots/  Each slot is saved on its own (add / edit / delete one slot persists immediately) — there is no bulk \&quot;save the template\&quot; step here. A slot carries weekday + hour_start/hour_end + an optional &#x60;&#x60;place&#x60;&#x60; (venue). Read: any strict team member. Write: owner/manager only.
      * @endpoint put /api/v1/teams/{team_pk}/training-slots/{id}/
-     * @param id A unique integer value identifying this training slot.
-     * @param teamPk 
-     * @param trainingSlot 
+* @param requestParameters
      */
-    teamsTrainingSlotsUpdate(id: number, teamPk: number, trainingSlot: TrainingSlot, extraHttpRequestParams?: any): Observable<TrainingSlot>;
+    teamsTrainingSlotsUpdate(requestParameters: TeamsTrainingSlotsUpdateRequestParams, extraHttpRequestParams?: any): Observable<TrainingSlot>;
 
     /**
      * Read the team\&#39;s weekly training template
      * Returns the team\&#39;s reusable weekly training template: the list of weekly slots (weekday Monday&#x3D;0…Sunday&#x3D;6 + hour_start/hour_end), the default pool/venue, and the default season dates. Any member of the team may read it; non-members get 404.
      * @endpoint get /api/v1/teams/{id}/training-template/
-     * @param id A unique integer value identifying this team.
+* @param requestParameters
      */
-    teamsTrainingTemplateRetrieve(id: number, extraHttpRequestParams?: any): Observable<TrainingTemplate>;
+    teamsTrainingTemplateRetrieve(requestParameters: TeamsTrainingTemplateRetrieveRequestParams, extraHttpRequestParams?: any): Observable<TrainingTemplate>;
 
     /**
      * 
      * CRUD sur Teams. Liste &#x3D; teams gérées par l\&#39;user + teams publiques actives.
      * @endpoint put /api/v1/teams/{id}/
-     * @param id A unique integer value identifying this team.
-     * @param team 
+* @param requestParameters
      */
-    teamsUpdate(id: number, team: Team, extraHttpRequestParams?: any): Observable<Team>;
+    teamsUpdate(requestParameters: TeamsUpdateRequestParams, extraHttpRequestParams?: any): Observable<Team>;
 
 }

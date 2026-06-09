@@ -194,7 +194,7 @@ describe('ProgramsFormComponent', () => {
 
   it('on edit mode, fetches the program with includeInactive=true and pre-fills the form', async () => {
     await setup('7');
-    expect(programsMock.programsRetrieve).toHaveBeenCalledWith(7, true);
+    expect(programsMock.programsRetrieve).toHaveBeenCalledWith({ id: 7, includeInactive: true });
     expect(access(component).isEditMode()).toBe(true);
     expect(access(component).form.getRawValue()).toMatchObject({
       name: 'Cycle aérobie',
@@ -230,8 +230,9 @@ describe('ProgramsFormComponent', () => {
   it('patchActive calls programsPartialUpdate with the is_active body as 3rd arg', async () => {
     await setup('7');
     access(component).patchActive(7, false);
-    expect(programsMock.programsPartialUpdate).toHaveBeenCalledWith(7, undefined, {
-      is_active: false,
+    expect(programsMock.programsPartialUpdate).toHaveBeenCalledWith({
+      id: 7,
+      patchedProgram: { is_active: false },
     });
   });
 
@@ -247,8 +248,8 @@ describe('ProgramsFormComponent', () => {
     access(component).form.patchValue({ name: 'Renamed' });
     access(component).submit();
     expect(programsMock.programsPartialUpdate).toHaveBeenCalledTimes(1);
-    expect(programsMock.programsPartialUpdate.mock.calls[0][0]).toBe(7);
-    expect(programsMock.programsPartialUpdate.mock.calls[0][1]).toBeUndefined();
+    expect(programsMock.programsPartialUpdate.mock.calls[0][0].id).toBe(7);
+    expect(programsMock.programsPartialUpdate.mock.calls[0][0].includeInactive).toBeUndefined();
     expect(router.navigate).toHaveBeenCalledWith(['/programs', 7]);
   });
 
@@ -317,7 +318,7 @@ describe('ProgramsFormComponent', () => {
       return confirmationService;
     });
     access(component).confirmDelete();
-    expect(programsMock.programsDestroy).toHaveBeenCalledWith(7);
+    expect(programsMock.programsDestroy).toHaveBeenCalledWith({ id: 7 });
     expect(router.navigate).toHaveBeenCalledWith(['/teams', 4]);
     expect(messageService.add).toHaveBeenCalledWith(
       expect.objectContaining({ severity: 'success' }),

@@ -19,6 +19,42 @@ import { PatchedExercise } from '../model/models';
 import { Configuration }                                     from '../configuration';
 
 
+export interface ExercisesCloneCreateRequestParams {
+    id: number;
+}
+
+export interface ExercisesCreateRequestParams {
+    exercise: Exercise;
+}
+
+export interface ExercisesDestroyRequestParams {
+    id: number;
+}
+
+export interface ExercisesListRequestParams {
+    energysegment?: number;
+    language?: 'en' | 'es' | 'fr' | 'it' | 'nl';
+    modality?: number;
+    ordering?: string;
+    page?: number;
+    pageSize?: number;
+    search?: string;
+}
+
+export interface ExercisesPartialUpdateRequestParams {
+    id: number;
+    patchedExercise?: PatchedExercise;
+}
+
+export interface ExercisesRetrieveRequestParams {
+    id: number;
+}
+
+export interface ExercisesUpdateRequestParams {
+    id: number;
+    exercise: Exercise;
+}
+
 
 export interface ExercisesServiceInterface {
     defaultHeaders: HttpHeaders;
@@ -28,64 +64,56 @@ export interface ExercisesServiceInterface {
      * 
      * Clone this Exercise. Returns the new Exercise.
      * @endpoint post /api/v1/exercises/{id}/clone/
-     * @param id A unique integer value identifying this Exercise.
+* @param requestParameters
      */
-    exercisesCloneCreate(id: number, extraHttpRequestParams?: any): Observable<Exercise>;
+    exercisesCloneCreate(requestParameters: ExercisesCloneCreateRequestParams, extraHttpRequestParams?: any): Observable<Exercise>;
 
     /**
      * 
      * CRUD complet pour Exercise.
      * @endpoint post /api/v1/exercises/
-     * @param exercise 
+* @param requestParameters
      */
-    exercisesCreate(exercise: Exercise, extraHttpRequestParams?: any): Observable<Exercise>;
+    exercisesCreate(requestParameters: ExercisesCreateRequestParams, extraHttpRequestParams?: any): Observable<Exercise>;
 
     /**
      * 
      * CRUD complet pour Exercise.
      * @endpoint delete /api/v1/exercises/{id}/
-     * @param id A unique integer value identifying this Exercise.
+* @param requestParameters
      */
-    exercisesDestroy(id: number, extraHttpRequestParams?: any): Observable<{}>;
+    exercisesDestroy(requestParameters: ExercisesDestroyRequestParams, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * 
      * CRUD complet pour Exercise.
      * @endpoint get /api/v1/exercises/
-     * @param energysegment 
-     * @param language * &#x60;fr&#x60; - Français * &#x60;nl&#x60; - Nederlands * &#x60;en&#x60; - English * &#x60;it&#x60; - Italiano * &#x60;es&#x60; - Español
-     * @param modality 
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
+* @param requestParameters
      */
-    exercisesList(energysegment?: number, language?: 'en' | 'es' | 'fr' | 'it' | 'nl', modality?: number, ordering?: string, page?: number, pageSize?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedExerciseList>;
+    exercisesList(requestParameters: ExercisesListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedExerciseList>;
 
     /**
      * 
      * CRUD complet pour Exercise.
      * @endpoint patch /api/v1/exercises/{id}/
-     * @param id A unique integer value identifying this Exercise.
-     * @param patchedExercise 
+* @param requestParameters
      */
-    exercisesPartialUpdate(id: number, patchedExercise?: PatchedExercise, extraHttpRequestParams?: any): Observable<Exercise>;
+    exercisesPartialUpdate(requestParameters: ExercisesPartialUpdateRequestParams, extraHttpRequestParams?: any): Observable<Exercise>;
 
     /**
      * 
      * CRUD complet pour Exercise.
      * @endpoint get /api/v1/exercises/{id}/
-     * @param id A unique integer value identifying this Exercise.
+* @param requestParameters
      */
-    exercisesRetrieve(id: number, extraHttpRequestParams?: any): Observable<Exercise>;
+    exercisesRetrieve(requestParameters: ExercisesRetrieveRequestParams, extraHttpRequestParams?: any): Observable<Exercise>;
 
     /**
      * 
      * CRUD complet pour Exercise.
      * @endpoint put /api/v1/exercises/{id}/
-     * @param id A unique integer value identifying this Exercise.
-     * @param exercise 
+* @param requestParameters
      */
-    exercisesUpdate(id: number, exercise: Exercise, extraHttpRequestParams?: any): Observable<Exercise>;
+    exercisesUpdate(requestParameters: ExercisesUpdateRequestParams, extraHttpRequestParams?: any): Observable<Exercise>;
 
 }

@@ -319,8 +319,9 @@ export class EventTrainingComponent {
 
     this.reordering.set(true);
     firstValueFrom(
-      this.eventsService.eventsRoundsReorderCreate(eventId, {
-        round_ids: renumbered.map((x) => x.id),
+      this.eventsService.eventsRoundsReorderCreate({
+        id: eventId,
+        reorderRoundsRequest: { round_ids: renumbered.map((x) => x.id) },
       }),
     )
       .catch((err: HttpErrorResponse) => {
@@ -362,8 +363,9 @@ export class EventTrainingComponent {
 
     this.reordering.set(true);
     firstValueFrom(
-      this.roundsService.roundsExercisesReorderCreate(roundId, {
-        exercise_ids: renumbered.map((ex) => ex.id),
+      this.roundsService.roundsExercisesReorderCreate({
+        id: roundId,
+        reorderExercisesRequest: { exercise_ids: renumbered.map((ex) => ex.id) },
       }),
     )
       .catch((err: HttpErrorResponse) => {
@@ -409,7 +411,7 @@ export class EventTrainingComponent {
 
   private deleteRound(r: Round): void {
     this.roundsService
-      .roundsDestroy(r.id)
+      .roundsDestroy({ id: r.id })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
@@ -430,7 +432,7 @@ export class EventTrainingComponent {
     this.loadingOptions.set(true);
     try {
       const [modList, segList] = await Promise.all([
-        firstValueFrom(this.sportsService.sportsModalitiesList(sportId)),
+        firstValueFrom(this.sportsService.sportsModalitiesList({ sportPk: sportId })),
         firstValueFrom(this.energySegmentsService.energySegmentsList()),
       ]);
       this.modalities.set((modList.results ?? []).filter((m) => m.is_active));
@@ -563,15 +565,18 @@ export class EventTrainingComponent {
     // therefore have a NEW id — we swap it in by the old id.
     const roundId = this.roundIdOfExercise(ex.id);
     this.exercisesService
-      .exercisesPartialUpdate(ex.id, {
-        modality_id: value.modality_id,
-        energysegment_id: value.energysegment_id,
-        repetition: value.repetition,
-        distance: value.distance,
-        t_start: value.t_start || null,
-        t_break: value.t_break || null,
-        notes: value.notes ?? '',
-        ...(roundId != null ? { round_id: roundId } : {}),
+      .exercisesPartialUpdate({
+        id: ex.id,
+        patchedExercise: {
+          modality_id: value.modality_id,
+          energysegment_id: value.energysegment_id,
+          repetition: value.repetition,
+          distance: value.distance,
+          t_start: value.t_start || null,
+          t_break: value.t_break || null,
+          notes: value.notes ?? '',
+          ...(roundId != null ? { round_id: roundId } : {}),
+        },
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -610,7 +615,7 @@ export class EventTrainingComponent {
       language: (this.team()?.language ?? 'fr') as LanguageEnum,
     };
     this.exercisesService
-      .exercisesCreate(payload as unknown as Exercise)
+      .exercisesCreate({ exercise: payload as unknown as Exercise })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (created) => {
@@ -723,7 +728,7 @@ export class EventTrainingComponent {
 
   private deleteExercise(ex: Exercise): void {
     this.exercisesService
-      .exercisesDestroy(ex.id)
+      .exercisesDestroy({ id: ex.id })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

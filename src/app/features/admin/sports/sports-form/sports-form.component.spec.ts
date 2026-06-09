@@ -114,7 +114,7 @@ describe('SportsFormComponent', () => {
     await setup('7');
 
     expect(access(component).sportId()).toBe(7);
-    expect(sportsServiceMock.sportsRetrieve).toHaveBeenCalledWith(7, true);
+    expect(sportsServiceMock.sportsRetrieve).toHaveBeenCalledWith({ id: 7, includeInactive: true });
     expect(access(component).activeValue()).toBe(true);
     expect(access(component).form.value).toMatchObject({
       name_fr: 'Course',
@@ -135,8 +135,9 @@ describe('SportsFormComponent', () => {
   it('patchActive calls sportsPartialUpdate with undefined 2nd arg and is_active body', async () => {
     await setup('7');
     access(component).patchActive(7, false);
-    expect(sportsServiceMock.sportsPartialUpdate).toHaveBeenCalledWith(7, undefined, {
-      is_active: false,
+    expect(sportsServiceMock.sportsPartialUpdate).toHaveBeenCalledWith({
+      id: 7,
+      patchedSportAdmin: { is_active: false },
     });
   });
 
@@ -147,7 +148,7 @@ describe('SportsFormComponent', () => {
     access(component).submit();
 
     expect(sportsServiceMock.sportsCreate).toHaveBeenCalledTimes(1);
-    const payload = sportsServiceMock.sportsCreate.mock.calls[0][0];
+    const payload = sportsServiceMock.sportsCreate.mock.calls[0][0].sportAdmin;
     expect(payload).toMatchObject({ slug: 'tennis', name_fr: 'Tennis', name_nl: null });
     expect(navigate).toHaveBeenCalledWith(['/admin/sports']);
   });
@@ -160,11 +161,11 @@ describe('SportsFormComponent', () => {
     access(component).submit();
 
     expect(sportsServiceMock.sportsPartialUpdate).toHaveBeenCalledTimes(1);
-    const [id, includeInactive, payload] =
-      sportsServiceMock.sportsPartialUpdate.mock.calls[0];
+    const { id, includeInactive, patchedSportAdmin } =
+      sportsServiceMock.sportsPartialUpdate.mock.calls[0][0];
     expect(id).toBe(7);
     expect(includeInactive).toBeUndefined();
-    expect(payload).toMatchObject({ name_nl: 'Hardlopen' });
+    expect(patchedSportAdmin).toMatchObject({ name_nl: 'Hardlopen' });
     expect(navigate).toHaveBeenCalledWith(['/admin/sports']);
   });
 

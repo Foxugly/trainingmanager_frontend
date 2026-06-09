@@ -119,12 +119,14 @@ describe('RoundFormDialogComponent', () => {
     component.closed.subscribe((r) => (emitted = r));
     access(component).submit();
     expect(roundsMock.roundsCreate).toHaveBeenCalledWith({
-      event_id: 7,
-      sport_id: 1,
-      language: 'fr',
-      count: 1,
-      t_start: null,
-      t_break: null,
+      round: {
+        event_id: 7,
+        sport_id: 1,
+        language: 'fr',
+        count: 1,
+        t_start: null,
+        t_break: null,
+      },
     });
     expect((emitted as Round | null)?.id).toBe(99);
   });
@@ -134,10 +136,13 @@ describe('RoundFormDialogComponent', () => {
     let emitted: Round | null = null;
     component.closed.subscribe((r) => (emitted = r));
     access(component).submit();
-    expect(roundsMock.roundsPartialUpdate).toHaveBeenCalledWith(11, {
-      count: 3,
-      t_start: null,
-      t_break: null,
+    expect(roundsMock.roundsPartialUpdate).toHaveBeenCalledWith({
+      id: 11,
+      patchedRound: {
+        count: 3,
+        t_start: null,
+        t_break: null,
+      },
     });
     expect((emitted as Round | null)?.count).toBe(5);
   });

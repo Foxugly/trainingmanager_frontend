@@ -26,7 +26,7 @@ export interface DiscussionsServiceInterface {
      * Unread discussion summary for the current user
      * GET /api/v1/discussions/unread/ — the caller\&#39;s unread count + the topics that have unread messages, across all teams they are a member of.  Unread for a topic &#x3D; messages created after the user\&#39;s last-read marker (TopicRead), excluding the user\&#39;s own messages. No marker &#x3D; all such messages are unread. Coaches-only topics are included only for managers.
      * @endpoint get /api/v1/discussions/unread/
-     */
+*/
     discussionsUnread(extraHttpRequestParams?: any): Observable<UnreadSummary>;
 
 }

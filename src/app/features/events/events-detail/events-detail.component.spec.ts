@@ -242,8 +242,8 @@ describe('EventsDetailComponent', () => {
       eventsDestroy: vi.fn().mockReturnValue(of(null)),
       eventsPartialUpdate: vi
         .fn()
-        .mockImplementation((_id: number, body: { total?: number }) =>
-          of({ ...(eventResult ?? eventNoRounds), total: body?.total ?? 0 } as Event),
+        .mockImplementation((p: { patchedEvent?: { total?: number } }) =>
+          of({ ...(eventResult ?? eventNoRounds), total: p?.patchedEvent?.total ?? 0 } as Event),
         ),
       eventsRotiRetrieve: vi
         .fn()
@@ -268,11 +268,11 @@ describe('EventsDetailComponent', () => {
       ),
       eventsRsvpUpdate: vi
         .fn()
-        .mockImplementation((_id: number, body: { status: string }) =>
+        .mockImplementation((p: { rsvpUpsert: { status: string } }) =>
           of({
             counts: { going: 3, maybe: 1, not_going: 1, no_response: 0 },
             total_members: 5,
-            my_status: body.status,
+            my_status: p.rsvpUpsert.status,
             by_member: [],
           }),
         ),
@@ -372,9 +372,9 @@ describe('EventsDetailComponent', () => {
   });
 
   it('loads the event for route :id and resolves the team for role', () => {
-    expect(eventsMock.eventsRetrieve).toHaveBeenCalledWith(7);
-    expect(programsMock.programsRetrieve).toHaveBeenCalledWith(4);
-    expect(teamsMock.teamsRetrieve).toHaveBeenCalledWith(4);
+    expect(eventsMock.eventsRetrieve).toHaveBeenCalledWith({ id: 7 });
+    expect(programsMock.programsRetrieve).toHaveBeenCalledWith({ id: 4 });
+    expect(teamsMock.teamsRetrieve).toHaveBeenCalledWith({ id: 4 });
     expect(access(component).event()?.id).toBe(7);
     expect(access(component).canRegenerate()).toBe(true);
   });
@@ -436,8 +436,9 @@ describe('EventsDetailComponent', () => {
     (component as unknown as { onRegenerateConfirmed: (s: string) => void }).onRegenerateConfirmed(
       'focus on endurance',
     );
-    expect(eventsMock.eventsGenerateTrainingCreate).toHaveBeenCalledWith(7, {
-      additional_prompt: 'focus on endurance',
+    expect(eventsMock.eventsGenerateTrainingCreate).toHaveBeenCalledWith({
+      id: 7,
+      generateTrainingRequest: { additional_prompt: 'focus on endurance' },
     });
     expect(roundsMock.roundsDestroy).not.toHaveBeenCalled();
   });
@@ -449,9 +450,10 @@ describe('EventsDetailComponent', () => {
     );
     await new Promise((r) => setTimeout(r, 0));
     expect(roundsMock.roundsDestroy).toHaveBeenCalledTimes(3);
-    expect(roundsMock.roundsDestroy).toHaveBeenNthCalledWith(1, 11);
-    expect(eventsMock.eventsGenerateTrainingCreate).toHaveBeenCalledWith(7, {
-      additional_prompt: 'with kickboard',
+    expect(roundsMock.roundsDestroy).toHaveBeenNthCalledWith(1, { id: 11 });
+    expect(eventsMock.eventsGenerateTrainingCreate).toHaveBeenCalledWith({
+      id: 7,
+      generateTrainingRequest: { additional_prompt: 'with kickboard' },
     });
   });
 
@@ -478,7 +480,7 @@ describe('EventsDetailComponent', () => {
     });
     access(component).confirmDelete();
     await new Promise((r) => setTimeout(r, 0));
-    expect(eventsMock.eventsDestroy).toHaveBeenCalledWith(7);
+    expect(eventsMock.eventsDestroy).toHaveBeenCalledWith({ id: 7 });
     expect(navSpy).toHaveBeenCalledWith(['/programs', 4]);
     expect(access(component).deleting()).toBe(false);
   });
@@ -539,7 +541,7 @@ describe('EventsDetailComponent', () => {
     await setup('7', eventNoRounds, ownerUser, rsvpTeam);
     await new Promise((r) => setTimeout(r, 0));
     expect(access(component).rsvpEnabled()).toBe(true);
-    expect(eventsMock.eventsRsvpRetrieve).toHaveBeenCalledWith(7);
+    expect(eventsMock.eventsRsvpRetrieve).toHaveBeenCalledWith({ eventPk: 7 });
     expect(access(component).rsvpSummary()?.counts.going).toBe(2);
     expect(access(component).rsvpSummary()?.total_members).toBe(5);
   });
@@ -548,7 +550,10 @@ describe('EventsDetailComponent', () => {
     await setup('7', eventNoRounds, athleteUser, rsvpTeam);
     await new Promise((r) => setTimeout(r, 0));
     access(component).submitRsvp('going');
-    expect(eventsMock.eventsRsvpUpdate).toHaveBeenCalledWith(7, { status: 'going' });
+    expect(eventsMock.eventsRsvpUpdate).toHaveBeenCalledWith({
+      eventPk: 7,
+      rsvpUpsert: { status: 'going' },
+    });
     expect(access(component).rsvpSummary()?.my_status).toBe('going');
   });
 
@@ -562,7 +567,7 @@ describe('EventsDetailComponent', () => {
     });
     const retrieveCallsBefore = eventsMock.eventsRetrieve.mock.calls.length;
     access(component).confirmApplyRsvpToAttendance();
-    expect(eventsMock.eventsRsvpApplyToAttendance).toHaveBeenCalledWith(7);
+    expect(eventsMock.eventsRsvpApplyToAttendance).toHaveBeenCalledWith({ eventPk: 7 });
     // reloadEvent() triggers another eventsRetrieve to refresh the attendance tab.
     expect(eventsMock.eventsRetrieve.mock.calls.length).toBeGreaterThan(retrieveCallsBefore);
   });

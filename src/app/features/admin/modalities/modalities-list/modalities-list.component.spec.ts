@@ -104,9 +104,9 @@ describe('ModalitiesListComponent', () => {
 
   it('reads sportId from route, loads sport + active modalities on init', () => {
     expect(access(component).sportId()).toBe(1);
-    expect(serviceMock.sportsRetrieve).toHaveBeenCalledWith(1, true);
+    expect(serviceMock.sportsRetrieve).toHaveBeenCalledWith({ id: 1, includeInactive: true });
     expect(serviceMock.sportsModalitiesList).toHaveBeenCalledTimes(1);
-    const [sportPk, includeInactive] = serviceMock.sportsModalitiesList.mock.calls[0];
+    const { sportPk, includeInactive } = serviceMock.sportsModalitiesList.mock.calls[0][0];
     expect(sportPk).toBe(1);
     expect(includeInactive).toBeUndefined();
     expect(access(component).modalities()).toEqual([m1]);
@@ -118,7 +118,7 @@ describe('ModalitiesListComponent', () => {
     fixture.detectChanges();
 
     expect(serviceMock.sportsModalitiesList).toHaveBeenCalledTimes(2);
-    const [sportPk, includeInactive] = serviceMock.sportsModalitiesList.mock.calls[1];
+    const { sportPk, includeInactive } = serviceMock.sportsModalitiesList.mock.calls[1][0];
     expect(sportPk).toBe(1);
     expect(includeInactive).toBe(true);
   });
@@ -130,7 +130,7 @@ describe('ModalitiesListComponent', () => {
     const opts = confirmMock.confirm.mock.calls[0][0] as { accept: () => void };
     opts.accept();
 
-    expect(serviceMock.sportsModalitiesDestroy).toHaveBeenCalledWith(m1.id, 1);
+    expect(serviceMock.sportsModalitiesDestroy).toHaveBeenCalledWith({ id: m1.id, sportPk: 1 });
     expect(messageMock.add).toHaveBeenCalledTimes(1);
     expect(messageMock.add.mock.calls[0][0].severity).toBe('success');
   });
@@ -139,8 +139,11 @@ describe('ModalitiesListComponent', () => {
     serviceMock.sportsModalitiesList.mockClear();
     access(component).restore(m2);
 
-    expect(serviceMock.sportsModalitiesPartialUpdate).toHaveBeenCalledWith(m2.id, 1, true, {
-      is_active: true,
+    expect(serviceMock.sportsModalitiesPartialUpdate).toHaveBeenCalledWith({
+      id: m2.id,
+      sportPk: 1,
+      includeInactive: true,
+      patchedModalityAdmin: { is_active: true },
     });
     expect(messageMock.add).toHaveBeenCalledTimes(1);
     expect(serviceMock.sportsModalitiesList).toHaveBeenCalled();

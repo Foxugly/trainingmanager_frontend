@@ -30,7 +30,13 @@ import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables'
 import { Configuration }                                     from '../configuration';
 import { BaseService } from '../api.base.service';
 import {
-    PlacesServiceInterface
+    PlacesServiceInterface,
+    PlacesCreateRequestParams,
+    PlacesDestroyRequestParams,
+    PlacesListRequestParams,
+    PlacesPartialUpdateRequestParams,
+    PlacesRetrieveRequestParams,
+    PlacesUpdateRequestParams
 } from './places.serviceInterface';
 
 
@@ -48,15 +54,16 @@ export class PlacesService extends BaseService implements PlacesServiceInterface
      * Create a place and link it to a team (manager only)
      * Creates a venue in the pool and links it to the given team (the requester must manage that team); the place\&#39;s sport is the team\&#39;s sport.
      * @endpoint post /api/v1/places/
-     * @param placeRequest 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public placesCreate(placeRequest: PlaceRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Place>;
-    public placesCreate(placeRequest: PlaceRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Place>>;
-    public placesCreate(placeRequest: PlaceRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Place>>;
-    public placesCreate(placeRequest: PlaceRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public placesCreate(requestParameters: PlacesCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Place>;
+    public placesCreate(requestParameters: PlacesCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Place>>;
+    public placesCreate(requestParameters: PlacesCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Place>>;
+    public placesCreate(requestParameters: PlacesCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const placeRequest = requestParameters?.placeRequest;
         if (placeRequest === null || placeRequest === undefined) {
             throw new Error('Required parameter placeRequest was null or undefined when calling placesCreate.');
         }
@@ -120,15 +127,16 @@ export class PlacesService extends BaseService implements PlacesServiceInterface
      * Delete a place (manager only)
      * Hard-deletes the venue. Events referencing it keep their free-text &#x60;location&#x60; (their &#x60;place&#x60; FK is SET_NULL).
      * @endpoint delete /api/v1/places/{id}/
-     * @param id A unique integer value identifying this place.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public placesDestroy(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public placesDestroy(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public placesDestroy(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public placesDestroy(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public placesDestroy(requestParameters: PlacesDestroyRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public placesDestroy(requestParameters: PlacesDestroyRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public placesDestroy(requestParameters: PlacesDestroyRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public placesDestroy(requestParameters: PlacesDestroyRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling placesDestroy.');
         }
@@ -179,20 +187,21 @@ export class PlacesService extends BaseService implements PlacesServiceInterface
      * List venues (Lieux) from the sport pool
      * Returns venues from the global, sport-scoped pool. ?team&#x3D;&lt;id&gt; restricts to a team\&#39;s linked places (members only); ?sport&#x3D;&lt;id&gt; returns the whole pool for a sport (to attach/share). Without filters, returns places linked to the requester\&#39;s member teams.
      * @endpoint get /api/v1/places/
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
-     * @param sport Return the whole pool for a sport.
-     * @param team Restrict to a team\&#39;s linked places.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public placesList(ordering?: string, page?: number, pageSize?: number, search?: string, sport?: number, team?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedPlaceList>;
-    public placesList(ordering?: string, page?: number, pageSize?: number, search?: string, sport?: number, team?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedPlaceList>>;
-    public placesList(ordering?: string, page?: number, pageSize?: number, search?: string, sport?: number, team?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedPlaceList>>;
-    public placesList(ordering?: string, page?: number, pageSize?: number, search?: string, sport?: number, team?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public placesList(requestParameters?: PlacesListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedPlaceList>;
+    public placesList(requestParameters?: PlacesListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedPlaceList>>;
+    public placesList(requestParameters?: PlacesListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedPlaceList>>;
+    public placesList(requestParameters?: PlacesListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const ordering = requestParameters?.ordering;
+        const page = requestParameters?.page;
+        const pageSize = requestParameters?.pageSize;
+        const search = requestParameters?.search;
+        const sport = requestParameters?.sport;
+        const team = requestParameters?.team;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -298,19 +307,20 @@ export class PlacesService extends BaseService implements PlacesServiceInterface
      * Patch a place (manager only)
      * CRUD on the managed team venue (Lieu).  Read: any strict member of the place\&#39;s team. Write (create/update/delete): owner or manager of the team only.
      * @endpoint patch /api/v1/places/{id}/
-     * @param id A unique integer value identifying this place.
-     * @param patchedPlace 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public placesPartialUpdate(id: number, patchedPlace?: PatchedPlace, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Place>;
-    public placesPartialUpdate(id: number, patchedPlace?: PatchedPlace, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Place>>;
-    public placesPartialUpdate(id: number, patchedPlace?: PatchedPlace, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Place>>;
-    public placesPartialUpdate(id: number, patchedPlace?: PatchedPlace, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public placesPartialUpdate(requestParameters: PlacesPartialUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Place>;
+    public placesPartialUpdate(requestParameters: PlacesPartialUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Place>>;
+    public placesPartialUpdate(requestParameters: PlacesPartialUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Place>>;
+    public placesPartialUpdate(requestParameters: PlacesPartialUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling placesPartialUpdate.');
         }
+        const patchedPlace = requestParameters?.patchedPlace;
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -371,15 +381,16 @@ export class PlacesService extends BaseService implements PlacesServiceInterface
      * Retrieve a place
      * CRUD on the managed team venue (Lieu).  Read: any strict member of the place\&#39;s team. Write (create/update/delete): owner or manager of the team only.
      * @endpoint get /api/v1/places/{id}/
-     * @param id A unique integer value identifying this place.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public placesRetrieve(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Place>;
-    public placesRetrieve(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Place>>;
-    public placesRetrieve(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Place>>;
-    public placesRetrieve(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public placesRetrieve(requestParameters: PlacesRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Place>;
+    public placesRetrieve(requestParameters: PlacesRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Place>>;
+    public placesRetrieve(requestParameters: PlacesRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Place>>;
+    public placesRetrieve(requestParameters: PlacesRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling placesRetrieve.');
         }
@@ -431,19 +442,20 @@ export class PlacesService extends BaseService implements PlacesServiceInterface
      * Update a place (manager only)
      * CRUD on the managed team venue (Lieu).  Read: any strict member of the place\&#39;s team. Write (create/update/delete): owner or manager of the team only.
      * @endpoint put /api/v1/places/{id}/
-     * @param id A unique integer value identifying this place.
-     * @param placeRequest 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public placesUpdate(id: number, placeRequest: PlaceRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Place>;
-    public placesUpdate(id: number, placeRequest: PlaceRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Place>>;
-    public placesUpdate(id: number, placeRequest: PlaceRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Place>>;
-    public placesUpdate(id: number, placeRequest: PlaceRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public placesUpdate(requestParameters: PlacesUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Place>;
+    public placesUpdate(requestParameters: PlacesUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Place>>;
+    public placesUpdate(requestParameters: PlacesUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Place>>;
+    public placesUpdate(requestParameters: PlacesUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling placesUpdate.');
         }
+        const placeRequest = requestParameters?.placeRequest;
         if (placeRequest === null || placeRequest === undefined) {
             throw new Error('Required parameter placeRequest was null or undefined when calling placesUpdate.');
         }

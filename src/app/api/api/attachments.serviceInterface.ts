@@ -21,6 +21,31 @@ import { PresignUploadResponse } from '../model/models';
 import { Configuration }                                     from '../configuration';
 
 
+export interface AttachmentsCompleteCreateRequestParams {
+    id: number;
+}
+
+export interface AttachmentsDestroyRequestParams {
+    id: number;
+}
+
+export interface AttachmentsDownloadRetrieveRequestParams {
+    id: number;
+}
+
+export interface AttachmentsListRequestParams {
+    targetId: number;
+    targetType: 'event' | 'message';
+    ordering?: string;
+    page?: number;
+    pageSize?: number;
+    search?: string;
+}
+
+export interface AttachmentsPresignCreateRequestParams {
+    presignUploadRequest: PresignUploadRequest;
+}
+
 
 export interface AttachmentsServiceInterface {
     defaultHeaders: HttpHeaders;
@@ -30,45 +55,40 @@ export interface AttachmentsServiceInterface {
      * 
      * Finalize an upload: HEAD the S3 object, record its real size, and flip the Attachment to &#x60;ready&#x60;. Caller must be the uploader or able to write the target.
      * @endpoint post /api/v1/attachments/{id}/complete/
-     * @param id A unique integer value identifying this attachment.
+* @param requestParameters
      */
-    attachmentsCompleteCreate(id: number, extraHttpRequestParams?: any): Observable<Attachment>;
+    attachmentsCompleteCreate(requestParameters: AttachmentsCompleteCreateRequestParams, extraHttpRequestParams?: any): Observable<Attachment>;
 
     /**
      * 
      * Delete an attachment: best-effort removal of the S3 object then the row. Caller must be the uploader or able to write the target.
      * @endpoint delete /api/v1/attachments/{id}/
-     * @param id A unique integer value identifying this attachment.
+* @param requestParameters
      */
-    attachmentsDestroy(id: number, extraHttpRequestParams?: any): Observable<{}>;
+    attachmentsDestroy(requestParameters: AttachmentsDestroyRequestParams, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * 
      * Mint a short-lived presigned GET URL to download a ready attachment. Caller must be able to read the target.
      * @endpoint get /api/v1/attachments/{id}/download/
-     * @param id A unique integer value identifying this attachment.
+* @param requestParameters
      */
-    attachmentsDownloadRetrieve(id: number, extraHttpRequestParams?: any): Observable<AttachmentDownloadResponse>;
+    attachmentsDownloadRetrieve(requestParameters: AttachmentsDownloadRetrieveRequestParams, extraHttpRequestParams?: any): Observable<AttachmentDownloadResponse>;
 
     /**
      * 
      * List the READY attachments for a target the caller can read. Both &#x60;target_type&#x60; and &#x60;target_id&#x60; are required query params.
      * @endpoint get /api/v1/attachments/
-     * @param targetId 
-     * @param targetType 
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
+* @param requestParameters
      */
-    attachmentsList(targetId: number, targetType: 'event' | 'message', ordering?: string, page?: number, pageSize?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedAttachmentList>;
+    attachmentsList(requestParameters: AttachmentsListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedAttachmentList>;
 
     /**
      * 
      * Request a presigned S3 PUT URL to upload a file and create a &#x60;pending&#x60; Attachment for an Event or Message target. Validates the MIME allow-list and the size cap, and that the caller may write to the target (event-team manager / message author or coach).
      * @endpoint post /api/v1/attachments/presign/
-     * @param presignUploadRequest 
+* @param requestParameters
      */
-    attachmentsPresignCreate(presignUploadRequest: PresignUploadRequest, extraHttpRequestParams?: any): Observable<PresignUploadResponse>;
+    attachmentsPresignCreate(requestParameters: AttachmentsPresignCreateRequestParams, extraHttpRequestParams?: any): Observable<PresignUploadResponse>;
 
 }

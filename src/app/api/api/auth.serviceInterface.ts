@@ -34,6 +34,54 @@ import { VerifiedTokenObtainPair } from '../model/models';
 import { Configuration }                                     from '../configuration';
 
 
+export interface AuthAccountDeleteCreateRequestParams {
+    accountDelete: AccountDelete;
+}
+
+export interface AuthEmailConfirmCreateRequestParams {
+    emailConfirm: EmailConfirm;
+}
+
+export interface AuthEmailResendCreateRequestParams {
+    emailResend: EmailResend;
+}
+
+export interface AuthLogoutCreateRequestParams {
+    logout: Logout;
+}
+
+export interface AuthMagicLinkExchangeCreateRequestParams {
+    magicLinkExchangeRequest: MagicLinkExchangeRequest;
+}
+
+export interface AuthMagicLinkRequestCreateRequestParams {
+    magicLinkRequest: MagicLinkRequest;
+}
+
+export interface AuthPasswordChangeCreateRequestParams {
+    passwordChange: PasswordChange;
+}
+
+export interface AuthPasswordResetConfirmCreateRequestParams {
+    passwordResetConfirm: PasswordResetConfirm;
+}
+
+export interface AuthPasswordResetCreateRequestParams {
+    passwordResetRequest: PasswordResetRequest;
+}
+
+export interface AuthRegisterCreateRequestParams {
+    register: Register;
+}
+
+export interface AuthTokenCreateRequestParams {
+    verifiedTokenObtainPair: VerifiedTokenObtainPair;
+}
+
+export interface AuthTokenRefreshCreateRequestParams {
+    tokenRefresh: TokenRefresh;
+}
+
 
 export interface AuthServiceInterface {
     defaultHeaders: HttpHeaders;
@@ -43,96 +91,96 @@ export interface AuthServiceInterface {
      * 
      * POST /api/v1/auth/account/delete/ — authenticated: delete own account. Body: {current_password}. 204 on success. 409 (code owns_teams) when the user still owns teams. No tokens; user row is removed.
      * @endpoint post /api/v1/auth/account/delete/
-     * @param accountDelete 
+* @param requestParameters
      */
-    authAccountDeleteCreate(accountDelete: AccountDelete, extraHttpRequestParams?: any): Observable<{}>;
+    authAccountDeleteCreate(requestParameters: AuthAccountDeleteCreateRequestParams, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * 
      * POST /api/v1/auth/email/confirm/ — finalize signup with the key received by email. Returns JWT tokens for auto-login.
      * @endpoint post /api/v1/auth/email/confirm/
-     * @param emailConfirm 
+* @param requestParameters
      */
-    authEmailConfirmCreate(emailConfirm: EmailConfirm, extraHttpRequestParams?: any): Observable<{}>;
+    authEmailConfirmCreate(requestParameters: AuthEmailConfirmCreateRequestParams, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * 
      * POST /api/v1/auth/email/resend/ — re-send confirmation link.  Anti-leak: always returns 200 regardless of whether the email exists, so an attacker cannot enumerate registered emails. The fact that no email is sent for unknown addresses must remain invisible to the client.  Rate-limited to 3 requests per hour per IP (anti-enumeration + anti-mail-spam).
      * @endpoint post /api/v1/auth/email/resend/
-     * @param emailResend 
+* @param requestParameters
      */
-    authEmailResendCreate(emailResend: EmailResend, extraHttpRequestParams?: any): Observable<{}>;
+    authEmailResendCreate(requestParameters: AuthEmailResendCreateRequestParams, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * 
      * POST /api/v1/auth/logout/ — revoke a refresh token.  The caller authenticates with their access token and posts the refresh they want revoked. On success (204), that refresh — and any rotation descendants produced by /auth/token/refresh/ — can no longer be used. The access token itself is short-lived and not invalidated here; it naturally expires within ACCESS_TOKEN_LIFETIME.  Ownership is verified before blacklisting: a holder of someone else\&#39;s refresh string cannot use this endpoint to revoke it. We respond with a generic invalid_token to avoid signalling whether the token exists or only doesn\&#39;t belong to the caller.
      * @endpoint post /api/v1/auth/logout/
-     * @param logout 
+* @param requestParameters
      */
-    authLogoutCreate(logout: Logout, extraHttpRequestParams?: any): Observable<{}>;
+    authLogoutCreate(requestParameters: AuthLogoutCreateRequestParams, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * 
      * POST /api/v1/auth/magic-link/exchange/ — public: trade token for JWT.  Body: {token}. On success returns the JWT pair (access + refresh). Errors: expired -&gt; 410 {\&quot;detail\&quot;:\&quot;token_expired\&quot;}; invalid/ineligible -&gt; 400 {\&quot;detail\&quot;:\&quot;token_invalid\&quot;}.
      * @endpoint post /api/v1/auth/magic-link/exchange/
-     * @param magicLinkExchangeRequest 
+* @param requestParameters
      */
-    authMagicLinkExchangeCreate(magicLinkExchangeRequest: MagicLinkExchangeRequest, extraHttpRequestParams?: any): Observable<MagicLinkExchangeResponse>;
+    authMagicLinkExchangeCreate(requestParameters: AuthMagicLinkExchangeCreateRequestParams, extraHttpRequestParams?: any): Observable<MagicLinkExchangeResponse>;
 
     /**
      * 
      * POST /api/v1/auth/magic-link/request/ — public: email a sign-in link.  Always returns 200 with the same body whether or not the email matches an active, email-confirmed account (no user enumeration). Rate-limited to 5 requests per hour per IP.
      * @endpoint post /api/v1/auth/magic-link/request/
-     * @param magicLinkRequest 
+* @param requestParameters
      */
-    authMagicLinkRequestCreate(magicLinkRequest: MagicLinkRequest, extraHttpRequestParams?: any): Observable<MagicLinkRequestResponse>;
+    authMagicLinkRequestCreate(requestParameters: AuthMagicLinkRequestCreateRequestParams, extraHttpRequestParams?: any): Observable<MagicLinkRequestResponse>;
 
     /**
      * 
      * POST /api/v1/auth/password/change/ — authenticated: change own password.  Body: {current_password, new_password}. The caller must prove they still know &#x60;current_password&#x60;; &#x60;new_password&#x60; is validated against Django\&#39;s configured password validators (with the user as context) and must differ from the current one. On success the password is updated and a localized {detail} body is returned — NO tokens are issued.
      * @endpoint post /api/v1/auth/password/change/
-     * @param passwordChange 
+* @param requestParameters
      */
-    authPasswordChangeCreate(passwordChange: PasswordChange, extraHttpRequestParams?: any): Observable<PasswordChangeResponse>;
+    authPasswordChangeCreate(requestParameters: AuthPasswordChangeCreateRequestParams, extraHttpRequestParams?: any): Observable<PasswordChangeResponse>;
 
     /**
      * 
      * POST /api/v1/auth/password/reset/confirm/ — public: finalize a reset.  Body: {key, new_password}. The key is the {uid}-{token} string the user received in their email. Returns the JWT pair on success (auto-login after reset).
      * @endpoint post /api/v1/auth/password/reset/confirm/
-     * @param passwordResetConfirm 
+* @param requestParameters
      */
-    authPasswordResetConfirmCreate(passwordResetConfirm: PasswordResetConfirm, extraHttpRequestParams?: any): Observable<PasswordResetConfirmResponse>;
+    authPasswordResetConfirmCreate(requestParameters: AuthPasswordResetConfirmCreateRequestParams, extraHttpRequestParams?: any): Observable<PasswordResetConfirmResponse>;
 
     /**
      * 
      * POST /api/v1/auth/password/reset/ — public: request a password reset.  Anti-leak: ALWAYS returns 200 with the same body, whether the email matches a User or not. If it does, an email with a reset link is dispatched (frontend URL: {FRONTEND_URL}/auth/reset-password/{key}, no trailing slash). If it doesn\&#39;t, the call is a silent no-op.  Rate-limited to 3 requests per hour per IP. Turnstile required.
      * @endpoint post /api/v1/auth/password/reset/
-     * @param passwordResetRequest 
+* @param requestParameters
      */
-    authPasswordResetCreate(passwordResetRequest: PasswordResetRequest, extraHttpRequestParams?: any): Observable<PasswordResetRequestResponse>;
+    authPasswordResetCreate(requestParameters: AuthPasswordResetCreateRequestParams, extraHttpRequestParams?: any): Observable<PasswordResetRequestResponse>;
 
     /**
      * 
      * POST /api/v1/auth/register/ — public self-signup.  Creates a CustomUser (is_active&#x3D;True) plus an unverified EmailAddress via allauth, then sends a confirmation email. No JWT is returned — the caller must verify their email before obtaining tokens.  Rate-limited to 5 requests per hour per IP (anti-bot signup).
      * @endpoint post /api/v1/auth/register/
-     * @param register 
+* @param requestParameters
      */
-    authRegisterCreate(register: Register, extraHttpRequestParams?: any): Observable<{}>;
+    authRegisterCreate(requestParameters: AuthRegisterCreateRequestParams, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * 
      * Drop-in replacement for SimpleJWT\&#39;s TokenObtainPairView that refuses login when the user\&#39;s primary email is unverified.  Rate-limited to 10 requests per minute per IP (anti-bruteforce).  The @extend_schema(responses&#x3D;...) above is required because SimpleJWT\&#39;s TokenObtainPairSerializer describes the *input* shape ({username, password}) and drf-spectacular would otherwise reuse it for the response — leading to a wrong codegen on the frontend (Observable&lt;{username, password}&gt; instead of Observable&lt;{access, refresh}&gt;).
      * @endpoint post /api/v1/auth/token/
-     * @param verifiedTokenObtainPair 
+* @param requestParameters
      */
-    authTokenCreate(verifiedTokenObtainPair: VerifiedTokenObtainPair, extraHttpRequestParams?: any): Observable<TokenObtainPairResponse>;
+    authTokenCreate(requestParameters: AuthTokenCreateRequestParams, extraHttpRequestParams?: any): Observable<TokenObtainPairResponse>;
 
     /**
      * 
      * Takes a refresh type JSON web token and returns an access type JSON web token if the refresh token is valid.
      * @endpoint post /api/v1/auth/token/refresh/
-     * @param tokenRefresh 
+* @param requestParameters
      */
-    authTokenRefreshCreate(tokenRefresh: TokenRefresh, extraHttpRequestParams?: any): Observable<TokenRefresh>;
+    authTokenRefreshCreate(requestParameters: AuthTokenRefreshCreateRequestParams, extraHttpRequestParams?: any): Observable<TokenRefresh>;
 
 }

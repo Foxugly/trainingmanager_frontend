@@ -22,6 +22,22 @@ import { UnreadCount } from '../model/models';
 import { Configuration }                                     from '../configuration';
 
 
+export interface NotificationsListRequestParams {
+    isRead?: boolean;
+    ordering?: string;
+    page?: number;
+    pageSize?: number;
+    search?: string;
+}
+
+export interface NotificationsPreferencesUpdateRequestParams {
+    notificationPreferenceUpdate: NotificationPreferenceUpdate;
+}
+
+export interface NotificationsReadCreateRequestParams {
+    id: number;
+}
+
 
 export interface NotificationsServiceInterface {
     defaultHeaders: HttpHeaders;
@@ -31,49 +47,45 @@ export interface NotificationsServiceInterface {
      * List the caller\&#39;s notifications (newest first)
      * The caller\&#39;s own notifications + read-state mutations + channel prefs.  A user only ever sees/affects their OWN notifications: the queryset is filtered by &#x60;&#x60;recipient&#x3D;request.user&#x60;&#x60; and every action operates on that scope (so marking someone else\&#39;s notification read yields 404).
      * @endpoint get /api/v1/notifications/
-     * @param isRead Filter by read state (e.g. ?is_read&#x3D;false for unread only).
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
+* @param requestParameters
      */
-    notificationsList(isRead?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedNotificationList>;
+    notificationsList(requestParameters: NotificationsListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedNotificationList>;
 
     /**
      * Get the caller\&#39;s effective notification preferences
      * Returns every NotificationType with the caller\&#39;s effective channel settings {type, label, in_app, email}, defaulting to in_app&#x3D;True / email&#x3D;True where no stored row exists.
      * @endpoint get /api/v1/notifications/preferences/
-     */
+*/
     notificationsPreferencesRetrieve(extraHttpRequestParams?: any): Observable<Array<NotificationPreference>>;
 
     /**
      * Upsert the caller\&#39;s notification preferences
      * Accepts a list of {type, in_app, email} entries and upserts the caller\&#39;s rows. Returns the full updated effective list.
      * @endpoint put /api/v1/notifications/preferences/
-     * @param notificationPreferenceUpdate 
+* @param requestParameters
      */
-    notificationsPreferencesUpdate(notificationPreferenceUpdate: NotificationPreferenceUpdate, extraHttpRequestParams?: any): Observable<Array<NotificationPreference>>;
+    notificationsPreferencesUpdate(requestParameters: NotificationsPreferencesUpdateRequestParams, extraHttpRequestParams?: any): Observable<Array<NotificationPreference>>;
 
     /**
      * Mark all the caller\&#39;s notifications as read
      * The caller\&#39;s own notifications + read-state mutations + channel prefs.  A user only ever sees/affects their OWN notifications: the queryset is filtered by &#x60;&#x60;recipient&#x3D;request.user&#x60;&#x60; and every action operates on that scope (so marking someone else\&#39;s notification read yields 404).
      * @endpoint post /api/v1/notifications/read_all/
-     */
+*/
     notificationsReadAllCreate(extraHttpRequestParams?: any): Observable<ReadAllResponse>;
 
     /**
      * Mark one notification as read
      * The caller\&#39;s own notifications + read-state mutations + channel prefs.  A user only ever sees/affects their OWN notifications: the queryset is filtered by &#x60;&#x60;recipient&#x3D;request.user&#x60;&#x60; and every action operates on that scope (so marking someone else\&#39;s notification read yields 404).
      * @endpoint post /api/v1/notifications/{id}/read/
-     * @param id A unique integer value identifying this notification.
+* @param requestParameters
      */
-    notificationsReadCreate(id: number, extraHttpRequestParams?: any): Observable<Notification>;
+    notificationsReadCreate(requestParameters: NotificationsReadCreateRequestParams, extraHttpRequestParams?: any): Observable<Notification>;
 
     /**
      * Count the caller\&#39;s unread notifications
      * The caller\&#39;s own notifications + read-state mutations + channel prefs.  A user only ever sees/affects their OWN notifications: the queryset is filtered by &#x60;&#x60;recipient&#x3D;request.user&#x60;&#x60; and every action operates on that scope (so marking someone else\&#39;s notification read yields 404).
      * @endpoint get /api/v1/notifications/unread_count/
-     */
+*/
     notificationsUnreadCountRetrieve(extraHttpRequestParams?: any): Observable<UnreadCount>;
 
 }

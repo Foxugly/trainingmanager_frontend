@@ -97,7 +97,7 @@ export class InvitationAcceptComponent implements OnInit {
     }
     this.token.set(token);
     this.invitationsService
-      .invitationsLookupRetrieve(token)
+      .invitationsLookupRetrieve({ token })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (inv) => {
@@ -129,7 +129,7 @@ export class InvitationAcceptComponent implements OnInit {
     };
 
     this.invitationsService
-      .invitationsLookupCreate(token, payload)
+      .invitationsLookupCreate({ token, completeInvitation: payload })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {

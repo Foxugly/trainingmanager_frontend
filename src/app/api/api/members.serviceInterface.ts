@@ -19,6 +19,41 @@ import { PatchedMember } from '../model/models';
 import { Configuration }                                     from '../configuration';
 
 
+export interface MembersAnonymizeRequestParams {
+    id: number;
+}
+
+export interface MembersCreateRequestParams {
+    member: Member;
+}
+
+export interface MembersDestroyRequestParams {
+    id: number;
+}
+
+export interface MembersListRequestParams {
+    firstname?: string;
+    lastname?: string;
+    ordering?: string;
+    page?: number;
+    pageSize?: number;
+    search?: string;
+}
+
+export interface MembersPartialUpdateRequestParams {
+    id: number;
+    patchedMember?: PatchedMember;
+}
+
+export interface MembersRetrieveRequestParams {
+    id: number;
+}
+
+export interface MembersUpdateRequestParams {
+    id: number;
+    member: Member;
+}
+
 
 export interface MembersServiceInterface {
     defaultHeaders: HttpHeaders;
@@ -28,63 +63,56 @@ export interface MembersServiceInterface {
      * 
      * Irreversibly anonymize an athlete\&#39;s personal data (RGPD erasure).  A coach (owner/manager) of a team the member belongs to (active OR past membership) blanks the member\&#39;s PII: firstname/lastname become a neutral placeholder, email and phonenumber are cleared. Any linked user account is UNLINKED (member.user &#x3D; None) but NOT deleted — users own their own account. Coach notes ABOUT this member are deleted (they may contain PII). Training history (memberships, performances, rsvp, roti) is KEPT, now tied to the anonymized member so aggregate stats survive.  THIS IS IRREVERSIBLE. There is no undo.
      * @endpoint post /api/v1/members/{id}/anonymize/
-     * @param id A unique integer value identifying this Member.
+* @param requestParameters
      */
-    membersAnonymize(id: number, extraHttpRequestParams?: any): Observable<Member>;
+    membersAnonymize(requestParameters: MembersAnonymizeRequestParams, extraHttpRequestParams?: any): Observable<Member>;
 
     /**
      * 
      * CRUD complet pour Member, scopé par teams du Member.
      * @endpoint post /api/v1/members/
-     * @param member 
+* @param requestParameters
      */
-    membersCreate(member: Member, extraHttpRequestParams?: any): Observable<Member>;
+    membersCreate(requestParameters: MembersCreateRequestParams, extraHttpRequestParams?: any): Observable<Member>;
 
     /**
      * 
      * CRUD complet pour Member, scopé par teams du Member.
      * @endpoint delete /api/v1/members/{id}/
-     * @param id A unique integer value identifying this Member.
+* @param requestParameters
      */
-    membersDestroy(id: number, extraHttpRequestParams?: any): Observable<{}>;
+    membersDestroy(requestParameters: MembersDestroyRequestParams, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * 
      * CRUD complet pour Member, scopé par teams du Member.
      * @endpoint get /api/v1/members/
-     * @param firstname 
-     * @param lastname 
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
+* @param requestParameters
      */
-    membersList(firstname?: string, lastname?: string, ordering?: string, page?: number, pageSize?: number, search?: string, extraHttpRequestParams?: any): Observable<PaginatedMemberList>;
+    membersList(requestParameters: MembersListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedMemberList>;
 
     /**
      * 
      * CRUD complet pour Member, scopé par teams du Member.
      * @endpoint patch /api/v1/members/{id}/
-     * @param id A unique integer value identifying this Member.
-     * @param patchedMember 
+* @param requestParameters
      */
-    membersPartialUpdate(id: number, patchedMember?: PatchedMember, extraHttpRequestParams?: any): Observable<Member>;
+    membersPartialUpdate(requestParameters: MembersPartialUpdateRequestParams, extraHttpRequestParams?: any): Observable<Member>;
 
     /**
      * 
      * CRUD complet pour Member, scopé par teams du Member.
      * @endpoint get /api/v1/members/{id}/
-     * @param id A unique integer value identifying this Member.
+* @param requestParameters
      */
-    membersRetrieve(id: number, extraHttpRequestParams?: any): Observable<Member>;
+    membersRetrieve(requestParameters: MembersRetrieveRequestParams, extraHttpRequestParams?: any): Observable<Member>;
 
     /**
      * 
      * CRUD complet pour Member, scopé par teams du Member.
      * @endpoint put /api/v1/members/{id}/
-     * @param id A unique integer value identifying this Member.
-     * @param member 
+* @param requestParameters
      */
-    membersUpdate(id: number, member: Member, extraHttpRequestParams?: any): Observable<Member>;
+    membersUpdate(requestParameters: MembersUpdateRequestParams, extraHttpRequestParams?: any): Observable<Member>;
 
 }

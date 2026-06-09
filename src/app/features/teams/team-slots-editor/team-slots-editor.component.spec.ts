@@ -62,8 +62,16 @@ describe('TeamSlotsEditorComponent', () => {
     });
     teamsMock = {
       teamsTrainingSlotsList: vi.fn().mockReturnValue(of(opts.slots ?? [])),
-      teamsTrainingSlotsCreate: vi.fn().mockImplementation((_t, b) => of(echo(100, b))),
-      teamsTrainingSlotsPartialUpdate: vi.fn().mockImplementation((id, _t, b) => of(echo(id, b))),
+      teamsTrainingSlotsCreate: vi
+        .fn()
+        .mockImplementation((p: { trainingSlot: { place_id?: number | null } }) =>
+          of(echo(100, p.trainingSlot)),
+        ),
+      teamsTrainingSlotsPartialUpdate: vi
+        .fn()
+        .mockImplementation((p: { id: number; patchedTrainingSlot: { place_id?: number | null } }) =>
+          of(echo(p.id, p.patchedTrainingSlot)),
+        ),
       teamsTrainingSlotsDestroy: vi.fn().mockReturnValue(of(undefined)),
     };
     messageMock = { add: vi.fn() };
@@ -102,7 +110,7 @@ describe('TeamSlotsEditorComponent', () => {
   beforeEach(() => setup());
 
   it('loads the team weekly slots on init', () => {
-    expect(teamsMock.teamsTrainingSlotsList).toHaveBeenCalledWith(5);
+    expect(teamsMock.teamsTrainingSlotsList).toHaveBeenCalledWith({ teamPk: 5 });
   });
 
   it('hydrates existing slot rows from the list response', async () => {
@@ -135,7 +143,7 @@ describe('TeamSlotsEditorComponent', () => {
     fillSlot(0, 2, null);
     access(component).confirmSlot(0);
     expect(teamsMock.teamsTrainingSlotsCreate).toHaveBeenCalledTimes(1);
-    const [teamPk, body] = teamsMock.teamsTrainingSlotsCreate.mock.calls[0];
+    const { teamPk, trainingSlot: body } = teamsMock.teamsTrainingSlotsCreate.mock.calls[0][0];
     expect(teamPk).toBe(5);
     expect(body).toMatchObject({ weekday: 2, hour_start: '18:00', hour_end: '19:30', place_id: null });
     expect(access(component).isSlotEditing(0)).toBe(false);
@@ -145,7 +153,7 @@ describe('TeamSlotsEditorComponent', () => {
     access(component).addSlot();
     fillSlot(0, 0, 7);
     access(component).confirmSlot(0);
-    expect(teamsMock.teamsTrainingSlotsCreate.mock.calls[0][1].place_id).toBe(7);
+    expect(teamsMock.teamsTrainingSlotsCreate.mock.calls[0][0].trainingSlot.place_id).toBe(7);
   });
 
   it('confirmSlot on an existing row PATCHes by id + teamPk', async () => {
@@ -154,7 +162,11 @@ describe('TeamSlotsEditorComponent', () => {
     fillSlot(0, 3, null);
     access(component).confirmSlot(0);
     expect(teamsMock.teamsTrainingSlotsPartialUpdate).toHaveBeenCalledTimes(1);
-    const [id, teamPk, body] = teamsMock.teamsTrainingSlotsPartialUpdate.mock.calls[0];
+    const {
+      id,
+      teamPk,
+      patchedTrainingSlot: body,
+    } = teamsMock.teamsTrainingSlotsPartialUpdate.mock.calls[0][0];
     expect(id).toBe(42);
     expect(teamPk).toBe(5);
     expect(body).toMatchObject({ weekday: 3, hour_start: '18:00', hour_end: '19:30' });
@@ -172,7 +184,7 @@ describe('TeamSlotsEditorComponent', () => {
     await setup({ slots: [{ id: 88, weekday: 1, hour_start: '18:00', hour_end: '19:30', place: null }] });
     expect(access(component).slots.length).toBe(1);
     access(component).removeSlot(0);
-    expect(teamsMock.teamsTrainingSlotsDestroy).toHaveBeenCalledWith(88, 5);
+    expect(teamsMock.teamsTrainingSlotsDestroy).toHaveBeenCalledWith({ id: 88, teamPk: 5 });
     expect(access(component).slots.length).toBe(0);
   });
 

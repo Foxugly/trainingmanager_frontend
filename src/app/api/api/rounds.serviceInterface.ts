@@ -22,6 +22,51 @@ import { Round } from '../model/models';
 import { Configuration }                                     from '../configuration';
 
 
+export interface RoundsCloneCreateRequestParams {
+    id: number;
+}
+
+export interface RoundsCloneExerciseCreateRequestParams {
+    id: number;
+    cloneExerciseRequest: CloneExerciseRequest;
+}
+
+export interface RoundsCreateRequestParams {
+    round: Round;
+}
+
+export interface RoundsDestroyRequestParams {
+    id: number;
+}
+
+export interface RoundsExercisesReorderCreateRequestParams {
+    id: number;
+    reorderExercisesRequest: ReorderExercisesRequest;
+}
+
+export interface RoundsListRequestParams {
+    language?: 'en' | 'es' | 'fr' | 'it' | 'nl';
+    ordering?: string;
+    page?: number;
+    pageSize?: number;
+    search?: string;
+    sport?: number;
+}
+
+export interface RoundsPartialUpdateRequestParams {
+    id: number;
+    patchedRound?: PatchedRound;
+}
+
+export interface RoundsRetrieveRequestParams {
+    id: number;
+}
+
+export interface RoundsUpdateRequestParams {
+    id: number;
+    round: Round;
+}
+
 
 export interface RoundsServiceInterface {
     defaultHeaders: HttpHeaders;
@@ -31,81 +76,72 @@ export interface RoundsServiceInterface {
      * 
      * Clone this Round (scalar fields + M2M exercises). Returns the new Round.
      * @endpoint post /api/v1/rounds/{id}/clone/
-     * @param id A unique integer value identifying this Round.
+* @param requestParameters
      */
-    roundsCloneCreate(id: number, extraHttpRequestParams?: any): Observable<Round>;
+    roundsCloneCreate(requestParameters: RoundsCloneCreateRequestParams, extraHttpRequestParams?: any): Observable<Round>;
 
     /**
      * 
      * Clone an Exercise and attach the copy to this Round.
      * @endpoint post /api/v1/rounds/{id}/clone-exercise/
-     * @param id A unique integer value identifying this Round.
-     * @param cloneExerciseRequest 
+* @param requestParameters
      */
-    roundsCloneExerciseCreate(id: number, cloneExerciseRequest: CloneExerciseRequest, extraHttpRequestParams?: any): Observable<Exercise>;
+    roundsCloneExerciseCreate(requestParameters: RoundsCloneExerciseCreateRequestParams, extraHttpRequestParams?: any): Observable<Exercise>;
 
     /**
      * 
      * CRUD complet pour Round.
      * @endpoint post /api/v1/rounds/
-     * @param round 
+* @param requestParameters
      */
-    roundsCreate(round: Round, extraHttpRequestParams?: any): Observable<Round>;
+    roundsCreate(requestParameters: RoundsCreateRequestParams, extraHttpRequestParams?: any): Observable<Round>;
 
     /**
      * 
      * CRUD complet pour Round.
      * @endpoint delete /api/v1/rounds/{id}/
-     * @param id A unique integer value identifying this Round.
+* @param requestParameters
      */
-    roundsDestroy(id: number, extraHttpRequestParams?: any): Observable<{}>;
+    roundsDestroy(requestParameters: RoundsDestroyRequestParams, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * 
      * Atomically reorder the Exercises attached to this Round. &#x60;exercise_ids&#x60; must contain exactly the IDs of the Exercises currently attached, in the desired final order. Exercise.order is set to 1..N matching list position, in a single transaction.
      * @endpoint post /api/v1/rounds/{id}/exercises/reorder/
-     * @param id A unique integer value identifying this Round.
-     * @param reorderExercisesRequest 
+* @param requestParameters
      */
-    roundsExercisesReorderCreate(id: number, reorderExercisesRequest: ReorderExercisesRequest, extraHttpRequestParams?: any): Observable<{}>;
+    roundsExercisesReorderCreate(requestParameters: RoundsExercisesReorderCreateRequestParams, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * 
      * CRUD complet pour Round.
      * @endpoint get /api/v1/rounds/
-     * @param language * &#x60;fr&#x60; - Français * &#x60;nl&#x60; - Nederlands * &#x60;en&#x60; - English * &#x60;it&#x60; - Italiano * &#x60;es&#x60; - Español
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
-     * @param sport 
+* @param requestParameters
      */
-    roundsList(language?: 'en' | 'es' | 'fr' | 'it' | 'nl', ordering?: string, page?: number, pageSize?: number, search?: string, sport?: number, extraHttpRequestParams?: any): Observable<PaginatedRoundList>;
+    roundsList(requestParameters: RoundsListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedRoundList>;
 
     /**
      * 
      * CRUD complet pour Round.
      * @endpoint patch /api/v1/rounds/{id}/
-     * @param id A unique integer value identifying this Round.
-     * @param patchedRound 
+* @param requestParameters
      */
-    roundsPartialUpdate(id: number, patchedRound?: PatchedRound, extraHttpRequestParams?: any): Observable<Round>;
+    roundsPartialUpdate(requestParameters: RoundsPartialUpdateRequestParams, extraHttpRequestParams?: any): Observable<Round>;
 
     /**
      * 
      * CRUD complet pour Round.
      * @endpoint get /api/v1/rounds/{id}/
-     * @param id A unique integer value identifying this Round.
+* @param requestParameters
      */
-    roundsRetrieve(id: number, extraHttpRequestParams?: any): Observable<Round>;
+    roundsRetrieve(requestParameters: RoundsRetrieveRequestParams, extraHttpRequestParams?: any): Observable<Round>;
 
     /**
      * 
      * CRUD complet pour Round.
      * @endpoint put /api/v1/rounds/{id}/
-     * @param id A unique integer value identifying this Round.
-     * @param round 
+* @param requestParameters
      */
-    roundsUpdate(id: number, round: Round, extraHttpRequestParams?: any): Observable<Round>;
+    roundsUpdate(requestParameters: RoundsUpdateRequestParams, extraHttpRequestParams?: any): Observable<Round>;
 
 }

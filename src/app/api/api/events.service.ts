@@ -60,7 +60,30 @@ import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables'
 import { Configuration }                                     from '../configuration';
 import { BaseService } from '../api.base.service';
 import {
-    EventsServiceInterface
+    EventsServiceInterface,
+    EventsAttendanceBulkCreateRequestParams,
+    EventsAttendanceCreateRequestParams,
+    EventsAttendanceDestroyRequestParams,
+    EventsAttendanceListRequestParams,
+    EventsAttendancePartialUpdateRequestParams,
+    EventsAttendanceRetrieveRequestParams,
+    EventsAttendanceUpdateRequestParams,
+    EventsCreateRequestParams,
+    EventsDestroyRequestParams,
+    EventsDuplicateCreateRequestParams,
+    EventsGenerateTrainingCreateRequestParams,
+    EventsListRequestParams,
+    EventsPartialUpdateRequestParams,
+    EventsRetrieveRequestParams,
+    EventsRotiRetrieveRequestParams,
+    EventsRotiSummaryRequestParams,
+    EventsRotiUpdateRequestParams,
+    EventsRoundsReorderCreateRequestParams,
+    EventsRsvpApplyToAttendanceRequestParams,
+    EventsRsvpRetrieveRequestParams,
+    EventsRsvpUpdateRequestParams,
+    EventsShareCreateRequestParams,
+    EventsUpdateRequestParams
 } from './events.serviceInterface';
 
 
@@ -78,19 +101,20 @@ export class EventsService extends BaseService implements EventsServiceInterface
      * Bulk set attendances for an event
      * Creates or updates multiple attendance rows in a single atomic call. For each item: if (event, member) exists, update status; otherwise, create new. Members not in the payload are NOT touched. All-or-nothing: any validation error rolls back the entire batch.
      * @endpoint post /api/v1/events/{event_pk}/attendance/bulk/
-     * @param eventPk 
-     * @param attendanceBulk 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public eventsAttendanceBulkCreate(eventPk: number, attendanceBulk: AttendanceBulk, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedAttendanceList>;
-    public eventsAttendanceBulkCreate(eventPk: number, attendanceBulk: AttendanceBulk, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedAttendanceList>>;
-    public eventsAttendanceBulkCreate(eventPk: number, attendanceBulk: AttendanceBulk, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedAttendanceList>>;
-    public eventsAttendanceBulkCreate(eventPk: number, attendanceBulk: AttendanceBulk, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public eventsAttendanceBulkCreate(requestParameters: EventsAttendanceBulkCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedAttendanceList>;
+    public eventsAttendanceBulkCreate(requestParameters: EventsAttendanceBulkCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedAttendanceList>>;
+    public eventsAttendanceBulkCreate(requestParameters: EventsAttendanceBulkCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedAttendanceList>>;
+    public eventsAttendanceBulkCreate(requestParameters: EventsAttendanceBulkCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const eventPk = requestParameters?.eventPk;
         if (eventPk === null || eventPk === undefined) {
             throw new Error('Required parameter eventPk was null or undefined when calling eventsAttendanceBulkCreate.');
         }
+        const attendanceBulk = requestParameters?.attendanceBulk;
         if (attendanceBulk === null || attendanceBulk === undefined) {
             throw new Error('Required parameter attendanceBulk was null or undefined when calling eventsAttendanceBulkCreate.');
         }
@@ -154,19 +178,20 @@ export class EventsService extends BaseService implements EventsServiceInterface
      * Create an attendance row (coach only)
      * Member must be in the team via an active TeamMembership. Returns 400 if a row already exists for (event, member) — use PATCH.
      * @endpoint post /api/v1/events/{event_pk}/attendance/
-     * @param eventPk 
-     * @param attendance 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public eventsAttendanceCreate(eventPk: number, attendance: Attendance, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Attendance>;
-    public eventsAttendanceCreate(eventPk: number, attendance: Attendance, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Attendance>>;
-    public eventsAttendanceCreate(eventPk: number, attendance: Attendance, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Attendance>>;
-    public eventsAttendanceCreate(eventPk: number, attendance: Attendance, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public eventsAttendanceCreate(requestParameters: EventsAttendanceCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Attendance>;
+    public eventsAttendanceCreate(requestParameters: EventsAttendanceCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Attendance>>;
+    public eventsAttendanceCreate(requestParameters: EventsAttendanceCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Attendance>>;
+    public eventsAttendanceCreate(requestParameters: EventsAttendanceCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const eventPk = requestParameters?.eventPk;
         if (eventPk === null || eventPk === undefined) {
             throw new Error('Required parameter eventPk was null or undefined when calling eventsAttendanceCreate.');
         }
+        const attendance = requestParameters?.attendance;
         if (attendance === null || attendance === undefined) {
             throw new Error('Required parameter attendance was null or undefined when calling eventsAttendanceCreate.');
         }
@@ -230,19 +255,20 @@ export class EventsService extends BaseService implements EventsServiceInterface
      * Delete an attendance row (coach only)
      * CRUD on event attendance.  URL: /api/v1/events/{event_pk}/attendance/
      * @endpoint delete /api/v1/events/{event_pk}/attendance/{id}/
-     * @param eventPk 
-     * @param id A unique integer value identifying this attendance.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public eventsAttendanceDestroy(eventPk: number, id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public eventsAttendanceDestroy(eventPk: number, id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public eventsAttendanceDestroy(eventPk: number, id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public eventsAttendanceDestroy(eventPk: number, id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public eventsAttendanceDestroy(requestParameters: EventsAttendanceDestroyRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public eventsAttendanceDestroy(requestParameters: EventsAttendanceDestroyRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public eventsAttendanceDestroy(requestParameters: EventsAttendanceDestroyRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public eventsAttendanceDestroy(requestParameters: EventsAttendanceDestroyRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const eventPk = requestParameters?.eventPk;
         if (eventPk === null || eventPk === undefined) {
             throw new Error('Required parameter eventPk was null or undefined when calling eventsAttendanceDestroy.');
         }
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling eventsAttendanceDestroy.');
         }
@@ -293,22 +319,23 @@ export class EventsService extends BaseService implements EventsServiceInterface
      * List attendance for an event
      * Returns all attendance rows. Coaches see everyone; athletes see only their own row.
      * @endpoint get /api/v1/events/{event_pk}/attendance/
-     * @param eventPk 
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public eventsAttendanceList(eventPk: number, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedAttendanceList>;
-    public eventsAttendanceList(eventPk: number, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedAttendanceList>>;
-    public eventsAttendanceList(eventPk: number, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedAttendanceList>>;
-    public eventsAttendanceList(eventPk: number, ordering?: string, page?: number, pageSize?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public eventsAttendanceList(requestParameters: EventsAttendanceListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedAttendanceList>;
+    public eventsAttendanceList(requestParameters: EventsAttendanceListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedAttendanceList>>;
+    public eventsAttendanceList(requestParameters: EventsAttendanceListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedAttendanceList>>;
+    public eventsAttendanceList(requestParameters: EventsAttendanceListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const eventPk = requestParameters?.eventPk;
         if (eventPk === null || eventPk === undefined) {
             throw new Error('Required parameter eventPk was null or undefined when calling eventsAttendanceList.');
         }
+        const ordering = requestParameters?.ordering;
+        const page = requestParameters?.page;
+        const pageSize = requestParameters?.pageSize;
+        const search = requestParameters?.search;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -396,23 +423,24 @@ export class EventsService extends BaseService implements EventsServiceInterface
      * Update attendance status (coach only)
      * Update one or more fields of an attendance row. &#x60;member&#x60; is read-only after create and is silently ignored — to reassign attendance, DELETE the row and create a new one.
      * @endpoint patch /api/v1/events/{event_pk}/attendance/{id}/
-     * @param eventPk 
-     * @param id A unique integer value identifying this attendance.
-     * @param patchedAttendance 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public eventsAttendancePartialUpdate(eventPk: number, id: number, patchedAttendance?: PatchedAttendance, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Attendance>;
-    public eventsAttendancePartialUpdate(eventPk: number, id: number, patchedAttendance?: PatchedAttendance, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Attendance>>;
-    public eventsAttendancePartialUpdate(eventPk: number, id: number, patchedAttendance?: PatchedAttendance, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Attendance>>;
-    public eventsAttendancePartialUpdate(eventPk: number, id: number, patchedAttendance?: PatchedAttendance, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public eventsAttendancePartialUpdate(requestParameters: EventsAttendancePartialUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Attendance>;
+    public eventsAttendancePartialUpdate(requestParameters: EventsAttendancePartialUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Attendance>>;
+    public eventsAttendancePartialUpdate(requestParameters: EventsAttendancePartialUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Attendance>>;
+    public eventsAttendancePartialUpdate(requestParameters: EventsAttendancePartialUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const eventPk = requestParameters?.eventPk;
         if (eventPk === null || eventPk === undefined) {
             throw new Error('Required parameter eventPk was null or undefined when calling eventsAttendancePartialUpdate.');
         }
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling eventsAttendancePartialUpdate.');
         }
+        const patchedAttendance = requestParameters?.patchedAttendance;
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -473,19 +501,20 @@ export class EventsService extends BaseService implements EventsServiceInterface
      * Retrieve a single attendance row
      * CRUD on event attendance.  URL: /api/v1/events/{event_pk}/attendance/
      * @endpoint get /api/v1/events/{event_pk}/attendance/{id}/
-     * @param eventPk 
-     * @param id A unique integer value identifying this attendance.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public eventsAttendanceRetrieve(eventPk: number, id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Attendance>;
-    public eventsAttendanceRetrieve(eventPk: number, id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Attendance>>;
-    public eventsAttendanceRetrieve(eventPk: number, id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Attendance>>;
-    public eventsAttendanceRetrieve(eventPk: number, id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public eventsAttendanceRetrieve(requestParameters: EventsAttendanceRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Attendance>;
+    public eventsAttendanceRetrieve(requestParameters: EventsAttendanceRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Attendance>>;
+    public eventsAttendanceRetrieve(requestParameters: EventsAttendanceRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Attendance>>;
+    public eventsAttendanceRetrieve(requestParameters: EventsAttendanceRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const eventPk = requestParameters?.eventPk;
         if (eventPk === null || eventPk === undefined) {
             throw new Error('Required parameter eventPk was null or undefined when calling eventsAttendanceRetrieve.');
         }
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling eventsAttendanceRetrieve.');
         }
@@ -537,23 +566,24 @@ export class EventsService extends BaseService implements EventsServiceInterface
      * Replace attendance row (coach only)
      * Replace an attendance row. &#x60;member&#x60; is read-only after create and is silently ignored on update — to reassign attendance, DELETE the row and create a new one.
      * @endpoint put /api/v1/events/{event_pk}/attendance/{id}/
-     * @param eventPk 
-     * @param id A unique integer value identifying this attendance.
-     * @param attendance 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public eventsAttendanceUpdate(eventPk: number, id: number, attendance: Attendance, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Attendance>;
-    public eventsAttendanceUpdate(eventPk: number, id: number, attendance: Attendance, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Attendance>>;
-    public eventsAttendanceUpdate(eventPk: number, id: number, attendance: Attendance, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Attendance>>;
-    public eventsAttendanceUpdate(eventPk: number, id: number, attendance: Attendance, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public eventsAttendanceUpdate(requestParameters: EventsAttendanceUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Attendance>;
+    public eventsAttendanceUpdate(requestParameters: EventsAttendanceUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Attendance>>;
+    public eventsAttendanceUpdate(requestParameters: EventsAttendanceUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Attendance>>;
+    public eventsAttendanceUpdate(requestParameters: EventsAttendanceUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const eventPk = requestParameters?.eventPk;
         if (eventPk === null || eventPk === undefined) {
             throw new Error('Required parameter eventPk was null or undefined when calling eventsAttendanceUpdate.');
         }
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling eventsAttendanceUpdate.');
         }
+        const attendance = requestParameters?.attendance;
         if (attendance === null || attendance === undefined) {
             throw new Error('Required parameter attendance was null or undefined when calling eventsAttendanceUpdate.');
         }
@@ -616,15 +646,16 @@ export class EventsService extends BaseService implements EventsServiceInterface
     /**
      * CRUD complet pour Event, scopé par team du program.
      * @endpoint post /api/v1/events/
-     * @param event 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public eventsCreate(event: Event, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Event>;
-    public eventsCreate(event: Event, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Event>>;
-    public eventsCreate(event: Event, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Event>>;
-    public eventsCreate(event: Event, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public eventsCreate(requestParameters: EventsCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Event>;
+    public eventsCreate(requestParameters: EventsCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Event>>;
+    public eventsCreate(requestParameters: EventsCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Event>>;
+    public eventsCreate(requestParameters: EventsCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const event = requestParameters?.event;
         if (event === null || event === undefined) {
             throw new Error('Required parameter event was null or undefined when calling eventsCreate.');
         }
@@ -687,15 +718,16 @@ export class EventsService extends BaseService implements EventsServiceInterface
     /**
      * CRUD complet pour Event, scopé par team du program.
      * @endpoint delete /api/v1/events/{id}/
-     * @param id A unique integer value identifying this event.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public eventsDestroy(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public eventsDestroy(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public eventsDestroy(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public eventsDestroy(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public eventsDestroy(requestParameters: EventsDestroyRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public eventsDestroy(requestParameters: EventsDestroyRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public eventsDestroy(requestParameters: EventsDestroyRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public eventsDestroy(requestParameters: EventsDestroyRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling eventsDestroy.');
         }
@@ -745,19 +777,20 @@ export class EventsService extends BaseService implements EventsServiceInterface
     /**
      * Duplicate this training session onto a new date, optionally repeating weekly. The copy deep-copies the source\&#39;s Rounds into fresh Round rows (re-linking the shared Exercise library) so each session is fully independent; per-session members are NOT copied. With &#x60;repeat_weekly&#x3D;true&#x60; and &#x60;occurrences&#x3D;N&#x60;, N sessions are created on &#x60;date&#x60;, &#x60;date&#x60;+7d, ..., &#x60;date&#x60;+7*(N-1)d. With &#x60;repeat_weekly&#x3D;false&#x60; exactly one copy is created (occurrences is forced to 1). Manager/owner of the event\&#39;s team only.
      * @endpoint post /api/v1/events/{id}/duplicate/
-     * @param id A unique integer value identifying this event.
-     * @param duplicateEventRequest 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public eventsDuplicateCreate(id: number, duplicateEventRequest: DuplicateEventRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<DuplicateEventResponse>;
-    public eventsDuplicateCreate(id: number, duplicateEventRequest: DuplicateEventRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<DuplicateEventResponse>>;
-    public eventsDuplicateCreate(id: number, duplicateEventRequest: DuplicateEventRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<DuplicateEventResponse>>;
-    public eventsDuplicateCreate(id: number, duplicateEventRequest: DuplicateEventRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public eventsDuplicateCreate(requestParameters: EventsDuplicateCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<DuplicateEventResponse>;
+    public eventsDuplicateCreate(requestParameters: EventsDuplicateCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<DuplicateEventResponse>>;
+    public eventsDuplicateCreate(requestParameters: EventsDuplicateCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<DuplicateEventResponse>>;
+    public eventsDuplicateCreate(requestParameters: EventsDuplicateCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling eventsDuplicateCreate.');
         }
+        const duplicateEventRequest = requestParameters?.duplicateEventRequest;
         if (duplicateEventRequest === null || duplicateEventRequest === undefined) {
             throw new Error('Required parameter duplicateEventRequest was null or undefined when calling eventsDuplicateCreate.');
         }
@@ -820,19 +853,20 @@ export class EventsService extends BaseService implements EventsServiceInterface
     /**
      * Generate detailed Rounds and Exercises with AI for an Event. Optionally accepts an &#x60;additional_prompt&#x60; (max 2000 chars) appended to the LLM user prompt after the structured context.
      * @endpoint post /api/v1/events/{id}/generate-training/
-     * @param id A unique integer value identifying this event.
-     * @param generateTrainingRequest 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public eventsGenerateTrainingCreate(id: number, generateTrainingRequest?: GenerateTrainingRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<GenerateTrainingResponse>;
-    public eventsGenerateTrainingCreate(id: number, generateTrainingRequest?: GenerateTrainingRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<GenerateTrainingResponse>>;
-    public eventsGenerateTrainingCreate(id: number, generateTrainingRequest?: GenerateTrainingRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<GenerateTrainingResponse>>;
-    public eventsGenerateTrainingCreate(id: number, generateTrainingRequest?: GenerateTrainingRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public eventsGenerateTrainingCreate(requestParameters: EventsGenerateTrainingCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<GenerateTrainingResponse>;
+    public eventsGenerateTrainingCreate(requestParameters: EventsGenerateTrainingCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<GenerateTrainingResponse>>;
+    public eventsGenerateTrainingCreate(requestParameters: EventsGenerateTrainingCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<GenerateTrainingResponse>>;
+    public eventsGenerateTrainingCreate(requestParameters: EventsGenerateTrainingCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling eventsGenerateTrainingCreate.');
         }
+        const generateTrainingRequest = requestParameters?.generateTrainingRequest;
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -892,23 +926,24 @@ export class EventsService extends BaseService implements EventsServiceInterface
     /**
      * CRUD complet pour Event, scopé par team du program.
      * @endpoint get /api/v1/events/
-     * @param color 
-     * @param date 
-     * @param dateGte 
-     * @param dateLte 
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param referProgram 
-     * @param search A search term.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public eventsList(color?: string, date?: string, dateGte?: string, dateLte?: string, ordering?: string, page?: number, pageSize?: number, referProgram?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedEventList>;
-    public eventsList(color?: string, date?: string, dateGte?: string, dateLte?: string, ordering?: string, page?: number, pageSize?: number, referProgram?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedEventList>>;
-    public eventsList(color?: string, date?: string, dateGte?: string, dateLte?: string, ordering?: string, page?: number, pageSize?: number, referProgram?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedEventList>>;
-    public eventsList(color?: string, date?: string, dateGte?: string, dateLte?: string, ordering?: string, page?: number, pageSize?: number, referProgram?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public eventsList(requestParameters?: EventsListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedEventList>;
+    public eventsList(requestParameters?: EventsListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedEventList>>;
+    public eventsList(requestParameters?: EventsListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedEventList>>;
+    public eventsList(requestParameters?: EventsListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const color = requestParameters?.color;
+        const date = requestParameters?.date;
+        const dateGte = requestParameters?.dateGte;
+        const dateLte = requestParameters?.dateLte;
+        const ordering = requestParameters?.ordering;
+        const page = requestParameters?.page;
+        const pageSize = requestParameters?.pageSize;
+        const referProgram = requestParameters?.referProgram;
+        const search = requestParameters?.search;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -1040,19 +1075,20 @@ export class EventsService extends BaseService implements EventsServiceInterface
     /**
      * CRUD complet pour Event, scopé par team du program.
      * @endpoint patch /api/v1/events/{id}/
-     * @param id A unique integer value identifying this event.
-     * @param patchedEvent 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public eventsPartialUpdate(id: number, patchedEvent?: PatchedEvent, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Event>;
-    public eventsPartialUpdate(id: number, patchedEvent?: PatchedEvent, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Event>>;
-    public eventsPartialUpdate(id: number, patchedEvent?: PatchedEvent, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Event>>;
-    public eventsPartialUpdate(id: number, patchedEvent?: PatchedEvent, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public eventsPartialUpdate(requestParameters: EventsPartialUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Event>;
+    public eventsPartialUpdate(requestParameters: EventsPartialUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Event>>;
+    public eventsPartialUpdate(requestParameters: EventsPartialUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Event>>;
+    public eventsPartialUpdate(requestParameters: EventsPartialUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling eventsPartialUpdate.');
         }
+        const patchedEvent = requestParameters?.patchedEvent;
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -1112,15 +1148,16 @@ export class EventsService extends BaseService implements EventsServiceInterface
     /**
      * CRUD complet pour Event, scopé par team du program.
      * @endpoint get /api/v1/events/{id}/
-     * @param id A unique integer value identifying this event.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public eventsRetrieve(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Event>;
-    public eventsRetrieve(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Event>>;
-    public eventsRetrieve(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Event>>;
-    public eventsRetrieve(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public eventsRetrieve(requestParameters: EventsRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Event>;
+    public eventsRetrieve(requestParameters: EventsRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Event>>;
+    public eventsRetrieve(requestParameters: EventsRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Event>>;
+    public eventsRetrieve(requestParameters: EventsRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling eventsRetrieve.');
         }
@@ -1172,15 +1209,16 @@ export class EventsService extends BaseService implements EventsServiceInterface
      * Get ROTI summary for an event (incl. my_score)
      * Returns the aggregate ROTI for the event (average, count, distribution) plus the caller\&#39;s own score (my_score). Coaches and athlete-members of the team may read.
      * @endpoint get /api/v1/events/{event_pk}/roti/
-     * @param eventPk 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public eventsRotiRetrieve(eventPk: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<RotiSummary>>;
-    public eventsRotiRetrieve(eventPk: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<RotiSummary>>>;
-    public eventsRotiRetrieve(eventPk: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<RotiSummary>>>;
-    public eventsRotiRetrieve(eventPk: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public eventsRotiRetrieve(requestParameters: EventsRotiRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<RotiSummary>>;
+    public eventsRotiRetrieve(requestParameters: EventsRotiRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<RotiSummary>>>;
+    public eventsRotiRetrieve(requestParameters: EventsRotiRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<RotiSummary>>>;
+    public eventsRotiRetrieve(requestParameters: EventsRotiRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const eventPk = requestParameters?.eventPk;
         if (eventPk === null || eventPk === undefined) {
             throw new Error('Required parameter eventPk was null or undefined when calling eventsRotiRetrieve.');
         }
@@ -1232,15 +1270,16 @@ export class EventsService extends BaseService implements EventsServiceInterface
      * ROTI aggregate summary for an event (managers)
      * Same shape as GET .../roti/. Provided as an explicit endpoint for the manager dashboard.
      * @endpoint get /api/v1/events/{event_pk}/roti/summary/
-     * @param eventPk 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public eventsRotiSummary(eventPk: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<RotiSummary>;
-    public eventsRotiSummary(eventPk: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<RotiSummary>>;
-    public eventsRotiSummary(eventPk: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<RotiSummary>>;
-    public eventsRotiSummary(eventPk: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public eventsRotiSummary(requestParameters: EventsRotiSummaryRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<RotiSummary>;
+    public eventsRotiSummary(requestParameters: EventsRotiSummaryRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<RotiSummary>>;
+    public eventsRotiSummary(requestParameters: EventsRotiSummaryRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<RotiSummary>>;
+    public eventsRotiSummary(requestParameters: EventsRotiSummaryRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const eventPk = requestParameters?.eventPk;
         if (eventPk === null || eventPk === undefined) {
             throw new Error('Required parameter eventPk was null or undefined when calling eventsRotiSummary.');
         }
@@ -1292,19 +1331,20 @@ export class EventsService extends BaseService implements EventsServiceInterface
      * Upsert the caller\&#39;s own ROTI score (1..5)
      * Athlete-only: resolves the caller\&#39;s Member within the event\&#39;s team and update_or_creates their Roti(event, member) with the given score. Returns 403 if the team has roti_enabled&#x3D;False or the caller is not an athlete-member; 400 if the score is out of range.
      * @endpoint put /api/v1/events/{event_pk}/roti/
-     * @param eventPk 
-     * @param rotiUpsert 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public eventsRotiUpdate(eventPk: number, rotiUpsert: RotiUpsert, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<RotiSummary>;
-    public eventsRotiUpdate(eventPk: number, rotiUpsert: RotiUpsert, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<RotiSummary>>;
-    public eventsRotiUpdate(eventPk: number, rotiUpsert: RotiUpsert, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<RotiSummary>>;
-    public eventsRotiUpdate(eventPk: number, rotiUpsert: RotiUpsert, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public eventsRotiUpdate(requestParameters: EventsRotiUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<RotiSummary>;
+    public eventsRotiUpdate(requestParameters: EventsRotiUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<RotiSummary>>;
+    public eventsRotiUpdate(requestParameters: EventsRotiUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<RotiSummary>>;
+    public eventsRotiUpdate(requestParameters: EventsRotiUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const eventPk = requestParameters?.eventPk;
         if (eventPk === null || eventPk === undefined) {
             throw new Error('Required parameter eventPk was null or undefined when calling eventsRotiUpdate.');
         }
+        const rotiUpsert = requestParameters?.rotiUpsert;
         if (rotiUpsert === null || rotiUpsert === undefined) {
             throw new Error('Required parameter rotiUpsert was null or undefined when calling eventsRotiUpdate.');
         }
@@ -1367,19 +1407,20 @@ export class EventsService extends BaseService implements EventsServiceInterface
     /**
      * Atomically reorder the Rounds attached to this Event. &#x60;round_ids&#x60; must contain exactly the IDs of the Rounds currently attached, in the desired final order. Round.order is set to 1..N matching list position, in a single transaction.
      * @endpoint post /api/v1/events/{id}/rounds/reorder/
-     * @param id A unique integer value identifying this event.
-     * @param reorderRoundsRequest 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public eventsRoundsReorderCreate(id: number, reorderRoundsRequest: ReorderRoundsRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public eventsRoundsReorderCreate(id: number, reorderRoundsRequest: ReorderRoundsRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public eventsRoundsReorderCreate(id: number, reorderRoundsRequest: ReorderRoundsRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public eventsRoundsReorderCreate(id: number, reorderRoundsRequest: ReorderRoundsRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public eventsRoundsReorderCreate(requestParameters: EventsRoundsReorderCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public eventsRoundsReorderCreate(requestParameters: EventsRoundsReorderCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public eventsRoundsReorderCreate(requestParameters: EventsRoundsReorderCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public eventsRoundsReorderCreate(requestParameters: EventsRoundsReorderCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling eventsRoundsReorderCreate.');
         }
+        const reorderRoundsRequest = requestParameters?.reorderRoundsRequest;
         if (reorderRoundsRequest === null || reorderRoundsRequest === undefined) {
             throw new Error('Required parameter reorderRoundsRequest was null or undefined when calling eventsRoundsReorderCreate.');
         }
@@ -1442,15 +1483,16 @@ export class EventsService extends BaseService implements EventsServiceInterface
      * Pre-fill attendance from RSVPs (managers only)
      * Managers/owner only. For each member with an RSVP on the event, upserts their Attendance: GOING -&gt; the \&#39;present\&#39; AttendanceStatus, NOT_GOING -&gt; \&#39;absent\&#39;. MAYBE is skipped (attendance left untouched). RSVPs whose target status code is not seeded are also skipped. Returns how many rows were applied and skipped.
      * @endpoint post /api/v1/events/{event_pk}/rsvp/apply_to_attendance/
-     * @param eventPk 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public eventsRsvpApplyToAttendance(eventPk: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<RsvpApplyToAttendanceResult>;
-    public eventsRsvpApplyToAttendance(eventPk: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<RsvpApplyToAttendanceResult>>;
-    public eventsRsvpApplyToAttendance(eventPk: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<RsvpApplyToAttendanceResult>>;
-    public eventsRsvpApplyToAttendance(eventPk: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public eventsRsvpApplyToAttendance(requestParameters: EventsRsvpApplyToAttendanceRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<RsvpApplyToAttendanceResult>;
+    public eventsRsvpApplyToAttendance(requestParameters: EventsRsvpApplyToAttendanceRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<RsvpApplyToAttendanceResult>>;
+    public eventsRsvpApplyToAttendance(requestParameters: EventsRsvpApplyToAttendanceRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<RsvpApplyToAttendanceResult>>;
+    public eventsRsvpApplyToAttendance(requestParameters: EventsRsvpApplyToAttendanceRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const eventPk = requestParameters?.eventPk;
         if (eventPk === null || eventPk === undefined) {
             throw new Error('Required parameter eventPk was null or undefined when calling eventsRsvpApplyToAttendance.');
         }
@@ -1502,15 +1544,16 @@ export class EventsService extends BaseService implements EventsServiceInterface
      * Get RSVP summary for an event (incl. my_status)
      * Returns the aggregate availability for the event (counts, total_members) plus the caller\&#39;s own status (my_status). Managers additionally get the per-member breakdown (by_member); athletes get an empty by_member. Coaches and athlete-members of the team may read.
      * @endpoint get /api/v1/events/{event_pk}/rsvp/
-     * @param eventPk 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public eventsRsvpRetrieve(eventPk: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<RsvpSummary>;
-    public eventsRsvpRetrieve(eventPk: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<RsvpSummary>>;
-    public eventsRsvpRetrieve(eventPk: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<RsvpSummary>>;
-    public eventsRsvpRetrieve(eventPk: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public eventsRsvpRetrieve(requestParameters: EventsRsvpRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<RsvpSummary>;
+    public eventsRsvpRetrieve(requestParameters: EventsRsvpRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<RsvpSummary>>;
+    public eventsRsvpRetrieve(requestParameters: EventsRsvpRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<RsvpSummary>>;
+    public eventsRsvpRetrieve(requestParameters: EventsRsvpRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const eventPk = requestParameters?.eventPk;
         if (eventPk === null || eventPk === undefined) {
             throw new Error('Required parameter eventPk was null or undefined when calling eventsRsvpRetrieve.');
         }
@@ -1562,19 +1605,20 @@ export class EventsService extends BaseService implements EventsServiceInterface
      * Upsert the caller\&#39;s own RSVP (going/maybe/not_going)
      * Athlete-only: resolves the caller\&#39;s Member within the event\&#39;s team and update_or_creates their Rsvp(event, member) with the given status. Returns 403 if the team has rsvp_enabled&#x3D;False or the caller is not an athlete-member; 400 if the status is invalid.
      * @endpoint put /api/v1/events/{event_pk}/rsvp/
-     * @param eventPk 
-     * @param rsvpUpsert 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public eventsRsvpUpdate(eventPk: number, rsvpUpsert: RsvpUpsert, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<RsvpSummary>;
-    public eventsRsvpUpdate(eventPk: number, rsvpUpsert: RsvpUpsert, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<RsvpSummary>>;
-    public eventsRsvpUpdate(eventPk: number, rsvpUpsert: RsvpUpsert, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<RsvpSummary>>;
-    public eventsRsvpUpdate(eventPk: number, rsvpUpsert: RsvpUpsert, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public eventsRsvpUpdate(requestParameters: EventsRsvpUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<RsvpSummary>;
+    public eventsRsvpUpdate(requestParameters: EventsRsvpUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<RsvpSummary>>;
+    public eventsRsvpUpdate(requestParameters: EventsRsvpUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<RsvpSummary>>;
+    public eventsRsvpUpdate(requestParameters: EventsRsvpUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const eventPk = requestParameters?.eventPk;
         if (eventPk === null || eventPk === undefined) {
             throw new Error('Required parameter eventPk was null or undefined when calling eventsRsvpUpdate.');
         }
+        const rsvpUpsert = requestParameters?.rsvpUpsert;
         if (rsvpUpsert === null || rsvpUpsert === undefined) {
             throw new Error('Required parameter rsvpUpsert was null or undefined when calling eventsRsvpUpdate.');
         }
@@ -1637,19 +1681,20 @@ export class EventsService extends BaseService implements EventsServiceInterface
     /**
      * Toggle the public read-only share link for this session. Enabling (is_public&#x3D;true) requires the event\&#39;s team to have public_sharing_enabled&#x3D;true (else 409 public_sharing_disabled) and mints an unguessable token if absent. Disabling (is_public&#x3D;false) keeps the token so re-enabling reuses the same URL. Manager/owner of the event\&#39;s team only.
      * @endpoint post /api/v1/events/{id}/share/
-     * @param id A unique integer value identifying this event.
-     * @param eventShareRequest 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public eventsShareCreate(id: number, eventShareRequest: EventShareRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<EventShareResponse>;
-    public eventsShareCreate(id: number, eventShareRequest: EventShareRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EventShareResponse>>;
-    public eventsShareCreate(id: number, eventShareRequest: EventShareRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EventShareResponse>>;
-    public eventsShareCreate(id: number, eventShareRequest: EventShareRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public eventsShareCreate(requestParameters: EventsShareCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<EventShareResponse>;
+    public eventsShareCreate(requestParameters: EventsShareCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EventShareResponse>>;
+    public eventsShareCreate(requestParameters: EventsShareCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EventShareResponse>>;
+    public eventsShareCreate(requestParameters: EventsShareCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling eventsShareCreate.');
         }
+        const eventShareRequest = requestParameters?.eventShareRequest;
         if (eventShareRequest === null || eventShareRequest === undefined) {
             throw new Error('Required parameter eventShareRequest was null or undefined when calling eventsShareCreate.');
         }
@@ -1712,19 +1757,20 @@ export class EventsService extends BaseService implements EventsServiceInterface
     /**
      * CRUD complet pour Event, scopé par team du program.
      * @endpoint put /api/v1/events/{id}/
-     * @param id A unique integer value identifying this event.
-     * @param event 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public eventsUpdate(id: number, event: Event, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Event>;
-    public eventsUpdate(id: number, event: Event, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Event>>;
-    public eventsUpdate(id: number, event: Event, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Event>>;
-    public eventsUpdate(id: number, event: Event, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public eventsUpdate(requestParameters: EventsUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Event>;
+    public eventsUpdate(requestParameters: EventsUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Event>>;
+    public eventsUpdate(requestParameters: EventsUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Event>>;
+    public eventsUpdate(requestParameters: EventsUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling eventsUpdate.');
         }
+        const event = requestParameters?.event;
         if (event === null || event === undefined) {
             throw new Error('Required parameter event was null or undefined when calling eventsUpdate.');
         }

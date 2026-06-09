@@ -220,7 +220,7 @@ describe('EventsFormComponent', () => {
 
   it('loads available programs in create mode via teamsList → programsList per team', async () => {
     await new Promise((r) => setTimeout(r, 0));
-    expect(teamsMock.teamsList).toHaveBeenCalledWith(true);
+    expect(teamsMock.teamsList).toHaveBeenCalledWith({ isActive: true });
     expect(programsMock.programsList).toHaveBeenCalled();
     expect(access(component).availablePrograms().length).toBeGreaterThan(0);
   });
@@ -245,7 +245,7 @@ describe('EventsFormComponent', () => {
 
   it('on edit mode, fetches and pre-fills the form, locks refer_program_id', async () => {
     await setup('7');
-    expect(eventsMock.eventsRetrieve).toHaveBeenCalledWith(7);
+    expect(eventsMock.eventsRetrieve).toHaveBeenCalledWith({ id: 7 });
     expect(access(component).isEditMode()).toBe(true);
     expect(access(component).form.getRawValue()).toMatchObject({
       name: 'Séance 1',
@@ -273,7 +273,7 @@ describe('EventsFormComponent', () => {
     access(component).form.patchValue({ name: 'Renamed' });
     access(component).submit();
     expect(eventsMock.eventsPartialUpdate).toHaveBeenCalledTimes(1);
-    expect(eventsMock.eventsPartialUpdate.mock.calls[0][0]).toBe(7);
+    expect(eventsMock.eventsPartialUpdate.mock.calls[0][0].id).toBe(7);
     expect(router.navigate).toHaveBeenCalledWith(['/events', 7]);
   });
 
@@ -357,7 +357,7 @@ describe('EventsFormComponent', () => {
   it('prefills vis_* from the selected program team defaults on create', async () => {
     access(component).form.patchValue({ refer_program_id: 4 });
     await new Promise((r) => setTimeout(r, 0));
-    expect(teamsMock.teamsRetrieve).toHaveBeenCalledWith(4);
+    expect(teamsMock.teamsRetrieve).toHaveBeenCalledWith({ id: 4 });
     expect(access(component).form.getRawValue()).toMatchObject({
       vis_distance: VisibilityMode.After,
       vis_goal: VisibilityMode.Never,
@@ -387,7 +387,7 @@ describe('EventsFormComponent', () => {
       vis_rounds: VisibilityMode.Always,
     });
     access(component).submit();
-    expect(eventsMock.eventsCreate.mock.calls[0][0]).toMatchObject({
+    expect(eventsMock.eventsCreate.mock.calls[0][0].event).toMatchObject({
       vis_distance: VisibilityMode.After,
       vis_goal: VisibilityMode.Never,
       vis_rounds: VisibilityMode.Always,
@@ -398,7 +398,7 @@ describe('EventsFormComponent', () => {
     await setup('7');
     access(component).form.patchValue({ vis_goal: VisibilityMode.After });
     access(component).submit();
-    expect(eventsMock.eventsPartialUpdate.mock.calls[0][1]).toMatchObject({
+    expect(eventsMock.eventsPartialUpdate.mock.calls[0][0].patchedEvent).toMatchObject({
       vis_goal: VisibilityMode.After,
     });
   });
@@ -417,15 +417,15 @@ describe('EventsFormComponent', () => {
       place_id: 9,
     });
     access(component).submit();
-    expect(eventsMock.eventsCreate.mock.calls[0][0]).toMatchObject({ place_id: 9 });
-    expect(eventsMock.eventsCreate.mock.calls[0][0]).not.toHaveProperty('location');
+    expect(eventsMock.eventsCreate.mock.calls[0][0].event).toMatchObject({ place_id: 9 });
+    expect(eventsMock.eventsCreate.mock.calls[0][0].event).not.toHaveProperty('location');
   });
 
   it('sends place_id in the update payload on edit', async () => {
     await setup('7');
     access(component).form.patchValue({ place_id: 9 });
     access(component).submit();
-    expect(eventsMock.eventsPartialUpdate.mock.calls[0][1]).toMatchObject({ place_id: 9 });
+    expect(eventsMock.eventsPartialUpdate.mock.calls[0][0].patchedEvent).toMatchObject({ place_id: 9 });
   });
 
   it('pre-selects the event place and clears the legacy location hint on edit', async () => {

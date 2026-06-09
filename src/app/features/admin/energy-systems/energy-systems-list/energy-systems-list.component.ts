@@ -61,7 +61,7 @@ export class EnergySystemsListComponent implements OnInit {
   private load(includeInactive: boolean): void {
     this.loading.set(true);
     this.energySystemsService
-      .energySystemsList(includeInactive || undefined)
+      .energySystemsList({ includeInactive: includeInactive || undefined })
       .pipe(
         tap((res) => this.energySystems.set(res.results ?? [])),
         catchError(() => {
@@ -89,7 +89,7 @@ export class EnergySystemsListComponent implements OnInit {
 
   private deleteOne(es: EnergySystem): void {
     this.energySystemsService
-      .energySystemsDestroy(es.id)
+      .energySystemsDestroy({ id: es.id })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
@@ -106,7 +106,7 @@ export class EnergySystemsListComponent implements OnInit {
 
   protected restore(es: EnergySystem): void {
     this.energySystemsService
-      .energySystemsPartialUpdate(es.id, true, { is_active: true })
+      .energySystemsPartialUpdate({ id: es.id, includeInactive: true, patchedEnergySystemAdmin: { is_active: true } })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

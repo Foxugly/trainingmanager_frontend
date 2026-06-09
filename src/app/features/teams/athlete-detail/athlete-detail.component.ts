@@ -109,7 +109,7 @@ export class AthleteDetailComponent {
     this.member.set(null);
 
     this.teamsService
-      .teamsRetrieve(teamId)
+      .teamsRetrieve({ id: teamId })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (t) => this.team.set(t),
@@ -117,7 +117,7 @@ export class AthleteDetailComponent {
       });
 
     this.membersService
-      .membersRetrieve(memberId)
+      .membersRetrieve({ id: memberId })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (m) => {

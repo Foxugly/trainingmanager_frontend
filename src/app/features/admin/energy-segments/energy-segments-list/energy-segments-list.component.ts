@@ -61,7 +61,7 @@ export class EnergySegmentsListComponent implements OnInit {
   private load(includeInactive: boolean): void {
     this.loading.set(true);
     this.service
-      .energySegmentsList(undefined, includeInactive || undefined)
+      .energySegmentsList({ includeInactive: includeInactive || undefined })
       .pipe(
         tap((res) => this.segments.set(res.results ?? [])),
         catchError(() => {
@@ -85,7 +85,7 @@ export class EnergySegmentsListComponent implements OnInit {
 
   private deleteOne(seg: EnergySegment): void {
     this.service
-      .energySegmentsDestroy(seg.id)
+      .energySegmentsDestroy({ id: seg.id })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
@@ -102,7 +102,7 @@ export class EnergySegmentsListComponent implements OnInit {
 
   protected restore(seg: EnergySegment): void {
     this.service
-      .energySegmentsPartialUpdate(seg.id, true, { is_active: true })
+      .energySegmentsPartialUpdate({ id: seg.id, includeInactive: true, patchedEnergySegmentAdmin: { is_active: true } })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

@@ -72,15 +72,7 @@ describe('PlaceSelectComponent', () => {
   });
 
   it('loads the team linked places via ?team (position 6) when teamId is set', () => {
-    // Signature: (ordering, page, pageSize, search, sport, team).
-    expect(placesMock.placesList).toHaveBeenCalledWith(
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      5,
-    );
+    expect(placesMock.placesList).toHaveBeenCalledWith({ team: 5 });
     expect(access(component).places()).toHaveLength(1);
   });
 
@@ -103,9 +95,9 @@ describe('PlaceSelectComponent', () => {
     access(component).openCreate();
     (component as unknown as { newName: { set(v: string): void } }).newName.set('Nouveau');
     access(component).createPlace();
-    expect(placesMock.placesCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ team: 5, name: 'Nouveau' }),
-    );
+    expect(placesMock.placesCreate).toHaveBeenCalledWith({
+      placeRequest: expect.objectContaining({ team: 5, name: 'Nouveau' }),
+    });
     expect(access(component).places().some((p) => p.id === 8)).toBe(true);
     expect(pushed).toBe(8);
     expect(access(component).dialogVisible()).toBe(false);

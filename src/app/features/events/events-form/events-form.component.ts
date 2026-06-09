@@ -237,7 +237,7 @@ export class EventsFormComponent implements OnInit {
     if (teamId == null) return;
     this.prefilledForProgramId = programId;
     this.teamsService
-      .teamsRetrieve(teamId)
+      .teamsRetrieve({ id: teamId })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (t) => {
@@ -274,7 +274,7 @@ export class EventsFormComponent implements OnInit {
     if (this.loadedSportsForTeamId === teamId) return;
     this.loadedSportsForTeamId = teamId;
     this.teamsService
-      .teamsRetrieve(teamId)
+      .teamsRetrieve({ id: teamId })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (t) => {
@@ -293,7 +293,7 @@ export class EventsFormComponent implements OnInit {
 
   private loadAvailablePrograms(): void {
     this.teamsService
-      .teamsList(true)
+      .teamsList({ isActive: true })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
@@ -310,18 +310,7 @@ export class EventsFormComponent implements OnInit {
     }
     const requests = teamIds.map((teamId) =>
       firstValueFrom(
-        this.programsService.programsList(
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          teamId,
-        ),
+        this.programsService.programsList({ team: teamId }),
       ),
     );
     const responses = await Promise.all(requests);
@@ -337,7 +326,7 @@ export class EventsFormComponent implements OnInit {
   private loadEvent(id: number): void {
     this.loading.set(true);
     this.eventsService
-      .eventsRetrieve(id)
+      .eventsRetrieve({ id })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (e) => {
@@ -419,7 +408,7 @@ export class EventsFormComponent implements OnInit {
         vis_rounds: value.vis_rounds,
       };
       this.eventsService
-        .eventsCreate(createPayload as unknown as Event)
+        .eventsCreate({ event: createPayload as unknown as Event })
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (created) => {
@@ -453,7 +442,7 @@ export class EventsFormComponent implements OnInit {
     };
 
     this.eventsService
-      .eventsPartialUpdate(id, updatePayload)
+      .eventsPartialUpdate({ id, patchedEvent: updatePayload })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

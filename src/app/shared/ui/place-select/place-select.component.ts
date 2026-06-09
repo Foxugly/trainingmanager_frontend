@@ -101,7 +101,7 @@ export class PlaceSelectComponent implements ControlValueAccessor {
         switchMap((teamId) =>
           this.placesService
             // Signature: (ordering, page, pageSize, search, sport, team) — ?team.
-            .placesList(undefined, undefined, undefined, undefined, undefined, teamId)
+            .placesList({ team: teamId })
             .pipe(catchError(() => of(null))),
         ),
         takeUntilDestroyed(this.destroyRef),
@@ -165,7 +165,7 @@ export class PlaceSelectComponent implements ControlValueAccessor {
       address: this.newAddress().trim() || undefined,
     };
     this.placesService
-      .placesCreate(payload)
+      .placesCreate({ placeRequest: payload })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (created) => {

@@ -79,9 +79,12 @@ export class EnergySegmentsFormComponent implements OnInit {
   protected readonly activeValue = signal(true);
 
   protected readonly patchActive = (id: number, value: boolean) =>
-    this.service.energySegmentsPartialUpdate(id, undefined, {
-      is_active: value,
-    } as PatchedEnergySegmentAdmin);
+    this.service.energySegmentsPartialUpdate({
+      id,
+      patchedEnergySegmentAdmin: {
+        is_active: value,
+      } as PatchedEnergySegmentAdmin,
+    });
 
   protected readonly activeLabels = computed<ActiveToggleLabels>(() => ({
     active: this.transloco.translate('common.active'),
@@ -113,7 +116,7 @@ export class EnergySegmentsFormComponent implements OnInit {
       this.segmentId.set(id);
       this.loading.set(true);
       this.service
-        .energySegmentsRetrieve(id, true)
+        .energySegmentsRetrieve({ id, includeInactive: true })
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (seg) => {
@@ -166,12 +169,11 @@ export class EnergySegmentsFormComponent implements OnInit {
     };
 
     const request$ = id
-      ? this.service.energySegmentsPartialUpdate(
+      ? this.service.energySegmentsPartialUpdate({
           id,
-          undefined,
-          payload as PatchedEnergySegmentAdmin,
-        )
-      : this.service.energySegmentsCreate(payload as EnergySegmentAdmin);
+          patchedEnergySegmentAdmin: payload as PatchedEnergySegmentAdmin,
+        })
+      : this.service.energySegmentsCreate({ energySegmentAdmin: payload as EnergySegmentAdmin });
 
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {

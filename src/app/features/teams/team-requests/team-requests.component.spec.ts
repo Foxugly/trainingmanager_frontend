@@ -120,22 +120,14 @@ describe('TeamRequestsComponent', () => {
   beforeEach(() => setup());
 
   it('loads pending invitations + join requests on init, filtered by team', () => {
-    expect(invitationsMock.invitationsList).toHaveBeenCalledWith(
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      InvitationStatusEnum.Pending,
-      4,
-    );
-    expect(joinRequestsMock.joinRequestsList).toHaveBeenCalledWith(
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      JoinRequestStatusEnum.Pending,
-      4,
-    );
+    expect(invitationsMock.invitationsList).toHaveBeenCalledWith({
+      status: InvitationStatusEnum.Pending,
+      team: 4,
+    });
+    expect(joinRequestsMock.joinRequestsList).toHaveBeenCalledWith({
+      status: JoinRequestStatusEnum.Pending,
+      team: 4,
+    });
     expect(access(component).invitations()).toHaveLength(1);
     expect(access(component).joinRequests()).toHaveLength(1);
   });
@@ -154,10 +146,12 @@ describe('TeamRequestsComponent', () => {
     access(component).inviteForm.patchValue({ email: 'a@b.com', firstname: 'A', lastname: 'B' });
     access(component).submitInvite();
     expect(invitationsMock.invitationsCreate).toHaveBeenCalledWith({
-      team: 4,
-      email: 'a@b.com',
-      firstname: 'A',
-      lastname: 'B',
+      createInvitation: {
+        team: 4,
+        email: 'a@b.com',
+        firstname: 'A',
+        lastname: 'B',
+      },
     });
     expect(invitationsMock.invitationsList).toHaveBeenCalledTimes(2);
     expect(access(component).showInviteDialog()).toBe(false);
@@ -177,15 +171,16 @@ describe('TeamRequestsComponent', () => {
 
   it('confirmCancelInvitation calls invitationsDestroy on accept', () => {
     access(component).confirmCancelInvitation(inv1);
-    expect(invitationsMock.invitationsDestroy).toHaveBeenCalledWith(11);
+    expect(invitationsMock.invitationsDestroy).toHaveBeenCalledWith({ id: 11 });
   });
 
   it('confirmAcceptJoinRequest accepts, reloads, and signals membershipsChanged', () => {
     const membershipsChanged = vi.fn();
     component.membershipsChanged.subscribe(membershipsChanged);
     access(component).confirmAcceptJoinRequest(joinReq1);
-    expect(joinRequestsMock.joinRequestsPartialUpdate).toHaveBeenCalledWith(77, {
-      status: JoinRequestStatusEnum.Accepted,
+    expect(joinRequestsMock.joinRequestsPartialUpdate).toHaveBeenCalledWith({
+      id: 77,
+      patchedTeamJoinRequest: { status: JoinRequestStatusEnum.Accepted },
     });
     expect(joinRequestsMock.joinRequestsList).toHaveBeenCalledTimes(2);
     expect(membershipsChanged).toHaveBeenCalled();
@@ -196,9 +191,12 @@ describe('TeamRequestsComponent', () => {
     expect(access(component).rejectingRequest()).toEqual(joinReq1);
     access(component).rejectMessage.set('full team');
     access(component).submitReject();
-    expect(joinRequestsMock.joinRequestsPartialUpdate).toHaveBeenCalledWith(77, {
-      status: JoinRequestStatusEnum.Rejected,
-      response_message: 'full team',
+    expect(joinRequestsMock.joinRequestsPartialUpdate).toHaveBeenCalledWith({
+      id: 77,
+      patchedTeamJoinRequest: {
+        status: JoinRequestStatusEnum.Rejected,
+        response_message: 'full team',
+      },
     });
     expect(access(component).rejectingRequest()).toBeNull();
   });

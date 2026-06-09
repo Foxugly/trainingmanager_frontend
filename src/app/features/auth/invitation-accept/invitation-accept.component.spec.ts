@@ -118,7 +118,7 @@ describe('InvitationAcceptComponent', () => {
   });
 
   it('fetches the invitation on init', () => {
-    expect(invitationsMock.invitationsLookupRetrieve).toHaveBeenCalledWith('tok-abc');
+    expect(invitationsMock.invitationsLookupRetrieve).toHaveBeenCalledWith({ token: 'tok-abc' });
     expect(access(component).invitation()?.team_name).toBe('RBP WP Senior');
     expect(access(component).lookupError()).toBeNull();
     expect(access(component).canSubmit()).toBe(true);
@@ -163,9 +163,12 @@ describe('InvitationAcceptComponent', () => {
       password_confirm: 'StrongPass1!',
     });
     access(component).submit();
-    expect(invitationsMock.invitationsLookupCreate).toHaveBeenCalledWith('tok-abc', {
-      username: 'newathlete',
-      password: 'StrongPass1!',
+    expect(invitationsMock.invitationsLookupCreate).toHaveBeenCalledWith({
+      token: 'tok-abc',
+      completeInvitation: {
+        username: 'newathlete',
+        password: 'StrongPass1!',
+      },
     });
     expect(authMock.loginWithTokens).toHaveBeenCalledWith('A', 'R');
     expect(router.navigate).toHaveBeenCalledWith(['/teams']);

@@ -20,6 +20,37 @@ import { TeamJoinRequest } from '../model/models';
 import { Configuration }                                     from '../configuration';
 
 
+export interface JoinRequestsCreateRequestParams {
+    createJoinRequest: CreateJoinRequest;
+}
+
+export interface JoinRequestsDestroyRequestParams {
+    id: number;
+}
+
+export interface JoinRequestsListRequestParams {
+    ordering?: string;
+    page?: number;
+    pageSize?: number;
+    search?: string;
+    status?: 'accepted' | 'cancelled' | 'pending' | 'rejected';
+    team?: number;
+}
+
+export interface JoinRequestsPartialUpdateRequestParams {
+    id: number;
+    patchedTeamJoinRequest?: PatchedTeamJoinRequest;
+}
+
+export interface JoinRequestsRetrieveRequestParams {
+    id: number;
+}
+
+export interface JoinRequestsUpdateRequestParams {
+    id: number;
+    teamJoinRequest: TeamJoinRequest;
+}
+
 
 export interface JoinRequestsServiceInterface {
     defaultHeaders: HttpHeaders;
@@ -29,55 +60,48 @@ export interface JoinRequestsServiceInterface {
      * 
      * Self-signup join request flow.
      * @endpoint post /api/v1/join-requests/
-     * @param createJoinRequest 
+* @param requestParameters
      */
-    joinRequestsCreate(createJoinRequest: CreateJoinRequest, extraHttpRequestParams?: any): Observable<CreateJoinRequest>;
+    joinRequestsCreate(requestParameters: JoinRequestsCreateRequestParams, extraHttpRequestParams?: any): Observable<CreateJoinRequest>;
 
     /**
      * 
      * Self-signup join request flow.
      * @endpoint delete /api/v1/join-requests/{id}/
-     * @param id A unique integer value identifying this team join request.
+* @param requestParameters
      */
-    joinRequestsDestroy(id: number, extraHttpRequestParams?: any): Observable<{}>;
+    joinRequestsDestroy(requestParameters: JoinRequestsDestroyRequestParams, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * 
      * Self-signup join request flow.
      * @endpoint get /api/v1/join-requests/
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
-     * @param status * &#x60;pending&#x60; - Pending * &#x60;accepted&#x60; - Accepted * &#x60;rejected&#x60; - Rejected * &#x60;cancelled&#x60; - Cancelled
-     * @param team 
+* @param requestParameters
      */
-    joinRequestsList(ordering?: string, page?: number, pageSize?: number, search?: string, status?: 'accepted' | 'cancelled' | 'pending' | 'rejected', team?: number, extraHttpRequestParams?: any): Observable<PaginatedTeamJoinRequestList>;
+    joinRequestsList(requestParameters: JoinRequestsListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedTeamJoinRequestList>;
 
     /**
      * 
      * Self-signup join request flow.
      * @endpoint patch /api/v1/join-requests/{id}/
-     * @param id A unique integer value identifying this team join request.
-     * @param patchedTeamJoinRequest 
+* @param requestParameters
      */
-    joinRequestsPartialUpdate(id: number, patchedTeamJoinRequest?: PatchedTeamJoinRequest, extraHttpRequestParams?: any): Observable<TeamJoinRequest>;
+    joinRequestsPartialUpdate(requestParameters: JoinRequestsPartialUpdateRequestParams, extraHttpRequestParams?: any): Observable<TeamJoinRequest>;
 
     /**
      * 
      * Self-signup join request flow.
      * @endpoint get /api/v1/join-requests/{id}/
-     * @param id A unique integer value identifying this team join request.
+* @param requestParameters
      */
-    joinRequestsRetrieve(id: number, extraHttpRequestParams?: any): Observable<TeamJoinRequest>;
+    joinRequestsRetrieve(requestParameters: JoinRequestsRetrieveRequestParams, extraHttpRequestParams?: any): Observable<TeamJoinRequest>;
 
     /**
      * 
      * Self-signup join request flow.
      * @endpoint put /api/v1/join-requests/{id}/
-     * @param id A unique integer value identifying this team join request.
-     * @param teamJoinRequest 
+* @param requestParameters
      */
-    joinRequestsUpdate(id: number, teamJoinRequest: TeamJoinRequest, extraHttpRequestParams?: any): Observable<TeamJoinRequest>;
+    joinRequestsUpdate(requestParameters: JoinRequestsUpdateRequestParams, extraHttpRequestParams?: any): Observable<TeamJoinRequest>;
 
 }

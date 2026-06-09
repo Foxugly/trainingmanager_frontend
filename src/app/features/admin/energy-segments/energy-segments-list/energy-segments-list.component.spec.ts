@@ -91,7 +91,7 @@ describe('EnergySegmentsListComponent', () => {
 
   it('loads active segments on init (no includeInactive)', () => {
     expect(serviceMock.energySegmentsList).toHaveBeenCalledTimes(1);
-    const [energysystem, includeInactive] = serviceMock.energySegmentsList.mock.calls[0];
+    const { energysystem, includeInactive } = serviceMock.energySegmentsList.mock.calls[0][0];
     expect(energysystem).toBeUndefined();
     expect(includeInactive).toBeUndefined();
     expect(access(component).segments()).toEqual([z1]);
@@ -103,7 +103,7 @@ describe('EnergySegmentsListComponent', () => {
     fixture.detectChanges();
 
     expect(serviceMock.energySegmentsList).toHaveBeenCalledTimes(2);
-    const [energysystem, includeInactive] = serviceMock.energySegmentsList.mock.calls[1];
+    const { energysystem, includeInactive } = serviceMock.energySegmentsList.mock.calls[1][0];
     expect(energysystem).toBeUndefined();
     expect(includeInactive).toBe(true);
     expect(access(component).segments()).toEqual([z1, z3]);
@@ -116,7 +116,7 @@ describe('EnergySegmentsListComponent', () => {
     const opts = confirmMock.confirm.mock.calls[0][0] as { accept: () => void };
     opts.accept();
 
-    expect(serviceMock.energySegmentsDestroy).toHaveBeenCalledWith(z1.id);
+    expect(serviceMock.energySegmentsDestroy).toHaveBeenCalledWith({ id: z1.id });
     expect(messageMock.add).toHaveBeenCalledTimes(1);
     expect(messageMock.add.mock.calls[0][0].severity).toBe('success');
   });
@@ -125,8 +125,10 @@ describe('EnergySegmentsListComponent', () => {
     serviceMock.energySegmentsList.mockClear();
     access(component).restore(z3);
 
-    expect(serviceMock.energySegmentsPartialUpdate).toHaveBeenCalledWith(z3.id, true, {
-      is_active: true,
+    expect(serviceMock.energySegmentsPartialUpdate).toHaveBeenCalledWith({
+      id: z3.id,
+      includeInactive: true,
+      patchedEnergySegmentAdmin: { is_active: true },
     });
     expect(messageMock.add).toHaveBeenCalledTimes(1);
     expect(serviceMock.energySegmentsList).toHaveBeenCalled();

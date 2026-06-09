@@ -26,7 +26,7 @@ export interface HealthServiceInterface {
      * Service healthcheck
      * Readiness/liveness probe. Returns 200 when the default database answers a trivial SELECT, 503 otherwise. Public — no auth required.
      * @endpoint get /api/v1/health/
-     */
+*/
     healthRetrieve(extraHttpRequestParams?: any): Observable<HealthCheck>;
 
 }

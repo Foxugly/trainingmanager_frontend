@@ -131,7 +131,8 @@ describe('GenerateEventsDialogComponent', () => {
   it('submits an ISO-formatted payload and emits generated on success', () => {
     access(component).submit();
     expect(serviceMock.programsGenerateEventsCreate).toHaveBeenCalledTimes(1);
-    const [id, payload] = serviceMock.programsGenerateEventsCreate.mock.calls[0];
+    const { id, generatePlanRequest: payload } =
+      serviceMock.programsGenerateEventsCreate.mock.calls[0][0];
     expect(id).toBe(4);
     expect(payload.date_start).toBe('2026-05-01');
     expect(payload.date_end).toBe('2026-08-31');
@@ -175,14 +176,14 @@ describe('GenerateEventsDialogComponent', () => {
   // ── Team training template integration ────────────────────────────────────
 
   it('fetches the team training template for the program team on open', () => {
-    expect(teamsMock.teamsTrainingTemplateRetrieve).toHaveBeenCalledWith(4);
+    expect(teamsMock.teamsTrainingTemplateRetrieve).toHaveBeenCalledWith({ id: 4 });
   });
 
   it('with no slots: hasTemplate is false and frequency stays required', () => {
     expect(access(component).hasTemplate()).toBe(false);
     const payload = (() => {
       access(component).submit();
-      return serviceMock.programsGenerateEventsCreate.mock.calls[0][1];
+      return serviceMock.programsGenerateEventsCreate.mock.calls[0][0].generatePlanRequest;
     })();
     expect(payload.frequency_per_week).toBe(3);
   });
@@ -201,7 +202,7 @@ describe('GenerateEventsDialogComponent', () => {
     await setup(true, richTemplate);
     expect(access(component).hasTemplate()).toBe(true);
     access(component).submit();
-    const payload = serviceMock.programsGenerateEventsCreate.mock.calls[0][1];
+    const payload = serviceMock.programsGenerateEventsCreate.mock.calls[0][0].generatePlanRequest;
     expect(payload.frequency_per_week).toBeUndefined();
   });
 

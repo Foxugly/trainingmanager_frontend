@@ -50,7 +50,7 @@ export class MessagesComponent implements OnInit {
   ngOnInit(): void {
     this.loading.set(true);
     this.teamsService
-      .teamsList(true)
+      .teamsList({ isActive: true })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => this.loadTopics(res.results ?? []),
@@ -67,7 +67,7 @@ export class MessagesComponent implements OnInit {
     }
 
     const calls = teams.map((team) =>
-      this.teamsService.teamsTopicsList(team.id).pipe(
+      this.teamsService.teamsTopicsList({ teamPk: team.id }).pipe(
         map((res) => (res.results ?? []).map((topic) => this.toRow(topic, team))),
         // A single team failing must not blank the whole list.
         catchError(() => of([] as TopicRow[])),

@@ -17,6 +17,10 @@ import { DashboardSummary } from '../model/models';
 import { Configuration }                                     from '../configuration';
 
 
+export interface DashboardSummaryRetrieveRequestParams {
+    today?: string;
+}
+
 
 export interface DashboardServiceInterface {
     defaultHeaders: HttpHeaders;
@@ -26,8 +30,8 @@ export interface DashboardServiceInterface {
      * Aggregate dashboard payload (replaces the per-resource fan-out)
      * GET /api/v1/dashboard/summary/ — one-shot aggregate for the dashboard.
      * @endpoint get /api/v1/dashboard/summary/
-     * @param today Caller\&#39;s local date (YYYY-MM-DD) for the date windows; defaults to the server\&#39;s local date.
+* @param requestParameters
      */
-    dashboardSummaryRetrieve(today?: string, extraHttpRequestParams?: any): Observable<DashboardSummary>;
+    dashboardSummaryRetrieve(requestParameters: DashboardSummaryRetrieveRequestParams, extraHttpRequestParams?: any): Observable<DashboardSummary>;
 
 }

@@ -127,7 +127,10 @@ describe('EnergySegmentsFormComponent', () => {
     await setup('3');
 
     expect(access(component).segmentId()).toBe(3);
-    expect(segmentsServiceMock.energySegmentsRetrieve).toHaveBeenCalledWith(3, true);
+    expect(segmentsServiceMock.energySegmentsRetrieve).toHaveBeenCalledWith({
+      id: 3,
+      includeInactive: true,
+    });
     expect(access(component).activeValue()).toBe(true);
     expect(access(component).form.value).toMatchObject({
       abv: 'Z3',
@@ -147,8 +150,9 @@ describe('EnergySegmentsFormComponent', () => {
   it('patchActive calls energySegmentsPartialUpdate with undefined 2nd arg and is_active body', async () => {
     await setup('3');
     access(component).patchActive(3, false);
-    expect(segmentsServiceMock.energySegmentsPartialUpdate).toHaveBeenCalledWith(3, undefined, {
-      is_active: false,
+    expect(segmentsServiceMock.energySegmentsPartialUpdate).toHaveBeenCalledWith({
+      id: 3,
+      patchedEnergySegmentAdmin: { is_active: false },
     });
   });
 
@@ -163,7 +167,7 @@ describe('EnergySegmentsFormComponent', () => {
     access(component).submit();
 
     expect(segmentsServiceMock.energySegmentsCreate).toHaveBeenCalledTimes(1);
-    expect(segmentsServiceMock.energySegmentsCreate.mock.calls[0][0]).toMatchObject({
+    expect(segmentsServiceMock.energySegmentsCreate.mock.calls[0][0].energySegmentAdmin).toMatchObject({
       abv: 'ZTEST',
       energy_system_id: 1,
       description_fr: 'Pour test',
@@ -180,11 +184,11 @@ describe('EnergySegmentsFormComponent', () => {
     access(component).submit();
 
     expect(segmentsServiceMock.energySegmentsPartialUpdate).toHaveBeenCalledTimes(1);
-    const [id, includeInactive, payload] =
-      segmentsServiceMock.energySegmentsPartialUpdate.mock.calls[0];
+    const { id, includeInactive, patchedEnergySegmentAdmin } =
+      segmentsServiceMock.energySegmentsPartialUpdate.mock.calls[0][0];
     expect(id).toBe(3);
     expect(includeInactive).toBeUndefined();
-    expect(payload).toMatchObject({ description_nl: 'beschrijving' });
+    expect(patchedEnergySegmentAdmin).toMatchObject({ description_nl: 'beschrijving' });
     expect(navigate).toHaveBeenCalledWith(['/admin/energy-segments']);
   });
 

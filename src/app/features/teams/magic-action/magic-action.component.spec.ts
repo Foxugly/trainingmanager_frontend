@@ -112,7 +112,7 @@ describe('MagicActionComponent', () => {
   });
 
   it('loads preview and exposes the parsed payload', () => {
-    expect(magicMock.joinMagicRetrieve).toHaveBeenCalledWith('tok-abc');
+    expect(magicMock.joinMagicRetrieve).toHaveBeenCalledWith({ token: 'tok-abc' });
     expect(access(component).data()?.join_request.team_name).toBe('Sharks');
     expect(access(component).errorState()).toBeNull();
   });
@@ -159,7 +159,9 @@ describe('MagicActionComponent', () => {
       of(makePreview({ status: MagicActionJoinRequestStatusEnum.Accepted, responded_by: 'me' })),
     );
     access(component).execute();
-    expect(magicMock.joinMagicCreate).toHaveBeenCalledWith({ token: 'tok-abc' });
+    expect(magicMock.joinMagicCreate).toHaveBeenCalledWith({
+      teamJoinRequestMagicActionPost: { token: 'tok-abc' },
+    });
     expect(access(component).executed()).toBe(true);
     expect(access(component).data()?.join_request.status).toBe(
       MagicActionJoinRequestStatusEnum.Accepted,

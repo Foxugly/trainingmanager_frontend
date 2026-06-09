@@ -28,7 +28,14 @@ import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables'
 import { Configuration }                                     from '../configuration';
 import { BaseService } from '../api.base.service';
 import {
-    MembersServiceInterface
+    MembersServiceInterface,
+    MembersAnonymizeRequestParams,
+    MembersCreateRequestParams,
+    MembersDestroyRequestParams,
+    MembersListRequestParams,
+    MembersPartialUpdateRequestParams,
+    MembersRetrieveRequestParams,
+    MembersUpdateRequestParams
 } from './members.serviceInterface';
 
 
@@ -45,15 +52,16 @@ export class MembersService extends BaseService implements MembersServiceInterfa
     /**
      * Irreversibly anonymize an athlete\&#39;s personal data (RGPD erasure).  A coach (owner/manager) of a team the member belongs to (active OR past membership) blanks the member\&#39;s PII: firstname/lastname become a neutral placeholder, email and phonenumber are cleared. Any linked user account is UNLINKED (member.user &#x3D; None) but NOT deleted — users own their own account. Coach notes ABOUT this member are deleted (they may contain PII). Training history (memberships, performances, rsvp, roti) is KEPT, now tied to the anonymized member so aggregate stats survive.  THIS IS IRREVERSIBLE. There is no undo.
      * @endpoint post /api/v1/members/{id}/anonymize/
-     * @param id A unique integer value identifying this Member.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public membersAnonymize(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Member>;
-    public membersAnonymize(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Member>>;
-    public membersAnonymize(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Member>>;
-    public membersAnonymize(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public membersAnonymize(requestParameters: MembersAnonymizeRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Member>;
+    public membersAnonymize(requestParameters: MembersAnonymizeRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Member>>;
+    public membersAnonymize(requestParameters: MembersAnonymizeRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Member>>;
+    public membersAnonymize(requestParameters: MembersAnonymizeRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling membersAnonymize.');
         }
@@ -104,15 +112,16 @@ export class MembersService extends BaseService implements MembersServiceInterfa
     /**
      * CRUD complet pour Member, scopé par teams du Member.
      * @endpoint post /api/v1/members/
-     * @param member 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public membersCreate(member: Member, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Member>;
-    public membersCreate(member: Member, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Member>>;
-    public membersCreate(member: Member, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Member>>;
-    public membersCreate(member: Member, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public membersCreate(requestParameters: MembersCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Member>;
+    public membersCreate(requestParameters: MembersCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Member>>;
+    public membersCreate(requestParameters: MembersCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Member>>;
+    public membersCreate(requestParameters: MembersCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const member = requestParameters?.member;
         if (member === null || member === undefined) {
             throw new Error('Required parameter member was null or undefined when calling membersCreate.');
         }
@@ -175,15 +184,16 @@ export class MembersService extends BaseService implements MembersServiceInterfa
     /**
      * CRUD complet pour Member, scopé par teams du Member.
      * @endpoint delete /api/v1/members/{id}/
-     * @param id A unique integer value identifying this Member.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public membersDestroy(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public membersDestroy(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public membersDestroy(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public membersDestroy(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public membersDestroy(requestParameters: MembersDestroyRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public membersDestroy(requestParameters: MembersDestroyRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public membersDestroy(requestParameters: MembersDestroyRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public membersDestroy(requestParameters: MembersDestroyRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling membersDestroy.');
         }
@@ -233,20 +243,21 @@ export class MembersService extends BaseService implements MembersServiceInterfa
     /**
      * CRUD complet pour Member, scopé par teams du Member.
      * @endpoint get /api/v1/members/
-     * @param firstname 
-     * @param lastname 
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public membersList(firstname?: string, lastname?: string, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedMemberList>;
-    public membersList(firstname?: string, lastname?: string, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedMemberList>>;
-    public membersList(firstname?: string, lastname?: string, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedMemberList>>;
-    public membersList(firstname?: string, lastname?: string, ordering?: string, page?: number, pageSize?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public membersList(requestParameters?: MembersListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedMemberList>;
+    public membersList(requestParameters?: MembersListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedMemberList>>;
+    public membersList(requestParameters?: MembersListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedMemberList>>;
+    public membersList(requestParameters?: MembersListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const firstname = requestParameters?.firstname;
+        const lastname = requestParameters?.lastname;
+        const ordering = requestParameters?.ordering;
+        const page = requestParameters?.page;
+        const pageSize = requestParameters?.pageSize;
+        const search = requestParameters?.search;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -351,19 +362,20 @@ export class MembersService extends BaseService implements MembersServiceInterfa
     /**
      * CRUD complet pour Member, scopé par teams du Member.
      * @endpoint patch /api/v1/members/{id}/
-     * @param id A unique integer value identifying this Member.
-     * @param patchedMember 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public membersPartialUpdate(id: number, patchedMember?: PatchedMember, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Member>;
-    public membersPartialUpdate(id: number, patchedMember?: PatchedMember, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Member>>;
-    public membersPartialUpdate(id: number, patchedMember?: PatchedMember, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Member>>;
-    public membersPartialUpdate(id: number, patchedMember?: PatchedMember, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public membersPartialUpdate(requestParameters: MembersPartialUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Member>;
+    public membersPartialUpdate(requestParameters: MembersPartialUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Member>>;
+    public membersPartialUpdate(requestParameters: MembersPartialUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Member>>;
+    public membersPartialUpdate(requestParameters: MembersPartialUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling membersPartialUpdate.');
         }
+        const patchedMember = requestParameters?.patchedMember;
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -423,15 +435,16 @@ export class MembersService extends BaseService implements MembersServiceInterfa
     /**
      * CRUD complet pour Member, scopé par teams du Member.
      * @endpoint get /api/v1/members/{id}/
-     * @param id A unique integer value identifying this Member.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public membersRetrieve(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Member>;
-    public membersRetrieve(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Member>>;
-    public membersRetrieve(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Member>>;
-    public membersRetrieve(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public membersRetrieve(requestParameters: MembersRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Member>;
+    public membersRetrieve(requestParameters: MembersRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Member>>;
+    public membersRetrieve(requestParameters: MembersRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Member>>;
+    public membersRetrieve(requestParameters: MembersRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling membersRetrieve.');
         }
@@ -482,19 +495,20 @@ export class MembersService extends BaseService implements MembersServiceInterfa
     /**
      * CRUD complet pour Member, scopé par teams du Member.
      * @endpoint put /api/v1/members/{id}/
-     * @param id A unique integer value identifying this Member.
-     * @param member 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public membersUpdate(id: number, member: Member, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Member>;
-    public membersUpdate(id: number, member: Member, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Member>>;
-    public membersUpdate(id: number, member: Member, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Member>>;
-    public membersUpdate(id: number, member: Member, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public membersUpdate(requestParameters: MembersUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Member>;
+    public membersUpdate(requestParameters: MembersUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Member>>;
+    public membersUpdate(requestParameters: MembersUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Member>>;
+    public membersUpdate(requestParameters: MembersUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling membersUpdate.');
         }
+        const member = requestParameters?.member;
         if (member === null || member === undefined) {
             throw new Error('Required parameter member was null or undefined when calling membersUpdate.');
         }

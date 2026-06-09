@@ -211,7 +211,7 @@ export class EventsCalendarComponent implements OnInit {
 
   private loadTeams(): void {
     this.teamsService
-      .teamsList(true)
+      .teamsList({ isActive: true })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
@@ -230,18 +230,7 @@ export class EventsCalendarComponent implements OnInit {
     }
     const requests = teamIds.map((teamId) =>
       firstValueFrom(
-        this.programsService.programsList(
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          teamId,
-        ),
+        this.programsService.programsList({ team: teamId }),
       ),
     );
     const responses = await Promise.all(requests);
@@ -267,9 +256,12 @@ export class EventsCalendarComponent implements OnInit {
       const lte = isoDate(end);
       const requests = programIds.map((pid) =>
         firstValueFrom(
-          this.eventsService.eventsList(
-            undefined, undefined, gte, lte, 'date', undefined, undefined, pid, undefined,
-          ),
+          this.eventsService.eventsList({
+            dateGte: gte,
+            dateLte: lte,
+            ordering: 'date',
+            referProgram: pid,
+          }),
         ),
       );
       const responses = await Promise.all(requests);

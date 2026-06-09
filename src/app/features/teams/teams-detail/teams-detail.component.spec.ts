@@ -301,8 +301,8 @@ describe('TeamsDetailComponent', () => {
   });
 
   it('loads team and memberships from route id on init', () => {
-    expect(serviceMock.teamsRetrieve).toHaveBeenCalledWith(4);
-    expect(serviceMock.teamsMembershipsList).toHaveBeenCalledWith(4);
+    expect(serviceMock.teamsRetrieve).toHaveBeenCalledWith({ id: 4 });
+    expect(serviceMock.teamsMembershipsList).toHaveBeenCalledWith({ teamPk: 4 });
     expect(access(component).team()?.id).toBe(4);
     expect(access(component).memberships()).toHaveLength(1);
   });
@@ -374,7 +374,7 @@ describe('TeamsDetailComponent', () => {
     });
     access(component).openNotes(mb1);
     access(component).confirmAnonymizeMember(mb1);
-    expect(membersMock.membersAnonymize).toHaveBeenCalledWith(mb1.member);
+    expect(membersMock.membersAnonymize).toHaveBeenCalledWith({ id: mb1.member });
     expect(access(component).notesDialogOpen()).toBe(false);
     expect(access(component).notesMembership()).toBeNull();
     // initial load + reload after anonymize
@@ -395,7 +395,7 @@ describe('TeamsDetailComponent', () => {
       return confirmation;
     });
     access(component).confirmRemoveMember(mb1);
-    expect(serviceMock.teamsMembershipsDestroy).toHaveBeenCalledWith(1, 4);
+    expect(serviceMock.teamsMembershipsDestroy).toHaveBeenCalledWith({ id: 1, teamPk: 4 });
   });
 
   it('confirmDeactivate calls teamsPartialUpdate with is_active=false and navigates to /teams', () => {
@@ -405,7 +405,10 @@ describe('TeamsDetailComponent', () => {
       return confirmation;
     });
     access(component).confirmDeactivate();
-    expect(serviceMock.teamsPartialUpdate).toHaveBeenCalledWith(4, { is_active: false });
+    expect(serviceMock.teamsPartialUpdate).toHaveBeenCalledWith({
+      id: 4,
+      patchedTeam: { is_active: false },
+    });
     expect(router.navigate).toHaveBeenCalledWith(['/teams']);
   });
 
@@ -416,7 +419,10 @@ describe('TeamsDetailComponent', () => {
   it('patchActive calls teamsPartialUpdate with is_active as the 2nd arg', () => {
     serviceMock.teamsPartialUpdate.mockClear();
     access(component).patchActive(4, false);
-    expect(serviceMock.teamsPartialUpdate).toHaveBeenCalledWith(4, { is_active: false });
+    expect(serviceMock.teamsPartialUpdate).toHaveBeenCalledWith({
+      id: 4,
+      patchedTeam: { is_active: false },
+    });
   });
 
   it('non-manager (member) cannot manage and the template hides invitation controls', async () => {
@@ -455,9 +461,11 @@ describe('TeamsDetailComponent', () => {
     );
     access(component).submitJoinRequest();
     expect(joinRequestsMock.joinRequestsCreate).toHaveBeenCalledWith({
-      id: 0,
-      team: 4,
-      message: 'Hi, swimmer here',
+      createJoinRequest: {
+        id: 0,
+        team: 4,
+        message: 'Hi, swimmer here',
+      },
     });
     expect(access(component).showJoinDialog()).toBe(false);
   });
@@ -508,8 +516,9 @@ describe('TeamsDetailComponent', () => {
       return confirmation;
     });
     access(component).confirmCancelMyRequest();
-    expect(joinRequestsMock.joinRequestsPartialUpdate).toHaveBeenCalledWith(77, {
-      status: JoinRequestStatusEnum.Cancelled,
+    expect(joinRequestsMock.joinRequestsPartialUpdate).toHaveBeenCalledWith({
+      id: 77,
+      patchedTeamJoinRequest: { status: JoinRequestStatusEnum.Cancelled },
     });
     expect(access(component).myPendingRequest()).toBeNull();
   });
@@ -625,7 +634,7 @@ describe('TeamsDetailComponent', () => {
 
   it('opening the Journal tab fetches the team audit log and maps rows', () => {
     access(component).onTabChange('audit');
-    expect(auditMock.auditLogList).toHaveBeenCalledWith(undefined, 1, undefined, undefined, 4);
+    expect(auditMock.auditLogList).toHaveBeenCalledWith({ page: 1, team: 4 });
     const rows = access(component).auditRows();
     expect(rows).toHaveLength(2);
     expect(rows[0].id).toBe(501);
@@ -654,7 +663,7 @@ describe('TeamsDetailComponent', () => {
     expect(access(component).auditRows()).toHaveLength(1);
     expect(access(component).auditHasMore()).toBe(true);
     access(component).loadMoreAudit();
-    expect(auditMock.auditLogList).toHaveBeenLastCalledWith(undefined, 2, undefined, undefined, 4);
+    expect(auditMock.auditLogList).toHaveBeenLastCalledWith({ page: 2, team: 4 });
     expect(access(component).auditRows()).toHaveLength(2);
     expect(access(component).auditHasMore()).toBe(false);
   });

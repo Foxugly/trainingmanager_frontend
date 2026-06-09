@@ -48,7 +48,7 @@ export class LanguageService {
     this.applyToTranslocoOnly(code);
 
     const payload: PatchedMe = { language: code as LanguageEnum };
-    return this.meService.mePartialUpdate(payload).pipe(
+    return this.meService.mePartialUpdate({ patchedMe: payload }).pipe(
       tap((updated) => this.authService.setCurrentUser(updated)),
       catchError((err) => {
         this.applyToTranslocoOnly(previous);

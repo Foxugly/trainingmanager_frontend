@@ -30,7 +30,13 @@ import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables'
 import { Configuration }                                     from '../configuration';
 import { BaseService } from '../api.base.service';
 import {
-    JoinRequestsServiceInterface
+    JoinRequestsServiceInterface,
+    JoinRequestsCreateRequestParams,
+    JoinRequestsDestroyRequestParams,
+    JoinRequestsListRequestParams,
+    JoinRequestsPartialUpdateRequestParams,
+    JoinRequestsRetrieveRequestParams,
+    JoinRequestsUpdateRequestParams
 } from './join-requests.serviceInterface';
 
 
@@ -47,15 +53,16 @@ export class JoinRequestsService extends BaseService implements JoinRequestsServ
     /**
      * Self-signup join request flow.
      * @endpoint post /api/v1/join-requests/
-     * @param createJoinRequest 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public joinRequestsCreate(createJoinRequest: CreateJoinRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<CreateJoinRequest>;
-    public joinRequestsCreate(createJoinRequest: CreateJoinRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<CreateJoinRequest>>;
-    public joinRequestsCreate(createJoinRequest: CreateJoinRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<CreateJoinRequest>>;
-    public joinRequestsCreate(createJoinRequest: CreateJoinRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public joinRequestsCreate(requestParameters: JoinRequestsCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<CreateJoinRequest>;
+    public joinRequestsCreate(requestParameters: JoinRequestsCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<CreateJoinRequest>>;
+    public joinRequestsCreate(requestParameters: JoinRequestsCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<CreateJoinRequest>>;
+    public joinRequestsCreate(requestParameters: JoinRequestsCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const createJoinRequest = requestParameters?.createJoinRequest;
         if (createJoinRequest === null || createJoinRequest === undefined) {
             throw new Error('Required parameter createJoinRequest was null or undefined when calling joinRequestsCreate.');
         }
@@ -118,15 +125,16 @@ export class JoinRequestsService extends BaseService implements JoinRequestsServ
     /**
      * Self-signup join request flow.
      * @endpoint delete /api/v1/join-requests/{id}/
-     * @param id A unique integer value identifying this team join request.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public joinRequestsDestroy(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public joinRequestsDestroy(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public joinRequestsDestroy(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public joinRequestsDestroy(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public joinRequestsDestroy(requestParameters: JoinRequestsDestroyRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public joinRequestsDestroy(requestParameters: JoinRequestsDestroyRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public joinRequestsDestroy(requestParameters: JoinRequestsDestroyRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public joinRequestsDestroy(requestParameters: JoinRequestsDestroyRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling joinRequestsDestroy.');
         }
@@ -176,20 +184,21 @@ export class JoinRequestsService extends BaseService implements JoinRequestsServ
     /**
      * Self-signup join request flow.
      * @endpoint get /api/v1/join-requests/
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
-     * @param status * &#x60;pending&#x60; - Pending * &#x60;accepted&#x60; - Accepted * &#x60;rejected&#x60; - Rejected * &#x60;cancelled&#x60; - Cancelled
-     * @param team 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public joinRequestsList(ordering?: string, page?: number, pageSize?: number, search?: string, status?: 'accepted' | 'cancelled' | 'pending' | 'rejected', team?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedTeamJoinRequestList>;
-    public joinRequestsList(ordering?: string, page?: number, pageSize?: number, search?: string, status?: 'accepted' | 'cancelled' | 'pending' | 'rejected', team?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedTeamJoinRequestList>>;
-    public joinRequestsList(ordering?: string, page?: number, pageSize?: number, search?: string, status?: 'accepted' | 'cancelled' | 'pending' | 'rejected', team?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedTeamJoinRequestList>>;
-    public joinRequestsList(ordering?: string, page?: number, pageSize?: number, search?: string, status?: 'accepted' | 'cancelled' | 'pending' | 'rejected', team?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public joinRequestsList(requestParameters?: JoinRequestsListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedTeamJoinRequestList>;
+    public joinRequestsList(requestParameters?: JoinRequestsListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedTeamJoinRequestList>>;
+    public joinRequestsList(requestParameters?: JoinRequestsListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedTeamJoinRequestList>>;
+    public joinRequestsList(requestParameters?: JoinRequestsListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const ordering = requestParameters?.ordering;
+        const page = requestParameters?.page;
+        const pageSize = requestParameters?.pageSize;
+        const search = requestParameters?.search;
+        const status = requestParameters?.status;
+        const team = requestParameters?.team;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -294,19 +303,20 @@ export class JoinRequestsService extends BaseService implements JoinRequestsServ
     /**
      * Self-signup join request flow.
      * @endpoint patch /api/v1/join-requests/{id}/
-     * @param id A unique integer value identifying this team join request.
-     * @param patchedTeamJoinRequest 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public joinRequestsPartialUpdate(id: number, patchedTeamJoinRequest?: PatchedTeamJoinRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamJoinRequest>;
-    public joinRequestsPartialUpdate(id: number, patchedTeamJoinRequest?: PatchedTeamJoinRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamJoinRequest>>;
-    public joinRequestsPartialUpdate(id: number, patchedTeamJoinRequest?: PatchedTeamJoinRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamJoinRequest>>;
-    public joinRequestsPartialUpdate(id: number, patchedTeamJoinRequest?: PatchedTeamJoinRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public joinRequestsPartialUpdate(requestParameters: JoinRequestsPartialUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamJoinRequest>;
+    public joinRequestsPartialUpdate(requestParameters: JoinRequestsPartialUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamJoinRequest>>;
+    public joinRequestsPartialUpdate(requestParameters: JoinRequestsPartialUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamJoinRequest>>;
+    public joinRequestsPartialUpdate(requestParameters: JoinRequestsPartialUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling joinRequestsPartialUpdate.');
         }
+        const patchedTeamJoinRequest = requestParameters?.patchedTeamJoinRequest;
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -366,15 +376,16 @@ export class JoinRequestsService extends BaseService implements JoinRequestsServ
     /**
      * Self-signup join request flow.
      * @endpoint get /api/v1/join-requests/{id}/
-     * @param id A unique integer value identifying this team join request.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public joinRequestsRetrieve(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamJoinRequest>;
-    public joinRequestsRetrieve(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamJoinRequest>>;
-    public joinRequestsRetrieve(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamJoinRequest>>;
-    public joinRequestsRetrieve(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public joinRequestsRetrieve(requestParameters: JoinRequestsRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamJoinRequest>;
+    public joinRequestsRetrieve(requestParameters: JoinRequestsRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamJoinRequest>>;
+    public joinRequestsRetrieve(requestParameters: JoinRequestsRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamJoinRequest>>;
+    public joinRequestsRetrieve(requestParameters: JoinRequestsRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling joinRequestsRetrieve.');
         }
@@ -425,19 +436,20 @@ export class JoinRequestsService extends BaseService implements JoinRequestsServ
     /**
      * Self-signup join request flow.
      * @endpoint put /api/v1/join-requests/{id}/
-     * @param id A unique integer value identifying this team join request.
-     * @param teamJoinRequest 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public joinRequestsUpdate(id: number, teamJoinRequest: TeamJoinRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamJoinRequest>;
-    public joinRequestsUpdate(id: number, teamJoinRequest: TeamJoinRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamJoinRequest>>;
-    public joinRequestsUpdate(id: number, teamJoinRequest: TeamJoinRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamJoinRequest>>;
-    public joinRequestsUpdate(id: number, teamJoinRequest: TeamJoinRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public joinRequestsUpdate(requestParameters: JoinRequestsUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamJoinRequest>;
+    public joinRequestsUpdate(requestParameters: JoinRequestsUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamJoinRequest>>;
+    public joinRequestsUpdate(requestParameters: JoinRequestsUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamJoinRequest>>;
+    public joinRequestsUpdate(requestParameters: JoinRequestsUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling joinRequestsUpdate.');
         }
+        const teamJoinRequest = requestParameters?.teamJoinRequest;
         if (teamJoinRequest === null || teamJoinRequest === undefined) {
             throw new Error('Required parameter teamJoinRequest was null or undefined when calling joinRequestsUpdate.');
         }

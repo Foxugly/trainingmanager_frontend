@@ -28,7 +28,13 @@ import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables'
 import { Configuration }                                     from '../configuration';
 import { BaseService } from '../api.base.service';
 import {
-    EnergySegmentsServiceInterface
+    EnergySegmentsServiceInterface,
+    EnergySegmentsCreateRequestParams,
+    EnergySegmentsDestroyRequestParams,
+    EnergySegmentsListRequestParams,
+    EnergySegmentsPartialUpdateRequestParams,
+    EnergySegmentsRetrieveRequestParams,
+    EnergySegmentsUpdateRequestParams
 } from './energy-segments.serviceInterface';
 
 
@@ -46,15 +52,16 @@ export class EnergySegmentsService extends BaseService implements EnergySegments
      * Create energy segment (staff only)
      * CRUD on EnergySegment referential.
      * @endpoint post /api/v1/energy-segments/
-     * @param energySegmentAdmin 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public energySegmentsCreate(energySegmentAdmin: EnergySegmentAdmin, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<EnergySegmentAdmin>;
-    public energySegmentsCreate(energySegmentAdmin: EnergySegmentAdmin, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EnergySegmentAdmin>>;
-    public energySegmentsCreate(energySegmentAdmin: EnergySegmentAdmin, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EnergySegmentAdmin>>;
-    public energySegmentsCreate(energySegmentAdmin: EnergySegmentAdmin, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public energySegmentsCreate(requestParameters: EnergySegmentsCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<EnergySegmentAdmin>;
+    public energySegmentsCreate(requestParameters: EnergySegmentsCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EnergySegmentAdmin>>;
+    public energySegmentsCreate(requestParameters: EnergySegmentsCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EnergySegmentAdmin>>;
+    public energySegmentsCreate(requestParameters: EnergySegmentsCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const energySegmentAdmin = requestParameters?.energySegmentAdmin;
         if (energySegmentAdmin === null || energySegmentAdmin === undefined) {
             throw new Error('Required parameter energySegmentAdmin was null or undefined when calling energySegmentsCreate.');
         }
@@ -118,15 +125,16 @@ export class EnergySegmentsService extends BaseService implements EnergySegments
      * Soft delete energy segment (staff only)
      * CRUD on EnergySegment referential.
      * @endpoint delete /api/v1/energy-segments/{id}/
-     * @param id A unique integer value identifying this energy segment.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public energySegmentsDestroy(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public energySegmentsDestroy(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public energySegmentsDestroy(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public energySegmentsDestroy(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public energySegmentsDestroy(requestParameters: EnergySegmentsDestroyRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public energySegmentsDestroy(requestParameters: EnergySegmentsDestroyRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public energySegmentsDestroy(requestParameters: EnergySegmentsDestroyRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public energySegmentsDestroy(requestParameters: EnergySegmentsDestroyRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling energySegmentsDestroy.');
         }
@@ -177,21 +185,22 @@ export class EnergySegmentsService extends BaseService implements EnergySegments
      * List energy segments (public flavor)
      * CRUD on EnergySegment referential.
      * @endpoint get /api/v1/energy-segments/
-     * @param energysystem 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
-     * @param isActive 
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public energySegmentsList(energysystem?: number, includeInactive?: boolean, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedEnergySegmentList>;
-    public energySegmentsList(energysystem?: number, includeInactive?: boolean, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedEnergySegmentList>>;
-    public energySegmentsList(energysystem?: number, includeInactive?: boolean, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedEnergySegmentList>>;
-    public energySegmentsList(energysystem?: number, includeInactive?: boolean, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public energySegmentsList(requestParameters?: EnergySegmentsListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedEnergySegmentList>;
+    public energySegmentsList(requestParameters?: EnergySegmentsListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedEnergySegmentList>>;
+    public energySegmentsList(requestParameters?: EnergySegmentsListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedEnergySegmentList>>;
+    public energySegmentsList(requestParameters?: EnergySegmentsListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const energysystem = requestParameters?.energysystem;
+        const includeInactive = requestParameters?.includeInactive;
+        const isActive = requestParameters?.isActive;
+        const ordering = requestParameters?.ordering;
+        const page = requestParameters?.page;
+        const pageSize = requestParameters?.pageSize;
+        const search = requestParameters?.search;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -305,20 +314,21 @@ export class EnergySegmentsService extends BaseService implements EnergySegments
     /**
      * CRUD on EnergySegment referential.
      * @endpoint patch /api/v1/energy-segments/{id}/
-     * @param id A unique integer value identifying this energy segment.
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
-     * @param patchedEnergySegmentAdmin 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public energySegmentsPartialUpdate(id: number, includeInactive?: boolean, patchedEnergySegmentAdmin?: PatchedEnergySegmentAdmin, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<EnergySegmentAdmin>;
-    public energySegmentsPartialUpdate(id: number, includeInactive?: boolean, patchedEnergySegmentAdmin?: PatchedEnergySegmentAdmin, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EnergySegmentAdmin>>;
-    public energySegmentsPartialUpdate(id: number, includeInactive?: boolean, patchedEnergySegmentAdmin?: PatchedEnergySegmentAdmin, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EnergySegmentAdmin>>;
-    public energySegmentsPartialUpdate(id: number, includeInactive?: boolean, patchedEnergySegmentAdmin?: PatchedEnergySegmentAdmin, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public energySegmentsPartialUpdate(requestParameters: EnergySegmentsPartialUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<EnergySegmentAdmin>;
+    public energySegmentsPartialUpdate(requestParameters: EnergySegmentsPartialUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EnergySegmentAdmin>>;
+    public energySegmentsPartialUpdate(requestParameters: EnergySegmentsPartialUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EnergySegmentAdmin>>;
+    public energySegmentsPartialUpdate(requestParameters: EnergySegmentsPartialUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling energySegmentsPartialUpdate.');
         }
+        const includeInactive = requestParameters?.includeInactive;
+        const patchedEnergySegmentAdmin = requestParameters?.patchedEnergySegmentAdmin;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -391,19 +401,20 @@ export class EnergySegmentsService extends BaseService implements EnergySegments
      * Retrieve energy segment (admin flavor for staff)
      * CRUD on EnergySegment referential.
      * @endpoint get /api/v1/energy-segments/{id}/
-     * @param id A unique integer value identifying this energy segment.
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public energySegmentsRetrieve(id: number, includeInactive?: boolean, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<EnergySegmentAdmin>;
-    public energySegmentsRetrieve(id: number, includeInactive?: boolean, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EnergySegmentAdmin>>;
-    public energySegmentsRetrieve(id: number, includeInactive?: boolean, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EnergySegmentAdmin>>;
-    public energySegmentsRetrieve(id: number, includeInactive?: boolean, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public energySegmentsRetrieve(requestParameters: EnergySegmentsRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<EnergySegmentAdmin>;
+    public energySegmentsRetrieve(requestParameters: EnergySegmentsRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EnergySegmentAdmin>>;
+    public energySegmentsRetrieve(requestParameters: EnergySegmentsRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EnergySegmentAdmin>>;
+    public energySegmentsRetrieve(requestParameters: EnergySegmentsRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling energySegmentsRetrieve.');
         }
+        const includeInactive = requestParameters?.includeInactive;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -463,23 +474,24 @@ export class EnergySegmentsService extends BaseService implements EnergySegments
     /**
      * CRUD on EnergySegment referential.
      * @endpoint put /api/v1/energy-segments/{id}/
-     * @param id A unique integer value identifying this energy segment.
-     * @param energySegmentAdmin 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public energySegmentsUpdate(id: number, energySegmentAdmin: EnergySegmentAdmin, includeInactive?: boolean, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<EnergySegmentAdmin>;
-    public energySegmentsUpdate(id: number, energySegmentAdmin: EnergySegmentAdmin, includeInactive?: boolean, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EnergySegmentAdmin>>;
-    public energySegmentsUpdate(id: number, energySegmentAdmin: EnergySegmentAdmin, includeInactive?: boolean, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EnergySegmentAdmin>>;
-    public energySegmentsUpdate(id: number, energySegmentAdmin: EnergySegmentAdmin, includeInactive?: boolean, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public energySegmentsUpdate(requestParameters: EnergySegmentsUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<EnergySegmentAdmin>;
+    public energySegmentsUpdate(requestParameters: EnergySegmentsUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EnergySegmentAdmin>>;
+    public energySegmentsUpdate(requestParameters: EnergySegmentsUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EnergySegmentAdmin>>;
+    public energySegmentsUpdate(requestParameters: EnergySegmentsUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling energySegmentsUpdate.');
         }
+        const energySegmentAdmin = requestParameters?.energySegmentAdmin;
         if (energySegmentAdmin === null || energySegmentAdmin === undefined) {
             throw new Error('Required parameter energySegmentAdmin was null or undefined when calling energySegmentsUpdate.');
         }
+        const includeInactive = requestParameters?.includeInactive;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 

@@ -33,11 +33,13 @@ export class AttachmentUploadService {
   ): Promise<Attachment> {
     const presign = await firstValueFrom(
       this.attachments.attachmentsPresignCreate({
-        target_type: targetType as TargetTypeEnum,
-        target_id: targetId,
-        filename: file.name,
-        content_type: file.type || 'application/octet-stream',
-        size: file.size,
+        presignUploadRequest: {
+          target_type: targetType as TargetTypeEnum,
+          target_id: targetId,
+          filename: file.name,
+          content_type: file.type || 'application/octet-stream',
+          size: file.size,
+        },
       }),
     );
 
@@ -53,12 +55,12 @@ export class AttachmentUploadService {
       throw new Error(`S3 upload failed with status ${putResponse.status}`);
     }
 
-    return firstValueFrom(this.attachments.attachmentsCompleteCreate(presign.attachment_id));
+    return firstValueFrom(this.attachments.attachmentsCompleteCreate({ id: presign.attachment_id }));
   }
 
   /** Mint a presigned GET URL and open it in a new tab. */
   async download(id: number): Promise<void> {
-    const res = await firstValueFrom(this.attachments.attachmentsDownloadRetrieve(id));
+    const res = await firstValueFrom(this.attachments.attachmentsDownloadRetrieve({ id }));
     window.open(res.url, '_blank', 'noopener');
   }
 

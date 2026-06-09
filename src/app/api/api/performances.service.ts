@@ -28,7 +28,13 @@ import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables'
 import { Configuration }                                     from '../configuration';
 import { BaseService } from '../api.base.service';
 import {
-    PerformancesServiceInterface
+    PerformancesServiceInterface,
+    PerformancesCreateRequestParams,
+    PerformancesDestroyRequestParams,
+    PerformancesListRequestParams,
+    PerformancesPartialUpdateRequestParams,
+    PerformancesRetrieveRequestParams,
+    PerformancesUpdateRequestParams
 } from './performances.serviceInterface';
 
 
@@ -46,15 +52,16 @@ export class PerformancesService extends BaseService implements PerformancesServ
      * Log a performance
      * CRUD on athlete performance records, scoped to a team + member.  URL: /api/v1/performances/  READ scope: a user sees a Performance if they are the member\&#39;s linked user OR a coach (owner/manager) of the performance\&#39;s team. WRITE: the member\&#39;s own user OR a coach of the team. Athletes may only create for their own member, in a team they belong to.
      * @endpoint post /api/v1/performances/
-     * @param performance 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public performancesCreate(performance: Performance, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Performance>;
-    public performancesCreate(performance: Performance, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Performance>>;
-    public performancesCreate(performance: Performance, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Performance>>;
-    public performancesCreate(performance: Performance, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public performancesCreate(requestParameters: PerformancesCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Performance>;
+    public performancesCreate(requestParameters: PerformancesCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Performance>>;
+    public performancesCreate(requestParameters: PerformancesCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Performance>>;
+    public performancesCreate(requestParameters: PerformancesCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const performance = requestParameters?.performance;
         if (performance === null || performance === undefined) {
             throw new Error('Required parameter performance was null or undefined when calling performancesCreate.');
         }
@@ -118,15 +125,16 @@ export class PerformancesService extends BaseService implements PerformancesServ
      * Delete a performance
      * CRUD on athlete performance records, scoped to a team + member.  URL: /api/v1/performances/  READ scope: a user sees a Performance if they are the member\&#39;s linked user OR a coach (owner/manager) of the performance\&#39;s team. WRITE: the member\&#39;s own user OR a coach of the team. Athletes may only create for their own member, in a team they belong to.
      * @endpoint delete /api/v1/performances/{id}/
-     * @param id A unique integer value identifying this performance.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public performancesDestroy(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public performancesDestroy(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public performancesDestroy(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public performancesDestroy(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public performancesDestroy(requestParameters: PerformancesDestroyRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public performancesDestroy(requestParameters: PerformancesDestroyRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public performancesDestroy(requestParameters: PerformancesDestroyRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public performancesDestroy(requestParameters: PerformancesDestroyRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling performancesDestroy.');
         }
@@ -177,21 +185,22 @@ export class PerformancesService extends BaseService implements PerformancesServ
      * List athlete performances (scoped + filtered)
      * Returns the performances the caller may see: their own (as the member\&#39;s linked user) plus those of any team they coach. Optional filters: team, member, label (icontains). Order by recorded_on.
      * @endpoint get /api/v1/performances/
-     * @param label Filter by label (icontains).
-     * @param member Filter by member id.
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
-     * @param team Filter by team id.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public performancesList(label?: string, member?: number, ordering?: string, page?: number, pageSize?: number, search?: string, team?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedPerformanceList>;
-    public performancesList(label?: string, member?: number, ordering?: string, page?: number, pageSize?: number, search?: string, team?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedPerformanceList>>;
-    public performancesList(label?: string, member?: number, ordering?: string, page?: number, pageSize?: number, search?: string, team?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedPerformanceList>>;
-    public performancesList(label?: string, member?: number, ordering?: string, page?: number, pageSize?: number, search?: string, team?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public performancesList(requestParameters?: PerformancesListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedPerformanceList>;
+    public performancesList(requestParameters?: PerformancesListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedPerformanceList>>;
+    public performancesList(requestParameters?: PerformancesListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedPerformanceList>>;
+    public performancesList(requestParameters?: PerformancesListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const label = requestParameters?.label;
+        const member = requestParameters?.member;
+        const ordering = requestParameters?.ordering;
+        const page = requestParameters?.page;
+        const pageSize = requestParameters?.pageSize;
+        const search = requestParameters?.search;
+        const team = requestParameters?.team;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -306,19 +315,20 @@ export class PerformancesService extends BaseService implements PerformancesServ
      * Edit a performance
      * CRUD on athlete performance records, scoped to a team + member.  URL: /api/v1/performances/  READ scope: a user sees a Performance if they are the member\&#39;s linked user OR a coach (owner/manager) of the performance\&#39;s team. WRITE: the member\&#39;s own user OR a coach of the team. Athletes may only create for their own member, in a team they belong to.
      * @endpoint patch /api/v1/performances/{id}/
-     * @param id A unique integer value identifying this performance.
-     * @param patchedPerformance 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public performancesPartialUpdate(id: number, patchedPerformance?: PatchedPerformance, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Performance>;
-    public performancesPartialUpdate(id: number, patchedPerformance?: PatchedPerformance, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Performance>>;
-    public performancesPartialUpdate(id: number, patchedPerformance?: PatchedPerformance, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Performance>>;
-    public performancesPartialUpdate(id: number, patchedPerformance?: PatchedPerformance, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public performancesPartialUpdate(requestParameters: PerformancesPartialUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Performance>;
+    public performancesPartialUpdate(requestParameters: PerformancesPartialUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Performance>>;
+    public performancesPartialUpdate(requestParameters: PerformancesPartialUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Performance>>;
+    public performancesPartialUpdate(requestParameters: PerformancesPartialUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling performancesPartialUpdate.');
         }
+        const patchedPerformance = requestParameters?.patchedPerformance;
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -379,15 +389,16 @@ export class PerformancesService extends BaseService implements PerformancesServ
      * Retrieve a performance
      * CRUD on athlete performance records, scoped to a team + member.  URL: /api/v1/performances/  READ scope: a user sees a Performance if they are the member\&#39;s linked user OR a coach (owner/manager) of the performance\&#39;s team. WRITE: the member\&#39;s own user OR a coach of the team. Athletes may only create for their own member, in a team they belong to.
      * @endpoint get /api/v1/performances/{id}/
-     * @param id A unique integer value identifying this performance.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public performancesRetrieve(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Performance>;
-    public performancesRetrieve(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Performance>>;
-    public performancesRetrieve(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Performance>>;
-    public performancesRetrieve(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public performancesRetrieve(requestParameters: PerformancesRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Performance>;
+    public performancesRetrieve(requestParameters: PerformancesRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Performance>>;
+    public performancesRetrieve(requestParameters: PerformancesRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Performance>>;
+    public performancesRetrieve(requestParameters: PerformancesRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling performancesRetrieve.');
         }
@@ -439,19 +450,20 @@ export class PerformancesService extends BaseService implements PerformancesServ
      * Replace a performance
      * CRUD on athlete performance records, scoped to a team + member.  URL: /api/v1/performances/  READ scope: a user sees a Performance if they are the member\&#39;s linked user OR a coach (owner/manager) of the performance\&#39;s team. WRITE: the member\&#39;s own user OR a coach of the team. Athletes may only create for their own member, in a team they belong to.
      * @endpoint put /api/v1/performances/{id}/
-     * @param id A unique integer value identifying this performance.
-     * @param performance 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public performancesUpdate(id: number, performance: Performance, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Performance>;
-    public performancesUpdate(id: number, performance: Performance, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Performance>>;
-    public performancesUpdate(id: number, performance: Performance, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Performance>>;
-    public performancesUpdate(id: number, performance: Performance, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public performancesUpdate(requestParameters: PerformancesUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Performance>;
+    public performancesUpdate(requestParameters: PerformancesUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Performance>>;
+    public performancesUpdate(requestParameters: PerformancesUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Performance>>;
+    public performancesUpdate(requestParameters: PerformancesUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling performancesUpdate.');
         }
+        const performance = requestParameters?.performance;
         if (performance === null || performance === undefined) {
             throw new Error('Required parameter performance was null or undefined when calling performancesUpdate.');
         }

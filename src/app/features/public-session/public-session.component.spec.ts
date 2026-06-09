@@ -103,7 +103,7 @@ describe('PublicSessionComponent', () => {
   });
 
   it('fetches the session on init with the route token', () => {
-    expect(publicMock.publicEventsRetrieve).toHaveBeenCalledWith('tok-abc');
+    expect(publicMock.publicEventsRetrieve).toHaveBeenCalledWith({ token: 'tok-abc' });
     expect(access(component).loading()).toBe(false);
     expect(access(component).error()).toBe(false);
     expect(access(component).session()?.name).toBe('Threshold set');

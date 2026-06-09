@@ -106,7 +106,7 @@ describe('EnergySystemsFormComponent', () => {
     await setup('10');
 
     expect(access(component).esId()).toBe(10);
-    expect(serviceMock.energySystemsRetrieve).toHaveBeenCalledWith(10, true);
+    expect(serviceMock.energySystemsRetrieve).toHaveBeenCalledWith({ id: 10, includeInactive: true });
     expect(access(component).activeValue()).toBe(true);
     expect(access(component).form.value).toMatchObject({
       name_fr: 'Endurance',
@@ -125,8 +125,9 @@ describe('EnergySystemsFormComponent', () => {
   it('patchActive calls energySystemsPartialUpdate with undefined 2nd arg and is_active body', async () => {
     await setup('10');
     access(component).patchActive(10, false);
-    expect(serviceMock.energySystemsPartialUpdate).toHaveBeenCalledWith(10, undefined, {
-      is_active: false,
+    expect(serviceMock.energySystemsPartialUpdate).toHaveBeenCalledWith({
+      id: 10,
+      patchedEnergySystemAdmin: { is_active: false },
     });
   });
 
@@ -137,7 +138,7 @@ describe('EnergySystemsFormComponent', () => {
     access(component).submit();
 
     expect(serviceMock.energySystemsCreate).toHaveBeenCalledTimes(1);
-    expect(serviceMock.energySystemsCreate.mock.calls[0][0]).toMatchObject({
+    expect(serviceMock.energySystemsCreate.mock.calls[0][0].energySystemAdmin).toMatchObject({
       name_fr: 'Test',
       name_nl: null,
     });
@@ -152,10 +153,11 @@ describe('EnergySystemsFormComponent', () => {
     access(component).submit();
 
     expect(serviceMock.energySystemsPartialUpdate).toHaveBeenCalledTimes(1);
-    const [id, includeInactive, payload] = serviceMock.energySystemsPartialUpdate.mock.calls[0];
+    const { id, includeInactive, patchedEnergySystemAdmin } =
+      serviceMock.energySystemsPartialUpdate.mock.calls[0][0];
     expect(id).toBe(10);
     expect(includeInactive).toBeUndefined();
-    expect(payload).toMatchObject({ name_nl: 'Endurance NL' });
+    expect(patchedEnergySystemAdmin).toMatchObject({ name_nl: 'Endurance NL' });
     expect(navigate).toHaveBeenCalledWith(['/admin/energy-systems']);
   });
 

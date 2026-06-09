@@ -149,8 +149,9 @@ describe('AttendanceManagerComponent', () => {
 
     await new Promise((r) => setTimeout(r, 350));
     expect(eventsMock.eventsAttendanceBulkCreate).toHaveBeenCalledTimes(1);
-    expect(eventsMock.eventsAttendanceBulkCreate).toHaveBeenCalledWith(7, {
-      attendances: [{ member_id: 10, status_code: 'present' }],
+    expect(eventsMock.eventsAttendanceBulkCreate).toHaveBeenCalledWith({
+      eventPk: 7,
+      attendanceBulk: { attendances: [{ member_id: 10, status_code: 'present' }] },
     });
   });
 

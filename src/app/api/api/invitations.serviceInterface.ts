@@ -22,6 +22,36 @@ import { ValidateInvitation } from '../model/models';
 import { Configuration }                                     from '../configuration';
 
 
+export interface InvitationsCreateRequestParams {
+    createInvitation: CreateInvitation;
+}
+
+export interface InvitationsDestroyRequestParams {
+    id: number;
+}
+
+export interface InvitationsListRequestParams {
+    ordering?: string;
+    page?: number;
+    pageSize?: number;
+    search?: string;
+    status?: 'cancelled' | 'completed' | 'expired' | 'pending';
+    team?: number;
+}
+
+export interface InvitationsLookupCreateRequestParams {
+    token: string;
+    completeInvitation: CompleteInvitation;
+}
+
+export interface InvitationsLookupRetrieveRequestParams {
+    token: string;
+}
+
+export interface InvitationsRetrieveRequestParams {
+    id: number;
+}
+
 
 export interface InvitationsServiceInterface {
     defaultHeaders: HttpHeaders;
@@ -31,54 +61,48 @@ export interface InvitationsServiceInterface {
      * 
      * Trainer pre-registers an athlete on a managed team by sending an invitation email. Refused with code&#x3D;user_already_registered if the email matches an existing user account; the trainer must use a different flow (e.g. ask the user to issue a TeamJoinRequest) for registered users.
      * @endpoint post /api/v1/invitations/
-     * @param createInvitation 
+* @param requestParameters
      */
-    invitationsCreate(createInvitation: CreateInvitation, extraHttpRequestParams?: any): Observable<TeamInvitation>;
+    invitationsCreate(requestParameters: InvitationsCreateRequestParams, extraHttpRequestParams?: any): Observable<TeamInvitation>;
 
     /**
      * 
      * Trainer invitation flow.
      * @endpoint delete /api/v1/invitations/{id}/
-     * @param id A unique integer value identifying this team invitation.
+* @param requestParameters
      */
-    invitationsDestroy(id: number, extraHttpRequestParams?: any): Observable<{}>;
+    invitationsDestroy(requestParameters: InvitationsDestroyRequestParams, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * 
      * Trainer invitation flow.
      * @endpoint get /api/v1/invitations/
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
-     * @param status * &#x60;pending&#x60; - Pending * &#x60;completed&#x60; - Completed * &#x60;expired&#x60; - Expired * &#x60;cancelled&#x60; - Cancelled
-     * @param team 
+* @param requestParameters
      */
-    invitationsList(ordering?: string, page?: number, pageSize?: number, search?: string, status?: 'cancelled' | 'completed' | 'expired' | 'pending', team?: number, extraHttpRequestParams?: any): Observable<PaginatedTeamInvitationList>;
+    invitationsList(requestParameters: InvitationsListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedTeamInvitationList>;
 
     /**
      * 
      * Finalize invitation: create the user, link Member, return JWT.
      * @endpoint post /api/v1/invitations/lookup/{token}/
-     * @param token 
-     * @param completeInvitation 
+* @param requestParameters
      */
-    invitationsLookupCreate(token: string, completeInvitation: CompleteInvitation, extraHttpRequestParams?: any): Observable<CompleteInvitationResponse>;
+    invitationsLookupCreate(requestParameters: InvitationsLookupCreateRequestParams, extraHttpRequestParams?: any): Observable<CompleteInvitationResponse>;
 
     /**
      * 
      * Lookup an invitation by token. No authentication required.
      * @endpoint get /api/v1/invitations/lookup/{token}/
-     * @param token 
+* @param requestParameters
      */
-    invitationsLookupRetrieve(token: string, extraHttpRequestParams?: any): Observable<ValidateInvitation>;
+    invitationsLookupRetrieve(requestParameters: InvitationsLookupRetrieveRequestParams, extraHttpRequestParams?: any): Observable<ValidateInvitation>;
 
     /**
      * 
      * Trainer invitation flow.
      * @endpoint get /api/v1/invitations/{id}/
-     * @param id A unique integer value identifying this team invitation.
+* @param requestParameters
      */
-    invitationsRetrieve(id: number, extraHttpRequestParams?: any): Observable<TeamInvitation>;
+    invitationsRetrieve(requestParameters: InvitationsRetrieveRequestParams, extraHttpRequestParams?: any): Observable<TeamInvitation>;
 
 }

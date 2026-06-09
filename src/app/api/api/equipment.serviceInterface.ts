@@ -18,6 +18,19 @@ import { PaginatedEquipmentList } from '../model/models';
 import { Configuration }                                     from '../configuration';
 
 
+export interface EquipmentListRequestParams {
+    ordering?: string;
+    page?: number;
+    pageSize?: number;
+    search?: string;
+    sport?: number;
+    team?: number;
+}
+
+export interface EquipmentRetrieveRequestParams {
+    id: number;
+}
+
 
 export interface EquipmentServiceInterface {
     defaultHeaders: HttpHeaders;
@@ -27,21 +40,16 @@ export interface EquipmentServiceInterface {
      * List the global equipment (Matériel) catalog
      * Returns the active, multilingual equipment catalog (names localized to the active language). Pass ?team&#x3D;&lt;id&gt; to restrict to the equipment a team has enabled (the requester must be a member of that team).
      * @endpoint get /api/v1/equipment/
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
-     * @param sport Restrict to one sport\&#39;s catalog.
-     * @param team Restrict to a team\&#39;s enabled equipment.
+* @param requestParameters
      */
-    equipmentList(ordering?: string, page?: number, pageSize?: number, search?: string, sport?: number, team?: number, extraHttpRequestParams?: any): Observable<PaginatedEquipmentList>;
+    equipmentList(requestParameters: EquipmentListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedEquipmentList>;
 
     /**
      * Retrieve an equipment item
      * Read-only access to the global equipment catalog.  The catalog is curated centrally (Django admin + seed migration). Teams enable a subset via &#x60;&#x60;Team.equipment&#x60;&#x60;; &#x60;&#x60;?team&#x3D;&lt;id&gt;&#x60;&#x60; returns that subset.
      * @endpoint get /api/v1/equipment/{id}/
-     * @param id A unique integer value identifying this Equipment.
+* @param requestParameters
      */
-    equipmentRetrieve(id: number, extraHttpRequestParams?: any): Observable<Equipment>;
+    equipmentRetrieve(requestParameters: EquipmentRetrieveRequestParams, extraHttpRequestParams?: any): Observable<Equipment>;
 
 }

@@ -61,7 +61,7 @@ export class SportsListComponent implements OnInit {
   private loadSports(includeInactive: boolean): void {
     this.loading.set(true);
     this.sportsService
-      .sportsList(includeInactive || undefined)
+      .sportsList({ includeInactive: includeInactive || undefined })
       .pipe(
         tap((res) => this.sports.set(res.results ?? [])),
         catchError(() => {
@@ -89,7 +89,7 @@ export class SportsListComponent implements OnInit {
 
   private deleteSport(sport: Sport): void {
     this.sportsService
-      .sportsDestroy(sport.id)
+      .sportsDestroy({ id: sport.id })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
@@ -112,7 +112,7 @@ export class SportsListComponent implements OnInit {
 
   protected restore(sport: Sport): void {
     this.sportsService
-      .sportsPartialUpdate(sport.id, true, { is_active: true })
+      .sportsPartialUpdate({ id: sport.id, includeInactive: true, patchedSportAdmin: { is_active: true } })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

@@ -173,7 +173,7 @@ export class GenerateEventsDialogComponent {
     }
     this.templateLoadedForTeamId = teamId;
     this.teamsService
-      .teamsTrainingTemplateRetrieve(teamId)
+      .teamsTrainingTemplateRetrieve({ id: teamId })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (tpl) => {
@@ -223,7 +223,7 @@ export class GenerateEventsDialogComponent {
     };
 
     this.programsService
-      .programsGenerateEventsCreate(this.program().id, payload)
+      .programsGenerateEventsCreate({ id: this.program().id, generatePlanRequest: payload })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {

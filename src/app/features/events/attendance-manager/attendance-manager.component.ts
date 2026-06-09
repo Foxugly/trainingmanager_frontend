@@ -108,9 +108,9 @@ export class AttendanceManagerComponent implements OnInit, OnDestroy {
   private load(): void {
     this.loading.set(true);
     forkJoin({
-      attendances: this.eventsService.eventsAttendanceList(this.event().id),
+      attendances: this.eventsService.eventsAttendanceList({ eventPk: this.event().id }),
       statuses: this.statusesService.attendanceStatusesList(),
-      memberships: this.teamsService.teamsMembershipsList(this.team().id),
+      memberships: this.teamsService.teamsMembershipsList({ teamPk: this.team().id }),
     })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -177,8 +177,9 @@ export class AttendanceManagerComponent implements OnInit, OnDestroy {
 
   private persistAttendance(memberId: number, code: string): void {
     firstValueFrom(
-      this.eventsService.eventsAttendanceBulkCreate(this.event().id, {
-        attendances: [{ member_id: memberId, status_code: code }],
+      this.eventsService.eventsAttendanceBulkCreate({
+        eventPk: this.event().id,
+        attendanceBulk: { attendances: [{ member_id: memberId, status_code: code }] },
       }),
     )
       .then(() => {

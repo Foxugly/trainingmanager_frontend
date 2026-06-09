@@ -26,7 +26,9 @@ import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables'
 import { Configuration }                                     from '../configuration';
 import { BaseService } from '../api.base.service';
 import {
-    EquipmentServiceInterface
+    EquipmentServiceInterface,
+    EquipmentListRequestParams,
+    EquipmentRetrieveRequestParams
 } from './equipment.serviceInterface';
 
 
@@ -44,20 +46,21 @@ export class EquipmentService extends BaseService implements EquipmentServiceInt
      * List the global equipment (Matériel) catalog
      * Returns the active, multilingual equipment catalog (names localized to the active language). Pass ?team&#x3D;&lt;id&gt; to restrict to the equipment a team has enabled (the requester must be a member of that team).
      * @endpoint get /api/v1/equipment/
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
-     * @param sport Restrict to one sport\&#39;s catalog.
-     * @param team Restrict to a team\&#39;s enabled equipment.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public equipmentList(ordering?: string, page?: number, pageSize?: number, search?: string, sport?: number, team?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedEquipmentList>;
-    public equipmentList(ordering?: string, page?: number, pageSize?: number, search?: string, sport?: number, team?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedEquipmentList>>;
-    public equipmentList(ordering?: string, page?: number, pageSize?: number, search?: string, sport?: number, team?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedEquipmentList>>;
-    public equipmentList(ordering?: string, page?: number, pageSize?: number, search?: string, sport?: number, team?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public equipmentList(requestParameters?: EquipmentListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedEquipmentList>;
+    public equipmentList(requestParameters?: EquipmentListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedEquipmentList>>;
+    public equipmentList(requestParameters?: EquipmentListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedEquipmentList>>;
+    public equipmentList(requestParameters?: EquipmentListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const ordering = requestParameters?.ordering;
+        const page = requestParameters?.page;
+        const pageSize = requestParameters?.pageSize;
+        const search = requestParameters?.search;
+        const sport = requestParameters?.sport;
+        const team = requestParameters?.team;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -163,15 +166,16 @@ export class EquipmentService extends BaseService implements EquipmentServiceInt
      * Retrieve an equipment item
      * Read-only access to the global equipment catalog.  The catalog is curated centrally (Django admin + seed migration). Teams enable a subset via &#x60;&#x60;Team.equipment&#x60;&#x60;; &#x60;&#x60;?team&#x3D;&lt;id&gt;&#x60;&#x60; returns that subset.
      * @endpoint get /api/v1/equipment/{id}/
-     * @param id A unique integer value identifying this Equipment.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public equipmentRetrieve(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Equipment>;
-    public equipmentRetrieve(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Equipment>>;
-    public equipmentRetrieve(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Equipment>>;
-    public equipmentRetrieve(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public equipmentRetrieve(requestParameters: EquipmentRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Equipment>;
+    public equipmentRetrieve(requestParameters: EquipmentRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Equipment>>;
+    public equipmentRetrieve(requestParameters: EquipmentRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Equipment>>;
+    public equipmentRetrieve(requestParameters: EquipmentRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling equipmentRetrieve.');
         }

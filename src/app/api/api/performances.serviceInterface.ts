@@ -19,6 +19,38 @@ import { Performance } from '../model/models';
 import { Configuration }                                     from '../configuration';
 
 
+export interface PerformancesCreateRequestParams {
+    performance: Performance;
+}
+
+export interface PerformancesDestroyRequestParams {
+    id: number;
+}
+
+export interface PerformancesListRequestParams {
+    label?: string;
+    member?: number;
+    ordering?: string;
+    page?: number;
+    pageSize?: number;
+    search?: string;
+    team?: number;
+}
+
+export interface PerformancesPartialUpdateRequestParams {
+    id: number;
+    patchedPerformance?: PatchedPerformance;
+}
+
+export interface PerformancesRetrieveRequestParams {
+    id: number;
+}
+
+export interface PerformancesUpdateRequestParams {
+    id: number;
+    performance: Performance;
+}
+
 
 export interface PerformancesServiceInterface {
     defaultHeaders: HttpHeaders;
@@ -28,56 +60,48 @@ export interface PerformancesServiceInterface {
      * Log a performance
      * CRUD on athlete performance records, scoped to a team + member.  URL: /api/v1/performances/  READ scope: a user sees a Performance if they are the member\&#39;s linked user OR a coach (owner/manager) of the performance\&#39;s team. WRITE: the member\&#39;s own user OR a coach of the team. Athletes may only create for their own member, in a team they belong to.
      * @endpoint post /api/v1/performances/
-     * @param performance 
+* @param requestParameters
      */
-    performancesCreate(performance: Performance, extraHttpRequestParams?: any): Observable<Performance>;
+    performancesCreate(requestParameters: PerformancesCreateRequestParams, extraHttpRequestParams?: any): Observable<Performance>;
 
     /**
      * Delete a performance
      * CRUD on athlete performance records, scoped to a team + member.  URL: /api/v1/performances/  READ scope: a user sees a Performance if they are the member\&#39;s linked user OR a coach (owner/manager) of the performance\&#39;s team. WRITE: the member\&#39;s own user OR a coach of the team. Athletes may only create for their own member, in a team they belong to.
      * @endpoint delete /api/v1/performances/{id}/
-     * @param id A unique integer value identifying this performance.
+* @param requestParameters
      */
-    performancesDestroy(id: number, extraHttpRequestParams?: any): Observable<{}>;
+    performancesDestroy(requestParameters: PerformancesDestroyRequestParams, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * List athlete performances (scoped + filtered)
      * Returns the performances the caller may see: their own (as the member\&#39;s linked user) plus those of any team they coach. Optional filters: team, member, label (icontains). Order by recorded_on.
      * @endpoint get /api/v1/performances/
-     * @param label Filter by label (icontains).
-     * @param member Filter by member id.
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
-     * @param team Filter by team id.
+* @param requestParameters
      */
-    performancesList(label?: string, member?: number, ordering?: string, page?: number, pageSize?: number, search?: string, team?: number, extraHttpRequestParams?: any): Observable<PaginatedPerformanceList>;
+    performancesList(requestParameters: PerformancesListRequestParams, extraHttpRequestParams?: any): Observable<PaginatedPerformanceList>;
 
     /**
      * Edit a performance
      * CRUD on athlete performance records, scoped to a team + member.  URL: /api/v1/performances/  READ scope: a user sees a Performance if they are the member\&#39;s linked user OR a coach (owner/manager) of the performance\&#39;s team. WRITE: the member\&#39;s own user OR a coach of the team. Athletes may only create for their own member, in a team they belong to.
      * @endpoint patch /api/v1/performances/{id}/
-     * @param id A unique integer value identifying this performance.
-     * @param patchedPerformance 
+* @param requestParameters
      */
-    performancesPartialUpdate(id: number, patchedPerformance?: PatchedPerformance, extraHttpRequestParams?: any): Observable<Performance>;
+    performancesPartialUpdate(requestParameters: PerformancesPartialUpdateRequestParams, extraHttpRequestParams?: any): Observable<Performance>;
 
     /**
      * Retrieve a performance
      * CRUD on athlete performance records, scoped to a team + member.  URL: /api/v1/performances/  READ scope: a user sees a Performance if they are the member\&#39;s linked user OR a coach (owner/manager) of the performance\&#39;s team. WRITE: the member\&#39;s own user OR a coach of the team. Athletes may only create for their own member, in a team they belong to.
      * @endpoint get /api/v1/performances/{id}/
-     * @param id A unique integer value identifying this performance.
+* @param requestParameters
      */
-    performancesRetrieve(id: number, extraHttpRequestParams?: any): Observable<Performance>;
+    performancesRetrieve(requestParameters: PerformancesRetrieveRequestParams, extraHttpRequestParams?: any): Observable<Performance>;
 
     /**
      * Replace a performance
      * CRUD on athlete performance records, scoped to a team + member.  URL: /api/v1/performances/  READ scope: a user sees a Performance if they are the member\&#39;s linked user OR a coach (owner/manager) of the performance\&#39;s team. WRITE: the member\&#39;s own user OR a coach of the team. Athletes may only create for their own member, in a team they belong to.
      * @endpoint put /api/v1/performances/{id}/
-     * @param id A unique integer value identifying this performance.
-     * @param performance 
+* @param requestParameters
      */
-    performancesUpdate(id: number, performance: Performance, extraHttpRequestParams?: any): Observable<Performance>;
+    performancesUpdate(requestParameters: PerformancesUpdateRequestParams, extraHttpRequestParams?: any): Observable<Performance>;
 
 }

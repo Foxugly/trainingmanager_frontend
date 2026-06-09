@@ -74,7 +74,7 @@ export class AttachmentListComponent {
   private load(targetId: number, targetType: 'event' | 'message'): void {
     this.loading.set(true);
     this.attachments
-      .attachmentsList(targetId, targetType)
+      .attachmentsList({ targetId, targetType })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
@@ -174,7 +174,7 @@ export class AttachmentListComponent {
 
   private deleteItem(item: Attachment): void {
     this.attachments
-      .attachmentsDestroy(item.id)
+      .attachmentsDestroy({ id: item.id })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

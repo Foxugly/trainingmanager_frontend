@@ -144,7 +144,7 @@ describe('TeamsListComponent', () => {
 
   it('loads teams on init filtered by is_active=true', () => {
     expect(serviceMock.teamsList).toHaveBeenCalledTimes(1);
-    expect(serviceMock.teamsList).toHaveBeenCalledWith(true);
+    expect(serviceMock.teamsList).toHaveBeenCalledWith({ isActive: true });
     expect(access(component).teams().length).toBe(3);
   });
 

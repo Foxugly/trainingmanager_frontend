@@ -34,7 +34,10 @@ import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables'
 import { Configuration }                                     from '../configuration';
 import { BaseService } from '../api.base.service';
 import {
-    NotificationsServiceInterface
+    NotificationsServiceInterface,
+    NotificationsListRequestParams,
+    NotificationsPreferencesUpdateRequestParams,
+    NotificationsReadCreateRequestParams
 } from './notifications.serviceInterface';
 
 
@@ -52,19 +55,20 @@ export class NotificationsService extends BaseService implements NotificationsSe
      * List the caller\&#39;s notifications (newest first)
      * The caller\&#39;s own notifications + read-state mutations + channel prefs.  A user only ever sees/affects their OWN notifications: the queryset is filtered by &#x60;&#x60;recipient&#x3D;request.user&#x60;&#x60; and every action operates on that scope (so marking someone else\&#39;s notification read yields 404).
      * @endpoint get /api/v1/notifications/
-     * @param isRead Filter by read state (e.g. ?is_read&#x3D;false for unread only).
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public notificationsList(isRead?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedNotificationList>;
-    public notificationsList(isRead?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedNotificationList>>;
-    public notificationsList(isRead?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedNotificationList>>;
-    public notificationsList(isRead?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public notificationsList(requestParameters?: NotificationsListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedNotificationList>;
+    public notificationsList(requestParameters?: NotificationsListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedNotificationList>>;
+    public notificationsList(requestParameters?: NotificationsListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedNotificationList>>;
+    public notificationsList(requestParameters?: NotificationsListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const isRead = requestParameters?.isRead;
+        const ordering = requestParameters?.ordering;
+        const page = requestParameters?.page;
+        const pageSize = requestParameters?.pageSize;
+        const search = requestParameters?.search;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -217,15 +221,16 @@ export class NotificationsService extends BaseService implements NotificationsSe
      * Upsert the caller\&#39;s notification preferences
      * Accepts a list of {type, in_app, email} entries and upserts the caller\&#39;s rows. Returns the full updated effective list.
      * @endpoint put /api/v1/notifications/preferences/
-     * @param notificationPreferenceUpdate 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public notificationsPreferencesUpdate(notificationPreferenceUpdate: NotificationPreferenceUpdate, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<NotificationPreference>>;
-    public notificationsPreferencesUpdate(notificationPreferenceUpdate: NotificationPreferenceUpdate, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<NotificationPreference>>>;
-    public notificationsPreferencesUpdate(notificationPreferenceUpdate: NotificationPreferenceUpdate, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<NotificationPreference>>>;
-    public notificationsPreferencesUpdate(notificationPreferenceUpdate: NotificationPreferenceUpdate, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public notificationsPreferencesUpdate(requestParameters: NotificationsPreferencesUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<NotificationPreference>>;
+    public notificationsPreferencesUpdate(requestParameters: NotificationsPreferencesUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<NotificationPreference>>>;
+    public notificationsPreferencesUpdate(requestParameters: NotificationsPreferencesUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<NotificationPreference>>>;
+    public notificationsPreferencesUpdate(requestParameters: NotificationsPreferencesUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const notificationPreferenceUpdate = requestParameters?.notificationPreferenceUpdate;
         if (notificationPreferenceUpdate === null || notificationPreferenceUpdate === undefined) {
             throw new Error('Required parameter notificationPreferenceUpdate was null or undefined when calling notificationsPreferencesUpdate.');
         }
@@ -345,15 +350,16 @@ export class NotificationsService extends BaseService implements NotificationsSe
      * Mark one notification as read
      * The caller\&#39;s own notifications + read-state mutations + channel prefs.  A user only ever sees/affects their OWN notifications: the queryset is filtered by &#x60;&#x60;recipient&#x3D;request.user&#x60;&#x60; and every action operates on that scope (so marking someone else\&#39;s notification read yields 404).
      * @endpoint post /api/v1/notifications/{id}/read/
-     * @param id A unique integer value identifying this notification.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public notificationsReadCreate(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Notification>;
-    public notificationsReadCreate(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Notification>>;
-    public notificationsReadCreate(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Notification>>;
-    public notificationsReadCreate(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public notificationsReadCreate(requestParameters: NotificationsReadCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Notification>;
+    public notificationsReadCreate(requestParameters: NotificationsReadCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Notification>>;
+    public notificationsReadCreate(requestParameters: NotificationsReadCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Notification>>;
+    public notificationsReadCreate(requestParameters: NotificationsReadCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling notificationsReadCreate.');
         }

@@ -34,7 +34,13 @@ import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables'
 import { Configuration }                                     from '../configuration';
 import { BaseService } from '../api.base.service';
 import {
-    InvitationsServiceInterface
+    InvitationsServiceInterface,
+    InvitationsCreateRequestParams,
+    InvitationsDestroyRequestParams,
+    InvitationsListRequestParams,
+    InvitationsLookupCreateRequestParams,
+    InvitationsLookupRetrieveRequestParams,
+    InvitationsRetrieveRequestParams
 } from './invitations.serviceInterface';
 
 
@@ -51,15 +57,16 @@ export class InvitationsService extends BaseService implements InvitationsServic
     /**
      * Trainer pre-registers an athlete on a managed team by sending an invitation email. Refused with code&#x3D;user_already_registered if the email matches an existing user account; the trainer must use a different flow (e.g. ask the user to issue a TeamJoinRequest) for registered users.
      * @endpoint post /api/v1/invitations/
-     * @param createInvitation 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public invitationsCreate(createInvitation: CreateInvitation, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamInvitation>;
-    public invitationsCreate(createInvitation: CreateInvitation, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamInvitation>>;
-    public invitationsCreate(createInvitation: CreateInvitation, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamInvitation>>;
-    public invitationsCreate(createInvitation: CreateInvitation, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public invitationsCreate(requestParameters: InvitationsCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamInvitation>;
+    public invitationsCreate(requestParameters: InvitationsCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamInvitation>>;
+    public invitationsCreate(requestParameters: InvitationsCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamInvitation>>;
+    public invitationsCreate(requestParameters: InvitationsCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const createInvitation = requestParameters?.createInvitation;
         if (createInvitation === null || createInvitation === undefined) {
             throw new Error('Required parameter createInvitation was null or undefined when calling invitationsCreate.');
         }
@@ -122,15 +129,16 @@ export class InvitationsService extends BaseService implements InvitationsServic
     /**
      * Trainer invitation flow.
      * @endpoint delete /api/v1/invitations/{id}/
-     * @param id A unique integer value identifying this team invitation.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public invitationsDestroy(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public invitationsDestroy(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public invitationsDestroy(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public invitationsDestroy(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public invitationsDestroy(requestParameters: InvitationsDestroyRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public invitationsDestroy(requestParameters: InvitationsDestroyRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public invitationsDestroy(requestParameters: InvitationsDestroyRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public invitationsDestroy(requestParameters: InvitationsDestroyRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling invitationsDestroy.');
         }
@@ -180,20 +188,21 @@ export class InvitationsService extends BaseService implements InvitationsServic
     /**
      * Trainer invitation flow.
      * @endpoint get /api/v1/invitations/
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
-     * @param status * &#x60;pending&#x60; - Pending * &#x60;completed&#x60; - Completed * &#x60;expired&#x60; - Expired * &#x60;cancelled&#x60; - Cancelled
-     * @param team 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public invitationsList(ordering?: string, page?: number, pageSize?: number, search?: string, status?: 'cancelled' | 'completed' | 'expired' | 'pending', team?: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedTeamInvitationList>;
-    public invitationsList(ordering?: string, page?: number, pageSize?: number, search?: string, status?: 'cancelled' | 'completed' | 'expired' | 'pending', team?: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedTeamInvitationList>>;
-    public invitationsList(ordering?: string, page?: number, pageSize?: number, search?: string, status?: 'cancelled' | 'completed' | 'expired' | 'pending', team?: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedTeamInvitationList>>;
-    public invitationsList(ordering?: string, page?: number, pageSize?: number, search?: string, status?: 'cancelled' | 'completed' | 'expired' | 'pending', team?: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public invitationsList(requestParameters?: InvitationsListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedTeamInvitationList>;
+    public invitationsList(requestParameters?: InvitationsListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedTeamInvitationList>>;
+    public invitationsList(requestParameters?: InvitationsListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedTeamInvitationList>>;
+    public invitationsList(requestParameters?: InvitationsListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const ordering = requestParameters?.ordering;
+        const page = requestParameters?.page;
+        const pageSize = requestParameters?.pageSize;
+        const search = requestParameters?.search;
+        const status = requestParameters?.status;
+        const team = requestParameters?.team;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -298,19 +307,20 @@ export class InvitationsService extends BaseService implements InvitationsServic
     /**
      * Finalize invitation: create the user, link Member, return JWT.
      * @endpoint post /api/v1/invitations/lookup/{token}/
-     * @param token 
-     * @param completeInvitation 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public invitationsLookupCreate(token: string, completeInvitation: CompleteInvitation, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<CompleteInvitationResponse>;
-    public invitationsLookupCreate(token: string, completeInvitation: CompleteInvitation, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<CompleteInvitationResponse>>;
-    public invitationsLookupCreate(token: string, completeInvitation: CompleteInvitation, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<CompleteInvitationResponse>>;
-    public invitationsLookupCreate(token: string, completeInvitation: CompleteInvitation, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public invitationsLookupCreate(requestParameters: InvitationsLookupCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<CompleteInvitationResponse>;
+    public invitationsLookupCreate(requestParameters: InvitationsLookupCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<CompleteInvitationResponse>>;
+    public invitationsLookupCreate(requestParameters: InvitationsLookupCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<CompleteInvitationResponse>>;
+    public invitationsLookupCreate(requestParameters: InvitationsLookupCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const token = requestParameters?.token;
         if (token === null || token === undefined) {
             throw new Error('Required parameter token was null or undefined when calling invitationsLookupCreate.');
         }
+        const completeInvitation = requestParameters?.completeInvitation;
         if (completeInvitation === null || completeInvitation === undefined) {
             throw new Error('Required parameter completeInvitation was null or undefined when calling invitationsLookupCreate.');
         }
@@ -370,15 +380,16 @@ export class InvitationsService extends BaseService implements InvitationsServic
     /**
      * Lookup an invitation by token. No authentication required.
      * @endpoint get /api/v1/invitations/lookup/{token}/
-     * @param token 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public invitationsLookupRetrieve(token: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ValidateInvitation>;
-    public invitationsLookupRetrieve(token: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ValidateInvitation>>;
-    public invitationsLookupRetrieve(token: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ValidateInvitation>>;
-    public invitationsLookupRetrieve(token: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public invitationsLookupRetrieve(requestParameters: InvitationsLookupRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ValidateInvitation>;
+    public invitationsLookupRetrieve(requestParameters: InvitationsLookupRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ValidateInvitation>>;
+    public invitationsLookupRetrieve(requestParameters: InvitationsLookupRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ValidateInvitation>>;
+    public invitationsLookupRetrieve(requestParameters: InvitationsLookupRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const token = requestParameters?.token;
         if (token === null || token === undefined) {
             throw new Error('Required parameter token was null or undefined when calling invitationsLookupRetrieve.');
         }
@@ -426,15 +437,16 @@ export class InvitationsService extends BaseService implements InvitationsServic
     /**
      * Trainer invitation flow.
      * @endpoint get /api/v1/invitations/{id}/
-     * @param id A unique integer value identifying this team invitation.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public invitationsRetrieve(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamInvitation>;
-    public invitationsRetrieve(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamInvitation>>;
-    public invitationsRetrieve(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamInvitation>>;
-    public invitationsRetrieve(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public invitationsRetrieve(requestParameters: InvitationsRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamInvitation>;
+    public invitationsRetrieve(requestParameters: InvitationsRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamInvitation>>;
+    public invitationsRetrieve(requestParameters: InvitationsRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamInvitation>>;
+    public invitationsRetrieve(requestParameters: InvitationsRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling invitationsRetrieve.');
         }

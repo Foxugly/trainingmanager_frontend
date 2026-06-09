@@ -135,9 +135,9 @@ describe('EventsCalendarComponent', () => {
     };
     programsMock = {
       programsList: vi.fn().mockImplementation(
-        (...args: unknown[]) => {
-          // signature: dateEnd, dateStart, includeInactive, isActive, name, ordering, page, pageSize, search, team
-          const teamId = args[9] as number;
+        (params: { team?: number } = {}) => {
+          // single-object request params (ProgramsListRequestParams)
+          const teamId = params.team;
           if (teamId === 4) return of({ count: 1, results: [program] });
           if (teamId === 5) return of({ count: 1, results: [program2] });
           return of({ count: 0, results: [] });
@@ -145,9 +145,9 @@ describe('EventsCalendarComponent', () => {
       ),
     };
     eventsMock = {
-      eventsList: vi.fn().mockImplementation((...args: unknown[]) => {
-        // signature: color, date, dateGte, dateLte, ordering, page, pageSize, referProgram, search
-        const referProgram = args[7] as number;
+      eventsList: vi.fn().mockImplementation((params: { referProgram?: number } = {}) => {
+        // single-object request params (EventsListRequestParams)
+        const referProgram = params.referProgram;
         if (referProgram === 4) return of({ count: 2, results: [event1, event2] });
         return of({ count: 0, results: [] });
       }),
@@ -189,7 +189,7 @@ describe('EventsCalendarComponent', () => {
   });
 
   it('loads teams + their programs and pre-selects everything', async () => {
-    expect(teamsMock.teamsList).toHaveBeenCalledWith(true);
+    expect(teamsMock.teamsList).toHaveBeenCalledWith({ isActive: true });
     expect(access(component).availableTeams()).toHaveLength(2);
     expect(access(component).selectedTeamIds()).toEqual([4, 5]);
     expect(access(component).availablePrograms().length).toBeGreaterThan(0);

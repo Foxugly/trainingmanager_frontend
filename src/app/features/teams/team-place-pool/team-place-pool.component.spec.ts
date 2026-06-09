@@ -88,7 +88,7 @@ describe('TeamPlacePoolComponent', () => {
   beforeEach(() => setup());
 
   it('loads the venue pool via ?sport for each team sport on init', () => {
-    expect(placesMock.placesList).toHaveBeenCalledWith(undefined, undefined, undefined, undefined, 1);
+    expect(placesMock.placesList).toHaveBeenCalledWith({ sport: 1 });
     expect(access(component).places()).toHaveLength(2);
   });
 
@@ -155,9 +155,9 @@ describe('TeamPlacePoolComponent', () => {
     access(component).enterCreateMode();
     access(component).placeName.set('Nouveau');
     access(component).savePlace();
-    expect(placesMock.placesCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ team: 5, name: 'Nouveau' }),
-    );
+    expect(placesMock.placesCreate).toHaveBeenCalledWith({
+      placeRequest: expect.objectContaining({ team: 5, name: 'Nouveau' }),
+    });
     expect(pool?.some((p) => p.id === 8)).toBe(true);
     expect(linked).toContain(8);
   });

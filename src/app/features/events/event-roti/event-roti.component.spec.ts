@@ -68,7 +68,7 @@ describe('EventRotiComponent', () => {
   beforeEach(() => setup());
 
   it('loads + unwraps the array ROTI summary on init', () => {
-    expect(eventsMock.eventsRotiRetrieve).toHaveBeenCalledWith(7);
+    expect(eventsMock.eventsRotiRetrieve).toHaveBeenCalledWith({ eventPk: 7 });
     expect(access(component).rotiSummary()?.count).toBe(5);
     expect(access(component).rotiSummary()?.average).toBe(3.4);
   });
@@ -81,7 +81,7 @@ describe('EventRotiComponent', () => {
 
   it('submitRoti PUTs the score then refreshes the summary', () => {
     access(component).submitRoti(2);
-    expect(eventsMock.eventsRotiUpdate).toHaveBeenCalledWith(7, { score: 2 });
+    expect(eventsMock.eventsRotiUpdate).toHaveBeenCalledWith({ eventPk: 7, rotiUpsert: { score: 2 } });
     expect(access(component).rotiSummary()?.my_score).toBe(2);
   });
 });

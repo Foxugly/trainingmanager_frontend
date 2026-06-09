@@ -78,7 +78,8 @@ describe('MessagesComponent', () => {
     const topicsByTeam = opts.topicsByTeam ?? {};
     serviceMock = {
       teamsList: vi.fn().mockReturnValue(of({ count: teams.length, results: teams })),
-      teamsTopicsList: vi.fn().mockImplementation((teamId: number) => {
+      teamsTopicsList: vi.fn().mockImplementation((params: { teamPk: number }) => {
+        const teamId = params.teamPk;
         if (opts.failTeamId === teamId) return throwError(() => new Error('boom'));
         const results = topicsByTeam[teamId] ?? [];
         return of({ count: results.length, results });
@@ -111,7 +112,7 @@ describe('MessagesComponent', () => {
 
   it('loads teams on init filtered by is_active=true', () => {
     expect(serviceMock.teamsList).toHaveBeenCalledTimes(1);
-    expect(serviceMock.teamsList).toHaveBeenCalledWith(true);
+    expect(serviceMock.teamsList).toHaveBeenCalledWith({ isActive: true });
     expect(access(component).loading()).toBe(false);
   });
 
@@ -134,8 +135,8 @@ describe('MessagesComponent', () => {
         5: [makeTopic({ id: 50, title: 'New', updated_at: '2026-05-01T00:00:00Z' })],
       },
     });
-    expect(serviceMock.teamsTopicsList).toHaveBeenCalledWith(4);
-    expect(serviceMock.teamsTopicsList).toHaveBeenCalledWith(5);
+    expect(serviceMock.teamsTopicsList).toHaveBeenCalledWith({ teamPk: 4 });
+    expect(serviceMock.teamsTopicsList).toHaveBeenCalledWith({ teamPk: 5 });
     const rows = access(component).rows();
     expect(rows.length).toBe(2);
     // Most recent first.

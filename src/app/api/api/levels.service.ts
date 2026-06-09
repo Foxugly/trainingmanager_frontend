@@ -28,7 +28,13 @@ import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables'
 import { Configuration }                                     from '../configuration';
 import { BaseService } from '../api.base.service';
 import {
-    LevelsServiceInterface
+    LevelsServiceInterface,
+    LevelsCreateRequestParams,
+    LevelsDestroyRequestParams,
+    LevelsListRequestParams,
+    LevelsPartialUpdateRequestParams,
+    LevelsRetrieveRequestParams,
+    LevelsUpdateRequestParams
 } from './levels.serviceInterface';
 
 
@@ -46,15 +52,16 @@ export class LevelsService extends BaseService implements LevelsServiceInterface
      * Create level (staff only)
      * Accepts the admin flavor with name_*_/description_* variants.
      * @endpoint post /api/v1/levels/
-     * @param levelAdmin 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public levelsCreate(levelAdmin: LevelAdmin, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<LevelAdmin>;
-    public levelsCreate(levelAdmin: LevelAdmin, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<LevelAdmin>>;
-    public levelsCreate(levelAdmin: LevelAdmin, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<LevelAdmin>>;
-    public levelsCreate(levelAdmin: LevelAdmin, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public levelsCreate(requestParameters: LevelsCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<LevelAdmin>;
+    public levelsCreate(requestParameters: LevelsCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<LevelAdmin>>;
+    public levelsCreate(requestParameters: LevelsCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<LevelAdmin>>;
+    public levelsCreate(requestParameters: LevelsCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const levelAdmin = requestParameters?.levelAdmin;
         if (levelAdmin === null || levelAdmin === undefined) {
             throw new Error('Required parameter levelAdmin was null or undefined when calling levelsCreate.');
         }
@@ -118,15 +125,16 @@ export class LevelsService extends BaseService implements LevelsServiceInterface
      * Soft delete level (staff only)
      * Sets is_active&#x3D;False; does not hard delete.
      * @endpoint delete /api/v1/levels/{id}/
-     * @param id A unique integer value identifying this level.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public levelsDestroy(id: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public levelsDestroy(id: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public levelsDestroy(id: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public levelsDestroy(id: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public levelsDestroy(requestParameters: LevelsDestroyRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public levelsDestroy(requestParameters: LevelsDestroyRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public levelsDestroy(requestParameters: LevelsDestroyRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public levelsDestroy(requestParameters: LevelsDestroyRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling levelsDestroy.');
         }
@@ -177,20 +185,21 @@ export class LevelsService extends BaseService implements LevelsServiceInterface
      * List levels (public flavor)
      * Returns the public Level serializer with localized \&#39;name\&#39; and \&#39;description\&#39;. Available to all authenticated users. Pass ?include_inactive&#x3D;true (staff only) to include soft-deleted rows.
      * @endpoint get /api/v1/levels/
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
-     * @param isActive 
-     * @param ordering Which field to use when ordering the results.
-     * @param page A page number within the paginated result set.
-     * @param pageSize Number of results to return per page.
-     * @param search A search term.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public levelsList(includeInactive?: boolean, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedLevelList>;
-    public levelsList(includeInactive?: boolean, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedLevelList>>;
-    public levelsList(includeInactive?: boolean, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedLevelList>>;
-    public levelsList(includeInactive?: boolean, isActive?: boolean, ordering?: string, page?: number, pageSize?: number, search?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public levelsList(requestParameters?: LevelsListRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PaginatedLevelList>;
+    public levelsList(requestParameters?: LevelsListRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PaginatedLevelList>>;
+    public levelsList(requestParameters?: LevelsListRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PaginatedLevelList>>;
+    public levelsList(requestParameters?: LevelsListRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const includeInactive = requestParameters?.includeInactive;
+        const isActive = requestParameters?.isActive;
+        const ordering = requestParameters?.ordering;
+        const page = requestParameters?.page;
+        const pageSize = requestParameters?.pageSize;
+        const search = requestParameters?.search;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -295,20 +304,21 @@ export class LevelsService extends BaseService implements LevelsServiceInterface
     /**
      * CRUD on the Level referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete bumps updated_at.
      * @endpoint patch /api/v1/levels/{id}/
-     * @param id A unique integer value identifying this level.
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
-     * @param patchedLevelAdmin 
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public levelsPartialUpdate(id: number, includeInactive?: boolean, patchedLevelAdmin?: PatchedLevelAdmin, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<LevelAdmin>;
-    public levelsPartialUpdate(id: number, includeInactive?: boolean, patchedLevelAdmin?: PatchedLevelAdmin, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<LevelAdmin>>;
-    public levelsPartialUpdate(id: number, includeInactive?: boolean, patchedLevelAdmin?: PatchedLevelAdmin, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<LevelAdmin>>;
-    public levelsPartialUpdate(id: number, includeInactive?: boolean, patchedLevelAdmin?: PatchedLevelAdmin, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public levelsPartialUpdate(requestParameters: LevelsPartialUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<LevelAdmin>;
+    public levelsPartialUpdate(requestParameters: LevelsPartialUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<LevelAdmin>>;
+    public levelsPartialUpdate(requestParameters: LevelsPartialUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<LevelAdmin>>;
+    public levelsPartialUpdate(requestParameters: LevelsPartialUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling levelsPartialUpdate.');
         }
+        const includeInactive = requestParameters?.includeInactive;
+        const patchedLevelAdmin = requestParameters?.patchedLevelAdmin;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -381,19 +391,20 @@ export class LevelsService extends BaseService implements LevelsServiceInterface
      * Retrieve level (admin flavor for staff)
      * Returns the admin flavor with name_*_/description_* per-language variants when called by a staff user, otherwise the public flavor.
      * @endpoint get /api/v1/levels/{id}/
-     * @param id A unique integer value identifying this level.
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public levelsRetrieve(id: number, includeInactive?: boolean, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<LevelAdmin>;
-    public levelsRetrieve(id: number, includeInactive?: boolean, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<LevelAdmin>>;
-    public levelsRetrieve(id: number, includeInactive?: boolean, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<LevelAdmin>>;
-    public levelsRetrieve(id: number, includeInactive?: boolean, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public levelsRetrieve(requestParameters: LevelsRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<LevelAdmin>;
+    public levelsRetrieve(requestParameters: LevelsRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<LevelAdmin>>;
+    public levelsRetrieve(requestParameters: LevelsRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<LevelAdmin>>;
+    public levelsRetrieve(requestParameters: LevelsRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling levelsRetrieve.');
         }
+        const includeInactive = requestParameters?.includeInactive;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -453,23 +464,24 @@ export class LevelsService extends BaseService implements LevelsServiceInterface
     /**
      * CRUD on the Level referential.  Read: any authenticated user (default queryset filters is_active&#x3D;True). Write: staff only. Soft delete bumps updated_at.
      * @endpoint put /api/v1/levels/{id}/
-     * @param id A unique integer value identifying this level.
-     * @param levelAdmin 
-     * @param includeInactive If true and the user is staff, include soft-deleted (is_active&#x3D;False) records in the result. Silently ignored for non-staff users.
+     * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public levelsUpdate(id: number, levelAdmin: LevelAdmin, includeInactive?: boolean, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<LevelAdmin>;
-    public levelsUpdate(id: number, levelAdmin: LevelAdmin, includeInactive?: boolean, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<LevelAdmin>>;
-    public levelsUpdate(id: number, levelAdmin: LevelAdmin, includeInactive?: boolean, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<LevelAdmin>>;
-    public levelsUpdate(id: number, levelAdmin: LevelAdmin, includeInactive?: boolean, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public levelsUpdate(requestParameters: LevelsUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<LevelAdmin>;
+    public levelsUpdate(requestParameters: LevelsUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<LevelAdmin>>;
+    public levelsUpdate(requestParameters: LevelsUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<LevelAdmin>>;
+    public levelsUpdate(requestParameters: LevelsUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling levelsUpdate.');
         }
+        const levelAdmin = requestParameters?.levelAdmin;
         if (levelAdmin === null || levelAdmin === undefined) {
             throw new Error('Required parameter levelAdmin was null or undefined when calling levelsUpdate.');
         }
+        const includeInactive = requestParameters?.includeInactive;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 

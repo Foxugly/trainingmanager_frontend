@@ -71,7 +71,7 @@ export class EventRotiComponent {
 
   private load(eventId: number): void {
     this.eventsService
-      .eventsRotiRetrieve(eventId)
+      .eventsRotiRetrieve({ eventPk: eventId })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         // The endpoint is typed as an array by the schema; the payload is a
@@ -91,7 +91,7 @@ export class EventRotiComponent {
     if (this.rotiSubmitting()) return;
     this.rotiSubmitting.set(true);
     this.eventsService
-      .eventsRotiUpdate(eventId, { score })
+      .eventsRotiUpdate({ eventPk: eventId, rotiUpsert: { score } })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
