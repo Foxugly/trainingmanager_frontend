@@ -55,7 +55,7 @@
             optionValue="id"
             [placeholder]="'admin.energy_segments.form.energy_system_placeholder' | transloco"
             styleClass="w-full"
-            [attr.aria-describedby]="fieldError('energy_system_id') ? energySystemField.errorId() : null"
+            [appAriaDescribes]="fieldError('energy_system_id') ? energySystemField.errorId() : null"
           />
         </app-meta-field>
 

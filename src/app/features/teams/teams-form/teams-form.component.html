@@ -67,7 +67,7 @@
                       display="chip"
                       [filter]="true"
                       [placeholder]="'teams.form.sports_placeholder' | transloco"
-                      [attr.aria-describedby]="fieldError('sport_ids') ? sportIdsField.errorId() : null"
+                      [appAriaDescribes]="fieldError('sport_ids') ? sportIdsField.errorId() : null"
                     />
                   </app-meta-field>
                   <app-meta-field
@@ -84,7 +84,7 @@
                       optionLabel="name"
                       optionValue="id"
                       [filter]="true"
-                      [attr.aria-describedby]="fieldError('default_sport_id') ? defaultSportField.errorId() : null"
+                      [appAriaDescribes]="fieldError('default_sport_id') ? defaultSportField.errorId() : null"
                     />
                   </app-meta-field>
                 </div>
@@ -107,7 +107,7 @@
                       [filter]="true"
                       [showClear]="true"
                       [placeholder]="'teams.form.level_placeholder' | transloco"
-                      [attr.aria-describedby]="fieldError('level_id') ? levelField.errorId() : null"
+                      [appAriaDescribes]="fieldError('level_id') ? levelField.errorId() : null"
                     />
                   </app-meta-field>
                   <app-meta-field

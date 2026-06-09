@@ -36,6 +36,7 @@ import { MetaFieldComponent } from '../../../shared/ui/meta-field/meta-field.com
 import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
 import { RichEditorComponent } from '../../../shared/ui/rich-editor/rich-editor.component';
 import { StatusBadgeComponent } from '../../../shared/ui/status-badge/status-badge.component';
+import { AriaDescribesDirective } from '../../../shared/a11y/aria-describes.directive';
 import { TeamRole, computeTeamRole } from '../../teams/teams-list/teams-list.component';
 
 function toIsoDate(d: Date | null | undefined): string | null {
@@ -71,6 +72,7 @@ function fromIsoDate(s: string | null | undefined): Date | null {
     ActiveToggleComponent,
     MetaFieldComponent,
     FormFooterComponent,
+    AriaDescribesDirective,
     TranslocoPipe,
   ],
   providers: [ConfirmationService],

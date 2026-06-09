@@ -33,6 +33,7 @@ import { FormFooterComponent } from '../../../../shared/ui/form-footer/form-foot
 import { MetaFieldComponent } from '../../../../shared/ui/meta-field/meta-field.component';
 import { PageHeaderComponent } from '../../../../shared/ui/page-header/page-header.component';
 import { StatusBadgeComponent } from '../../../../shared/ui/status-badge/status-badge.component';
+import { AriaDescribesDirective } from '../../../../shared/a11y/aria-describes.directive';
 
 @Component({
   selector: 'app-energy-segments-form',
@@ -54,6 +55,7 @@ import { StatusBadgeComponent } from '../../../../shared/ui/status-badge/status-
     ActiveToggleComponent,
     MetaFieldComponent,
     FormFooterComponent,
+    AriaDescribesDirective,
     TranslocoPipe,
   ],
   providers: [ConfirmationService],

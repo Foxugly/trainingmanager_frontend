@@ -38,6 +38,7 @@ import { type FieldErrors, extractServerError } from '../../shared/forms/notify-
 import { FormFooterComponent } from '../../shared/ui/form-footer/form-footer.component';
 import { MetaFieldComponent } from '../../shared/ui/meta-field/meta-field.component';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header.component';
+import { AriaDescribesDirective } from '../../shared/a11y/aria-describes.directive';
 
 interface ProfileFormValue {
   first_name: string;
@@ -66,6 +67,7 @@ interface ProfileFormValue {
     PageHeaderComponent,
     MetaFieldComponent,
     FormFooterComponent,
+    AriaDescribesDirective,
     DatePipe,
     TranslocoPipe,
   ],

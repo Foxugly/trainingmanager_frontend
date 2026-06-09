@@ -34,7 +34,7 @@
               inputId="place_id"
               formControlName="place_id"
               [teamId]="selectedTeamId()"
-              [attr.aria-describedby]="fieldError('place_id') ? placeField.errorId() : null"
+              [appAriaDescribes]="fieldError('place_id') ? placeField.errorId() : null"
             />
             @if (legacyLocation()) {
               <small class="meta-hint mt-1 block">
@@ -63,7 +63,7 @@
                 optionValue="id"
                 [filter]="true"
                 [placeholder]="'events.form.sport' | transloco"
-                [attr.aria-describedby]="fieldError('sport_id') ? sportField.errorId() : null"
+                [appAriaDescribes]="fieldError('sport_id') ? sportField.errorId() : null"
               />
             </app-meta-field>
           </div>
@@ -72,7 +72,7 @@
         <div class="meta-grid">
           <app-meta-field #goalField [full]="true" [label]="'events.form.goal' | transloco" for="goal" [error]="fieldError('goal')">
             <app-rich-editor formControlName="goal" [style]="{ height: '7rem' }"
-              [attr.aria-describedby]="fieldError('goal') ? goalField.errorId() : null" />
+              [appAriaDescribes]="fieldError('goal') ? goalField.errorId() : null" />
           </app-meta-field>
           <app-meta-field
             #equipmentField
@@ -86,7 +86,7 @@
               inputId="equipment_item_ids"
               formControlName="equipment_item_ids"
               [teamId]="selectedTeamId()"
-              [attr.aria-describedby]="fieldError('equipment_item_ids') ? equipmentField.errorId() : null"
+              [appAriaDescribes]="fieldError('equipment_item_ids') ? equipmentField.errorId() : null"
             />
             @if (equipmentEmpty()) {
               <small class="meta-hint mt-1 block">
@@ -120,7 +120,7 @@
         <div class="meta-grid cols-3">
           <app-meta-field #dateField [label]="'events.form.date' | transloco" for="date" [error]="fieldError('date')">
             <p-datepicker inputId="date" formControlName="date" dateFormat="dd/mm/yy" [showIcon]="true" appendTo="body"
-              [attr.aria-describedby]="fieldError('date') ? dateField.errorId() : null" />
+              [appAriaDescribes]="fieldError('date') ? dateField.errorId() : null" />
           </app-meta-field>
           <app-meta-field [label]="'events.form.hour_start' | transloco" for="hour_start">
             <p-datepicker inputId="hour_start" formControlName="hour_start" [timeOnly]="true" [showIcon]="true" appendTo="body" />
@@ -128,7 +128,7 @@
           <app-meta-field #hourEndField [label]="'events.form.hour_end' | transloco" for="hour_end"
             [error]="form.errors?.['time_range'] ? ('events.form.errors.time_range' | transloco) : null">
             <p-datepicker inputId="hour_end" formControlName="hour_end" [timeOnly]="true" [showIcon]="true" appendTo="body"
-              [attr.aria-describedby]="form.errors?.['time_range'] ? hourEndField.errorId() : null" />
+              [appAriaDescribes]="form.errors?.['time_range'] ? hourEndField.errorId() : null" />
           </app-meta-field>
         </div>
 

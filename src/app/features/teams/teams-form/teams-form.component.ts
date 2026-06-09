@@ -51,6 +51,7 @@ import { FormFooterComponent } from '../../../shared/ui/form-footer/form-footer.
 import { MetaFieldComponent } from '../../../shared/ui/meta-field/meta-field.component';
 import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
 import { StatusBadgeComponent } from '../../../shared/ui/status-badge/status-badge.component';
+import { AriaDescribesDirective } from '../../../shared/a11y/aria-describes.directive';
 import { TeamManagersComponent } from '../team-managers/team-managers.component';
 import { TeamPlacePoolComponent } from '../team-place-pool/team-place-pool.component';
 import { TeamSlotsEditorComponent } from '../team-slots-editor/team-slots-editor.component';
@@ -81,6 +82,7 @@ import { TeamSlotsEditorComponent } from '../team-slots-editor/team-slots-editor
     TeamSlotsEditorComponent,
     TeamManagersComponent,
     TeamPlacePoolComponent,
+    AriaDescribesDirective,
     TranslocoPipe,
   ],
   templateUrl: './teams-form.component.html',

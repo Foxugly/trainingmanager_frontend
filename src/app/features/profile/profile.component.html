@@ -240,19 +240,19 @@
           for="current_password" [error]="changePwFieldError('current_password')">
           <p-password inputId="current_password" formControlName="current_password"
             [feedback]="false" [toggleMask]="true" autocomplete="current-password" [fluid]="true"
-            [attr.aria-describedby]="changePwFieldError('current_password') ? currentPwField.errorId() : null" />
+            [appAriaDescribes]="changePwFieldError('current_password') ? currentPwField.errorId() : null" />
         </app-meta-field>
         <app-meta-field #newPwField [full]="true" [label]="'profile.new_password' | transloco"
           for="new_password" [error]="changePwFieldError('new_password')">
           <p-password inputId="new_password" formControlName="new_password"
             [feedback]="false" [toggleMask]="true" autocomplete="new-password" [fluid]="true"
-            [attr.aria-describedby]="changePwFieldError('new_password') ? newPwField.errorId() : null" />
+            [appAriaDescribes]="changePwFieldError('new_password') ? newPwField.errorId() : null" />
         </app-meta-field>
         <app-meta-field #newPwConfirmField [full]="true" [label]="'profile.new_password_confirm' | transloco"
           for="new_password_confirm" [error]="changePwFieldError('new_password_confirm')">
           <p-password inputId="new_password_confirm" formControlName="new_password_confirm"
             [feedback]="false" [toggleMask]="true" autocomplete="new-password" [fluid]="true"
-            [attr.aria-describedby]="changePwFieldError('new_password_confirm') ? newPwConfirmField.errorId() : null" />
+            [appAriaDescribes]="changePwFieldError('new_password_confirm') ? newPwConfirmField.errorId() : null" />
         </app-meta-field>
       </div>
     </form>
@@ -284,7 +284,7 @@
           for="delete_current_password" [error]="deleteFieldError('current_password')">
           <p-password inputId="delete_current_password" formControlName="current_password"
             [feedback]="false" [toggleMask]="true" autocomplete="current-password" [fluid]="true"
-            [attr.aria-describedby]="deleteFieldError('current_password') ? deletePwField.errorId() : null" />
+            [appAriaDescribes]="deleteFieldError('current_password') ? deletePwField.errorId() : null" />
         </app-meta-field>
       </div>
     </form>

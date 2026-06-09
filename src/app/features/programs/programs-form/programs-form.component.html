@@ -80,7 +80,7 @@
               optionValue="id"
               [filter]="true"
               [placeholder]="'programs.form.team_placeholder' | transloco"
-              [attr.aria-describedby]="
+              [appAriaDescribes]="
                 (!isEditMode() && availableTeams().length === 0) || fieldError('team_id')
                   ? teamField.errorId()
                   : null
@@ -117,7 +117,7 @@
               dateFormat="dd/mm/yy"
               [showIcon]="true"
               appendTo="body"
-              [attr.aria-describedby]="fieldError('date_start') ? dateStartField.errorId() : null"
+              [appAriaDescribes]="fieldError('date_start') ? dateStartField.errorId() : null"
             />
           </app-meta-field>
           <app-meta-field
@@ -132,7 +132,7 @@
               dateFormat="dd/mm/yy"
               [showIcon]="true"
               appendTo="body"
-              [attr.aria-describedby]="fieldError('date_end') ? dateEndField.errorId() : null"
+              [appAriaDescribes]="fieldError('date_end') ? dateEndField.errorId() : null"
             />
           </app-meta-field>
         </div>
@@ -170,7 +170,7 @@
             [error]="fieldError('description')"
           >
             <app-rich-editor formControlName="description" [style]="{ height: '7rem' }"
-              [attr.aria-describedby]="fieldError('description') ? descriptionField.errorId() : null" />
+              [appAriaDescribes]="fieldError('description') ? descriptionField.errorId() : null" />
           </app-meta-field>
         </div>
       </form>

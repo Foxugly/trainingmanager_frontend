@@ -44,6 +44,7 @@ import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.
 import { PlaceSelectComponent } from '../../../shared/ui/place-select/place-select.component';
 import { EquipmentSelectComponent } from '../../../shared/ui/equipment-select/equipment-select.component';
 import { RichEditorComponent } from '../../../shared/ui/rich-editor/rich-editor.component';
+import { AriaDescribesDirective } from '../../../shared/a11y/aria-describes.directive';
 
 function toIsoDate(d: Date | null | undefined): string | null {
   if (!d) return null;
@@ -101,6 +102,7 @@ function timeRangeValidator(group: AbstractControl): ValidationErrors | null {
     FormFooterComponent,
     PlaceSelectComponent,
     EquipmentSelectComponent,
+    AriaDescribesDirective,
     TranslocoPipe,
   ],
   templateUrl: './events-form.component.html',
