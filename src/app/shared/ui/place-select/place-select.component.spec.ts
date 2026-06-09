@@ -36,12 +36,12 @@ describe('PlaceSelectComponent', () => {
       placesList: vi.fn().mockReturnValue(
         of({
           count: 1,
-          results: [{ id: 7, team: 5, name: 'Piscine olympique', address: '1 rue X' } as Place],
+          results: [{ id: 7, name: 'Piscine olympique', address: '1 rue X' } as Place],
         }),
       ),
       placesCreate: vi
         .fn()
-        .mockReturnValue(of({ id: 8, team: 5, name: 'Nouveau', address: '' } as Place)),
+        .mockReturnValue(of({ id: 8, name: 'Nouveau', address: '' } as Place)),
     };
 
     await TestBed.configureTestingModule({
@@ -96,7 +96,7 @@ describe('PlaceSelectComponent', () => {
     (component as unknown as { newName: { set(v: string): void } }).newName.set('Nouveau');
     access(component).createPlace();
     expect(placesMock.placesCreate).toHaveBeenCalledWith({
-      place: expect.objectContaining({ team: 5, name: 'Nouveau' }),
+      placeRequest: expect.objectContaining({ team: 5, name: 'Nouveau' }),
     });
     expect(access(component).places().some((p) => p.id === 8)).toBe(true);
     expect(pushed).toBe(8);

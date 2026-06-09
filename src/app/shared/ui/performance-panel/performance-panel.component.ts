@@ -25,8 +25,9 @@ import { Select } from 'primeng/select';
 import { Tag } from 'primeng/tag';
 import { Textarea } from 'primeng/textarea';
 import { PerformancesService } from '../../../api/api/performances.service';
-import { PatchedPerformance } from '../../../api/model/patched-performance';
+import { PatchedPerformanceRequest } from '../../../api/model/patched-performance-request';
 import { Performance } from '../../../api/model/performance';
+import { PerformanceRequest } from '../../../api/model/performance-request';
 import { UnitEnum } from '../../../api/model/unit-enum';
 import { EmptyStateComponent } from '../empty-state/empty-state.component';
 
@@ -334,7 +335,7 @@ export class PerformancePanelComponent {
     const editingId = this.editingId();
 
     if (editingId !== null) {
-      const payload: PatchedPerformance = {
+      const payload: PatchedPerformanceRequest = {
         label: raw.label,
         value: String(raw.value),
         unit: raw.unit,
@@ -342,7 +343,7 @@ export class PerformancePanelComponent {
         notes: raw.notes,
       };
       this.performancesService
-        .performancesPartialUpdate({ id: editingId, patchedPerformance: payload })
+        .performancesPartialUpdate({ id: editingId, patchedPerformanceRequest: payload })
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (updated) => {
@@ -360,7 +361,7 @@ export class PerformancePanelComponent {
       this.saving.set(false);
       return;
     }
-    const performance: Performance = {
+    const performance: PerformanceRequest = {
       team,
       member,
       label: raw.label,
@@ -368,9 +369,9 @@ export class PerformancePanelComponent {
       unit: raw.unit,
       recorded_on: this.toIsoDate(raw.recorded_on),
       notes: raw.notes,
-    } as Performance;
+    };
     this.performancesService
-      .performancesCreate({ performance })
+      .performancesCreate({ performanceRequest: performance })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (created) => {

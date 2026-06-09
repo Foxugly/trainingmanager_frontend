@@ -214,7 +214,7 @@ describe('PerformancePanelComponent', () => {
     access(component).submit();
 
     expect(perfMock.performancesCreate).toHaveBeenCalledWith({
-      performance: expect.objectContaining({
+      performanceRequest: expect.objectContaining({
         team: 7,
         member: 3,
         label: 'Squat',

@@ -27,6 +27,7 @@ import { Textarea } from 'primeng/textarea';
 import { Tooltip } from 'primeng/tooltip';
 import { PlacesService } from '../../../api/api/places.service';
 import { Place } from '../../../api/model/place';
+import { PlaceRequest } from '../../../api/model/place-request';
 
 /**
  * Reusable place (Lieu) selector with an inline "create on the fly" dialog.
@@ -158,13 +159,13 @@ export class PlaceSelectComponent implements ControlValueAccessor {
     }
     this.creating.set(true);
     this.nameError.set(null);
-    const payload = {
+    const payload: PlaceRequest = {
       team: teamId,
       name,
       address: this.newAddress().trim() || undefined,
     };
     this.placesService
-      .placesCreate({ place: payload as unknown as Place })
+      .placesCreate({ placeRequest: payload })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (created) => {
