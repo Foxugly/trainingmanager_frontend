@@ -8,6 +8,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { EnergySystemsService } from '../../../../api/api/energy-systems.service';
 import { SportsService } from '../../../../api/api/sports.service';
 import { SportAdmin } from '../../../../api/model/sport-admin';
+import { TrainingTypeEnum } from '../../../../api/model/training-type-enum';
 import { SportsFormComponent } from './sports-form.component';
 
 const sportAdmin: SportAdmin = {
@@ -167,6 +168,22 @@ describe('SportsFormComponent', () => {
     expect(includeInactive).toBeUndefined();
     expect(patchedSportAdmin).toMatchObject({ name_nl: 'Hardlopen' });
     expect(navigate).toHaveBeenCalledWith(['/admin/sports']);
+  });
+
+  it('includes default_training_type in the create payload', () => {
+    vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    access(component).form.patchValue({ slug: 'tennis', default_training_type: 'freeform' });
+    access(component).submit();
+    expect(sportsServiceMock.sportsCreate).toHaveBeenCalledWith({
+      sportAdmin: expect.objectContaining({ default_training_type: 'freeform' }),
+    });
+  });
+
+  it('seeds default_training_type from the loaded sport in edit mode', async () => {
+    sportAdmin.default_training_type = TrainingTypeEnum.Freeform;
+    await setup('7');
+    expect(access(component).form.value).toMatchObject({ default_training_type: 'freeform' });
+    delete sportAdmin.default_training_type;
   });
 
   it('maps backend field errors into fieldErrors()', () => {

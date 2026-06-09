@@ -58,6 +58,15 @@
             [placeholder]="'admin.sports.form.energy_systems_placeholder' | transloco"
           />
         </app-meta-field>
+        <app-meta-field [label]="'admin.sports.default_training_type' | transloco" for="default_training_type">
+          <p-select
+            inputId="default_training_type"
+            [options]="trainingTypeOptions()"
+            formControlName="default_training_type"
+            optionLabel="label"
+            optionValue="value"
+          />
+        </app-meta-field>
         <app-meta-field [full]="true" [label]="'admin.sports.fields.name' | transloco">
           <p-tabs value="fr" class="builder-tabs">
             <p-tablist>

@@ -17,6 +17,7 @@ import { Button } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { InputText } from 'primeng/inputtext';
 import { MultiSelect } from 'primeng/multiselect';
+import { Select } from 'primeng/select';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { Tooltip } from 'primeng/tooltip';
 import { EnergySystemsService } from '../../../../api/api/energy-systems.service';
@@ -24,6 +25,7 @@ import { SportsService } from '../../../../api/api/sports.service';
 import { EnergySystem } from '../../../../api/model/energy-system';
 import { PatchedSportAdmin } from '../../../../api/model/patched-sport-admin';
 import { SportAdmin } from '../../../../api/model/sport-admin';
+import { TrainingTypeEnum } from '../../../../api/model/training-type-enum';
 import { type FieldErrors, extractServerError } from '../../../../shared/forms/notify-error';
 import {
   ActiveToggleComponent,
@@ -41,6 +43,7 @@ import { StatusBadgeComponent } from '../../../../shared/ui/status-badge/status-
     RouterLink,
     InputText,
     MultiSelect,
+    Select,
     Button,
     ConfirmDialog,
     Tabs,
@@ -100,6 +103,22 @@ export class SportsFormComponent implements OnInit {
     name_es: [''],
     slug: ['', Validators.required],
     energy_systems: [[] as number[]],
+    default_training_type: ['structured'],
+  });
+
+  /** Training-type select options, re-translated on language change. */
+  protected readonly trainingTypeOptions = computed(() => {
+    this.transloco.getActiveLang();
+    return [
+      {
+        label: this.transloco.translate('events.training.type_structured'),
+        value: TrainingTypeEnum.Structured,
+      },
+      {
+        label: this.transloco.translate('events.training.type_freeform'),
+        value: TrainingTypeEnum.Freeform,
+      },
+    ];
   });
 
   ngOnInit(): void {
@@ -128,6 +147,8 @@ export class SportsFormComponent implements OnInit {
               name_es: sport.name_es ?? '',
               slug: sport.slug,
               energy_systems: sport.energy_systems ?? [],
+              default_training_type:
+                (sport.default_training_type as string | undefined) ?? 'structured',
             });
             this.loading.set(false);
           },
@@ -165,6 +186,7 @@ export class SportsFormComponent implements OnInit {
       name_es: value.name_es || null,
       slug: value.slug,
       energy_systems: value.energy_systems,
+      default_training_type: value.default_training_type as TrainingTypeEnum,
     };
 
     const request$ = id
