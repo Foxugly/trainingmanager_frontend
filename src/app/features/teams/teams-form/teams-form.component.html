@@ -89,6 +89,24 @@
                   </app-meta-field>
                 </div>
 
+                <!-- Per-sport training-type override -->
+                @if (selectedSports().length > 0) {
+                  <div class="meta-grid cols-2">
+                    @for (s of selectedSports(); track s.id) {
+                      <app-meta-field [label]="s.name + ' — ' + ('teams.form.training_type_label' | transloco)">
+                        <p-select
+                          [options]="sportTrainingTypeOptions()"
+                          [ngModel]="sportTrainingType(s.id)"
+                          [ngModelOptions]="{ standalone: true }"
+                          optionLabel="label"
+                          optionValue="value"
+                          (onChange)="setSportTrainingType(s.id, $event.value)"
+                        />
+                      </app-meta-field>
+                    }
+                  </div>
+                }
+
                 <!-- Row 2: level / public toggle / timezone (3 cols) -->
                 <div class="meta-grid cols-3">
                   <app-meta-field

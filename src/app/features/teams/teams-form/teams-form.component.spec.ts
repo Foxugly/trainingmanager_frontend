@@ -98,6 +98,8 @@ interface ProtectedFields {
   };
   submit(): void;
   cancel(): void;
+  // Per-sport training-type override
+  setSportTrainingType(sportId: number, value: TrainingTypeEnum | null): void;
   // Planning type tab
   slots: { length: number };
   addSlot(): void;
@@ -348,6 +350,35 @@ describe('TeamsFormComponent', () => {
       team: expect.objectContaining({ level_id: 3, sport_ids: [1], default_sport_id: 1 }),
     });
     expect(router.navigate).toHaveBeenCalledWith(['/teams', 42, 'edit']);
+  });
+
+  it('includes per-sport training_type overrides in the create payload', () => {
+    access(component).form.patchValue({
+      name: 'New',
+      sport_ids: [1],
+      default_sport_id: 1,
+      language: 'fr',
+    });
+    access(component).setSportTrainingType(1, TrainingTypeEnum.Freeform);
+    access(component).submit();
+    expect(teamsMock.teamsCreate).toHaveBeenCalledWith({
+      team: expect.objectContaining({
+        sport_training_types: [{ sport_id: 1, training_type: TrainingTypeEnum.Freeform }],
+      }),
+    });
+  });
+
+  it('includes per-sport training_type overrides in the update payload', async () => {
+    await setup('5');
+    access(component).form.patchValue({ sport_ids: [1], default_sport_id: 1 });
+    access(component).setSportTrainingType(1, TrainingTypeEnum.Freeform);
+    access(component).submit();
+    expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith({
+      id: 5,
+      patchedTeam: expect.objectContaining({
+        sport_training_types: [{ sport_id: 1, training_type: TrainingTypeEnum.Freeform }],
+      }),
+    });
   });
 
   it('on edit success, navigates to /teams/:id detail page', async () => {
