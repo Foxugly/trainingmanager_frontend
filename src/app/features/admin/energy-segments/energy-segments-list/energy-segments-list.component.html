@@ -56,6 +56,7 @@
         @if (seg.is_active) {
           <p-button
             icon="pi pi-trash"
+            [ariaLabel]="'common.delete' | transloco"
             [text]="true"
             severity="danger"
             (onClick)="confirmDelete(seg)"
@@ -63,6 +64,7 @@
         } @else {
           <p-button
             icon="pi pi-undo"
+            [ariaLabel]="'common.restore' | transloco"
             [text]="true"
             severity="success"
             (onClick)="restore(seg)"
