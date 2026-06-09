@@ -41,14 +41,17 @@ test('manager can create an event under the seeded program', async ({ page }) =>
     .click();
   await page.waitForURL(/\/events\/new\?program=\d+/, { timeout: 15_000 });
 
-  // 3. Fill name + a date (dd/mm/yy). Pick a fixed near-future date.
+  // 3. Fill name, then pick a date from the calendar overlay.
   await page.locator('#name').fill(eventName);
-  // PrimeNG datepicker only commits a typed value to the form control on blur;
-  // without it, form.invalid stays true and the footer Save button stays
-  // disabled. Blur also closes the calendar overlay (so it can't cover Save).
-  const dateInput = page.locator('#date');
-  await dateInput.fill('15/12/26');
-  await dateInput.blur();
+  // Typing into the PrimeNG datepicker does NOT commit to the reactive form
+  // control (the input stays empty, form.invalid stays true and the footer Save
+  // button stays disabled). Open the picker and click a day in the month it
+  // opens on (the current month) — day 15 always exists and is unambiguous.
+  await page.getByRole('combobox', { name: 'Date', exact: true }).click();
+  await page
+    .getByRole('dialog', { name: 'Choose Date' })
+    .getByRole('gridcell', { name: '15', exact: true })
+    .click();
 
   // 4. Save (form-footer primary button).
   await page.getByRole('button', { name: /save|enregistrer|opslaan|salva|guardar/i }).click();
