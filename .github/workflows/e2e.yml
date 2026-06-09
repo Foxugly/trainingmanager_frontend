@@ -1,0 +1,162 @@
+name: E2E
+
+# Run the Playwright critical-path suite (e2e/) against a freshly-built local
+# stack on every push and PR. The job builds the WHOLE stack from source:
+#   - the backend (separate private repo Foxugly/trainingmanager_server) is
+#     checked out into ./backend, installed, migrated, seeded with
+#     `create_e2e_data`, and served on :8000 (sqlite, dev settings);
+#   - this frontend is `npm ci`-installed and served by `ng serve` on :4200.
+#     environment.ts hard-codes apiBase=http://localhost:8000, so the SPA
+#     served by ng serve calls the local backend directly (no nginx runtime
+#     config in dev).
+# Then `playwright test` runs with E2E_BASE_URL=http://localhost:4200.
+#
+# REQUIRED REPO SECRET: E2E_BACKEND_TOKEN — a token (classic PAT or
+# fine-grained) with READ (contents) access to Foxugly/trainingmanager_server,
+# used for the cross-repo checkout of the backend. See e2e/README.md.
+
+on:
+  pull_request:
+  push:
+    branches:
+      - "**"
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      # 1. Frontend repo (this repo) into the workspace root.
+      - name: Checkout frontend
+        uses: actions/checkout@v5
+
+      # 2. Backend repo (separate private repo) into ./backend.
+      - name: Checkout backend
+        uses: actions/checkout@v5
+        with:
+          repository: Foxugly/trainingmanager_server
+          ref: main
+          token: ${{ secrets.E2E_BACKEND_TOKEN }}
+          path: backend
+
+      # 3. Python + backend deps (version matches the backend's deploy.yml).
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install backend dependencies
+        run: pip install -r backend/requirements.txt -r backend/requirements-dev.txt
+
+      # 4. CI .env for the backend. settings/base.py reads these with NO default
+      #    (fail-loud): SECRET_KEY, DEBUG, ALLOWED_HOSTS, FRONTEND_BASE_URL,
+      #    GRAPH_TENANT_ID/CLIENT_ID/CLIENT_SECRET/SENDER. STATE+WEBSITE+CORS and
+      #    the Turnstile/Anthropic/attachment vars have defaults but are set to
+      #    safe dummies anyway. environ.Env.read_env(..., overwrite=True) makes
+      #    this .env authoritative, so write it rather than relying on shell env.
+      #    DB_ENGINE is intentionally absent -> sqlite (base.py DATABASE_URL
+      #    fallback). DEBUG=True + STATE=INT keep the create_e2e_data prod-guard
+      #    satisfied (it only refuses when DEBUG off AND STATE in PROD/PRODUCTION).
+      #    Login is exempt from Turnstile, so a dummy secret is fine for e2e.
+      - name: Write backend CI .env
+        run: |
+          cat > backend/.env <<'EOF'
+          SECRET_KEY=ci-dummy-secret-key-not-used-in-prod
+          DEBUG=True
+          STATE=INT
+          WEBSITE=localhost
+          ALLOWED_HOSTS=localhost,127.0.0.1
+          FRONTEND_BASE_URL=http://localhost:4200
+          CORS_ALLOWED_ORIGINS=http://localhost:4200,http://127.0.0.1:4200
+          GRAPH_TENANT_ID=ci
+          GRAPH_CLIENT_ID=ci
+          GRAPH_CLIENT_SECRET=ci
+          GRAPH_SENDER=ci@example.com
+          TURNSTILE_SITE_KEY=ci-dummy-site-key
+          TURNSTILE_SECRET_KEY=ci-dummy-secret-key
+          ANTHROPIC_API_KEY=
+          ATTACHMENTS_S3_BUCKET=
+          EOF
+
+      # 5. Migrate + seed (run from ./backend so manage.py + .env resolve).
+      #    manage.py defaults DJANGO_SETTINGS_MODULE to
+      #    django-trainingmanager.settings.dev, which is what we want for CI.
+      - name: Migrate database
+        working-directory: backend
+        run: python manage.py migrate --noinput
+
+      - name: Seed e2e data
+        working-directory: backend
+        run: python manage.py create_e2e_data
+
+      # 6. Start the backend on :8000 and wait for the health endpoint.
+      - name: Start backend
+        working-directory: backend
+        run: |
+          python manage.py runserver 0.0.0.0:8000 > "$GITHUB_WORKSPACE/backend.log" 2>&1 &
+          echo "Waiting for backend on http://localhost:8000/api/v1/health/ ..."
+          for i in $(seq 1 60); do
+            if curl --fail --silent --max-time 5 http://localhost:8000/api/v1/health/ > /dev/null; then
+              echo "Backend is up (after ${i}s)."
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Backend failed to come up. Last 100 log lines:"
+          tail -n 100 "$GITHUB_WORKSPACE/backend.log" || true
+          exit 1
+
+      # 7. Node + frontend deps (version matches this repo's deploy.yml).
+      - name: Set up Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      # 8. Playwright browser + OS deps (chromium only — the suite is chromium).
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      # 9. Start the frontend on :4200 and wait for it to serve.
+      - name: Start frontend
+        run: |
+          npm start -- --host 0.0.0.0 --port 4200 > "$GITHUB_WORKSPACE/frontend.log" 2>&1 &
+          echo "Waiting for frontend on http://localhost:4200 ..."
+          for i in $(seq 1 180); do
+            if curl --fail --silent --max-time 5 http://localhost:4200 > /dev/null; then
+              echo "Frontend is up (after ${i}s)."
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Frontend failed to come up. Last 100 log lines:"
+          tail -n 100 "$GITHUB_WORKSPACE/frontend.log" || true
+          exit 1
+
+      # 10. Run the suite against the local stack.
+      - name: Run Playwright tests
+        env:
+          E2E_BASE_URL: http://localhost:4200
+          CI: "true"
+        run: npx playwright test
+
+      # 11. Always publish the HTML report (+ server logs for debugging).
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            backend.log
+            frontend.log
+          retention-days: 14
+          if-no-files-found: ignore
