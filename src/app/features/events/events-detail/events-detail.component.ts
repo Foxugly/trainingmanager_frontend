@@ -325,7 +325,7 @@ export class EventsDetailComponent implements OnInit {
     if (eventId == null || this.rsvpSubmitting()) return;
     this.rsvpSubmitting.set(true);
     this.eventsService
-      .eventsRsvpUpdate({ eventPk: eventId, rsvpUpsert: { status } })
+      .eventsRsvpUpdate({ eventPk: eventId, rsvpUpsertRequest: { status } })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
@@ -389,7 +389,7 @@ export class EventsDetailComponent implements OnInit {
 
   private patchEventTotal(eventId: number, total: number): void {
     this.eventsService
-      .eventsPartialUpdate({ id: eventId, patchedEvent: { total } })
+      .eventsPartialUpdate({ id: eventId, patchedEventRequest: { total } })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (updated) => {
@@ -544,7 +544,7 @@ export class EventsDetailComponent implements OnInit {
     this.eventsService
       .eventsGenerateTrainingCreate({
         id: event.id,
-        generateTrainingRequest: { additional_prompt: additionalPrompt },
+        generateTrainingRequestRequest: { additional_prompt: additionalPrompt },
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -566,7 +566,7 @@ export class EventsDetailComponent implements OnInit {
     const res = await firstValueFrom(
       this.eventsService.eventsGenerateTrainingCreate({
         id: eventId,
-        generateTrainingRequest: { additional_prompt: additionalPrompt },
+        generateTrainingRequestRequest: { additional_prompt: additionalPrompt },
       }),
     );
     this.lastResult.set(res);
@@ -594,7 +594,7 @@ export class EventsDetailComponent implements OnInit {
     this.eventsService
       .eventsDuplicateCreate({
         id: eventId,
-        duplicateEventRequest: {
+        duplicateEventRequestRequest: {
           date: payload.date,
           repeat_weekly: payload.repeat_weekly,
           occurrences: payload.occurrences,
@@ -637,7 +637,7 @@ export class EventsDetailComponent implements OnInit {
     if (eventId == null || this.sharing()) return;
     this.sharing.set(true);
     this.eventsService
-      .eventsShareCreate({ id: eventId, eventShareRequest: { is_public: isPublic } })
+      .eventsShareCreate({ id: eventId, eventShareRequestRequest: { is_public: isPublic } })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res: EventShareResponse) => {
@@ -769,7 +769,7 @@ export class EventsDetailComponent implements OnInit {
 
   private applyTrainingType(id: number, next: TrainingTypeEnum): void {
     this.eventsService
-      .eventsPartialUpdate({ id, patchedEvent: { training_type: next } })
+      .eventsPartialUpdate({ id, patchedEventRequest: { training_type: next } })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.reloadEvent(),

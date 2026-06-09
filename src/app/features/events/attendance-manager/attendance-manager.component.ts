@@ -179,7 +179,7 @@ export class AttendanceManagerComponent implements OnInit, OnDestroy {
     firstValueFrom(
       this.eventsService.eventsAttendanceBulkCreate({
         eventPk: this.event().id,
-        attendanceBulk: { attendances: [{ member_id: memberId, status_code: code }] },
+        attendanceBulkRequest: { attendances: [{ member_id: memberId, status_code: code }] },
       }),
     )
       .then(() => {

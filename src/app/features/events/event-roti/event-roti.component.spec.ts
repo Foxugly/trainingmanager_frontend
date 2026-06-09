@@ -81,7 +81,7 @@ describe('EventRotiComponent', () => {
 
   it('submitRoti PUTs the score then refreshes the summary', () => {
     access(component).submitRoti(2);
-    expect(eventsMock.eventsRotiUpdate).toHaveBeenCalledWith({ eventPk: 7, rotiUpsert: { score: 2 } });
+    expect(eventsMock.eventsRotiUpdate).toHaveBeenCalledWith({ eventPk: 7, rotiUpsertRequest: { score: 2 } });
     expect(access(component).rotiSummary()?.my_score).toBe(2);
   });
 });

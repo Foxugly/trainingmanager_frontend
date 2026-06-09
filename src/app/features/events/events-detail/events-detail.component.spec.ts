@@ -261,8 +261,8 @@ describe('EventsDetailComponent', () => {
       eventsDestroy: vi.fn().mockReturnValue(of(null)),
       eventsPartialUpdate: vi
         .fn()
-        .mockImplementation((p: { patchedEvent?: { total?: number } }) =>
-          of({ ...(eventResult ?? eventNoRounds), total: p?.patchedEvent?.total ?? 0 } as Event),
+        .mockImplementation((p: { patchedEventRequest?: { total?: number } }) =>
+          of({ ...(eventResult ?? eventNoRounds), total: p?.patchedEventRequest?.total ?? 0 } as Event),
         ),
       eventsRotiRetrieve: vi
         .fn()
@@ -287,11 +287,11 @@ describe('EventsDetailComponent', () => {
       ),
       eventsRsvpUpdate: vi
         .fn()
-        .mockImplementation((p: { rsvpUpsert: { status: string } }) =>
+        .mockImplementation((p: { rsvpUpsertRequest: { status: string } }) =>
           of({
             counts: { going: 3, maybe: 1, not_going: 1, no_response: 0 },
             total_members: 5,
-            my_status: p.rsvpUpsert.status,
+            my_status: p.rsvpUpsertRequest.status,
             by_member: [],
           }),
         ),
@@ -488,7 +488,7 @@ describe('EventsDetailComponent', () => {
     );
     expect(eventsMock.eventsGenerateTrainingCreate).toHaveBeenCalledWith({
       id: 7,
-      generateTrainingRequest: { additional_prompt: 'focus on endurance' },
+      generateTrainingRequestRequest: { additional_prompt: 'focus on endurance' },
     });
     expect(roundsMock.roundsDestroy).not.toHaveBeenCalled();
   });
@@ -503,7 +503,7 @@ describe('EventsDetailComponent', () => {
     expect(roundsMock.roundsDestroy).toHaveBeenNthCalledWith(1, { id: 11 });
     expect(eventsMock.eventsGenerateTrainingCreate).toHaveBeenCalledWith({
       id: 7,
-      generateTrainingRequest: { additional_prompt: 'with kickboard' },
+      generateTrainingRequestRequest: { additional_prompt: 'with kickboard' },
     });
   });
 
@@ -602,7 +602,7 @@ describe('EventsDetailComponent', () => {
     access(component).submitRsvp('going');
     expect(eventsMock.eventsRsvpUpdate).toHaveBeenCalledWith({
       eventPk: 7,
-      rsvpUpsert: { status: 'going' },
+      rsvpUpsertRequest: { status: 'going' },
     });
     expect(access(component).rsvpSummary()?.my_status).toBe('going');
   });
@@ -713,7 +713,7 @@ describe('EventsDetailComponent', () => {
     );
     // Not applied until the confirm is accepted.
     expect(eventsMock.eventsPartialUpdate).not.toHaveBeenCalledWith(
-      expect.objectContaining({ patchedEvent: { training_type: TrainingTypeEnum.Freeform } }),
+      expect.objectContaining({ patchedEventRequest: { training_type: TrainingTypeEnum.Freeform } }),
     );
   });
 
@@ -723,7 +723,7 @@ describe('EventsDetailComponent', () => {
     access(component).onTrainingTypeChange(TrainingTypeEnum.Freeform);
     expect(eventsMock.eventsPartialUpdate).toHaveBeenCalledWith({
       id: 7,
-      patchedEvent: { training_type: TrainingTypeEnum.Freeform },
+      patchedEventRequest: { training_type: TrainingTypeEnum.Freeform },
     });
     // applyTrainingType → reloadEvent() refetches the event.
     expect(eventsMock.eventsRetrieve.mock.calls.length).toBeGreaterThan(retrieveCallsBefore);
@@ -739,7 +739,7 @@ describe('EventsDetailComponent', () => {
     access(component).onTrainingTypeChange(TrainingTypeEnum.Freeform);
     expect(eventsMock.eventsPartialUpdate).toHaveBeenCalledWith({
       id: 7,
-      patchedEvent: { training_type: TrainingTypeEnum.Freeform },
+      patchedEventRequest: { training_type: TrainingTypeEnum.Freeform },
     });
   });
 
@@ -756,7 +756,7 @@ describe('EventsDetailComponent', () => {
     access(component).onTrainingTypeChange(TrainingTypeEnum.Freeform);
     // No PATCH fires for a rejected switch.
     expect(eventsMock.eventsPartialUpdate).not.toHaveBeenCalledWith(
-      expect.objectContaining({ patchedEvent: { training_type: TrainingTypeEnum.Freeform } }),
+      expect.objectContaining({ patchedEventRequest: { training_type: TrainingTypeEnum.Freeform } }),
     );
     // The revert is real: the control value is written back to the original type.
     expect(access(component).trainingTypeControl.value).toBe(TrainingTypeEnum.Structured);

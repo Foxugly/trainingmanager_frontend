@@ -29,8 +29,7 @@ import { Select } from 'primeng/select';
 import { EventsService } from '../../../api/api/events.service';
 import { ProgramsService } from '../../../api/api/programs.service';
 import { TeamsService } from '../../../api/api/teams.service';
-import { Event } from '../../../api/model/event';
-import { PatchedEvent } from '../../../api/model/patched-event';
+import { PatchedEventRequest } from '../../../api/model/patched-event-request';
 import { Program } from '../../../api/model/program';
 import { Team } from '../../../api/model/team';
 import { TeamSportRead } from '../../../api/model/team-sport-read';
@@ -386,7 +385,10 @@ export class EventsFormComponent implements OnInit {
     if (id === null) {
       const createPayload = {
         name: value.name,
-        refer_program_id: value.refer_program_id,
+        // Required by the form (Validators.required) + guarded by the form.invalid
+        // early-return above, so it is non-null here. EventRequest types it as a
+        // plain number.
+        refer_program_id: value.refer_program_id!,
         goal: value.goal || null,
         sport_id: value.sport_id ?? null,
         place_id: value.place_id ?? null,
@@ -401,7 +403,7 @@ export class EventsFormComponent implements OnInit {
         vis_rounds: value.vis_rounds,
       };
       this.eventsService
-        .eventsCreate({ event: createPayload as unknown as Event })
+        .eventsCreate({ eventRequest: createPayload })
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (created) => {
@@ -417,7 +419,7 @@ export class EventsFormComponent implements OnInit {
       return;
     }
 
-    const updatePayload: PatchedEvent = {
+    const updatePayload: PatchedEventRequest = {
       name: value.name,
       refer_program_id: value.refer_program_id ?? undefined,
       goal: value.goal || undefined,
@@ -435,7 +437,7 @@ export class EventsFormComponent implements OnInit {
     };
 
     this.eventsService
-      .eventsPartialUpdate({ id, patchedEvent: updatePayload })
+      .eventsPartialUpdate({ id, patchedEventRequest: updatePayload })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

@@ -209,11 +209,11 @@ export class RoundExercisesComponent {
     const src = ex ?? prefill ?? {};
     return this.fb.nonNullable.group({
       modality_id: this.fb.nonNullable.control<number | null>(
-        src.modality_id ?? src.modality?.id ?? null,
+        src.modality?.id ?? null,
         [Validators.required],
       ),
       energysegment_id: this.fb.nonNullable.control<number | null>(
-        src.energysegment_id ?? src.energysegment?.id ?? null,
+        src.energysegment?.id ?? null,
         [Validators.required],
       ),
       repetition: this.fb.nonNullable.control<number>(src.repetition ?? 1, [
@@ -270,8 +270,8 @@ export class RoundExercisesComponent {
     const last = existing.length > 0 ? existing[existing.length - 1] : null;
     const prefill: Partial<Exercise> | undefined = last
       ? {
-          modality_id: last.modality_id ?? last.modality?.id ?? null,
-          energysegment_id: last.energysegment_id ?? last.energysegment?.id ?? null,
+          modality: last.modality,
+          energysegment: last.energysegment,
           distance: last.distance,
           t_start: last.t_start,
           t_break: last.t_break,
@@ -318,7 +318,7 @@ export class RoundExercisesComponent {
     this.exercisesService
       .exercisesPartialUpdate({
         id: ex.id,
-        patchedExercise: {
+        patchedExerciseRequest: {
           modality_id: value.modality_id,
           energysegment_id: value.energysegment_id,
           repetition: value.repetition,
@@ -366,7 +366,7 @@ export class RoundExercisesComponent {
       language: (this.language() ?? 'fr') as LanguageEnum,
     };
     this.exercisesService
-      .exercisesCreate({ exercise: payload as unknown as Exercise })
+      .exercisesCreate({ exerciseRequest: payload })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (created) => {
@@ -436,7 +436,7 @@ export class RoundExercisesComponent {
     firstValueFrom(
       this.roundsService.roundsExercisesReorderCreate({
         id: this.round().id,
-        reorderExercisesRequest: { exercise_ids: renumbered.map((ex) => ex.id) },
+        reorderExercisesRequestRequest: { exercise_ids: renumbered.map((ex) => ex.id) },
       }),
     )
       .catch((err: HttpErrorResponse) => {

@@ -59,8 +59,8 @@ describe('RoundExercisesComponent', () => {
       exercisesCreate: vi.fn().mockReturnValue(of({ ...exercise1, id: 999 })),
       exercisesPartialUpdate: vi
         .fn()
-        .mockImplementation((p: { id: number; patchedExercise?: { repetition?: number } }) =>
-          of({ ...exercise1, id: p.id, repetition: p.patchedExercise?.repetition ?? 4 }),
+        .mockImplementation((p: { id: number; patchedExerciseRequest?: { repetition?: number } }) =>
+          of({ ...exercise1, id: p.id, repetition: p.patchedExerciseRequest?.repetition ?? 4 }),
         ),
       exercisesDestroy: vi.fn().mockReturnValue(of(undefined)),
     };
@@ -152,7 +152,7 @@ describe('RoundExercisesComponent', () => {
     access(component).saveNewRow(row);
     await tick();
     expect(exercisesMock.exercisesCreate).toHaveBeenCalledTimes(1);
-    expect(exercisesMock.exercisesCreate.mock.calls[0][0].exercise.round_id).toBe(round.id);
+    expect(exercisesMock.exercisesCreate.mock.calls[0][0].exerciseRequest.round_id).toBe(round.id);
     expect(access(component).newRows().length).toBe(0);
     expect(access(component).localExercises().some((e) => e.id === 999)).toBe(true);
     expect(changed.at(-1)?.some((e) => e.id === 999)).toBe(true);
@@ -169,8 +169,8 @@ describe('RoundExercisesComponent', () => {
     access(component).saveEditExercise(exercise1);
     await tick();
     const call = exercisesMock.exercisesPartialUpdate.mock.calls[0][0];
-    expect(call.patchedExercise.repetition).toBe(8);
-    expect(call.patchedExercise.round_id).toBe(round.id);
+    expect(call.patchedExerciseRequest.repetition).toBe(8);
+    expect(call.patchedExerciseRequest.round_id).toBe(round.id);
     expect(access(component).isEditingExercise(exercise1)).toBe(false);
     expect(changed.length).toBeGreaterThan(0);
   });
@@ -183,7 +183,7 @@ describe('RoundExercisesComponent', () => {
     expect(access(component).localExercises().map((e) => e.id)).toEqual([202, 201]);
     expect(roundsMock.roundsExercisesReorderCreate).toHaveBeenCalledWith({
       id: round.id,
-      reorderExercisesRequest: { exercise_ids: [202, 201] },
+      reorderExercisesRequestRequest: { exercise_ids: [202, 201] },
     });
     expect(changed.at(-1)?.map((e) => e.id)).toEqual([202, 201]);
   });

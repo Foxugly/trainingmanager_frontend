@@ -479,7 +479,7 @@ describe('EventsFormComponent', () => {
     await setup('7');
     access(component).form.patchValue({ vis_goal: VisibilityMode.After });
     access(component).submit();
-    expect(eventsMock.eventsPartialUpdate.mock.calls[0][0].patchedEvent).toMatchObject({
+    expect(eventsMock.eventsPartialUpdate.mock.calls[0][0].patchedEventRequest).toMatchObject({
       vis_goal: VisibilityMode.After,
     });
   });
@@ -498,15 +498,15 @@ describe('EventsFormComponent', () => {
       place_id: 9,
     });
     access(component).submit();
-    expect(eventsMock.eventsCreate.mock.calls[0][0].event).toMatchObject({ place_id: 9 });
-    expect(eventsMock.eventsCreate.mock.calls[0][0].event).not.toHaveProperty('location');
+    expect(eventsMock.eventsCreate.mock.calls[0][0].eventRequest).toMatchObject({ place_id: 9 });
+    expect(eventsMock.eventsCreate.mock.calls[0][0].eventRequest).not.toHaveProperty('location');
   });
 
   it('sends place_id in the update payload on edit', async () => {
     await setup('7');
     access(component).form.patchValue({ place_id: 9 });
     access(component).submit();
-    expect(eventsMock.eventsPartialUpdate.mock.calls[0][0].patchedEvent).toMatchObject({ place_id: 9 });
+    expect(eventsMock.eventsPartialUpdate.mock.calls[0][0].patchedEventRequest).toMatchObject({ place_id: 9 });
   });
 
   it('pre-selects the event place and clears the legacy location hint on edit', async () => {

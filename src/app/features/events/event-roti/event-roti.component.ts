@@ -91,7 +91,7 @@ export class EventRotiComponent {
     if (this.rotiSubmitting()) return;
     this.rotiSubmitting.set(true);
     this.eventsService
-      .eventsRotiUpdate({ eventPk: eventId, rotiUpsert: { score } })
+      .eventsRotiUpdate({ eventPk: eventId, rotiUpsertRequest: { score } })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {

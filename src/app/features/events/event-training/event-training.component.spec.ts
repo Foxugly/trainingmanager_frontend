@@ -192,7 +192,7 @@ describe('EventTrainingComponent', () => {
     expect(access(component).rounds().map((r) => r.id)).toEqual([12, 11, 13]);
     expect(eventsMock.eventsRoundsReorderCreate).toHaveBeenCalledWith({
       id: 7,
-      reorderRoundsRequest: { round_ids: [12, 11, 13] },
+      reorderRoundsRequestRequest: { round_ids: [12, 11, 13] },
     });
   });
 });

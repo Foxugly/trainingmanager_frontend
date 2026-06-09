@@ -121,7 +121,7 @@ describe('RoundFormDialogComponent', () => {
     component.closed.subscribe((r) => (emitted = r));
     access(component).submit();
     expect(roundsMock.roundsCreate).toHaveBeenCalledWith({
-      round: {
+      roundRequest: {
         event_id: 7,
         sport_id: 1,
         language: 'fr',
@@ -140,7 +140,7 @@ describe('RoundFormDialogComponent', () => {
     access(component).submit();
     expect(roundsMock.roundsPartialUpdate).toHaveBeenCalledWith({
       id: 11,
-      patchedRound: {
+      patchedRoundRequest: {
         count: 3,
         t_start: null,
         t_break: null,

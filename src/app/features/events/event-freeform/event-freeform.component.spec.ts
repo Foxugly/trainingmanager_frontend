@@ -26,13 +26,13 @@ describe('EventFreeformComponent', () => {
     fixture = TestBed.createComponent(EventFreeformComponent);
   });
 
-  it('saves the richtext via eventsPartialUpdate({id, patchedEvent})', () => {
+  it('saves the richtext via eventsPartialUpdate({id, patchedEventRequest})', () => {
     const c = fixture.componentInstance as unknown as { draft: { set(v: string): void }; save(): void };
     fixture.componentRef.setInput('event', { id: 7, training_richtext: '' });
     fixture.componentRef.setInput('canManage', true);
     c.draft.set('<p>new</p>');
     c.save();
-    expect(eventsMock.eventsPartialUpdate).toHaveBeenCalledWith({ id: 7, patchedEvent: { training_richtext: '<p>new</p>' } });
+    expect(eventsMock.eventsPartialUpdate).toHaveBeenCalledWith({ id: 7, patchedEventRequest: { training_richtext: '<p>new</p>' } });
   });
 
   it('toasts a translated save_failed error (not a raw i18n key) when the save fails', () => {

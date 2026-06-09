@@ -264,7 +264,7 @@ export class EventTrainingComponent {
     firstValueFrom(
       this.eventsService.eventsRoundsReorderCreate({
         id: eventId,
-        reorderRoundsRequest: { round_ids: renumbered.map((x) => x.id) },
+        reorderRoundsRequestRequest: { round_ids: renumbered.map((x) => x.id) },
       }),
     )
       .catch((err: HttpErrorResponse) => {

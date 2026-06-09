@@ -60,7 +60,7 @@ export class EventFreeformComponent {
   protected save(): void {
     this.saving.set(true);
     this.eventsService
-      .eventsPartialUpdate({ id: this.event().id, patchedEvent: { training_richtext: this.draft() } })
+      .eventsPartialUpdate({ id: this.event().id, patchedEventRequest: { training_richtext: this.draft() } })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

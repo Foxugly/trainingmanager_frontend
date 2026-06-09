@@ -151,7 +151,7 @@ describe('AttendanceManagerComponent', () => {
     expect(eventsMock.eventsAttendanceBulkCreate).toHaveBeenCalledTimes(1);
     expect(eventsMock.eventsAttendanceBulkCreate).toHaveBeenCalledWith({
       eventPk: 7,
-      attendanceBulk: { attendances: [{ member_id: 10, status_code: 'present' }] },
+      attendanceBulkRequest: { attendances: [{ member_id: 10, status_code: 'present' }] },
     });
   });
 
