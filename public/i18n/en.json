@@ -314,6 +314,12 @@
       "apply_confirm": "Fill attendance from availability?",
       "applied": "{{count}} attendance record(s) updated",
       "empty": "No responses"
+    },
+    "training": {
+      "type_structured": "Structured (rounds & exercises)",
+      "type_freeform": "Free text",
+      "switch_confirm": "Changing the training type will delete the current content. Continue?",
+      "freeform_heading": "Training (free text)"
     }
   },
   "programs": {
@@ -611,7 +617,9 @@
       "managers_empty_subtitle": "Select or deselect managers from the list above.",
       "manager_add": "Add a coach",
       "manager_pick_label": "Person to add as coach",
-      "manager_pick_placeholder": "Select a person"
+      "manager_pick_placeholder": "Select a person",
+      "training_type_label": "Training type",
+      "training_type_inherit": "Inherit (sport default)"
     },
     "member_dialog": {
       "title": "Add a member",
@@ -1279,7 +1287,8 @@
       },
       "errors": {
         "unknown": "Something went wrong."
-      }
+      },
+      "default_training_type": "Default training type"
     }
   },
   "stats": {

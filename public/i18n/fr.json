@@ -314,6 +314,12 @@
       "apply_confirm": "Remplir les présences à partir des disponibilités ?",
       "applied": "{{count}} présence(s) mise(s) à jour",
       "empty": "Aucune réponse"
+    },
+    "training": {
+      "type_structured": "Structuré (rounds & exercices)",
+      "type_freeform": "Texte libre",
+      "switch_confirm": "Changer le type d'entraînement supprimera le contenu actuel. Continuer ?",
+      "freeform_heading": "Entraînement (texte libre)"
     }
   },
   "programs": {
@@ -611,7 +617,9 @@
       "managers_empty_subtitle": "Désélectionnez ou sélectionnez des managers dans la liste ci-dessus.",
       "manager_add": "Ajouter un encadrant",
       "manager_pick_label": "Personne à ajouter comme encadrant",
-      "manager_pick_placeholder": "Sélectionner une personne"
+      "manager_pick_placeholder": "Sélectionner une personne",
+      "training_type_label": "Type d'entraînement",
+      "training_type_inherit": "Hériter (défaut du sport)"
     },
     "member_dialog": {
       "title": "Ajouter un membre",
@@ -1279,7 +1287,8 @@
       },
       "errors": {
         "unknown": "Une erreur est survenue."
-      }
+      },
+      "default_training_type": "Type d'entraînement par défaut"
     }
   },
   "stats": {

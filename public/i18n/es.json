@@ -314,6 +314,12 @@
       "apply_confirm": "¿Rellenar la asistencia a partir de la disponibilidad?",
       "applied": "{{count}} asistencia(s) actualizada(s)",
       "empty": "Sin respuestas"
+    },
+    "training": {
+      "type_structured": "Estructurado (rondas y ejercicios)",
+      "type_freeform": "Texto libre",
+      "switch_confirm": "Cambiar el tipo de entrenamiento eliminará el contenido actual. ¿Continuar?",
+      "freeform_heading": "Entrenamiento (texto libre)"
     }
   },
   "programs": {
@@ -611,7 +617,9 @@
       "managers_empty_subtitle": "Selecciona o deselecciona managers en la lista de arriba.",
       "manager_add": "Añadir un entrenador",
       "manager_pick_label": "Persona para añadir como entrenador",
-      "manager_pick_placeholder": "Selecciona una persona"
+      "manager_pick_placeholder": "Selecciona una persona",
+      "training_type_label": "Tipo de entrenamiento",
+      "training_type_inherit": "Heredar (predeterminado del deporte)"
     },
     "member_dialog": {
       "title": "Añadir un miembro",
@@ -1279,7 +1287,8 @@
       },
       "errors": {
         "unknown": "Se ha producido un error."
-      }
+      },
+      "default_training_type": "Tipo de entrenamiento predeterminado"
     }
   },
   "stats": {
