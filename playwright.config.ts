@@ -21,37 +21,30 @@ export default defineConfig({
     baseURL: process.env.E2E_BASE_URL || 'http://localhost:4200',
     trace: 'on-first-retry',
   },
+  // Every spec authenticates itself: the public login spec logs in through the
+  // UI, and the authed specs log in fresh per spec via a beforeEach (loginAs in
+  // e2e/auth.ts). We deliberately do NOT share a saved storageState — the
+  // backend rotates+blacklists refresh tokens, so replaying one frozen token
+  // across specs/retries 401s on refresh and logs the app out. See e2e/auth.ts.
   projects: [
-    // 1. Auth setup — logs in as the seeded manager + athlete and persists
-    //    their storageState to e2e/.auth/*.json. Authed projects depend on it.
-    { name: 'setup', testMatch: /auth\.setup\.ts$/ },
-
-    // 2. Public/unauthenticated specs (login flow starts logged-out).
+    // Public/unauthenticated: the login flow itself, starts logged-out.
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
       testMatch: /login\.spec\.ts$/,
     },
 
-    // 3. Manager-authenticated specs (reuse the manager storageState).
+    // Manager critical paths (team + event); each spec logs in as the manager.
     {
       name: 'chromium-manager',
-      use: {
-        ...devices['Desktop Chrome'],
-        storageState: 'e2e/.auth/manager.json',
-      },
-      dependencies: ['setup'],
+      use: { ...devices['Desktop Chrome'] },
       testMatch: /(team|event)\.spec\.ts$/,
     },
 
-    // 4. Athlete-authenticated specs (reuse the athlete storageState).
+    // Athlete critical path (rsvp); each spec logs in as the athlete.
     {
       name: 'chromium-athlete',
-      use: {
-        ...devices['Desktop Chrome'],
-        storageState: 'e2e/.auth/athlete.json',
-      },
-      dependencies: ['setup'],
+      use: { ...devices['Desktop Chrome'] },
       testMatch: /rsvp\.spec\.ts$/,
     },
   ],

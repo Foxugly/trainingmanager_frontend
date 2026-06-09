@@ -1,8 +1,14 @@
 import { test, expect } from '@playwright/test';
 import { SEED } from './seed';
+import { loginAs } from './auth';
+
+test.beforeEach(async ({ page }) => {
+  await loginAs(page, 'athlete');
+});
 
 /**
- * Athlete RSVP critical path (athlete storageState).
+ * Athlete RSVP critical path (logged in fresh as the athlete — see e2e/auth.ts
+ * for why this is a per-spec login and not a shared storageState).
  *
  * The seeded athlete is a member of the seeded rsvp_enabled "E2E Team", so any
  * event under that team exposes the RSVP ("Availability") tab to them. This

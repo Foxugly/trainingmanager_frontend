@@ -15,16 +15,22 @@ separate repos, so the suite drives the real SPA against a real backend.
 ```
 e2e/
   seed.ts          # the seed-data contract — must mirror the backend create_e2e_data command
-  auth.setup.ts    # logs in manager + athlete, persists storageState to e2e/.auth/*.json
+  auth.ts          # loginAs(page, role) — fresh per-spec UI login helper
   login.spec.ts    # logged-out: manager logs in and reaches /dashboard
   team.spec.ts     # manager: create a team
   event.spec.ts    # manager: create a session under the seeded program
   rsvp.spec.ts     # athlete: set RSVP to "going" on a team event
 ```
 
-Playwright projects (see `playwright.config.ts`): `setup` runs first and the
-authed projects (`chromium-manager`, `chromium-athlete`) reuse its
-`storageState`; `chromium` runs the logged-out login spec.
+Playwright projects (see `playwright.config.ts`): `chromium` runs the
+logged-out login spec; `chromium-manager` (team + event) and `chromium-athlete`
+(rsvp) each authenticate **fresh per spec** via a `beforeEach` calling
+`loginAs`. We deliberately do **not** share a saved `storageState`: the backend
+rotates and blacklists refresh tokens (`SIMPLE_JWT ROTATE_REFRESH_TOKENS +
+BLACKLIST_AFTER_ROTATION`), so the SPA's cold-boot refresh consumes the saved
+token and replaying one frozen token across specs/retries 401s and logs the app
+out. A fresh login per spec gives each test its own single-use token pair. See
+the header comment in `e2e/auth.ts`.
 
 ## Running locally
 

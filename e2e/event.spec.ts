@@ -1,8 +1,14 @@
 import { test, expect } from '@playwright/test';
 import { SEED } from './seed';
+import { loginAs } from './auth';
+
+test.beforeEach(async ({ page }) => {
+  await loginAs(page, 'manager');
+});
 
 /**
- * Event (session) creation critical path (manager storageState).
+ * Event (session) creation critical path (logged in fresh as the manager — see
+ * e2e/auth.ts for why this is a per-spec login and not a shared storageState).
  *
  * IMPORTANT — the events-form has NO program picker. `refer_program_id` is
  * required but is only ever set via the `?program=<id>` query param, which the

@@ -10,8 +10,3 @@ export const SEED = {
   program: 'E2E Program',
   sport: 'E2E Sport',
 } as const;
-
-export const STORAGE = {
-  manager: 'e2e/.auth/manager.json',
-  athlete: 'e2e/.auth/athlete.json',
-} as const;

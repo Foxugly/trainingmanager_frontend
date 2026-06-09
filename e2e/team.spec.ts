@@ -1,8 +1,14 @@
 import { test, expect } from '@playwright/test';
 import { SEED } from './seed';
+import { loginAs } from './auth';
+
+test.beforeEach(async ({ page }) => {
+  await loginAs(page, 'manager');
+});
 
 /**
- * Team creation critical path (manager storageState).
+ * Team creation critical path (logged in fresh as the manager — see
+ * e2e/auth.ts for why this is a per-spec login and not a shared storageState).
  *
  * Flow (teams-list -> teams-form):
  *   /teams  has a "New team" CTA -> /teams/new
