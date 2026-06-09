@@ -24,8 +24,10 @@ import { TeamsService } from '../../../api/api/teams.service';
 import { Event } from '../../../api/model/event';
 import { Program } from '../../../api/model/program';
 import { Team } from '../../../api/model/team';
+import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../core/auth/auth.service';
 import { LanguageService } from '../../../core/i18n/language.service';
+import { loadProgramsForTeams as fanOutPrograms } from '../../programs/program-fanout';
 import { computeTeamRole } from '../../teams/teams-list/teams-list.component';
 
 const HEX_RE = /^#([0-9a-f]{6}|[0-9a-f]{3})$/i;
@@ -92,6 +94,7 @@ export class EventsCalendarComponent implements OnInit {
   private readonly programsService = inject(ProgramsService);
   private readonly eventsService = inject(EventsService);
   private readonly authService = inject(AuthService);
+  private readonly messageService = inject(MessageService);
   private readonly transloco = inject(TranslocoService);
   private readonly languageService = inject(LanguageService);
   private readonly destroyRef = inject(DestroyRef);
@@ -224,28 +227,31 @@ export class EventsCalendarComponent implements OnInit {
           const teams = res.results ?? [];
           this.availableTeams.set(teams);
           this.selectedTeamIds.set(teams.map((t) => t.id));
-          this.loadProgramsForTeams(teams.map((t) => t.id));
+          void this.loadProgramsForTeams(teams.map((t) => t.id));
         },
+        // Without an error handler the team filter silently stays empty and the
+        // calendar never loads — surface a toast so the user knows to retry.
+        error: () => this.notifyLoadFailed(),
       });
   }
 
   private async loadProgramsForTeams(teamIds: number[]): Promise<void> {
-    if (teamIds.length === 0) {
-      this.availablePrograms.set([]);
-      return;
+    try {
+      const programs = await fanOutPrograms(this.programsService, teamIds);
+      this.availablePrograms.set(programs);
+      this.selectedProgramIds.set(programs.map((p) => p.id));
+    } catch {
+      // A failed program fetch leaves the program filter empty — tell the user.
+      this.notifyLoadFailed();
     }
-    const requests = teamIds.map((teamId) =>
-      firstValueFrom(
-        this.programsService.programsList({ team: teamId }),
-      ),
-    );
-    const responses = await Promise.all(requests);
-    const all: Program[] = responses.flatMap((r) => r.results ?? []);
-    const dedup = new Map<number, Program>();
-    for (const p of all) dedup.set(p.id, p);
-    const programs = Array.from(dedup.values());
-    this.availablePrograms.set(programs);
-    this.selectedProgramIds.set(programs.map((p) => p.id));
+  }
+
+  private notifyLoadFailed(): void {
+    this.messageService.add({
+      severity: 'error',
+      summary: this.transloco.translate('common.error'),
+      detail: this.transloco.translate('common.load_failed'),
+    });
   }
 
   private async reloadEvents(): Promise<void> {

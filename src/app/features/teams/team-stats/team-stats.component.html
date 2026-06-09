@@ -4,8 +4,9 @@
     <div class="card flex flex-wrap items-center gap-3">
       @if (showControls()) {
         <div class="flex flex-col gap-1">
-          <span class="text-xs font-medium text-gray-500">{{ 'stats.period' | transloco }}</span>
+          <label for="stats-period" class="text-xs font-medium text-gray-500">{{ 'stats.period' | transloco }}</label>
           <p-datepicker
+            inputId="stats-period"
             selectionMode="range"
             [ngModel]="range()"
             (ngModelChange)="onRangeChange($event)"
@@ -105,8 +106,11 @@
             <ng-template pTemplate="body" let-row>
               <tr
                 class="cursor-pointer"
+                role="button"
+                [attr.aria-label]="'stats.view_member_stats' | transloco: { name: row.name }"
                 (click)="onMemberRowClick(row.member_id)"
                 (keydown.enter)="onMemberRowClick(row.member_id)"
+                (keydown.space)="$event.preventDefault(); onMemberRowClick(row.member_id)"
                 tabindex="0"
               >
                 <td class="font-medium text-indigo-700">{{ row.name }}</td>

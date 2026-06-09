@@ -32,14 +32,17 @@
     <form [formGroup]="form">
       <div class="meta-grid">
         <app-meta-field
+          #abvField
           [label]="'admin.energy_segments.form.abv' | transloco"
           [for]="'abv'"
           [error]="fieldError('abv')"
         >
-          <input pInputText id="abv" formControlName="abv" placeholder="Z1" class="w-full" />
+          <input pInputText id="abv" formControlName="abv" placeholder="Z1" class="w-full"
+            [attr.aria-describedby]="fieldError('abv') ? abvField.errorId() : null" />
         </app-meta-field>
 
         <app-meta-field
+          #energySystemField
           [label]="'admin.energy_segments.form.energy_system' | transloco"
           [for]="'energy_system_id'"
           [error]="fieldError('energy_system_id')"
@@ -52,10 +55,12 @@
             optionValue="id"
             [placeholder]="'admin.energy_segments.form.energy_system_placeholder' | transloco"
             styleClass="w-full"
+            [attr.aria-describedby]="fieldError('energy_system_id') ? energySystemField.errorId() : null"
           />
         </app-meta-field>
 
         <app-meta-field
+          #descriptionField
           [full]="true"
           [label]="'admin.energy_segments.form.description' | transloco"
           [error]="fieldError('description')"
@@ -70,19 +75,24 @@
             </p-tablist>
             <p-tabpanels>
               <p-tabpanel value="fr">
-                <textarea pTextarea formControlName="description_fr" rows="3" placeholder="Français" class="w-full"></textarea>
+                <textarea pTextarea formControlName="description_fr" rows="3" placeholder="Français" class="w-full"
+                  [attr.aria-describedby]="fieldError('description') ? descriptionField.errorId() : null"></textarea>
               </p-tabpanel>
               <p-tabpanel value="nl">
-                <textarea pTextarea formControlName="description_nl" rows="3" placeholder="Nederlands" class="w-full"></textarea>
+                <textarea pTextarea formControlName="description_nl" rows="3" placeholder="Nederlands" class="w-full"
+                  [attr.aria-describedby]="fieldError('description') ? descriptionField.errorId() : null"></textarea>
               </p-tabpanel>
               <p-tabpanel value="en">
-                <textarea pTextarea formControlName="description_en" rows="3" placeholder="English" class="w-full"></textarea>
+                <textarea pTextarea formControlName="description_en" rows="3" placeholder="English" class="w-full"
+                  [attr.aria-describedby]="fieldError('description') ? descriptionField.errorId() : null"></textarea>
               </p-tabpanel>
               <p-tabpanel value="it">
-                <textarea pTextarea formControlName="description_it" rows="3" placeholder="Italiano" class="w-full"></textarea>
+                <textarea pTextarea formControlName="description_it" rows="3" placeholder="Italiano" class="w-full"
+                  [attr.aria-describedby]="fieldError('description') ? descriptionField.errorId() : null"></textarea>
               </p-tabpanel>
               <p-tabpanel value="es">
-                <textarea pTextarea formControlName="description_es" rows="3" placeholder="Español" class="w-full"></textarea>
+                <textarea pTextarea formControlName="description_es" rows="3" placeholder="Español" class="w-full"
+                  [attr.aria-describedby]="fieldError('description') ? descriptionField.errorId() : null"></textarea>
               </p-tabpanel>
             </p-tabpanels>
           </p-tabs>

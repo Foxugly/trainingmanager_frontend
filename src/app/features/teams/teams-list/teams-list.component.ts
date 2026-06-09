@@ -13,6 +13,7 @@ import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
+import { Tooltip } from 'primeng/tooltip';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { TeamsService } from '../../../api/api/teams.service';
 import { Team } from '../../../api/model/team';
@@ -32,7 +33,7 @@ export interface TeamWithRole extends Team {
 
 @Component({
   selector: 'app-teams-list',
-  imports: [CommonModule, RouterLink, Button, Skeleton, EmptyStateComponent, TranslocoPipe],
+  imports: [CommonModule, RouterLink, Button, Skeleton, Tooltip, EmptyStateComponent, TranslocoPipe],
   templateUrl: './teams-list.component.html',
   styleUrl: './teams-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

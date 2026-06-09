@@ -44,8 +44,9 @@
   <div class="card form-card">
     <form [formGroup]="form">
       <div class="meta-grid">
-        <app-meta-field [label]="'admin.sports.form.slug' | transloco" for="slug" [error]="fieldError('slug')">
-          <input pInputText id="slug" formControlName="slug" />
+        <app-meta-field #slugField [label]="'admin.sports.form.slug' | transloco" for="slug" [error]="fieldError('slug')">
+          <input pInputText id="slug" formControlName="slug"
+            [attr.aria-describedby]="fieldError('slug') ? slugField.errorId() : null" />
         </app-meta-field>
         <app-meta-field [label]="'admin.sports.form.energy_systems' | transloco">
           <p-multiSelect

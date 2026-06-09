@@ -37,12 +37,27 @@
             <p-button [label]="'teams.list.new' | transloco" icon="pi pi-plus" severity="success" />
           </a>
         } @else {
-          <p-button
-            [label]="'teams.list.new' | transloco"
-            icon="pi pi-plus"
-            severity="success"
-            [disabled]="true"
-          />
+          <!-- Wrap in a span so the tooltip still fires when the button is disabled
+               (PrimeNG disabled buttons don't emit hover events). -->
+          <span
+            [pTooltip]="
+              quota()
+                ? (quotaIsLegacy()
+                    ? ('teams.quota.tooltip_legacy'
+                      | transloco: { used: quota()!.used, max: quota()!.max })
+                    : ('teams.quota.tooltip_full'
+                      | transloco: { used: quota()!.used, max: quota()!.max }))
+                : ''
+            "
+            tooltipPosition="bottom"
+          >
+            <p-button
+              [label]="'teams.list.new' | transloco"
+              icon="pi pi-plus"
+              severity="success"
+              [disabled]="true"
+            />
+          </span>
         }
       </div>
       @if (!canCreate()) {

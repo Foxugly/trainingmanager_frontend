@@ -3,7 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { of } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { EventsService } from '../../../api/api/events.service';
 import { ProgramsService } from '../../../api/api/programs.service';
@@ -132,19 +133,31 @@ describe('EventsCalendarComponent', () => {
   let teamsMock: { teamsList: ReturnType<typeof vi.fn> };
   let programsMock: { programsList: ReturnType<typeof vi.fn> };
   let eventsMock: { eventsList: ReturnType<typeof vi.fn> };
+  let messageService: MessageService;
   let userSig: ReturnType<typeof signal<CustomUserPublic | null>>;
 
   const access = (c: EventsCalendarComponent) => c as unknown as ProtectedFields;
 
-  async function setup(currentUser: CustomUserPublic | null = ownerUser, teams: Team[] = [team, team2]) {
+  async function setup(
+    currentUser: CustomUserPublic | null = ownerUser,
+    teams: Team[] = [team, team2],
+    opts: { teamsListFails?: boolean; programsListFails?: boolean } = {},
+  ) {
     TestBed.resetTestingModule();
     userSig = signal<CustomUserPublic | null>(currentUser);
     teamsMock = {
-      teamsList: vi.fn().mockReturnValue(of({ count: teams.length, results: teams })),
+      teamsList: vi
+        .fn()
+        .mockReturnValue(
+          opts.teamsListFails
+            ? throwError(() => new Error('boom'))
+            : of({ count: teams.length, results: teams }),
+        ),
     };
     programsMock = {
       programsList: vi.fn().mockImplementation(
         (params: { team?: number } = {}) => {
+          if (opts.programsListFails) return throwError(() => new Error('boom'));
           // single-object request params (ProgramsListRequestParams)
           const teamId = params.team;
           if (teamId === 4) return of({ count: 1, results: [program] });
@@ -173,6 +186,7 @@ describe('EventsCalendarComponent', () => {
       providers: [
         provideNoopAnimations(),
         provideRouter([]),
+        MessageService,
         { provide: TeamsService, useValue: teamsMock },
         { provide: ProgramsService, useValue: programsMock },
         { provide: EventsService, useValue: eventsMock },
@@ -186,6 +200,8 @@ describe('EventsCalendarComponent', () => {
 
     fixture = TestBed.createComponent(EventsCalendarComponent);
     component = fixture.componentInstance;
+    messageService = TestBed.inject(MessageService);
+    vi.spyOn(messageService, 'add');
     fixture.detectChanges();
     await new Promise((r) => setTimeout(r, 0));
     fixture.detectChanges();
@@ -286,5 +302,19 @@ describe('EventsCalendarComponent', () => {
       expect(i).toBeGreaterThanOrEqual(0);
       expect(i).toBeLessThan(42);
     }
+  });
+
+  it('toasts a load error when the teams list fails', async () => {
+    await setup(ownerUser, [team, team2], { teamsListFails: true });
+    expect(messageService.add).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'error', detail: 'common.load_failed' }),
+    );
+  });
+
+  it('toasts a load error when the program fan-out fails', async () => {
+    await setup(ownerUser, [team, team2], { programsListFails: true });
+    expect(messageService.add).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'error', detail: 'common.load_failed' }),
+    );
   });
 });

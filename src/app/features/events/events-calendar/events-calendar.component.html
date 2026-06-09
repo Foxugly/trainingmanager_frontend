@@ -42,10 +42,11 @@
 
   <div class="flex gap-3 mb-4 flex-wrap">
     <div class="flex flex-col gap-1 min-w-[14rem]">
-      <label class="text-xs font-medium text-gray-700">
+      <label for="cal-teams" class="text-xs font-medium text-gray-700">
         {{ 'events.calendar.filter_teams' | transloco }}
       </label>
       <p-multiSelect
+        inputId="cal-teams"
         [options]="availableTeams()"
         [(ngModel)]="selectedTeamIdsModel"
         optionLabel="name"
@@ -56,10 +57,11 @@
       />
     </div>
     <div class="flex flex-col gap-1 min-w-[14rem]">
-      <label class="text-xs font-medium text-gray-700">
+      <label for="cal-programs" class="text-xs font-medium text-gray-700">
         {{ 'events.calendar.filter_programs' | transloco }}
       </label>
       <p-multiSelect
+        inputId="cal-programs"
         [options]="filteredAvailablePrograms()"
         [(ngModel)]="selectedProgramIdsModel"
         optionLabel="name"

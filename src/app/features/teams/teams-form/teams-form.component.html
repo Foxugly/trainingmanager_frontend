@@ -52,6 +52,7 @@
                 <!-- Row 1: sports (multi) / default sport (2 cols) -->
                 <div class="meta-grid cols-2">
                   <app-meta-field
+                    #sportIdsField
                     [label]="'teams.form.sports' | transloco"
                     for="sport_ids"
                     [tooltip]="'teams.form.sports_help' | transloco"
@@ -66,9 +67,11 @@
                       display="chip"
                       [filter]="true"
                       [placeholder]="'teams.form.sports_placeholder' | transloco"
+                      [attr.aria-describedby]="fieldError('sport_ids') ? sportIdsField.errorId() : null"
                     />
                   </app-meta-field>
                   <app-meta-field
+                    #defaultSportField
                     [label]="'teams.form.default_sport' | transloco"
                     for="default_sport_id"
                     [tooltip]="'teams.form.default_sport_help' | transloco"
@@ -81,6 +84,7 @@
                       optionLabel="name"
                       optionValue="id"
                       [filter]="true"
+                      [attr.aria-describedby]="fieldError('default_sport_id') ? defaultSportField.errorId() : null"
                     />
                   </app-meta-field>
                 </div>
@@ -88,6 +92,7 @@
                 <!-- Row 2: level / public toggle / timezone (3 cols) -->
                 <div class="meta-grid cols-3">
                   <app-meta-field
+                    #levelField
                     [label]="'teams.form.level' | transloco"
                     for="level_id"
                     [tooltip]="'teams.form.level_help' | transloco"
@@ -102,6 +107,7 @@
                       [filter]="true"
                       [showClear]="true"
                       [placeholder]="'teams.form.level_placeholder' | transloco"
+                      [attr.aria-describedby]="fieldError('level_id') ? levelField.errorId() : null"
                     />
                   </app-meta-field>
                   <app-meta-field
@@ -129,8 +135,9 @@
 
                 <!-- Row 2: name / language (2 cols) -->
                 <div class="meta-grid cols-2">
-                  <app-meta-field [label]="'teams.form.name' | transloco" for="name" [error]="fieldError('name')">
-                    <input pInputText id="name" formControlName="name" />
+                  <app-meta-field #nameField [label]="'teams.form.name' | transloco" for="name" [error]="fieldError('name')">
+                    <input pInputText id="name" formControlName="name"
+                      [attr.aria-describedby]="fieldError('name') ? nameField.errorId() : null" />
                   </app-meta-field>
                   <app-meta-field [label]="'teams.form.language' | transloco" for="language">
                     <p-select

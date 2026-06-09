@@ -1299,6 +1299,7 @@
     "by_week": "Per settimana",
     "by_session": "Per sessione",
     "member": "Membro",
+    "view_member_stats": "Visualizza le statistiche di {{name}}",
     "present": "Presente",
     "total": "Totale",
     "last_present": "Ultima presenza",

@@ -24,12 +24,9 @@ import { Select } from 'primeng/select';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { Textarea } from 'primeng/textarea';
 import { Tooltip } from 'primeng/tooltip';
-import { AuditLogService } from '../../../api/api/audit-log.service';
 import { JoinRequestsService } from '../../../api/api/join-requests.service';
 import { MembersService } from '../../../api/api/members.service';
 import { TeamsService } from '../../../api/api/teams.service';
-import { AuditLogEntry } from '../../../api/model/audit-log-entry';
-import { ActionEnum } from '../../../api/model/action-enum';
 import { CreateJoinRequest } from '../../../api/model/create-join-request';
 import { JoinRequestStatusEnum } from '../../../api/model/join-request-status-enum';
 import { PatchedTeam } from '../../../api/model/patched-team';
@@ -42,6 +39,7 @@ import { TeamRole } from '../teams-list/teams-list.component';
 import { ProgramsListComponent } from '../../programs/programs-list/programs-list.component';
 import { TeamRequestsComponent } from '../team-requests/team-requests.component';
 import { TeamStatsComponent } from '../team-stats/team-stats.component';
+import { TeamAuditLogComponent } from '../team-audit-log/team-audit-log.component';
 import { MemberNotesComponent } from '../member-notes/member-notes.component';
 import { PerformancePanelComponent } from '../../../shared/ui/performance-panel/performance-panel.component';
 import {
@@ -54,16 +52,6 @@ import {
   ActiveToggleComponent,
   ActiveToggleLabels,
 } from '../../../shared/ui/active-toggle/active-toggle.component';
-
-/** An audit entry pre-decorated with display-ready fields (no Date()/format in template). */
-interface AuditRow {
-  readonly id: number;
-  readonly when: string;
-  readonly who: string;
-  readonly action: string;
-  readonly target: string;
-  readonly tagClass: string;
-}
 
 interface FieldErrors {
   [field: string]: string[];
@@ -95,6 +83,7 @@ interface FieldErrors {
     ProgramsListComponent,
     TeamStatsComponent,
     TeamRequestsComponent,
+    TeamAuditLogComponent,
     MemberNotesComponent,
     PerformancePanelComponent,
     TeamDiscussionsComponent,
@@ -114,7 +103,6 @@ export class TeamsDetailComponent implements OnInit {
   private readonly teamsService = inject(TeamsService);
   private readonly joinRequestsService = inject(JoinRequestsService);
   private readonly membersService = inject(MembersService);
-  private readonly auditLogService = inject(AuditLogService);
   private readonly memberMembershipService = inject(MemberMembershipService);
   private readonly authService = inject(AuthService);
   private readonly confirmationService = inject(ConfirmationService);
@@ -270,87 +258,10 @@ export class TeamsDetailComponent implements OnInit {
   // --- RGPD anonymize (coach-only, irreversible) ---
   protected readonly anonymizing = signal(false);
 
-  // --- Audit log (coach-only journal) ---
-  protected readonly auditRows = signal<AuditRow[]>([]);
-  protected readonly loadingAudit = signal(false);
-  protected readonly auditLoaded = signal(false);
-  private readonly auditNextPage = signal<number | null>(null);
-  protected readonly auditHasMore = computed(() => this.auditNextPage() !== null);
-
-  /** Lazy-load the audit log the first time the Journal tab is opened. */
+  /** Tracks the active tab; the audit log loads lazily via app-team-audit-log,
+   *  which the template renders only when this tab is active + the viewer manages. */
   protected onTabChange(value: string): void {
     this.activeTab.set(value);
-    if (value === 'audit' && this.canManage() && !this.auditLoaded()) {
-      this.loadAuditLog(1);
-    }
-  }
-
-  protected loadMoreAudit(): void {
-    const next = this.auditNextPage();
-    if (next !== null) this.loadAuditLog(next);
-  }
-
-  private loadAuditLog(page: number): void {
-    const id = this.teamId();
-    if (id === null || !this.canManage() || this.loadingAudit()) return;
-    this.loadingAudit.set(true);
-    // auditLogList(ordering, page, pageSize, search, team) — newest-first by default.
-    this.auditLogService
-      .auditLogList({ page, team: id })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (res) => {
-          const rows = (res.results ?? []).map((e) => this.toAuditRow(e));
-          this.auditRows.update((prev) => (page === 1 ? rows : [...prev, ...rows]));
-          this.auditNextPage.set(res.next ? page + 1 : null);
-          this.loadingAudit.set(false);
-          this.auditLoaded.set(true);
-        },
-        error: () => {
-          this.loadingAudit.set(false);
-          this.auditLoaded.set(true);
-        },
-      });
-  }
-
-  private toAuditRow(e: AuditLogEntry): AuditRow {
-    return {
-      id: e.id,
-      when: this.formatAuditDate(e.created_at),
-      who: e.actor_label?.trim() || this.transloco.translate('audit.system'),
-      action: e.action_display,
-      target: e.target_repr,
-      tagClass: this.auditTagClass(e.action),
-    };
-  }
-
-  private formatAuditDate(iso: string): string {
-    const d = new Date(iso);
-    if (Number.isNaN(d.getTime())) return iso;
-    return d.toLocaleString(this.transloco.getActiveLang(), {
-      year: 'numeric',
-      month: 'short',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  }
-
-  /** Colored pill per action category: destructive=danger, share=info, config=neutral. */
-  private auditTagClass(action: ActionEnum): string {
-    const base = 'inline-block text-xs font-medium px-2 py-0.5 rounded';
-    switch (action) {
-      case 'member_anonymized':
-      case 'member_removed':
-      case 'account_deleted':
-      case 'attachment_deleted':
-        return `${base} bg-rose-100 text-rose-800`;
-      case 'session_shared':
-      case 'session_unshared':
-        return `${base} bg-sky-100 text-sky-800`;
-      default:
-        return `${base} bg-gray-100 text-gray-700`;
-    }
   }
 
   protected openNotes(mb: TeamMembership): void {

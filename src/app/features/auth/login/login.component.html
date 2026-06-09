@@ -15,6 +15,7 @@
             formControlName="email"
             [formGroup]="form"
             [placeholder]="'auth.login.email_for_resend_placeholder' | transloco"
+            [attr.aria-label]="'auth.magic_link.email_label' | transloco"
             autocomplete="email"
           />
           @if (resendError(); as msg) {

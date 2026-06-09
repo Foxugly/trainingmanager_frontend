@@ -132,7 +132,6 @@ export * from './patched-round';
 export * from './patched-sport-admin';
 export * from './patched-team';
 export * from './patched-team-join-request';
-export * from './patched-team-membership';
 export * from './patched-topic-message';
 export * from './patched-training-slot';
 export * from './performance';

@@ -9,6 +9,7 @@
   <form [formGroup]="form">
     <div class="meta-grid">
       <app-meta-field
+        #countField
         [full]="true"
         [label]="'events.round_form.fields.count' | transloco"
         for="round_count"
@@ -23,11 +24,13 @@
           buttonLayout="horizontal"
           spinnerMode="horizontal"
           [useGrouping]="false"
+          [ariaDescribedBy]="fieldError('count') ? countField.errorId() : undefined"
           decrementButtonIcon="pi pi-minus"
           incrementButtonIcon="pi pi-plus"
         />
       </app-meta-field>
       <app-meta-field
+        #tStartField
         [label]="'events.round_form.fields.t_start' | transloco"
         for="round_t_start"
         [error]="
@@ -44,9 +47,15 @@
           pattern="\d{1,3}:[0-5]\d"
           maxlength="6"
           [placeholder]="'events.round_form.fields.time_placeholder' | transloco"
+          [attr.aria-describedby]="
+            (form.controls.t_start.invalid && form.controls.t_start.dirty) || fieldError('t_start')
+              ? tStartField.errorId()
+              : null
+          "
         />
       </app-meta-field>
       <app-meta-field
+        #tBreakField
         [label]="'events.round_form.fields.t_break' | transloco"
         for="round_t_break"
         [error]="
@@ -63,6 +72,11 @@
           pattern="\d{1,3}:[0-5]\d"
           maxlength="6"
           [placeholder]="'events.round_form.fields.time_placeholder' | transloco"
+          [attr.aria-describedby]="
+            (form.controls.t_break.invalid && form.controls.t_break.dirty) || fieldError('t_break')
+              ? tBreakField.errorId()
+              : null
+          "
         />
       </app-meta-field>
     </div>

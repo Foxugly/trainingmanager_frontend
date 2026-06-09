@@ -20,6 +20,7 @@ import { Button } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Message } from 'primeng/message';
 import { ProgressSpinner } from 'primeng/progressspinner';
+import { Skeleton } from 'primeng/skeleton';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { Tooltip } from 'primeng/tooltip';
 import { firstValueFrom, of, switchMap } from 'rxjs';
@@ -59,6 +60,7 @@ import { EventShareResponse } from '../../../api/model/event-share-response';
     ConfirmDialog,
     Message,
     ProgressSpinner,
+    Skeleton,
     Tab,
     TabList,
     TabPanel,

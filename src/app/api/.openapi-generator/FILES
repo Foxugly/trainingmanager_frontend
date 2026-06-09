@@ -195,7 +195,6 @@ model/patched-program.ts
 model/patched-round.ts
 model/patched-sport-admin.ts
 model/patched-team-join-request.ts
-model/patched-team-membership.ts
 model/patched-team.ts
 model/patched-topic-message.ts
 model/patched-training-slot.ts

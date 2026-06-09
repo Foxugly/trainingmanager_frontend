@@ -26,15 +26,16 @@ import { DatePicker } from 'primeng/datepicker';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
-import { firstValueFrom } from 'rxjs';
 import { EventsService } from '../../../api/api/events.service';
 import { ProgramsService } from '../../../api/api/programs.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { Event } from '../../../api/model/event';
 import { PatchedEvent } from '../../../api/model/patched-event';
 import { Program } from '../../../api/model/program';
+import { Team } from '../../../api/model/team';
 import { TeamSportRead } from '../../../api/model/team-sport-read';
 import { VisibilityMode } from '../../../api/model/visibility-mode';
+import { loadProgramsForTeams } from '../../programs/program-fanout';
 import { type FieldErrors, extractServerError } from '../../../shared/forms/notify-error';
 import { buildVisibilityOptions } from '../../../shared/forms/visibility-options';
 import { FormFooterComponent } from '../../../shared/ui/form-footer/form-footer.component';
@@ -158,8 +159,6 @@ export class EventsFormComponent implements OnInit {
 
   /** True once the user has manually touched any vis_* control (suppresses team prefill). */
   private visTouchedByUser = false;
-  /** Program id the vis_* controls were last prefilled from (avoids redundant fetches). */
-  private prefilledForProgramId: number | null = null;
 
   protected readonly form = this.fb.nonNullable.group(
     {
@@ -198,14 +197,12 @@ export class EventsFormComponent implements OnInit {
       this.eventId.set(id);
       this.loadEvent(id);
     } else {
-      // On CREATE, prefill the per-event visibility from the chosen program's team
-      // defaults — unless the user has already overridden them.
+      // On CREATE, resolve the chosen program's team once and use that single
+      // response to (a) prefill the per-event visibility from the team defaults
+      // and (b) default the session sport — instead of two parallel retrieves.
       this.form.controls.refer_program_id.valueChanges
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((pid) => {
-          this.prefillVisFromTeam(pid);
-          this.resolveTeamForProgram(pid);
-        });
+        .subscribe((pid) => this.resolveTeamForProgram(pid));
 
       const programParam = this.route.snapshot.queryParamMap.get('program');
       if (programParam) {
@@ -213,7 +210,6 @@ export class EventsFormComponent implements OnInit {
         if (Number.isFinite(pid)) {
           this.form.patchValue({ refer_program_id: pid });
           this.form.controls.refer_program_id.disable();
-          this.prefillVisFromTeam(pid);
           this.resolveTeamForProgram(pid);
         }
       }
@@ -226,38 +222,11 @@ export class EventsFormComponent implements OnInit {
   }
 
   /**
-   * Prefill the 3 vis_* selects from the selected program's team defaults.
-   * No-op once the user has manually changed a visibility value.
-   */
-  private prefillVisFromTeam(programId: number | null | undefined): void {
-    if (this.visTouchedByUser || programId == null) return;
-    if (this.prefilledForProgramId === programId) return;
-    const program = this.availablePrograms().find((p) => p.id === programId);
-    const teamId = program?.team_id ?? program?.team?.id ?? null;
-    if (teamId == null) return;
-    this.prefilledForProgramId = programId;
-    this.teamsService
-      .teamsRetrieve({ id: teamId })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (t) => {
-          if (this.visTouchedByUser) return;
-          this.form.patchValue(
-            {
-              vis_distance: t.vis_distance ?? VisibilityMode.Always,
-              vis_goal: t.vis_goal ?? VisibilityMode.Always,
-              vis_rounds: t.vis_rounds ?? VisibilityMode.Always,
-            },
-            { emitEvent: false },
-          );
-        },
-      });
-  }
-
-  /**
-   * Resolve the team id for a program (from the loaded program list) and expose
-   * it to the Place selector so it loads that team's managed places. No-op when
-   * the team can't be resolved yet (program list not loaded).
+   * Resolve the team id for a program (from the loaded program list), expose it
+   * to the Place selector, and fetch the team ONCE — feeding both the session
+   * sport defaulting and (on create) the visibility prefill from that single
+   * response. No-op when the team can't be resolved yet (program list not
+   * loaded) or when the team was already fetched.
    */
   private resolveTeamForProgram(programId: number | null | undefined): void {
     if (programId == null) return;
@@ -265,12 +234,7 @@ export class EventsFormComponent implements OnInit {
     const teamId = program?.team_id ?? program?.team?.id ?? null;
     if (teamId == null) return;
     this.selectedTeamId.set(teamId);
-    this.loadTeamSports(teamId);
-  }
-
-  /** Fetch the resolved team's sports and, on create, default the session sport
-   *  to the team's default. No-op if already loaded for this team. */
-  private loadTeamSports(teamId: number): void {
+    // Single teamsRetrieve per team feeds both vis-prefill and sports defaulting.
     if (this.loadedSportsForTeamId === teamId) return;
     this.loadedSportsForTeamId = teamId;
     this.teamsService
@@ -278,17 +242,39 @@ export class EventsFormComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (t) => {
-          const sports = t.sports ?? [];
-          this.teamSports.set(sports);
-          // Default only when nothing is chosen yet (preserves an edited event's
-          // own sport, set in loadEvent before the team resolves).
-          if (this.form.controls.sport_id.value == null) {
-            const def = sports.find((s) => s.is_default) ?? sports[0];
-            if (def) this.form.controls.sport_id.setValue(def.id);
-          }
+          this.applyVisPrefill(t);
+          this.applyTeamSports(t);
         },
         error: () => this.teamSports.set([]),
       });
+  }
+
+  /**
+   * Prefill the 3 vis_* selects from the team defaults. Create-only: no-op in
+   * edit mode (vis comes from the event) and once the user has manually changed
+   * a visibility value.
+   */
+  private applyVisPrefill(t: Team): void {
+    if (this.isEditMode() || this.visTouchedByUser) return;
+    this.form.patchValue(
+      {
+        vis_distance: t.vis_distance ?? VisibilityMode.Always,
+        vis_goal: t.vis_goal ?? VisibilityMode.Always,
+        vis_rounds: t.vis_rounds ?? VisibilityMode.Always,
+      },
+      { emitEvent: false },
+    );
+  }
+
+  /** Populate the session-sport options and, when nothing is chosen yet, default
+   *  the sport to the team's default (preserves an edited event's own sport). */
+  private applyTeamSports(t: Team): void {
+    const sports = t.sports ?? [];
+    this.teamSports.set(sports);
+    if (this.form.controls.sport_id.value == null) {
+      const def = sports.find((s) => s.is_default) ?? sports[0];
+      if (def) this.form.controls.sport_id.setValue(def.id);
+    }
   }
 
   private loadAvailablePrograms(): void {
@@ -307,21 +293,10 @@ export class EventsFormComponent implements OnInit {
   }
 
   private async fetchProgramsForTeams(teamIds: number[]): Promise<void> {
-    if (teamIds.length === 0) {
-      this.availablePrograms.set([]);
-      return;
-    }
     try {
-      const requests = teamIds.map((teamId) =>
-        firstValueFrom(
-          this.programsService.programsList({ team: teamId }),
-        ),
+      this.availablePrograms.set(
+        await loadProgramsForTeams(this.programsService, teamIds),
       );
-      const responses = await Promise.all(requests);
-      const all: Program[] = responses.flatMap((r) => r.results ?? []);
-      const dedup = new Map<number, Program>();
-      for (const p of all) dedup.set(p.id, p);
-      this.availablePrograms.set(Array.from(dedup.values()));
       // The program list may arrive after the event/param did; (re)resolve the
       // team now that team ids are known so the Place selector can load places.
       this.resolveTeamForProgram(this.form.controls.refer_program_id.value);

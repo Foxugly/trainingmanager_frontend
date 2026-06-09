@@ -61,6 +61,7 @@
         <!-- Row 1 — Team (full width). Edit: disabled (team is not changeable). -->
         <div class="meta-grid">
           <app-meta-field
+            #teamField
             [full]="true"
             [label]="'programs.form.team' | transloco"
             for="team_id"
@@ -79,6 +80,11 @@
               optionValue="id"
               [filter]="true"
               [placeholder]="'programs.form.team_placeholder' | transloco"
+              [attr.aria-describedby]="
+                (!isEditMode() && availableTeams().length === 0) || fieldError('team_id')
+                  ? teamField.errorId()
+                  : null
+              "
             />
           </app-meta-field>
         </div>
@@ -86,6 +92,7 @@
         <!-- Row 2 — Name + start date + end date. -->
         <div class="meta-grid cols-3">
           <app-meta-field
+            #nameField
             [label]="'programs.form.name' | transloco"
             for="name"
             [error]="fieldError('name')"
@@ -95,9 +102,11 @@
               id="name"
               formControlName="name"
               [placeholder]="'programs.form.name_placeholder' | transloco"
+              [attr.aria-describedby]="fieldError('name') ? nameField.errorId() : null"
             />
           </app-meta-field>
           <app-meta-field
+            #dateStartField
             [label]="'programs.form.date_start' | transloco"
             for="date_start"
             [error]="fieldError('date_start')"
@@ -108,9 +117,11 @@
               dateFormat="dd/mm/yy"
               [showIcon]="true"
               appendTo="body"
+              [attr.aria-describedby]="fieldError('date_start') ? dateStartField.errorId() : null"
             />
           </app-meta-field>
           <app-meta-field
+            #dateEndField
             [label]="'programs.form.date_end' | transloco"
             for="date_end"
             [error]="fieldError('date_end')"
@@ -121,6 +132,7 @@
               dateFormat="dd/mm/yy"
               [showIcon]="true"
               appendTo="body"
+              [attr.aria-describedby]="fieldError('date_end') ? dateEndField.errorId() : null"
             />
           </app-meta-field>
         </div>
@@ -128,6 +140,7 @@
         <!-- Frequency (kept; not part of the 3 spec rows). -->
         <div class="meta-grid cols-2">
           <app-meta-field
+            #frequencyField
             [label]="'programs.form.frequency' | transloco"
             for="frequency_per_week"
             [tooltip]="'programs.form.frequency_help' | transloco"
@@ -141,6 +154,7 @@
               [showButtons]="true"
               buttonLayout="horizontal"
               spinnerMode="horizontal"
+              [ariaDescribedBy]="fieldError('frequency_per_week') ? frequencyField.errorId() : undefined"
               decrementButtonIcon="pi pi-minus"
               incrementButtonIcon="pi pi-plus"
             />
@@ -150,11 +164,13 @@
         <!-- Row 3 — Description (rich editor, ~3 lines). -->
         <div class="meta-grid">
           <app-meta-field
+            #descriptionField
             [full]="true"
             [label]="'programs.form.description' | transloco"
             [error]="fieldError('description')"
           >
-            <app-rich-editor formControlName="description" [style]="{ height: '7rem' }" />
+            <app-rich-editor formControlName="description" [style]="{ height: '7rem' }"
+              [attr.aria-describedby]="fieldError('description') ? descriptionField.errorId() : null" />
           </app-meta-field>
         </div>
       </form>

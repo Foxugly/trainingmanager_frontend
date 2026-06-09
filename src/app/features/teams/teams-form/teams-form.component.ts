@@ -286,7 +286,10 @@ export class TeamsFormComponent implements OnInit {
     this.sportsService
       .sportsList(undefined)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((res) => this.availableSports.set(res.results ?? []));
+      .subscribe({
+        next: (res) => this.availableSports.set(res.results ?? []),
+        error: () => this.notifyLoadError(),
+      });
 
     // Keep the default sport valid: when the selected set changes, drop a
     // default that's no longer selected (falling back to the first), and pick
@@ -303,15 +306,21 @@ export class TeamsFormComponent implements OnInit {
     this.levelsService
       .levelsList()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((res) => this.availableLevels.set(res.results ?? []));
+      .subscribe({
+        next: (res) => this.availableLevels.set(res.results ?? []),
+        error: () => this.notifyLoadError(),
+      });
 
     this.statusesService
       .attendanceStatusesList()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((res) => {
-        const list = (res.results ?? []).filter((s) => s.is_active);
-        this.availableStatuses.set(list);
-        this.partitionStatuses(list, this.team()?.attendance_statuses ?? null);
+      .subscribe({
+        next: (res) => {
+          const list = (res.results ?? []).filter((s) => s.is_active);
+          this.availableStatuses.set(list);
+          this.partitionStatuses(list, this.team()?.attendance_statuses ?? null);
+        },
+        error: () => this.notifyLoadError(),
       });
 
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -702,7 +711,7 @@ export class TeamsFormComponent implements OnInit {
     this.messageService.add({
       severity: 'error',
       summary: this.transloco.translate('common.error'),
-      detail: this.transloco.translate('teams.errors.unknown'),
+      detail: this.transloco.translate('common.load_failed'),
     });
   }
 

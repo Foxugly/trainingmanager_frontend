@@ -26,13 +26,15 @@
                   [tooltip]="'profile.email_readonly_help' | transloco">
                   <span>{{ me.email }}</span>
                 </app-meta-field>
-                <app-meta-field [label]="'profile.first_name' | transloco" for="first_name"
+                <app-meta-field #firstNameField [label]="'profile.first_name' | transloco" for="first_name"
                   [error]="fieldError('first_name')">
-                  <input pInputText id="first_name" formControlName="first_name" autocomplete="given-name" />
+                  <input pInputText id="first_name" formControlName="first_name" autocomplete="given-name"
+                    [attr.aria-describedby]="fieldError('first_name') ? firstNameField.errorId() : null" />
                 </app-meta-field>
-                <app-meta-field [label]="'profile.last_name' | transloco" for="last_name"
+                <app-meta-field #lastNameField [label]="'profile.last_name' | transloco" for="last_name"
                   [error]="fieldError('last_name')">
-                  <input pInputText id="last_name" formControlName="last_name" autocomplete="family-name" />
+                  <input pInputText id="last_name" formControlName="last_name" autocomplete="family-name"
+                    [attr.aria-describedby]="fieldError('last_name') ? lastNameField.errorId() : null" />
                 </app-meta-field>
                 <app-meta-field [full]="true" [label]="'profile.language' | transloco" for="language">
                   <p-select inputId="language" formControlName="language" [options]="languages"
@@ -234,20 +236,23 @@
   >
     <form [formGroup]="changePwForm">
       <div class="meta-grid">
-        <app-meta-field [full]="true" [label]="'profile.confirm_password' | transloco"
+        <app-meta-field #currentPwField [full]="true" [label]="'profile.confirm_password' | transloco"
           for="current_password" [error]="changePwFieldError('current_password')">
           <p-password inputId="current_password" formControlName="current_password"
-            [feedback]="false" [toggleMask]="true" autocomplete="current-password" [fluid]="true" />
+            [feedback]="false" [toggleMask]="true" autocomplete="current-password" [fluid]="true"
+            [attr.aria-describedby]="changePwFieldError('current_password') ? currentPwField.errorId() : null" />
         </app-meta-field>
-        <app-meta-field [full]="true" [label]="'profile.new_password' | transloco"
+        <app-meta-field #newPwField [full]="true" [label]="'profile.new_password' | transloco"
           for="new_password" [error]="changePwFieldError('new_password')">
           <p-password inputId="new_password" formControlName="new_password"
-            [feedback]="false" [toggleMask]="true" autocomplete="new-password" [fluid]="true" />
+            [feedback]="false" [toggleMask]="true" autocomplete="new-password" [fluid]="true"
+            [attr.aria-describedby]="changePwFieldError('new_password') ? newPwField.errorId() : null" />
         </app-meta-field>
-        <app-meta-field [full]="true" [label]="'profile.new_password_confirm' | transloco"
+        <app-meta-field #newPwConfirmField [full]="true" [label]="'profile.new_password_confirm' | transloco"
           for="new_password_confirm" [error]="changePwFieldError('new_password_confirm')">
           <p-password inputId="new_password_confirm" formControlName="new_password_confirm"
-            [feedback]="false" [toggleMask]="true" autocomplete="new-password" [fluid]="true" />
+            [feedback]="false" [toggleMask]="true" autocomplete="new-password" [fluid]="true"
+            [attr.aria-describedby]="changePwFieldError('new_password_confirm') ? newPwConfirmField.errorId() : null" />
         </app-meta-field>
       </div>
     </form>
@@ -275,10 +280,11 @@
     </div>
     <form [formGroup]="deleteForm">
       <div class="meta-grid">
-        <app-meta-field [full]="true" [label]="'profile.confirm_password' | transloco"
+        <app-meta-field #deletePwField [full]="true" [label]="'profile.confirm_password' | transloco"
           for="delete_current_password" [error]="deleteFieldError('current_password')">
           <p-password inputId="delete_current_password" formControlName="current_password"
-            [feedback]="false" [toggleMask]="true" autocomplete="current-password" [fluid]="true" />
+            [feedback]="false" [toggleMask]="true" autocomplete="current-password" [fluid]="true"
+            [attr.aria-describedby]="deleteFieldError('current_password') ? deletePwField.errorId() : null" />
         </app-meta-field>
       </div>
     </form>

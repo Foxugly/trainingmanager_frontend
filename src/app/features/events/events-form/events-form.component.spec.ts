@@ -435,6 +435,15 @@ describe('EventsFormComponent', () => {
     });
   });
 
+  it('fetches the program team only ONCE per pick (single teamsRetrieve feeds vis + sports)', async () => {
+    teamsMock.teamsRetrieve.mockClear();
+    access(component).form.patchValue({ refer_program_id: 4 });
+    await new Promise((r) => setTimeout(r, 0));
+    // Both vis-prefill and sports defaulting are driven from one response.
+    expect(teamsMock.teamsRetrieve).toHaveBeenCalledTimes(1);
+    expect(teamsMock.teamsRetrieve).toHaveBeenCalledWith({ id: 4 });
+  });
+
   it('does not overwrite vis_* with team defaults once the user has changed them', async () => {
     access(component).form.patchValue({ vis_distance: VisibilityMode.Never });
     access(component).onVisChanged();

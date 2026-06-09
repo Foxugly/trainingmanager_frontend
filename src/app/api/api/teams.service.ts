@@ -35,8 +35,6 @@ import { PatchedNote } from '../model/patched-note';
 // @ts-ignore
 import { PatchedTeam } from '../model/patched-team';
 // @ts-ignore
-import { PatchedTeamMembership } from '../model/patched-team-membership';
-// @ts-ignore
 import { PatchedTopicMessage } from '../model/patched-topic-message';
 // @ts-ignore
 import { PatchedTrainingSlot } from '../model/patched-training-slot';
@@ -78,9 +76,7 @@ import {
     TeamsMembershipsCreateRequestParams,
     TeamsMembershipsDestroyRequestParams,
     TeamsMembershipsListRequestParams,
-    TeamsMembershipsPartialUpdateRequestParams,
     TeamsMembershipsRetrieveRequestParams,
-    TeamsMembershipsUpdateRequestParams,
     TeamsPartialUpdateRequestParams,
     TeamsPoolsRetrieveRequestParams,
     TeamsRetrieveRequestParams,
@@ -1452,96 +1448,6 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
 
     /**
      * Manage team memberships.  URL: /api/v1/teams/{team_pk}/memberships/  - GET (list): active memberships of the team. Pass ?include_inactive&#x3D;true   to also see historical (left_at IS NOT NULL) rows. - POST: add a member to the team (manager-only). Idempotent: rejects with   400 already_member if an active membership already exists for the same   (team, member) pair. - DELETE /{id}/: end a membership (sets left_at &#x3D; now). Allowed for the   member herself or a team manager. The team owner cannot leave their own   team via this endpoint.
-     * @endpoint patch /api/v1/teams/{team_pk}/memberships/{id}/
-     * @param requestParameters
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     * @param options additional options
-     */
-    public teamsMembershipsPartialUpdate(requestParameters: TeamsMembershipsPartialUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamMembership>;
-    public teamsMembershipsPartialUpdate(requestParameters: TeamsMembershipsPartialUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamMembership>>;
-    public teamsMembershipsPartialUpdate(requestParameters: TeamsMembershipsPartialUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamMembership>>;
-    public teamsMembershipsPartialUpdate(requestParameters: TeamsMembershipsPartialUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const id = requestParameters?.id;
-        if (id === null || id === undefined) {
-            throw new Error('Required parameter id was null or undefined when calling teamsMembershipsPartialUpdate.');
-        }
-        const teamPk = requestParameters?.teamPk;
-        if (teamPk === null || teamPk === undefined) {
-            throw new Error('Required parameter teamPk was null or undefined when calling teamsMembershipsPartialUpdate.');
-        }
-        const includeInactive = requestParameters?.includeInactive;
-        const patchedTeamMembership = requestParameters?.patchedTeamMembership;
-
-        let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
-
-        localVarQueryParameters = this.addToHttpParams(
-            localVarQueryParameters,
-            'include_inactive',
-            <any>includeInactive,
-            QueryParamStyle.Form,
-            true,
-        );
-
-
-        let localVarHeaders = this.defaultHeaders;
-
-        // authentication (jwtAuth) required
-        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
-
-        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
-            'application/json'
-        ]);
-        if (localVarHttpHeaderAcceptSelected !== undefined) {
-            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
-        }
-
-        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
-
-        const localVarTransferCache: boolean = options?.transferCache ?? true;
-
-
-        // to determine the Content-Type header
-        const consumes: string[] = [
-            'application/json',
-            'application/x-www-form-urlencoded',
-            'multipart/form-data'
-        ];
-        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected !== undefined) {
-            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
-        }
-
-        let responseType_: 'text' | 'json' | 'blob' = 'json';
-        if (localVarHttpHeaderAcceptSelected) {
-            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
-                responseType_ = 'text';
-            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
-                responseType_ = 'json';
-            } else {
-                responseType_ = 'blob';
-            }
-        }
-
-        let localVarPath = `/api/v1/teams/${this.configuration.encodeParam({name: "teamPk", value: teamPk, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/memberships/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/`;
-        const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<TeamMembership>('patch', `${basePath}${localVarPath}`,
-            {
-                context: localVarHttpContext,
-                body: patchedTeamMembership,
-                params: localVarQueryParameters.toHttpParams(),
-                responseType: <any>responseType_,
-                ...(withCredentials ? { withCredentials } : {}),
-                headers: localVarHeaders,
-                observe: observe,
-                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
-     * Manage team memberships.  URL: /api/v1/teams/{team_pk}/memberships/  - GET (list): active memberships of the team. Pass ?include_inactive&#x3D;true   to also see historical (left_at IS NOT NULL) rows. - POST: add a member to the team (manager-only). Idempotent: rejects with   400 already_member if an active membership already exists for the same   (team, member) pair. - DELETE /{id}/: end a membership (sets left_at &#x3D; now). Allowed for the   member herself or a team manager. The team owner cannot leave their own   team via this endpoint.
      * @endpoint get /api/v1/teams/{team_pk}/memberships/{id}/
      * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
@@ -1606,99 +1512,6 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         return this.httpClient.request<TeamMembership>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                params: localVarQueryParameters.toHttpParams(),
-                responseType: <any>responseType_,
-                ...(withCredentials ? { withCredentials } : {}),
-                headers: localVarHeaders,
-                observe: observe,
-                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
-     * Manage team memberships.  URL: /api/v1/teams/{team_pk}/memberships/  - GET (list): active memberships of the team. Pass ?include_inactive&#x3D;true   to also see historical (left_at IS NOT NULL) rows. - POST: add a member to the team (manager-only). Idempotent: rejects with   400 already_member if an active membership already exists for the same   (team, member) pair. - DELETE /{id}/: end a membership (sets left_at &#x3D; now). Allowed for the   member herself or a team manager. The team owner cannot leave their own   team via this endpoint.
-     * @endpoint put /api/v1/teams/{team_pk}/memberships/{id}/
-     * @param requestParameters
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     * @param options additional options
-     */
-    public teamsMembershipsUpdate(requestParameters: TeamsMembershipsUpdateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TeamMembership>;
-    public teamsMembershipsUpdate(requestParameters: TeamsMembershipsUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamMembership>>;
-    public teamsMembershipsUpdate(requestParameters: TeamsMembershipsUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamMembership>>;
-    public teamsMembershipsUpdate(requestParameters: TeamsMembershipsUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const id = requestParameters?.id;
-        if (id === null || id === undefined) {
-            throw new Error('Required parameter id was null or undefined when calling teamsMembershipsUpdate.');
-        }
-        const teamPk = requestParameters?.teamPk;
-        if (teamPk === null || teamPk === undefined) {
-            throw new Error('Required parameter teamPk was null or undefined when calling teamsMembershipsUpdate.');
-        }
-        const teamMembership = requestParameters?.teamMembership;
-        if (teamMembership === null || teamMembership === undefined) {
-            throw new Error('Required parameter teamMembership was null or undefined when calling teamsMembershipsUpdate.');
-        }
-        const includeInactive = requestParameters?.includeInactive;
-
-        let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
-
-        localVarQueryParameters = this.addToHttpParams(
-            localVarQueryParameters,
-            'include_inactive',
-            <any>includeInactive,
-            QueryParamStyle.Form,
-            true,
-        );
-
-
-        let localVarHeaders = this.defaultHeaders;
-
-        // authentication (jwtAuth) required
-        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
-
-        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
-            'application/json'
-        ]);
-        if (localVarHttpHeaderAcceptSelected !== undefined) {
-            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
-        }
-
-        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
-
-        const localVarTransferCache: boolean = options?.transferCache ?? true;
-
-
-        // to determine the Content-Type header
-        const consumes: string[] = [
-            'application/json',
-            'application/x-www-form-urlencoded',
-            'multipart/form-data'
-        ];
-        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected !== undefined) {
-            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
-        }
-
-        let responseType_: 'text' | 'json' | 'blob' = 'json';
-        if (localVarHttpHeaderAcceptSelected) {
-            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
-                responseType_ = 'text';
-            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
-                responseType_ = 'json';
-            } else {
-                responseType_ = 'blob';
-            }
-        }
-
-        let localVarPath = `/api/v1/teams/${this.configuration.encodeParam({name: "teamPk", value: teamPk, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/memberships/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/`;
-        const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<TeamMembership>('put', `${basePath}${localVarPath}`,
-            {
-                context: localVarHttpContext,
-                body: teamMembership,
                 params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),

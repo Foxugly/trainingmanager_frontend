@@ -6,6 +6,8 @@ import { TranslocoTestingModule } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { AttendanceStatusesService } from '../../../api/api/attendance-statuses.service';
+import { EquipmentService } from '../../../api/api/equipment.service';
 import { LevelsService } from '../../../api/api/levels.service';
 import { PlacesService } from '../../../api/api/places.service';
 import { SportsService } from '../../../api/api/sports.service';
@@ -149,6 +151,8 @@ describe('TeamsFormComponent', () => {
   };
   let sportsMock: { sportsList: ReturnType<typeof vi.fn> };
   let levelsMock: { levelsList: ReturnType<typeof vi.fn> };
+  let statusesMock: { attendanceStatusesList: ReturnType<typeof vi.fn> };
+  let equipmentMock: { equipmentList: ReturnType<typeof vi.fn> };
   let placesMock: {
     placesList: ReturnType<typeof vi.fn>;
     placesCreate: ReturnType<typeof vi.fn>;
@@ -202,6 +206,12 @@ describe('TeamsFormComponent', () => {
     levelsMock = {
       levelsList: vi.fn().mockReturnValue(of({ count: 1, results: [level] })),
     };
+    statusesMock = {
+      attendanceStatusesList: vi.fn().mockReturnValue(of({ count: 0, results: [] })),
+    };
+    equipmentMock = {
+      equipmentList: vi.fn().mockReturnValue(of({ count: 0, results: [] })),
+    };
     placesMock = {
       // The sport pool (loaded via ?sport once the team's sport is known).
       placesList: vi.fn().mockReturnValue(
@@ -235,6 +245,8 @@ describe('TeamsFormComponent', () => {
         { provide: TeamsService, useValue: teamsMock },
         { provide: SportsService, useValue: sportsMock },
         { provide: LevelsService, useValue: levelsMock },
+        { provide: AttendanceStatusesService, useValue: statusesMock },
+        { provide: EquipmentService, useValue: equipmentMock },
         { provide: PlacesService, useValue: placesMock },
         { provide: AuthService, useValue: { currentUser: userSig.asReadonly(), refreshMe: vi.fn() } },
         {
@@ -685,5 +697,107 @@ describe('TeamsFormComponent', () => {
       1, 2, 3,
     ]);
     expect(mgrControls(component).managers_ids.value).toEqual([1, 2, 3]);
+  });
+
+  // ── Taxonomy loaders: a failure toasts a load-failure message instead of
+  //    leaving the selects silently empty ────────────────────────────────────
+
+  /** Build the component with one taxonomy loader rigged to error, returning a
+   *  spy on the MessageService so the toast can be asserted. */
+  async function setupWithLoaderError(
+    rig: (mocks: {
+      sportsMock: typeof sportsMock;
+      levelsMock: typeof levelsMock;
+      statusesMock: typeof statusesMock;
+    }) => void,
+  ): Promise<ReturnType<typeof vi.fn>> {
+    TestBed.resetTestingModule();
+    routeIdParam = null;
+    teamsMock = {
+      teamsRetrieve: vi.fn().mockReturnValue(of(team)),
+      teamsCreate: vi.fn().mockReturnValue(of(team)),
+      teamsPartialUpdate: vi.fn().mockReturnValue(of(team)),
+      teamsTrainingSlotsList: vi.fn().mockReturnValue(of([])),
+      teamsTrainingSlotsCreate: vi.fn().mockReturnValue(of({})),
+      teamsTrainingSlotsPartialUpdate: vi.fn().mockReturnValue(of({})),
+      teamsTrainingSlotsDestroy: vi.fn().mockReturnValue(of(undefined)),
+    };
+    sportsMock = { sportsList: vi.fn().mockReturnValue(of({ count: 1, results: [sport] })) };
+    levelsMock = { levelsList: vi.fn().mockReturnValue(of({ count: 1, results: [level] })) };
+    statusesMock = {
+      attendanceStatusesList: vi.fn().mockReturnValue(of({ count: 0, results: [] })),
+    };
+    equipmentMock = { equipmentList: vi.fn().mockReturnValue(of({ count: 0, results: [] })) };
+    placesMock = {
+      placesList: vi.fn().mockReturnValue(of({ count: 0, results: [] })),
+      placesCreate: vi.fn().mockReturnValue(of({} as Place)),
+    };
+    rig({ sportsMock, levelsMock, statusesMock });
+    userSig = signal<CustomUserPublic | null>(ownerUser);
+
+    await TestBed.configureTestingModule({
+      imports: [
+        TeamsFormComponent,
+        TranslocoTestingModule.forRoot({
+          langs: { fr: {} },
+          translocoConfig: { availableLangs: ['fr'], defaultLang: 'fr' },
+        }),
+      ],
+      providers: [
+        provideNoopAnimations(),
+        provideRouter([]),
+        ConfirmationService,
+        MessageService,
+        { provide: TeamsService, useValue: teamsMock },
+        { provide: SportsService, useValue: sportsMock },
+        { provide: LevelsService, useValue: levelsMock },
+        { provide: AttendanceStatusesService, useValue: statusesMock },
+        { provide: EquipmentService, useValue: equipmentMock },
+        { provide: PlacesService, useValue: placesMock },
+        { provide: AuthService, useValue: { currentUser: userSig.asReadonly(), refreshMe: vi.fn() } },
+        {
+          provide: ActivatedRoute,
+          useValue: { snapshot: { paramMap: { get: () => routeIdParam } } },
+        },
+      ],
+    })
+      .overrideComponent(TeamsFormComponent, { set: { template: '', imports: [] } })
+      .compileComponents();
+
+    fixture = TestBed.createComponent(TeamsFormComponent);
+    component = fixture.componentInstance;
+    const messageService = TestBed.inject(MessageService);
+    const addSpy = vi.spyOn(messageService, 'add');
+    fixture.detectChanges();
+    return addSpy as unknown as ReturnType<typeof vi.fn>;
+  }
+
+  it('toasts a load-failure when the sports loader errors', async () => {
+    const addSpy = await setupWithLoaderError(({ sportsMock }) => {
+      sportsMock.sportsList.mockReturnValue(throwError(() => new Error('boom')));
+    });
+    expect(addSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'error', detail: 'common.load_failed' }),
+    );
+    expect(access(component).availableSports()).toEqual([]);
+  });
+
+  it('toasts a load-failure when the levels loader errors', async () => {
+    const addSpy = await setupWithLoaderError(({ levelsMock }) => {
+      levelsMock.levelsList.mockReturnValue(throwError(() => new Error('boom')));
+    });
+    expect(addSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'error', detail: 'common.load_failed' }),
+    );
+    expect(access(component).availableLevels()).toEqual([]);
+  });
+
+  it('toasts a load-failure when the attendance-statuses loader errors', async () => {
+    const addSpy = await setupWithLoaderError(({ statusesMock }) => {
+      statusesMock.attendanceStatusesList.mockReturnValue(throwError(() => new Error('boom')));
+    });
+    expect(addSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ severity: 'error', detail: 'common.load_failed' }),
+    );
   });
 });

@@ -20,7 +20,6 @@ import { PaginatedTopicList } from '../model/models';
 import { PaginatedTopicMessageList } from '../model/models';
 import { PatchedNote } from '../model/models';
 import { PatchedTeam } from '../model/models';
-import { PatchedTeamMembership } from '../model/models';
 import { PatchedTopicMessage } from '../model/models';
 import { PatchedTrainingSlot } from '../model/models';
 import { Team } from '../model/models';
@@ -140,23 +139,9 @@ export interface TeamsMembershipsListRequestParams {
     search?: string;
 }
 
-export interface TeamsMembershipsPartialUpdateRequestParams {
-    id: number;
-    teamPk: number;
-    includeInactive?: boolean;
-    patchedTeamMembership?: PatchedTeamMembership;
-}
-
 export interface TeamsMembershipsRetrieveRequestParams {
     id: number;
     teamPk: number;
-    includeInactive?: boolean;
-}
-
-export interface TeamsMembershipsUpdateRequestParams {
-    id: number;
-    teamPk: number;
-    teamMembership: TeamMembership;
     includeInactive?: boolean;
 }
 
@@ -419,26 +404,10 @@ export interface TeamsServiceInterface {
     /**
      * 
      * Manage team memberships.  URL: /api/v1/teams/{team_pk}/memberships/  - GET (list): active memberships of the team. Pass ?include_inactive&#x3D;true   to also see historical (left_at IS NOT NULL) rows. - POST: add a member to the team (manager-only). Idempotent: rejects with   400 already_member if an active membership already exists for the same   (team, member) pair. - DELETE /{id}/: end a membership (sets left_at &#x3D; now). Allowed for the   member herself or a team manager. The team owner cannot leave their own   team via this endpoint.
-     * @endpoint patch /api/v1/teams/{team_pk}/memberships/{id}/
-* @param requestParameters
-     */
-    teamsMembershipsPartialUpdate(requestParameters: TeamsMembershipsPartialUpdateRequestParams, extraHttpRequestParams?: any): Observable<TeamMembership>;
-
-    /**
-     * 
-     * Manage team memberships.  URL: /api/v1/teams/{team_pk}/memberships/  - GET (list): active memberships of the team. Pass ?include_inactive&#x3D;true   to also see historical (left_at IS NOT NULL) rows. - POST: add a member to the team (manager-only). Idempotent: rejects with   400 already_member if an active membership already exists for the same   (team, member) pair. - DELETE /{id}/: end a membership (sets left_at &#x3D; now). Allowed for the   member herself or a team manager. The team owner cannot leave their own   team via this endpoint.
      * @endpoint get /api/v1/teams/{team_pk}/memberships/{id}/
 * @param requestParameters
      */
     teamsMembershipsRetrieve(requestParameters: TeamsMembershipsRetrieveRequestParams, extraHttpRequestParams?: any): Observable<TeamMembership>;
-
-    /**
-     * 
-     * Manage team memberships.  URL: /api/v1/teams/{team_pk}/memberships/  - GET (list): active memberships of the team. Pass ?include_inactive&#x3D;true   to also see historical (left_at IS NOT NULL) rows. - POST: add a member to the team (manager-only). Idempotent: rejects with   400 already_member if an active membership already exists for the same   (team, member) pair. - DELETE /{id}/: end a membership (sets left_at &#x3D; now). Allowed for the   member herself or a team manager. The team owner cannot leave their own   team via this endpoint.
-     * @endpoint put /api/v1/teams/{team_pk}/memberships/{id}/
-* @param requestParameters
-     */
-    teamsMembershipsUpdate(requestParameters: TeamsMembershipsUpdateRequestParams, extraHttpRequestParams?: any): Observable<TeamMembership>;
 
     /**
      * 

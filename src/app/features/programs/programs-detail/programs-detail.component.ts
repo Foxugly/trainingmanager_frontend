@@ -18,6 +18,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Message } from 'primeng/message';
+import { Skeleton } from 'primeng/skeleton';
 import { Tooltip } from 'primeng/tooltip';
 import { EventsService } from '../../../api/api/events.service';
 import { ProgramsService } from '../../../api/api/programs.service';
@@ -107,6 +108,7 @@ function eventDateAsDate(e: Event): Date | null {
     ConfirmDialog,
     GenerateEventsDialogComponent,
     Message,
+    Skeleton,
     Tooltip,
     TranslocoPipe,
     DetailHeaderComponent,

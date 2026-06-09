@@ -1299,6 +1299,7 @@
     "by_week": "Per week",
     "by_session": "Per sessie",
     "member": "Lid",
+    "view_member_stats": "Statistieken van {{name}} bekijken",
     "present": "Aanwezig",
     "total": "Totaal",
     "last_present": "Laatst aanwezig",
