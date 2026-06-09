@@ -12,15 +12,16 @@ import { HttpHeaders }                                       from '@angular/comm
 import { Observable }                                        from 'rxjs';
 
 import { EnergySegmentAdmin } from '../model/models';
+import { EnergySegmentAdminRequest } from '../model/models';
 import { PaginatedEnergySegmentList } from '../model/models';
-import { PatchedEnergySegmentAdmin } from '../model/models';
+import { PatchedEnergySegmentAdminRequest } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
 
 
 export interface EnergySegmentsCreateRequestParams {
-    energySegmentAdmin: EnergySegmentAdmin;
+    energySegmentAdminRequest: EnergySegmentAdminRequest;
 }
 
 export interface EnergySegmentsDestroyRequestParams {
@@ -40,7 +41,7 @@ export interface EnergySegmentsListRequestParams {
 export interface EnergySegmentsPartialUpdateRequestParams {
     id: number;
     includeInactive?: boolean;
-    patchedEnergySegmentAdmin?: PatchedEnergySegmentAdmin;
+    patchedEnergySegmentAdminRequest?: PatchedEnergySegmentAdminRequest;
 }
 
 export interface EnergySegmentsRetrieveRequestParams {
@@ -50,7 +51,7 @@ export interface EnergySegmentsRetrieveRequestParams {
 
 export interface EnergySegmentsUpdateRequestParams {
     id: number;
-    energySegmentAdmin: EnergySegmentAdmin;
+    energySegmentAdminRequest: EnergySegmentAdminRequest;
     includeInactive?: boolean;
 }
 

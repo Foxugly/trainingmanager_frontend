@@ -44,7 +44,6 @@ const eventWithRounds: Event = {
   hour_end: null,
   total: undefined,
   refer_program: { id: 4, name: 'Cycle aérobie' },
-  refer_program_id: 4,
   sport,
   place: null,
   equipment_items: [],
@@ -63,7 +62,6 @@ const eventWithRounds: Event = {
 const round1: Round = {
   id: 11,
   sport,
-  sport_id: 1,
   language: LanguageEnum.Fr,
   order: 1,
   count: 2,

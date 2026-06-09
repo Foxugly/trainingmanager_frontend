@@ -27,13 +27,7 @@ export interface Exercise {
      */
     t_break?: string | null;
     readonly modality: Modality;
-    modality_id?: number | null;
     readonly energysegment: EnergySegment;
-    energysegment_id?: number | null;
-    /**
-     * Optional. On POST, the newly created Exercise is atomically attached to this Round. On PATCH/PUT, if the Exercise is shared by several Rounds (usage_count > 1), it is forked: a clone with the changes is swapped into THIS Round and the shared original is left untouched. The request user must manage at least one team of an Event linked to this Round (library rounds with no events are accepted as-is).
-     */
-    round_id?: number;
     language: LanguageEnum;
     readonly usage_count: number;
     readonly created_at: string;

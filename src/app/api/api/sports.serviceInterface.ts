@@ -12,18 +12,20 @@ import { HttpHeaders }                                       from '@angular/comm
 import { Observable }                                        from 'rxjs';
 
 import { ModalityAdmin } from '../model/models';
+import { ModalityAdminRequest } from '../model/models';
 import { PaginatedModalityList } from '../model/models';
 import { PaginatedSportList } from '../model/models';
-import { PatchedModalityAdmin } from '../model/models';
-import { PatchedSportAdmin } from '../model/models';
+import { PatchedModalityAdminRequest } from '../model/models';
+import { PatchedSportAdminRequest } from '../model/models';
 import { SportAdmin } from '../model/models';
+import { SportAdminRequest } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
 
 
 export interface SportsCreateRequestParams {
-    sportAdmin: SportAdmin;
+    sportAdminRequest: SportAdminRequest;
 }
 
 export interface SportsDestroyRequestParams {
@@ -41,7 +43,7 @@ export interface SportsListRequestParams {
 
 export interface SportsModalitiesCreateRequestParams {
     sportPk: number;
-    modalityAdmin: ModalityAdmin;
+    modalityAdminRequest: ModalityAdminRequest;
 }
 
 export interface SportsModalitiesDestroyRequestParams {
@@ -65,7 +67,7 @@ export interface SportsModalitiesPartialUpdateRequestParams {
     id: number;
     sportPk: number;
     includeInactive?: boolean;
-    patchedModalityAdmin?: PatchedModalityAdmin;
+    patchedModalityAdminRequest?: PatchedModalityAdminRequest;
 }
 
 export interface SportsModalitiesRetrieveRequestParams {
@@ -77,14 +79,14 @@ export interface SportsModalitiesRetrieveRequestParams {
 export interface SportsModalitiesUpdateRequestParams {
     id: number;
     sportPk: number;
-    modalityAdmin: ModalityAdmin;
+    modalityAdminRequest: ModalityAdminRequest;
     includeInactive?: boolean;
 }
 
 export interface SportsPartialUpdateRequestParams {
     id: number;
     includeInactive?: boolean;
-    patchedSportAdmin?: PatchedSportAdmin;
+    patchedSportAdminRequest?: PatchedSportAdminRequest;
 }
 
 export interface SportsRetrieveRequestParams {
@@ -94,7 +96,7 @@ export interface SportsRetrieveRequestParams {
 
 export interface SportsUpdateRequestParams {
     id: number;
-    sportAdmin: SportAdmin;
+    sportAdminRequest: SportAdminRequest;
     includeInactive?: boolean;
 }
 

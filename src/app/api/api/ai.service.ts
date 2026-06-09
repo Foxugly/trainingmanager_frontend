@@ -17,7 +17,7 @@ import { Observable }                                        from 'rxjs';
 import { OpenApiHttpParams, QueryParamStyle } from '../query.params';
 
 // @ts-ignore
-import { AIPingRequest } from '../model/ai-ping-request';
+import { AIPingRequestRequest } from '../model/ai-ping-request-request';
 // @ts-ignore
 import { AIPingResponse } from '../model/ai-ping-response';
 
@@ -53,7 +53,7 @@ export class AiService extends BaseService implements AiServiceInterface {
     public aiPingCreate(requestParameters?: AiPingCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AIPingResponse>>;
     public aiPingCreate(requestParameters?: AiPingCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AIPingResponse>>;
     public aiPingCreate(requestParameters?: AiPingCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const aIPingRequest = requestParameters?.aIPingRequest;
+        const aIPingRequestRequest = requestParameters?.aIPingRequestRequest;
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -99,7 +99,7 @@ export class AiService extends BaseService implements AiServiceInterface {
         return this.httpClient.request<AIPingResponse>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: aIPingRequest,
+                body: aIPingRequestRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

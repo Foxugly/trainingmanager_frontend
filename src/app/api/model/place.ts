@@ -26,7 +26,6 @@ export interface Place {
      * Optional postal address / directions for the venue.
      */
     address?: string;
-    team?: number;
     readonly created_at: string;
     readonly updated_at: string;
 }

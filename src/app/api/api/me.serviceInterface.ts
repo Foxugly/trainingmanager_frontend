@@ -13,14 +13,14 @@ import { Observable }                                        from 'rxjs';
 
 import { CalendarToken } from '../model/models';
 import { Me } from '../model/models';
-import { PatchedMe } from '../model/models';
+import { PatchedMeRequest } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
 
 
 export interface MePartialUpdateRequestParams {
-    patchedMe?: PatchedMe;
+    patchedMeRequest?: PatchedMeRequest;
 }
 
 

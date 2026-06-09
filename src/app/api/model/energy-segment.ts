@@ -15,7 +15,6 @@ export interface EnergySegment {
     abv: string;
     description?: string | null;
     readonly energy_system: EnergySystem;
-    energy_system_id?: number | null;
     readonly is_active: boolean;
 }
 

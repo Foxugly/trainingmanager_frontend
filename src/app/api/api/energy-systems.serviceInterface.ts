@@ -12,15 +12,16 @@ import { HttpHeaders }                                       from '@angular/comm
 import { Observable }                                        from 'rxjs';
 
 import { EnergySystemAdmin } from '../model/models';
+import { EnergySystemAdminRequest } from '../model/models';
 import { PaginatedEnergySystemList } from '../model/models';
-import { PatchedEnergySystemAdmin } from '../model/models';
+import { PatchedEnergySystemAdminRequest } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
 
 
 export interface EnergySystemsCreateRequestParams {
-    energySystemAdmin?: EnergySystemAdmin;
+    energySystemAdminRequest?: EnergySystemAdminRequest;
 }
 
 export interface EnergySystemsDestroyRequestParams {
@@ -40,7 +41,7 @@ export interface EnergySystemsListRequestParams {
 export interface EnergySystemsPartialUpdateRequestParams {
     id: number;
     includeInactive?: boolean;
-    patchedEnergySystemAdmin?: PatchedEnergySystemAdmin;
+    patchedEnergySystemAdminRequest?: PatchedEnergySystemAdminRequest;
 }
 
 export interface EnergySystemsRetrieveRequestParams {
@@ -51,7 +52,7 @@ export interface EnergySystemsRetrieveRequestParams {
 export interface EnergySystemsUpdateRequestParams {
     id: number;
     includeInactive?: boolean;
-    energySystemAdmin?: EnergySystemAdmin;
+    energySystemAdminRequest?: EnergySystemAdminRequest;
 }
 
 

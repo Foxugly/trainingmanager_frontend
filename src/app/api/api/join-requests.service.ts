@@ -19,11 +19,15 @@ import { OpenApiHttpParams, QueryParamStyle } from '../query.params';
 // @ts-ignore
 import { CreateJoinRequest } from '../model/create-join-request';
 // @ts-ignore
+import { CreateJoinRequestRequest } from '../model/create-join-request-request';
+// @ts-ignore
 import { PaginatedTeamJoinRequestList } from '../model/paginated-team-join-request-list';
 // @ts-ignore
-import { PatchedTeamJoinRequest } from '../model/patched-team-join-request';
+import { PatchedTeamJoinRequestRequest } from '../model/patched-team-join-request-request';
 // @ts-ignore
 import { TeamJoinRequest } from '../model/team-join-request';
+// @ts-ignore
+import { TeamJoinRequestRequest } from '../model/team-join-request-request';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -62,9 +66,9 @@ export class JoinRequestsService extends BaseService implements JoinRequestsServ
     public joinRequestsCreate(requestParameters: JoinRequestsCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<CreateJoinRequest>>;
     public joinRequestsCreate(requestParameters: JoinRequestsCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<CreateJoinRequest>>;
     public joinRequestsCreate(requestParameters: JoinRequestsCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const createJoinRequest = requestParameters?.createJoinRequest;
-        if (createJoinRequest === null || createJoinRequest === undefined) {
-            throw new Error('Required parameter createJoinRequest was null or undefined when calling joinRequestsCreate.');
+        const createJoinRequestRequest = requestParameters?.createJoinRequestRequest;
+        if (createJoinRequestRequest === null || createJoinRequestRequest === undefined) {
+            throw new Error('Required parameter createJoinRequestRequest was null or undefined when calling joinRequestsCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -111,7 +115,7 @@ export class JoinRequestsService extends BaseService implements JoinRequestsServ
         return this.httpClient.request<CreateJoinRequest>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: createJoinRequest,
+                body: createJoinRequestRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -316,7 +320,7 @@ export class JoinRequestsService extends BaseService implements JoinRequestsServ
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling joinRequestsPartialUpdate.');
         }
-        const patchedTeamJoinRequest = requestParameters?.patchedTeamJoinRequest;
+        const patchedTeamJoinRequestRequest = requestParameters?.patchedTeamJoinRequestRequest;
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -362,7 +366,7 @@ export class JoinRequestsService extends BaseService implements JoinRequestsServ
         return this.httpClient.request<TeamJoinRequest>('patch', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: patchedTeamJoinRequest,
+                body: patchedTeamJoinRequestRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -449,9 +453,9 @@ export class JoinRequestsService extends BaseService implements JoinRequestsServ
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling joinRequestsUpdate.');
         }
-        const teamJoinRequest = requestParameters?.teamJoinRequest;
-        if (teamJoinRequest === null || teamJoinRequest === undefined) {
-            throw new Error('Required parameter teamJoinRequest was null or undefined when calling joinRequestsUpdate.');
+        const teamJoinRequestRequest = requestParameters?.teamJoinRequestRequest;
+        if (teamJoinRequestRequest === null || teamJoinRequestRequest === undefined) {
+            throw new Error('Required parameter teamJoinRequestRequest was null or undefined when calling joinRequestsUpdate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -498,7 +502,7 @@ export class JoinRequestsService extends BaseService implements JoinRequestsServ
         return this.httpClient.request<TeamJoinRequest>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: teamJoinRequest,
+                body: teamJoinRequestRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

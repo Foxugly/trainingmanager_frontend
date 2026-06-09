@@ -12,15 +12,16 @@ import { HttpHeaders }                                       from '@angular/comm
 import { Observable }                                        from 'rxjs';
 
 import { PaginatedPerformanceList } from '../model/models';
-import { PatchedPerformance } from '../model/models';
+import { PatchedPerformanceRequest } from '../model/models';
 import { Performance } from '../model/models';
+import { PerformanceRequest } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
 
 
 export interface PerformancesCreateRequestParams {
-    performance: Performance;
+    performanceRequest: PerformanceRequest;
 }
 
 export interface PerformancesDestroyRequestParams {
@@ -39,7 +40,7 @@ export interface PerformancesListRequestParams {
 
 export interface PerformancesPartialUpdateRequestParams {
     id: number;
-    patchedPerformance?: PatchedPerformance;
+    patchedPerformanceRequest?: PatchedPerformanceRequest;
 }
 
 export interface PerformancesRetrieveRequestParams {
@@ -48,7 +49,7 @@ export interface PerformancesRetrieveRequestParams {
 
 export interface PerformancesUpdateRequestParams {
     id: number;
-    performance: Performance;
+    performanceRequest: PerformanceRequest;
 }
 
 

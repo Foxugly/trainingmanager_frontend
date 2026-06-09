@@ -17,17 +17,19 @@ import { Observable }                                        from 'rxjs';
 import { OpenApiHttpParams, QueryParamStyle } from '../query.params';
 
 // @ts-ignore
-import { CloneExerciseRequest } from '../model/clone-exercise-request';
+import { CloneExerciseRequestRequest } from '../model/clone-exercise-request-request';
 // @ts-ignore
 import { Exercise } from '../model/exercise';
 // @ts-ignore
 import { PaginatedRoundList } from '../model/paginated-round-list';
 // @ts-ignore
-import { PatchedRound } from '../model/patched-round';
+import { PatchedRoundRequest } from '../model/patched-round-request';
 // @ts-ignore
-import { ReorderExercisesRequest } from '../model/reorder-exercises-request';
+import { ReorderExercisesRequestRequest } from '../model/reorder-exercises-request-request';
 // @ts-ignore
 import { Round } from '../model/round';
+// @ts-ignore
+import { RoundRequest } from '../model/round-request';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -133,9 +135,9 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling roundsCloneExerciseCreate.');
         }
-        const cloneExerciseRequest = requestParameters?.cloneExerciseRequest;
-        if (cloneExerciseRequest === null || cloneExerciseRequest === undefined) {
-            throw new Error('Required parameter cloneExerciseRequest was null or undefined when calling roundsCloneExerciseCreate.');
+        const cloneExerciseRequestRequest = requestParameters?.cloneExerciseRequestRequest;
+        if (cloneExerciseRequestRequest === null || cloneExerciseRequestRequest === undefined) {
+            throw new Error('Required parameter cloneExerciseRequestRequest was null or undefined when calling roundsCloneExerciseCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -182,7 +184,7 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
         return this.httpClient.request<Exercise>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: cloneExerciseRequest,
+                body: cloneExerciseRequestRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -205,9 +207,9 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
     public roundsCreate(requestParameters: RoundsCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Round>>;
     public roundsCreate(requestParameters: RoundsCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Round>>;
     public roundsCreate(requestParameters: RoundsCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const round = requestParameters?.round;
-        if (round === null || round === undefined) {
-            throw new Error('Required parameter round was null or undefined when calling roundsCreate.');
+        const roundRequest = requestParameters?.roundRequest;
+        if (roundRequest === null || roundRequest === undefined) {
+            throw new Error('Required parameter roundRequest was null or undefined when calling roundsCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -254,7 +256,7 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
         return this.httpClient.request<Round>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: round,
+                body: roundRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -340,9 +342,9 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling roundsExercisesReorderCreate.');
         }
-        const reorderExercisesRequest = requestParameters?.reorderExercisesRequest;
-        if (reorderExercisesRequest === null || reorderExercisesRequest === undefined) {
-            throw new Error('Required parameter reorderExercisesRequest was null or undefined when calling roundsExercisesReorderCreate.');
+        const reorderExercisesRequestRequest = requestParameters?.reorderExercisesRequestRequest;
+        if (reorderExercisesRequestRequest === null || reorderExercisesRequestRequest === undefined) {
+            throw new Error('Required parameter reorderExercisesRequestRequest was null or undefined when calling roundsExercisesReorderCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -388,7 +390,7 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
         return this.httpClient.request<any>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: reorderExercisesRequest,
+                body: reorderExercisesRequestRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -534,7 +536,7 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling roundsPartialUpdate.');
         }
-        const patchedRound = requestParameters?.patchedRound;
+        const patchedRoundRequest = requestParameters?.patchedRoundRequest;
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -580,7 +582,7 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
         return this.httpClient.request<Round>('patch', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: patchedRound,
+                body: patchedRoundRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -667,9 +669,9 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling roundsUpdate.');
         }
-        const round = requestParameters?.round;
-        if (round === null || round === undefined) {
-            throw new Error('Required parameter round was null or undefined when calling roundsUpdate.');
+        const roundRequest = requestParameters?.roundRequest;
+        if (roundRequest === null || roundRequest === undefined) {
+            throw new Error('Required parameter roundRequest was null or undefined when calling roundsUpdate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -716,7 +718,7 @@ export class RoundsService extends BaseService implements RoundsServiceInterface
         return this.httpClient.request<Round>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: round,
+                body: roundRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

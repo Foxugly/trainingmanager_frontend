@@ -13,22 +13,28 @@ import { Observable }                                        from 'rxjs';
 
 import { AIUsageAggregateResponse } from '../model/models';
 import { Note } from '../model/models';
+import { NoteRequest } from '../model/models';
 import { PaginatedAIUsageDetailList } from '../model/models';
 import { PaginatedNoteList } from '../model/models';
 import { PaginatedTeamList } from '../model/models';
 import { PaginatedTopicList } from '../model/models';
 import { PaginatedTopicMessageList } from '../model/models';
-import { PatchedNote } from '../model/models';
-import { PatchedTeam } from '../model/models';
-import { PatchedTopicMessage } from '../model/models';
-import { PatchedTrainingSlot } from '../model/models';
+import { PatchedNoteRequest } from '../model/models';
+import { PatchedTeamRequest } from '../model/models';
+import { PatchedTopicMessageRequest } from '../model/models';
+import { PatchedTrainingSlotRequest } from '../model/models';
 import { Team } from '../model/models';
 import { TeamMembership } from '../model/models';
+import { TeamMembershipRequest } from '../model/models';
 import { TeamPoolsResponse } from '../model/models';
+import { TeamRequest } from '../model/models';
 import { TeamStats } from '../model/models';
 import { Topic } from '../model/models';
 import { TopicMessage } from '../model/models';
+import { TopicMessageRequest } from '../model/models';
+import { TopicRequest } from '../model/models';
 import { TrainingSlot } from '../model/models';
+import { TrainingSlotRequest } from '../model/models';
 import { TrainingTemplate } from '../model/models';
 
 
@@ -54,7 +60,7 @@ export interface TeamsAiUsageRetrieveRequestParams {
 }
 
 export interface TeamsCreateRequestParams {
-    team: Team;
+    teamRequest: TeamRequest;
 }
 
 export interface TeamsDestroyRequestParams {
@@ -78,7 +84,7 @@ export interface TeamsLogoRetrieveRequestParams {
 export interface TeamsMembersNotesCreateRequestParams {
     memberPk: number;
     teamPk: number;
-    note: Note;
+    noteRequest: NoteRequest;
 }
 
 export interface TeamsMembersNotesDestroyRequestParams {
@@ -102,7 +108,7 @@ export interface TeamsMembersNotesPartialUpdateRequestParams {
     memberPk: number;
     teamPk: number;
     includeInactive?: boolean;
-    patchedNote?: PatchedNote;
+    patchedNoteRequest?: PatchedNoteRequest;
 }
 
 export interface TeamsMembersNotesRetrieveRequestParams {
@@ -116,13 +122,13 @@ export interface TeamsMembersNotesUpdateRequestParams {
     id: number;
     memberPk: number;
     teamPk: number;
-    note: Note;
+    noteRequest: NoteRequest;
     includeInactive?: boolean;
 }
 
 export interface TeamsMembershipsCreateRequestParams {
     teamPk: number;
-    teamMembership: TeamMembership;
+    teamMembershipRequest: TeamMembershipRequest;
     includeInactive?: boolean;
 }
 
@@ -147,7 +153,7 @@ export interface TeamsMembershipsRetrieveRequestParams {
 
 export interface TeamsPartialUpdateRequestParams {
     id: number;
-    patchedTeam?: PatchedTeam;
+    patchedTeamRequest?: PatchedTeamRequest;
 }
 
 export interface TeamsPoolsRetrieveRequestParams {
@@ -167,7 +173,7 @@ export interface TeamsStatsRetrieveRequestParams {
 
 export interface TeamsTopicsCreateRequestParams {
     teamPk: number;
-    topic: Topic;
+    topicRequest: TopicRequest;
 }
 
 export interface TeamsTopicsDestroyRequestParams {
@@ -186,7 +192,7 @@ export interface TeamsTopicsListRequestParams {
 export interface TeamsTopicsMessagesCreateRequestParams {
     teamPk: number;
     topicPk: number;
-    topicMessage: TopicMessage;
+    topicMessageRequest: TopicMessageRequest;
 }
 
 export interface TeamsTopicsMessagesDestroyRequestParams {
@@ -208,7 +214,7 @@ export interface TeamsTopicsMessagesPartialUpdateRequestParams {
     id: number;
     teamPk: number;
     topicPk: number;
-    patchedTopicMessage?: PatchedTopicMessage;
+    patchedTopicMessageRequest?: PatchedTopicMessageRequest;
 }
 
 export interface TeamsTopicsMessagesRetrieveRequestParams {
@@ -221,7 +227,7 @@ export interface TeamsTopicsMessagesUpdateRequestParams {
     id: number;
     teamPk: number;
     topicPk: number;
-    topicMessage: TopicMessage;
+    topicMessageRequest: TopicMessageRequest;
 }
 
 export interface TeamsTopicsReadRequestParams {
@@ -236,7 +242,7 @@ export interface TeamsTopicsRetrieveRequestParams {
 
 export interface TeamsTrainingSlotsCreateRequestParams {
     teamPk: number;
-    trainingSlot: TrainingSlot;
+    trainingSlotRequest: TrainingSlotRequest;
 }
 
 export interface TeamsTrainingSlotsDestroyRequestParams {
@@ -253,7 +259,7 @@ export interface TeamsTrainingSlotsListRequestParams {
 export interface TeamsTrainingSlotsPartialUpdateRequestParams {
     id: number;
     teamPk: number;
-    patchedTrainingSlot?: PatchedTrainingSlot;
+    patchedTrainingSlotRequest?: PatchedTrainingSlotRequest;
 }
 
 export interface TeamsTrainingSlotsRetrieveRequestParams {
@@ -264,7 +270,7 @@ export interface TeamsTrainingSlotsRetrieveRequestParams {
 export interface TeamsTrainingSlotsUpdateRequestParams {
     id: number;
     teamPk: number;
-    trainingSlot: TrainingSlot;
+    trainingSlotRequest: TrainingSlotRequest;
 }
 
 export interface TeamsTrainingTemplateRetrieveRequestParams {
@@ -273,7 +279,7 @@ export interface TeamsTrainingTemplateRetrieveRequestParams {
 
 export interface TeamsUpdateRequestParams {
     id: number;
-    team: Team;
+    teamRequest: TeamRequest;
 }
 
 

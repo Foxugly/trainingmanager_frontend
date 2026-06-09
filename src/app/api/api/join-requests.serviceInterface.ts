@@ -12,16 +12,18 @@ import { HttpHeaders }                                       from '@angular/comm
 import { Observable }                                        from 'rxjs';
 
 import { CreateJoinRequest } from '../model/models';
+import { CreateJoinRequestRequest } from '../model/models';
 import { PaginatedTeamJoinRequestList } from '../model/models';
-import { PatchedTeamJoinRequest } from '../model/models';
+import { PatchedTeamJoinRequestRequest } from '../model/models';
 import { TeamJoinRequest } from '../model/models';
+import { TeamJoinRequestRequest } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
 
 
 export interface JoinRequestsCreateRequestParams {
-    createJoinRequest: CreateJoinRequest;
+    createJoinRequestRequest: CreateJoinRequestRequest;
 }
 
 export interface JoinRequestsDestroyRequestParams {
@@ -39,7 +41,7 @@ export interface JoinRequestsListRequestParams {
 
 export interface JoinRequestsPartialUpdateRequestParams {
     id: number;
-    patchedTeamJoinRequest?: PatchedTeamJoinRequest;
+    patchedTeamJoinRequestRequest?: PatchedTeamJoinRequestRequest;
 }
 
 export interface JoinRequestsRetrieveRequestParams {
@@ -48,7 +50,7 @@ export interface JoinRequestsRetrieveRequestParams {
 
 export interface JoinRequestsUpdateRequestParams {
     id: number;
-    teamJoinRequest: TeamJoinRequest;
+    teamJoinRequestRequest: TeamJoinRequestRequest;
 }
 
 

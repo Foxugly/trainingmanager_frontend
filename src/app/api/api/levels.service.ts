@@ -19,9 +19,11 @@ import { OpenApiHttpParams, QueryParamStyle } from '../query.params';
 // @ts-ignore
 import { LevelAdmin } from '../model/level-admin';
 // @ts-ignore
+import { LevelAdminRequest } from '../model/level-admin-request';
+// @ts-ignore
 import { PaginatedLevelList } from '../model/paginated-level-list';
 // @ts-ignore
-import { PatchedLevelAdmin } from '../model/patched-level-admin';
+import { PatchedLevelAdminRequest } from '../model/patched-level-admin-request';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -61,9 +63,9 @@ export class LevelsService extends BaseService implements LevelsServiceInterface
     public levelsCreate(requestParameters: LevelsCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<LevelAdmin>>;
     public levelsCreate(requestParameters: LevelsCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<LevelAdmin>>;
     public levelsCreate(requestParameters: LevelsCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const levelAdmin = requestParameters?.levelAdmin;
-        if (levelAdmin === null || levelAdmin === undefined) {
-            throw new Error('Required parameter levelAdmin was null or undefined when calling levelsCreate.');
+        const levelAdminRequest = requestParameters?.levelAdminRequest;
+        if (levelAdminRequest === null || levelAdminRequest === undefined) {
+            throw new Error('Required parameter levelAdminRequest was null or undefined when calling levelsCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -110,7 +112,7 @@ export class LevelsService extends BaseService implements LevelsServiceInterface
         return this.httpClient.request<LevelAdmin>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: levelAdmin,
+                body: levelAdminRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -318,7 +320,7 @@ export class LevelsService extends BaseService implements LevelsServiceInterface
             throw new Error('Required parameter id was null or undefined when calling levelsPartialUpdate.');
         }
         const includeInactive = requestParameters?.includeInactive;
-        const patchedLevelAdmin = requestParameters?.patchedLevelAdmin;
+        const patchedLevelAdminRequest = requestParameters?.patchedLevelAdminRequest;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -375,7 +377,7 @@ export class LevelsService extends BaseService implements LevelsServiceInterface
         return this.httpClient.request<LevelAdmin>('patch', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: patchedLevelAdmin,
+                body: patchedLevelAdminRequest,
                 params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
@@ -477,9 +479,9 @@ export class LevelsService extends BaseService implements LevelsServiceInterface
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling levelsUpdate.');
         }
-        const levelAdmin = requestParameters?.levelAdmin;
-        if (levelAdmin === null || levelAdmin === undefined) {
-            throw new Error('Required parameter levelAdmin was null or undefined when calling levelsUpdate.');
+        const levelAdminRequest = requestParameters?.levelAdminRequest;
+        if (levelAdminRequest === null || levelAdminRequest === undefined) {
+            throw new Error('Required parameter levelAdminRequest was null or undefined when calling levelsUpdate.');
         }
         const includeInactive = requestParameters?.includeInactive;
 
@@ -538,7 +540,7 @@ export class LevelsService extends BaseService implements LevelsServiceInterface
         return this.httpClient.request<LevelAdmin>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: levelAdmin,
+                body: levelAdminRequest,
                 params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),

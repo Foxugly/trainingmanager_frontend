@@ -11,18 +11,19 @@ import { HttpHeaders }                                       from '@angular/comm
 
 import { Observable }                                        from 'rxjs';
 
-import { GeneratePlanRequest } from '../model/models';
+import { GeneratePlanRequestRequest } from '../model/models';
 import { GeneratePlanResponse } from '../model/models';
 import { PaginatedProgramList } from '../model/models';
-import { PatchedProgram } from '../model/models';
+import { PatchedProgramRequest } from '../model/models';
 import { Program } from '../model/models';
+import { ProgramRequest } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
 
 
 export interface ProgramsCreateRequestParams {
-    program: Program;
+    programRequest: ProgramRequest;
 }
 
 export interface ProgramsDestroyRequestParams {
@@ -31,7 +32,7 @@ export interface ProgramsDestroyRequestParams {
 
 export interface ProgramsGenerateEventsCreateRequestParams {
     id: number;
-    generatePlanRequest: GeneratePlanRequest;
+    generatePlanRequestRequest: GeneratePlanRequestRequest;
 }
 
 export interface ProgramsListRequestParams {
@@ -50,7 +51,7 @@ export interface ProgramsListRequestParams {
 export interface ProgramsPartialUpdateRequestParams {
     id: number;
     includeInactive?: boolean;
-    patchedProgram?: PatchedProgram;
+    patchedProgramRequest?: PatchedProgramRequest;
 }
 
 export interface ProgramsRetrieveRequestParams {
@@ -60,7 +61,7 @@ export interface ProgramsRetrieveRequestParams {
 
 export interface ProgramsUpdateRequestParams {
     id: number;
-    program: Program;
+    programRequest: ProgramRequest;
     includeInactive?: boolean;
 }
 

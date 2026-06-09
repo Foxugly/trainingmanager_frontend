@@ -19,19 +19,23 @@ import { OpenApiHttpParams, QueryParamStyle } from '../query.params';
 // @ts-ignore
 import { Attendance } from '../model/attendance';
 // @ts-ignore
-import { AttendanceBulk } from '../model/attendance-bulk';
+import { AttendanceBulkRequest } from '../model/attendance-bulk-request';
 // @ts-ignore
-import { DuplicateEventRequest } from '../model/duplicate-event-request';
+import { AttendanceRequest } from '../model/attendance-request';
+// @ts-ignore
+import { DuplicateEventRequestRequest } from '../model/duplicate-event-request-request';
 // @ts-ignore
 import { DuplicateEventResponse } from '../model/duplicate-event-response';
 // @ts-ignore
 import { Event } from '../model/event';
 // @ts-ignore
-import { EventShareRequest } from '../model/event-share-request';
+import { EventRequest } from '../model/event-request';
+// @ts-ignore
+import { EventShareRequestRequest } from '../model/event-share-request-request';
 // @ts-ignore
 import { EventShareResponse } from '../model/event-share-response';
 // @ts-ignore
-import { GenerateTrainingRequest } from '../model/generate-training-request';
+import { GenerateTrainingRequestRequest } from '../model/generate-training-request-request';
 // @ts-ignore
 import { GenerateTrainingResponse } from '../model/generate-training-response';
 // @ts-ignore
@@ -39,21 +43,21 @@ import { PaginatedAttendanceList } from '../model/paginated-attendance-list';
 // @ts-ignore
 import { PaginatedEventList } from '../model/paginated-event-list';
 // @ts-ignore
-import { PatchedAttendance } from '../model/patched-attendance';
+import { PatchedAttendanceRequest } from '../model/patched-attendance-request';
 // @ts-ignore
-import { PatchedEvent } from '../model/patched-event';
+import { PatchedEventRequest } from '../model/patched-event-request';
 // @ts-ignore
-import { ReorderRoundsRequest } from '../model/reorder-rounds-request';
+import { ReorderRoundsRequestRequest } from '../model/reorder-rounds-request-request';
 // @ts-ignore
 import { RotiSummary } from '../model/roti-summary';
 // @ts-ignore
-import { RotiUpsert } from '../model/roti-upsert';
+import { RotiUpsertRequest } from '../model/roti-upsert-request';
 // @ts-ignore
 import { RsvpApplyToAttendanceResult } from '../model/rsvp-apply-to-attendance-result';
 // @ts-ignore
 import { RsvpSummary } from '../model/rsvp-summary';
 // @ts-ignore
-import { RsvpUpsert } from '../model/rsvp-upsert';
+import { RsvpUpsertRequest } from '../model/rsvp-upsert-request';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -114,9 +118,9 @@ export class EventsService extends BaseService implements EventsServiceInterface
         if (eventPk === null || eventPk === undefined) {
             throw new Error('Required parameter eventPk was null or undefined when calling eventsAttendanceBulkCreate.');
         }
-        const attendanceBulk = requestParameters?.attendanceBulk;
-        if (attendanceBulk === null || attendanceBulk === undefined) {
-            throw new Error('Required parameter attendanceBulk was null or undefined when calling eventsAttendanceBulkCreate.');
+        const attendanceBulkRequest = requestParameters?.attendanceBulkRequest;
+        if (attendanceBulkRequest === null || attendanceBulkRequest === undefined) {
+            throw new Error('Required parameter attendanceBulkRequest was null or undefined when calling eventsAttendanceBulkCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -163,7 +167,7 @@ export class EventsService extends BaseService implements EventsServiceInterface
         return this.httpClient.request<PaginatedAttendanceList>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: attendanceBulk,
+                body: attendanceBulkRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -191,9 +195,9 @@ export class EventsService extends BaseService implements EventsServiceInterface
         if (eventPk === null || eventPk === undefined) {
             throw new Error('Required parameter eventPk was null or undefined when calling eventsAttendanceCreate.');
         }
-        const attendance = requestParameters?.attendance;
-        if (attendance === null || attendance === undefined) {
-            throw new Error('Required parameter attendance was null or undefined when calling eventsAttendanceCreate.');
+        const attendanceRequest = requestParameters?.attendanceRequest;
+        if (attendanceRequest === null || attendanceRequest === undefined) {
+            throw new Error('Required parameter attendanceRequest was null or undefined when calling eventsAttendanceCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -240,7 +244,7 @@ export class EventsService extends BaseService implements EventsServiceInterface
         return this.httpClient.request<Attendance>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: attendance,
+                body: attendanceRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -440,7 +444,7 @@ export class EventsService extends BaseService implements EventsServiceInterface
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling eventsAttendancePartialUpdate.');
         }
-        const patchedAttendance = requestParameters?.patchedAttendance;
+        const patchedAttendanceRequest = requestParameters?.patchedAttendanceRequest;
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -486,7 +490,7 @@ export class EventsService extends BaseService implements EventsServiceInterface
         return this.httpClient.request<Attendance>('patch', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: patchedAttendance,
+                body: patchedAttendanceRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -583,9 +587,9 @@ export class EventsService extends BaseService implements EventsServiceInterface
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling eventsAttendanceUpdate.');
         }
-        const attendance = requestParameters?.attendance;
-        if (attendance === null || attendance === undefined) {
-            throw new Error('Required parameter attendance was null or undefined when calling eventsAttendanceUpdate.');
+        const attendanceRequest = requestParameters?.attendanceRequest;
+        if (attendanceRequest === null || attendanceRequest === undefined) {
+            throw new Error('Required parameter attendanceRequest was null or undefined when calling eventsAttendanceUpdate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -632,7 +636,7 @@ export class EventsService extends BaseService implements EventsServiceInterface
         return this.httpClient.request<Attendance>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: attendance,
+                body: attendanceRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -655,9 +659,9 @@ export class EventsService extends BaseService implements EventsServiceInterface
     public eventsCreate(requestParameters: EventsCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Event>>;
     public eventsCreate(requestParameters: EventsCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Event>>;
     public eventsCreate(requestParameters: EventsCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const event = requestParameters?.event;
-        if (event === null || event === undefined) {
-            throw new Error('Required parameter event was null or undefined when calling eventsCreate.');
+        const eventRequest = requestParameters?.eventRequest;
+        if (eventRequest === null || eventRequest === undefined) {
+            throw new Error('Required parameter eventRequest was null or undefined when calling eventsCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -704,7 +708,7 @@ export class EventsService extends BaseService implements EventsServiceInterface
         return this.httpClient.request<Event>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: event,
+                body: eventRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -790,9 +794,9 @@ export class EventsService extends BaseService implements EventsServiceInterface
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling eventsDuplicateCreate.');
         }
-        const duplicateEventRequest = requestParameters?.duplicateEventRequest;
-        if (duplicateEventRequest === null || duplicateEventRequest === undefined) {
-            throw new Error('Required parameter duplicateEventRequest was null or undefined when calling eventsDuplicateCreate.');
+        const duplicateEventRequestRequest = requestParameters?.duplicateEventRequestRequest;
+        if (duplicateEventRequestRequest === null || duplicateEventRequestRequest === undefined) {
+            throw new Error('Required parameter duplicateEventRequestRequest was null or undefined when calling eventsDuplicateCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -839,7 +843,7 @@ export class EventsService extends BaseService implements EventsServiceInterface
         return this.httpClient.request<DuplicateEventResponse>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: duplicateEventRequest,
+                body: duplicateEventRequestRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -866,7 +870,7 @@ export class EventsService extends BaseService implements EventsServiceInterface
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling eventsGenerateTrainingCreate.');
         }
-        const generateTrainingRequest = requestParameters?.generateTrainingRequest;
+        const generateTrainingRequestRequest = requestParameters?.generateTrainingRequestRequest;
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -912,7 +916,7 @@ export class EventsService extends BaseService implements EventsServiceInterface
         return this.httpClient.request<GenerateTrainingResponse>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: generateTrainingRequest,
+                body: generateTrainingRequestRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -1088,7 +1092,7 @@ export class EventsService extends BaseService implements EventsServiceInterface
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling eventsPartialUpdate.');
         }
-        const patchedEvent = requestParameters?.patchedEvent;
+        const patchedEventRequest = requestParameters?.patchedEventRequest;
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -1134,7 +1138,7 @@ export class EventsService extends BaseService implements EventsServiceInterface
         return this.httpClient.request<Event>('patch', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: patchedEvent,
+                body: patchedEventRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -1344,9 +1348,9 @@ export class EventsService extends BaseService implements EventsServiceInterface
         if (eventPk === null || eventPk === undefined) {
             throw new Error('Required parameter eventPk was null or undefined when calling eventsRotiUpdate.');
         }
-        const rotiUpsert = requestParameters?.rotiUpsert;
-        if (rotiUpsert === null || rotiUpsert === undefined) {
-            throw new Error('Required parameter rotiUpsert was null or undefined when calling eventsRotiUpdate.');
+        const rotiUpsertRequest = requestParameters?.rotiUpsertRequest;
+        if (rotiUpsertRequest === null || rotiUpsertRequest === undefined) {
+            throw new Error('Required parameter rotiUpsertRequest was null or undefined when calling eventsRotiUpdate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -1393,7 +1397,7 @@ export class EventsService extends BaseService implements EventsServiceInterface
         return this.httpClient.request<RotiSummary>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: rotiUpsert,
+                body: rotiUpsertRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -1420,9 +1424,9 @@ export class EventsService extends BaseService implements EventsServiceInterface
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling eventsRoundsReorderCreate.');
         }
-        const reorderRoundsRequest = requestParameters?.reorderRoundsRequest;
-        if (reorderRoundsRequest === null || reorderRoundsRequest === undefined) {
-            throw new Error('Required parameter reorderRoundsRequest was null or undefined when calling eventsRoundsReorderCreate.');
+        const reorderRoundsRequestRequest = requestParameters?.reorderRoundsRequestRequest;
+        if (reorderRoundsRequestRequest === null || reorderRoundsRequestRequest === undefined) {
+            throw new Error('Required parameter reorderRoundsRequestRequest was null or undefined when calling eventsRoundsReorderCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -1468,7 +1472,7 @@ export class EventsService extends BaseService implements EventsServiceInterface
         return this.httpClient.request<any>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: reorderRoundsRequest,
+                body: reorderRoundsRequestRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -1618,9 +1622,9 @@ export class EventsService extends BaseService implements EventsServiceInterface
         if (eventPk === null || eventPk === undefined) {
             throw new Error('Required parameter eventPk was null or undefined when calling eventsRsvpUpdate.');
         }
-        const rsvpUpsert = requestParameters?.rsvpUpsert;
-        if (rsvpUpsert === null || rsvpUpsert === undefined) {
-            throw new Error('Required parameter rsvpUpsert was null or undefined when calling eventsRsvpUpdate.');
+        const rsvpUpsertRequest = requestParameters?.rsvpUpsertRequest;
+        if (rsvpUpsertRequest === null || rsvpUpsertRequest === undefined) {
+            throw new Error('Required parameter rsvpUpsertRequest was null or undefined when calling eventsRsvpUpdate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -1667,7 +1671,7 @@ export class EventsService extends BaseService implements EventsServiceInterface
         return this.httpClient.request<RsvpSummary>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: rsvpUpsert,
+                body: rsvpUpsertRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -1694,9 +1698,9 @@ export class EventsService extends BaseService implements EventsServiceInterface
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling eventsShareCreate.');
         }
-        const eventShareRequest = requestParameters?.eventShareRequest;
-        if (eventShareRequest === null || eventShareRequest === undefined) {
-            throw new Error('Required parameter eventShareRequest was null or undefined when calling eventsShareCreate.');
+        const eventShareRequestRequest = requestParameters?.eventShareRequestRequest;
+        if (eventShareRequestRequest === null || eventShareRequestRequest === undefined) {
+            throw new Error('Required parameter eventShareRequestRequest was null or undefined when calling eventsShareCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -1743,7 +1747,7 @@ export class EventsService extends BaseService implements EventsServiceInterface
         return this.httpClient.request<EventShareResponse>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: eventShareRequest,
+                body: eventShareRequestRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -1770,9 +1774,9 @@ export class EventsService extends BaseService implements EventsServiceInterface
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling eventsUpdate.');
         }
-        const event = requestParameters?.event;
-        if (event === null || event === undefined) {
-            throw new Error('Required parameter event was null or undefined when calling eventsUpdate.');
+        const eventRequest = requestParameters?.eventRequest;
+        if (eventRequest === null || eventRequest === undefined) {
+            throw new Error('Required parameter eventRequest was null or undefined when calling eventsUpdate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -1819,7 +1823,7 @@ export class EventsService extends BaseService implements EventsServiceInterface
         return this.httpClient.request<Event>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: event,
+                body: eventRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

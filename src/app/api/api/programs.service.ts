@@ -17,15 +17,17 @@ import { Observable }                                        from 'rxjs';
 import { OpenApiHttpParams, QueryParamStyle } from '../query.params';
 
 // @ts-ignore
-import { GeneratePlanRequest } from '../model/generate-plan-request';
+import { GeneratePlanRequestRequest } from '../model/generate-plan-request-request';
 // @ts-ignore
 import { GeneratePlanResponse } from '../model/generate-plan-response';
 // @ts-ignore
 import { PaginatedProgramList } from '../model/paginated-program-list';
 // @ts-ignore
-import { PatchedProgram } from '../model/patched-program';
+import { PatchedProgramRequest } from '../model/patched-program-request';
 // @ts-ignore
 import { Program } from '../model/program';
+// @ts-ignore
+import { ProgramRequest } from '../model/program-request';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -65,9 +67,9 @@ export class ProgramsService extends BaseService implements ProgramsServiceInter
     public programsCreate(requestParameters: ProgramsCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Program>>;
     public programsCreate(requestParameters: ProgramsCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Program>>;
     public programsCreate(requestParameters: ProgramsCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const program = requestParameters?.program;
-        if (program === null || program === undefined) {
-            throw new Error('Required parameter program was null or undefined when calling programsCreate.');
+        const programRequest = requestParameters?.programRequest;
+        if (programRequest === null || programRequest === undefined) {
+            throw new Error('Required parameter programRequest was null or undefined when calling programsCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -114,7 +116,7 @@ export class ProgramsService extends BaseService implements ProgramsServiceInter
         return this.httpClient.request<Program>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: program,
+                body: programRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -201,9 +203,9 @@ export class ProgramsService extends BaseService implements ProgramsServiceInter
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling programsGenerateEventsCreate.');
         }
-        const generatePlanRequest = requestParameters?.generatePlanRequest;
-        if (generatePlanRequest === null || generatePlanRequest === undefined) {
-            throw new Error('Required parameter generatePlanRequest was null or undefined when calling programsGenerateEventsCreate.');
+        const generatePlanRequestRequest = requestParameters?.generatePlanRequestRequest;
+        if (generatePlanRequestRequest === null || generatePlanRequestRequest === undefined) {
+            throw new Error('Required parameter generatePlanRequestRequest was null or undefined when calling programsGenerateEventsCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -250,7 +252,7 @@ export class ProgramsService extends BaseService implements ProgramsServiceInter
         return this.httpClient.request<GeneratePlanResponse>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: generatePlanRequest,
+                body: generatePlanRequestRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -437,7 +439,7 @@ export class ProgramsService extends BaseService implements ProgramsServiceInter
             throw new Error('Required parameter id was null or undefined when calling programsPartialUpdate.');
         }
         const includeInactive = requestParameters?.includeInactive;
-        const patchedProgram = requestParameters?.patchedProgram;
+        const patchedProgramRequest = requestParameters?.patchedProgramRequest;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -494,7 +496,7 @@ export class ProgramsService extends BaseService implements ProgramsServiceInter
         return this.httpClient.request<Program>('patch', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: patchedProgram,
+                body: patchedProgramRequest,
                 params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
@@ -595,9 +597,9 @@ export class ProgramsService extends BaseService implements ProgramsServiceInter
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling programsUpdate.');
         }
-        const program = requestParameters?.program;
-        if (program === null || program === undefined) {
-            throw new Error('Required parameter program was null or undefined when calling programsUpdate.');
+        const programRequest = requestParameters?.programRequest;
+        if (programRequest === null || programRequest === undefined) {
+            throw new Error('Required parameter programRequest was null or undefined when calling programsUpdate.');
         }
         const includeInactive = requestParameters?.includeInactive;
 
@@ -656,7 +658,7 @@ export class ProgramsService extends BaseService implements ProgramsServiceInter
         return this.httpClient.request<Program>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: program,
+                body: programRequest,
                 params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),

@@ -17,11 +17,11 @@ import { Observable }                                        from 'rxjs';
 import { OpenApiHttpParams, QueryParamStyle } from '../query.params';
 
 // @ts-ignore
-import { CompleteInvitation } from '../model/complete-invitation';
+import { CompleteInvitationRequest } from '../model/complete-invitation-request';
 // @ts-ignore
 import { CompleteInvitationResponse } from '../model/complete-invitation-response';
 // @ts-ignore
-import { CreateInvitation } from '../model/create-invitation';
+import { CreateInvitationRequest } from '../model/create-invitation-request';
 // @ts-ignore
 import { PaginatedTeamInvitationList } from '../model/paginated-team-invitation-list';
 // @ts-ignore
@@ -66,9 +66,9 @@ export class InvitationsService extends BaseService implements InvitationsServic
     public invitationsCreate(requestParameters: InvitationsCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamInvitation>>;
     public invitationsCreate(requestParameters: InvitationsCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamInvitation>>;
     public invitationsCreate(requestParameters: InvitationsCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const createInvitation = requestParameters?.createInvitation;
-        if (createInvitation === null || createInvitation === undefined) {
-            throw new Error('Required parameter createInvitation was null or undefined when calling invitationsCreate.');
+        const createInvitationRequest = requestParameters?.createInvitationRequest;
+        if (createInvitationRequest === null || createInvitationRequest === undefined) {
+            throw new Error('Required parameter createInvitationRequest was null or undefined when calling invitationsCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -115,7 +115,7 @@ export class InvitationsService extends BaseService implements InvitationsServic
         return this.httpClient.request<TeamInvitation>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: createInvitation,
+                body: createInvitationRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -320,9 +320,9 @@ export class InvitationsService extends BaseService implements InvitationsServic
         if (token === null || token === undefined) {
             throw new Error('Required parameter token was null or undefined when calling invitationsLookupCreate.');
         }
-        const completeInvitation = requestParameters?.completeInvitation;
-        if (completeInvitation === null || completeInvitation === undefined) {
-            throw new Error('Required parameter completeInvitation was null or undefined when calling invitationsLookupCreate.');
+        const completeInvitationRequest = requestParameters?.completeInvitationRequest;
+        if (completeInvitationRequest === null || completeInvitationRequest === undefined) {
+            throw new Error('Required parameter completeInvitationRequest was null or undefined when calling invitationsLookupCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -366,7 +366,7 @@ export class InvitationsService extends BaseService implements InvitationsServic
         return this.httpClient.request<CompleteInvitationResponse>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: completeInvitation,
+                body: completeInvitationRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

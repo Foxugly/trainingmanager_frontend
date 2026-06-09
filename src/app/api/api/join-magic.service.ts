@@ -21,7 +21,7 @@ import { JoinMagicCancelledResponse } from '../model/join-magic-cancelled-respon
 // @ts-ignore
 import { JoinMagicError } from '../model/join-magic-error';
 // @ts-ignore
-import { TeamJoinRequestMagicActionPost } from '../model/team-join-request-magic-action-post';
+import { TeamJoinRequestMagicActionPostRequest } from '../model/team-join-request-magic-action-post-request';
 // @ts-ignore
 import { TeamJoinRequestMagicActionResponse } from '../model/team-join-request-magic-action-response';
 
@@ -58,9 +58,9 @@ export class JoinMagicService extends BaseService implements JoinMagicServiceInt
     public joinMagicCreate(requestParameters: JoinMagicCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TeamJoinRequestMagicActionResponse>>;
     public joinMagicCreate(requestParameters: JoinMagicCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TeamJoinRequestMagicActionResponse>>;
     public joinMagicCreate(requestParameters: JoinMagicCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const teamJoinRequestMagicActionPost = requestParameters?.teamJoinRequestMagicActionPost;
-        if (teamJoinRequestMagicActionPost === null || teamJoinRequestMagicActionPost === undefined) {
-            throw new Error('Required parameter teamJoinRequestMagicActionPost was null or undefined when calling joinMagicCreate.');
+        const teamJoinRequestMagicActionPostRequest = requestParameters?.teamJoinRequestMagicActionPostRequest;
+        if (teamJoinRequestMagicActionPostRequest === null || teamJoinRequestMagicActionPostRequest === undefined) {
+            throw new Error('Required parameter teamJoinRequestMagicActionPostRequest was null or undefined when calling joinMagicCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -107,7 +107,7 @@ export class JoinMagicService extends BaseService implements JoinMagicServiceInt
         return this.httpClient.request<TeamJoinRequestMagicActionResponse>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: teamJoinRequestMagicActionPost,
+                body: teamJoinRequestMagicActionPostRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

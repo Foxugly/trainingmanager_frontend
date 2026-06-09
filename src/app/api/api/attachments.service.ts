@@ -23,7 +23,7 @@ import { AttachmentDownloadResponse } from '../model/attachment-download-respons
 // @ts-ignore
 import { PaginatedAttachmentList } from '../model/paginated-attachment-list';
 // @ts-ignore
-import { PresignUploadRequest } from '../model/presign-upload-request';
+import { PresignUploadRequestRequest } from '../model/presign-upload-request-request';
 // @ts-ignore
 import { PresignUploadResponse } from '../model/presign-upload-response';
 
@@ -367,9 +367,9 @@ export class AttachmentsService extends BaseService implements AttachmentsServic
     public attachmentsPresignCreate(requestParameters: AttachmentsPresignCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PresignUploadResponse>>;
     public attachmentsPresignCreate(requestParameters: AttachmentsPresignCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PresignUploadResponse>>;
     public attachmentsPresignCreate(requestParameters: AttachmentsPresignCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const presignUploadRequest = requestParameters?.presignUploadRequest;
-        if (presignUploadRequest === null || presignUploadRequest === undefined) {
-            throw new Error('Required parameter presignUploadRequest was null or undefined when calling attachmentsPresignCreate.');
+        const presignUploadRequestRequest = requestParameters?.presignUploadRequestRequest;
+        if (presignUploadRequestRequest === null || presignUploadRequestRequest === undefined) {
+            throw new Error('Required parameter presignUploadRequestRequest was null or undefined when calling attachmentsPresignCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -416,7 +416,7 @@ export class AttachmentsService extends BaseService implements AttachmentsServic
         return this.httpClient.request<PresignUploadResponse>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: presignUploadRequest,
+                body: presignUploadRequestRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

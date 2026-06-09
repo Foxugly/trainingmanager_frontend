@@ -33,22 +33,18 @@ export interface Event {
      */
     location?: string;
     readonly place: PlaceMinimal | null;
-    place_id?: number | null;
     /**
      * Material/gear athletes should bring. Always visible to athletes.
      */
     equipment?: string;
     readonly equipment_items: Array<EquipmentMinimal>;
-    equipment_item_ids?: Array<number>;
     color?: string;
     date?: string | null;
     hour_start?: string | null;
     hour_end?: string | null;
     total?: number;
     readonly refer_program: ProgramMinimal;
-    refer_program_id: number;
     readonly sport: Sport;
-    sport_id?: number | null;
     readonly rounds: Array<number>;
     readonly rounds_detail: Array<EventRoundDetail>;
     readonly members: Array<number>;

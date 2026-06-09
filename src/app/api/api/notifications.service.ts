@@ -21,7 +21,7 @@ import { Notification } from '../model/notification';
 // @ts-ignore
 import { NotificationPreference } from '../model/notification-preference';
 // @ts-ignore
-import { NotificationPreferenceUpdate } from '../model/notification-preference-update';
+import { NotificationPreferenceUpdateRequest } from '../model/notification-preference-update-request';
 // @ts-ignore
 import { PaginatedNotificationList } from '../model/paginated-notification-list';
 // @ts-ignore
@@ -230,9 +230,9 @@ export class NotificationsService extends BaseService implements NotificationsSe
     public notificationsPreferencesUpdate(requestParameters: NotificationsPreferencesUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<NotificationPreference>>>;
     public notificationsPreferencesUpdate(requestParameters: NotificationsPreferencesUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<NotificationPreference>>>;
     public notificationsPreferencesUpdate(requestParameters: NotificationsPreferencesUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const notificationPreferenceUpdate = requestParameters?.notificationPreferenceUpdate;
-        if (notificationPreferenceUpdate === null || notificationPreferenceUpdate === undefined) {
-            throw new Error('Required parameter notificationPreferenceUpdate was null or undefined when calling notificationsPreferencesUpdate.');
+        const notificationPreferenceUpdateRequest = requestParameters?.notificationPreferenceUpdateRequest;
+        if (notificationPreferenceUpdateRequest === null || notificationPreferenceUpdateRequest === undefined) {
+            throw new Error('Required parameter notificationPreferenceUpdateRequest was null or undefined when calling notificationsPreferencesUpdate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -279,7 +279,7 @@ export class NotificationsService extends BaseService implements NotificationsSe
         return this.httpClient.request<Array<NotificationPreference>>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: notificationPreferenceUpdate,
+                body: notificationPreferenceUpdateRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

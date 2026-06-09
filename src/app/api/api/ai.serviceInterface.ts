@@ -11,7 +11,7 @@ import { HttpHeaders }                                       from '@angular/comm
 
 import { Observable }                                        from 'rxjs';
 
-import { AIPingRequest } from '../model/models';
+import { AIPingRequestRequest } from '../model/models';
 import { AIPingResponse } from '../model/models';
 
 
@@ -19,7 +19,7 @@ import { Configuration }                                     from '../configurat
 
 
 export interface AiPingCreateRequestParams {
-    aIPingRequest?: AIPingRequest;
+    aIPingRequestRequest?: AIPingRequestRequest;
 }
 
 

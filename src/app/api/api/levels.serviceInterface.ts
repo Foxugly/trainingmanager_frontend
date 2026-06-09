@@ -12,15 +12,16 @@ import { HttpHeaders }                                       from '@angular/comm
 import { Observable }                                        from 'rxjs';
 
 import { LevelAdmin } from '../model/models';
+import { LevelAdminRequest } from '../model/models';
 import { PaginatedLevelList } from '../model/models';
-import { PatchedLevelAdmin } from '../model/models';
+import { PatchedLevelAdminRequest } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
 
 
 export interface LevelsCreateRequestParams {
-    levelAdmin: LevelAdmin;
+    levelAdminRequest: LevelAdminRequest;
 }
 
 export interface LevelsDestroyRequestParams {
@@ -39,7 +40,7 @@ export interface LevelsListRequestParams {
 export interface LevelsPartialUpdateRequestParams {
     id: number;
     includeInactive?: boolean;
-    patchedLevelAdmin?: PatchedLevelAdmin;
+    patchedLevelAdminRequest?: PatchedLevelAdminRequest;
 }
 
 export interface LevelsRetrieveRequestParams {
@@ -49,7 +50,7 @@ export interface LevelsRetrieveRequestParams {
 
 export interface LevelsUpdateRequestParams {
     id: number;
-    levelAdmin: LevelAdmin;
+    levelAdminRequest: LevelAdminRequest;
     includeInactive?: boolean;
 }
 

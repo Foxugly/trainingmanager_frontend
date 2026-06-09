@@ -19,9 +19,11 @@ import { OpenApiHttpParams, QueryParamStyle } from '../query.params';
 // @ts-ignore
 import { EnergySystemAdmin } from '../model/energy-system-admin';
 // @ts-ignore
+import { EnergySystemAdminRequest } from '../model/energy-system-admin-request';
+// @ts-ignore
 import { PaginatedEnergySystemList } from '../model/paginated-energy-system-list';
 // @ts-ignore
-import { PatchedEnergySystemAdmin } from '../model/patched-energy-system-admin';
+import { PatchedEnergySystemAdminRequest } from '../model/patched-energy-system-admin-request';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -61,7 +63,7 @@ export class EnergySystemsService extends BaseService implements EnergySystemsSe
     public energySystemsCreate(requestParameters?: EnergySystemsCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EnergySystemAdmin>>;
     public energySystemsCreate(requestParameters?: EnergySystemsCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EnergySystemAdmin>>;
     public energySystemsCreate(requestParameters?: EnergySystemsCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const energySystemAdmin = requestParameters?.energySystemAdmin;
+        const energySystemAdminRequest = requestParameters?.energySystemAdminRequest;
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -107,7 +109,7 @@ export class EnergySystemsService extends BaseService implements EnergySystemsSe
         return this.httpClient.request<EnergySystemAdmin>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: energySystemAdmin,
+                body: energySystemAdminRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -325,7 +327,7 @@ export class EnergySystemsService extends BaseService implements EnergySystemsSe
             throw new Error('Required parameter id was null or undefined when calling energySystemsPartialUpdate.');
         }
         const includeInactive = requestParameters?.includeInactive;
-        const patchedEnergySystemAdmin = requestParameters?.patchedEnergySystemAdmin;
+        const patchedEnergySystemAdminRequest = requestParameters?.patchedEnergySystemAdminRequest;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -382,7 +384,7 @@ export class EnergySystemsService extends BaseService implements EnergySystemsSe
         return this.httpClient.request<EnergySystemAdmin>('patch', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: patchedEnergySystemAdmin,
+                body: patchedEnergySystemAdminRequest,
                 params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
@@ -485,7 +487,7 @@ export class EnergySystemsService extends BaseService implements EnergySystemsSe
             throw new Error('Required parameter id was null or undefined when calling energySystemsUpdate.');
         }
         const includeInactive = requestParameters?.includeInactive;
-        const energySystemAdmin = requestParameters?.energySystemAdmin;
+        const energySystemAdminRequest = requestParameters?.energySystemAdminRequest;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -542,7 +544,7 @@ export class EnergySystemsService extends BaseService implements EnergySystemsSe
         return this.httpClient.request<EnergySystemAdmin>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: energySystemAdmin,
+                body: energySystemAdminRequest,
                 params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),

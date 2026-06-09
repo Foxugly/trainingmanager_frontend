@@ -12,15 +12,16 @@ import { HttpHeaders }                                       from '@angular/comm
 import { Observable }                                        from 'rxjs';
 
 import { PaginatedPlaceList } from '../model/models';
-import { PatchedPlace } from '../model/models';
+import { PatchedPlaceRequest } from '../model/models';
 import { Place } from '../model/models';
+import { PlaceRequest } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
 
 
 export interface PlacesCreateRequestParams {
-    place: Place;
+    placeRequest: PlaceRequest;
 }
 
 export interface PlacesDestroyRequestParams {
@@ -38,7 +39,7 @@ export interface PlacesListRequestParams {
 
 export interface PlacesPartialUpdateRequestParams {
     id: number;
-    patchedPlace?: PatchedPlace;
+    patchedPlaceRequest?: PatchedPlaceRequest;
 }
 
 export interface PlacesRetrieveRequestParams {
@@ -47,7 +48,7 @@ export interface PlacesRetrieveRequestParams {
 
 export interface PlacesUpdateRequestParams {
     id: number;
-    place: Place;
+    placeRequest: PlaceRequest;
 }
 
 

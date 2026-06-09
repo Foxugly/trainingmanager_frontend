@@ -19,7 +19,6 @@ export interface Member {
     phonenumber?: string | null;
     readonly teams: Array<number>;
     readonly user: CustomUserPublic;
-    user_id?: number | null;
     readonly created_at: string;
     readonly updated_at: string;
 }

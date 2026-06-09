@@ -7,7 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { MagicActionJoinRequestStatusEnum } from './magic-action-join-request-status-enum';
+import { MagicActionJoinStatusEnum } from './magic-action-join-status-enum';
 
 
 /**
@@ -21,7 +21,7 @@ export interface MagicActionJoinRequest {
     requester_email: string;
     message: string;
     requested_at: string;
-    status: MagicActionJoinRequestStatusEnum;
+    status: MagicActionJoinStatusEnum;
     responded_at: string | null;
     /**
      * username

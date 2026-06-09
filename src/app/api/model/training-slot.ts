@@ -30,9 +30,7 @@ export interface TrainingSlot {
      */
     hour_end: string;
     readonly place: PlaceMinimal | null;
-    place_id?: number | null;
     readonly sport: Sport;
-    sport_id?: number | null;
 }
 
 

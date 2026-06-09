@@ -19,9 +19,11 @@ import { OpenApiHttpParams, QueryParamStyle } from '../query.params';
 // @ts-ignore
 import { EnergySegmentAdmin } from '../model/energy-segment-admin';
 // @ts-ignore
+import { EnergySegmentAdminRequest } from '../model/energy-segment-admin-request';
+// @ts-ignore
 import { PaginatedEnergySegmentList } from '../model/paginated-energy-segment-list';
 // @ts-ignore
-import { PatchedEnergySegmentAdmin } from '../model/patched-energy-segment-admin';
+import { PatchedEnergySegmentAdminRequest } from '../model/patched-energy-segment-admin-request';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -61,9 +63,9 @@ export class EnergySegmentsService extends BaseService implements EnergySegments
     public energySegmentsCreate(requestParameters: EnergySegmentsCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EnergySegmentAdmin>>;
     public energySegmentsCreate(requestParameters: EnergySegmentsCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EnergySegmentAdmin>>;
     public energySegmentsCreate(requestParameters: EnergySegmentsCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const energySegmentAdmin = requestParameters?.energySegmentAdmin;
-        if (energySegmentAdmin === null || energySegmentAdmin === undefined) {
-            throw new Error('Required parameter energySegmentAdmin was null or undefined when calling energySegmentsCreate.');
+        const energySegmentAdminRequest = requestParameters?.energySegmentAdminRequest;
+        if (energySegmentAdminRequest === null || energySegmentAdminRequest === undefined) {
+            throw new Error('Required parameter energySegmentAdminRequest was null or undefined when calling energySegmentsCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -110,7 +112,7 @@ export class EnergySegmentsService extends BaseService implements EnergySegments
         return this.httpClient.request<EnergySegmentAdmin>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: energySegmentAdmin,
+                body: energySegmentAdminRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -328,7 +330,7 @@ export class EnergySegmentsService extends BaseService implements EnergySegments
             throw new Error('Required parameter id was null or undefined when calling energySegmentsPartialUpdate.');
         }
         const includeInactive = requestParameters?.includeInactive;
-        const patchedEnergySegmentAdmin = requestParameters?.patchedEnergySegmentAdmin;
+        const patchedEnergySegmentAdminRequest = requestParameters?.patchedEnergySegmentAdminRequest;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -385,7 +387,7 @@ export class EnergySegmentsService extends BaseService implements EnergySegments
         return this.httpClient.request<EnergySegmentAdmin>('patch', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: patchedEnergySegmentAdmin,
+                body: patchedEnergySegmentAdminRequest,
                 params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
@@ -487,9 +489,9 @@ export class EnergySegmentsService extends BaseService implements EnergySegments
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling energySegmentsUpdate.');
         }
-        const energySegmentAdmin = requestParameters?.energySegmentAdmin;
-        if (energySegmentAdmin === null || energySegmentAdmin === undefined) {
-            throw new Error('Required parameter energySegmentAdmin was null or undefined when calling energySegmentsUpdate.');
+        const energySegmentAdminRequest = requestParameters?.energySegmentAdminRequest;
+        if (energySegmentAdminRequest === null || energySegmentAdminRequest === undefined) {
+            throw new Error('Required parameter energySegmentAdminRequest was null or undefined when calling energySegmentsUpdate.');
         }
         const includeInactive = requestParameters?.includeInactive;
 
@@ -548,7 +550,7 @@ export class EnergySegmentsService extends BaseService implements EnergySegments
         return this.httpClient.request<EnergySegmentAdmin>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: energySegmentAdmin,
+                body: energySegmentAdminRequest,
                 params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),

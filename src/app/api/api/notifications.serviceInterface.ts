@@ -13,7 +13,7 @@ import { Observable }                                        from 'rxjs';
 
 import { Notification } from '../model/models';
 import { NotificationPreference } from '../model/models';
-import { NotificationPreferenceUpdate } from '../model/models';
+import { NotificationPreferenceUpdateRequest } from '../model/models';
 import { PaginatedNotificationList } from '../model/models';
 import { ReadAllResponse } from '../model/models';
 import { UnreadCount } from '../model/models';
@@ -31,7 +31,7 @@ export interface NotificationsListRequestParams {
 }
 
 export interface NotificationsPreferencesUpdateRequestParams {
-    notificationPreferenceUpdate: NotificationPreferenceUpdate;
+    notificationPreferenceUpdateRequest: NotificationPreferenceUpdateRequest;
 }
 
 export interface NotificationsReadCreateRequestParams {

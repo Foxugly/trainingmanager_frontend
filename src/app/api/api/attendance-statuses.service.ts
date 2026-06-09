@@ -19,9 +19,11 @@ import { OpenApiHttpParams, QueryParamStyle } from '../query.params';
 // @ts-ignore
 import { AttendanceStatusAdmin } from '../model/attendance-status-admin';
 // @ts-ignore
+import { AttendanceStatusAdminRequest } from '../model/attendance-status-admin-request';
+// @ts-ignore
 import { PaginatedAttendanceStatusList } from '../model/paginated-attendance-status-list';
 // @ts-ignore
-import { PatchedAttendanceStatusAdmin } from '../model/patched-attendance-status-admin';
+import { PatchedAttendanceStatusAdminRequest } from '../model/patched-attendance-status-admin-request';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -61,9 +63,9 @@ export class AttendanceStatusesService extends BaseService implements Attendance
     public attendanceStatusesCreate(requestParameters: AttendanceStatusesCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<AttendanceStatusAdmin>>;
     public attendanceStatusesCreate(requestParameters: AttendanceStatusesCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<AttendanceStatusAdmin>>;
     public attendanceStatusesCreate(requestParameters: AttendanceStatusesCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const attendanceStatusAdmin = requestParameters?.attendanceStatusAdmin;
-        if (attendanceStatusAdmin === null || attendanceStatusAdmin === undefined) {
-            throw new Error('Required parameter attendanceStatusAdmin was null or undefined when calling attendanceStatusesCreate.');
+        const attendanceStatusAdminRequest = requestParameters?.attendanceStatusAdminRequest;
+        if (attendanceStatusAdminRequest === null || attendanceStatusAdminRequest === undefined) {
+            throw new Error('Required parameter attendanceStatusAdminRequest was null or undefined when calling attendanceStatusesCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -110,7 +112,7 @@ export class AttendanceStatusesService extends BaseService implements Attendance
         return this.httpClient.request<AttendanceStatusAdmin>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: attendanceStatusAdmin,
+                body: attendanceStatusAdminRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -328,7 +330,7 @@ export class AttendanceStatusesService extends BaseService implements Attendance
             throw new Error('Required parameter id was null or undefined when calling attendanceStatusesPartialUpdate.');
         }
         const includeInactive = requestParameters?.includeInactive;
-        const patchedAttendanceStatusAdmin = requestParameters?.patchedAttendanceStatusAdmin;
+        const patchedAttendanceStatusAdminRequest = requestParameters?.patchedAttendanceStatusAdminRequest;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -385,7 +387,7 @@ export class AttendanceStatusesService extends BaseService implements Attendance
         return this.httpClient.request<AttendanceStatusAdmin>('patch', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: patchedAttendanceStatusAdmin,
+                body: patchedAttendanceStatusAdminRequest,
                 params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
@@ -487,9 +489,9 @@ export class AttendanceStatusesService extends BaseService implements Attendance
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling attendanceStatusesUpdate.');
         }
-        const attendanceStatusAdmin = requestParameters?.attendanceStatusAdmin;
-        if (attendanceStatusAdmin === null || attendanceStatusAdmin === undefined) {
-            throw new Error('Required parameter attendanceStatusAdmin was null or undefined when calling attendanceStatusesUpdate.');
+        const attendanceStatusAdminRequest = requestParameters?.attendanceStatusAdminRequest;
+        if (attendanceStatusAdminRequest === null || attendanceStatusAdminRequest === undefined) {
+            throw new Error('Required parameter attendanceStatusAdminRequest was null or undefined when calling attendanceStatusesUpdate.');
         }
         const includeInactive = requestParameters?.includeInactive;
 
@@ -548,7 +550,7 @@ export class AttendanceStatusesService extends BaseService implements Attendance
         return this.httpClient.request<AttendanceStatusAdmin>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: attendanceStatusAdmin,
+                body: attendanceStatusAdminRequest,
                 params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),

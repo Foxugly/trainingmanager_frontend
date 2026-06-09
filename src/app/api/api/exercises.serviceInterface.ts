@@ -12,8 +12,9 @@ import { HttpHeaders }                                       from '@angular/comm
 import { Observable }                                        from 'rxjs';
 
 import { Exercise } from '../model/models';
+import { ExerciseRequest } from '../model/models';
 import { PaginatedExerciseList } from '../model/models';
-import { PatchedExercise } from '../model/models';
+import { PatchedExerciseRequest } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
@@ -24,7 +25,7 @@ export interface ExercisesCloneCreateRequestParams {
 }
 
 export interface ExercisesCreateRequestParams {
-    exercise: Exercise;
+    exerciseRequest: ExerciseRequest;
 }
 
 export interface ExercisesDestroyRequestParams {
@@ -43,7 +44,7 @@ export interface ExercisesListRequestParams {
 
 export interface ExercisesPartialUpdateRequestParams {
     id: number;
-    patchedExercise?: PatchedExercise;
+    patchedExerciseRequest?: PatchedExerciseRequest;
 }
 
 export interface ExercisesRetrieveRequestParams {
@@ -52,7 +53,7 @@ export interface ExercisesRetrieveRequestParams {
 
 export interface ExercisesUpdateRequestParams {
     id: number;
-    exercise: Exercise;
+    exerciseRequest: ExerciseRequest;
 }
 
 

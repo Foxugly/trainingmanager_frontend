@@ -21,7 +21,7 @@ import { CalendarToken } from '../model/calendar-token';
 // @ts-ignore
 import { Me } from '../model/me';
 // @ts-ignore
-import { PatchedMe } from '../model/patched-me';
+import { PatchedMeRequest } from '../model/patched-me-request';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -164,7 +164,7 @@ export class MeService extends BaseService implements MeServiceInterface {
     public mePartialUpdate(requestParameters?: MePartialUpdateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Me>>;
     public mePartialUpdate(requestParameters?: MePartialUpdateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Me>>;
     public mePartialUpdate(requestParameters?: MePartialUpdateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const patchedMe = requestParameters?.patchedMe;
+        const patchedMeRequest = requestParameters?.patchedMeRequest;
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -210,7 +210,7 @@ export class MeService extends BaseService implements MeServiceInterface {
         return this.httpClient.request<Me>('patch', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: patchedMe,
+                body: patchedMeRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

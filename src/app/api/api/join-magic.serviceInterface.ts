@@ -13,7 +13,7 @@ import { Observable }                                        from 'rxjs';
 
 import { JoinMagicCancelledResponse } from '../model/models';
 import { JoinMagicError } from '../model/models';
-import { TeamJoinRequestMagicActionPost } from '../model/models';
+import { TeamJoinRequestMagicActionPostRequest } from '../model/models';
 import { TeamJoinRequestMagicActionResponse } from '../model/models';
 
 
@@ -21,7 +21,7 @@ import { Configuration }                                     from '../configurat
 
 
 export interface JoinMagicCreateRequestParams {
-    teamJoinRequestMagicActionPost: TeamJoinRequestMagicActionPost;
+    teamJoinRequestMagicActionPostRequest: TeamJoinRequestMagicActionPostRequest;
 }
 
 export interface JoinMagicRetrieveRequestParams {

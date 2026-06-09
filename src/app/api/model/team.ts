@@ -16,7 +16,6 @@ import { TeamSportRead } from './team-sport-read';
 import { CustomUserPublic } from './custom-user-public';
 import { Level } from './level';
 import { LanguageEnum } from './language-enum';
-import { SportTrainingTypeWrite } from './sport-training-type-write';
 import { JoinRequestPolicyEnum } from './join-request-policy-enum';
 
 
@@ -25,25 +24,16 @@ export interface Team {
     name: string;
     readonly sports: Array<TeamSportRead>;
     readonly sport: Sport;
-    sport_id?: number;
-    sport_ids?: Array<number>;
-    default_sport_id?: number;
-    sport_training_types?: Array<SportTrainingTypeWrite>;
     readonly level: Level | null;
-    level_id?: number | null;
     readonly owner: CustomUserPublic;
     readonly managers: Array<CustomUserPublic>;
-    managers_ids?: Array<number>;
     /**
      * Default venue/pool for this team\'s sessions (used by the season-plan generator).
      */
     readonly default_pool: string;
     readonly places: Array<PlaceMinimal>;
-    place_ids?: Array<number>;
     readonly default_place: PlaceMinimal | null;
-    default_place_id?: number | null;
     readonly equipment: Array<EquipmentMinimal>;
-    equipment_ids?: Array<number>;
     readonly logo_url: string | null;
     language?: LanguageEnum;
     is_active?: boolean;

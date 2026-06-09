@@ -11,9 +11,9 @@ import { HttpHeaders }                                       from '@angular/comm
 
 import { Observable }                                        from 'rxjs';
 
-import { CompleteInvitation } from '../model/models';
+import { CompleteInvitationRequest } from '../model/models';
 import { CompleteInvitationResponse } from '../model/models';
-import { CreateInvitation } from '../model/models';
+import { CreateInvitationRequest } from '../model/models';
 import { PaginatedTeamInvitationList } from '../model/models';
 import { TeamInvitation } from '../model/models';
 import { ValidateInvitation } from '../model/models';
@@ -23,7 +23,7 @@ import { Configuration }                                     from '../configurat
 
 
 export interface InvitationsCreateRequestParams {
-    createInvitation: CreateInvitation;
+    createInvitationRequest: CreateInvitationRequest;
 }
 
 export interface InvitationsDestroyRequestParams {
@@ -41,7 +41,7 @@ export interface InvitationsListRequestParams {
 
 export interface InvitationsLookupCreateRequestParams {
     token: string;
-    completeInvitation: CompleteInvitation;
+    completeInvitationRequest: CompleteInvitationRequest;
 }
 
 export interface InvitationsLookupRetrieveRequestParams {

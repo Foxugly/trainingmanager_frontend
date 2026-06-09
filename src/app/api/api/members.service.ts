@@ -19,9 +19,11 @@ import { OpenApiHttpParams, QueryParamStyle } from '../query.params';
 // @ts-ignore
 import { Member } from '../model/member';
 // @ts-ignore
+import { MemberRequest } from '../model/member-request';
+// @ts-ignore
 import { PaginatedMemberList } from '../model/paginated-member-list';
 // @ts-ignore
-import { PatchedMember } from '../model/patched-member';
+import { PatchedMemberRequest } from '../model/patched-member-request';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -121,9 +123,9 @@ export class MembersService extends BaseService implements MembersServiceInterfa
     public membersCreate(requestParameters: MembersCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Member>>;
     public membersCreate(requestParameters: MembersCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Member>>;
     public membersCreate(requestParameters: MembersCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const member = requestParameters?.member;
-        if (member === null || member === undefined) {
-            throw new Error('Required parameter member was null or undefined when calling membersCreate.');
+        const memberRequest = requestParameters?.memberRequest;
+        if (memberRequest === null || memberRequest === undefined) {
+            throw new Error('Required parameter memberRequest was null or undefined when calling membersCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -170,7 +172,7 @@ export class MembersService extends BaseService implements MembersServiceInterfa
         return this.httpClient.request<Member>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: member,
+                body: memberRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -375,7 +377,7 @@ export class MembersService extends BaseService implements MembersServiceInterfa
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling membersPartialUpdate.');
         }
-        const patchedMember = requestParameters?.patchedMember;
+        const patchedMemberRequest = requestParameters?.patchedMemberRequest;
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -421,7 +423,7 @@ export class MembersService extends BaseService implements MembersServiceInterfa
         return this.httpClient.request<Member>('patch', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: patchedMember,
+                body: patchedMemberRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -508,9 +510,9 @@ export class MembersService extends BaseService implements MembersServiceInterfa
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling membersUpdate.');
         }
-        const member = requestParameters?.member;
-        if (member === null || member === undefined) {
-            throw new Error('Required parameter member was null or undefined when calling membersUpdate.');
+        const memberRequest = requestParameters?.memberRequest;
+        if (memberRequest === null || memberRequest === undefined) {
+            throw new Error('Required parameter memberRequest was null or undefined when calling membersUpdate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -557,7 +559,7 @@ export class MembersService extends BaseService implements MembersServiceInterfa
         return this.httpClient.request<Member>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: member,
+                body: memberRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

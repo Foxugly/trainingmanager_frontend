@@ -11,75 +11,76 @@ import { HttpHeaders }                                       from '@angular/comm
 
 import { Observable }                                        from 'rxjs';
 
-import { AccountDelete } from '../model/models';
-import { EmailConfirm } from '../model/models';
-import { EmailResend } from '../model/models';
-import { Logout } from '../model/models';
-import { MagicLinkExchangeRequest } from '../model/models';
+import { AccountDeleteRequest } from '../model/models';
+import { EmailConfirmRequest } from '../model/models';
+import { EmailResendRequest } from '../model/models';
+import { LogoutRequest } from '../model/models';
+import { MagicLinkExchangeRequestRequest } from '../model/models';
 import { MagicLinkExchangeResponse } from '../model/models';
-import { MagicLinkRequest } from '../model/models';
+import { MagicLinkRequestRequest } from '../model/models';
 import { MagicLinkRequestResponse } from '../model/models';
-import { PasswordChange } from '../model/models';
+import { PasswordChangeRequest } from '../model/models';
 import { PasswordChangeResponse } from '../model/models';
-import { PasswordResetConfirm } from '../model/models';
+import { PasswordResetConfirmRequest } from '../model/models';
 import { PasswordResetConfirmResponse } from '../model/models';
-import { PasswordResetRequest } from '../model/models';
+import { PasswordResetRequestRequest } from '../model/models';
 import { PasswordResetRequestResponse } from '../model/models';
-import { Register } from '../model/models';
+import { RegisterRequest } from '../model/models';
 import { TokenObtainPairResponse } from '../model/models';
 import { TokenRefresh } from '../model/models';
-import { VerifiedTokenObtainPair } from '../model/models';
+import { TokenRefreshRequest } from '../model/models';
+import { VerifiedTokenObtainPairRequest } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
 
 
 export interface AuthAccountDeleteCreateRequestParams {
-    accountDelete: AccountDelete;
+    accountDeleteRequest: AccountDeleteRequest;
 }
 
 export interface AuthEmailConfirmCreateRequestParams {
-    emailConfirm: EmailConfirm;
+    emailConfirmRequest: EmailConfirmRequest;
 }
 
 export interface AuthEmailResendCreateRequestParams {
-    emailResend: EmailResend;
+    emailResendRequest: EmailResendRequest;
 }
 
 export interface AuthLogoutCreateRequestParams {
-    logout: Logout;
+    logoutRequest: LogoutRequest;
 }
 
 export interface AuthMagicLinkExchangeCreateRequestParams {
-    magicLinkExchangeRequest: MagicLinkExchangeRequest;
+    magicLinkExchangeRequestRequest: MagicLinkExchangeRequestRequest;
 }
 
 export interface AuthMagicLinkRequestCreateRequestParams {
-    magicLinkRequest: MagicLinkRequest;
+    magicLinkRequestRequest: MagicLinkRequestRequest;
 }
 
 export interface AuthPasswordChangeCreateRequestParams {
-    passwordChange: PasswordChange;
+    passwordChangeRequest: PasswordChangeRequest;
 }
 
 export interface AuthPasswordResetConfirmCreateRequestParams {
-    passwordResetConfirm: PasswordResetConfirm;
+    passwordResetConfirmRequest: PasswordResetConfirmRequest;
 }
 
 export interface AuthPasswordResetCreateRequestParams {
-    passwordResetRequest: PasswordResetRequest;
+    passwordResetRequestRequest: PasswordResetRequestRequest;
 }
 
 export interface AuthRegisterCreateRequestParams {
-    register: Register;
+    registerRequest: RegisterRequest;
 }
 
 export interface AuthTokenCreateRequestParams {
-    verifiedTokenObtainPair: VerifiedTokenObtainPair;
+    verifiedTokenObtainPairRequest: VerifiedTokenObtainPairRequest;
 }
 
 export interface AuthTokenRefreshCreateRequestParams {
-    tokenRefresh: TokenRefresh;
+    tokenRefreshRequest: TokenRefreshRequest;
 }
 
 

@@ -19,9 +19,11 @@ import { OpenApiHttpParams, QueryParamStyle } from '../query.params';
 // @ts-ignore
 import { PaginatedPerformanceList } from '../model/paginated-performance-list';
 // @ts-ignore
-import { PatchedPerformance } from '../model/patched-performance';
+import { PatchedPerformanceRequest } from '../model/patched-performance-request';
 // @ts-ignore
 import { Performance } from '../model/performance';
+// @ts-ignore
+import { PerformanceRequest } from '../model/performance-request';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -61,9 +63,9 @@ export class PerformancesService extends BaseService implements PerformancesServ
     public performancesCreate(requestParameters: PerformancesCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Performance>>;
     public performancesCreate(requestParameters: PerformancesCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Performance>>;
     public performancesCreate(requestParameters: PerformancesCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const performance = requestParameters?.performance;
-        if (performance === null || performance === undefined) {
-            throw new Error('Required parameter performance was null or undefined when calling performancesCreate.');
+        const performanceRequest = requestParameters?.performanceRequest;
+        if (performanceRequest === null || performanceRequest === undefined) {
+            throw new Error('Required parameter performanceRequest was null or undefined when calling performancesCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -110,7 +112,7 @@ export class PerformancesService extends BaseService implements PerformancesServ
         return this.httpClient.request<Performance>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: performance,
+                body: performanceRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -328,7 +330,7 @@ export class PerformancesService extends BaseService implements PerformancesServ
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling performancesPartialUpdate.');
         }
-        const patchedPerformance = requestParameters?.patchedPerformance;
+        const patchedPerformanceRequest = requestParameters?.patchedPerformanceRequest;
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -374,7 +376,7 @@ export class PerformancesService extends BaseService implements PerformancesServ
         return this.httpClient.request<Performance>('patch', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: patchedPerformance,
+                body: patchedPerformanceRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -463,9 +465,9 @@ export class PerformancesService extends BaseService implements PerformancesServ
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling performancesUpdate.');
         }
-        const performance = requestParameters?.performance;
-        if (performance === null || performance === undefined) {
-            throw new Error('Required parameter performance was null or undefined when calling performancesUpdate.');
+        const performanceRequest = requestParameters?.performanceRequest;
+        if (performanceRequest === null || performanceRequest === undefined) {
+            throw new Error('Required parameter performanceRequest was null or undefined when calling performancesUpdate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -512,7 +514,7 @@ export class PerformancesService extends BaseService implements PerformancesServ
         return this.httpClient.request<Performance>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: performance,
+                body: performanceRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

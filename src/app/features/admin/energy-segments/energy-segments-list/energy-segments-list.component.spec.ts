@@ -16,7 +16,6 @@ const z1: EnergySegment = {
   abv: 'Z1',
   description: 'Récupération',
   energy_system: parent,
-  energy_system_id: parent.id,
   is_active: true,
 };
 const z3: EnergySegment = {
@@ -24,7 +23,6 @@ const z3: EnergySegment = {
   abv: 'Z3',
   description: 'vo2max',
   energy_system: parent,
-  energy_system_id: parent.id,
   is_active: false,
 };
 

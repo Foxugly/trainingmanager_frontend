@@ -14,7 +14,6 @@ import { LanguageEnum } from './language-enum';
 export interface Round { 
     readonly id: number;
     readonly sport: Sport;
-    sport_id: number;
     language: LanguageEnum;
     order?: number;
     count?: number;
@@ -27,10 +26,6 @@ export interface Round {
      */
     t_break?: string | null;
     exercises?: Array<number>;
-    /**
-     * Optional. If provided on POST, the newly created Round is atomically attached to this Event. The request user must manage the Event\'s team. Ignored on PATCH/PUT.
-     */
-    event_id?: number;
     readonly usage_count: number;
     readonly created_at: string;
     readonly updated_at: string;

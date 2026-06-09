@@ -35,7 +35,6 @@ const team: Team = {
   id: 4,
   name: 'RBP WP Senior',
   sport,
-  sport_id: 1,
   sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null }],
   owner: ownerUser,
   managers: [],
@@ -61,7 +60,6 @@ const program: Program = {
   date_start: '2026-04-01',
   date_end: '2026-08-31',
   team: { id: 4, name: 'RBP WP Senior', language: LanguageEnum.Fr },
-  team_id: 4,
   events: [],
   frequency_per_week: 3,
   description: '',
@@ -72,7 +70,7 @@ const program: Program = {
   updated_at: '2026-04-01T00:00:00Z',
 };
 
-const program2: Program = { ...program, id: 5, name: 'Plan B', team_id: 5, team: { id: 5, name: 'Coach2', language: LanguageEnum.Fr } };
+const program2: Program = { ...program, id: 5, name: 'Plan B', team: { id: 5, name: 'Coach2', language: LanguageEnum.Fr } };
 
 const event1: Event = {
   id: 100,
@@ -84,7 +82,6 @@ const event1: Event = {
   hour_end: null,
   total: 0,
   refer_program: { id: 4, name: 'Cycle aérobie' },
-  refer_program_id: 4,
   sport,
   place: null,
   equipment_items: [],

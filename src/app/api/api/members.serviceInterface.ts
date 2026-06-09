@@ -12,8 +12,9 @@ import { HttpHeaders }                                       from '@angular/comm
 import { Observable }                                        from 'rxjs';
 
 import { Member } from '../model/models';
+import { MemberRequest } from '../model/models';
 import { PaginatedMemberList } from '../model/models';
-import { PatchedMember } from '../model/models';
+import { PatchedMemberRequest } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
@@ -24,7 +25,7 @@ export interface MembersAnonymizeRequestParams {
 }
 
 export interface MembersCreateRequestParams {
-    member: Member;
+    memberRequest: MemberRequest;
 }
 
 export interface MembersDestroyRequestParams {
@@ -42,7 +43,7 @@ export interface MembersListRequestParams {
 
 export interface MembersPartialUpdateRequestParams {
     id: number;
-    patchedMember?: PatchedMember;
+    patchedMemberRequest?: PatchedMemberRequest;
 }
 
 export interface MembersRetrieveRequestParams {
@@ -51,7 +52,7 @@ export interface MembersRetrieveRequestParams {
 
 export interface MembersUpdateRequestParams {
     id: number;
-    member: Member;
+    memberRequest: MemberRequest;
 }
 
 

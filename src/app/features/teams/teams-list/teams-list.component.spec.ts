@@ -34,7 +34,6 @@ function makeTeam(partial: Partial<Team>): Team {
     name: 'T',
     sport,
     sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null }],
-    sport_id: 1,
     owner: ownerUser,
     managers: [],
     language: LanguageEnum.Fr,

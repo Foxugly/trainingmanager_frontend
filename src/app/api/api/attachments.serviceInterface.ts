@@ -14,7 +14,7 @@ import { Observable }                                        from 'rxjs';
 import { Attachment } from '../model/models';
 import { AttachmentDownloadResponse } from '../model/models';
 import { PaginatedAttachmentList } from '../model/models';
-import { PresignUploadRequest } from '../model/models';
+import { PresignUploadRequestRequest } from '../model/models';
 import { PresignUploadResponse } from '../model/models';
 
 
@@ -43,7 +43,7 @@ export interface AttachmentsListRequestParams {
 }
 
 export interface AttachmentsPresignCreateRequestParams {
-    presignUploadRequest: PresignUploadRequest;
+    presignUploadRequestRequest: PresignUploadRequestRequest;
 }
 
 

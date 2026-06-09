@@ -17,41 +17,43 @@ import { Observable }                                        from 'rxjs';
 import { OpenApiHttpParams, QueryParamStyle } from '../query.params';
 
 // @ts-ignore
-import { AccountDelete } from '../model/account-delete';
+import { AccountDeleteRequest } from '../model/account-delete-request';
 // @ts-ignore
-import { EmailConfirm } from '../model/email-confirm';
+import { EmailConfirmRequest } from '../model/email-confirm-request';
 // @ts-ignore
-import { EmailResend } from '../model/email-resend';
+import { EmailResendRequest } from '../model/email-resend-request';
 // @ts-ignore
-import { Logout } from '../model/logout';
+import { LogoutRequest } from '../model/logout-request';
 // @ts-ignore
-import { MagicLinkExchangeRequest } from '../model/magic-link-exchange-request';
+import { MagicLinkExchangeRequestRequest } from '../model/magic-link-exchange-request-request';
 // @ts-ignore
 import { MagicLinkExchangeResponse } from '../model/magic-link-exchange-response';
 // @ts-ignore
-import { MagicLinkRequest } from '../model/magic-link-request';
+import { MagicLinkRequestRequest } from '../model/magic-link-request-request';
 // @ts-ignore
 import { MagicLinkRequestResponse } from '../model/magic-link-request-response';
 // @ts-ignore
-import { PasswordChange } from '../model/password-change';
+import { PasswordChangeRequest } from '../model/password-change-request';
 // @ts-ignore
 import { PasswordChangeResponse } from '../model/password-change-response';
 // @ts-ignore
-import { PasswordResetConfirm } from '../model/password-reset-confirm';
+import { PasswordResetConfirmRequest } from '../model/password-reset-confirm-request';
 // @ts-ignore
 import { PasswordResetConfirmResponse } from '../model/password-reset-confirm-response';
 // @ts-ignore
-import { PasswordResetRequest } from '../model/password-reset-request';
+import { PasswordResetRequestRequest } from '../model/password-reset-request-request';
 // @ts-ignore
 import { PasswordResetRequestResponse } from '../model/password-reset-request-response';
 // @ts-ignore
-import { Register } from '../model/register';
+import { RegisterRequest } from '../model/register-request';
 // @ts-ignore
 import { TokenObtainPairResponse } from '../model/token-obtain-pair-response';
 // @ts-ignore
 import { TokenRefresh } from '../model/token-refresh';
 // @ts-ignore
-import { VerifiedTokenObtainPair } from '../model/verified-token-obtain-pair';
+import { TokenRefreshRequest } from '../model/token-refresh-request';
+// @ts-ignore
+import { VerifiedTokenObtainPairRequest } from '../model/verified-token-obtain-pair-request';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -96,9 +98,9 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     public authAccountDeleteCreate(requestParameters: AuthAccountDeleteCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
     public authAccountDeleteCreate(requestParameters: AuthAccountDeleteCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
     public authAccountDeleteCreate(requestParameters: AuthAccountDeleteCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const accountDelete = requestParameters?.accountDelete;
-        if (accountDelete === null || accountDelete === undefined) {
-            throw new Error('Required parameter accountDelete was null or undefined when calling authAccountDeleteCreate.');
+        const accountDeleteRequest = requestParameters?.accountDeleteRequest;
+        if (accountDeleteRequest === null || accountDeleteRequest === undefined) {
+            throw new Error('Required parameter accountDeleteRequest was null or undefined when calling authAccountDeleteCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -144,7 +146,7 @@ export class AuthService extends BaseService implements AuthServiceInterface {
         return this.httpClient.request<any>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: accountDelete,
+                body: accountDeleteRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -167,9 +169,9 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     public authEmailConfirmCreate(requestParameters: AuthEmailConfirmCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
     public authEmailConfirmCreate(requestParameters: AuthEmailConfirmCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
     public authEmailConfirmCreate(requestParameters: AuthEmailConfirmCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const emailConfirm = requestParameters?.emailConfirm;
-        if (emailConfirm === null || emailConfirm === undefined) {
-            throw new Error('Required parameter emailConfirm was null or undefined when calling authEmailConfirmCreate.');
+        const emailConfirmRequest = requestParameters?.emailConfirmRequest;
+        if (emailConfirmRequest === null || emailConfirmRequest === undefined) {
+            throw new Error('Required parameter emailConfirmRequest was null or undefined when calling authEmailConfirmCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -212,7 +214,7 @@ export class AuthService extends BaseService implements AuthServiceInterface {
         return this.httpClient.request<any>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: emailConfirm,
+                body: emailConfirmRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -235,9 +237,9 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     public authEmailResendCreate(requestParameters: AuthEmailResendCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
     public authEmailResendCreate(requestParameters: AuthEmailResendCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
     public authEmailResendCreate(requestParameters: AuthEmailResendCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const emailResend = requestParameters?.emailResend;
-        if (emailResend === null || emailResend === undefined) {
-            throw new Error('Required parameter emailResend was null or undefined when calling authEmailResendCreate.');
+        const emailResendRequest = requestParameters?.emailResendRequest;
+        if (emailResendRequest === null || emailResendRequest === undefined) {
+            throw new Error('Required parameter emailResendRequest was null or undefined when calling authEmailResendCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -280,7 +282,7 @@ export class AuthService extends BaseService implements AuthServiceInterface {
         return this.httpClient.request<any>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: emailResend,
+                body: emailResendRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -303,9 +305,9 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     public authLogoutCreate(requestParameters: AuthLogoutCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
     public authLogoutCreate(requestParameters: AuthLogoutCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
     public authLogoutCreate(requestParameters: AuthLogoutCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const logout = requestParameters?.logout;
-        if (logout === null || logout === undefined) {
-            throw new Error('Required parameter logout was null or undefined when calling authLogoutCreate.');
+        const logoutRequest = requestParameters?.logoutRequest;
+        if (logoutRequest === null || logoutRequest === undefined) {
+            throw new Error('Required parameter logoutRequest was null or undefined when calling authLogoutCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -351,7 +353,7 @@ export class AuthService extends BaseService implements AuthServiceInterface {
         return this.httpClient.request<any>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: logout,
+                body: logoutRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -374,9 +376,9 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     public authMagicLinkExchangeCreate(requestParameters: AuthMagicLinkExchangeCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<MagicLinkExchangeResponse>>;
     public authMagicLinkExchangeCreate(requestParameters: AuthMagicLinkExchangeCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<MagicLinkExchangeResponse>>;
     public authMagicLinkExchangeCreate(requestParameters: AuthMagicLinkExchangeCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const magicLinkExchangeRequest = requestParameters?.magicLinkExchangeRequest;
-        if (magicLinkExchangeRequest === null || magicLinkExchangeRequest === undefined) {
-            throw new Error('Required parameter magicLinkExchangeRequest was null or undefined when calling authMagicLinkExchangeCreate.');
+        const magicLinkExchangeRequestRequest = requestParameters?.magicLinkExchangeRequestRequest;
+        if (magicLinkExchangeRequestRequest === null || magicLinkExchangeRequestRequest === undefined) {
+            throw new Error('Required parameter magicLinkExchangeRequestRequest was null or undefined when calling authMagicLinkExchangeCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -420,7 +422,7 @@ export class AuthService extends BaseService implements AuthServiceInterface {
         return this.httpClient.request<MagicLinkExchangeResponse>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: magicLinkExchangeRequest,
+                body: magicLinkExchangeRequestRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -443,9 +445,9 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     public authMagicLinkRequestCreate(requestParameters: AuthMagicLinkRequestCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<MagicLinkRequestResponse>>;
     public authMagicLinkRequestCreate(requestParameters: AuthMagicLinkRequestCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<MagicLinkRequestResponse>>;
     public authMagicLinkRequestCreate(requestParameters: AuthMagicLinkRequestCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const magicLinkRequest = requestParameters?.magicLinkRequest;
-        if (magicLinkRequest === null || magicLinkRequest === undefined) {
-            throw new Error('Required parameter magicLinkRequest was null or undefined when calling authMagicLinkRequestCreate.');
+        const magicLinkRequestRequest = requestParameters?.magicLinkRequestRequest;
+        if (magicLinkRequestRequest === null || magicLinkRequestRequest === undefined) {
+            throw new Error('Required parameter magicLinkRequestRequest was null or undefined when calling authMagicLinkRequestCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -489,7 +491,7 @@ export class AuthService extends BaseService implements AuthServiceInterface {
         return this.httpClient.request<MagicLinkRequestResponse>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: magicLinkRequest,
+                body: magicLinkRequestRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -512,9 +514,9 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     public authPasswordChangeCreate(requestParameters: AuthPasswordChangeCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PasswordChangeResponse>>;
     public authPasswordChangeCreate(requestParameters: AuthPasswordChangeCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PasswordChangeResponse>>;
     public authPasswordChangeCreate(requestParameters: AuthPasswordChangeCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const passwordChange = requestParameters?.passwordChange;
-        if (passwordChange === null || passwordChange === undefined) {
-            throw new Error('Required parameter passwordChange was null or undefined when calling authPasswordChangeCreate.');
+        const passwordChangeRequest = requestParameters?.passwordChangeRequest;
+        if (passwordChangeRequest === null || passwordChangeRequest === undefined) {
+            throw new Error('Required parameter passwordChangeRequest was null or undefined when calling authPasswordChangeCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -561,7 +563,7 @@ export class AuthService extends BaseService implements AuthServiceInterface {
         return this.httpClient.request<PasswordChangeResponse>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: passwordChange,
+                body: passwordChangeRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -584,9 +586,9 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     public authPasswordResetConfirmCreate(requestParameters: AuthPasswordResetConfirmCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PasswordResetConfirmResponse>>;
     public authPasswordResetConfirmCreate(requestParameters: AuthPasswordResetConfirmCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PasswordResetConfirmResponse>>;
     public authPasswordResetConfirmCreate(requestParameters: AuthPasswordResetConfirmCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const passwordResetConfirm = requestParameters?.passwordResetConfirm;
-        if (passwordResetConfirm === null || passwordResetConfirm === undefined) {
-            throw new Error('Required parameter passwordResetConfirm was null or undefined when calling authPasswordResetConfirmCreate.');
+        const passwordResetConfirmRequest = requestParameters?.passwordResetConfirmRequest;
+        if (passwordResetConfirmRequest === null || passwordResetConfirmRequest === undefined) {
+            throw new Error('Required parameter passwordResetConfirmRequest was null or undefined when calling authPasswordResetConfirmCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -630,7 +632,7 @@ export class AuthService extends BaseService implements AuthServiceInterface {
         return this.httpClient.request<PasswordResetConfirmResponse>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: passwordResetConfirm,
+                body: passwordResetConfirmRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -653,9 +655,9 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     public authPasswordResetCreate(requestParameters: AuthPasswordResetCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PasswordResetRequestResponse>>;
     public authPasswordResetCreate(requestParameters: AuthPasswordResetCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PasswordResetRequestResponse>>;
     public authPasswordResetCreate(requestParameters: AuthPasswordResetCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const passwordResetRequest = requestParameters?.passwordResetRequest;
-        if (passwordResetRequest === null || passwordResetRequest === undefined) {
-            throw new Error('Required parameter passwordResetRequest was null or undefined when calling authPasswordResetCreate.');
+        const passwordResetRequestRequest = requestParameters?.passwordResetRequestRequest;
+        if (passwordResetRequestRequest === null || passwordResetRequestRequest === undefined) {
+            throw new Error('Required parameter passwordResetRequestRequest was null or undefined when calling authPasswordResetCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -699,7 +701,7 @@ export class AuthService extends BaseService implements AuthServiceInterface {
         return this.httpClient.request<PasswordResetRequestResponse>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: passwordResetRequest,
+                body: passwordResetRequestRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -722,9 +724,9 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     public authRegisterCreate(requestParameters: AuthRegisterCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
     public authRegisterCreate(requestParameters: AuthRegisterCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
     public authRegisterCreate(requestParameters: AuthRegisterCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const register = requestParameters?.register;
-        if (register === null || register === undefined) {
-            throw new Error('Required parameter register was null or undefined when calling authRegisterCreate.');
+        const registerRequest = requestParameters?.registerRequest;
+        if (registerRequest === null || registerRequest === undefined) {
+            throw new Error('Required parameter registerRequest was null or undefined when calling authRegisterCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -767,7 +769,7 @@ export class AuthService extends BaseService implements AuthServiceInterface {
         return this.httpClient.request<any>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: register,
+                body: registerRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -790,9 +792,9 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     public authTokenCreate(requestParameters: AuthTokenCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TokenObtainPairResponse>>;
     public authTokenCreate(requestParameters: AuthTokenCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TokenObtainPairResponse>>;
     public authTokenCreate(requestParameters: AuthTokenCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const verifiedTokenObtainPair = requestParameters?.verifiedTokenObtainPair;
-        if (verifiedTokenObtainPair === null || verifiedTokenObtainPair === undefined) {
-            throw new Error('Required parameter verifiedTokenObtainPair was null or undefined when calling authTokenCreate.');
+        const verifiedTokenObtainPairRequest = requestParameters?.verifiedTokenObtainPairRequest;
+        if (verifiedTokenObtainPairRequest === null || verifiedTokenObtainPairRequest === undefined) {
+            throw new Error('Required parameter verifiedTokenObtainPairRequest was null or undefined when calling authTokenCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -836,7 +838,7 @@ export class AuthService extends BaseService implements AuthServiceInterface {
         return this.httpClient.request<TokenObtainPairResponse>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: verifiedTokenObtainPair,
+                body: verifiedTokenObtainPairRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -859,9 +861,9 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     public authTokenRefreshCreate(requestParameters: AuthTokenRefreshCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TokenRefresh>>;
     public authTokenRefreshCreate(requestParameters: AuthTokenRefreshCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TokenRefresh>>;
     public authTokenRefreshCreate(requestParameters: AuthTokenRefreshCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const tokenRefresh = requestParameters?.tokenRefresh;
-        if (tokenRefresh === null || tokenRefresh === undefined) {
-            throw new Error('Required parameter tokenRefresh was null or undefined when calling authTokenRefreshCreate.');
+        const tokenRefreshRequest = requestParameters?.tokenRefreshRequest;
+        if (tokenRefreshRequest === null || tokenRefreshRequest === undefined) {
+            throw new Error('Required parameter tokenRefreshRequest was null or undefined when calling authTokenRefreshCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -905,7 +907,7 @@ export class AuthService extends BaseService implements AuthServiceInterface {
         return this.httpClient.request<TokenRefresh>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: tokenRefresh,
+                body: tokenRefreshRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

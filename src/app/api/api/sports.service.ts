@@ -19,15 +19,19 @@ import { OpenApiHttpParams, QueryParamStyle } from '../query.params';
 // @ts-ignore
 import { ModalityAdmin } from '../model/modality-admin';
 // @ts-ignore
+import { ModalityAdminRequest } from '../model/modality-admin-request';
+// @ts-ignore
 import { PaginatedModalityList } from '../model/paginated-modality-list';
 // @ts-ignore
 import { PaginatedSportList } from '../model/paginated-sport-list';
 // @ts-ignore
-import { PatchedModalityAdmin } from '../model/patched-modality-admin';
+import { PatchedModalityAdminRequest } from '../model/patched-modality-admin-request';
 // @ts-ignore
-import { PatchedSportAdmin } from '../model/patched-sport-admin';
+import { PatchedSportAdminRequest } from '../model/patched-sport-admin-request';
 // @ts-ignore
 import { SportAdmin } from '../model/sport-admin';
+// @ts-ignore
+import { SportAdminRequest } from '../model/sport-admin-request';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -73,9 +77,9 @@ export class SportsService extends BaseService implements SportsServiceInterface
     public sportsCreate(requestParameters: SportsCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<SportAdmin>>;
     public sportsCreate(requestParameters: SportsCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<SportAdmin>>;
     public sportsCreate(requestParameters: SportsCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const sportAdmin = requestParameters?.sportAdmin;
-        if (sportAdmin === null || sportAdmin === undefined) {
-            throw new Error('Required parameter sportAdmin was null or undefined when calling sportsCreate.');
+        const sportAdminRequest = requestParameters?.sportAdminRequest;
+        if (sportAdminRequest === null || sportAdminRequest === undefined) {
+            throw new Error('Required parameter sportAdminRequest was null or undefined when calling sportsCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -122,7 +126,7 @@ export class SportsService extends BaseService implements SportsServiceInterface
         return this.httpClient.request<SportAdmin>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: sportAdmin,
+                body: sportAdminRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -330,9 +334,9 @@ export class SportsService extends BaseService implements SportsServiceInterface
         if (sportPk === null || sportPk === undefined) {
             throw new Error('Required parameter sportPk was null or undefined when calling sportsModalitiesCreate.');
         }
-        const modalityAdmin = requestParameters?.modalityAdmin;
-        if (modalityAdmin === null || modalityAdmin === undefined) {
-            throw new Error('Required parameter modalityAdmin was null or undefined when calling sportsModalitiesCreate.');
+        const modalityAdminRequest = requestParameters?.modalityAdminRequest;
+        if (modalityAdminRequest === null || modalityAdminRequest === undefined) {
+            throw new Error('Required parameter modalityAdminRequest was null or undefined when calling sportsModalitiesCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -379,7 +383,7 @@ export class SportsService extends BaseService implements SportsServiceInterface
         return this.httpClient.request<ModalityAdmin>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: modalityAdmin,
+                body: modalityAdminRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -619,7 +623,7 @@ export class SportsService extends BaseService implements SportsServiceInterface
             throw new Error('Required parameter sportPk was null or undefined when calling sportsModalitiesPartialUpdate.');
         }
         const includeInactive = requestParameters?.includeInactive;
-        const patchedModalityAdmin = requestParameters?.patchedModalityAdmin;
+        const patchedModalityAdminRequest = requestParameters?.patchedModalityAdminRequest;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -676,7 +680,7 @@ export class SportsService extends BaseService implements SportsServiceInterface
         return this.httpClient.request<ModalityAdmin>('patch', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: patchedModalityAdmin,
+                body: patchedModalityAdminRequest,
                 params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
@@ -786,9 +790,9 @@ export class SportsService extends BaseService implements SportsServiceInterface
         if (sportPk === null || sportPk === undefined) {
             throw new Error('Required parameter sportPk was null or undefined when calling sportsModalitiesUpdate.');
         }
-        const modalityAdmin = requestParameters?.modalityAdmin;
-        if (modalityAdmin === null || modalityAdmin === undefined) {
-            throw new Error('Required parameter modalityAdmin was null or undefined when calling sportsModalitiesUpdate.');
+        const modalityAdminRequest = requestParameters?.modalityAdminRequest;
+        if (modalityAdminRequest === null || modalityAdminRequest === undefined) {
+            throw new Error('Required parameter modalityAdminRequest was null or undefined when calling sportsModalitiesUpdate.');
         }
         const includeInactive = requestParameters?.includeInactive;
 
@@ -847,7 +851,7 @@ export class SportsService extends BaseService implements SportsServiceInterface
         return this.httpClient.request<ModalityAdmin>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: modalityAdmin,
+                body: modalityAdminRequest,
                 params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
@@ -876,7 +880,7 @@ export class SportsService extends BaseService implements SportsServiceInterface
             throw new Error('Required parameter id was null or undefined when calling sportsPartialUpdate.');
         }
         const includeInactive = requestParameters?.includeInactive;
-        const patchedSportAdmin = requestParameters?.patchedSportAdmin;
+        const patchedSportAdminRequest = requestParameters?.patchedSportAdminRequest;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -933,7 +937,7 @@ export class SportsService extends BaseService implements SportsServiceInterface
         return this.httpClient.request<SportAdmin>('patch', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: patchedSportAdmin,
+                body: patchedSportAdminRequest,
                 params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
@@ -1035,9 +1039,9 @@ export class SportsService extends BaseService implements SportsServiceInterface
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling sportsUpdate.');
         }
-        const sportAdmin = requestParameters?.sportAdmin;
-        if (sportAdmin === null || sportAdmin === undefined) {
-            throw new Error('Required parameter sportAdmin was null or undefined when calling sportsUpdate.');
+        const sportAdminRequest = requestParameters?.sportAdminRequest;
+        if (sportAdminRequest === null || sportAdminRequest === undefined) {
+            throw new Error('Required parameter sportAdminRequest was null or undefined when calling sportsUpdate.');
         }
         const includeInactive = requestParameters?.includeInactive;
 
@@ -1096,7 +1100,7 @@ export class SportsService extends BaseService implements SportsServiceInterface
         return this.httpClient.request<SportAdmin>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: sportAdmin,
+                body: sportAdminRequest,
                 params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),

@@ -232,7 +232,7 @@ export class EventsFormComponent implements OnInit {
   private resolveTeamForProgram(programId: number | null | undefined): void {
     if (programId == null) return;
     const program = this.availablePrograms().find((p) => p.id === programId);
-    const teamId = program?.team_id ?? program?.team?.id ?? null;
+    const teamId = program?.team?.id ?? null;
     if (teamId == null) return;
     this.selectedTeamId.set(teamId);
     // Single teamsRetrieve per team feeds both vis-prefill and sports defaulting.

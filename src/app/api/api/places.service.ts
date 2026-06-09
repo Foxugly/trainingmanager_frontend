@@ -19,9 +19,11 @@ import { OpenApiHttpParams, QueryParamStyle } from '../query.params';
 // @ts-ignore
 import { PaginatedPlaceList } from '../model/paginated-place-list';
 // @ts-ignore
-import { PatchedPlace } from '../model/patched-place';
+import { PatchedPlaceRequest } from '../model/patched-place-request';
 // @ts-ignore
 import { Place } from '../model/place';
+// @ts-ignore
+import { PlaceRequest } from '../model/place-request';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -61,9 +63,9 @@ export class PlacesService extends BaseService implements PlacesServiceInterface
     public placesCreate(requestParameters: PlacesCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Place>>;
     public placesCreate(requestParameters: PlacesCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Place>>;
     public placesCreate(requestParameters: PlacesCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const place = requestParameters?.place;
-        if (place === null || place === undefined) {
-            throw new Error('Required parameter place was null or undefined when calling placesCreate.');
+        const placeRequest = requestParameters?.placeRequest;
+        if (placeRequest === null || placeRequest === undefined) {
+            throw new Error('Required parameter placeRequest was null or undefined when calling placesCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -110,7 +112,7 @@ export class PlacesService extends BaseService implements PlacesServiceInterface
         return this.httpClient.request<Place>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: place,
+                body: placeRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -318,7 +320,7 @@ export class PlacesService extends BaseService implements PlacesServiceInterface
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling placesPartialUpdate.');
         }
-        const patchedPlace = requestParameters?.patchedPlace;
+        const patchedPlaceRequest = requestParameters?.patchedPlaceRequest;
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -364,7 +366,7 @@ export class PlacesService extends BaseService implements PlacesServiceInterface
         return this.httpClient.request<Place>('patch', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: patchedPlace,
+                body: patchedPlaceRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -453,9 +455,9 @@ export class PlacesService extends BaseService implements PlacesServiceInterface
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling placesUpdate.');
         }
-        const place = requestParameters?.place;
-        if (place === null || place === undefined) {
-            throw new Error('Required parameter place was null or undefined when calling placesUpdate.');
+        const placeRequest = requestParameters?.placeRequest;
+        if (placeRequest === null || placeRequest === undefined) {
+            throw new Error('Required parameter placeRequest was null or undefined when calling placesUpdate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -502,7 +504,7 @@ export class PlacesService extends BaseService implements PlacesServiceInterface
         return this.httpClient.request<Place>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: place,
+                body: placeRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

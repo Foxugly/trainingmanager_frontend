@@ -19,9 +19,11 @@ import { OpenApiHttpParams, QueryParamStyle } from '../query.params';
 // @ts-ignore
 import { Exercise } from '../model/exercise';
 // @ts-ignore
+import { ExerciseRequest } from '../model/exercise-request';
+// @ts-ignore
 import { PaginatedExerciseList } from '../model/paginated-exercise-list';
 // @ts-ignore
-import { PatchedExercise } from '../model/patched-exercise';
+import { PatchedExerciseRequest } from '../model/patched-exercise-request';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -121,9 +123,9 @@ export class ExercisesService extends BaseService implements ExercisesServiceInt
     public exercisesCreate(requestParameters: ExercisesCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Exercise>>;
     public exercisesCreate(requestParameters: ExercisesCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Exercise>>;
     public exercisesCreate(requestParameters: ExercisesCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const exercise = requestParameters?.exercise;
-        if (exercise === null || exercise === undefined) {
-            throw new Error('Required parameter exercise was null or undefined when calling exercisesCreate.');
+        const exerciseRequest = requestParameters?.exerciseRequest;
+        if (exerciseRequest === null || exerciseRequest === undefined) {
+            throw new Error('Required parameter exerciseRequest was null or undefined when calling exercisesCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -170,7 +172,7 @@ export class ExercisesService extends BaseService implements ExercisesServiceInt
         return this.httpClient.request<Exercise>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: exercise,
+                body: exerciseRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -385,7 +387,7 @@ export class ExercisesService extends BaseService implements ExercisesServiceInt
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling exercisesPartialUpdate.');
         }
-        const patchedExercise = requestParameters?.patchedExercise;
+        const patchedExerciseRequest = requestParameters?.patchedExerciseRequest;
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -431,7 +433,7 @@ export class ExercisesService extends BaseService implements ExercisesServiceInt
         return this.httpClient.request<Exercise>('patch', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: patchedExercise,
+                body: patchedExerciseRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -518,9 +520,9 @@ export class ExercisesService extends BaseService implements ExercisesServiceInt
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling exercisesUpdate.');
         }
-        const exercise = requestParameters?.exercise;
-        if (exercise === null || exercise === undefined) {
-            throw new Error('Required parameter exercise was null or undefined when calling exercisesUpdate.');
+        const exerciseRequest = requestParameters?.exerciseRequest;
+        if (exerciseRequest === null || exerciseRequest === undefined) {
+            throw new Error('Required parameter exerciseRequest was null or undefined when calling exercisesUpdate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -567,7 +569,7 @@ export class ExercisesService extends BaseService implements ExercisesServiceInt
         return this.httpClient.request<Exercise>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: exercise,
+                body: exerciseRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

@@ -12,15 +12,16 @@ import { HttpHeaders }                                       from '@angular/comm
 import { Observable }                                        from 'rxjs';
 
 import { AttendanceStatusAdmin } from '../model/models';
+import { AttendanceStatusAdminRequest } from '../model/models';
 import { PaginatedAttendanceStatusList } from '../model/models';
-import { PatchedAttendanceStatusAdmin } from '../model/models';
+import { PatchedAttendanceStatusAdminRequest } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
 
 
 export interface AttendanceStatusesCreateRequestParams {
-    attendanceStatusAdmin: AttendanceStatusAdmin;
+    attendanceStatusAdminRequest: AttendanceStatusAdminRequest;
 }
 
 export interface AttendanceStatusesDestroyRequestParams {
@@ -40,7 +41,7 @@ export interface AttendanceStatusesListRequestParams {
 export interface AttendanceStatusesPartialUpdateRequestParams {
     id: number;
     includeInactive?: boolean;
-    patchedAttendanceStatusAdmin?: PatchedAttendanceStatusAdmin;
+    patchedAttendanceStatusAdminRequest?: PatchedAttendanceStatusAdminRequest;
 }
 
 export interface AttendanceStatusesRetrieveRequestParams {
@@ -50,7 +51,7 @@ export interface AttendanceStatusesRetrieveRequestParams {
 
 export interface AttendanceStatusesUpdateRequestParams {
     id: number;
-    attendanceStatusAdmin: AttendanceStatusAdmin;
+    attendanceStatusAdminRequest: AttendanceStatusAdminRequest;
     includeInactive?: boolean;
 }
 

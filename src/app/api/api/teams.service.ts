@@ -21,6 +21,8 @@ import { AIUsageAggregateResponse } from '../model/ai-usage-aggregate-response';
 // @ts-ignore
 import { Note } from '../model/note';
 // @ts-ignore
+import { NoteRequest } from '../model/note-request';
+// @ts-ignore
 import { PaginatedAIUsageDetailList } from '../model/paginated-ai-usage-detail-list';
 // @ts-ignore
 import { PaginatedNoteList } from '../model/paginated-note-list';
@@ -31,19 +33,23 @@ import { PaginatedTopicList } from '../model/paginated-topic-list';
 // @ts-ignore
 import { PaginatedTopicMessageList } from '../model/paginated-topic-message-list';
 // @ts-ignore
-import { PatchedNote } from '../model/patched-note';
+import { PatchedNoteRequest } from '../model/patched-note-request';
 // @ts-ignore
-import { PatchedTeam } from '../model/patched-team';
+import { PatchedTeamRequest } from '../model/patched-team-request';
 // @ts-ignore
-import { PatchedTopicMessage } from '../model/patched-topic-message';
+import { PatchedTopicMessageRequest } from '../model/patched-topic-message-request';
 // @ts-ignore
-import { PatchedTrainingSlot } from '../model/patched-training-slot';
+import { PatchedTrainingSlotRequest } from '../model/patched-training-slot-request';
 // @ts-ignore
 import { Team } from '../model/team';
 // @ts-ignore
 import { TeamMembership } from '../model/team-membership';
 // @ts-ignore
+import { TeamMembershipRequest } from '../model/team-membership-request';
+// @ts-ignore
 import { TeamPoolsResponse } from '../model/team-pools-response';
+// @ts-ignore
+import { TeamRequest } from '../model/team-request';
 // @ts-ignore
 import { TeamStats } from '../model/team-stats';
 // @ts-ignore
@@ -51,7 +57,13 @@ import { Topic } from '../model/topic';
 // @ts-ignore
 import { TopicMessage } from '../model/topic-message';
 // @ts-ignore
+import { TopicMessageRequest } from '../model/topic-message-request';
+// @ts-ignore
+import { TopicRequest } from '../model/topic-request';
+// @ts-ignore
 import { TrainingSlot } from '../model/training-slot';
+// @ts-ignore
+import { TrainingSlotRequest } from '../model/training-slot-request';
 // @ts-ignore
 import { TrainingTemplate } from '../model/training-template';
 
@@ -353,9 +365,9 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
     public teamsCreate(requestParameters: TeamsCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Team>>;
     public teamsCreate(requestParameters: TeamsCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Team>>;
     public teamsCreate(requestParameters: TeamsCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        const team = requestParameters?.team;
-        if (team === null || team === undefined) {
-            throw new Error('Required parameter team was null or undefined when calling teamsCreate.');
+        const teamRequest = requestParameters?.teamRequest;
+        if (teamRequest === null || teamRequest === undefined) {
+            throw new Error('Required parameter teamRequest was null or undefined when calling teamsCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -402,7 +414,7 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         return this.httpClient.request<Team>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: team,
+                body: teamRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -671,9 +683,9 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsMembersNotesCreate.');
         }
-        const note = requestParameters?.note;
-        if (note === null || note === undefined) {
-            throw new Error('Required parameter note was null or undefined when calling teamsMembersNotesCreate.');
+        const noteRequest = requestParameters?.noteRequest;
+        if (noteRequest === null || noteRequest === undefined) {
+            throw new Error('Required parameter noteRequest was null or undefined when calling teamsMembersNotesCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -720,7 +732,7 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         return this.httpClient.request<Note>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: note,
+                body: noteRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -941,7 +953,7 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsMembersNotesPartialUpdate.');
         }
         const includeInactive = requestParameters?.includeInactive;
-        const patchedNote = requestParameters?.patchedNote;
+        const patchedNoteRequest = requestParameters?.patchedNoteRequest;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -998,7 +1010,7 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         return this.httpClient.request<Note>('patch', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: patchedNote,
+                body: patchedNoteRequest,
                 params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
@@ -1115,9 +1127,9 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsMembersNotesUpdate.');
         }
-        const note = requestParameters?.note;
-        if (note === null || note === undefined) {
-            throw new Error('Required parameter note was null or undefined when calling teamsMembersNotesUpdate.');
+        const noteRequest = requestParameters?.noteRequest;
+        if (noteRequest === null || noteRequest === undefined) {
+            throw new Error('Required parameter noteRequest was null or undefined when calling teamsMembersNotesUpdate.');
         }
         const includeInactive = requestParameters?.includeInactive;
 
@@ -1176,7 +1188,7 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         return this.httpClient.request<Note>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: note,
+                body: noteRequest,
                 params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
@@ -1204,9 +1216,9 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsMembershipsCreate.');
         }
-        const teamMembership = requestParameters?.teamMembership;
-        if (teamMembership === null || teamMembership === undefined) {
-            throw new Error('Required parameter teamMembership was null or undefined when calling teamsMembershipsCreate.');
+        const teamMembershipRequest = requestParameters?.teamMembershipRequest;
+        if (teamMembershipRequest === null || teamMembershipRequest === undefined) {
+            throw new Error('Required parameter teamMembershipRequest was null or undefined when calling teamsMembershipsCreate.');
         }
         const includeInactive = requestParameters?.includeInactive;
 
@@ -1265,7 +1277,7 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         return this.httpClient.request<TeamMembership>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: teamMembership,
+                body: teamMembershipRequest,
                 params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
@@ -1539,7 +1551,7 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsPartialUpdate.');
         }
-        const patchedTeam = requestParameters?.patchedTeam;
+        const patchedTeamRequest = requestParameters?.patchedTeamRequest;
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -1585,7 +1597,7 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         return this.httpClient.request<Team>('patch', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: patchedTeam,
+                body: patchedTeamRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -1828,9 +1840,9 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsTopicsCreate.');
         }
-        const topic = requestParameters?.topic;
-        if (topic === null || topic === undefined) {
-            throw new Error('Required parameter topic was null or undefined when calling teamsTopicsCreate.');
+        const topicRequest = requestParameters?.topicRequest;
+        if (topicRequest === null || topicRequest === undefined) {
+            throw new Error('Required parameter topicRequest was null or undefined when calling teamsTopicsCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -1877,7 +1889,7 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         return this.httpClient.request<Topic>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: topic,
+                body: topicRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -2077,9 +2089,9 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         if (topicPk === null || topicPk === undefined) {
             throw new Error('Required parameter topicPk was null or undefined when calling teamsTopicsMessagesCreate.');
         }
-        const topicMessage = requestParameters?.topicMessage;
-        if (topicMessage === null || topicMessage === undefined) {
-            throw new Error('Required parameter topicMessage was null or undefined when calling teamsTopicsMessagesCreate.');
+        const topicMessageRequest = requestParameters?.topicMessageRequest;
+        if (topicMessageRequest === null || topicMessageRequest === undefined) {
+            throw new Error('Required parameter topicMessageRequest was null or undefined when calling teamsTopicsMessagesCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -2126,7 +2138,7 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         return this.httpClient.request<TopicMessage>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: topicMessage,
+                body: topicMessageRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -2338,7 +2350,7 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         if (topicPk === null || topicPk === undefined) {
             throw new Error('Required parameter topicPk was null or undefined when calling teamsTopicsMessagesPartialUpdate.');
         }
-        const patchedTopicMessage = requestParameters?.patchedTopicMessage;
+        const patchedTopicMessageRequest = requestParameters?.patchedTopicMessageRequest;
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -2384,7 +2396,7 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         return this.httpClient.request<TopicMessage>('patch', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: patchedTopicMessage,
+                body: patchedTopicMessageRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -2489,9 +2501,9 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         if (topicPk === null || topicPk === undefined) {
             throw new Error('Required parameter topicPk was null or undefined when calling teamsTopicsMessagesUpdate.');
         }
-        const topicMessage = requestParameters?.topicMessage;
-        if (topicMessage === null || topicMessage === undefined) {
-            throw new Error('Required parameter topicMessage was null or undefined when calling teamsTopicsMessagesUpdate.');
+        const topicMessageRequest = requestParameters?.topicMessageRequest;
+        if (topicMessageRequest === null || topicMessageRequest === undefined) {
+            throw new Error('Required parameter topicMessageRequest was null or undefined when calling teamsTopicsMessagesUpdate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -2538,7 +2550,7 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         return this.httpClient.request<TopicMessage>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: topicMessage,
+                body: topicMessageRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -2695,9 +2707,9 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsTrainingSlotsCreate.');
         }
-        const trainingSlot = requestParameters?.trainingSlot;
-        if (trainingSlot === null || trainingSlot === undefined) {
-            throw new Error('Required parameter trainingSlot was null or undefined when calling teamsTrainingSlotsCreate.');
+        const trainingSlotRequest = requestParameters?.trainingSlotRequest;
+        if (trainingSlotRequest === null || trainingSlotRequest === undefined) {
+            throw new Error('Required parameter trainingSlotRequest was null or undefined when calling teamsTrainingSlotsCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -2744,7 +2756,7 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         return this.httpClient.request<TrainingSlot>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: trainingSlot,
+                body: trainingSlotRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -2924,7 +2936,7 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsTrainingSlotsPartialUpdate.');
         }
-        const patchedTrainingSlot = requestParameters?.patchedTrainingSlot;
+        const patchedTrainingSlotRequest = requestParameters?.patchedTrainingSlotRequest;
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -2970,7 +2982,7 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         return this.httpClient.request<TrainingSlot>('patch', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: patchedTrainingSlot,
+                body: patchedTrainingSlotRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -3066,9 +3078,9 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         if (teamPk === null || teamPk === undefined) {
             throw new Error('Required parameter teamPk was null or undefined when calling teamsTrainingSlotsUpdate.');
         }
-        const trainingSlot = requestParameters?.trainingSlot;
-        if (trainingSlot === null || trainingSlot === undefined) {
-            throw new Error('Required parameter trainingSlot was null or undefined when calling teamsTrainingSlotsUpdate.');
+        const trainingSlotRequest = requestParameters?.trainingSlotRequest;
+        if (trainingSlotRequest === null || trainingSlotRequest === undefined) {
+            throw new Error('Required parameter trainingSlotRequest was null or undefined when calling teamsTrainingSlotsUpdate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -3115,7 +3127,7 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         return this.httpClient.request<TrainingSlot>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: trainingSlot,
+                body: trainingSlotRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -3203,9 +3215,9 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling teamsUpdate.');
         }
-        const team = requestParameters?.team;
-        if (team === null || team === undefined) {
-            throw new Error('Required parameter team was null or undefined when calling teamsUpdate.');
+        const teamRequest = requestParameters?.teamRequest;
+        if (teamRequest === null || teamRequest === undefined) {
+            throw new Error('Required parameter teamRequest was null or undefined when calling teamsUpdate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -3252,7 +3264,7 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         return this.httpClient.request<Team>('put', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: team,
+                body: teamRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

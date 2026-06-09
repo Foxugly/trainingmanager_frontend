@@ -12,24 +12,26 @@ import { HttpHeaders }                                       from '@angular/comm
 import { Observable }                                        from 'rxjs';
 
 import { Attendance } from '../model/models';
-import { AttendanceBulk } from '../model/models';
-import { DuplicateEventRequest } from '../model/models';
+import { AttendanceBulkRequest } from '../model/models';
+import { AttendanceRequest } from '../model/models';
+import { DuplicateEventRequestRequest } from '../model/models';
 import { DuplicateEventResponse } from '../model/models';
 import { Event } from '../model/models';
-import { EventShareRequest } from '../model/models';
+import { EventRequest } from '../model/models';
+import { EventShareRequestRequest } from '../model/models';
 import { EventShareResponse } from '../model/models';
-import { GenerateTrainingRequest } from '../model/models';
+import { GenerateTrainingRequestRequest } from '../model/models';
 import { GenerateTrainingResponse } from '../model/models';
 import { PaginatedAttendanceList } from '../model/models';
 import { PaginatedEventList } from '../model/models';
-import { PatchedAttendance } from '../model/models';
-import { PatchedEvent } from '../model/models';
-import { ReorderRoundsRequest } from '../model/models';
+import { PatchedAttendanceRequest } from '../model/models';
+import { PatchedEventRequest } from '../model/models';
+import { ReorderRoundsRequestRequest } from '../model/models';
 import { RotiSummary } from '../model/models';
-import { RotiUpsert } from '../model/models';
+import { RotiUpsertRequest } from '../model/models';
 import { RsvpApplyToAttendanceResult } from '../model/models';
 import { RsvpSummary } from '../model/models';
-import { RsvpUpsert } from '../model/models';
+import { RsvpUpsertRequest } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
@@ -37,12 +39,12 @@ import { Configuration }                                     from '../configurat
 
 export interface EventsAttendanceBulkCreateRequestParams {
     eventPk: number;
-    attendanceBulk: AttendanceBulk;
+    attendanceBulkRequest: AttendanceBulkRequest;
 }
 
 export interface EventsAttendanceCreateRequestParams {
     eventPk: number;
-    attendance: Attendance;
+    attendanceRequest: AttendanceRequest;
 }
 
 export interface EventsAttendanceDestroyRequestParams {
@@ -61,7 +63,7 @@ export interface EventsAttendanceListRequestParams {
 export interface EventsAttendancePartialUpdateRequestParams {
     eventPk: number;
     id: number;
-    patchedAttendance?: PatchedAttendance;
+    patchedAttendanceRequest?: PatchedAttendanceRequest;
 }
 
 export interface EventsAttendanceRetrieveRequestParams {
@@ -72,11 +74,11 @@ export interface EventsAttendanceRetrieveRequestParams {
 export interface EventsAttendanceUpdateRequestParams {
     eventPk: number;
     id: number;
-    attendance: Attendance;
+    attendanceRequest: AttendanceRequest;
 }
 
 export interface EventsCreateRequestParams {
-    event: Event;
+    eventRequest: EventRequest;
 }
 
 export interface EventsDestroyRequestParams {
@@ -85,12 +87,12 @@ export interface EventsDestroyRequestParams {
 
 export interface EventsDuplicateCreateRequestParams {
     id: number;
-    duplicateEventRequest: DuplicateEventRequest;
+    duplicateEventRequestRequest: DuplicateEventRequestRequest;
 }
 
 export interface EventsGenerateTrainingCreateRequestParams {
     id: number;
-    generateTrainingRequest?: GenerateTrainingRequest;
+    generateTrainingRequestRequest?: GenerateTrainingRequestRequest;
 }
 
 export interface EventsListRequestParams {
@@ -107,7 +109,7 @@ export interface EventsListRequestParams {
 
 export interface EventsPartialUpdateRequestParams {
     id: number;
-    patchedEvent?: PatchedEvent;
+    patchedEventRequest?: PatchedEventRequest;
 }
 
 export interface EventsRetrieveRequestParams {
@@ -124,12 +126,12 @@ export interface EventsRotiSummaryRequestParams {
 
 export interface EventsRotiUpdateRequestParams {
     eventPk: number;
-    rotiUpsert: RotiUpsert;
+    rotiUpsertRequest: RotiUpsertRequest;
 }
 
 export interface EventsRoundsReorderCreateRequestParams {
     id: number;
-    reorderRoundsRequest: ReorderRoundsRequest;
+    reorderRoundsRequestRequest: ReorderRoundsRequestRequest;
 }
 
 export interface EventsRsvpApplyToAttendanceRequestParams {
@@ -142,17 +144,17 @@ export interface EventsRsvpRetrieveRequestParams {
 
 export interface EventsRsvpUpdateRequestParams {
     eventPk: number;
-    rsvpUpsert: RsvpUpsert;
+    rsvpUpsertRequest: RsvpUpsertRequest;
 }
 
 export interface EventsShareCreateRequestParams {
     id: number;
-    eventShareRequest: EventShareRequest;
+    eventShareRequestRequest: EventShareRequestRequest;
 }
 
 export interface EventsUpdateRequestParams {
     id: number;
-    event: Event;
+    eventRequest: EventRequest;
 }
 
 

@@ -33,7 +33,6 @@ function makeTeam(overrides: Partial<Team>): Team {
     name: '',
     sport,
     sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null }],
-    sport_id: 1,
     owner: otherOwner,
     managers: [],
     language: LanguageEnum.Fr,

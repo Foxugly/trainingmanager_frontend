@@ -11,12 +11,13 @@ import { HttpHeaders }                                       from '@angular/comm
 
 import { Observable }                                        from 'rxjs';
 
-import { CloneExerciseRequest } from '../model/models';
+import { CloneExerciseRequestRequest } from '../model/models';
 import { Exercise } from '../model/models';
 import { PaginatedRoundList } from '../model/models';
-import { PatchedRound } from '../model/models';
-import { ReorderExercisesRequest } from '../model/models';
+import { PatchedRoundRequest } from '../model/models';
+import { ReorderExercisesRequestRequest } from '../model/models';
 import { Round } from '../model/models';
+import { RoundRequest } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
@@ -28,11 +29,11 @@ export interface RoundsCloneCreateRequestParams {
 
 export interface RoundsCloneExerciseCreateRequestParams {
     id: number;
-    cloneExerciseRequest: CloneExerciseRequest;
+    cloneExerciseRequestRequest: CloneExerciseRequestRequest;
 }
 
 export interface RoundsCreateRequestParams {
-    round: Round;
+    roundRequest: RoundRequest;
 }
 
 export interface RoundsDestroyRequestParams {
@@ -41,7 +42,7 @@ export interface RoundsDestroyRequestParams {
 
 export interface RoundsExercisesReorderCreateRequestParams {
     id: number;
-    reorderExercisesRequest: ReorderExercisesRequest;
+    reorderExercisesRequestRequest: ReorderExercisesRequestRequest;
 }
 
 export interface RoundsListRequestParams {
@@ -55,7 +56,7 @@ export interface RoundsListRequestParams {
 
 export interface RoundsPartialUpdateRequestParams {
     id: number;
-    patchedRound?: PatchedRound;
+    patchedRoundRequest?: PatchedRoundRequest;
 }
 
 export interface RoundsRetrieveRequestParams {
@@ -64,7 +65,7 @@ export interface RoundsRetrieveRequestParams {
 
 export interface RoundsUpdateRequestParams {
     id: number;
-    round: Round;
+    roundRequest: RoundRequest;
 }
 
 

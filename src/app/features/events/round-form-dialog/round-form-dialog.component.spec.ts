@@ -24,7 +24,6 @@ const sport: Sport = {
 const seedRound: Round = {
   id: 11,
   sport,
-  sport_id: 1,
   language: LanguageEnum.Fr,
   count: 3,
   exercises: [],
