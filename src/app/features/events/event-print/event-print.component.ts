@@ -13,13 +13,10 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import QRCode from 'qrcode';
-import { firstValueFrom } from 'rxjs';
 import { EventsService } from '../../../api/api/events.service';
-import { ExercisesService } from '../../../api/api/exercises.service';
-import { RoundsService } from '../../../api/api/rounds.service';
 import { Event } from '../../../api/model/event';
+import { EventRoundDetail } from '../../../api/model/event-round-detail';
 import { Exercise } from '../../../api/model/exercise';
-import { Round } from '../../../api/model/round';
 
 @Component({
   selector: 'app-event-print',
@@ -31,13 +28,11 @@ import { Round } from '../../../api/model/round';
 export class EventPrintComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly eventsService = inject(EventsService);
-  private readonly roundsService = inject(RoundsService);
-  private readonly exercisesService = inject(ExercisesService);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly eventId = signal<number | null>(null);
   protected readonly event = signal<Event | null>(null);
-  protected readonly rounds = signal<Round[]>([]);
+  protected readonly rounds = signal<EventRoundDetail[]>([]);
   protected readonly exercisesByRound = signal<Map<number, Exercise[]>>(new Map());
   protected readonly loading = signal(false);
   protected readonly notFound = signal(false);
@@ -61,12 +56,12 @@ export class EventPrintComponent implements OnInit {
     return rep * dist;
   }
 
-  protected roundDistancePerIteration(round: Round): number {
+  protected roundDistancePerIteration(round: EventRoundDetail): number {
     const exercises = this.exercisesByRound().get(round.id) ?? [];
     return exercises.reduce((sum, ex) => sum + this.exerciseDistance(ex), 0);
   }
 
-  protected roundTotalDistance(round: Round): number {
+  protected roundTotalDistance(round: EventRoundDetail): number {
     return (round.count ?? 1) * this.roundDistancePerIteration(round);
   }
 
@@ -120,7 +115,7 @@ export class EventPrintComponent implements OnInit {
         next: (e) => {
           this.event.set(e);
           this.loading.set(false);
-          void this.loadRoundsAndExercises(e.rounds ?? []);
+          this.buildFromRoundsDetail(e.rounds_detail ?? []);
         },
         error: () => {
           this.notFound.set(true);
@@ -129,43 +124,17 @@ export class EventPrintComponent implements OnInit {
       });
   }
 
-  private async loadRoundsAndExercises(roundIds: readonly number[]): Promise<void> {
-    if (roundIds.length === 0) {
-      this.rounds.set([]);
-      this.exercisesByRound.set(new Map());
-      return;
+  /** Build rounds + per-round exercises from the event's embedded
+   * `rounds_detail` (a whole session in one request) — no per-round/per-exercise
+   * fetches, matching the events-detail / event-training data flow. */
+  private buildFromRoundsDetail(details: readonly EventRoundDetail[]): void {
+    const sortedRounds = [...details].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    this.rounds.set(sortedRounds);
+    const map = new Map<number, Exercise[]>();
+    for (const round of sortedRounds) {
+      const sorted = [...(round.exercises ?? [])].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+      map.set(round.id, sorted);
     }
-    try {
-      const roundResults = await Promise.allSettled(
-        roundIds.map((rid) => firstValueFrom(this.roundsService.roundsRetrieve({ id: rid }))),
-      );
-      const fetchedRounds: Round[] = [];
-      for (const r of roundResults) {
-        if (r.status === 'fulfilled') fetchedRounds.push(r.value);
-      }
-      const sortedRounds = [...fetchedRounds].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-      this.rounds.set(sortedRounds);
-
-      const exerciseFetches = sortedRounds.map(async (round) => {
-        const ids = round.exercises ?? [];
-        const settled = await Promise.allSettled(
-          ids.map((eid) => firstValueFrom(this.exercisesService.exercisesRetrieve({ id: eid }))),
-        );
-        const fulfilled: Exercise[] = [];
-        for (const s of settled) {
-          if (s.status === 'fulfilled') fulfilled.push(s.value);
-        }
-        const sorted = [...fulfilled].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-        return [round.id, sorted] as const;
-      });
-      const entries = await Promise.all(exerciseFetches);
-      const map = new Map<number, Exercise[]>();
-      for (const [rid, list] of entries) {
-        map.set(rid, list);
-      }
-      this.exercisesByRound.set(map);
-    } catch {
-      // Keep whatever loaded; the sheet still prints what it has.
-    }
+    this.exercisesByRound.set(map);
   }
 }

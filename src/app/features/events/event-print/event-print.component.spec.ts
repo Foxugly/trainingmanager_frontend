@@ -14,12 +14,10 @@ vi.mock('qrcode', () => ({
   },
 }));
 import { EventsService } from '../../../api/api/events.service';
-import { ExercisesService } from '../../../api/api/exercises.service';
-import { RoundsService } from '../../../api/api/rounds.service';
 import { Event } from '../../../api/model/event';
+import { EventRoundDetail } from '../../../api/model/event-round-detail';
 import { Exercise } from '../../../api/model/exercise';
 import { LanguageEnum } from '../../../api/model/language-enum';
-import { Round } from '../../../api/model/round';
 import { Sport } from '../../../api/model/sport';
 import { TrainingTypeEnum } from '../../../api/model/training-type-enum';
 import { EventPrintComponent } from './event-print.component';
@@ -32,45 +30,6 @@ const sport: Sport = {
   energy_systems: [],
   created_at: '2026-04-01T00:00:00Z',
   default_training_type: TrainingTypeEnum.Structured,
-};
-
-const eventWithRounds: Event = {
-  id: 7,
-  name: 'Séance 1',
-  goal: null,
-  color: undefined,
-  date: '2026-05-02',
-  hour_start: null,
-  hour_end: null,
-  total: undefined,
-  refer_program: { id: 4, name: 'Cycle aérobie' },
-  sport,
-  place: null,
-  equipment_items: [],
-  rounds_detail: [],
-  rounds: [11],
-  members: [],
-  generated_by_ai: false,
-  ai_response: '',
-  ai_generated_at: null,
-  created_at: '2026-04-01T00:00:00Z',
-  updated_at: '2026-04-01T00:00:00Z',
-  is_public: false,
-  public_token: null,
-};
-
-const round1: Round = {
-  id: 11,
-  sport,
-  language: LanguageEnum.Fr,
-  order: 1,
-  count: 2,
-  t_start: null,
-  t_break: null,
-  exercises: [201, 202],
-  usage_count: 0,
-  created_at: '2026-04-01T00:00:00Z',
-  updated_at: '2026-04-01T00:00:00Z',
 };
 
 const exercise1 = {
@@ -99,16 +58,54 @@ const exercise1 = {
 
 const exercise2 = { ...exercise1, id: 202, order: 2, distance: 100 } as Exercise;
 
+// A round with its exercises fully nested, as the backend embeds it under the
+// event's `rounds_detail` (the whole session in one request — no per-round/
+// per-exercise fetch). Exercises are intentionally out of order to assert sort.
+const roundDetail1 = {
+  id: 11,
+  order: 1,
+  count: 2,
+  t_start: null,
+  t_break: null,
+  sport,
+  exercises: [exercise2, exercise1],
+} as unknown as EventRoundDetail;
+
+const eventWithRounds: Event = {
+  id: 7,
+  name: 'Séance 1',
+  goal: null,
+  color: undefined,
+  date: '2026-05-02',
+  hour_start: null,
+  hour_end: null,
+  total: undefined,
+  refer_program: { id: 4, name: 'Cycle aérobie' },
+  sport,
+  place: null,
+  equipment_items: [],
+  rounds_detail: [roundDetail1],
+  rounds: [11],
+  members: [],
+  generated_by_ai: false,
+  ai_response: '',
+  ai_generated_at: null,
+  created_at: '2026-04-01T00:00:00Z',
+  updated_at: '2026-04-01T00:00:00Z',
+  is_public: false,
+  public_token: null,
+};
+
 interface ProtectedFields {
   event(): Event | null;
   notFound(): boolean;
-  rounds(): Round[];
+  rounds(): EventRoundDetail[];
   exercisesByRound(): Map<number, Exercise[]>;
   publicUrl(): string;
   qrDataUrl(): string | null;
   eventTotalDistance(): number;
   exerciseDistance(ex: Exercise): number;
-  roundTotalDistance(round: Round): number;
+  roundTotalDistance(round: EventRoundDetail): number;
   formatDistance(meters: number): string;
 }
 
@@ -116,8 +113,6 @@ describe('EventPrintComponent', () => {
   let fixture: ComponentFixture<EventPrintComponent>;
   let component: EventPrintComponent;
   let eventsMock: { eventsRetrieve: ReturnType<typeof vi.fn> };
-  let roundsMock: { roundsRetrieve: ReturnType<typeof vi.fn> };
-  let exercisesMock: { exercisesRetrieve: ReturnType<typeof vi.fn> };
   let routeIdParam: string | null;
 
   const access = (c: EventPrintComponent) => c as unknown as ProtectedFields;
@@ -133,16 +128,6 @@ describe('EventPrintComponent', () => {
         .fn()
         .mockReturnValue(eventResult ? of(eventResult) : throwError(() => new Error('404'))),
     };
-    roundsMock = {
-      roundsRetrieve: vi
-        .fn()
-        .mockImplementation((p: { id: number }) => of({ ...round1, id: p.id })),
-    };
-    exercisesMock = {
-      exercisesRetrieve: vi
-        .fn()
-        .mockImplementation((p: { id: number }) => of(p.id === 201 ? exercise1 : exercise2)),
-    };
 
     await TestBed.configureTestingModule({
       imports: [
@@ -156,8 +141,6 @@ describe('EventPrintComponent', () => {
         provideNoopAnimations(),
         provideRouter([]),
         { provide: EventsService, useValue: eventsMock },
-        { provide: RoundsService, useValue: roundsMock },
-        { provide: ExercisesService, useValue: exercisesMock },
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: { get: () => routeIdParam } } },
@@ -210,19 +193,15 @@ describe('EventPrintComponent', () => {
     expect(access(component).notFound()).toBe(true);
   });
 
-  it('loads rounds and their ordered exercises', async () => {
-    await new Promise((r) => setTimeout(r, 0));
-    await new Promise((r) => setTimeout(r, 0));
-    expect(roundsMock.roundsRetrieve).toHaveBeenCalledWith({ id: 11 });
+  it('builds rounds + ordered exercises from the embedded rounds_detail (no fetch)', () => {
     expect(access(component).rounds().length).toBe(1);
     const exercises = access(component).exercisesByRound().get(11);
     expect(exercises?.length).toBe(2);
+    // Sorted by order despite being embedded out of order.
     expect(exercises?.[0].order).toBeLessThanOrEqual(exercises?.[1].order ?? 999);
   });
 
-  it('computes the total distance like events-detail (count × Σ rep×dist)', async () => {
-    await new Promise((r) => setTimeout(r, 0));
-    await new Promise((r) => setTimeout(r, 0));
+  it('computes the total distance like events-detail (count × Σ rep×dist)', () => {
     // round count=2, exercises 4×50=200 + 4×100=400 = 600 → 2×600 = 1200
     expect(access(component).eventTotalDistance()).toBe(1200);
   });
@@ -241,6 +220,7 @@ describe('EventPrintComponent', () => {
     training_type: TrainingTypeEnum.Freeform,
     training_richtext: '<p>Easy swim, your own pace.</p>',
     rounds: [],
+    rounds_detail: [],
   };
 
   /** Mounts the real template (no override) so we can assert the rendered DOM. */
@@ -248,14 +228,6 @@ describe('EventPrintComponent', () => {
     TestBed.resetTestingModule();
     routeIdParam = '7';
     eventsMock = { eventsRetrieve: vi.fn().mockReturnValue(of(eventResult)) };
-    roundsMock = {
-      roundsRetrieve: vi.fn().mockImplementation((p: { id: number }) => of({ ...round1, id: p.id })),
-    };
-    exercisesMock = {
-      exercisesRetrieve: vi
-        .fn()
-        .mockImplementation((p: { id: number }) => of(p.id === 201 ? exercise1 : exercise2)),
-    };
     await TestBed.configureTestingModule({
       imports: [
         EventPrintComponent,
@@ -268,8 +240,6 @@ describe('EventPrintComponent', () => {
         provideNoopAnimations(),
         provideRouter([]),
         { provide: EventsService, useValue: eventsMock },
-        { provide: RoundsService, useValue: roundsMock },
-        { provide: ExercisesService, useValue: exercisesMock },
         { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => routeIdParam } } } },
       ],
     }).compileComponents();
@@ -290,7 +260,6 @@ describe('EventPrintComponent', () => {
 
   it('renders the rounds table (not freeform) for a structured event', async () => {
     await setupRendered({ ...eventWithRounds, training_type: TrainingTypeEnum.Structured });
-    await new Promise((r) => setTimeout(r, 0));
     await new Promise((r) => setTimeout(r, 0));
     fixture.detectChanges();
     expect((fixture.nativeElement as HTMLElement).querySelector('table.exercises')).not.toBeNull();
