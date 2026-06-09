@@ -12,7 +12,7 @@ import {
   untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -149,9 +149,15 @@ export class EventsDetailComponent implements OnInit {
   protected readonly canRegenerate = this.canManage;
 
   // --- Training type selector (structured ↔ freeform) ---
-  /** The training-type select model, kept in sync with the loaded event so a
-   *  rejected confirm can revert it. */
-  protected readonly trainingTypeModel = signal<TrainingTypeEnum>(TrainingTypeEnum.Structured);
+  /** The training-type select control, kept in sync with the loaded event. A
+   *  reactive FormControl (not one-way ngModel) so a rejected confirm can write
+   *  the original value straight back into the widget — even when it equals the
+   *  control's current value, which a signal `.set()` of the same value would
+   *  not flush to PrimeNG's internal state. */
+  protected readonly trainingTypeControl = new FormControl<TrainingTypeEnum>(
+    TrainingTypeEnum.Structured,
+    { nonNullable: true },
+  );
 
   /** Select options, re-translated on language change. */
   protected readonly trainingTypeOptions = computed(() => {
@@ -441,7 +447,9 @@ export class EventsDetailComponent implements OnInit {
       .subscribe({
         next: (e) => {
           this.event.set(e);
-          this.trainingTypeModel.set(e.training_type ?? TrainingTypeEnum.Structured);
+          this.trainingTypeControl.setValue(e.training_type ?? TrainingTypeEnum.Structured, {
+            emitEvent: false,
+          });
           this.loading.set(false);
           if (e.refer_program?.id != null) {
             this.loadProgramTeam(e.refer_program.id);
@@ -772,9 +780,16 @@ export class EventsDetailComponent implements OnInit {
       });
   }
 
-  /** Reset the select model back to the loaded event's current type. */
+  /**
+   * Reset the select control back to the loaded event's current type. Writing
+   * through the FormControl (with emitEvent:false so we don't re-fire
+   * onTrainingTypeChange) always flushes to PrimeNG's widget state, so the
+   * dropdown visually reverts even when the value is unchanged.
+   */
   private revertTrainingType(): void {
-    this.trainingTypeModel.set(this.event()?.training_type ?? TrainingTypeEnum.Structured);
+    this.trainingTypeControl.setValue(this.event()?.training_type ?? TrainingTypeEnum.Structured, {
+      emitEvent: false,
+    });
   }
 
   private notifyMutationError(err: HttpErrorResponse): void {

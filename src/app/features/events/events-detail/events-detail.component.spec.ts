@@ -179,7 +179,7 @@ interface ProtectedFields {
   isRestrictedViewer(): boolean;
   // Training-type selector
   onTrainingTypeChange(next: TrainingTypeEnum): void;
-  trainingTypeModel(): TrainingTypeEnum;
+  trainingTypeControl: FormControl<TrainingTypeEnum>;
   distanceHidden(): boolean;
   goalHidden(): boolean;
   distanceHiddenVariant(): 'never' | 'after';
@@ -743,17 +743,22 @@ describe('EventsDetailComponent', () => {
     });
   });
 
-  it('rejecting the confirm reverts the select model and does not PATCH', async () => {
+  it('rejecting the confirm reverts the select control to the original type and does not PATCH', async () => {
     await setup('7', { ...eventWithRounds, training_type: TrainingTypeEnum.Structured });
+    // Simulate the widget having moved to the rejected option, mirroring how
+    // PrimeNG would have written the new value into the control before onChange.
+    access(component).trainingTypeControl.setValue(TrainingTypeEnum.Freeform, { emitEvent: false });
     const confirmation = fixture.debugElement.injector.get(ConfirmationService);
     vi.spyOn(confirmation, 'confirm').mockImplementation((cfg) => {
       cfg.reject?.();
       return confirmation;
     });
     access(component).onTrainingTypeChange(TrainingTypeEnum.Freeform);
+    // No PATCH fires for a rejected switch.
     expect(eventsMock.eventsPartialUpdate).not.toHaveBeenCalledWith(
       expect.objectContaining({ patchedEvent: { training_type: TrainingTypeEnum.Freeform } }),
     );
-    expect(access(component).trainingTypeModel()).toBe(TrainingTypeEnum.Structured);
+    // The revert is real: the control value is written back to the original type.
+    expect(access(component).trainingTypeControl.value).toBe(TrainingTypeEnum.Structured);
   });
 });

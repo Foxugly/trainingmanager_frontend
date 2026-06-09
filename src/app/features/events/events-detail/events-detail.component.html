@@ -285,7 +285,7 @@
               <p-select
                 inputId="training_type"
                 [options]="trainingTypeOptions()"
-                [ngModel]="trainingTypeModel()"
+                [formControl]="trainingTypeControl"
                 optionLabel="label"
                 optionValue="value"
                 (onChange)="onTrainingTypeChange($event.value)"
