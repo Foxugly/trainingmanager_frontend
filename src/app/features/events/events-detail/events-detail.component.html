@@ -277,14 +277,22 @@
       <p-tabpanels>
         <!-- TAB 1 — TRAINING -->
         <p-tabpanel value="training">
-          <app-event-training
-            [event]="e"
-            [team]="team()"
-            [canManage]="canManage()"
-            [restrictedViewer]="isRestrictedViewer()"
-            (stateChange)="onTrainingState($event)"
-            (reloadRequested)="reloadEvent()"
-          />
+          @if (e.training_type === 'freeform') {
+            <app-event-freeform
+              [event]="e"
+              [canManage]="canManage()"
+              (reloadRequested)="reloadEvent()"
+            />
+          } @else {
+            <app-event-training
+              [event]="e"
+              [team]="team()"
+              [canManage]="canManage()"
+              [restrictedViewer]="isRestrictedViewer()"
+              (stateChange)="onTrainingState($event)"
+              (reloadRequested)="reloadEvent()"
+            />
+          }
 
           @if (lastResult(); as result) {
             <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded">

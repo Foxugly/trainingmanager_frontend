@@ -43,6 +43,7 @@ import { AttendanceManagerComponent } from '../attendance-manager/attendance-man
 import { EventRotiComponent } from '../event-roti/event-roti.component';
 import { EventRsvpComponent } from '../event-rsvp/event-rsvp.component';
 import { EventTrainingComponent } from '../event-training/event-training.component';
+import { EventFreeformComponent } from '../event-freeform/event-freeform.component';
 import { RegenerateTrainingDialogComponent } from '../regenerate-training-dialog/regenerate-training-dialog.component';
 import {
   DuplicateEventDialogComponent,
@@ -74,6 +75,7 @@ import { EventShareResponse } from '../../../api/model/event-share-response';
     EventRotiComponent,
     EventRsvpComponent,
     EventTrainingComponent,
+    EventFreeformComponent,
     RegenerateTrainingDialogComponent,
     DuplicateEventDialogComponent,
     ShareEventDialogComponent,
