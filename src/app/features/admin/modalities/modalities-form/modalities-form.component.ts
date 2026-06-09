@@ -19,8 +19,6 @@ import { InputText } from 'primeng/inputtext';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { EMPTY, Observable } from 'rxjs';
 import { SportsService } from '../../../../api/api/sports.service';
-import { ModalityAdmin } from '../../../../api/model/modality-admin';
-import { PatchedModalityAdmin } from '../../../../api/model/patched-modality-admin';
 import { Sport } from '../../../../api/model/sport';
 import { TrainingTypeEnum } from '../../../../api/model/training-type-enum';
 import { type FieldErrors, extractServerError } from '../../../../shared/forms/notify-error';
@@ -82,9 +80,9 @@ export class ModalitiesFormComponent implements OnInit {
       id,
       sportPk: sportId,
       includeInactive: true,
-      patchedModalityAdmin: {
+      patchedModalityAdminRequest: {
         is_active: value,
-      } as PatchedModalityAdmin,
+      },
     });
   };
 
@@ -197,11 +195,11 @@ export class ModalitiesFormComponent implements OnInit {
       ? this.sportsService.sportsModalitiesPartialUpdate({
           id: modalityId,
           sportPk: sportId,
-          patchedModalityAdmin: payload as PatchedModalityAdmin,
+          patchedModalityAdminRequest: payload,
         })
       : this.sportsService.sportsModalitiesCreate({
           sportPk: sportId,
-          modalityAdmin: payload as ModalityAdmin,
+          modalityAdminRequest: payload,
         });
 
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({

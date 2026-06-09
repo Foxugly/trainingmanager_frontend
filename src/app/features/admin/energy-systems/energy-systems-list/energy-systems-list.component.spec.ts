@@ -108,7 +108,7 @@ describe('EnergySystemsListComponent', () => {
     expect(serviceMock.energySystemsPartialUpdate).toHaveBeenCalledWith({
       id: es2.id,
       includeInactive: true,
-      patchedEnergySystemAdmin: { is_active: true },
+      patchedEnergySystemAdminRequest: { is_active: true },
     });
     expect(messageMock.add).toHaveBeenCalledTimes(1);
     expect(serviceMock.energySystemsList).toHaveBeenCalled();

@@ -18,8 +18,6 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 import { InputText } from 'primeng/inputtext';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { EnergySystemsService } from '../../../../api/api/energy-systems.service';
-import { EnergySystemAdmin } from '../../../../api/model/energy-system-admin';
-import { PatchedEnergySystemAdmin } from '../../../../api/model/patched-energy-system-admin';
 import { type FieldErrors, extractServerError } from '../../../../shared/forms/notify-error';
 import {
   ActiveToggleComponent,
@@ -73,9 +71,9 @@ export class EnergySystemsFormComponent implements OnInit {
   protected readonly patchActive = (id: number, value: boolean) =>
     this.energySystemsService.energySystemsPartialUpdate({
       id,
-      patchedEnergySystemAdmin: {
+      patchedEnergySystemAdminRequest: {
         is_active: value,
-      } as PatchedEnergySystemAdmin,
+      },
     });
 
   protected readonly activeLabels = computed<ActiveToggleLabels>(() => ({
@@ -152,10 +150,10 @@ export class EnergySystemsFormComponent implements OnInit {
     const request$ = id
       ? this.energySystemsService.energySystemsPartialUpdate({
           id,
-          patchedEnergySystemAdmin: payload as PatchedEnergySystemAdmin,
+          patchedEnergySystemAdminRequest: payload,
         })
       : this.energySystemsService.energySystemsCreate({
-          energySystemAdmin: payload as EnergySystemAdmin,
+          energySystemAdminRequest: payload,
         });
 
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({

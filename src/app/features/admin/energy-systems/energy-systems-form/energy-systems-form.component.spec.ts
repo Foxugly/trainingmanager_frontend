@@ -127,7 +127,7 @@ describe('EnergySystemsFormComponent', () => {
     access(component).patchActive(10, false);
     expect(serviceMock.energySystemsPartialUpdate).toHaveBeenCalledWith({
       id: 10,
-      patchedEnergySystemAdmin: { is_active: false },
+      patchedEnergySystemAdminRequest: { is_active: false },
     });
   });
 
@@ -138,7 +138,7 @@ describe('EnergySystemsFormComponent', () => {
     access(component).submit();
 
     expect(serviceMock.energySystemsCreate).toHaveBeenCalledTimes(1);
-    expect(serviceMock.energySystemsCreate.mock.calls[0][0].energySystemAdmin).toMatchObject({
+    expect(serviceMock.energySystemsCreate.mock.calls[0][0].energySystemAdminRequest).toMatchObject({
       name_fr: 'Test',
       name_nl: null,
     });
@@ -153,11 +153,11 @@ describe('EnergySystemsFormComponent', () => {
     access(component).submit();
 
     expect(serviceMock.energySystemsPartialUpdate).toHaveBeenCalledTimes(1);
-    const { id, includeInactive, patchedEnergySystemAdmin } =
+    const { id, includeInactive, patchedEnergySystemAdminRequest } =
       serviceMock.energySystemsPartialUpdate.mock.calls[0][0];
     expect(id).toBe(10);
     expect(includeInactive).toBeUndefined();
-    expect(patchedEnergySystemAdmin).toMatchObject({ name_nl: 'Endurance NL' });
+    expect(patchedEnergySystemAdminRequest).toMatchObject({ name_nl: 'Endurance NL' });
     expect(navigate).toHaveBeenCalledWith(['/admin/energy-systems']);
   });
 

@@ -112,7 +112,7 @@ export class SportsListComponent implements OnInit {
 
   protected restore(sport: Sport): void {
     this.sportsService
-      .sportsPartialUpdate({ id: sport.id, includeInactive: true, patchedSportAdmin: { is_active: true } })
+      .sportsPartialUpdate({ id: sport.id, includeInactive: true, patchedSportAdminRequest: { is_active: true } })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

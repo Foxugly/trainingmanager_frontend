@@ -136,7 +136,7 @@ export class ModalitiesListComponent implements OnInit {
         id: modality.id,
         sportPk: sportId,
         includeInactive: true,
-        patchedModalityAdmin: { is_active: true },
+        patchedModalityAdminRequest: { is_active: true },
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({

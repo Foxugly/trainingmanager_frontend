@@ -145,7 +145,7 @@ describe('ModalitiesListComponent', () => {
       id: m2.id,
       sportPk: 1,
       includeInactive: true,
-      patchedModalityAdmin: { is_active: true },
+      patchedModalityAdminRequest: { is_active: true },
     });
     expect(messageMock.add).toHaveBeenCalledTimes(1);
     expect(serviceMock.sportsModalitiesList).toHaveBeenCalled();

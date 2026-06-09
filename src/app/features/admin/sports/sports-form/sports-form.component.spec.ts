@@ -138,7 +138,7 @@ describe('SportsFormComponent', () => {
     access(component).patchActive(7, false);
     expect(sportsServiceMock.sportsPartialUpdate).toHaveBeenCalledWith({
       id: 7,
-      patchedSportAdmin: { is_active: false },
+      patchedSportAdminRequest: { is_active: false },
     });
   });
 
@@ -149,7 +149,7 @@ describe('SportsFormComponent', () => {
     access(component).submit();
 
     expect(sportsServiceMock.sportsCreate).toHaveBeenCalledTimes(1);
-    const payload = sportsServiceMock.sportsCreate.mock.calls[0][0].sportAdmin;
+    const payload = sportsServiceMock.sportsCreate.mock.calls[0][0].sportAdminRequest;
     expect(payload).toMatchObject({ slug: 'tennis', name_fr: 'Tennis', name_nl: null });
     expect(navigate).toHaveBeenCalledWith(['/admin/sports']);
   });
@@ -162,11 +162,11 @@ describe('SportsFormComponent', () => {
     access(component).submit();
 
     expect(sportsServiceMock.sportsPartialUpdate).toHaveBeenCalledTimes(1);
-    const { id, includeInactive, patchedSportAdmin } =
+    const { id, includeInactive, patchedSportAdminRequest } =
       sportsServiceMock.sportsPartialUpdate.mock.calls[0][0];
     expect(id).toBe(7);
     expect(includeInactive).toBeUndefined();
-    expect(patchedSportAdmin).toMatchObject({ name_nl: 'Hardlopen' });
+    expect(patchedSportAdminRequest).toMatchObject({ name_nl: 'Hardlopen' });
     expect(navigate).toHaveBeenCalledWith(['/admin/sports']);
   });
 
@@ -175,7 +175,7 @@ describe('SportsFormComponent', () => {
     access(component).form.patchValue({ slug: 'tennis', default_training_type: 'freeform' });
     access(component).submit();
     expect(sportsServiceMock.sportsCreate).toHaveBeenCalledWith({
-      sportAdmin: expect.objectContaining({ default_training_type: 'freeform' }),
+      sportAdminRequest: expect.objectContaining({ default_training_type: 'freeform' }),
     });
   });
 

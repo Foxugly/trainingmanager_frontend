@@ -23,8 +23,6 @@ import { Tooltip } from 'primeng/tooltip';
 import { EnergySystemsService } from '../../../../api/api/energy-systems.service';
 import { SportsService } from '../../../../api/api/sports.service';
 import { EnergySystem } from '../../../../api/model/energy-system';
-import { PatchedSportAdmin } from '../../../../api/model/patched-sport-admin';
-import { SportAdmin } from '../../../../api/model/sport-admin';
 import { TrainingTypeEnum } from '../../../../api/model/training-type-enum';
 import { type FieldErrors, extractServerError } from '../../../../shared/forms/notify-error';
 import {
@@ -84,7 +82,7 @@ export class SportsFormComponent implements OnInit {
   protected readonly patchActive = (id: number, value: boolean) =>
     this.sportsService.sportsPartialUpdate({
       id,
-      patchedSportAdmin: { is_active: value } as PatchedSportAdmin,
+      patchedSportAdminRequest: { is_active: value },
     });
 
   protected readonly activeLabels = computed<ActiveToggleLabels>(() => ({
@@ -190,8 +188,8 @@ export class SportsFormComponent implements OnInit {
     };
 
     const request$ = id
-      ? this.sportsService.sportsPartialUpdate({ id, patchedSportAdmin: payload as PatchedSportAdmin })
-      : this.sportsService.sportsCreate({ sportAdmin: payload as unknown as SportAdmin });
+      ? this.sportsService.sportsPartialUpdate({ id, patchedSportAdminRequest: payload })
+      : this.sportsService.sportsCreate({ sportAdminRequest: payload });
 
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {

@@ -102,7 +102,7 @@ export class EnergySegmentsListComponent implements OnInit {
 
   protected restore(seg: EnergySegment): void {
     this.service
-      .energySegmentsPartialUpdate({ id: seg.id, includeInactive: true, patchedEnergySegmentAdmin: { is_active: true } })
+      .energySegmentsPartialUpdate({ id: seg.id, includeInactive: true, patchedEnergySegmentAdminRequest: { is_active: true } })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

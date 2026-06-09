@@ -125,7 +125,7 @@ describe('SportsListComponent', () => {
     expect(sportsServiceMock.sportsPartialUpdate).toHaveBeenCalledWith({
       id: sport2.id,
       includeInactive: true,
-      patchedSportAdmin: { is_active: true },
+      patchedSportAdminRequest: { is_active: true },
     });
     expect(messageMock.add).toHaveBeenCalledTimes(1);
     expect(sportsServiceMock.sportsList).toHaveBeenCalled();

@@ -128,7 +128,7 @@ describe('EnergySegmentsListComponent', () => {
     expect(serviceMock.energySegmentsPartialUpdate).toHaveBeenCalledWith({
       id: z3.id,
       includeInactive: true,
-      patchedEnergySegmentAdmin: { is_active: true },
+      patchedEnergySegmentAdminRequest: { is_active: true },
     });
     expect(messageMock.add).toHaveBeenCalledTimes(1);
     expect(serviceMock.energySegmentsList).toHaveBeenCalled();

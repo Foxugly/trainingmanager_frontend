@@ -21,9 +21,7 @@ import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { Textarea } from 'primeng/textarea';
 import { EnergySegmentsService } from '../../../../api/api/energy-segments.service';
 import { EnergySystemsService } from '../../../../api/api/energy-systems.service';
-import { EnergySegmentAdmin } from '../../../../api/model/energy-segment-admin';
 import { EnergySystem } from '../../../../api/model/energy-system';
-import { PatchedEnergySegmentAdmin } from '../../../../api/model/patched-energy-segment-admin';
 import { type FieldErrors, extractServerError } from '../../../../shared/forms/notify-error';
 import {
   ActiveToggleComponent,
@@ -83,9 +81,9 @@ export class EnergySegmentsFormComponent implements OnInit {
   protected readonly patchActive = (id: number, value: boolean) =>
     this.service.energySegmentsPartialUpdate({
       id,
-      patchedEnergySegmentAdmin: {
+      patchedEnergySegmentAdminRequest: {
         is_active: value,
-      } as PatchedEnergySegmentAdmin,
+      },
     });
 
   protected readonly activeLabels = computed<ActiveToggleLabels>(() => ({
@@ -173,9 +171,9 @@ export class EnergySegmentsFormComponent implements OnInit {
     const request$ = id
       ? this.service.energySegmentsPartialUpdate({
           id,
-          patchedEnergySegmentAdmin: payload as PatchedEnergySegmentAdmin,
+          patchedEnergySegmentAdminRequest: payload,
         })
-      : this.service.energySegmentsCreate({ energySegmentAdmin: payload as EnergySegmentAdmin });
+      : this.service.energySegmentsCreate({ energySegmentAdminRequest: payload });
 
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {

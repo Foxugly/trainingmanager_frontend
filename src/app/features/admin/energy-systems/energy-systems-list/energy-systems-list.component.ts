@@ -106,7 +106,7 @@ export class EnergySystemsListComponent implements OnInit {
 
   protected restore(es: EnergySystem): void {
     this.energySystemsService
-      .energySystemsPartialUpdate({ id: es.id, includeInactive: true, patchedEnergySystemAdmin: { is_active: true } })
+      .energySystemsPartialUpdate({ id: es.id, includeInactive: true, patchedEnergySystemAdminRequest: { is_active: true } })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
