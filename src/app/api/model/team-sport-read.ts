@@ -18,5 +18,15 @@ export interface TeamSportRead {
     readonly slug: string;
     readonly is_default: boolean;
     readonly order: number;
+    /**
+     * Team override of the sport\'s default training type. Null = inherit Sport.default_training_type.  * `structured` - Structured (rounds & exercises) * `freeform` - Free text
+     */
+    readonly training_type: TeamSportReadTrainingTypeEnum | null;
 }
+export enum TeamSportReadTrainingTypeEnum {
+    Structured = 'structured',
+    Freeform = 'freeform'
+};
+
+
 

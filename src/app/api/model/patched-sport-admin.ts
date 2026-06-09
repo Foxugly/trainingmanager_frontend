@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { TrainingTypeEnum } from './training-type-enum';
 
 
 /**
@@ -22,6 +23,12 @@ export interface PatchedSportAdmin {
     slug?: string;
     is_active?: boolean;
     energy_systems?: Array<number>;
+    /**
+     * Default training-content type for events of this sport (overridable per team and per event).  * `structured` - Structured (rounds & exercises) * `freeform` - Free text
+     */
+    default_training_type?: TrainingTypeEnum;
     readonly created_at?: string;
 }
+
+
 

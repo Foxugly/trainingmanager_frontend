@@ -16,6 +16,7 @@ import { TeamSportRead } from './team-sport-read';
 import { CustomUserPublic } from './custom-user-public';
 import { Level } from './level';
 import { LanguageEnum } from './language-enum';
+import { SportTrainingTypeWrite } from './sport-training-type-write';
 import { JoinRequestPolicyEnum } from './join-request-policy-enum';
 
 
@@ -27,6 +28,7 @@ export interface Team {
     sport_id?: number;
     sport_ids?: Array<number>;
     default_sport_id?: number;
+    sport_training_types?: Array<SportTrainingTypeWrite>;
     readonly level: Level | null;
     level_id?: number | null;
     readonly owner: CustomUserPublic;

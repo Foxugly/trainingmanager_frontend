@@ -220,6 +220,7 @@ model/rsvp-status-enum.ts
 model/rsvp-summary.ts
 model/rsvp-upsert.ts
 model/sport-admin.ts
+model/sport-training-type-write.ts
 model/sport.ts
 model/stats-attendance-by-member.ts
 model/stats-attendance-by-session.ts
@@ -250,6 +251,7 @@ model/topic-message.ts
 model/topic.ts
 model/training-slot.ts
 model/training-template.ts
+model/training-type-enum.ts
 model/type-enum.ts
 model/unit-enum.ts
 model/unread-count.ts

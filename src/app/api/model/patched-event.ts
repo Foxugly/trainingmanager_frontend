@@ -9,6 +9,7 @@
  */
 import { EquipmentMinimal } from './equipment-minimal';
 import { Sport } from './sport';
+import { TrainingTypeEnum } from './training-type-enum';
 import { VisibilityMode } from './visibility-mode';
 import { PlaceMinimal } from './place-minimal';
 import { EventRoundDetail } from './event-round-detail';
@@ -19,6 +20,14 @@ export interface PatchedEvent {
     readonly id?: number;
     name?: string;
     goal?: string | null;
+    /**
+     * This event\'s active training-content type. Seeded at creation from the team-sport / sport cascade; editable by the coach.  * `structured` - Structured (rounds & exercises) * `freeform` - Free text
+     */
+    training_type?: TrainingTypeEnum;
+    /**
+     * Free-text training content (sanitized HTML) when training_type=freeform.
+     */
+    training_richtext?: string;
     /**
      * Where the session takes place (venue, pool, track, address). Always visible to athletes.
      */

@@ -11,9 +11,9 @@ import { GenerateTrainingTokensUsed } from './generate-training-tokens-used';
 
 
 export interface GenerateTrainingResponse { 
-    rounds_created: number;
-    exercises_created: number;
-    exercises_reused: number;
+    rounds_created?: number;
+    exercises_created?: number;
+    exercises_reused?: number;
     rationale: string;
     model: string;
     tokens_used: GenerateTrainingTokensUsed;

@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { TrainingTypeEnum } from './training-type-enum';
 
 
 /**
@@ -18,6 +19,12 @@ export interface Sport {
     readonly slug: string;
     readonly is_active: boolean;
     readonly energy_systems: Array<number>;
+    /**
+     * Default training-content type for events of this sport (overridable per team and per event).  * `structured` - Structured (rounds & exercises) * `freeform` - Free text
+     */
+    readonly default_training_type: TrainingTypeEnum;
     readonly created_at: string;
 }
+
+
 
