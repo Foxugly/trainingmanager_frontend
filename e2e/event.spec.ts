@@ -43,9 +43,12 @@ test('manager can create an event under the seeded program', async ({ page }) =>
 
   // 3. Fill name + a date (dd/mm/yy). Pick a fixed near-future date.
   await page.locator('#name').fill(eventName);
-  await page.locator('#date').fill('15/12/26');
-  // Dismiss the datepicker overlay so it does not cover the save button.
-  await page.keyboard.press('Escape');
+  // PrimeNG datepicker only commits a typed value to the form control on blur;
+  // without it, form.invalid stays true and the footer Save button stays
+  // disabled. Blur also closes the calendar overlay (so it can't cover Save).
+  const dateInput = page.locator('#date');
+  await dateInput.fill('15/12/26');
+  await dateInput.blur();
 
   // 4. Save (form-footer primary button).
   await page.getByRole('button', { name: /save|enregistrer|opslaan|salva|guardar/i }).click();

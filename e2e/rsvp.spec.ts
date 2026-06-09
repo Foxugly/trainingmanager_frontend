@@ -45,6 +45,10 @@ test('athlete can set RSVP to going on an event', async ({ page }) => {
   const goingButton = page.getByRole('button', { name: GOING_LABEL }).first();
   await goingButton.click();
 
-  // The choice persists/reflects: the button becomes aria-pressed="true".
-  await expect(goingButton).toHaveAttribute('aria-pressed', 'true');
+  // Selection registers: the chosen status drops the unselected outlined/
+  // secondary look and takes its severity (going -> success). NB: the app's
+  // [ariaPressed] binding lands on the <p-button> host element, not on this
+  // inner native <button> that getByRole matches, so we assert the visible
+  // selected state (the success severity class) rather than aria-pressed.
+  await expect(goingButton).toHaveClass(/p-button-success/);
 });

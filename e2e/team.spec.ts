@@ -34,15 +34,18 @@ test('manager can create a team', async ({ page }) => {
   await page.locator('#name').fill(teamName);
 
   // Sports multiselect: open the panel, tick the seeded sport, close it.
-  // PrimeNG renders the trigger as a div with id = inputId; options land in an
-  // overlay panel as listbox options.
-  await page.locator('#sport_ids').click();
+  // PrimeNG puts inputId (#sport_ids) on a visually-hidden combobox input, not
+  // on the clickable trigger, so click the <p-multiselect> host (its
+  // onContainerClick opens the overlay); options land in an overlay as listbox
+  // options.
+  await page.locator('p-multiselect:has(#sport_ids)').click();
   await page.getByRole('option', { name: SEED.sport }).click();
   // Close the overlay so the default-sport select is interactable.
   await page.keyboard.press('Escape');
 
-  // Default sport select: open and choose the same sport (now an option).
-  await page.locator('#default_sport_id').click();
+  // Default sport select: open and choose the same sport (now an option). Same
+  // inputId-on-hidden-input rule as the multiselect — click the <p-select> host.
+  await page.locator('p-select:has(#default_sport_id)').click();
   await page.getByRole('option', { name: SEED.sport }).click();
 
   // Save (form-footer). The footer renders a submit-style button; the text is
