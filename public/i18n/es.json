@@ -1386,6 +1386,14 @@
         "consistency": "Regularidad",
         "progression": "Progresión"
       }
+    },
+    "rsvp_reliability": {
+      "title": "Fiabilidad RSVP",
+      "empty": "Sin RSVP « voy » en el periodo.",
+      "going": "Anunciados",
+      "no_shows": "Ausencias",
+      "rate": "Fiabilidad",
+      "hint": "Proporción de RSVP « voy » realmente cumplidos."
     }
   },
   "notes": {

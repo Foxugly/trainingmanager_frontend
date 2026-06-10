@@ -1386,6 +1386,14 @@
         "consistency": "Costanza",
         "progression": "Progressione"
       }
+    },
+    "rsvp_reliability": {
+      "title": "Affidabilità RSVP",
+      "empty": "Nessun RSVP « presente » nel periodo.",
+      "going": "Annunciati",
+      "no_shows": "Assenze",
+      "rate": "Affidabilità",
+      "hint": "Quota di RSVP « presente » realmente onorati."
     }
   },
   "notes": {

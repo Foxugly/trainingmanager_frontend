@@ -317,4 +317,9 @@
       }
     </section>
   }
+
+  <!-- RSVP reliability (managers, team aggregate) — driven by the same range. -->
+  @if (reviewVisible() && rangeFrom() && rangeTo()) {
+    <app-rsvp-reliability [teamId]="teamId()" [from]="rangeFrom()" [to]="rangeTo()" />
+  }
 </div>

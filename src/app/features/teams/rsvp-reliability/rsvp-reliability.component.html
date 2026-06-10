@@ -1,0 +1,32 @@
+<section class="card">
+  <h3 class="text-base font-semibold mb-3">{{ 'stats.rsvp_reliability.title' | transloco }}</h3>
+  @if (loading()) {
+    <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+  } @else if (error()) {
+    <p class="text-red-600">{{ 'common.load_failed' | transloco }}</p>
+  } @else if (entries().length === 0) {
+    <p class="text-sm text-gray-500">{{ 'stats.rsvp_reliability.empty' | transloco }}</p>
+  } @else {
+    <p-table [value]="entries()" styleClass="p-datatable-sm" responsiveLayout="scroll">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>{{ 'stats.member' | transloco }}</th>
+          <th class="text-right">{{ 'stats.rsvp_reliability.going' | transloco }}</th>
+          <th class="text-right">{{ 'stats.rsvp_reliability.no_shows' | transloco }}</th>
+          <th class="text-right">{{ 'stats.rsvp_reliability.rate' | transloco }}</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td>{{ row.name }}</td>
+          <td class="text-right">{{ row.going }}</td>
+          <td class="text-right">{{ row.no_shows }}</td>
+          <td class="text-right font-semibold" [class]="colorClass(row)">
+            {{ pct(row) === null ? '—' : pct(row) + '%' }}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <p class="mt-2 text-xs text-gray-400">{{ 'stats.rsvp_reliability.hint' | transloco }}</p>
+  }
+</section>

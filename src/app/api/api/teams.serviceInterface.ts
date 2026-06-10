@@ -26,6 +26,7 @@ import { PatchedTrainingSlotRequest } from '../model/models';
 import { ReviewBlockRequestRequest } from '../model/models';
 import { ReviewBlockResponse } from '../model/models';
 import { RosterHistoryResponse } from '../model/models';
+import { RsvpReliabilityResponse } from '../model/models';
 import { Team } from '../model/models';
 import { TeamMembership } from '../model/models';
 import { TeamMembershipRequest } from '../model/models';
@@ -176,6 +177,12 @@ export interface TeamsReviewBlockCreateRequestParams {
 
 export interface TeamsRosterHistoryRetrieveRequestParams {
     id: number;
+}
+
+export interface TeamsRsvpReliabilityRetrieveRequestParams {
+    id: number;
+    from?: string;
+    to?: string;
 }
 
 export interface TeamsStatsRetrieveRequestParams {
@@ -468,6 +475,14 @@ export interface TeamsServiceInterface {
 * @param requestParameters
      */
     teamsRosterHistoryRetrieve(requestParameters: TeamsRosterHistoryRetrieveRequestParams, extraHttpRequestParams?: any): Observable<RosterHistoryResponse>;
+
+    /**
+     * Per-athlete RSVP reliability (going-but-absent)
+     * Manager-only. Over the [from, to] window (same params as /stats/), for each athlete who RSVP\&#39;d GOING: how many of those sessions they were actually present at (shows), missed (no_shows), and the reliability rate (shows/going). Sorted worst-reliability first. Athletes with no GOING RSVP in the window are omitted.
+     * @endpoint get /api/v1/teams/{id}/rsvp-reliability/
+* @param requestParameters
+     */
+    teamsRsvpReliabilityRetrieve(requestParameters: TeamsRsvpReliabilityRetrieveRequestParams, extraHttpRequestParams?: any): Observable<RsvpReliabilityResponse>;
 
     /**
      * Team statistics (attendance, volume, intensity)

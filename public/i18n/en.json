@@ -1386,6 +1386,14 @@
         "consistency": "Consistency",
         "progression": "Progression"
       }
+    },
+    "rsvp_reliability": {
+      "title": "RSVP reliability",
+      "empty": "No GOING RSVPs in this period.",
+      "going": "Said going",
+      "no_shows": "No-shows",
+      "rate": "Reliability",
+      "hint": "Share of GOING RSVPs the athlete actually attended."
     }
   },
   "notes": {

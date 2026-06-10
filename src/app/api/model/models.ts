@@ -188,6 +188,8 @@ export * from './round-request';
 export * from './rsvp-apply-to-attendance-result';
 export * from './rsvp-by-member';
 export * from './rsvp-counts';
+export * from './rsvp-reliability-entry';
+export * from './rsvp-reliability-response';
 export * from './rsvp-status-enum';
 export * from './rsvp-summary';
 export * from './rsvp-upsert-request';

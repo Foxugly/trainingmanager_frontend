@@ -47,6 +47,8 @@ import { ReviewBlockResponse } from '../model/review-block-response';
 // @ts-ignore
 import { RosterHistoryResponse } from '../model/roster-history-response';
 // @ts-ignore
+import { RsvpReliabilityResponse } from '../model/rsvp-reliability-response';
+// @ts-ignore
 import { Team } from '../model/team';
 // @ts-ignore
 import { TeamMembership } from '../model/team-membership';
@@ -100,6 +102,7 @@ import {
     TeamsRetrieveRequestParams,
     TeamsReviewBlockCreateRequestParams,
     TeamsRosterHistoryRetrieveRequestParams,
+    TeamsRsvpReliabilityRetrieveRequestParams,
     TeamsStatsRetrieveRequestParams,
     TeamsTopicsCreateRequestParams,
     TeamsTopicsDestroyRequestParams,
@@ -1885,6 +1888,90 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         return this.httpClient.request<RosterHistoryResponse>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Per-athlete RSVP reliability (going-but-absent)
+     * Manager-only. Over the [from, to] window (same params as /stats/), for each athlete who RSVP\&#39;d GOING: how many of those sessions they were actually present at (shows), missed (no_shows), and the reliability rate (shows/going). Sorted worst-reliability first. Athletes with no GOING RSVP in the window are omitted.
+     * @endpoint get /api/v1/teams/{id}/rsvp-reliability/
+     * @param requestParameters
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public teamsRsvpReliabilityRetrieve(requestParameters: TeamsRsvpReliabilityRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<RsvpReliabilityResponse>;
+    public teamsRsvpReliabilityRetrieve(requestParameters: TeamsRsvpReliabilityRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<RsvpReliabilityResponse>>;
+    public teamsRsvpReliabilityRetrieve(requestParameters: TeamsRsvpReliabilityRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<RsvpReliabilityResponse>>;
+    public teamsRsvpReliabilityRetrieve(requestParameters: TeamsRsvpReliabilityRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling teamsRsvpReliabilityRetrieve.');
+        }
+        const from = requestParameters?.from;
+        const to = requestParameters?.to;
+
+        let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'from',
+            <any>from,
+            QueryParamStyle.Form,
+            true,
+        );
+
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'to',
+            <any>to,
+            QueryParamStyle.Form,
+            true,
+        );
+
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (jwtAuth) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/teams/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/rsvp-reliability/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<RsvpReliabilityResponse>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

@@ -252,6 +252,8 @@ model/round.ts
 model/rsvp-apply-to-attendance-result.ts
 model/rsvp-by-member.ts
 model/rsvp-counts.ts
+model/rsvp-reliability-entry.ts
+model/rsvp-reliability-response.ts
 model/rsvp-status-enum.ts
 model/rsvp-summary.ts
 model/rsvp-upsert-request.ts

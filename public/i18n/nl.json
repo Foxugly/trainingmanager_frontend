@@ -1386,6 +1386,14 @@
         "consistency": "Regelmaat",
         "progression": "Progressie"
       }
+    },
+    "rsvp_reliability": {
+      "title": "RSVP-betrouwbaarheid",
+      "empty": "Geen GOING-RSVP's in deze periode.",
+      "going": "Aangemeld",
+      "no_shows": "No-shows",
+      "rate": "Betrouwbaarheid",
+      "hint": "Aandeel GOING-RSVP's dat de atleet echt bijwoonde."
     }
   },
   "notes": {
