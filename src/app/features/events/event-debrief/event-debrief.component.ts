@@ -2,19 +2,19 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  effect,
   inject,
   input,
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { Textarea } from 'primeng/textarea';
-import { catchError, of, switchMap, tap } from 'rxjs';
 import { EventsService } from '../../../api/api/events.service';
-import { EventDebrief } from '../../../api/model/event-debrief';
 import { ToastService } from '../../../core/notifications/toast.service';
+import { loadOn } from '../../../shared/data/load-on';
 
 /**
  * Manager-only post-session debrief: consolidated attendance / ROTI / RSVP /
@@ -34,34 +34,21 @@ export class EventDebriefComponent {
 
   readonly eventId = input.required<number>();
 
-  protected readonly data = signal<EventDebrief | null>(null);
-  protected readonly loading = signal(false);
-  protected readonly error = signal(false);
+  private readonly state = loadOn(
+    () => this.eventId(),
+    (id) => this.eventsService.eventsDebriefRetrieve({ id }),
+    this.destroyRef,
+  );
+
+  protected readonly data = this.state.data;
+  protected readonly loading = this.state.loading;
+  protected readonly error = this.state.error;
   protected readonly debriefText = signal('');
   protected readonly saving = signal(false);
 
   constructor() {
-    toObservable(this.eventId)
-      .pipe(
-        tap(() => {
-          this.loading.set(true);
-          this.error.set(false);
-        }),
-        switchMap((id) =>
-          this.eventsService.eventsDebriefRetrieve({ id }).pipe(
-            catchError(() => {
-              this.error.set(true);
-              return of(null);
-            }),
-          ),
-        ),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((res) => {
-        this.data.set(res);
-        this.debriefText.set(res?.debrief ?? '');
-        this.loading.set(false);
-      });
+    // Seed the editable note from each freshly loaded debrief payload.
+    effect(() => this.debriefText.set(this.state.data()?.debrief ?? ''));
   }
 
   protected save(): void {

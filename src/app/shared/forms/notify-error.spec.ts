@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { describe, expect, it, vi } from 'vitest';
-import { extractServerError, notifyServerError } from './notify-error';
+import { describe, expect, it } from 'vitest';
+import { extractServerError } from './notify-error';
 
 describe('extractServerError', () => {
   it('returns fields when body.fields is present', () => {
@@ -16,23 +16,5 @@ describe('extractServerError', () => {
   it('falls back to detail', () => {
     const err = new HttpErrorResponse({ error: { detail: 'Boom' } });
     expect(extractServerError(err)).toEqual({ fields: null, detail: 'Boom' });
-  });
-});
-
-describe('notifyServerError', () => {
-  it('pushes a toast only when there is a global detail', () => {
-    const add = vi.fn();
-    const err = new HttpErrorResponse({ error: { detail: 'Boom' } });
-    const fields = notifyServerError({ add } as never, err, 'Erreur', 'fallback');
-    expect(add).toHaveBeenCalledWith({ severity: 'error', summary: 'Erreur', detail: 'Boom' });
-    expect(fields).toBeNull();
-  });
-
-  it('returns fields and does NOT toast when only field errors', () => {
-    const add = vi.fn();
-    const err = new HttpErrorResponse({ error: { fields: { name: ['Required'] } } });
-    const fields = notifyServerError({ add } as never, err, 'Erreur', 'fallback');
-    expect(add).not.toHaveBeenCalled();
-    expect(fields).toEqual({ name: ['Required'] });
   });
 });

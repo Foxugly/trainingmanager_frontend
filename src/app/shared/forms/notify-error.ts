@@ -1,5 +1,4 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import type { MessageService } from 'primeng/api';
 
 export interface FieldErrors {
   [field: string]: string[];
@@ -34,18 +33,4 @@ export function extractServerError(err: HttpErrorResponse): ServerError {
   }
 
   return { fields: null, detail: body?.detail ?? null };
-}
-
-/** Toast the global detail (if any) and return field errors for inline display.
- * `fallbackDetail` is shown when the server gives neither fields nor a detail. */
-export function notifyServerError(
-  messages: MessageService,
-  err: HttpErrorResponse,
-  summary: string,
-  fallbackDetail: string,
-): FieldErrors | null {
-  const { fields, detail } = extractServerError(err);
-  if (fields) return fields;
-  messages.add({ severity: 'error', summary, detail: detail ?? fallbackDetail });
-  return null;
 }

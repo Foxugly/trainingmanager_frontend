@@ -2,12 +2,13 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  computed,
   inject,
   input,
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService } from 'primeng/api';
@@ -17,12 +18,12 @@ import { DatePicker } from 'primeng/datepicker';
 import { Dialog } from 'primeng/dialog';
 import { Select } from 'primeng/select';
 import { TableModule } from 'primeng/table';
-import { catchError, of, switchMap, tap } from 'rxjs';
 import { EventTemplatesService } from '../../../api/api/event-templates.service';
 import { ProgramsService } from '../../../api/api/programs.service';
 import { EventTemplate } from '../../../api/model/event-template';
 import { Program } from '../../../api/model/program';
 import { ToastService } from '../../../core/notifications/toast.service';
+import { loadOn } from '../../../shared/data/load-on';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 
 /**
@@ -58,9 +59,15 @@ export class TeamTemplatesComponent {
 
   readonly teamId = input.required<number>();
 
-  protected readonly templates = signal<EventTemplate[]>([]);
-  protected readonly loading = signal(false);
-  protected readonly error = signal(false);
+  private readonly state = loadOn(
+    () => this.teamId(),
+    (id) => this.templatesService.eventTemplatesList({ team: id }),
+    this.destroyRef,
+  );
+
+  protected readonly templates = computed<EventTemplate[]>(() => this.state.data()?.results ?? []);
+  protected readonly loading = this.state.loading;
+  protected readonly error = this.state.error;
 
   // Instantiate dialog state.
   protected readonly dialogVisible = signal(false);
@@ -69,34 +76,6 @@ export class TeamTemplatesComponent {
   protected readonly programId = signal<number | null>(null);
   protected readonly date = signal<Date | null>(null);
   protected readonly instantiating = signal(false);
-
-  constructor() {
-    toObservable(this.teamId)
-      .pipe(
-        tap(() => {
-          this.loading.set(true);
-          this.error.set(false);
-        }),
-        switchMap((id) =>
-          this.templatesService.eventTemplatesList({ team: id }).pipe(
-            tap((res) => this.templates.set(res.results ?? [])),
-            catchError(() => {
-              this.error.set(true);
-              return of(null);
-            }),
-          ),
-        ),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe(() => this.loading.set(false));
-  }
-
-  private reload(): void {
-    this.templatesService
-      .eventTemplatesList({ team: this.teamId() })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((res) => this.templates.set(res.results ?? []));
-  }
 
   protected openInstantiate(tpl: EventTemplate): void {
     this.selected.set(tpl);
@@ -151,7 +130,7 @@ export class TeamTemplatesComponent {
           .subscribe({
             next: () => {
               this.toast.success('events.templates.deleted');
-              this.reload();
+              this.state.reload();
             },
             error: () => this.toast.error(),
           });

@@ -3,18 +3,17 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  computed,
   inject,
   input,
-  signal,
 } from '@angular/core';
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { Tag } from 'primeng/tag';
 import { TableModule } from 'primeng/table';
-import { catchError, of, switchMap, tap } from 'rxjs';
 import { TeamsService } from '../../../api/api/teams.service';
 import { RosterHistoryEntry } from '../../../api/model/roster-history-entry';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
+import { loadOn } from '../../../shared/data/load-on';
 
 /**
  * Manager-only roster-history timeline: every membership period (active + past)
@@ -33,31 +32,16 @@ export class TeamRosterHistoryComponent {
 
   readonly teamId = input.required<number>();
 
-  protected readonly entries = signal<RosterHistoryEntry[]>([]);
-  protected readonly loading = signal(false);
-  protected readonly error = signal(false);
+  // Reload when the team changes; switchMap cancels a stale in-flight fetch.
+  private readonly state = loadOn(
+    () => this.teamId(),
+    (id) => this.teamsService.teamsRosterHistoryRetrieve({ id }),
+    this.destroyRef,
+  );
 
-  constructor() {
-    // Reload when the team changes; switchMap cancels a stale in-flight fetch.
-    toObservable(this.teamId)
-      .pipe(
-        tap(() => {
-          this.loading.set(true);
-          this.error.set(false);
-        }),
-        switchMap((id) =>
-          this.teamsService.teamsRosterHistoryRetrieve({ id }).pipe(
-            catchError(() => {
-              this.error.set(true);
-              return of(null);
-            }),
-          ),
-        ),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((res) => {
-        this.entries.set(res?.entries ?? []);
-        this.loading.set(false);
-      });
-  }
+  protected readonly entries = computed<RosterHistoryEntry[]>(
+    () => this.state.data()?.entries ?? [],
+  );
+  protected readonly loading = this.state.loading;
+  protected readonly error = this.state.error;
 }

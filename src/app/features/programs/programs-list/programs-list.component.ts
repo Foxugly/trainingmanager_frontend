@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -13,8 +13,7 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { catchError, distinctUntilChanged, of, switchMap, tap } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { ToggleSwitch } from 'primeng/toggleswitch';
@@ -24,12 +23,13 @@ import { TeamsService } from '../../../api/api/teams.service';
 import { Program } from '../../../api/model/program';
 import { Team } from '../../../api/model/team';
 import { AuthService } from '../../../core/auth/auth.service';
+import { ToastService } from '../../../core/notifications/toast.service';
 import { computeTeamRole } from '../../teams/teams-list/teams-list.component';
 
 @Component({
   selector: 'app-programs-list',
   imports: [
-    CommonModule,
+    DatePipe,
     FormsModule,
     RouterLink,
     Button,
@@ -46,8 +46,7 @@ export class ProgramsListComponent implements OnInit {
   private readonly programsService = inject(ProgramsService);
   private readonly teamsService = inject(TeamsService);
   private readonly authService = inject(AuthService);
-  private readonly messageService = inject(MessageService);
-  private readonly transloco = inject(TranslocoService);
+  private readonly toast = inject(ToastService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly teamFilter = input<number | null>(null);
@@ -89,7 +88,13 @@ export class ProgramsListComponent implements OnInit {
               ordering: '-date_start',
               team,
             })
-            .pipe(catchError(() => of(null))),
+            .pipe(
+              catchError(() => {
+                // Surface the failure instead of silently showing an empty list.
+                this.toast.error();
+                return of(null);
+              }),
+            ),
         ),
         takeUntilDestroyed(this.destroyRef),
       )
@@ -121,11 +126,7 @@ export class ProgramsListComponent implements OnInit {
         error: () => {
           // Without this, canCreate silently resolves false on failure and the
           // user loses the "new program" affordance with no explanation.
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('common.load_failed'),
-          });
+          this.toast.error();
         },
       });
   }
