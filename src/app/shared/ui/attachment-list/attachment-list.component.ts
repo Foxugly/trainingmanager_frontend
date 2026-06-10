@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Tooltip } from 'primeng/tooltip';
@@ -21,6 +21,7 @@ import { AttachmentsService } from '../../../api/api/attachments.service';
 import { Attachment } from '../../../api/model/attachment';
 import { AttachmentStatusEnum } from '../../../api/model/attachment-status-enum';
 import { AttachmentUploadService } from '../../../core/attachments/attachment-upload.service';
+import { ToastService } from '../../../core/notifications/toast.service';
 import { EmptyStateComponent } from '../empty-state/empty-state.component';
 
 /** Accept attribute for the file picker — mirrors the backend MIME allow-list. */
@@ -47,7 +48,7 @@ export class AttachmentListComponent {
   private readonly attachments = inject(AttachmentsService);
   private readonly uploadService = inject(AttachmentUploadService);
   private readonly confirmationService = inject(ConfirmationService);
-  private readonly messageService = inject(MessageService);
+  private readonly toast = inject(ToastService);
   private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -144,11 +145,7 @@ export class AttachmentListComponent {
     try {
       const created = await this.uploadService.upload(file, this.targetType(), this.targetId());
       this.items.update((list) => [...list, created]);
-      this.messageService.add({
-        severity: 'success',
-        summary: this.transloco.translate('common.success'),
-        detail: this.transloco.translate('attachments.uploaded'),
-      });
+      this.toast.success('attachments.uploaded');
     } catch (err) {
       this.notifyError(err);
     } finally {
@@ -180,11 +177,7 @@ export class AttachmentListComponent {
       .subscribe({
         next: () => {
           this.items.update((list) => list.filter((a) => a.id !== item.id));
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('attachments.deleted'),
-          });
+          this.toast.success('attachments.deleted');
         },
         error: (err: HttpErrorResponse) => this.notifyError(err),
       });
@@ -208,10 +201,6 @@ export class AttachmentListComponent {
         detailKey = 'attachments.errors.forbidden';
       }
     }
-    this.messageService.add({
-      severity: 'error',
-      summary: this.transloco.translate('common.error'),
-      detail: this.transloco.translate(detailKey),
-    });
+    this.toast.error(detailKey);
   }
 }

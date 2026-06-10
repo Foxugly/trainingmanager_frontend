@@ -858,6 +858,8 @@
     "back": "Terug",
     "loading": "Laden",
     "error": "Fout",
+    "warning": "Waarschuwing",
+    "info": "Informatie",
     "success": "Gelukt",
     "active": "Actief",
     "inactive": "Inactief",

@@ -33,6 +33,7 @@ import { Place } from '../../../api/model/place';
 import { TrainingSlot } from '../../../api/model/training-slot';
 import { WeekdayEnum } from '../../../api/model/weekday-enum';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
+import { ToastService } from '../../../core/notifications/toast.service';
 
 function toHourMinute(d: Date | null | undefined): string | null {
   if (!d) return null;
@@ -98,6 +99,7 @@ export class TeamSlotsEditorComponent {
   private readonly teamsService = inject(TeamsService);
   private readonly transloco = inject(TranslocoService);
   private readonly messageService = inject(MessageService);
+  private readonly toast = inject(ToastService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -152,11 +154,7 @@ export class TeamSlotsEditorComponent {
         switchMap((teamId) =>
           this.teamsService.teamsTrainingSlotsList({ teamPk: teamId }).pipe(
             catchError(() => {
-              this.messageService.add({
-                severity: 'error',
-                summary: this.transloco.translate('common.error'),
-                detail: this.transloco.translate('training_template.error'),
-              });
+              this.toast.error('training_template.error');
               return of(null);
             }),
           ),

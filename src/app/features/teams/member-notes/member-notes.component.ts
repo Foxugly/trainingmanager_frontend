@@ -14,13 +14,14 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Tag } from 'primeng/tag';
 import { ToggleSwitch } from 'primeng/toggleswitch';
 import { Tooltip } from 'primeng/tooltip';
 import { TeamsService } from '../../../api/api/teams.service';
+import { ToastService } from '../../../core/notifications/toast.service';
 import { Note } from '../../../api/model/note';
 import { NoteRequest } from '../../../api/model/note-request';
 import { PatchedNoteRequest } from '../../../api/model/patched-note-request';
@@ -62,7 +63,7 @@ export class MemberNotesComponent {
   private readonly fb = inject(FormBuilder);
   private readonly teamsService = inject(TeamsService);
   private readonly confirmationService = inject(ConfirmationService);
-  private readonly messageService = inject(MessageService);
+  private readonly toast = inject(ToastService);
   private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -179,20 +180,12 @@ export class MemberNotesComponent {
     this.saving.set(false);
     this.editingId.set(null);
     this.form.reset({ content: '', visible_to_athlete: false });
-    this.messageService.add({
-      severity: 'success',
-      summary: this.transloco.translate('common.success'),
-      detail: this.transloco.translate('notes.saved'),
-    });
+    this.toast.success('notes.saved');
   }
 
   private onError(_err: HttpErrorResponse): void {
     this.saving.set(false);
-    this.messageService.add({
-      severity: 'error',
-      summary: this.transloco.translate('common.error'),
-      detail: this.transloco.translate('notes.errors.unknown'),
-    });
+    this.toast.error('notes.errors.unknown');
   }
 
   protected confirmDelete(note: Note): void {
@@ -217,11 +210,7 @@ export class MemberNotesComponent {
           if (this.editingId() === note.id) {
             this.cancelEdit();
           }
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('notes.deleted'),
-          });
+          this.toast.success('notes.deleted');
         },
         error: (err: HttpErrorResponse) => this.onError(err),
       });

@@ -13,7 +13,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
 import { Badge } from 'primeng/badge';
 import { Button } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
@@ -33,6 +33,7 @@ import { Team } from '../../../api/model/team';
 import { TeamJoinRequest } from '../../../api/model/team-join-request';
 import { TeamMembership } from '../../../api/model/team-membership';
 import { AuthService } from '../../../core/auth/auth.service';
+import { ToastService } from '../../../core/notifications/toast.service';
 import { MemberMembershipService } from '../member-membership.service';
 import { TeamRole } from '../teams-list/teams-list.component';
 import { ProgramsListComponent } from '../../programs/programs-list/programs-list.component';
@@ -109,7 +110,7 @@ export class TeamsDetailComponent implements OnInit {
   private readonly memberMembershipService = inject(MemberMembershipService);
   private readonly authService = inject(AuthService);
   private readonly confirmationService = inject(ConfirmationService);
-  private readonly messageService = inject(MessageService);
+  private readonly toast = inject(ToastService);
   private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -306,20 +307,12 @@ export class TeamsDetailComponent implements OnInit {
           this.anonymizing.set(false);
           this.notesDialogOpen.set(false);
           this.notesMembership.set(null);
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('rgpd.anonymize.toast'),
-          });
+          this.toast.success('rgpd.anonymize.toast');
           this.loadMemberships(id);
         },
         error: () => {
           this.anonymizing.set(false);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('rgpd.anonymize.error'),
-          });
+          this.toast.error('rgpd.anonymize.error');
         },
       });
   }
@@ -384,11 +377,7 @@ export class TeamsDetailComponent implements OnInit {
             this.notFound.set(true);
           } else {
             this.loadError.set(true);
-            this.messageService.add({
-              severity: 'error',
-              summary: this.transloco.translate('common.error'),
-              detail: this.transloco.translate('common.load_failed'),
-            });
+            this.toast.error('common.load_failed');
           }
         },
       });
@@ -416,11 +405,7 @@ export class TeamsDetailComponent implements OnInit {
         next: (list) => this.memberships.set(list ?? []),
         error: () => {
           // Don't silently leave a stale/empty roster — tell the user it failed.
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('common.load_failed'),
-          });
+          this.toast.error('common.load_failed');
         },
       });
   }
@@ -493,11 +478,7 @@ export class TeamsDetailComponent implements OnInit {
     this.loadMyPendingRequest(teamId);
     this.loadMemberships(teamId);
     this.loadTeam(teamId);
-    this.messageService.add({
-      severity: 'success',
-      summary: this.transloco.translate('common.success'),
-      detail: this.transloco.translate('teams.join_request.sent'),
-    });
+    this.toast.success('teams.join_request.sent');
   }
 
   private applyJoinError(err: HttpErrorResponse, teamId: number): void {
@@ -517,11 +498,7 @@ export class TeamsDetailComponent implements OnInit {
       // Already a member — refresh memberships so CTA disappears.
       this.loadMemberships(teamId);
       this.showJoinDialog.set(false);
-      this.messageService.add({
-        severity: 'info',
-        summary: this.transloco.translate('common.success'),
-        detail: this.transloco.translate('teams.join_request.errors.already_member'),
-      });
+      this.toast.info('teams.join_request.errors.already_member');
       return;
     }
     if (teamErrCode === 'team_not_active') {
@@ -561,11 +538,7 @@ export class TeamsDetailComponent implements OnInit {
         next: () => {
           this.cancellingMyRequest.set(false);
           this.myPendingRequest.set(null);
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('teams.join_request.cancelled'),
-          });
+          this.toast.success('teams.join_request.cancelled');
         },
         error: () => {
           this.cancellingMyRequest.set(false);
@@ -608,11 +581,7 @@ export class TeamsDetailComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('teams.member_dialog.added'),
-          });
+          this.toast.success('teams.member_dialog.added');
           this.addingMember.set(false);
           this.showAddMemberDialog.set(false);
           this.loadMemberships(id);
@@ -651,11 +620,7 @@ export class TeamsDetailComponent implements OnInit {
       .subscribe({
         next: (updated) => {
           this.team.set(updated);
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('teams.manager_dialog.added'),
-          });
+          this.toast.success('teams.manager_dialog.added');
           this.addingManager.set(false);
           this.showAddManagerDialog.set(false);
         },
@@ -683,19 +648,11 @@ export class TeamsDetailComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('teams.detail.removed'),
-          });
+          this.toast.success('teams.detail.removed');
           this.loadMemberships(id);
         },
         error: () => {
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('teams.errors.unknown'),
-          });
+          this.toast.error('teams.errors.unknown');
         },
       });
   }
@@ -717,19 +674,11 @@ export class TeamsDetailComponent implements OnInit {
       .subscribe({
         next: () => {
           this.authService.refreshMe();
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('teams.detail.deactivated'),
-          });
+          this.toast.success('teams.detail.deactivated');
           this.router.navigate(['/teams']);
         },
         error: () => {
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('teams.errors.unknown'),
-          });
+          this.toast.error('teams.errors.unknown');
         },
       });
   }

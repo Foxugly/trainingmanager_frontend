@@ -15,7 +15,6 @@ import { FormsModule } from '@angular/forms';
 import { Subject, forkJoin } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
 import { AutoComplete, AutoCompleteCompleteEvent } from 'primeng/autocomplete';
 import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
@@ -25,6 +24,7 @@ import { Tooltip } from 'primeng/tooltip';
 import { PlacesService } from '../../../api/api/places.service';
 import { Place } from '../../../api/model/place';
 import { NominatimResult, NominatimService } from '../../../core/geo/nominatim.service';
+import { ToastService } from '../../../core/notifications/toast.service';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 
 /**
@@ -57,7 +57,7 @@ import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.
 export class TeamPlacePoolComponent {
   private readonly placesService = inject(PlacesService);
   private readonly nominatim = inject(NominatimService);
-  private readonly messageService = inject(MessageService);
+  private readonly toast = inject(ToastService);
   private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -244,11 +244,7 @@ export class TeamPlacePoolComponent {
         },
         error: () => {
           this.placeSaving.set(false);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('place.error_create'),
-          });
+          this.toast.error('place.error_create');
         },
       });
   }
@@ -283,20 +279,12 @@ export class TeamPlacePoolComponent {
           this.places.set([]);
           this.poolChange.emit([]);
           this.placesLoading.set(false);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('teams.errors.unknown'),
-          });
+          this.toast.error('teams.errors.unknown');
         },
       });
   }
 
   private notifyPlaceToast(detailKey: string): void {
-    this.messageService.add({
-      severity: 'success',
-      summary: this.transloco.translate('common.success'),
-      detail: this.transloco.translate(detailKey),
-    });
+    this.toast.success(detailKey);
   }
 }

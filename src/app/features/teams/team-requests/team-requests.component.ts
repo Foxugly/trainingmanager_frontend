@@ -13,7 +13,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Dialog } from 'primeng/dialog';
@@ -27,6 +27,7 @@ import { InvitationStatusEnum } from '../../../api/model/invitation-status-enum'
 import { JoinRequestStatusEnum } from '../../../api/model/join-request-status-enum';
 import { TeamInvitation } from '../../../api/model/team-invitation';
 import { TeamJoinRequest } from '../../../api/model/team-join-request';
+import { ToastService } from '../../../core/notifications/toast.service';
 import { type FieldErrors } from '../../../shared/forms/notify-error';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 
@@ -63,7 +64,7 @@ export class TeamRequestsComponent {
   private readonly invitationsService = inject(InvitationsService);
   private readonly joinRequestsService = inject(JoinRequestsService);
   private readonly confirmationService = inject(ConfirmationService);
-  private readonly messageService = inject(MessageService);
+  private readonly toast = inject(ToastService);
   private readonly transloco = inject(TranslocoService);
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
@@ -158,11 +159,7 @@ export class TeamRequestsComponent {
       .subscribe({
         next: () => {
           this.processingRequestId.set(null);
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('teams.join_requests.accepted'),
-          });
+          this.toast.success('teams.join_requests.accepted');
           this.loadJoinRequests(teamId);
           this.membershipsChanged.emit();
         },
@@ -203,11 +200,7 @@ export class TeamRequestsComponent {
           this.processingRequestId.set(null);
           this.rejectingRequest.set(null);
           this.rejectMessage.set('');
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('teams.join_requests.rejected'),
-          });
+          this.toast.success('teams.join_requests.rejected');
           this.loadJoinRequests(teamId);
         },
         error: () => {
@@ -247,11 +240,7 @@ export class TeamRequestsComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('teams.invite_dialog.sent'),
-          });
+          this.toast.success('teams.invite_dialog.sent');
           this.inviting.set(false);
           this.showInviteDialog.set(false);
           this.loadInvitations(id);
@@ -278,11 +267,7 @@ export class TeamRequestsComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('teams.invitations.cancelled'),
-          });
+          this.toast.success('teams.invitations.cancelled');
           this.loadInvitations(id);
         },
         error: () => this.notifyError(),
@@ -325,10 +310,6 @@ export class TeamRequestsComponent {
   }
 
   private notifyError(): void {
-    this.messageService.add({
-      severity: 'error',
-      summary: this.transloco.translate('common.error'),
-      detail: this.transloco.translate('teams.errors.unknown'),
-    });
+    this.toast.error('teams.errors.unknown');
   }
 }

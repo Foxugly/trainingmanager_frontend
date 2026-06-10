@@ -31,6 +31,7 @@ import { Topic } from '../../../api/model/topic';
 import { TopicCreationEnum } from '../../../api/model/topic-creation-enum';
 import { TopicMessage } from '../../../api/model/topic-message';
 import { MessagesService } from '../../../core/messages/messages.service';
+import { ToastService } from '../../../core/notifications/toast.service';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { RichEditorComponent } from '../../../shared/ui/rich-editor/rich-editor.component';
 import { AttachmentListComponent } from '../../../shared/ui/attachment-list/attachment-list.component';
@@ -82,6 +83,7 @@ export class TeamDiscussionsComponent {
   private readonly teamsService = inject(TeamsService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
+  private readonly toast = inject(ToastService);
   private readonly messagesService = inject(MessagesService);
   private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
@@ -375,11 +377,7 @@ export class TeamDiscussionsComponent {
           this.topics.update((list) => [created, ...list]);
           this.creatingTopic.set(false);
           this.showNewTopic.set(false);
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('teams.discussions.topic_created'),
-          });
+          this.toast.success('teams.discussions.topic_created');
         },
         error: (err: HttpErrorResponse) => {
           this.creatingTopic.set(false);
@@ -489,11 +487,7 @@ export class TeamDiscussionsComponent {
           this.savingEdit.set(false);
           this.editingMessageId.set(null);
           this.editContent.set('');
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('teams.discussions.message_updated'),
-          });
+          this.toast.success('teams.discussions.message_updated');
         },
         error: () => {
           this.savingEdit.set(false);
@@ -554,11 +548,7 @@ export class TeamDiscussionsComponent {
         next: () => {
           this.topics.update((list) => list.filter((t) => t.id !== topic.id));
           if (this.selectedTopic()?.id === topic.id) this.backToList();
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('teams.discussions.topic_deleted'),
-          });
+          this.toast.success('teams.discussions.topic_deleted');
         },
         error: () => this.notifyError(),
       });
@@ -589,21 +579,13 @@ export class TeamDiscussionsComponent {
                 : t,
             ),
           );
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('teams.discussions.message_deleted'),
-          });
+          this.toast.success('teams.discussions.message_deleted');
         },
         error: () => this.notifyError(),
       });
   }
 
   private notifyError(): void {
-    this.messageService.add({
-      severity: 'error',
-      summary: this.transloco.translate('common.error'),
-      detail: this.transloco.translate('teams.errors.unknown'),
-    });
+    this.toast.error('teams.errors.unknown');
   }
 }

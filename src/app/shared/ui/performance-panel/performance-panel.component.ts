@@ -13,7 +13,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { UIChart } from 'primeng/chart';
 import { ConfirmDialog } from 'primeng/confirmdialog';
@@ -29,6 +29,7 @@ import { PatchedPerformanceRequest } from '../../../api/model/patched-performanc
 import { Performance } from '../../../api/model/performance';
 import { PerformanceRequest } from '../../../api/model/performance-request';
 import { UnitEnum } from '../../../api/model/unit-enum';
+import { ToastService } from '../../../core/notifications/toast.service';
 import { EmptyStateComponent } from '../empty-state/empty-state.component';
 
 interface ChartConfig {
@@ -94,7 +95,7 @@ export class PerformancePanelComponent {
   private readonly fb = inject(FormBuilder);
   private readonly performancesService = inject(PerformancesService);
   private readonly confirmationService = inject(ConfirmationService);
-  private readonly messageService = inject(MessageService);
+  private readonly toast = inject(ToastService);
   private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -386,20 +387,12 @@ export class PerformancePanelComponent {
     this.saving.set(false);
     this.dialogOpen.set(false);
     this.editingId.set(null);
-    this.messageService.add({
-      severity: 'success',
-      summary: this.transloco.translate('common.success'),
-      detail: this.transloco.translate(detailKey),
-    });
+    this.toast.success(detailKey);
   }
 
   private onError(_err: HttpErrorResponse): void {
     this.saving.set(false);
-    this.messageService.add({
-      severity: 'error',
-      summary: this.transloco.translate('common.error'),
-      detail: this.transloco.translate('performance.toasts.error'),
-    });
+    this.toast.error('performance.toasts.error');
   }
 
   protected confirmDelete(entry: Performance): void {
@@ -419,11 +412,7 @@ export class PerformancePanelComponent {
       .subscribe({
         next: () => {
           this.items.update((list) => list.filter((p) => p.id !== entry.id));
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('performance.toasts.deleted'),
-          });
+          this.toast.success('performance.toasts.deleted');
         },
         error: (err: HttpErrorResponse) => this.onError(err),
       });

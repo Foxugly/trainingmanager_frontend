@@ -858,6 +858,8 @@
     "back": "Indietro",
     "loading": "Caricamento",
     "error": "Errore",
+    "warning": "Avviso",
+    "info": "Informazione",
     "success": "Successo",
     "active": "Attivo",
     "inactive": "Inattivo",

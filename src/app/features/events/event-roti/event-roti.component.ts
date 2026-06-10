@@ -10,12 +10,12 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { Tooltip } from 'primeng/tooltip';
 import { EventsService } from '../../../api/api/events.service';
 import { RotiSummary } from '../../../api/model/roti-summary';
+import { ToastService } from '../../../core/notifications/toast.service';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 
 /**
@@ -32,8 +32,7 @@ import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.
 })
 export class EventRotiComponent {
   private readonly eventsService = inject(EventsService);
-  private readonly messageService = inject(MessageService);
-  private readonly transloco = inject(TranslocoService);
+  private readonly toast = inject(ToastService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly eventId = input.required<number>();
@@ -97,19 +96,11 @@ export class EventRotiComponent {
         next: (res) => {
           this.rotiSummary.set(this.normalize(res));
           this.rotiSubmitting.set(false);
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('events.roti.saved'),
-          });
+          this.toast.success('events.roti.saved');
         },
         error: () => {
           this.rotiSubmitting.set(false);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('events.errors.unknown'),
-          });
+          this.toast.error('events.errors.unknown');
         },
       });
   }

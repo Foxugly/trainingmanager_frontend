@@ -37,6 +37,7 @@ import { Team } from '../../../api/model/team';
 import { TrainingTypeEnum } from '../../../api/model/training-type-enum';
 import { VisibilityMode } from '../../../api/model/visibility-mode';
 import { AuthService } from '../../../core/auth/auth.service';
+import { ToastService } from '../../../core/notifications/toast.service';
 import { AiErrorMappingService } from '../../ai/ai-error-mapping.service';
 import { TeamRole, computeTeamRole } from '../../teams/teams-list/teams-list.component';
 import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-header.component';
@@ -106,6 +107,7 @@ export class EventsDetailComponent implements OnInit {
   private readonly aiErrorMapping = inject(AiErrorMappingService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
+  private readonly toast = inject(ToastService);
   private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -337,19 +339,11 @@ export class EventsDetailComponent implements OnInit {
         next: (res) => {
           this.rsvpSummary.set(res);
           this.rsvpSubmitting.set(false);
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('events.rsvp.saved'),
-          });
+          this.toast.success('events.rsvp.saved');
         },
         error: () => {
           this.rsvpSubmitting.set(false);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('events.errors.unknown'),
-          });
+          this.toast.error('events.errors.unknown');
         },
       });
   }
@@ -374,21 +368,13 @@ export class EventsDetailComponent implements OnInit {
       .subscribe({
         next: (res) => {
           this.rsvpApplying.set(false);
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('events.rsvp.applied', { count: res.applied }),
-          });
+          this.toast.success('events.rsvp.applied', { count: res.applied });
           // Refresh the attendance manager if it's the active tab (or whenever loaded).
           this.reloadEvent();
         },
         error: () => {
           this.rsvpApplying.set(false);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('events.errors.unknown'),
-          });
+          this.toast.error('events.errors.unknown');
         },
       });
   }
@@ -473,11 +459,7 @@ export class EventsDetailComponent implements OnInit {
             this.notFound.set(true);
           } else {
             this.loadError.set(true);
-            this.messageService.add({
-              severity: 'error',
-              summary: this.transloco.translate('common.error'),
-              detail: this.transloco.translate('events.detail.load_failed'),
-            });
+            this.toast.error('events.detail.load_failed');
           }
         },
       });
@@ -500,11 +482,7 @@ export class EventsDetailComponent implements OnInit {
           // The team drives role/permission gating; if it can't be resolved the
           // viewer is treated as a restricted (non-manager) viewer. Surface a
           // toast so a failed fetch isn't completely silent.
-          this.messageService.add({
-            severity: 'warn',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('events.detail.team_load_failed'),
-          });
+          this.toast.warn('events.detail.team_load_failed');
         },
       });
   }
@@ -581,11 +559,7 @@ export class EventsDetailComponent implements OnInit {
   }
 
   private notifyRegenerated(): void {
-    this.messageService.add({
-      severity: 'success',
-      summary: this.transloco.translate('common.success'),
-      detail: this.transloco.translate('events.regenerate.success_title'),
-    });
+    this.toast.success('events.regenerate.success_title');
   }
 
   protected openDuplicate(): void {
@@ -651,23 +625,15 @@ export class EventsDetailComponent implements OnInit {
           this.event.update((e) =>
             e ? { ...e, is_public: res.is_public, public_token: res.public_token ?? null } : e,
           );
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate(
-              res.is_public ? 'public_share.event.enabled' : 'public_share.event.disabled',
-            ),
-          });
+          this.toast.success(
+            res.is_public ? 'public_share.event.enabled' : 'public_share.event.disabled',
+          );
         },
         error: (err: HttpErrorResponse) => {
           this.sharing.set(false);
           const code = (err?.error as { code?: string } | null | undefined)?.code;
           if (err?.status === 409 && code === 'public_sharing_disabled') {
-            this.messageService.add({
-              severity: 'warn',
-              summary: this.transloco.translate('common.error'),
-              detail: this.transloco.translate('public_share.event.sharing_disabled'),
-            });
+            this.toast.warn('public_share.event.sharing_disabled');
           } else {
             this.notifyMutationError(err);
           }
@@ -699,11 +665,7 @@ export class EventsDetailComponent implements OnInit {
       .subscribe({
         next: () => {
           this.deleting.set(false);
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('events.actions.deleted'),
-          });
+          this.toast.success('events.actions.deleted');
           if (programId !== null) {
             this.router.navigate(['/programs', programId]);
           } else {
@@ -712,11 +674,7 @@ export class EventsDetailComponent implements OnInit {
         },
         error: () => {
           this.deleting.set(false);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('events.errors.unknown'),
-          });
+          this.toast.error('events.errors.unknown');
         },
       });
   }
@@ -727,11 +685,7 @@ export class EventsDetailComponent implements OnInit {
     // inline AI error message.
     const code = (err?.error as { code?: string } | null | undefined)?.code;
     if (err?.status === 409 && code === 'event_in_past') {
-      this.messageService.add({
-        severity: 'warn',
-        summary: this.transloco.translate('common.error'),
-        detail: this.transloco.translate('events.detail.regenerate_past_blocked'),
-      });
+      this.toast.warn('events.detail.regenerate_past_blocked');
       return;
     }
     const info = this.aiErrorMapping.map(err);
@@ -799,10 +753,6 @@ export class EventsDetailComponent implements OnInit {
 
   private notifyMutationError(err: HttpErrorResponse): void {
     const detailKey = err?.status === 403 ? 'events.errors.forbidden' : 'events.errors.unknown';
-    this.messageService.add({
-      severity: 'error',
-      summary: this.transloco.translate('common.error'),
-      detail: this.transloco.translate(detailKey),
-    });
+    this.toast.error(detailKey);
   }
 }

@@ -9,8 +9,8 @@ import { MessageService } from 'primeng/api';
  *
  * Replaces the ~30 hand-rolled `notify*` helpers that each rebuilt the same
  * `messageService.add({ severity, summary: translate('common.X'), detail:
- * translate(key) })`. Inject this instead and call success()/error()/… with
- * the detail i18n key.
+ * translate(key) })`. Inject this instead and call success()/error()/warn()/
+ * info() with the detail i18n key.
  *
  * For DRF field-error mapping use `applyServerError` / `extractServerError`
  * (shared/forms/notify-error) — that's a different concern and stays separate.
@@ -30,8 +30,18 @@ export class ToastService {
     this.add('error', 'common.error', detailKey, params);
   }
 
+  /** Warning toast — a non-blocking caveat the user should notice. */
+  warn(detailKey: string, params?: Record<string, unknown>): void {
+    this.add('warn', 'common.warning', detailKey, params);
+  }
+
+  /** Info toast — neutral, low-priority feedback. */
+  info(detailKey: string, params?: Record<string, unknown>): void {
+    this.add('info', 'common.info', detailKey, params);
+  }
+
   private add(
-    severity: 'success' | 'error',
+    severity: 'success' | 'error' | 'warn' | 'info',
     summaryKey: string,
     detailKey: string,
     params?: Record<string, unknown>,

@@ -22,7 +22,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { InputNumber } from 'primeng/inputnumber';
@@ -40,6 +40,7 @@ import { LanguageEnum } from '../../../api/model/language-enum';
 import { Modality } from '../../../api/model/modality';
 import { Round } from '../../../api/model/round';
 import { type FieldErrors, extractServerError } from '../../../shared/forms/notify-error';
+import { ToastService } from '../../../core/notifications/toast.service';
 import { timeMmSsValidator } from '../shared/time-validator';
 
 /** Reactive form for an inline exercise row (create or edit). */
@@ -99,7 +100,7 @@ export class RoundExercisesComponent {
   private readonly energySegmentsService = inject(EnergySegmentsService);
   private readonly fb = inject(FormBuilder);
   private readonly confirmationService = inject(ConfirmationService);
-  private readonly messageService = inject(MessageService);
+  private readonly toast = inject(ToastService);
   private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -461,11 +462,7 @@ export class RoundExercisesComponent {
       body?.code && REORDER_CODES.has(body.code)
         ? `events.detail.reorder_errors.${body.code}`
         : 'events.detail.reorder_errors.unknown';
-    this.messageService.add({
-      severity: 'error',
-      summary: this.transloco.translate('common.error'),
-      detail: this.transloco.translate(i18nKey),
-    });
+    this.toast.error(i18nKey);
   }
 
   // --- Delete -----------------------------------------------------------------
@@ -487,11 +484,7 @@ export class RoundExercisesComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('events.detail.confirm_delete_exercise.deleted'),
-          });
+          this.toast.success('events.detail.confirm_delete_exercise.deleted');
           this.reloadRequested.emit();
         },
         error: (err: HttpErrorResponse) => this.notifyMutationError(err),
@@ -501,11 +494,7 @@ export class RoundExercisesComponent {
   // --- Notifications + error mapping ------------------------------------------
 
   private notifyExerciseSaved(detailKey: string): void {
-    this.messageService.add({
-      severity: 'success',
-      summary: this.transloco.translate('common.success'),
-      detail: this.transloco.translate(detailKey),
-    });
+    this.toast.success(detailKey);
   }
 
   private setSaving(key: string, on: boolean): void {
@@ -545,19 +534,11 @@ export class RoundExercisesComponent {
   }
 
   private notifyGlobalError(detailKey: string): void {
-    this.messageService.add({
-      severity: 'error',
-      summary: this.transloco.translate('common.error'),
-      detail: this.transloco.translate(detailKey),
-    });
+    this.toast.error(detailKey);
   }
 
   private notifyMutationError(err: HttpErrorResponse): void {
     const detailKey = err?.status === 403 ? 'events.errors.forbidden' : 'events.errors.unknown';
-    this.messageService.add({
-      severity: 'error',
-      summary: this.transloco.translate('common.error'),
-      detail: this.transloco.translate(detailKey),
-    });
+    this.toast.error(detailKey);
   }
 }
