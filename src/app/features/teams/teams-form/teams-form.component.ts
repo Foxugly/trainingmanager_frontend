@@ -379,7 +379,7 @@ export class TeamsFormComponent implements OnInit {
             for (const s of t.sports ?? []) {
               overrides.set(
                 s.id,
-                (s.training_type as unknown as SportTrainingTypeWriteRequestTrainingTypeEnum | null) ?? null,
+                (s.training_type as SportTrainingTypeWriteRequestTrainingTypeEnum | null) ?? null,
               );
             }
             this.sportTrainingTypes.set(overrides);

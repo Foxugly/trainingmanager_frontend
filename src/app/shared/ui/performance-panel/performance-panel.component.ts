@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -31,6 +30,7 @@ import { PerformanceRequest } from '../../../api/model/performance-request';
 import { UnitEnum } from '../../../api/model/unit-enum';
 import { ToastService } from '../../../core/notifications/toast.service';
 import { EmptyStateComponent } from '../empty-state/empty-state.component';
+import { LocalizedDatePipe } from '../../datetime/localized-date.pipe';
 
 interface ChartConfig {
   data: unknown;
@@ -72,7 +72,7 @@ const SECONDS_IN_MINUTE = 60;
   selector: 'app-performance-panel',
   imports: [
     ReactiveFormsModule,
-    DatePipe,
+    LocalizedDatePipe,
     Button,
     UIChart,
     ConfirmDialog,

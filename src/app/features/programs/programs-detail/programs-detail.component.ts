@@ -32,6 +32,7 @@ import {
   GenerateEventsDialogComponent,
   GenerateEventsResult,
 } from '../generate-events-dialog/generate-events-dialog.component';
+import { ShortTimePipe } from '../../../shared/datetime/short-time.pipe';
 import { AttachmentListComponent } from '../../../shared/ui/attachment-list/attachment-list.component';
 import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-header.component';
 import {
@@ -46,6 +47,7 @@ import {
   startOfMonth,
   startOfWeekMonday,
 } from '../../../shared/date/calendar';
+import { LocalizedDatePipe } from '../../../shared/datetime/localized-date.pipe';
 
 const HEX_RE = /^#([0-9a-f]{6}|[0-9a-f]{3})$/i;
 
@@ -70,6 +72,7 @@ function eventDateAsDate(e: Event): Date | null {
   selector: 'app-programs-detail',
   imports: [
     CommonModule,
+    LocalizedDatePipe,
     RouterLink,
     Button,
     ConfirmDialog,
@@ -78,6 +81,7 @@ function eventDateAsDate(e: Event): Date | null {
     Skeleton,
     Tooltip,
     TranslocoPipe,
+    ShortTimePipe,
     DetailHeaderComponent,
     AttachmentListComponent,
     ActiveToggleComponent,

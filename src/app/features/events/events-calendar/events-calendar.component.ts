@@ -38,6 +38,7 @@ import {
   startOfMonth,
   startOfWeekMonday,
 } from '../../../shared/date/calendar';
+import { LocalizedDatePipe } from '../../../shared/datetime/localized-date.pipe';
 
 const HEX_RE = /^#([0-9a-f]{6}|[0-9a-f]{3})$/i;
 
@@ -53,7 +54,16 @@ function normalizeHex(value: string | null | undefined): string | null {
 
 @Component({
   selector: 'app-events-calendar',
-  imports: [CommonModule, FormsModule, RouterLink, Button, MultiSelect, Skeleton, TranslocoPipe],
+  imports: [
+    CommonModule,
+    LocalizedDatePipe,
+    FormsModule,
+    RouterLink,
+    Button,
+    MultiSelect,
+    Skeleton,
+    TranslocoPipe,
+  ],
   templateUrl: './events-calendar.component.html',
   styleUrl: './events-calendar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

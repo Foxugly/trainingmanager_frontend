@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -57,10 +56,11 @@ import {
 } from '../duplicate-event-dialog/duplicate-event-dialog.component';
 import { ShareEventDialogComponent } from '../share-event-dialog/share-event-dialog.component';
 import { EventShareResponse } from '../../../api/model/event-share-response';
+import { LocalizedDatePipe } from '../../../shared/datetime/localized-date.pipe';
 @Component({
   selector: 'app-events-detail',
   imports: [
-    CommonModule,
+    LocalizedDatePipe,
     ReactiveFormsModule,
     FormsModule,
     RouterLink,
@@ -237,6 +237,9 @@ export class EventsDetailComponent implements OnInit {
     const map = new Map<number, RsvpStatusEnum>();
     for (const m of this.rsvpSummary()?.by_member ?? []) {
       if (m.status != null) {
+        // codegen: RsvpByMemberStatusEnum (summary) and RsvpStatusEnum (write)
+        // are distinct generated enums with identical values; no overlap for a
+        // direct cast.
         map.set(m.member_id, m.status as unknown as RsvpStatusEnum);
       }
     }

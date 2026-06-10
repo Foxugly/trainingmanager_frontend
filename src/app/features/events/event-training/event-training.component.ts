@@ -197,6 +197,10 @@ export class EventTrainingComponent {
     const sorted = [...detail].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
     this.rounds.set(
       sorted.map(
+        // codegen: built from the embedded EventRoundDetail, projecting only the
+        // fields the editor consumes. The full Round interface also requires
+        // language/usage_count/created_at/updated_at, which the detail payload
+        // doesn't carry, so the partial object can't satisfy `as Round` directly.
         (rd) =>
           ({
             id: rd.id,

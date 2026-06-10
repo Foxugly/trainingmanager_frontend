@@ -53,7 +53,7 @@
           <div class="mb-2 flex flex-wrap items-center gap-2 text-xs text-gray-500">
             <span class="font-medium text-gray-700">{{ note.author_username || '—' }}</span>
             <span>·</span>
-            <span>{{ note.created_at | date: 'medium' }}</span>
+            <span>{{ note.created_at | localizedDate: 'medium' }}</span>
             @if (note.visible_to_athlete) {
               <p-tag
                 severity="success"

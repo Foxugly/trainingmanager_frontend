@@ -10,7 +10,7 @@
 import { ReviewFinding } from './review-finding';
 import { ReviewAdjustment } from './review-adjustment';
 import { StatsPeriod } from './stats-period';
-import { ReviewTokensUsed } from './review-tokens-used';
+import { TokensUsed } from './tokens-used';
 
 
 /**
@@ -30,6 +30,6 @@ export interface ReviewBlockResponse {
      */
     confidence: string;
     model: string;
-    tokens_used: ReviewTokensUsed;
+    tokens_used: TokensUsed;
 }
 

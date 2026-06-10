@@ -106,13 +106,13 @@
                   @if (!teamFilter() && p.team.name) {
                     <span> · </span>
                   }
-                  {{ p.date_start | date: 'mediumDate' }}
+                  {{ p.date_start | localizedDate: 'mediumDate' }}
                 }
                 @if (p.date_start && p.date_end) {
                   <span> → </span>
                 }
                 @if (p.date_end) {
-                  {{ p.date_end | date: 'mediumDate' }}
+                  {{ p.date_end | localizedDate: 'mediumDate' }}
                 }
               </p>
             </div>

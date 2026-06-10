@@ -36,7 +36,7 @@
                   <span class="text-xs text-gray-500">&#64;{{ req.user_username }}</span>
                 }
                 <span class="text-xs text-gray-500">
-                  · {{ req.requested_at | date: 'medium' }}
+                  · {{ req.requested_at | localizedDate: 'medium' }}
                 </span>
               </div>
               @if (req.message) {
@@ -104,11 +104,11 @@
             <div class="font-medium">{{ inv.email }}</div>
             <div class="text-xs text-gray-500">
               {{ 'teams.invitations.sent_at' | transloco }}
-              {{ inv.created_at | date: 'mediumDate' }}
+              {{ inv.created_at | localizedDate: 'mediumDate' }}
               @if (inv.expires_at) {
                 ·
                 {{ 'teams.invitations.expires_at' | transloco }}
-                {{ inv.expires_at | date: 'mediumDate' }}
+                {{ inv.expires_at | localizedDate: 'mediumDate' }}
               }
             </div>
           </div>

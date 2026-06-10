@@ -7,7 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { GeneratePlanTokensUsed } from './generate-plan-tokens-used';
+import { TokensUsed } from './tokens-used';
 
 
 export interface GeneratePlanResponse { 
@@ -15,6 +15,6 @@ export interface GeneratePlanResponse {
     deleted_count: number;
     rationale: string;
     model: string;
-    tokens_used: GeneratePlanTokensUsed;
+    tokens_used: TokensUsed;
 }
 

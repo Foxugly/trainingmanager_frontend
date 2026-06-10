@@ -247,7 +247,7 @@
               <i class="pi pi-check-circle" aria-hidden="true"></i>
               {{
                 'teams.detail.member_since'
-                  | transloco: { date: (mb.joined_at | date: 'mediumDate') }
+                  | transloco: { date: (mb.joined_at | localizedDate: 'mediumDate') }
               }}
             </div>
             @if (isAthleteMember() && myMemberId() !== null && teamId() !== null) {

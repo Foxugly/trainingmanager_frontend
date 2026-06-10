@@ -222,7 +222,7 @@
                 <td class="text-right">{{ ratePct(row.rate) }}</td>
                 <td class="text-right">{{ row.present }}/{{ row.total }}</td>
                 <td>
-                  {{ row.last_present_date ? (row.last_present_date | date: 'mediumDate') : '—' }}
+                  {{ row.last_present_date ? (row.last_present_date | localizedDate: 'mediumDate') : '—' }}
                 </td>
               </tr>
             </ng-template>
@@ -241,7 +241,7 @@
                 }
                 <span class="font-medium truncate">{{ sess.name }}</span>
                 <span class="ml-auto text-xs text-gray-500 shrink-0">
-                  {{ sess.date ? (sess.date | date: 'mediumDate') : '—' }}
+                  {{ sess.date ? (sess.date | localizedDate: 'mediumDate') : '—' }}
                 </span>
               </li>
             }

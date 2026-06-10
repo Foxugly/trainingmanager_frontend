@@ -30,6 +30,7 @@ import { OverlapStrategyEnum } from '../../../api/model/overlap-strategy-enum';
 import { Program } from '../../../api/model/program';
 import { TrainingTemplate } from '../../../api/model/training-template';
 import { AiErrorMappingService } from '../../ai/ai-error-mapping.service';
+import { shortTime } from '../../../shared/datetime/short-time';
 
 export interface GenerateEventsResult {
   created: number;
@@ -110,7 +111,7 @@ export class GenerateEventsDialogComponent {
     ];
     const parts = tpl.slots.map((s) => {
       const day = this.transloco.translate(dayKeys[s.weekday] ?? '');
-      return `${day} ${s.hour_start.slice(0, 5)}–${s.hour_end.slice(0, 5)}`;
+      return `${day} ${shortTime(s.hour_start)}–${shortTime(s.hour_end)}`;
     });
     let summary = parts.join(', ');
     if (tpl.default_pool) summary += ` · ${tpl.default_pool}`;

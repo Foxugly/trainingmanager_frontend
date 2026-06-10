@@ -28,14 +28,14 @@
           @if (e.date) {
             <div class="meta-item">
               <dt>{{ 'events.fields.date' | transloco }}</dt>
-              <dd>{{ e.date | date: 'fullDate' }}</dd>
+              <dd>{{ e.date | localizedDate: 'fullDate' }}</dd>
             </div>
           }
           @if (e.hour_start) {
             <div class="meta-item">
               <dt>{{ 'events.fields.hour_start' | transloco }}</dt>
               <dd>
-                {{ e.hour_start.slice(0, 5) }}@if (e.hour_end) { –{{ e.hour_end.slice(0, 5) }} }
+                {{ e.hour_start | shortTime }}@if (e.hour_end) { –{{ e.hour_end | shortTime }} }
               </dd>
             </div>
           }

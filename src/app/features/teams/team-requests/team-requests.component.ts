@@ -1,4 +1,4 @@
-import { DatePipe, KeyValuePipe } from '@angular/common';
+import { KeyValuePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -32,6 +32,7 @@ import { TeamJoinRequest } from '../../../api/model/team-join-request';
 import { ToastService } from '../../../core/notifications/toast.service';
 import { type FieldErrors } from '../../../shared/forms/notify-error';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
+import { LocalizedDatePipe } from '../../../shared/datetime/localized-date.pipe';
 
 /**
  * The team's manager-facing "Requests & Invitations" tab: pending join requests
@@ -46,7 +47,7 @@ import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.
 @Component({
   selector: 'app-team-requests',
   imports: [
-    DatePipe,
+    LocalizedDatePipe,
     KeyValuePipe,
     ReactiveFormsModule,
     Button,

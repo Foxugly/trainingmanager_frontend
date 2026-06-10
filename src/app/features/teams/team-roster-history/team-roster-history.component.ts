@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -14,6 +13,7 @@ import { TeamsService } from '../../../api/api/teams.service';
 import { RosterHistoryEntry } from '../../../api/model/roster-history-entry';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { loadOn } from '../../../shared/data/load-on';
+import { LocalizedDatePipe } from '../../../shared/datetime/localized-date.pipe';
 
 /**
  * Manager-only roster-history timeline: every membership period (active + past)
@@ -22,7 +22,7 @@ import { loadOn } from '../../../shared/data/load-on';
  */
 @Component({
   selector: 'app-team-roster-history',
-  imports: [DatePipe, TableModule, Tag, TranslocoPipe, EmptyStateComponent],
+  imports: [LocalizedDatePipe, TableModule, Tag, TranslocoPipe, EmptyStateComponent],
   templateUrl: './team-roster-history.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

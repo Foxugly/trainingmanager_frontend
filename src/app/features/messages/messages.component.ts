@@ -6,7 +6,6 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
@@ -20,6 +19,7 @@ import { TeamsService } from '../../api/api/teams.service';
 import { AudienceEnum } from '../../api/model/audience-enum';
 import { Team } from '../../api/model/team';
 import { Topic } from '../../api/model/topic';
+import { LocalizedDatePipe } from '../../shared/datetime/localized-date.pipe';
 
 /** A topic enriched with the team it belongs to, for the aggregated list. */
 export interface TopicRow {
@@ -32,7 +32,7 @@ export interface TopicRow {
 
 @Component({
   selector: 'app-messages',
-  imports: [DatePipe, RouterLink, Button, Skeleton, Tag, EmptyStateComponent, TranslocoPipe],
+  imports: [LocalizedDatePipe, RouterLink, Button, Skeleton, Tag, EmptyStateComponent, TranslocoPipe],
   templateUrl: './messages.component.html',
   styleUrl: './messages.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

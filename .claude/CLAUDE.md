@@ -127,7 +127,7 @@ Catalogs in `public/i18n/*.json`. Namespace by `feature.section.key`. New keys A
 - No `@HostBinding` / `@HostListener` — use the `host` object.
 - Reactive forms over template-driven.
 - `NgOptimizedImage` for static assets (not for inline base64).
-- External templates/styles paths relative to the component TS file.
+- External templates/styles paths relative to the component TS file. **Exception:** a handful of tiny presentational atoms in `shared/ui/` (`active-toggle`, `form-footer`, `meta-field`, `page-header`, `status-badge`) intentionally keep an inline `template:` — they are a few lines of markup with no logic, and an external `.html` would add ceremony without benefit. Feature components and anything non-trivial use external templates.
 
 ### Templates
 

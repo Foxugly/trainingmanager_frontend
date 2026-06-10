@@ -1,4 +1,4 @@
-import { DatePipe, KeyValuePipe, UpperCasePipe } from '@angular/common';
+import { KeyValuePipe, UpperCasePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -54,6 +54,7 @@ import {
   ActiveToggleComponent,
   ActiveToggleLabels,
 } from '../../../shared/ui/active-toggle/active-toggle.component';
+import { LocalizedDatePipe } from '../../../shared/datetime/localized-date.pipe';
 
 interface FieldErrors {
   [field: string]: string[];
@@ -62,7 +63,7 @@ interface FieldErrors {
 @Component({
   selector: 'app-teams-detail',
   imports: [
-    DatePipe,
+    LocalizedDatePipe,
     KeyValuePipe,
     UpperCasePipe,
     FormsModule,

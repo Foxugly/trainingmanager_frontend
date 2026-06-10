@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -14,13 +13,15 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import QRCode from 'qrcode';
 import { EventsService } from '../../../api/api/events.service';
+import { ShortTimePipe } from '../../../shared/datetime/short-time.pipe';
+import { LocalizedDatePipe } from '../../../shared/datetime/localized-date.pipe';
 import { Event } from '../../../api/model/event';
 import { EventRoundDetail } from '../../../api/model/event-round-detail';
 import { Exercise } from '../../../api/model/exercise';
 
 @Component({
   selector: 'app-event-print',
-  imports: [DatePipe, RouterLink, Button, TranslocoPipe],
+  imports: [LocalizedDatePipe, RouterLink, Button, TranslocoPipe, ShortTimePipe],
   templateUrl: './event-print.component.html',
   styleUrl: './event-print.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

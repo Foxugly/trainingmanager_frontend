@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -23,6 +22,7 @@ import { AttachmentStatusEnum } from '../../../api/model/attachment-status-enum'
 import { AttachmentUploadService } from '../../../core/attachments/attachment-upload.service';
 import { ToastService } from '../../../core/notifications/toast.service';
 import { EmptyStateComponent } from '../empty-state/empty-state.component';
+import { LocalizedDatePipe } from '../../datetime/localized-date.pipe';
 
 /** Accept attribute for the file picker — mirrors the backend MIME allow-list. */
 const ACCEPT = '.pdf,application/pdf,image/*,video/mp4,video/webm,video/quicktime';
@@ -38,7 +38,7 @@ const ACCEPT = '.pdf,application/pdf,image/*,video/mp4,video/webm,video/quicktim
  */
 @Component({
   selector: 'app-attachment-list',
-  imports: [DatePipe, Button, ConfirmDialog, Tooltip, TranslocoPipe, EmptyStateComponent],
+  imports: [LocalizedDatePipe, Button, ConfirmDialog, Tooltip, TranslocoPipe, EmptyStateComponent],
   templateUrl: './attachment-list.component.html',
   styleUrl: './attachment-list.component.scss',
   providers: [ConfirmationService],

@@ -8,7 +8,6 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { DatePipe } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
@@ -42,6 +41,7 @@ import { FormFooterComponent } from '../../shared/ui/form-footer/form-footer.com
 import { MetaFieldComponent } from '../../shared/ui/meta-field/meta-field.component';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header.component';
 import { AriaDescribesDirective } from '../../shared/a11y/aria-describes.directive';
+import { LocalizedDatePipe } from '../../shared/datetime/localized-date.pipe';
 
 interface ProfileFormValue {
   first_name: string;
@@ -72,7 +72,7 @@ interface ProfileFormValue {
     MetaFieldComponent,
     FormFooterComponent,
     AriaDescribesDirective,
-    DatePipe,
+    LocalizedDatePipe,
     TranslocoPipe,
   ],
   templateUrl: './profile.component.html',

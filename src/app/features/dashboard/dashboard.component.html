@@ -258,12 +258,12 @@
                 </div>
                 <div class="text-sm text-gray-700 shrink-0">
                   @if (item.event.date) {
-                    {{ item.event.date | date: 'EEE d MMM' }}
+                    {{ item.event.date | localizedDate: 'EEE d MMM' }}
                   }
                   @if (item.event.hour_start) {
-                    · {{ item.event.hour_start.slice(0, 5) }}
+                    · {{ item.event.hour_start | shortTime }}
                     @if (item.event.hour_end) {
-                      &nbsp;– {{ item.event.hour_end.slice(0, 5) }}
+                      &nbsp;– {{ item.event.hour_end | shortTime }}
                     }
                   }
                 </div>
@@ -312,7 +312,7 @@
                 <span class="text-xs text-gray-500 ml-2">
                   {{ item.teamName }} · {{ item.programName }}
                   @if (item.event.date) {
-                    · {{ item.event.date | date: 'mediumDate' }}
+                    · {{ item.event.date | localizedDate: 'mediumDate' }}
                   }
                 </span>
               </div>
@@ -443,12 +443,12 @@
                 </div>
                 <div class="text-sm text-gray-700 shrink-0">
                   @if (item.event.date) {
-                    {{ item.event.date | date: 'EEE d MMM' }}
+                    {{ item.event.date | localizedDate: 'EEE d MMM' }}
                   }
                   @if (item.event.hour_start) {
-                    · {{ item.event.hour_start.slice(0, 5) }}
+                    · {{ item.event.hour_start | shortTime }}
                     @if (item.event.hour_end) {
-                      &nbsp;– {{ item.event.hour_end.slice(0, 5) }}
+                      &nbsp;– {{ item.event.hour_end | shortTime }}
                     }
                   }
                 </div>
@@ -501,7 +501,7 @@
                 <span class="text-xs text-gray-500 ml-2">
                   {{ item.teamName }} · {{ item.programName }}
                   @if (item.event.date) {
-                    · {{ item.event.date | date: 'mediumDate' }}
+                    · {{ item.event.date | localizedDate: 'mediumDate' }}
                   }
                 </span>
               </div>

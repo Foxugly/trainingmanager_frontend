@@ -7,12 +7,12 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { ExplainTokensUsed } from './explain-tokens-used';
+import { TokensUsed } from './tokens-used';
 
 
 export interface ExplainSessionResponse { 
     athlete_brief: string;
     model: string;
-    tokens_used: ExplainTokensUsed;
+    tokens_used: TokensUsed;
 }
 

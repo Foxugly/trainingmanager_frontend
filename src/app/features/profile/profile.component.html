@@ -46,7 +46,7 @@
                     optionLabel="nativeName" optionValue="code" />
                 </app-meta-field>
                 <app-meta-field [label]="'profile.date_joined' | transloco">
-                  <span>{{ me.date_joined | date: 'medium' }}</span>
+                  <span>{{ me.date_joined | localizedDate: 'medium' }}</span>
                 </app-meta-field>
               </div>
 

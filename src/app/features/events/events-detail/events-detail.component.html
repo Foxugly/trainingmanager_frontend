@@ -196,7 +196,7 @@
           <div class="flex items-center gap-2">
             <i class="pi pi-calendar text-gray-400" aria-hidden="true"></i>
             <dt class="text-gray-500">{{ 'events.fields.date' | transloco }}</dt>
-            <dd class="font-medium text-gray-900">{{ e.date | date: 'fullDate' }}</dd>
+            <dd class="font-medium text-gray-900">{{ e.date | localizedDate: 'fullDate' }}</dd>
           </div>
         }
         @if (e.hour_start) {

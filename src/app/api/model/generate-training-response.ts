@@ -7,7 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { GenerateTrainingTokensUsed } from './generate-training-tokens-used';
+import { TokensUsed } from './tokens-used';
 
 
 export interface GenerateTrainingResponse { 
@@ -16,6 +16,6 @@ export interface GenerateTrainingResponse {
     exercises_reused?: number;
     rationale: string;
     model: string;
-    tokens_used: GenerateTrainingTokensUsed;
+    tokens_used: TokensUsed;
 }
 

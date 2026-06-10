@@ -46,7 +46,7 @@
             @for (entry of group.entries; track entry.id) {
               <li class="flex items-center gap-3 py-1.5">
                 <span class="w-24 shrink-0 text-gray-500">
-                  {{ entry.recorded_on | date: 'mediumDate' }}
+                  {{ entry.recorded_on | localizedDate: 'mediumDate' }}
                 </span>
                 <span class="font-medium text-gray-900">{{ formatEntryValue(entry) }}</span>
                 @if (entry.notes) {

@@ -5,6 +5,11 @@
  * as a free function.
  */
 
+/** Narrow view of `Intl` exposing the (not-yet-in-lib.d.ts) `supportedValuesOf`. */
+interface IntlWithSupportedValues {
+  supportedValuesOf?(key: string): string[];
+}
+
 /** Curated fallback if Intl.supportedValuesOf is unavailable (older runtimes). */
 export const TIMEZONE_FALLBACK: readonly string[] = [
   'UTC',
@@ -23,9 +28,7 @@ export const TIMEZONE_FALLBACK: readonly string[] = [
 export function timezoneOptions(): { label: string; value: string }[] {
   let zones: readonly string[];
   try {
-    const supported = (
-      Intl as unknown as { supportedValuesOf?: (key: string) => string[] }
-    ).supportedValuesOf;
+    const supported = (Intl as IntlWithSupportedValues).supportedValuesOf;
     zones = typeof supported === 'function' ? supported('timeZone') : TIMEZONE_FALLBACK;
   } catch {
     zones = TIMEZONE_FALLBACK;

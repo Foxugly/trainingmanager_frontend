@@ -7,7 +7,6 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
@@ -26,6 +25,7 @@ import { NoteRequest } from '../../../api/model/note-request';
 import { PatchedNoteRequest } from '../../../api/model/patched-note-request';
 import { MetaFieldComponent } from '../../../shared/ui/meta-field/meta-field.component';
 import { RichEditorComponent } from '../../../shared/ui/rich-editor/rich-editor.component';
+import { LocalizedDatePipe } from '../../../shared/datetime/localized-date.pipe';
 
 /**
  * Reusable per-athlete coach-notes panel.
@@ -43,7 +43,7 @@ import { RichEditorComponent } from '../../../shared/ui/rich-editor/rich-editor.
   selector: 'app-member-notes',
   imports: [
     ReactiveFormsModule,
-    DatePipe,
+    LocalizedDatePipe,
     Button,
     ConfirmDialog,
     RichEditorComponent,

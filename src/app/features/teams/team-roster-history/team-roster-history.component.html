@@ -17,8 +17,8 @@
     <ng-template pTemplate="body" let-row>
       <tr>
         <td>{{ row.name }}</td>
-        <td>{{ row.joined_at | date: 'mediumDate' }}</td>
-        <td>{{ row.left_at ? (row.left_at | date: 'mediumDate') : '—' }}</td>
+        <td>{{ row.joined_at | localizedDate: 'mediumDate' }}</td>
+        <td>{{ row.left_at ? (row.left_at | localizedDate: 'mediumDate') : '—' }}</td>
         <td>
           @if (row.active) {
             <p-tag severity="success" [value]="'teams.roster_history.active' | transloco" />

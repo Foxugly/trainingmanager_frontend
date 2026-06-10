@@ -64,7 +64,7 @@
                   <span>
                     <i class="pi pi-comment" aria-hidden="true"></i> {{ row.topic.message_count }}
                   </span>
-                  <span>{{ row.topic.updated_at | date: 'short' }}</span>
+                  <span>{{ row.topic.updated_at | localizedDate: 'short' }}</span>
                 </div>
               </div>
               <i

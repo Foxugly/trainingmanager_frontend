@@ -45,7 +45,7 @@
               <div class="att-meta">
                 <span class="att-size">{{ formatSize(item.size_bytes) }}</span>
                 <span class="att-dot" aria-hidden="true">·</span>
-                <span class="att-date">{{ item.created_at | date: 'mediumDate' }}</span>
+                <span class="att-date">{{ item.created_at | localizedDate: 'mediumDate' }}</span>
               </div>
             </div>
             <div class="att-actions-inline">

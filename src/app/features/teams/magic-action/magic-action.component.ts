@@ -18,6 +18,7 @@ import { ActionProposedEnum } from '../../../api/model/action-proposed-enum';
 import { JoinMagicCancelledResponse } from '../../../api/model/join-magic-cancelled-response';
 import { MagicActionJoinStatusEnum } from '../../../api/model/magic-action-join-status-enum';
 import { TeamJoinRequestMagicActionResponse } from '../../../api/model/team-join-request-magic-action-response';
+import { LocalizedDatePipe } from '../../../shared/datetime/localized-date.pipe';
 
 type MagicErrorState = 'invalid_token' | 'forbidden' | 'not_found' | 'unknown' | null;
 
@@ -32,7 +33,7 @@ type ConfirmationCase =
 
 @Component({
   selector: 'app-magic-action',
-  imports: [CommonModule, RouterLink, Button, TranslocoPipe],
+  imports: [CommonModule, LocalizedDatePipe, RouterLink, Button, TranslocoPipe],
   templateUrl: './magic-action.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -2,32 +2,12 @@
   display: block;
 }
 
-.discussions {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
 .muted {
   color: var(--p-text-muted-color, #6b7280);
   font-style: italic;
 }
 
-.list-header {
-  display: flex;
-  justify-content: flex-end;
-}
-
 /* ---- Topic list ---- */
-.topic-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
 .topic-card {
   display: flex;
   align-items: center;
@@ -56,16 +36,6 @@
   font: inherit;
 }
 
-.topic-title-row {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.topic-title {
-  font-weight: 600;
-}
-
 .topic-meta {
   display: flex;
   flex-wrap: wrap;
@@ -79,12 +49,6 @@
 }
 
 /* ---- Thread ---- */
-.thread {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
 .thread-header {
   display: flex;
   align-items: flex-start;
@@ -109,12 +73,6 @@
       color: var(--p-text-muted-color, #6b7280);
     }
   }
-}
-
-.messages {
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
 }
 
 .message {
@@ -158,16 +116,6 @@
   }
 }
 
-.message-body {
-  word-break: break-word;
-}
-
-.message-edit {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
 .editor-toolbar {
   display: flex;
   align-items: center;
@@ -176,11 +124,6 @@
   .spacer {
     flex: 1;
   }
-}
-
-.message-attachments {
-  display: block;
-  margin-top: 0.5rem;
 }
 
 .reply-box {
@@ -217,18 +160,7 @@
   }
 }
 
-.replies-disabled {
-  padding: 0.5rem 0;
-}
-
 /* ---- Dialog ---- */
-.dialog-body {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding-top: 0.25rem;
-}
-
 .field {
   display: flex;
   flex-direction: column;
@@ -238,17 +170,6 @@
   :host ::ng-deep .p-select {
     width: 100%;
   }
-}
-
-.field-label {
-  font-weight: 600;
-  font-size: 0.85rem;
-}
-
-.field-inline {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
 }
 
 :host-context(.dark-mode) {

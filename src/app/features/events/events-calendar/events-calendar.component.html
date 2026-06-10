@@ -93,7 +93,7 @@
           [class.font-semibold]="isToday(day)"
           [class.text-gray-500]="!isToday(day)"
         >
-          {{ day | date: 'd' }}
+          {{ day | localizedDate: 'd' }}
         </div>
         @if (loading() && skeletonIndices.has(i) && isSameMonth(day, currentMonth())) {
           <p-skeleton

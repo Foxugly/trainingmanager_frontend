@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -29,6 +28,7 @@ import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.
 import { RsvpReliabilityComponent } from '../rsvp-reliability/rsvp-reliability.component';
 import { RotiDriftComponent } from '../roti-drift/roti-drift.component';
 import { buildStatsCsv } from './stats-csv';
+import { LocalizedDatePipe } from '../../../shared/datetime/localized-date.pipe';
 
 interface ChartConfig {
   data: unknown;
@@ -58,7 +58,7 @@ const SEGMENT_PALETTE = [
 @Component({
   selector: 'app-team-stats',
   imports: [
-    DatePipe,
+    LocalizedDatePipe,
     FormsModule,
     TranslocoPipe,
     Button,

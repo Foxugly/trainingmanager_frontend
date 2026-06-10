@@ -171,6 +171,10 @@ export class ProgramsFormComponent implements OnInit {
           // p-select can resolve and display its label. Team is not changeable
           // on update, so we don't load the full managed-teams list here.
           if (p.team) {
+            // codegen: Program.team is a TeamMinimal (id/name/language only),
+            // but availableTeams seeds the disabled p-select which only reads
+            // id/name. The two codegen interfaces don't overlap enough for a
+            // direct `as Team`, so the double-cast bridges the read shape.
             this.availableTeams.set([p.team as unknown as Team]);
           }
           this.form.reset({

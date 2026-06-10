@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -17,6 +16,8 @@ import { Message } from 'primeng/message';
 import { Select } from 'primeng/select';
 import { Skeleton } from 'primeng/skeleton';
 import { forkJoin } from 'rxjs';
+import { ShortTimePipe } from '../../shared/datetime/short-time.pipe';
+import { LocalizedDatePipe } from '../../shared/datetime/localized-date.pipe';
 import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.component';
 import { PerformancePanelComponent } from '../../shared/ui/performance-panel/performance-panel.component';
 import { TeamStatsComponent } from '../teams/team-stats/team-stats.component';
@@ -77,7 +78,7 @@ function localTodayParam(): string {
 @Component({
   selector: 'app-dashboard',
   imports: [
-    DatePipe,
+    LocalizedDatePipe,
     FormsModule,
     RouterLink,
     Button,
@@ -88,6 +89,7 @@ function localTodayParam(): string {
     PerformancePanelComponent,
     TeamStatsComponent,
     TranslocoPipe,
+    ShortTimePipe,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',

@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -25,11 +24,12 @@ import { Team } from '../../../api/model/team';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ToastService } from '../../../core/notifications/toast.service';
 import { computeTeamRole } from '../../teams/teams-list/teams-list.component';
+import { LocalizedDatePipe } from '../../../shared/datetime/localized-date.pipe';
 
 @Component({
   selector: 'app-programs-list',
   imports: [
-    DatePipe,
+    LocalizedDatePipe,
     FormsModule,
     RouterLink,
     Button,

@@ -34,7 +34,7 @@
       <p class="text-sm text-gray-600 mb-6">
         <i class="pi pi-user text-gray-400 mr-1" aria-hidden="true"></i>
         {{ d.join_request.requester_username }}
-        <span class="text-xs text-gray-400">· {{ d.join_request.requested_at | date: 'medium' }}</span>
+        <span class="text-xs text-gray-400">· {{ d.join_request.requested_at | localizedDate: 'medium' }}</span>
       </p>
 
       @if (d.join_request.message) {
@@ -89,7 +89,7 @@
                 | transloco
                   : {
                       by: d.join_request.responded_by ?? '—',
-                      at: (d.join_request.responded_at | date: 'medium'),
+                      at: (d.join_request.responded_at | localizedDate: 'medium'),
                     }
             }}
           </p>
@@ -101,7 +101,7 @@
                 | transloco
                   : {
                       by: d.join_request.responded_by ?? '—',
-                      at: (d.join_request.responded_at | date: 'medium'),
+                      at: (d.join_request.responded_at | localizedDate: 'medium'),
                       user: d.join_request.requester_username,
                     }
             }}
@@ -114,7 +114,7 @@
                 | transloco
                   : {
                       by: d.join_request.responded_by ?? '—',
-                      at: (d.join_request.responded_at | date: 'medium'),
+                      at: (d.join_request.responded_at | localizedDate: 'medium'),
                     }
             }}
           </p>

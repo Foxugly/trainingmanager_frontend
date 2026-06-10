@@ -98,8 +98,12 @@ export const appConfig: ApplicationConfig = {
     {
       // Resolves once at first injection — we rely on provideAppInitializer above
       // to have populated LanguageService.activeLang() (from me.language) before
-      // the first DatePipe asks for LOCALE_ID. Mid-session swap won't repropagate
-      // to existing pipe instances (Angular caches LOCALE_ID per injector).
+      // LOCALE_ID is first read. Mid-session swap won't repropagate to existing
+      // consumers (Angular caches LOCALE_ID per injector), so date display now
+      // goes through LocalizedDatePipe (`| localizedDate`, impure, reads
+      // LanguageService.activeLang() on every CD) which reformats reactively on a
+      // language change. LOCALE_ID stays the bootstrap default for everything else
+      // (number/currency pipes, framework internals).
       provide: LOCALE_ID,
       useFactory: () => inject(LanguageService).activeLang(),
     },

@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -35,6 +34,7 @@ import { ToastService } from '../../../core/notifications/toast.service';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { RichEditorComponent } from '../../../shared/ui/rich-editor/rich-editor.component';
 import { AttachmentListComponent } from '../../../shared/ui/attachment-list/attachment-list.component';
+import { LocalizedDatePipe } from '../../../shared/datetime/localized-date.pipe';
 import { EMOJIS } from './emojis';
 
 /** owner | manager | member — the viewer's role within this team. */
@@ -59,7 +59,7 @@ type ThreadMessage = TopicMessage;
 @Component({
   selector: 'app-team-discussions',
   imports: [
-    DatePipe,
+    LocalizedDatePipe,
     FormsModule,
     Button,
     Checkbox,

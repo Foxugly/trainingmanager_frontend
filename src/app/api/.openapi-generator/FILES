@@ -136,13 +136,10 @@ model/event.ts
 model/exercise-request.ts
 model/exercise.ts
 model/explain-session-response.ts
-model/explain-tokens-used.ts
 model/generate-plan-request-request.ts
 model/generate-plan-response.ts
-model/generate-plan-tokens-used.ts
 model/generate-training-request-request.ts
 model/generate-training-response.ts
-model/generate-training-tokens-used.ts
 model/health-check.ts
 model/instantiate-template-request-request.ts
 model/invitation-status-enum.ts
@@ -253,7 +250,6 @@ model/review-adjustment.ts
 model/review-block-request-request.ts
 model/review-block-response.ts
 model/review-finding.ts
-model/review-tokens-used.ts
 model/roster-history-entry.ts
 model/roster-history-response.ts
 model/roti-drift-entry.ts
@@ -306,6 +302,7 @@ model/team.ts
 model/token-obtain-pair-response.ts
 model/token-refresh-request.ts
 model/token-refresh.ts
+model/tokens-used.ts
 model/topic-creation-enum.ts
 model/topic-message-request.ts
 model/topic-message.ts
