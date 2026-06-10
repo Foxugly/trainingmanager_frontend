@@ -19,7 +19,7 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService } from 'primeng/api';
@@ -29,7 +29,7 @@ import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { Tooltip } from 'primeng/tooltip';
-import { firstValueFrom } from 'rxjs';
+import { catchError, distinctUntilChanged, filter, firstValueFrom, forkJoin, of, switchMap, tap } from 'rxjs';
 import { EnergySegmentsService } from '../../../api/api/energy-segments.service';
 import { ExercisesService } from '../../../api/api/exercises.service';
 import { RoundsService } from '../../../api/api/rounds.service';
@@ -141,8 +141,6 @@ export class RoundExercisesComponent {
 
   protected readonly hasNewRows = computed(() => this.newRows().length > 0);
 
-  private optionsSportId: number | null = null;
-
   constructor() {
     // Mirror the exercises input into a local working copy that the inline
     // mutations (create/edit/reorder) update optimistically. Re-syncs whenever
@@ -153,14 +151,33 @@ export class RoundExercisesComponent {
     });
 
     // Load modality + energy-segment option lists once the sport is known, so
-    // inline edit/add rows have their selects ready.
-    effect(() => {
-      const sportId = this.sportId();
-      if (sportId == null) return;
-      if (this.optionsSportId === sportId) return;
-      this.optionsSportId = sportId;
-      untracked(() => void this.loadOptions(sportId));
-    });
+    // inline edit/add rows have their selects ready. toObservable(sportId) →
+    // switchMap cancels an in-flight fetch when the sport changes again;
+    // distinctUntilChanged dedupes repeat emissions of the same sport.
+    toObservable(this.sportId)
+      .pipe(
+        filter((sportId): sportId is number => sportId != null),
+        distinctUntilChanged(),
+        tap(() => this.loadingOptions.set(true)),
+        switchMap((sportId) =>
+          forkJoin({
+            mods: this.sportsService.sportsModalitiesList({ sportPk: sportId }),
+            segs: this.energySegmentsService.energySegmentsList(),
+          }).pipe(
+            tap(({ mods, segs }) => {
+              this.modalities.set((mods.results ?? []).filter((m) => m.is_active));
+              this.energySegments.set((segs.results ?? []).filter((s) => s.is_active));
+            }),
+            catchError(() => {
+              this.modalities.set([]);
+              this.energySegments.set([]);
+              return of(null);
+            }),
+          ),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => this.loadingOptions.set(false));
   }
 
   // --- Distance helpers -------------------------------------------------------
@@ -177,23 +194,6 @@ export class RoundExercisesComponent {
   }
 
   // --- Option lists -----------------------------------------------------------
-
-  private async loadOptions(sportId: number): Promise<void> {
-    this.loadingOptions.set(true);
-    try {
-      const [modList, segList] = await Promise.all([
-        firstValueFrom(this.sportsService.sportsModalitiesList({ sportPk: sportId })),
-        firstValueFrom(this.energySegmentsService.energySegmentsList()),
-      ]);
-      this.modalities.set((modList.results ?? []).filter((m) => m.is_active));
-      this.energySegments.set((segList.results ?? []).filter((s) => s.is_active));
-    } catch {
-      this.modalities.set([]);
-      this.energySegments.set([]);
-    } finally {
-      this.loadingOptions.set(false);
-    }
-  }
 
   protected hasOptions(): boolean {
     return this.modalities().length > 0 && this.energySegments().length > 0;

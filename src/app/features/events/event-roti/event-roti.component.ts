@@ -4,15 +4,15 @@ import {
   Component,
   DestroyRef,
   computed,
-  effect,
   inject,
   input,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { Tooltip } from 'primeng/tooltip';
+import { catchError, of, switchMap, tap } from 'rxjs';
 import { EventsService } from '../../../api/api/events.service';
 import { RotiSummary } from '../../../api/model/roti-summary';
 import { ToastService } from '../../../core/notifications/toast.service';
@@ -57,27 +57,23 @@ export class EventRotiComponent {
     return counts.length ? Math.max(1, ...counts) : 1;
   });
 
-  private loadedForEventId: number | null = null;
-
   constructor() {
-    effect(() => {
-      const eventId = this.eventId();
-      if (this.loadedForEventId === eventId) return;
-      this.loadedForEventId = eventId;
-      this.load(eventId);
-    });
-  }
-
-  private load(eventId: number): void {
-    this.eventsService
-      .eventsRotiRetrieve({ eventPk: eventId })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        // The endpoint is typed as an array by the schema; the payload is a
-        // single summary object. Accept either shape defensively.
-        next: (res) => this.rotiSummary.set(this.normalize(res)),
-        error: () => this.rotiSummary.set(null),
-      });
+    toObservable(this.eventId)
+      .pipe(
+        switchMap((eventId) =>
+          this.eventsService.eventsRotiRetrieve({ eventPk: eventId }).pipe(
+            // The endpoint is typed as an array by the schema; the payload is a
+            // single summary object. Accept either shape defensively.
+            tap((res) => this.rotiSummary.set(this.normalize(res))),
+            catchError(() => {
+              this.rotiSummary.set(null);
+              return of(null);
+            }),
+          ),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
   }
 
   private normalize(res: RotiSummary | RotiSummary[] | null): RotiSummary | null {

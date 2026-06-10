@@ -5,12 +5,11 @@ import {
   DestroyRef,
   OnInit,
   computed,
-  effect,
   inject,
   signal,
-  untracked,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { catchError, of, switchMap, tap } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -264,13 +263,48 @@ export class ProgramsDetailComponent implements OnInit {
     });
   });
 
+  private readonly monthScope = computed(() => ({
+    id: this.programId(),
+    month: this.currentMonth(),
+  }));
+
   constructor() {
-    effect(() => {
-      const id = this.programId();
-      const month = this.currentMonth();
-      if (id === null) return;
-      untracked(() => this.loadEventsForMonth(id, month));
-    });
+    toObservable(this.monthScope)
+      .pipe(
+        switchMap(({ id, month }) => {
+          if (id === null) return of(null);
+          const cacheKey = `${id}:${month.getFullYear()}-${month.getMonth()}`;
+          const cached = this.monthCache.get(cacheKey);
+          if (cached) {
+            this.events.set(cached);
+            return of(null);
+          }
+          this.loadingEvents.set(true);
+          const gridStart = startOfWeekMonday(startOfMonth(month));
+          const gridEnd = endOfWeekMonday(endOfMonth(month));
+          return this.eventsService
+            .eventsList({
+              dateGte: isoDate(gridStart),
+              dateLte: isoDate(gridEnd),
+              ordering: 'date',
+              referProgram: id,
+            })
+            .pipe(
+              tap((res) => {
+                const list = res.results ?? [];
+                this.monthCache.set(cacheKey, list);
+                this.events.set(list);
+                this.loadingEvents.set(false);
+              }),
+              catchError(() => {
+                this.loadingEvents.set(false);
+                return of(null);
+              }),
+            );
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
   }
 
   ngOnInit(): void {
@@ -346,37 +380,6 @@ export class ProgramsDetailComponent implements OnInit {
     this.currentMonth.set(startOfMonth(new Date()));
   }
 
-  private loadEventsForMonth(programId: number, month: Date): void {
-    const gridStart = startOfWeekMonday(startOfMonth(month));
-    const gridEnd = endOfWeekMonday(endOfMonth(month));
-    const cacheKey = `${programId}:${month.getFullYear()}-${month.getMonth()}`;
-    const cached = this.monthCache.get(cacheKey);
-    if (cached) {
-      this.events.set(cached);
-      return;
-    }
-    this.loadingEvents.set(true);
-    this.eventsService
-      .eventsList({
-        dateGte: isoDate(gridStart),
-        dateLte: isoDate(gridEnd),
-        ordering: 'date',
-        referProgram: programId,
-      })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (res) => {
-          const list = res.results ?? [];
-          this.monthCache.set(cacheKey, list);
-          this.events.set(list);
-          this.loadingEvents.set(false);
-        },
-        error: () => {
-          this.loadingEvents.set(false);
-        },
-      });
-  }
-
   private invalidateEventsCache(): void {
     this.monthCache.clear();
   }
@@ -435,7 +438,11 @@ export class ProgramsDetailComponent implements OnInit {
     if (id != null) {
       this.invalidateEventsCache();
       this.loadProgram(id);
-      this.loadEventsForMonth(id, this.currentMonth());
+      // Cache was just cleared; re-trigger the reactive month loader for the
+      // current month by emitting a fresh (reference-distinct) Date so monthScope
+      // recomputes and the toObservable(monthScope) pipe refetches.
+      const m = this.currentMonth();
+      this.currentMonth.set(new Date(m.getFullYear(), m.getMonth(), 1));
     }
   }
 

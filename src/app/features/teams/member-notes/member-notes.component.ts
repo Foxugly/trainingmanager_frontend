@@ -3,16 +3,15 @@ import {
   Component,
   DestroyRef,
   computed,
-  effect,
   inject,
   input,
   signal,
-  untracked,
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { catchError, of, switchMap, tap } from 'rxjs';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService } from 'primeng/api';
 import { Button } from 'primeng/button';
@@ -85,33 +84,27 @@ export class MemberNotesComponent {
     visible_to_athlete: [false],
   });
 
-  constructor() {
-    // Reload whenever the (team, member) scope changes. Reads the input
-    // signals so the effect re-runs on every reassignment.
-    effect(() => {
-      const team = this.teamId();
-      const member = this.memberId();
-      if (team != null && member != null) {
-        untracked(() => this.load(team, member));
-      }
-    });
-  }
+  /** The (team, member) scope; recomputed only when either input changes. */
+  private readonly scope = computed(() => ({ team: this.teamId(), member: this.memberId() }));
 
-  private load(team: number, member: number): void {
-    this.loading.set(true);
-    this.teamsService
-      .teamsMembersNotesList({ memberPk: member, teamPk: team })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (res) => {
-          this.notes.set(res.results ?? []);
-          this.loading.set(false);
-        },
-        error: () => {
-          this.notes.set([]);
-          this.loading.set(false);
-        },
-      });
+  constructor() {
+    // Reload whenever the (team, member) scope changes. switchMap cancels an
+    // in-flight list request if the scope changes again before it resolves.
+    toObservable(this.scope)
+      .pipe(
+        tap(() => this.loading.set(true)),
+        switchMap(({ team, member }) =>
+          this.teamsService.teamsMembersNotesList({ memberPk: member, teamPk: team }).pipe(
+            tap((res) => this.notes.set(res.results ?? [])),
+            catchError(() => {
+              this.notes.set([]);
+              return of(null);
+            }),
+          ),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => this.loading.set(false));
   }
 
   protected startEdit(note: Note): void {

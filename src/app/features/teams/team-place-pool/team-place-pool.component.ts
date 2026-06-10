@@ -3,17 +3,22 @@ import {
   Component,
   DestroyRef,
   computed,
-  effect,
   inject,
   input,
   output,
   signal,
-  untracked,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { Subject, forkJoin } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { Subject, forkJoin, of } from 'rxjs';
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  switchMap,
+  tap,
+} from 'rxjs/operators';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { AutoComplete, AutoCompleteCompleteEvent } from 'primeng/autocomplete';
 import { Button } from 'primeng/button';
@@ -121,12 +126,41 @@ export class TeamPlacePoolComponent {
       )
       .subscribe((results) => this.addressSuggestions.set(results));
 
-    // (Re)load the pool whenever the team's sports change. untracked: sportIds
-    // is the only intended trigger; the forkJoin load must not add effect deps.
-    effect(() => {
-      const ids = this.sportIds();
-      untracked(() => this.loadPool(ids));
-    });
+    // (Re)load the pool whenever the team's sports change. toObservable(sportIds)
+    // is the only trigger; switchMap cancels any in-flight forkJoin on change.
+    // The `?sport` filter is per-sport, so we query each and merge on id.
+    toObservable(this.sportIds)
+      .pipe(
+        switchMap((sportIds) => {
+          if (sportIds.length === 0) {
+            this.places.set([]);
+            this.poolChange.emit([]);
+            return of(null);
+          }
+          this.placesLoading.set(true);
+          return forkJoin(
+            // Signature: (ordering, page, pageSize, search, sport, team) — ?sport pool.
+            sportIds.map((id) => this.placesService.placesList({ sport: id })),
+          ).pipe(
+            tap((responses) => {
+              const byId = new Map<number, Place>();
+              for (const res of responses) {
+                for (const p of res.results ?? []) byId.set(p.id, p);
+              }
+              this.places.set([...byId.values()]);
+              this.poolChange.emit(this.places());
+            }),
+            catchError(() => {
+              this.places.set([]);
+              this.poolChange.emit([]);
+              this.toast.error('teams.errors.unknown');
+              return of(null);
+            }),
+          );
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => this.placesLoading.set(false));
   }
 
   protected isDefaultPlace(id: number): boolean {
@@ -245,41 +279,6 @@ export class TeamPlacePoolComponent {
         error: () => {
           this.placeSaving.set(false);
           this.toast.error('place.error_create');
-        },
-      });
-  }
-
-  /** Fetch the venue pool spanning every sport the team practises (union). The
-   *  `?sport` filter is per-sport, so we query each and merge on id. */
-  private loadPool(sportIds: number[]): void {
-    if (sportIds.length === 0) {
-      this.places.set([]);
-      this.poolChange.emit([]);
-      return;
-    }
-    this.placesLoading.set(true);
-    forkJoin(
-      // Signature: (ordering, page, pageSize, search, sport, team) — ?sport pool.
-      sportIds.map((id) =>
-        this.placesService.placesList({ sport: id }),
-      ),
-    )
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (responses) => {
-          const byId = new Map<number, Place>();
-          for (const res of responses) {
-            for (const p of res.results ?? []) byId.set(p.id, p);
-          }
-          this.places.set([...byId.values()]);
-          this.poolChange.emit(this.places());
-          this.placesLoading.set(false);
-        },
-        error: () => {
-          this.places.set([]);
-          this.poolChange.emit([]);
-          this.placesLoading.set(false);
-          this.toast.error('teams.errors.unknown');
         },
       });
   }

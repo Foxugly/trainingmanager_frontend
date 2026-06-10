@@ -10,7 +10,9 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { forkJoin, of } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService } from 'primeng/api';
@@ -95,16 +97,39 @@ export class TeamRequestsComponent {
     lastname: ['', [Validators.required]],
   });
 
-  private loadedForTeamId: number | null = null;
-
   constructor() {
-    effect(() => {
-      const id = this.teamId();
-      if (this.loadedForTeamId === id) return;
-      this.loadedForTeamId = id;
-      this.loadInvitations(id);
-      this.loadJoinRequests(id);
-    });
+    // Reactively (re)load both lists whenever the teamId input changes.
+    // switchMap cancels in-flight requests if the team switches mid-load and
+    // forkJoin runs the two list calls in parallel — a data stream, not a
+    // side-effecting effect(). Each call falls back to null on error so its
+    // existing list is left untouched (loading flags still settle below).
+    toObservable(this.teamId)
+      .pipe(
+        tap(() => {
+          this.loadingInvitations.set(true);
+          this.loadingJoinRequests.set(true);
+        }),
+        switchMap((id) =>
+          forkJoin({
+            requests: this.joinRequestsService
+              .joinRequestsList({ status: JoinRequestStatusEnum.Pending, team: id })
+              .pipe(catchError(() => of(null))),
+            invitations: this.invitationsService
+              .invitationsList({ status: InvitationStatusEnum.Pending, team: id })
+              .pipe(catchError(() => of(null))),
+          }).pipe(
+            tap(({ requests, invitations }) => {
+              if (requests) this.joinRequests.set(requests.results ?? []);
+              if (invitations) this.invitations.set(invitations.results ?? []);
+            }),
+          ),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => {
+        this.loadingInvitations.set(false);
+        this.loadingJoinRequests.set(false);
+      });
     // Keep the parent's badge in sync with both lists.
     effect(() => this.countChange.emit(this.joinRequests().length + this.invitations().length));
   }
