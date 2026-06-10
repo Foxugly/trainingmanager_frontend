@@ -540,6 +540,6 @@ export class TeamStatsComponent {
     const member = this.memberId();
     if (member !== null) params.set('member', String(member));
     const url = `${window.location.origin}/teams/${this.teamId()}/stats/print?${params.toString()}`;
-    window.open(url, '_blank');
+    window.open(url, '_blank', 'noopener');
   }
 }

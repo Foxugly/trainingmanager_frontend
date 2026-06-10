@@ -11,7 +11,7 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -24,7 +24,7 @@ import { Select } from 'primeng/select';
 import { Skeleton } from 'primeng/skeleton';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { Tooltip } from 'primeng/tooltip';
-import { firstValueFrom, of, switchMap } from 'rxjs';
+import { catchError, firstValueFrom, of, switchMap } from 'rxjs';
 import { EventsService } from '../../../api/api/events.service';
 import { ProgramsService } from '../../../api/api/programs.service';
 import { RoundsService } from '../../../api/api/rounds.service';
@@ -212,6 +212,18 @@ export class EventsDetailComponent implements OnInit {
   //     regardless of whether the RSVP tab was opened. ---
   protected readonly rsvpEnabled = computed(() => this.team()?.rsvp_enabled === true);
   protected readonly rsvpSummary = signal<RsvpSummary | null>(null);
+
+  /**
+   * Fetch scope for the RSVP summary: the event id once the team is known and
+   * RSVP is enabled, otherwise null (no event / RSVP disabled → clear summary).
+   * Folding both the id and rsvp_enabled into one signal lets the loader stream
+   * (constructor) re-run when either changes and cancel a stale in-flight fetch.
+   */
+  private readonly rsvpScope = computed<number | null>(() => {
+    const eventId = this.eventId();
+    if (eventId == null || !this.rsvpEnabled()) return null;
+    return eventId;
+  });
   protected readonly rsvpSubmitting = signal(false);
   protected readonly rsvpApplying = signal(false);
 
@@ -276,12 +288,23 @@ export class EventsDetailComponent implements OnInit {
   private patchingTotal = false;
 
   constructor() {
-    // Load the RSVP summary once the team (hence rsvp_enabled) is resolved.
-    effect(() => {
-      this.team();
-      this.eventId();
-      untracked(() => this.maybeLoadRsvp());
-    });
+    // Load the RSVP summary once the team (hence rsvp_enabled) is resolved. A
+    // data stream (not a side-effecting effect): the scope folds [eventId,
+    // rsvp_enabled] into a single value and switchMap cancels a stale in-flight
+    // request when it changes, which also subsumes the old manual dedup guard.
+    // A null scope (no event id / RSVP disabled) resets rsvpSummary to null.
+    toObservable(this.rsvpScope)
+      .pipe(
+        switchMap((eventId) =>
+          eventId == null
+            ? of(null)
+            : this.eventsService
+                .eventsRsvpRetrieve({ eventPk: eventId })
+                .pipe(catchError(() => of(null))),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((res) => this.rsvpSummary.set(res));
 
     // Keep the stored event.total in sync with the training editor's computed
     // distance. The editor (app-event-training) owns the rounds and emits the
@@ -301,31 +324,6 @@ export class EventsDetailComponent implements OnInit {
   /** app-event-training emitted its total distance + loading state. */
   protected onTrainingState(state: { totalDistance: number; loading: boolean }): void {
     this.trainingState.set(state);
-  }
-
-  private rsvpLoadedForEventId: number | null = null;
-
-  /** Load the RSVP summary once the team is known and RSVP is enabled. */
-  private maybeLoadRsvp(): void {
-    const eventId = this.eventId();
-    if (eventId == null || !this.rsvpEnabled()) {
-      this.rsvpSummary.set(null);
-      this.rsvpLoadedForEventId = null;
-      return;
-    }
-    if (this.rsvpLoadedForEventId === eventId) return;
-    this.rsvpLoadedForEventId = eventId;
-    this.loadRsvp(eventId);
-  }
-
-  private loadRsvp(eventId: number): void {
-    this.eventsService
-      .eventsRsvpRetrieve({ eventPk: eventId })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (res) => this.rsvpSummary.set(res),
-        error: () => this.rsvpSummary.set(null),
-      });
   }
 
   protected submitRsvp(status: RsvpStatusEnum): void {

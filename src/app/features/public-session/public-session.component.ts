@@ -14,6 +14,7 @@ import { ProgressSpinner } from 'primeng/progressspinner';
 import { PublicService } from '../../api/api/public.service';
 import { EventPublic } from '../../api/model/event-public';
 import { APP_VERSION } from '../../shared/app-version';
+import { shortTime } from '../../shared/datetime/short-time';
 import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.component';
 
 /** A defensively-normalized exercise inside a public round. */
@@ -87,10 +88,10 @@ export class PublicSessionComponent implements OnInit {
   protected readonly formattedTime = computed<string | null>(() => {
     const s = this.session();
     if (!s) return null;
-    const start = this.shortTime(s.hour_start);
-    const end = this.shortTime(s.hour_end);
+    const start = shortTime(s.hour_start);
+    const end = shortTime(s.hour_end);
     if (start && end) return `${start} – ${end}`;
-    return start ?? end ?? null;
+    return start || end || null;
   });
 
   /** Defensively normalized rounds (loosely typed any[] from the API). */
@@ -122,13 +123,6 @@ export class PublicSessionComponent implements OnInit {
   });
 
   protected readonly hasRounds = computed(() => this.rounds().length > 0);
-
-  private shortTime(value: string | null | undefined): string | null {
-    if (!value) return null;
-    // Backend times come as "HH:MM:SS" or "HH:MM"; keep HH:MM.
-    const match = /^(\d{2}:\d{2})/.exec(value);
-    return match ? match[1] : value;
-  }
 
   ngOnInit(): void {
     const token = this.route.snapshot.paramMap.get('token');

@@ -47,6 +47,12 @@ import { ToastService } from '../../../core/notifications/toast.service';
 import { openContactEmail } from '../../../shared/contact';
 import { buildVisibilityOptions } from '../../../shared/forms/visibility-options';
 import {
+  LOGO_MAX_CHARS,
+  LOGO_MAX_DIM,
+  resizeImageToDataUrl,
+} from '../../../shared/media/resize-image';
+import { timezoneOptions } from '../../../shared/datetime/timezones';
+import {
   ActiveToggleComponent,
   type ActiveToggleLabels,
 } from '../../../shared/ui/active-toggle/active-toggle.component';
@@ -132,36 +138,8 @@ export class TeamsFormComponent implements OnInit {
     return buildVisibilityOptions(this.transloco);
   });
 
-  /** Curated fallback if Intl.supportedValuesOf is unavailable (older runtimes). */
-  private static readonly TIMEZONE_FALLBACK: readonly string[] = [
-    'UTC',
-    'Europe/Brussels',
-    'Europe/Paris',
-    'Europe/Amsterdam',
-    'Europe/Madrid',
-    'Europe/Rome',
-    'Europe/London',
-    'Europe/Berlin',
-    'America/New_York',
-    'America/Los_Angeles',
-  ];
-
   /** IANA timezones as {label,value} for the filterable select, precomputed once. */
-  protected readonly timezoneOptions: { label: string; value: string }[] = (() => {
-    let zones: readonly string[];
-    try {
-      const supported = (
-        Intl as unknown as { supportedValuesOf?: (key: string) => string[] }
-      ).supportedValuesOf;
-      zones =
-        typeof supported === 'function'
-          ? supported('timeZone')
-          : TeamsFormComponent.TIMEZONE_FALLBACK;
-    } catch {
-      zones = TeamsFormComponent.TIMEZONE_FALLBACK;
-    }
-    return zones.map((z) => ({ label: z, value: z }));
-  })();
+  protected readonly timezoneOptions: { label: string; value: string }[] = timezoneOptions();
 
   /** Topic-creation policy select options, re-translated on language change. */
   protected readonly topicCreationOptions = computed(() => {
@@ -219,11 +197,6 @@ export class TeamsFormComponent implements OnInit {
     errorSummary: this.transloco.translate('common.error'),
     errorDetail: this.transloco.translate('common.update_failed'),
   }));
-
-  /** Max base64 data-URL length accepted by the backend (~375 KB binary). */
-  private static readonly LOGO_MAX_CHARS = 500000;
-  /** Longest side (px) the logo is downscaled to before encoding. */
-  private static readonly LOGO_MAX_DIM = 256;
 
   protected readonly logoValue = signal<string>('');
 
@@ -505,8 +478,8 @@ export class TeamsFormComponent implements OnInit {
     const file = input.files?.[0];
     if (!file) return;
     try {
-      const dataUrl = await this.fileToResizedDataUrl(file);
-      if (dataUrl.length > TeamsFormComponent.LOGO_MAX_CHARS) {
+      const dataUrl = await resizeImageToDataUrl(file, LOGO_MAX_DIM, LOGO_MAX_CHARS);
+      if (dataUrl.length > LOGO_MAX_CHARS) {
         this.notifyLogoTooLarge();
       } else {
         this.applyLogo(dataUrl);
@@ -531,51 +504,6 @@ export class TeamsFormComponent implements OnInit {
 
   private notifyLogoTooLarge(): void {
     this.toast.warn('teams.form.logo_too_large');
-  }
-
-  /**
-   * Load the file into an <img>, draw it onto a canvas downscaled so the
-   * longest side is at most LOGO_MAX_DIM (aspect preserved), and return a
-   * PNG data-URL. SVGs are kept as-is (vector, already small).
-   */
-  private fileToResizedDataUrl(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onerror = () => reject(new Error('read_failed'));
-      reader.onload = () => {
-        const src = reader.result as string;
-        if (file.type === 'image/svg+xml') {
-          resolve(src);
-          return;
-        }
-        const img = new Image();
-        img.onerror = () => reject(new Error('decode_failed'));
-        img.onload = () => {
-          const max = TeamsFormComponent.LOGO_MAX_DIM;
-          const scale = Math.min(1, max / Math.max(img.width, img.height));
-          const w = Math.max(1, Math.round(img.width * scale));
-          const h = Math.max(1, Math.round(img.height * scale));
-          const canvas = document.createElement('canvas');
-          canvas.width = w;
-          canvas.height = h;
-          const ctx = canvas.getContext('2d');
-          if (!ctx) {
-            reject(new Error('no_context'));
-            return;
-          }
-          ctx.drawImage(img, 0, 0, w, h);
-          // Prefer PNG; if too heavy, fall back to progressively lower JPEG quality.
-          let out = canvas.toDataURL('image/png');
-          for (const q of [0.85, 0.7, 0.55, 0.4]) {
-            if (out.length <= TeamsFormComponent.LOGO_MAX_CHARS) break;
-            out = canvas.toDataURL('image/jpeg', q);
-          }
-          resolve(out);
-        };
-        img.src = src;
-      };
-      reader.readAsDataURL(file);
-    });
   }
 
   protected cancel(): void {
