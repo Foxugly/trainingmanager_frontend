@@ -333,10 +333,20 @@ export class TeamDiscussionsComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
+          // Topic selection is an imperative flow (openTopic), so a stale
+          // response from a previously-clicked topic could otherwise overwrite
+          // the thread of the one now open. Drop any response that no longer
+          // matches the currently-selected topic. (loadingMessages is only
+          // cleared for the live topic — a stale response leaves the spinner to
+          // the in-flight one.)
+          if (this.selectedTopic()?.id !== topic.id) return;
           this.messages.set(res.results ?? []);
           this.loadingMessages.set(false);
         },
-        error: () => this.loadingMessages.set(false),
+        error: () => {
+          if (this.selectedTopic()?.id !== topic.id) return;
+          this.loadingMessages.set(false);
+        },
       });
   }
 

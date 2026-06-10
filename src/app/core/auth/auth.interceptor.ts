@@ -1,7 +1,7 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, switchMap, throwError } from 'rxjs';
-import { getRuntimeConfig } from '../runtime-config';
+import { isApiUrl, requestPathname } from '../http/api-url';
 import { AuthService } from './auth.service';
 import { TokenStorage } from './token.storage';
 
@@ -19,29 +19,6 @@ const AUTH_PATHS = [
   '/auth/magic-link/request/',
   '/auth/magic-link/exchange/',
 ];
-
-/** Pathname of a request URL (absolute or relative), or null if unparseable. */
-function requestPathname(url: string): string | null {
-  try {
-    return new URL(url, window.location.origin).pathname;
-  } catch {
-    return null;
-  }
-}
-
-/** True only when the request targets the configured API origin (exact origin
- * match + path prefix), not merely a string that starts with the base — guards
- * against prefix confusion (`https://api.example.com.evil.com`). */
-function isApiUrl(url: string): boolean {
-  try {
-    const base = new URL(getRuntimeConfig().apiBaseUrl, window.location.origin);
-    const target = new URL(url, window.location.origin);
-    const basePath = base.pathname.replace(/\/+$/, '');
-    return target.origin === base.origin && target.pathname.startsWith(basePath);
-  } catch {
-    return false;
-  }
-}
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const tokenStorage = inject(TokenStorage);

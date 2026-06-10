@@ -4,10 +4,18 @@ import { TeamStats } from '../../../api/model/team-stats';
  * Quote a CSV field per RFC 4180: wrap in double quotes and double any
  * embedded quotes whenever the value contains a comma, quote or newline.
  * `null` / `undefined` become an empty field.
+ *
+ * Before quoting, any text value that starts with a formula trigger
+ * (`= + - @ TAB CR`) is prefixed with a single quote to neutralise CSV
+ * formula injection — a malicious member name like `=HYPERLINK(...)` must
+ * never be evaluated when the export is opened in Excel / Sheets.
  */
 function csvField(value: string | number | null | undefined): string {
   if (value === null || value === undefined) return '';
-  const s = typeof value === 'number' ? String(value) : value;
+  // Numbers are trusted (never user-controlled formulas); only text values
+  // can carry a leading formula trigger that needs neutralising.
+  let s = typeof value === 'number' ? String(value) : value;
+  if (typeof value !== 'number' && /^[=+\-@\t\r]/.test(s)) s = "'" + s;
   if (/[",\n\r]/.test(s)) {
     return `"${s.replace(/"/g, '""')}"`;
   }

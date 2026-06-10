@@ -10,6 +10,8 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subject, of } from 'rxjs';
+import { catchError, switchMap, tap } from 'rxjs/operators';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -332,6 +334,64 @@ export class TeamsDetailComponent implements OnInit {
     phonenumber: [''],
   });
 
+  /**
+   * Reload triggers routed through a switchMap so that, under a burst of
+   * mutations (accept several join requests, remove + add members in quick
+   * succession), only the last response wins — a stale in-flight list can never
+   * land after a newer one and resurrect removed rows.
+   */
+  private readonly loadTeam$ = new Subject<number>();
+  private readonly loadMemberships$ = new Subject<number>();
+
+  constructor() {
+    this.loadTeam$
+      .pipe(
+        tap(() => {
+          this.loading.set(true);
+          this.notFound.set(false);
+          this.loadError.set(false);
+        }),
+        switchMap((id) =>
+          this.teamsService.teamsRetrieve({ id }).pipe(
+            tap((t) => {
+              this.team.set(t);
+              this.activeValue.set(t.is_active ?? true);
+              this.loading.set(false);
+              this.maybeLoadMyPendingRequest(t, id);
+            }),
+            catchError((err: HttpErrorResponse) => {
+              this.loading.set(false);
+              if (err?.status === 404) {
+                this.notFound.set(true);
+              } else {
+                this.loadError.set(true);
+                this.toast.error('common.load_failed');
+              }
+              return of(null);
+            }),
+          ),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
+
+    this.loadMemberships$
+      .pipe(
+        switchMap((id) =>
+          this.teamsService.teamsMembershipsList({ teamPk: id }).pipe(
+            tap((list) => this.memberships.set(list ?? [])),
+            catchError(() => {
+              // Don't silently leave a stale/empty roster — tell the user it failed.
+              this.toast.error('common.load_failed');
+              return of(null);
+            }),
+          ),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
+  }
+
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
     const id = idParam ? Number(idParam) : NaN;
@@ -355,34 +415,13 @@ export class TeamsDetailComponent implements OnInit {
     // Invitations + join requests are loaded by app-team-requests.
   }
 
+  // A genuine 404 means the team doesn't exist (or isn't visible) — show the
+  // dedicated "not found" copy. Any other status (server error, network
+  // failure) is a transient load error: surfaced distinctly with a retry + a
+  // toast rather than masquerading as "not found". (Handled in the loadTeam$
+  // pipeline above.)
   private loadTeam(id: number): void {
-    this.loading.set(true);
-    this.notFound.set(false);
-    this.loadError.set(false);
-    this.teamsService
-      .teamsRetrieve({ id })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (t) => {
-          this.team.set(t);
-          this.activeValue.set(t.is_active ?? true);
-          this.loading.set(false);
-          this.maybeLoadMyPendingRequest(t, id);
-        },
-        error: (err: HttpErrorResponse) => {
-          this.loading.set(false);
-          // A genuine 404 means the team doesn't exist (or isn't visible) —
-          // show the dedicated "not found" copy. Any other status (server error,
-          // network failure) is a transient load error: surface it distinctly
-          // with a retry + a toast rather than masquerading as "not found".
-          if (err?.status === 404) {
-            this.notFound.set(true);
-          } else {
-            this.loadError.set(true);
-            this.toast.error('common.load_failed');
-          }
-        },
-      });
+    this.loadTeam$.next(id);
   }
 
   protected reloadTeam(): void {
@@ -400,16 +439,7 @@ export class TeamsDetailComponent implements OnInit {
   }
 
   private loadMemberships(id: number): void {
-    this.teamsService
-      .teamsMembershipsList({ teamPk: id })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (list) => this.memberships.set(list ?? []),
-        error: () => {
-          // Don't silently leave a stale/empty roster — tell the user it failed.
-          this.toast.error('common.load_failed');
-        },
-      });
+    this.loadMemberships$.next(id);
   }
 
   private loadMyPendingRequest(teamId: number): void {

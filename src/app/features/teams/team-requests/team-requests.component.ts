@@ -4,7 +4,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
-  effect,
   inject,
   input,
   output,
@@ -130,9 +129,19 @@ export class TeamRequestsComponent {
       .subscribe(() => {
         this.loadingInvitations.set(false);
         this.loadingJoinRequests.set(false);
+        // Keep the parent's badge in sync once both lists have (re)loaded.
+        this.emitCount();
       });
-    // Keep the parent's badge in sync with both lists.
-    effect(() => this.countChange.emit(this.joinRequests().length + this.invitations().length));
+  }
+
+  /**
+   * Emit the current pending total to the parent's tab badge. Called explicitly
+   * after every (re)load and after each local mutation — deliberately NOT from
+   * an effect(): emitting an output inside an effect is an Angular anti-pattern
+   * (output during change detection risks NG0100 / ExpressionChanged errors).
+   */
+  private emitCount(): void {
+    this.countChange.emit(this.joinRequests().length + this.invitations().length);
   }
 
   private loadInvitations(id: number): void {
@@ -144,6 +153,7 @@ export class TeamRequestsComponent {
         next: (res) => {
           this.invitations.set(res.results ?? []);
           this.loadingInvitations.set(false);
+          this.emitCount();
         },
         error: () => this.loadingInvitations.set(false),
       });
@@ -158,6 +168,7 @@ export class TeamRequestsComponent {
         next: (res) => {
           this.joinRequests.set(res.results ?? []);
           this.loadingJoinRequests.set(false);
+          this.emitCount();
         },
         error: () => this.loadingJoinRequests.set(false),
       });

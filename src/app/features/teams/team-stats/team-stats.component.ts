@@ -28,6 +28,7 @@ import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.
 import { RsvpReliabilityComponent } from '../rsvp-reliability/rsvp-reliability.component';
 import { RotiDriftComponent } from '../roti-drift/roti-drift.component';
 import { buildStatsCsv } from './stats-csv';
+import { isoDate } from '../../../shared/date/calendar';
 import { LocalizedDatePipe } from '../../../shared/datetime/localized-date.pipe';
 
 interface ChartConfig {
@@ -120,11 +121,11 @@ export class TeamStatsComponent {
   /** Formatted current range bounds, for child panels (e.g. RSVP reliability). */
   protected readonly rangeFrom = computed(() => {
     const [f] = this.range();
-    return f ? this.fmt(f) : '';
+    return f ? isoDate(f) : '';
   });
   protected readonly rangeTo = computed(() => {
     const [, t] = this.range();
-    return t ? this.fmt(t) : '';
+    return t ? isoDate(t) : '';
   });
 
   protected readonly reviewDialogVisible = signal(false);
@@ -141,7 +142,7 @@ export class TeamStatsComponent {
     const member = this.memberId();
     const [from, to] = this.range();
     if (!from || !to) return null;
-    return { id, from: this.fmt(from), to: this.fmt(to), member: member ?? undefined };
+    return { id, from: isoDate(from), to: isoDate(to), member: member ?? undefined };
   });
 
   constructor() {
@@ -183,12 +184,22 @@ export class TeamStatsComponent {
       });
   }
 
-  /** Parse a YYYY-MM-DD string into a local-time Date, or null if invalid. */
+  /** Parse a YYYY-MM-DD string into a local-time Date, or null if invalid.
+   * Rejects out-of-range parts (the Date constructor silently rolls over,
+   * e.g. month 13 or day 32), so a crafted print-route query param can't
+   * resolve to a surprise date. */
   private static parseIso(iso: string | null): Date | null {
     if (!iso) return null;
     const [y, m, d] = iso.split('-').map(Number);
     if (!y || !m || !d) return null;
-    return new Date(y, m - 1, d);
+    if (m < 1 || m > 12 || d < 1 || d > 31) return null;
+    const date = new Date(y, m - 1, d);
+    // Reject rollover (e.g. 2026-02-31 → 3 Mar): the constructed parts must
+    // match the requested ones exactly.
+    if (date.getFullYear() !== y || date.getMonth() !== m - 1 || date.getDate() !== d) {
+      return null;
+    }
+    return date;
   }
 
   private static defaultRange(): Date[] {
@@ -196,14 +207,6 @@ export class TeamStatsComponent {
     const from = new Date();
     from.setDate(from.getDate() - 12 * 7); // last 12 weeks
     return [from, to];
-  }
-
-  /** YYYY-MM-DD in local time (avoids the UTC shift of toISOString). */
-  private fmt(d: Date): string {
-    const y = d.getFullYear();
-    const m = `${d.getMonth() + 1}`.padStart(2, '0');
-    const day = `${d.getDate()}`.padStart(2, '0');
-    return `${y}-${m}-${day}`;
   }
 
   protected setPreset(weeks: number | 'all'): void {
@@ -499,7 +502,7 @@ export class TeamStatsComponent {
     const s = this.stats();
     if (s?.period?.from && s.period.to) return [s.period.from, s.period.to];
     const [from, to] = this.range();
-    return [this.fmt(from), this.fmt(to)];
+    return [isoDate(from), isoDate(to)];
   }
 
   /** Slug for filenames: team/member name from the payload, fallback to ids. */

@@ -9,7 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { catchError, of, switchMap, tap } from 'rxjs';
+import { Subject, catchError, of, switchMap, tap } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -240,7 +240,25 @@ export class ProgramsDetailComponent implements OnInit {
     month: this.currentMonth(),
   }));
 
+  /**
+   * Team reloads routed through a switchMap so a burst of program reloads (e.g.
+   * repeated generations) can't land an older team response after a newer one.
+   */
+  private readonly loadTeam$ = new Subject<number>();
+
   constructor() {
+    this.loadTeam$
+      .pipe(
+        switchMap((teamId) =>
+          this.teamsService.teamsRetrieve({ id: teamId }).pipe(
+            tap((t) => this.team.set(t)),
+            catchError(() => of(null)),
+          ),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
+
     toObservable(this.monthScope)
       .pipe(
         switchMap(({ id, month }) => {
@@ -290,7 +308,7 @@ export class ProgramsDetailComponent implements OnInit {
     this.loadProgram(id);
   }
 
-  protected loadProgram(id: number): void {
+  protected loadProgram(id: number, resetMonth = true): void {
     this.loading.set(true);
     this.notFound.set(false);
     this.loadError.set(false);
@@ -305,7 +323,11 @@ export class ProgramsDetailComponent implements OnInit {
           if (p.team?.id != null) {
             this.loadTeam(p.team.id);
           }
-          this.initCalendarMonth(p);
+          // On a post-generation reload we want to STAY on the month the user is
+          // viewing (and just refresh its events) — resetting the calendar to
+          // the program's start month here would fight the explicit month
+          // reload in onGenerated() and yank the user away from their view.
+          if (resetMonth) this.initCalendarMonth(p);
         },
         error: (err: HttpErrorResponse) => {
           this.loading.set(false);
@@ -333,12 +355,7 @@ export class ProgramsDetailComponent implements OnInit {
   }
 
   private loadTeam(teamId: number): void {
-    this.teamsService
-      .teamsRetrieve({ id: teamId })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (t) => this.team.set(t),
-      });
+    this.loadTeam$.next(teamId);
   }
 
   private initCalendarMonth(p: Program): void {
@@ -409,10 +426,12 @@ export class ProgramsDetailComponent implements OnInit {
     const id = this.programId();
     if (id != null) {
       this.invalidateEventsCache();
-      this.loadProgram(id);
-      // Cache was just cleared; re-trigger the reactive month loader for the
-      // current month by emitting a fresh (reference-distinct) Date so monthScope
-      // recomputes and the toObservable(monthScope) pipe refetches.
+      // Refresh program metadata WITHOUT resetting the calendar month, then
+      // re-trigger the reactive month loader for the month currently in view by
+      // emitting a fresh (reference-distinct) Date so monthScope recomputes and
+      // the toObservable(monthScope) pipe refetches the now-uncached events.
+      // Keeping the month untouched avoids two concurrent month recalibrations.
+      this.loadProgram(id, false);
       const m = this.currentMonth();
       this.currentMonth.set(new Date(m.getFullYear(), m.getMonth(), 1));
     }

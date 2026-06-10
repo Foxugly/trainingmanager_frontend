@@ -38,9 +38,9 @@ export function endOfWeekMonday(d: Date): Date {
   return x;
 }
 
-export function dayKey(d: Date): string {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-}
+/**
+ * Map-key form of a local date — identical to {@link isoDate} (YYYY-MM-DD).
+ * Kept as a named alias so calendar callers reading as a "day key" stay
+ * expressive; there is a single source of truth (`isoDate`).
+ */
+export const dayKey = isoDate;

@@ -80,22 +80,22 @@
         {{ label }}
       </div>
     }
-    @for (day of daysInGrid(); track dayKey(day); let i = $index) {
+    @for (cell of gridCells(); track cell.key; let i = $index) {
       <div
         class="bg-white min-h-[6rem] p-1.5"
-        [class.bg-gray-50]="!isSameMonth(day, currentMonth())"
-        [class.opacity-60]="!isSameMonth(day, currentMonth())"
+        [class.bg-gray-50]="!cell.inMonth"
+        [class.opacity-60]="!cell.inMonth"
       >
         <div
           class="text-xs mb-1 inline-flex items-center justify-center w-6 h-6 rounded-full"
-          [class.bg-emerald-600]="isToday(day)"
-          [class.text-white]="isToday(day)"
-          [class.font-semibold]="isToday(day)"
-          [class.text-gray-500]="!isToday(day)"
+          [class.bg-emerald-600]="cell.isToday"
+          [class.text-white]="cell.isToday"
+          [class.font-semibold]="cell.isToday"
+          [class.text-gray-500]="!cell.isToday"
         >
-          {{ day | localizedDate: 'd' }}
+          {{ cell.dayLabel }}
         </div>
-        @if (loading() && skeletonIndices.has(i) && isSameMonth(day, currentMonth())) {
+        @if (loading() && skeletonIndices.has(i) && cell.inMonth) {
           <p-skeleton
             data-testid="cal-skeleton"
             width="80%"
@@ -104,7 +104,7 @@
             styleClass="mb-1"
           />
         }
-        @for (event of eventsByDay().get(dayKey(day)) || []; track event.id) {
+        @for (event of cell.events; track event.id) {
           <a
             [routerLink]="['/events', event.id]"
             class="block text-xs px-1.5 py-1 mb-1 rounded truncate cursor-pointer hover:opacity-80 transition"

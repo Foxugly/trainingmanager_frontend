@@ -133,10 +133,15 @@ describe('AthleteDetailComponent', () => {
       .overrideComponent(AthleteDetailComponent, { set: { template: '', imports: [] } })
       .compileComponents();
 
-    fixture = TestBed.createComponent(AthleteDetailComponent);
-    component = fixture.componentInstance;
+    // Spy on navigate BEFORE createComponent: the data stream subscribes in the
+    // constructor and (with the test's synchronous `of(paramMap)`) the
+    // non-manager redirect runs synchronously there — installing the spy after
+    // createComponent would miss it.
     router = TestBed.inject(Router);
     vi.spyOn(router, 'navigate').mockReturnValue(Promise.resolve(true));
+
+    fixture = TestBed.createComponent(AthleteDetailComponent);
+    component = fixture.componentInstance;
     fixture.detectChanges();
   }
 

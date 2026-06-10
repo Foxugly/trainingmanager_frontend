@@ -3,12 +3,11 @@ import {
   Component,
   DestroyRef,
   computed,
-  effect,
   inject,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { catchError, forkJoin, of, switchMap, tap } from 'rxjs';
+import { EMPTY, catchError, of, switchMap, tap } from 'rxjs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { MembersService } from '../../../api/api/members.service';
@@ -85,9 +84,13 @@ export class AthleteDetailComponent {
     // React to :teamId / :memberId param changes (reuse for another athlete).
     // A data stream (not a side-effecting load()): switchMap cancels the stale
     // in-flight fetches when the params change mid-flight, so overlapping
-    // responses can never land out of order. The two fetches are independent,
-    // so forkJoin runs them in parallel; each guards its own failure so one
-    // erroring doesn't abort the other.
+    // responses can never land out of order.
+    //
+    // Gating order matters: load the TEAM first, evaluate canManage, and ONLY
+    // then fetch the member. A non-manager is redirected away without ever
+    // hitting membersRetrieve — the member of someone else's team must not be
+    // fetched just because the page was opened. (The previous forkJoin fired
+    // both calls in parallel, leaking a member read for redirected viewers.)
     this.route.paramMap
       .pipe(
         tap((params) => {
@@ -109,35 +112,34 @@ export class AthleteDetailComponent {
           if (!Number.isFinite(teamId) || !Number.isFinite(memberId)) {
             return of(null);
           }
-          return forkJoin({
-            team: this.teamsService.teamsRetrieve({ id: teamId }).pipe(
-              tap((t) => this.team.set(t)),
-              catchError(() => {
-                this.router.navigate(['/teams']);
-                return of(null);
-              }),
-            ),
-            member: this.membersService.membersRetrieve({ id: memberId }).pipe(
-              tap((m) => this.member.set(m)),
-              catchError(() => {
-                this.notFound.set(true);
-                return of(null);
-              }),
-            ),
-          });
+          return this.teamsService.teamsRetrieve({ id: teamId }).pipe(
+            switchMap((t) => {
+              this.team.set(t);
+              // Coach-only page: redirect non-managers and skip the member read.
+              if (!this.canManage()) {
+                this.router.navigate(['/teams', t.id]);
+                this.loading.set(false);
+                return EMPTY;
+              }
+              return this.membersService.membersRetrieve({ id: memberId }).pipe(
+                tap((m) => this.member.set(m)),
+                catchError(() => {
+                  this.notFound.set(true);
+                  return of(null);
+                }),
+              );
+            }),
+            catchError(() => {
+              this.router.navigate(['/teams']);
+              this.loading.set(false);
+              return of(null);
+            }),
+          );
         }),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((result) => {
         if (result !== null) this.loading.set(false);
       });
-
-    // Once the team has resolved, redirect non-managers away (coach-only page).
-    effect(() => {
-      const t = this.team();
-      if (t && !this.canManage()) {
-        this.router.navigate(['/teams', t.id]);
-      }
-    });
   }
 }

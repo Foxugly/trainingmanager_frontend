@@ -38,9 +38,20 @@ import {
   startOfMonth,
   startOfWeekMonday,
 } from '../../../shared/date/calendar';
-import { LocalizedDatePipe } from '../../../shared/datetime/localized-date.pipe';
 
 const HEX_RE = /^#([0-9a-f]{6}|[0-9a-f]{3})$/i;
+
+/** A single precomputed day cell of the month grid (see `gridCells`). */
+interface GridCell {
+  /** YYYY-MM-DD local key (stable `@for` track + skeleton lookup). */
+  key: string;
+  /** Day-of-month number as a string (locale-invariant `d` format). */
+  dayLabel: string;
+  isToday: boolean;
+  /** Whether the day falls in the currently displayed month. */
+  inMonth: boolean;
+  events: Event[];
+}
 
 function normalizeHex(value: string | null | undefined): string | null {
   if (!value) return null;
@@ -56,7 +67,6 @@ function normalizeHex(value: string | null | undefined): string | null {
   selector: 'app-events-calendar',
   imports: [
     CommonModule,
-    LocalizedDatePipe,
     FormsModule,
     RouterLink,
     Button,
@@ -156,6 +166,36 @@ export class EventsCalendarComponent implements OnInit {
   });
 
   protected readonly today = startOfDay(new Date());
+
+  /**
+   * Fully-resolved month grid, memoised off `daysInGrid` / `eventsByDay` /
+   * `currentMonth`. Each cell carries everything the template needs as plain
+   * properties — no per-cell function calls, no `|| []` array allocations and
+   * no `isSameMonth`/`isToday` recomputation during change detection. The grid
+   * only recomputes when one of its source signals actually changes.
+   *
+   * `dayLabel` is the numeric day-of-month: the `localizedDate: 'd'` format is
+   * locale-invariant (a plain 1–31 number), so precomputing it here is
+   * identical to the previous pipe output while staying allocation-free.
+   */
+  protected readonly gridCells = computed<GridCell[]>(() => {
+    const days = this.daysInGrid();
+    const byDay = this.eventsByDay();
+    const month = this.currentMonth();
+    const todayKey = dayKey(this.today);
+    const refMonth = month.getMonth();
+    const refYear = month.getFullYear();
+    return days.map((day) => {
+      const key = dayKey(day);
+      return {
+        key,
+        dayLabel: String(day.getDate()),
+        isToday: key === todayKey,
+        inMonth: day.getMonth() === refMonth && day.getFullYear() === refYear,
+        events: byDay.get(key) ?? [],
+      };
+    });
+  });
 
   constructor() {
     effect(() => {
@@ -279,18 +319,6 @@ export class EventsCalendarComponent implements OnInit {
 
   protected goToToday(): void {
     this.currentMonth.set(startOfMonth(new Date()));
-  }
-
-  protected dayKey(d: Date): string {
-    return dayKey(d);
-  }
-
-  protected isSameMonth(d: Date, ref: Date): boolean {
-    return d.getMonth() === ref.getMonth() && d.getFullYear() === ref.getFullYear();
-  }
-
-  protected isToday(d: Date): boolean {
-    return d.toDateString() === this.today.toDateString();
   }
 
   protected eventBgColor(e: Event): string {

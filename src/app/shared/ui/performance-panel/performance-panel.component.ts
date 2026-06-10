@@ -29,6 +29,7 @@ import { Performance } from '../../../api/model/performance';
 import { PerformanceRequest } from '../../../api/model/performance-request';
 import { UnitEnum } from '../../../api/model/unit-enum';
 import { ToastService } from '../../../core/notifications/toast.service';
+import { isoDate } from '../../date/calendar';
 import { EmptyStateComponent } from '../empty-state/empty-state.component';
 import { LocalizedDatePipe } from '../../datetime/localized-date.pipe';
 
@@ -340,7 +341,7 @@ export class PerformancePanelComponent {
         label: raw.label,
         value: String(raw.value),
         unit: raw.unit,
-        recorded_on: this.toIsoDate(raw.recorded_on),
+        recorded_on: isoDate(raw.recorded_on),
         notes: raw.notes,
       };
       this.performancesService
@@ -368,7 +369,7 @@ export class PerformancePanelComponent {
       label: raw.label,
       value: String(raw.value),
       unit: raw.unit,
-      recorded_on: this.toIsoDate(raw.recorded_on),
+      recorded_on: isoDate(raw.recorded_on),
       notes: raw.notes,
     };
     this.performancesService
@@ -416,13 +417,5 @@ export class PerformancePanelComponent {
         },
         error: (err: HttpErrorResponse) => this.onError(err),
       });
-  }
-
-  /** YYYY-MM-DD in local time (avoids the UTC shift of toISOString). */
-  private toIsoDate(d: Date): string {
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${y}-${m}-${day}`;
   }
 }
