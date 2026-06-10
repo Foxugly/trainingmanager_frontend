@@ -1298,6 +1298,10 @@
     }
   },
   "stats": {
+    "roti": "ROTI",
+    "roti_trend": "Tendance ROTI",
+    "axis_roti": "Score (1–5)",
+    "streak": "Série en cours",
     "tab": "Statistiques",
     "my_tab": "Mes statistiques",
     "period": "Période",

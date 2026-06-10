@@ -184,6 +184,8 @@ export * from './stats-intensity';
 export * from './stats-intensity-by-segment';
 export * from './stats-member';
 export * from './stats-period';
+export * from './stats-roti';
+export * from './stats-roti-point';
 export * from './stats-volume';
 export * from './stats-volume-by-member';
 export * from './stats-volume-by-week';

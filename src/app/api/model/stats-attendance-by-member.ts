@@ -16,5 +16,9 @@ export interface StatsAttendanceByMember {
     total: number;
     rate: number | null;
     last_present_date: string | null;
+    /**
+     * Current consecutive-present streak (per-athlete scope only; null on the team aggregate).
+     */
+    streak?: number | null;
 }
 

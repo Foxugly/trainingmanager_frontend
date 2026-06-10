@@ -46,6 +46,7 @@ const aggregateStats: TeamStats = {
       { member_id: 24, name: 'Alice Dupont', distance: 6500 },
     ],
   },
+  roti: { series: [], average: null, count: 0 },
   intensity: {
     by_segment: [
       { abv: 'Z1', label: 'Endurance', distance: 8000 },
@@ -284,6 +285,7 @@ describe('TeamStatsComponent', () => {
       member: null,
       attendance: { team_rate: null, by_session: [], by_member: [] },
       volume: { total_distance: 0, by_week: [], by_member: [] },
+      roti: { series: [], average: null, count: 0 },
       intensity: { by_segment: [] },
     };
     await setup(null, emptyStats);

@@ -40,6 +40,7 @@ const aggregateStats: TeamStats = {
       { member_id: 24, name: 'Alice, Dupont', distance: 6500 },
     ],
   },
+  roti: { series: [], average: null, count: 0 },
   intensity: {
     by_segment: [
       { abv: 'Z1', label: 'Endurance', distance: 8000 },
@@ -64,6 +65,7 @@ const memberStats: TeamStats = {
     by_week: [{ week_start: '2026-05-04', distance: 6000 }],
     by_member: [],
   },
+  roti: { series: [], average: null, count: 0 },
   intensity: {
     by_segment: [{ abv: 'Z1', label: 'Endurance', distance: 6000 }],
   },
@@ -128,6 +130,7 @@ describe('buildStatsCsv', () => {
       member: null,
       attendance: { team_rate: null, by_session: [], by_member: [] },
       volume: { total_distance: 0, by_week: [], by_member: [] },
+      roti: { series: [], average: null, count: 0 },
       intensity: { by_segment: [] },
     };
     const csv = buildStatsCsv(empty);

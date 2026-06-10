@@ -1298,6 +1298,10 @@
     }
   },
   "stats": {
+    "roti": "ROTI",
+    "roti_trend": "ROTI-trend",
+    "axis_roti": "Score (1–5)",
+    "streak": "Huidige reeks",
     "tab": "Statistieken",
     "my_tab": "Mijn statistieken",
     "period": "Periode",

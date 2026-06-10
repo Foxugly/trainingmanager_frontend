@@ -248,6 +248,8 @@ model/stats-intensity-by-segment.ts
 model/stats-intensity.ts
 model/stats-member.ts
 model/stats-period.ts
+model/stats-roti-point.ts
+model/stats-roti.ts
 model/stats-volume-by-member.ts
 model/stats-volume-by-week.ts
 model/stats-volume.ts

@@ -74,11 +74,24 @@
           </span>
           <span class="text-xs text-gray-500">{{ 'stats.attendance_rate' | transloco }}</span>
         </div>
+        @if (attendanceStreak() !== null) {
+          <div class="flex items-baseline gap-2">
+            <span class="text-2xl font-bold text-emerald-600">{{ attendanceStreak() }}</span>
+            <span class="text-xs text-gray-500">{{ 'stats.streak' | transloco }}</span>
+          </div>
+        }
       </div>
 
       @if (attendanceChart(); as c) {
         <div class="chart-wrap">
           <p-chart type="line" [data]="c.data" [options]="c.options" />
+        </div>
+      }
+
+      @if (rotiChart(); as rc) {
+        <div class="chart-wrap mt-4">
+          <h4 class="text-sm font-medium text-gray-600 mb-2">{{ 'stats.roti_trend' | transloco }}</h4>
+          <p-chart type="line" [data]="rc.data" [options]="rc.options" />
         </div>
       }
 

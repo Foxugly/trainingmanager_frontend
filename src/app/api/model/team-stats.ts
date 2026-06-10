@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { StatsRoti } from './stats-roti';
 import { StatsAttendance } from './stats-attendance';
 import { StatsPeriod } from './stats-period';
 import { StatsVolume } from './stats-volume';
@@ -26,5 +27,6 @@ export interface TeamStats {
     attendance: StatsAttendance;
     volume: StatsVolume;
     intensity: StatsIntensity;
+    roti: StatsRoti;
 }
 

@@ -228,6 +228,13 @@ export class TeamStatsComponent {
     return Math.round(mine.rate * 100);
   });
 
+  /** Current consecutive-present streak (per-athlete scope only). */
+  protected readonly attendanceStreak = computed<number | null>(() => {
+    const s = this.stats();
+    if (!s || this.isAggregate()) return null;
+    return s.attendance.by_member?.[0]?.streak ?? null;
+  });
+
   protected readonly totalDistanceLabel = computed<string>(() => {
     const s = this.stats();
     if (!s) return '—';
@@ -296,6 +303,47 @@ export class TeamStatsComponent {
               color: '#475569',
             },
             ticks: { color: '#475569' },
+            grid: { color: '#e2e8f0' },
+          },
+        },
+      },
+    };
+  });
+
+  /** Per-athlete ROTI (1-5) trend over the window. Empty on the team aggregate. */
+  protected readonly rotiChart = computed<ChartConfig | null>(() => {
+    const s = this.stats();
+    if (!s || (s.roti?.series?.length ?? 0) === 0) return null;
+    const series = s.roti.series;
+    return {
+      data: {
+        labels: series.map((x) => x.date ?? x.name),
+        datasets: [
+          {
+            label: this.transloco.translate('stats.roti'),
+            data: series.map((x) => x.score),
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.2)',
+            tension: 0.3,
+            fill: true,
+            pointRadius: 3,
+          },
+        ],
+      },
+      options: {
+        ...this.gridOptions(this.transloco.translate('stats.axis_roti')),
+        scales: {
+          x: { ticks: { color: '#475569' }, grid: { color: '#e2e8f0' } },
+          y: {
+            beginAtZero: true,
+            min: 0,
+            max: 5,
+            title: {
+              display: true,
+              text: this.transloco.translate('stats.axis_roti'),
+              color: '#475569',
+            },
+            ticks: { color: '#475569', stepSize: 1 },
             grid: { color: '#e2e8f0' },
           },
         },
