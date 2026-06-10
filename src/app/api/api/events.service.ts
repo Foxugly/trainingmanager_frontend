@@ -29,6 +29,8 @@ import { DuplicateEventResponse } from '../model/duplicate-event-response';
 // @ts-ignore
 import { Event } from '../model/event';
 // @ts-ignore
+import { EventDebrief } from '../model/event-debrief';
+// @ts-ignore
 import { EventRequest } from '../model/event-request';
 // @ts-ignore
 import { EventShareRequestRequest } from '../model/event-share-request-request';
@@ -73,6 +75,7 @@ import {
     EventsAttendanceRetrieveRequestParams,
     EventsAttendanceUpdateRequestParams,
     EventsCreateRequestParams,
+    EventsDebriefRetrieveRequestParams,
     EventsDestroyRequestParams,
     EventsDuplicateCreateRequestParams,
     EventsGenerateTrainingCreateRequestParams,
@@ -709,6 +712,67 @@ export class EventsService extends BaseService implements EventsServiceInterface
             {
                 context: localVarHttpContext,
                 body: eventRequest,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Consolidated post-session debrief (managers only)
+     * One read with everything a coach reviews after a session: attendance (present/absent vs active roster), ROTI (average + count), RSVP (going/maybe/not_going/no_response) and the attachment count, plus the free-text &#x60;debrief&#x60; (edited via the normal event PATCH). Managers of the event\&#39;s team only.
+     * @endpoint get /api/v1/events/{id}/debrief/
+     * @param requestParameters
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public eventsDebriefRetrieve(requestParameters: EventsDebriefRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<EventDebrief>;
+    public eventsDebriefRetrieve(requestParameters: EventsDebriefRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EventDebrief>>;
+    public eventsDebriefRetrieve(requestParameters: EventsDebriefRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EventDebrief>>;
+    public eventsDebriefRetrieve(requestParameters: EventsDebriefRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling eventsDebriefRetrieve.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (jwtAuth) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/events/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/debrief/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<EventDebrief>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

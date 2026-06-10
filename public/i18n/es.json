@@ -320,6 +320,16 @@
       "type_freeform": "Texto libre",
       "switch_confirm": "Cambiar el tipo de entrenamiento eliminará el contenido actual. ¿Continuar?",
       "freeform_heading": "Entrenamiento (texto libre)"
+    },
+    "debrief": {
+      "tab": "Debrief",
+      "present": "Presentes",
+      "roti_avg": "Dificultad media",
+      "rsvp_going": "Anunciados",
+      "no_response": "sin respuesta",
+      "note_label": "Notas de debrief",
+      "note_placeholder": "¿Cómo fue la sesión? Notas para la próxima vez…",
+      "saved": "Debrief guardado."
     }
   },
   "programs": {

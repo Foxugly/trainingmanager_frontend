@@ -51,6 +51,7 @@ export interface PatchedEventRequest {
      * Visibility of this session\'s rounds (and exercises) to athletes.  * `always` - Always * `after` - After the session * `never` - Never
      */
     vis_rounds?: VisibilityMode;
+    debrief?: string;
 }
 
 

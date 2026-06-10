@@ -272,6 +272,12 @@
           <i class="pi pi-paperclip mr-2" aria-hidden="true"></i>
           {{ 'attachments.title' | transloco }}
         </p-tab>
+        @if (canManage()) {
+          <p-tab value="debrief">
+            <i class="pi pi-clipboard mr-2" aria-hidden="true"></i>
+            {{ 'events.debrief.tab' | transloco }}
+          </p-tab>
+        }
       </p-tablist>
 
       <p-tabpanels>
@@ -379,6 +385,13 @@
         <p-tabpanel value="attachments">
           <app-attachment-list targetType="event" [targetId]="e.id" [canEdit]="canManage()" />
         </p-tabpanel>
+
+        <!-- TAB 6 — DEBRIEF (manager-only) -->
+        @if (canManage()) {
+          <p-tabpanel value="debrief">
+            <app-event-debrief [eventId]="e.id" />
+          </p-tabpanel>
+        }
       </p-tabpanels>
     </p-tabs>
   }

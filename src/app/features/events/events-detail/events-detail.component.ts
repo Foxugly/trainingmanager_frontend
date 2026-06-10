@@ -42,6 +42,7 @@ import { TeamRole, computeTeamRole } from '../../teams/teams-list/teams-list.com
 import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-header.component';
 import { AttachmentListComponent } from '../../../shared/ui/attachment-list/attachment-list.component';
 import { AttendanceManagerComponent } from '../attendance-manager/attendance-manager.component';
+import { EventDebriefComponent } from '../event-debrief/event-debrief.component';
 import { EventRotiComponent } from '../event-roti/event-roti.component';
 import { EventRsvpComponent } from '../event-rsvp/event-rsvp.component';
 import { EventTrainingComponent } from '../event-training/event-training.component';
@@ -77,6 +78,7 @@ import { EventShareResponse } from '../../../api/model/event-share-response';
     AttachmentListComponent,
     AttendanceManagerComponent,
     EventRotiComponent,
+    EventDebriefComponent,
     EventRsvpComponent,
     EventTrainingComponent,
     EventFreeformComponent,
@@ -754,8 +756,7 @@ export class EventsDetailComponent implements OnInit {
   protected onTrainingTypeChange(next: TrainingTypeEnum): void {
     const e = this.event();
     if (!e || next === (e.training_type ?? TrainingTypeEnum.Structured)) return;
-    const hasContent =
-      (e.rounds?.length ?? 0) > 0 || (e.training_richtext?.trim().length ?? 0) > 0;
+    const hasContent = (e.rounds?.length ?? 0) > 0 || (e.training_richtext?.trim().length ?? 0) > 0;
     if (hasContent) {
       this.confirmationService.confirm({
         message: this.transloco.translate('events.training.switch_confirm'),
@@ -793,8 +794,7 @@ export class EventsDetailComponent implements OnInit {
   }
 
   private notifyMutationError(err: HttpErrorResponse): void {
-    const detailKey =
-      err?.status === 403 ? 'events.errors.forbidden' : 'events.errors.unknown';
+    const detailKey = err?.status === 403 ? 'events.errors.forbidden' : 'events.errors.unknown';
     this.messageService.add({
       severity: 'error',
       summary: this.transloco.translate('common.error'),

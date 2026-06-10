@@ -95,6 +95,9 @@ model/dashboard-history-item.ts
 model/dashboard-managed-team.ts
 model/dashboard-member-team.ts
 model/dashboard-summary.ts
+model/debrief-attendance.ts
+model/debrief-roti.ts
+model/debrief-rsvp.ts
 model/duplicate-event-created.ts
 model/duplicate-event-request-request.ts
 model/duplicate-event-response.ts
@@ -120,6 +123,7 @@ model/energy-system-admin.ts
 model/energy-system.ts
 model/equipment-minimal.ts
 model/equipment.ts
+model/event-debrief.ts
 model/event-public.ts
 model/event-request.ts
 model/event-round-detail.ts

@@ -17,6 +17,7 @@ import { AttendanceRequest } from '../model/models';
 import { DuplicateEventRequestRequest } from '../model/models';
 import { DuplicateEventResponse } from '../model/models';
 import { Event } from '../model/models';
+import { EventDebrief } from '../model/models';
 import { EventRequest } from '../model/models';
 import { EventShareRequestRequest } from '../model/models';
 import { EventShareResponse } from '../model/models';
@@ -79,6 +80,10 @@ export interface EventsAttendanceUpdateRequestParams {
 
 export interface EventsCreateRequestParams {
     eventRequest: EventRequest;
+}
+
+export interface EventsDebriefRetrieveRequestParams {
+    id: number;
 }
 
 export interface EventsDestroyRequestParams {
@@ -225,6 +230,14 @@ export interface EventsServiceInterface {
 * @param requestParameters
      */
     eventsCreate(requestParameters: EventsCreateRequestParams, extraHttpRequestParams?: any): Observable<Event>;
+
+    /**
+     * Consolidated post-session debrief (managers only)
+     * One read with everything a coach reviews after a session: attendance (present/absent vs active roster), ROTI (average + count), RSVP (going/maybe/not_going/no_response) and the attachment count, plus the free-text &#x60;debrief&#x60; (edited via the normal event PATCH). Managers of the event\&#39;s team only.
+     * @endpoint get /api/v1/events/{id}/debrief/
+* @param requestParameters
+     */
+    eventsDebriefRetrieve(requestParameters: EventsDebriefRetrieveRequestParams, extraHttpRequestParams?: any): Observable<EventDebrief>;
 
     /**
      * 

@@ -320,6 +320,16 @@
       "type_freeform": "Vrije tekst",
       "switch_confirm": "Het wijzigen van het trainingstype verwijdert de huidige inhoud. Doorgaan?",
       "freeform_heading": "Training (vrije tekst)"
+    },
+    "debrief": {
+      "tab": "Debrief",
+      "present": "Aanwezig",
+      "roti_avg": "Gem. zwaarte",
+      "rsvp_going": "Aangemeld",
+      "no_response": "geen antwoord",
+      "note_label": "Debriefnotities",
+      "note_placeholder": "Hoe ging de sessie? Notities voor de volgende keer…",
+      "saved": "Debrief opgeslagen."
     }
   },
   "programs": {

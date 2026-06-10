@@ -320,6 +320,16 @@
       "type_freeform": "Free text",
       "switch_confirm": "Changing the training type will delete the current content. Continue?",
       "freeform_heading": "Training (free text)"
+    },
+    "debrief": {
+      "tab": "Debrief",
+      "present": "Present",
+      "roti_avg": "Avg difficulty",
+      "rsvp_going": "Said going",
+      "no_response": "no reply",
+      "note_label": "Debrief notes",
+      "note_placeholder": "How did the session go? Notes for next time…",
+      "saved": "Debrief saved."
     }
   },
   "programs": {
