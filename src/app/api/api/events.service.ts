@@ -37,6 +37,8 @@ import { EventShareRequestRequest } from '../model/event-share-request-request';
 // @ts-ignore
 import { EventShareResponse } from '../model/event-share-response';
 // @ts-ignore
+import { EventTemplate } from '../model/event-template';
+// @ts-ignore
 import { ExplainSessionResponse } from '../model/explain-session-response';
 // @ts-ignore
 import { GenerateTrainingRequestRequest } from '../model/generate-training-request-request';
@@ -62,6 +64,8 @@ import { RsvpApplyToAttendanceResult } from '../model/rsvp-apply-to-attendance-r
 import { RsvpSummary } from '../model/rsvp-summary';
 // @ts-ignore
 import { RsvpUpsertRequest } from '../model/rsvp-upsert-request';
+// @ts-ignore
+import { SaveAsTemplateRequestRequest } from '../model/save-as-template-request-request';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -92,6 +96,7 @@ import {
     EventsRsvpApplyToAttendanceRequestParams,
     EventsRsvpRetrieveRequestParams,
     EventsRsvpUpdateRequestParams,
+    EventsSaveAsTemplateCreateRequestParams,
     EventsShareCreateRequestParams,
     EventsUpdateRequestParams
 } from './events.serviceInterface';
@@ -1799,6 +1804,82 @@ export class EventsService extends BaseService implements EventsServiceInterface
             {
                 context: localVarHttpContext,
                 body: rsvpUpsertRequest,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Save this session as a reusable team template (managers only). Copies goal/total/sport and deep-copies the rounds; the template is independent of later edits to this event.
+     * @endpoint post /api/v1/events/{id}/save-as-template/
+     * @param requestParameters
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public eventsSaveAsTemplateCreate(requestParameters: EventsSaveAsTemplateCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<EventTemplate>;
+    public eventsSaveAsTemplateCreate(requestParameters: EventsSaveAsTemplateCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EventTemplate>>;
+    public eventsSaveAsTemplateCreate(requestParameters: EventsSaveAsTemplateCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EventTemplate>>;
+    public eventsSaveAsTemplateCreate(requestParameters: EventsSaveAsTemplateCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling eventsSaveAsTemplateCreate.');
+        }
+        const saveAsTemplateRequestRequest = requestParameters?.saveAsTemplateRequestRequest;
+        if (saveAsTemplateRequestRequest === null || saveAsTemplateRequestRequest === undefined) {
+            throw new Error('Required parameter saveAsTemplateRequestRequest was null or undefined when calling eventsSaveAsTemplateCreate.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (jwtAuth) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'application/x-www-form-urlencoded',
+            'multipart/form-data'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/events/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/save-as-template/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<EventTemplate>('post', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: saveAsTemplateRequestRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

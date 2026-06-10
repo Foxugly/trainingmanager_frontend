@@ -338,6 +338,27 @@
       "empty": "Nog geen atletenbriefing.",
       "generated": "Atletenbriefing gegenereerd.",
       "error": "Kon de briefing niet genereren."
+    },
+    "templates": {
+      "tab": "Sjablonen",
+      "save_as": "Opslaan als sjabloon",
+      "saved": "Sessie opgeslagen als sjabloon.",
+      "name_label": "Sjabloonnaam",
+      "name_placeholder": "bv. Drempeldag",
+      "empty": "Nog geen sjablonen.",
+      "empty_hint": "Sla een sessie op als sjabloon om te hergebruiken.",
+      "rounds": "Blokken",
+      "use": "Gebruiken",
+      "use_title": "Sessie maken uit sjabloon",
+      "use_intro": "Een nieuwe sessie maken uit \"{{name}}\".",
+      "program": "Programma",
+      "program_placeholder": "Kies een programma",
+      "date": "Datum",
+      "create_event": "Sessie maken",
+      "instantiated": "Sessie gemaakt uit sjabloon.",
+      "delete_confirm_title": "Sjabloon verwijderen",
+      "delete_confirm_message": "Dit sjabloon verwijderen? Kan niet ongedaan worden.",
+      "deleted": "Sjabloon verwijderd."
     }
   },
   "programs": {

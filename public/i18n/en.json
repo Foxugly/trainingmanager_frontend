@@ -338,6 +338,27 @@
       "empty": "No athlete brief yet.",
       "generated": "Athlete brief generated.",
       "error": "Could not generate the brief."
+    },
+    "templates": {
+      "tab": "Templates",
+      "save_as": "Save as template",
+      "saved": "Session saved as template.",
+      "name_label": "Template name",
+      "name_placeholder": "e.g. Threshold day",
+      "empty": "No templates yet.",
+      "empty_hint": "Save a session as a template to reuse it.",
+      "rounds": "Rounds",
+      "use": "Use",
+      "use_title": "Create event from template",
+      "use_intro": "Create a new event from \"{{name}}\".",
+      "program": "Program",
+      "program_placeholder": "Select a program",
+      "date": "Date",
+      "create_event": "Create event",
+      "instantiated": "Event created from template.",
+      "delete_confirm_title": "Delete template",
+      "delete_confirm_message": "Delete this template? This cannot be undone.",
+      "deleted": "Template deleted."
     }
   },
   "programs": {

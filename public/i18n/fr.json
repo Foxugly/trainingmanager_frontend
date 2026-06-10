@@ -338,6 +338,27 @@
       "empty": "Pas encore de brief athlètes.",
       "generated": "Brief athlètes généré.",
       "error": "Impossible de générer le brief."
+    },
+    "templates": {
+      "tab": "Modèles",
+      "save_as": "Enregistrer comme modèle",
+      "saved": "Séance enregistrée comme modèle.",
+      "name_label": "Nom du modèle",
+      "name_placeholder": "ex. Jour seuil",
+      "empty": "Aucun modèle.",
+      "empty_hint": "Enregistrez une séance comme modèle pour la réutiliser.",
+      "rounds": "Blocs",
+      "use": "Utiliser",
+      "use_title": "Créer une séance depuis le modèle",
+      "use_intro": "Créer une nouvelle séance depuis « {{name}} ».",
+      "program": "Programme",
+      "program_placeholder": "Choisir un programme",
+      "date": "Date",
+      "create_event": "Créer la séance",
+      "instantiated": "Séance créée depuis le modèle.",
+      "delete_confirm_title": "Supprimer le modèle",
+      "delete_confirm_message": "Supprimer ce modèle ? Action irréversible.",
+      "deleted": "Modèle supprimé."
     }
   },
   "programs": {

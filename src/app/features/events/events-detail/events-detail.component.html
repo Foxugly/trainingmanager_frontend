@@ -289,6 +289,11 @@
             [canManage]="canManage()"
           />
           @if (canManage()) {
+            <div class="mb-4">
+              <app-save-as-template-button [eventId]="e.id" />
+            </div>
+          }
+          @if (canManage()) {
             <div class="mb-4 flex items-center gap-3">
               <label for="training_type" class="text-sm font-medium text-gray-600">
                 {{ 'teams.form.training_type_label' | transloco }}

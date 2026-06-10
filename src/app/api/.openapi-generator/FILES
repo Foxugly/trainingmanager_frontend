@@ -23,6 +23,8 @@ api/energy-systems.service.ts
 api/energy-systems.serviceInterface.ts
 api/equipment.service.ts
 api/equipment.serviceInterface.ts
+api/event-templates.service.ts
+api/event-templates.serviceInterface.ts
 api/events.service.ts
 api/events.serviceInterface.ts
 api/exercises.service.ts
@@ -129,6 +131,7 @@ model/event-request.ts
 model/event-round-detail.ts
 model/event-share-request-request.ts
 model/event-share-response.ts
+model/event-template.ts
 model/event.ts
 model/exercise-request.ts
 model/exercise.ts
@@ -141,6 +144,7 @@ model/generate-training-request-request.ts
 model/generate-training-response.ts
 model/generate-training-tokens-used.ts
 model/health-check.ts
+model/instantiate-template-request-request.ts
 model/invitation-status-enum.ts
 model/join-magic-cancelled-response-code-enum.ts
 model/join-magic-cancelled-response.ts
@@ -183,6 +187,7 @@ model/paginated-energy-segment-list.ts
 model/paginated-energy-system-list.ts
 model/paginated-equipment-list.ts
 model/paginated-event-list.ts
+model/paginated-event-template-list.ts
 model/paginated-exercise-list.ts
 model/paginated-level-list.ts
 model/paginated-member-list.ts
@@ -265,6 +270,7 @@ model/rsvp-reliability-response.ts
 model/rsvp-status-enum.ts
 model/rsvp-summary.ts
 model/rsvp-upsert-request.ts
+model/save-as-template-request-request.ts
 model/sport-admin-request.ts
 model/sport-admin.ts
 model/sport-training-type-write-request.ts

@@ -21,6 +21,7 @@ import { EventDebrief } from '../model/models';
 import { EventRequest } from '../model/models';
 import { EventShareRequestRequest } from '../model/models';
 import { EventShareResponse } from '../model/models';
+import { EventTemplate } from '../model/models';
 import { ExplainSessionResponse } from '../model/models';
 import { GenerateTrainingRequestRequest } from '../model/models';
 import { GenerateTrainingResponse } from '../model/models';
@@ -34,6 +35,7 @@ import { RotiUpsertRequest } from '../model/models';
 import { RsvpApplyToAttendanceResult } from '../model/models';
 import { RsvpSummary } from '../model/models';
 import { RsvpUpsertRequest } from '../model/models';
+import { SaveAsTemplateRequestRequest } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
@@ -155,6 +157,11 @@ export interface EventsRsvpRetrieveRequestParams {
 export interface EventsRsvpUpdateRequestParams {
     eventPk: number;
     rsvpUpsertRequest: RsvpUpsertRequest;
+}
+
+export interface EventsSaveAsTemplateCreateRequestParams {
+    id: number;
+    saveAsTemplateRequestRequest: SaveAsTemplateRequestRequest;
 }
 
 export interface EventsShareCreateRequestParams {
@@ -355,6 +362,14 @@ export interface EventsServiceInterface {
 * @param requestParameters
      */
     eventsRsvpUpdate(requestParameters: EventsRsvpUpdateRequestParams, extraHttpRequestParams?: any): Observable<RsvpSummary>;
+
+    /**
+     * 
+     * Save this session as a reusable team template (managers only). Copies goal/total/sport and deep-copies the rounds; the template is independent of later edits to this event.
+     * @endpoint post /api/v1/events/{id}/save-as-template/
+* @param requestParameters
+     */
+    eventsSaveAsTemplateCreate(requestParameters: EventsSaveAsTemplateCreateRequestParams, extraHttpRequestParams?: any): Observable<EventTemplate>;
 
     /**
      * 

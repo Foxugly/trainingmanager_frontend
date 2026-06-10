@@ -338,6 +338,27 @@
       "empty": "Aún no hay brief de atletas.",
       "generated": "Brief de atletas generado.",
       "error": "No se pudo generar el brief."
+    },
+    "templates": {
+      "tab": "Plantillas",
+      "save_as": "Guardar como plantilla",
+      "saved": "Sesión guardada como plantilla.",
+      "name_label": "Nombre de plantilla",
+      "name_placeholder": "p. ej. Día umbral",
+      "empty": "Sin plantillas.",
+      "empty_hint": "Guarda una sesión como plantilla para reutilizarla.",
+      "rounds": "Bloques",
+      "use": "Usar",
+      "use_title": "Crear sesión desde plantilla",
+      "use_intro": "Crear una nueva sesión desde «{{name}}».",
+      "program": "Programa",
+      "program_placeholder": "Elige un programa",
+      "date": "Fecha",
+      "create_event": "Crear sesión",
+      "instantiated": "Sesión creada desde la plantilla.",
+      "delete_confirm_title": "Eliminar plantilla",
+      "delete_confirm_message": "¿Eliminar esta plantilla? No se puede deshacer.",
+      "deleted": "Plantilla eliminada."
     }
   },
   "programs": {

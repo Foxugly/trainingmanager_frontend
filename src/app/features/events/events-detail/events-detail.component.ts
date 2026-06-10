@@ -43,6 +43,7 @@ import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-h
 import { AttachmentListComponent } from '../../../shared/ui/attachment-list/attachment-list.component';
 import { AttendanceManagerComponent } from '../attendance-manager/attendance-manager.component';
 import { EventAthleteBriefComponent } from '../event-athlete-brief/event-athlete-brief.component';
+import { SaveAsTemplateButtonComponent } from '../save-as-template-button/save-as-template-button.component';
 import { EventDebriefComponent } from '../event-debrief/event-debrief.component';
 import { EventRotiComponent } from '../event-roti/event-roti.component';
 import { EventRsvpComponent } from '../event-rsvp/event-rsvp.component';
@@ -81,6 +82,7 @@ import { EventShareResponse } from '../../../api/model/event-share-response';
     EventRotiComponent,
     EventDebriefComponent,
     EventAthleteBriefComponent,
+    SaveAsTemplateButtonComponent,
     EventRsvpComponent,
     EventTrainingComponent,
     EventFreeformComponent,

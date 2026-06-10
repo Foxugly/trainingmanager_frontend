@@ -338,6 +338,27 @@
       "empty": "Nessun brief atleti.",
       "generated": "Brief atleti generato.",
       "error": "Impossibile generare il brief."
+    },
+    "templates": {
+      "tab": "Modelli",
+      "save_as": "Salva come modello",
+      "saved": "Sessione salvata come modello.",
+      "name_label": "Nome modello",
+      "name_placeholder": "es. Giorno soglia",
+      "empty": "Nessun modello.",
+      "empty_hint": "Salva una sessione come modello per riutilizzarla.",
+      "rounds": "Blocchi",
+      "use": "Usa",
+      "use_title": "Crea sessione dal modello",
+      "use_intro": "Crea una nuova sessione da \"{{name}}\".",
+      "program": "Programma",
+      "program_placeholder": "Scegli un programma",
+      "date": "Data",
+      "create_event": "Crea sessione",
+      "instantiated": "Sessione creata dal modello.",
+      "delete_confirm_title": "Elimina modello",
+      "delete_confirm_message": "Eliminare questo modello? Non reversibile.",
+      "deleted": "Modello eliminato."
     }
   },
   "programs": {

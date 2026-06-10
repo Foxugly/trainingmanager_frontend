@@ -1,0 +1,47 @@
+<p-button
+  [label]="'events.templates.save_as' | transloco"
+  icon="pi pi-bookmark"
+  severity="secondary"
+  [outlined]="true"
+  size="small"
+  (onClick)="open()"
+/>
+
+<p-dialog
+  [header]="'events.templates.save_as' | transloco"
+  [(visible)]="visible"
+  [modal]="true"
+  [dismissableMask]="true"
+  [style]="{ width: '28rem', maxWidth: '95vw' }"
+>
+  <div class="flex flex-col gap-3">
+    <label for="tpl-name" class="text-sm font-medium text-gray-600">
+      {{ 'events.templates.name_label' | transloco }}
+    </label>
+    <input
+      pInputText
+      id="tpl-name"
+      [ngModel]="name()"
+      (ngModelChange)="name.set($event)"
+      [placeholder]="'events.templates.name_placeholder' | transloco"
+      class="w-full"
+    />
+    <div class="flex justify-end gap-2">
+      <p-button
+        [label]="'common.cancel' | transloco"
+        severity="secondary"
+        [text]="true"
+        size="small"
+        (onClick)="visible.set(false)"
+      />
+      <p-button
+        [label]="'common.save' | transloco"
+        icon="pi pi-check"
+        size="small"
+        [disabled]="!name().trim()"
+        [loading]="saving()"
+        (onClick)="save()"
+      />
+    </div>
+  </div>
+</p-dialog>

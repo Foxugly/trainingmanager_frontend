@@ -1,0 +1,110 @@
+@if (loading()) {
+  <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+} @else if (error()) {
+  <p class="py-4 text-red-600">{{ 'common.load_failed' | transloco }}</p>
+} @else if (templates().length === 0) {
+  <app-empty-state
+    icon="bookmark"
+    tone="gray"
+    [title]="'events.templates.empty' | transloco"
+    [subtitle]="'events.templates.empty_hint' | transloco"
+  />
+} @else {
+  <p-table [value]="templates()" styleClass="p-datatable-sm" responsiveLayout="scroll">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>{{ 'events.templates.name_label' | transloco }}</th>
+        <th class="text-right">{{ 'events.templates.rounds' | transloco }}</th>
+        <th class="text-right">{{ 'common.actions' | transloco }}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-tpl>
+      <tr>
+        <td>{{ tpl.name }}</td>
+        <td class="text-right">{{ tpl.rounds_count }}</td>
+        <td class="text-right whitespace-nowrap">
+          <p-button
+            [label]="'events.templates.use' | transloco"
+            icon="pi pi-calendar-plus"
+            size="small"
+            [text]="true"
+            (onClick)="openInstantiate(tpl)"
+          />
+          <p-button
+            icon="pi pi-trash"
+            severity="danger"
+            size="small"
+            [text]="true"
+            [ariaLabel]="'common.delete' | transloco"
+            (onClick)="confirmDelete(tpl)"
+          />
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+}
+
+<p-dialog
+  [header]="'events.templates.use_title' | transloco"
+  [(visible)]="dialogVisible"
+  [modal]="true"
+  [dismissableMask]="true"
+  [style]="{ width: '30rem', maxWidth: '95vw' }"
+>
+  @if (selected(); as tpl) {
+    <div class="flex flex-col gap-4">
+      <p class="text-sm text-gray-600">
+        {{ 'events.templates.use_intro' | transloco: { name: tpl.name } }}
+      </p>
+      <div class="flex flex-col gap-1">
+        <label for="tpl-program" class="text-sm font-medium text-gray-600">
+          {{ 'events.templates.program' | transloco }}
+        </label>
+        <p-select
+          inputId="tpl-program"
+          [options]="programs()"
+          optionLabel="name"
+          optionValue="id"
+          [ngModel]="programId()"
+          (ngModelChange)="programId.set($event)"
+          [placeholder]="'events.templates.program_placeholder' | transloco"
+          styleClass="w-full"
+          appendTo="body"
+        />
+      </div>
+      <div class="flex flex-col gap-1">
+        <label for="tpl-date" class="text-sm font-medium text-gray-600">
+          {{ 'events.templates.date' | transloco }}
+        </label>
+        <p-datepicker
+          inputId="tpl-date"
+          [ngModel]="date()"
+          (ngModelChange)="date.set($event)"
+          dateFormat="yy-mm-dd"
+          [showButtonBar]="true"
+          appendTo="body"
+          styleClass="w-full"
+        />
+      </div>
+      <div class="flex justify-end gap-2">
+        <p-button
+          [label]="'common.cancel' | transloco"
+          severity="secondary"
+          [text]="true"
+          size="small"
+          (onClick)="dialogVisible.set(false)"
+        />
+        <p-button
+          [label]="'events.templates.create_event' | transloco"
+          icon="pi pi-check"
+          size="small"
+          [disabled]="programId() === null || !date()"
+          [loading]="instantiating()"
+          (onClick)="instantiate()"
+        />
+      </div>
+    </div>
+  }
+</p-dialog>
+
+<p-confirmDialog />

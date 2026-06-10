@@ -40,6 +40,7 @@ import { TeamRequestsComponent } from '../team-requests/team-requests.component'
 import { TeamStatsComponent } from '../team-stats/team-stats.component';
 import { TeamAuditLogComponent } from '../team-audit-log/team-audit-log.component';
 import { TeamRosterHistoryComponent } from '../team-roster-history/team-roster-history.component';
+import { TeamTemplatesComponent } from '../team-templates/team-templates.component';
 import { MemberNotesComponent } from '../member-notes/member-notes.component';
 import { PerformancePanelComponent } from '../../../shared/ui/performance-panel/performance-panel.component';
 import {
@@ -83,6 +84,7 @@ interface FieldErrors {
     ProgramsListComponent,
     TeamStatsComponent,
     TeamRosterHistoryComponent,
+    TeamTemplatesComponent,
     TeamRequestsComponent,
     TeamAuditLogComponent,
     MemberNotesComponent,
