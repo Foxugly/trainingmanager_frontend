@@ -1,8 +1,9 @@
 import { DestroyRef, Directive, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { TranslocoService } from '@jsverse/transloco';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
 import { Observable, catchError, finalize, of, switchMap, tap } from 'rxjs';
+import { ToastService } from '../../../core/notifications/toast.service';
 
 export interface TaxonomyEntity {
   id: number;
@@ -25,7 +26,7 @@ export interface Paginated<T> {
 @Directive()
 export abstract class TaxonomyListBase<T extends TaxonomyEntity> {
   protected readonly confirmationService = inject(ConfirmationService);
-  protected readonly messageService = inject(MessageService);
+  protected readonly toast = inject(ToastService);
   protected readonly transloco = inject(TranslocoService);
   protected readonly destroyRef = inject(DestroyRef);
 
@@ -82,11 +83,7 @@ export abstract class TaxonomyListBase<T extends TaxonomyEntity> {
   private runMutation(op: Observable<unknown>, successKey: 'deleted' | 'restored'): void {
     op.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: this.transloco.translate('common.success'),
-          detail: this.transloco.translate(`${this.i18nPrefix}.actions.${successKey}`),
-        });
+        this.toast.success(`${this.i18nPrefix}.actions.${successKey}`);
         this.reload();
       },
       error: () => this.notifyUnknownError(),
@@ -94,11 +91,7 @@ export abstract class TaxonomyListBase<T extends TaxonomyEntity> {
   }
 
   protected notifyUnknownError(): void {
-    this.messageService.add({
-      severity: 'error',
-      summary: this.transloco.translate('common.error'),
-      detail: this.transloco.translate(`${this.i18nPrefix}.errors.unknown`),
-    });
+    this.toast.error(`${this.i18nPrefix}.errors.unknown`);
   }
 
   protected get includeInactiveModel(): boolean {
