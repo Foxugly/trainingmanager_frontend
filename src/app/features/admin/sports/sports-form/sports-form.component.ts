@@ -12,7 +12,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { InputText } from 'primeng/inputtext';
@@ -24,6 +24,7 @@ import { EnergySystemsService } from '../../../../api/api/energy-systems.service
 import { SportsService } from '../../../../api/api/sports.service';
 import { EnergySystem } from '../../../../api/model/energy-system';
 import { TrainingTypeEnum } from '../../../../api/model/training-type-enum';
+import { ToastService } from '../../../../core/notifications/toast.service';
 import { type FieldErrors, extractServerError } from '../../../../shared/forms/notify-error';
 import {
   ActiveToggleComponent,
@@ -68,7 +69,7 @@ export class SportsFormComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly sportsService = inject(SportsService);
   private readonly energySystemsService = inject(EnergySystemsService);
-  private readonly messageService = inject(MessageService);
+  private readonly toast = inject(ToastService);
   private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -151,7 +152,7 @@ export class SportsFormComponent implements OnInit {
             this.loading.set(false);
           },
           error: () => {
-            this.notifyLoadError();
+            this.toast.error('admin.sports.errors.unknown');
             this.loading.set(false);
           },
         });
@@ -193,11 +194,7 @@ export class SportsFormComponent implements OnInit {
 
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: this.transloco.translate('common.success'),
-          detail: this.transloco.translate('admin.sports.actions.saved'),
-        });
+        this.toast.success('admin.sports.actions.saved');
         this.saving.set(false);
         this.router.navigate(['/admin/sports']);
       },
@@ -208,25 +205,11 @@ export class SportsFormComponent implements OnInit {
     });
   }
 
-  private notifyLoadError(): void {
-    this.messageService.add({
-      severity: 'error',
-      summary: this.transloco.translate('common.error'),
-      detail: this.transloco.translate('admin.sports.errors.unknown'),
-    });
-  }
-
   private applyServerError(err: HttpErrorResponse): void {
     const { fields, detail } = extractServerError(err);
     this.fieldErrors.set(fields);
     if (!fields) {
-      this.messageService.add({
-        severity: 'error',
-        summary: this.transloco.translate('common.error'),
-        detail: detail
-          ? this.transloco.translate(detail)
-          : this.transloco.translate('admin.sports.errors.unknown'),
-      });
+      this.toast.error(detail ?? 'admin.sports.errors.unknown');
     }
   }
 }

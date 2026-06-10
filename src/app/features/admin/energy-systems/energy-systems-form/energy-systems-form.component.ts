@@ -12,12 +12,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { InputText } from 'primeng/inputtext';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { EnergySystemsService } from '../../../../api/api/energy-systems.service';
+import { ToastService } from '../../../../core/notifications/toast.service';
 import { type FieldErrors, extractServerError } from '../../../../shared/forms/notify-error';
 import {
   ActiveToggleComponent,
@@ -58,7 +59,7 @@ export class EnergySystemsFormComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly energySystemsService = inject(EnergySystemsService);
-  private readonly messageService = inject(MessageService);
+  private readonly toast = inject(ToastService);
   private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -114,7 +115,7 @@ export class EnergySystemsFormComponent implements OnInit {
             this.loading.set(false);
           },
           error: () => {
-            this.notifyLoadError();
+            this.toast.error('admin.energy_systems.errors.unknown');
             this.loading.set(false);
           },
         });
@@ -158,11 +159,7 @@ export class EnergySystemsFormComponent implements OnInit {
 
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: this.transloco.translate('common.success'),
-          detail: this.transloco.translate('admin.energy_systems.actions.saved'),
-        });
+        this.toast.success('admin.energy_systems.actions.saved');
         this.saving.set(false);
         this.router.navigate(['/admin/energy-systems']);
       },
@@ -173,25 +170,11 @@ export class EnergySystemsFormComponent implements OnInit {
     });
   }
 
-  private notifyLoadError(): void {
-    this.messageService.add({
-      severity: 'error',
-      summary: this.transloco.translate('common.error'),
-      detail: this.transloco.translate('admin.energy_systems.errors.unknown'),
-    });
-  }
-
   private applyServerError(err: HttpErrorResponse): void {
     const { fields, detail } = extractServerError(err);
     this.fieldErrors.set(fields);
     if (!fields) {
-      this.messageService.add({
-        severity: 'error',
-        summary: this.transloco.translate('common.error'),
-        detail: detail
-          ? this.transloco.translate(detail)
-          : this.transloco.translate('admin.energy_systems.errors.unknown'),
-      });
+      this.toast.error(detail ?? 'admin.energy_systems.errors.unknown');
     }
   }
 }
