@@ -14,27 +14,12 @@ import { PasswordResetConfirmRequest } from '../../api/model/password-reset-conf
 import { PasswordResetConfirmResponse } from '../../api/model/password-reset-confirm-response';
 import { PasswordResetRequest } from '../../api/model/password-reset-request';
 import { PasswordResetRequestResponse } from '../../api/model/password-reset-request-response';
+import { EmailConfirmResponse } from '../../api/model/email-confirm-response';
+import { EmailResendResponse } from '../../api/model/email-resend-response';
 import { Register } from '../../api/model/register';
+import { RegisterResponse } from '../../api/model/register-response';
 import { TokenRefresh } from '../../api/model/token-refresh';
 import { VerifiedTokenObtainPairRequest } from '../../api/model/verified-token-obtain-pair-request';
-
-export interface RegisterResponse {
-  readonly detail: string;
-  readonly code: 'registration_pending_verification';
-  readonly username: string;
-  readonly email: string;
-}
-
-export interface EmailConfirmResponse {
-  readonly access: string;
-  readonly refresh: string;
-  readonly user: Me;
-}
-
-export interface EmailResendResponse {
-  readonly detail: string;
-  readonly code?: string;
-}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -118,19 +103,19 @@ export class AuthService {
   }
 
   register(payload: Register): Observable<RegisterResponse> {
-    return this.apiAuth.authRegisterCreate({ registerRequest: payload }) as unknown as Observable<RegisterResponse>;
+    return this.apiAuth.authRegisterCreate({ registerRequest: payload });
   }
 
   confirmEmail(key: string): Observable<Me> {
     const payload: EmailConfirmRequest = { key };
-    return (this.apiAuth.authEmailConfirmCreate({ emailConfirmRequest: payload }) as unknown as Observable<EmailConfirmResponse>).pipe(
-      switchMap((res) => this.loginWithTokens(res.access, res.refresh)),
-    );
+    return this.apiAuth
+      .authEmailConfirmCreate({ emailConfirmRequest: payload })
+      .pipe(switchMap((res) => this.loginWithTokens(res.access, res.refresh)));
   }
 
   resendEmail(email: string): Observable<EmailResendResponse> {
     const payload: EmailResendRequest = { email };
-    return this.apiAuth.authEmailResendCreate({ emailResendRequest: payload }) as unknown as Observable<EmailResendResponse>;
+    return this.apiAuth.authEmailResendCreate({ emailResendRequest: payload });
   }
 
   requestPasswordReset(payload: PasswordResetRequest): Observable<PasswordResetRequestResponse> {

@@ -25,7 +25,11 @@ import { EmailChangeConfirmResponse } from '../model/email-change-confirm-respon
 // @ts-ignore
 import { EmailConfirmRequest } from '../model/email-confirm-request';
 // @ts-ignore
+import { EmailConfirmResponse } from '../model/email-confirm-response';
+// @ts-ignore
 import { EmailResendRequest } from '../model/email-resend-request';
+// @ts-ignore
+import { EmailResendResponse } from '../model/email-resend-response';
 // @ts-ignore
 import { LogoutRequest } from '../model/logout-request';
 // @ts-ignore
@@ -50,6 +54,8 @@ import { PasswordResetRequestRequest } from '../model/password-reset-request-req
 import { PasswordResetRequestResponse } from '../model/password-reset-request-response';
 // @ts-ignore
 import { RegisterRequest } from '../model/register-request';
+// @ts-ignore
+import { RegisterResponse } from '../model/register-response';
 // @ts-ignore
 import { TokenObtainPairResponse } from '../model/token-obtain-pair-response';
 // @ts-ignore
@@ -239,10 +245,10 @@ export class AuthService extends BaseService implements AuthServiceInterface {
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public authEmailConfirmCreate(requestParameters: AuthEmailConfirmCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public authEmailConfirmCreate(requestParameters: AuthEmailConfirmCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public authEmailConfirmCreate(requestParameters: AuthEmailConfirmCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public authEmailConfirmCreate(requestParameters: AuthEmailConfirmCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public authEmailConfirmCreate(requestParameters: AuthEmailConfirmCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<EmailConfirmResponse>;
+    public authEmailConfirmCreate(requestParameters: AuthEmailConfirmCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EmailConfirmResponse>>;
+    public authEmailConfirmCreate(requestParameters: AuthEmailConfirmCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EmailConfirmResponse>>;
+    public authEmailConfirmCreate(requestParameters: AuthEmailConfirmCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         const emailConfirmRequest = requestParameters?.emailConfirmRequest;
         if (emailConfirmRequest === null || emailConfirmRequest === undefined) {
             throw new Error('Required parameter emailConfirmRequest was null or undefined when calling authEmailConfirmCreate.');
@@ -251,6 +257,7 @@ export class AuthService extends BaseService implements AuthServiceInterface {
         let localVarHeaders = this.defaultHeaders;
 
         const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
         ]);
         if (localVarHttpHeaderAcceptSelected !== undefined) {
             localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
@@ -285,7 +292,7 @@ export class AuthService extends BaseService implements AuthServiceInterface {
 
         let localVarPath = `/api/v1/auth/email/confirm/`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<any>('post', `${basePath}${localVarPath}`,
+        return this.httpClient.request<EmailConfirmResponse>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 body: emailConfirmRequest,
@@ -307,10 +314,10 @@ export class AuthService extends BaseService implements AuthServiceInterface {
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public authEmailResendCreate(requestParameters: AuthEmailResendCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public authEmailResendCreate(requestParameters: AuthEmailResendCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public authEmailResendCreate(requestParameters: AuthEmailResendCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public authEmailResendCreate(requestParameters: AuthEmailResendCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public authEmailResendCreate(requestParameters: AuthEmailResendCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<EmailResendResponse>;
+    public authEmailResendCreate(requestParameters: AuthEmailResendCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EmailResendResponse>>;
+    public authEmailResendCreate(requestParameters: AuthEmailResendCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EmailResendResponse>>;
+    public authEmailResendCreate(requestParameters: AuthEmailResendCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         const emailResendRequest = requestParameters?.emailResendRequest;
         if (emailResendRequest === null || emailResendRequest === undefined) {
             throw new Error('Required parameter emailResendRequest was null or undefined when calling authEmailResendCreate.');
@@ -319,6 +326,7 @@ export class AuthService extends BaseService implements AuthServiceInterface {
         let localVarHeaders = this.defaultHeaders;
 
         const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
         ]);
         if (localVarHttpHeaderAcceptSelected !== undefined) {
             localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
@@ -353,7 +361,7 @@ export class AuthService extends BaseService implements AuthServiceInterface {
 
         let localVarPath = `/api/v1/auth/email/resend/`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<any>('post', `${basePath}${localVarPath}`,
+        return this.httpClient.request<EmailResendResponse>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 body: emailResendRequest,
@@ -794,10 +802,10 @@ export class AuthService extends BaseService implements AuthServiceInterface {
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public authRegisterCreate(requestParameters: AuthRegisterCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public authRegisterCreate(requestParameters: AuthRegisterCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public authRegisterCreate(requestParameters: AuthRegisterCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public authRegisterCreate(requestParameters: AuthRegisterCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public authRegisterCreate(requestParameters: AuthRegisterCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<RegisterResponse>;
+    public authRegisterCreate(requestParameters: AuthRegisterCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<RegisterResponse>>;
+    public authRegisterCreate(requestParameters: AuthRegisterCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<RegisterResponse>>;
+    public authRegisterCreate(requestParameters: AuthRegisterCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         const registerRequest = requestParameters?.registerRequest;
         if (registerRequest === null || registerRequest === undefined) {
             throw new Error('Required parameter registerRequest was null or undefined when calling authRegisterCreate.');
@@ -806,6 +814,7 @@ export class AuthService extends BaseService implements AuthServiceInterface {
         let localVarHeaders = this.defaultHeaders;
 
         const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
         ]);
         if (localVarHttpHeaderAcceptSelected !== undefined) {
             localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
@@ -840,7 +849,7 @@ export class AuthService extends BaseService implements AuthServiceInterface {
 
         let localVarPath = `/api/v1/auth/register/`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<any>('post', `${basePath}${localVarPath}`,
+        return this.httpClient.request<RegisterResponse>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 body: registerRequest,

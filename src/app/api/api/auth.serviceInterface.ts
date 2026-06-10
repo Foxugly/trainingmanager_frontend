@@ -15,7 +15,9 @@ import { AccountDeleteRequest } from '../model/models';
 import { EmailChangeConfirmRequest } from '../model/models';
 import { EmailChangeConfirmResponse } from '../model/models';
 import { EmailConfirmRequest } from '../model/models';
+import { EmailConfirmResponse } from '../model/models';
 import { EmailResendRequest } from '../model/models';
+import { EmailResendResponse } from '../model/models';
 import { LogoutRequest } from '../model/models';
 import { MagicLinkExchangeRequestRequest } from '../model/models';
 import { MagicLinkExchangeResponse } from '../model/models';
@@ -28,6 +30,7 @@ import { PasswordResetConfirmResponse } from '../model/models';
 import { PasswordResetRequestRequest } from '../model/models';
 import { PasswordResetRequestResponse } from '../model/models';
 import { RegisterRequest } from '../model/models';
+import { RegisterResponse } from '../model/models';
 import { TokenObtainPairResponse } from '../model/models';
 import { TokenRefresh } from '../model/models';
 import { TokenRefreshRequest } from '../model/models';
@@ -116,7 +119,7 @@ export interface AuthServiceInterface {
      * @endpoint post /api/v1/auth/email/confirm/
 * @param requestParameters
      */
-    authEmailConfirmCreate(requestParameters: AuthEmailConfirmCreateRequestParams, extraHttpRequestParams?: any): Observable<{}>;
+    authEmailConfirmCreate(requestParameters: AuthEmailConfirmCreateRequestParams, extraHttpRequestParams?: any): Observable<EmailConfirmResponse>;
 
     /**
      * 
@@ -124,7 +127,7 @@ export interface AuthServiceInterface {
      * @endpoint post /api/v1/auth/email/resend/
 * @param requestParameters
      */
-    authEmailResendCreate(requestParameters: AuthEmailResendCreateRequestParams, extraHttpRequestParams?: any): Observable<{}>;
+    authEmailResendCreate(requestParameters: AuthEmailResendCreateRequestParams, extraHttpRequestParams?: any): Observable<EmailResendResponse>;
 
     /**
      * 
@@ -180,7 +183,7 @@ export interface AuthServiceInterface {
      * @endpoint post /api/v1/auth/register/
 * @param requestParameters
      */
-    authRegisterCreate(requestParameters: AuthRegisterCreateRequestParams, extraHttpRequestParams?: any): Observable<{}>;
+    authRegisterCreate(requestParameters: AuthRegisterCreateRequestParams, extraHttpRequestParams?: any): Observable<RegisterResponse>;
 
     /**
      * 

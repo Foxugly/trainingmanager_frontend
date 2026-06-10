@@ -105,7 +105,11 @@ model/email-change-request-request.ts
 model/email-change-request-response-code-enum.ts
 model/email-change-request-response.ts
 model/email-confirm-request.ts
+model/email-confirm-response.ts
+model/email-confirm-user.ts
 model/email-resend-request.ts
+model/email-resend-response-code-enum.ts
+model/email-resend-response.ts
 model/endpoint-enum.ts
 model/energy-segment-admin-request.ts
 model/energy-segment-admin.ts
@@ -230,6 +234,8 @@ model/program-request.ts
 model/program.ts
 model/read-all-response.ts
 model/register-request.ts
+model/register-response-code-enum.ts
+model/register-response.ts
 model/reorder-exercises-request-request.ts
 model/reorder-rounds-request-request.ts
 model/roti-summary.ts
