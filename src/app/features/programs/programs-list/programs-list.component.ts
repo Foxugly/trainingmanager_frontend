@@ -5,13 +5,12 @@ import {
   DestroyRef,
   OnInit,
   computed,
-  effect,
   inject,
   input,
   signal,
-  untracked,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { catchError, distinctUntilChanged, of, switchMap, tap } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -74,13 +73,30 @@ export class ProgramsListComponent implements OnInit {
   });
 
   constructor() {
-    effect(() => {
-      const team = this.teamFilter();
-      const archived = this.showArchived();
-      // untracked: the load() data path must not register extra effect deps
-      // (the filters above are the only intended triggers).
-      untracked(() => this.load(team ?? undefined, archived));
-    });
+    // Data stream (not a side-effecting effect): switchMap cancels the in-flight
+    // request when the team/archived filter changes mid-flight, so overlapping
+    // responses can't land out of order. See team-discussions (the convention).
+    toObservable(
+      computed(() => ({ team: this.teamFilter() ?? undefined, archived: this.showArchived() })),
+    )
+      .pipe(
+        distinctUntilChanged((a, b) => a.team === b.team && a.archived === b.archived),
+        tap(() => this.loading.set(true)),
+        switchMap(({ team, archived }) =>
+          this.programsService
+            .programsList({
+              includeInactive: archived || undefined,
+              ordering: '-date_start',
+              team,
+            })
+            .pipe(catchError(() => of(null))),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((res) => {
+        this.programs.set(res?.results ?? []);
+        this.loading.set(false);
+      });
   }
 
   ngOnInit(): void {
@@ -110,27 +126,6 @@ export class ProgramsListComponent implements OnInit {
             summary: this.transloco.translate('common.error'),
             detail: this.transloco.translate('common.load_failed'),
           });
-        },
-      });
-  }
-
-  private load(team: number | undefined, includeArchived: boolean): void {
-    this.loading.set(true);
-    this.programsService
-      .programsList({
-        includeInactive: includeArchived || undefined,
-        ordering: '-date_start',
-        team,
-      })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (res) => {
-          this.programs.set(res.results ?? []);
-          this.loading.set(false);
-        },
-        error: () => {
-          this.programs.set([]);
-          this.loading.set(false);
         },
       });
   }
