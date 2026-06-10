@@ -375,6 +375,11 @@ export class EventsFormComponent implements OnInit {
     this.router.navigate(id ? ['/events', id] : ['/events']);
   }
 
+  /** CanDeactivate hook (unsavedChangesGuard): warn before leaving with edits. */
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty && !this.saving();
+  }
+
   protected submit(): void {
     if (handleInvalidSubmit(this.form, this.messageService, this.transloco)) return;
     this.saving.set(true);
@@ -410,6 +415,7 @@ export class EventsFormComponent implements OnInit {
           next: (created) => {
             this.notifySaved();
             this.saving.set(false);
+            this.form.markAsPristine();
             this.router.navigate(['/events', created.id]);
           },
           error: (err: HttpErrorResponse) => {
@@ -444,6 +450,7 @@ export class EventsFormComponent implements OnInit {
         next: () => {
           this.notifySaved();
           this.saving.set(false);
+          this.form.markAsPristine();
           this.router.navigate(['/events', id]);
         },
         error: (err: HttpErrorResponse) => {

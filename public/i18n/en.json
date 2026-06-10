@@ -798,6 +798,7 @@
     }
   },
   "common": {
+    "unsaved_changes_confirm": "You have unsaved changes. Leave this page and discard them?",
     "form_invalid_summary": "Incomplete form",
     "form_invalid_detail": "Please complete the highlighted required fields.",
     "restore": "Restore",

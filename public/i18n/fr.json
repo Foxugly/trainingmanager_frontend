@@ -798,6 +798,7 @@
     }
   },
   "common": {
+    "unsaved_changes_confirm": "Vous avez des modifications non enregistrées. Quitter cette page et les abandonner ?",
     "form_invalid_summary": "Formulaire incomplet",
     "form_invalid_detail": "Veuillez compléter les champs requis en surbrillance.",
     "restore": "Restaurer",

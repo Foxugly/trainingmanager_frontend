@@ -585,6 +585,11 @@ export class TeamsFormComponent implements OnInit {
     this.router.navigate(id ? ['/teams', id] : ['/teams']);
   }
 
+  /** CanDeactivate hook (unsavedChangesGuard): warn before leaving with edits. */
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty && !this.saving();
+  }
+
   protected submit(): void {
     if (handleInvalidSubmit(this.form, this.messageService, this.transloco)) {
       return;
@@ -627,6 +632,7 @@ export class TeamsFormComponent implements OnInit {
             this.notifySaved('teams.form.saved_create');
             this.authService.refreshMe();
             this.saving.set(false);
+            this.form.markAsPristine();
             this.router.navigate(['/teams', created.id, 'edit']);
           },
           error: (err: HttpErrorResponse) => {
@@ -687,6 +693,7 @@ export class TeamsFormComponent implements OnInit {
           this.notifySaved('teams.form.saved_edit');
           this.authService.refreshMe();
           this.saving.set(false);
+          this.form.markAsPristine();
           this.router.navigate(['/teams', id]);
         },
         error: (err: HttpErrorResponse) => {

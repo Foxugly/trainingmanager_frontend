@@ -798,6 +798,7 @@
     }
   },
   "common": {
+    "unsaved_changes_confirm": "U hebt niet-opgeslagen wijzigingen. Deze pagina verlaten en ze negeren?",
     "form_invalid_summary": "Onvolledig formulier",
     "form_invalid_detail": "Vul de gemarkeerde verplichte velden in.",
     "restore": "Herstellen",

@@ -215,6 +215,11 @@ export class ProgramsFormComponent implements OnInit {
     this.router.navigate(id ? ['/programs', id] : ['/programs']);
   }
 
+  /** CanDeactivate hook (unsavedChangesGuard): warn before leaving with edits. */
+  hasUnsavedChanges(): boolean {
+    return this.form.dirty && !this.saving();
+  }
+
   protected submit(): void {
     if (handleInvalidSubmit(this.form, this.messageService, this.transloco)) return;
     this.saving.set(true);
@@ -241,6 +246,7 @@ export class ProgramsFormComponent implements OnInit {
           next: (created) => {
             this.notifySaved('programs.form.saved_create');
             this.saving.set(false);
+            this.form.markAsPristine();
             this.router.navigate(['/programs', created.id]);
           },
           error: (err: HttpErrorResponse) => {
@@ -265,6 +271,7 @@ export class ProgramsFormComponent implements OnInit {
         next: () => {
           this.notifySaved('programs.form.saved_edit');
           this.saving.set(false);
+          this.form.markAsPristine();
           this.router.navigate(['/programs', id]);
         },
         error: (err: HttpErrorResponse) => {

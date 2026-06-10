@@ -798,6 +798,7 @@
     }
   },
   "common": {
+    "unsaved_changes_confirm": "Tienes cambios sin guardar. ¿Salir de esta página y descartarlos?",
     "form_invalid_summary": "Formulario incompleto",
     "form_invalid_detail": "Completa los campos obligatorios resaltados.",
     "restore": "Restaurar",

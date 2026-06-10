@@ -2,6 +2,7 @@ import { CanActivateFn, Router, Routes } from '@angular/router';
 import { inject } from '@angular/core';
 import { authGuard } from './core/auth/auth.guard';
 import { staffGuard } from './core/auth/staff.guard';
+import { unsavedChangesGuard } from './core/guards/unsaved-changes.guard';
 import { AuthService } from './core/auth/auth.service';
 import { AdminLayoutComponent } from './core/layout/admin-layout/admin-layout.component';
 import { MainLayoutComponent } from './core/layout/main-layout/main-layout.component';
@@ -214,6 +215,7 @@ export const routes: Routes = [
               import('./features/events/events-form/events-form.component').then(
                 (m) => m.EventsFormComponent,
               ),
+            canDeactivate: [unsavedChangesGuard],
           },
           {
             path: ':id',
@@ -228,6 +230,7 @@ export const routes: Routes = [
               import('./features/events/events-form/events-form.component').then(
                 (m) => m.EventsFormComponent,
               ),
+            canDeactivate: [unsavedChangesGuard],
           },
         ],
       },
@@ -247,6 +250,7 @@ export const routes: Routes = [
               import('./features/programs/programs-form/programs-form.component').then(
                 (m) => m.ProgramsFormComponent,
               ),
+            canDeactivate: [unsavedChangesGuard],
           },
           {
             path: ':id',
@@ -261,6 +265,7 @@ export const routes: Routes = [
               import('./features/programs/programs-form/programs-form.component').then(
                 (m) => m.ProgramsFormComponent,
               ),
+            canDeactivate: [unsavedChangesGuard],
           },
         ],
       },
@@ -287,6 +292,7 @@ export const routes: Routes = [
               import('./features/teams/teams-form/teams-form.component').then(
                 (m) => m.TeamsFormComponent,
               ),
+            canDeactivate: [unsavedChangesGuard],
           },
           {
             path: ':id',
@@ -301,6 +307,7 @@ export const routes: Routes = [
               import('./features/teams/teams-form/teams-form.component').then(
                 (m) => m.TeamsFormComponent,
               ),
+            canDeactivate: [unsavedChangesGuard],
           },
           {
             // Coach-facing per-athlete detail page (stats + performances + notes).

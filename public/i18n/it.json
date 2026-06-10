@@ -798,6 +798,7 @@
     }
   },
   "common": {
+    "unsaved_changes_confirm": "Hai modifiche non salvate. Lasciare questa pagina e annullarle?",
     "form_invalid_summary": "Modulo incompleto",
     "form_invalid_detail": "Compila i campi obbligatori evidenziati.",
     "restore": "Ripristina",
