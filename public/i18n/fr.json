@@ -964,6 +964,14 @@
     }
   },
   "auth": {
+    "email_change_confirm": {
+      "loading": "Confirmation de votre nouvel email",
+      "success": "Votre adresse email a été mise à jour.",
+      "expired": "Ce lien de confirmation a expiré.",
+      "invalid_token": "Ce lien de confirmation est invalide.",
+      "unknown_error": "Une erreur est survenue. Veuillez réessayer.",
+      "back_to_profile": "Retour au profil"
+    },
     "login": {
       "title": "Connexion",
       "remember_me_label": "Se souvenir de moi",
@@ -1125,6 +1133,19 @@
     "prefs_saved": "Préférences de notification enregistrées."
   },
   "profile": {
+    "email_change": {
+      "button": "Modifier",
+      "dialog_title": "Changer d'email",
+      "help": "Nous enverrons un lien de confirmation à la nouvelle adresse. Le changement prend effet après confirmation.",
+      "new_email_label": "Nouvel email",
+      "submit": "Envoyer la confirmation",
+      "requested_toast": "Consultez votre nouvelle boîte mail pour confirmer.",
+      "errors": {
+        "email_unchanged": "C'est déjà votre adresse email.",
+        "email_taken": "Cet email est déjà utilisé.",
+        "generic": "Impossible de demander le changement. Réessayez."
+      }
+    },
     "title": "Profil",
     "username": "Nom d'utilisateur",
     "email": "Email",

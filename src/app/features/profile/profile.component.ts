@@ -29,6 +29,7 @@ import { NotificationPreferenceRequest } from '../../api/model/notification-pref
 import { AccountDeleteRequest } from '../../api/model/account-delete-request';
 import { LanguageEnum } from '../../api/model/language-enum';
 import { Me } from '../../api/model/me';
+import { EmailChangeRequestRequest } from '../../api/model/email-change-request-request';
 import { PasswordChangeRequest } from '../../api/model/password-change-request';
 import { PatchedMeRequest } from '../../api/model/patched-me-request';
 import { AuthService } from '../../core/auth/auth.service';
@@ -131,6 +132,14 @@ export class ProfileComponent implements OnInit {
     current_password: ['', Validators.required],
     new_password: ['', Validators.required],
     new_password_confirm: ['', Validators.required],
+  });
+
+  // --- Change-email dialog (verified flow) ---
+  protected readonly emailChangeOpen = signal(false);
+  protected readonly emailChangeLoading = signal(false);
+  protected readonly emailChangeErrors = signal<FieldErrors | null>(null);
+  protected readonly emailChangeForm = this.fb.nonNullable.group({
+    new_email: ['', [Validators.required, Validators.email]],
   });
 
   // --- Delete-account dialog ---
@@ -427,6 +436,63 @@ export class ProfileComponent implements OnInit {
         this.applyChangePwError(err);
       },
     });
+  }
+
+  protected emailChangeFieldError(name: string): string | null {
+    return this.emailChangeErrors()?.[name]?.join(', ') ?? null;
+  }
+
+  protected openEmailChange(): void {
+    this.emailChangeForm.reset({ new_email: '' });
+    this.emailChangeErrors.set(null);
+    this.emailChangeOpen.set(true);
+  }
+
+  protected onEmailChangeVisible(value: boolean): void {
+    if (!value && !this.emailChangeLoading()) this.emailChangeOpen.set(false);
+  }
+
+  protected submitEmailChange(): void {
+    if (this.emailChangeForm.invalid || this.emailChangeLoading()) return;
+    this.emailChangeLoading.set(true);
+    this.emailChangeErrors.set(null);
+    const payload: EmailChangeRequestRequest = {
+      new_email: this.emailChangeForm.getRawValue().new_email,
+    };
+    this.meService
+      .meEmailChangeCreate({ emailChangeRequestRequest: payload })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.emailChangeLoading.set(false);
+          this.emailChangeOpen.set(false);
+          this.messageService.add({
+            severity: 'success',
+            summary: this.transloco.translate('common.success'),
+            detail: this.transloco.translate('profile.email_change.requested_toast'),
+          });
+        },
+        error: (err: HttpErrorResponse) => {
+          this.emailChangeLoading.set(false);
+          const code = (err?.error as { code?: string } | null | undefined)?.code;
+          if (code === 'email_unchanged' || code === 'email_taken') {
+            this.emailChangeErrors.set({
+              new_email: [this.transloco.translate(`profile.email_change.errors.${code}`)],
+            });
+            return;
+          }
+          const { fields } = extractServerError(err);
+          if (fields) {
+            this.emailChangeErrors.set(fields);
+            return;
+          }
+          this.messageService.add({
+            severity: 'error',
+            summary: this.transloco.translate('common.error'),
+            detail: this.transloco.translate('profile.email_change.errors.generic'),
+          });
+        },
+      });
   }
 
   private applyChangePwError(err: HttpErrorResponse): void {

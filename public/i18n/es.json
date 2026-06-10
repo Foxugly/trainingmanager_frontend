@@ -989,6 +989,14 @@
     }
   },
   "auth": {
+    "email_change_confirm": {
+      "loading": "Confirmando tu nuevo correo",
+      "success": "Tu dirección de correo se ha actualizado.",
+      "expired": "Este enlace de confirmación ha caducado.",
+      "invalid_token": "Este enlace de confirmación no es válido.",
+      "unknown_error": "Algo salió mal. Inténtalo de nuevo.",
+      "back_to_profile": "Volver al perfil"
+    },
     "login": {
       "title": "Iniciar sesión",
       "remember_me_label": "Recuérdame",
@@ -1125,6 +1133,19 @@
     "prefs_saved": "Preferencias de notificación guardadas."
   },
   "profile": {
+    "email_change": {
+      "button": "Cambiar",
+      "dialog_title": "Cambiar correo",
+      "help": "Enviaremos un enlace de confirmación a la nueva dirección. El cambio surte efecto tras confirmarlo.",
+      "new_email_label": "Nuevo correo",
+      "submit": "Enviar confirmación",
+      "requested_toast": "Revisa tu nueva bandeja para confirmar.",
+      "errors": {
+        "email_unchanged": "Ya es tu dirección de correo.",
+        "email_taken": "Este correo ya está en uso.",
+        "generic": "No se pudo solicitar el cambio. Inténtalo de nuevo."
+      }
+    },
     "title": "Perfil",
     "username": "Nombre de usuario",
     "email": "Correo",

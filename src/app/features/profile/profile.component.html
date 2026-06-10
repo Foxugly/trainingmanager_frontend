@@ -24,7 +24,12 @@
                 </app-meta-field>
                 <app-meta-field [label]="'profile.email' | transloco"
                   [tooltip]="'profile.email_readonly_help' | transloco">
-                  <span>{{ me.email }}</span>
+                  <div class="flex items-center gap-3 flex-wrap">
+                    <span>{{ me.email }}</span>
+                    <p-button [text]="true" size="small"
+                      [label]="'profile.email_change.button' | transloco"
+                      (onClick)="openEmailChange()" />
+                  </div>
                 </app-meta-field>
                 <app-meta-field #firstNameField [label]="'profile.first_name' | transloco" for="first_name"
                   [error]="fieldError('first_name')">
@@ -263,6 +268,37 @@
       [saveLabel]="'common.save' | transloco"
       (cancel)="cancelChangePassword()"
       (save)="submitChangePassword()"
+    />
+  </p-dialog>
+
+  <!-- Change-email dialog (verified flow) -->
+  <p-dialog
+    [visible]="emailChangeOpen()"
+    (visibleChange)="onEmailChangeVisible($event)"
+    [modal]="true"
+    [closable]="!emailChangeLoading()"
+    [style]="{ width: '30rem' }"
+    [header]="'profile.email_change.dialog_title' | transloco"
+  >
+    <p class="text-sm text-gray-600 mb-3">{{ 'profile.email_change.help' | transloco }}</p>
+    <form [formGroup]="emailChangeForm">
+      <div class="meta-grid">
+        <app-meta-field #newEmailField [full]="true"
+          [label]="'profile.email_change.new_email_label' | transloco"
+          for="new_email" [error]="emailChangeFieldError('new_email')">
+          <input pInputText id="new_email" type="email" formControlName="new_email" class="w-full"
+            autocomplete="email"
+            [appAriaDescribes]="emailChangeFieldError('new_email') ? newEmailField.errorId() : null" />
+        </app-meta-field>
+      </div>
+    </form>
+    <app-form-footer
+      [saving]="emailChangeLoading()"
+      [disabled]="emailChangeForm.invalid"
+      [cancelLabel]="'common.cancel' | transloco"
+      [saveLabel]="'profile.email_change.submit' | transloco"
+      (cancel)="onEmailChangeVisible(false)"
+      (save)="submitEmailChange()"
     />
   </p-dialog>
 

@@ -75,6 +75,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'auth/confirm-email-change/:token',
+        loadComponent: () =>
+          import('./features/auth/email-change-confirm/email-change-confirm.component').then(
+            (m) => m.EmailChangeConfirmComponent,
+          ),
+      },
+      {
         path: 'invitation/:token',
         loadComponent: () =>
           import('./features/auth/invitation-accept/invitation-accept.component').then(

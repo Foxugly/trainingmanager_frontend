@@ -989,6 +989,14 @@
     }
   },
   "auth": {
+    "email_change_confirm": {
+      "loading": "Je nieuwe e-mail bevestigen",
+      "success": "Je e-mailadres is bijgewerkt.",
+      "expired": "Deze bevestigingslink is verlopen.",
+      "invalid_token": "Deze bevestigingslink is ongeldig.",
+      "unknown_error": "Er ging iets mis. Probeer opnieuw.",
+      "back_to_profile": "Terug naar profiel"
+    },
     "login": {
       "title": "Inloggen",
       "remember_me_label": "Mij onthouden",
@@ -1125,6 +1133,19 @@
     "prefs_saved": "Meldingsvoorkeuren opgeslagen."
   },
   "profile": {
+    "email_change": {
+      "button": "Wijzigen",
+      "dialog_title": "E-mail wijzigen",
+      "help": "We sturen een bevestigingslink naar het nieuwe adres. De wijziging gaat in na bevestiging.",
+      "new_email_label": "Nieuwe e-mail",
+      "submit": "Bevestiging versturen",
+      "requested_toast": "Controleer je nieuwe inbox om te bevestigen.",
+      "errors": {
+        "email_unchanged": "Dit is al je e-mailadres.",
+        "email_taken": "Dit e-mailadres is al in gebruik.",
+        "generic": "Kon de wijziging niet aanvragen. Probeer opnieuw."
+      }
+    },
     "title": "Profiel",
     "username": "Gebruikersnaam",
     "email": "E-mail",

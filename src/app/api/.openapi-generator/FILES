@@ -98,6 +98,12 @@ model/dashboard-summary.ts
 model/duplicate-event-created.ts
 model/duplicate-event-request-request.ts
 model/duplicate-event-response.ts
+model/email-change-confirm-request.ts
+model/email-change-confirm-response-code-enum.ts
+model/email-change-confirm-response.ts
+model/email-change-request-request.ts
+model/email-change-request-response-code-enum.ts
+model/email-change-request-response.ts
 model/email-confirm-request.ts
 model/email-resend-request.ts
 model/endpoint-enum.ts

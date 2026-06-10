@@ -12,6 +12,8 @@ import { HttpHeaders }                                       from '@angular/comm
 import { Observable }                                        from 'rxjs';
 
 import { AccountDeleteRequest } from '../model/models';
+import { EmailChangeConfirmRequest } from '../model/models';
+import { EmailChangeConfirmResponse } from '../model/models';
 import { EmailConfirmRequest } from '../model/models';
 import { EmailResendRequest } from '../model/models';
 import { LogoutRequest } from '../model/models';
@@ -37,6 +39,10 @@ import { Configuration }                                     from '../configurat
 
 export interface AuthAccountDeleteCreateRequestParams {
     accountDeleteRequest: AccountDeleteRequest;
+}
+
+export interface AuthEmailChangeConfirmCreateRequestParams {
+    emailChangeConfirmRequest: EmailChangeConfirmRequest;
 }
 
 export interface AuthEmailConfirmCreateRequestParams {
@@ -95,6 +101,14 @@ export interface AuthServiceInterface {
 * @param requestParameters
      */
     authAccountDeleteCreate(requestParameters: AuthAccountDeleteCreateRequestParams, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * 
+     * POST /api/v1/auth/email/change/confirm/ — public: finalize an email change.  Body: {token}. Verifies the signed token, re-checks the new email is still free, then swaps the account\&#39;s primary email. Public so the link works even if the SPA session has expired.
+     * @endpoint post /api/v1/auth/email/change/confirm/
+* @param requestParameters
+     */
+    authEmailChangeConfirmCreate(requestParameters: AuthEmailChangeConfirmCreateRequestParams, extraHttpRequestParams?: any): Observable<EmailChangeConfirmResponse>;
 
     /**
      * 

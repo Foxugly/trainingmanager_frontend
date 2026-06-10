@@ -12,12 +12,18 @@ import { HttpHeaders }                                       from '@angular/comm
 import { Observable }                                        from 'rxjs';
 
 import { CalendarToken } from '../model/models';
+import { EmailChangeRequestRequest } from '../model/models';
+import { EmailChangeRequestResponse } from '../model/models';
 import { Me } from '../model/models';
 import { PatchedMeRequest } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
 
+
+export interface MeEmailChangeCreateRequestParams {
+    emailChangeRequestRequest: EmailChangeRequestRequest;
+}
 
 export interface MePartialUpdateRequestParams {
     patchedMeRequest?: PatchedMeRequest;
@@ -34,6 +40,14 @@ export interface MeServiceInterface {
      * @endpoint post /api/v1/me/calendar-token/rotate/
 */
     meCalendarTokenRotate(extraHttpRequestParams?: any): Observable<CalendarToken>;
+
+    /**
+     * 
+     * POST /api/v1/me/email/change/ — authenticated: request an email change.  Body: {new_email}. Sends a signed confirmation link to the NEW address; the change only takes effect once that link is confirmed (deferred-to-v2 flow, now implemented). Rate-limited per user.
+     * @endpoint post /api/v1/me/email/change/
+* @param requestParameters
+     */
+    meEmailChangeCreate(requestParameters: MeEmailChangeCreateRequestParams, extraHttpRequestParams?: any): Observable<EmailChangeRequestResponse>;
 
     /**
      * 

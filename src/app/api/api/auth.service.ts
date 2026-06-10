@@ -19,6 +19,10 @@ import { OpenApiHttpParams, QueryParamStyle } from '../query.params';
 // @ts-ignore
 import { AccountDeleteRequest } from '../model/account-delete-request';
 // @ts-ignore
+import { EmailChangeConfirmRequest } from '../model/email-change-confirm-request';
+// @ts-ignore
+import { EmailChangeConfirmResponse } from '../model/email-change-confirm-response';
+// @ts-ignore
 import { EmailConfirmRequest } from '../model/email-confirm-request';
 // @ts-ignore
 import { EmailResendRequest } from '../model/email-resend-request';
@@ -62,6 +66,7 @@ import { BaseService } from '../api.base.service';
 import {
     AuthServiceInterface,
     AuthAccountDeleteCreateRequestParams,
+    AuthEmailChangeConfirmCreateRequestParams,
     AuthEmailConfirmCreateRequestParams,
     AuthEmailResendCreateRequestParams,
     AuthLogoutCreateRequestParams,
@@ -147,6 +152,75 @@ export class AuthService extends BaseService implements AuthServiceInterface {
             {
                 context: localVarHttpContext,
                 body: accountDeleteRequest,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * POST /api/v1/auth/email/change/confirm/ — public: finalize an email change.  Body: {token}. Verifies the signed token, re-checks the new email is still free, then swaps the account\&#39;s primary email. Public so the link works even if the SPA session has expired.
+     * @endpoint post /api/v1/auth/email/change/confirm/
+     * @param requestParameters
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public authEmailChangeConfirmCreate(requestParameters: AuthEmailChangeConfirmCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<EmailChangeConfirmResponse>;
+    public authEmailChangeConfirmCreate(requestParameters: AuthEmailChangeConfirmCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<EmailChangeConfirmResponse>>;
+    public authEmailChangeConfirmCreate(requestParameters: AuthEmailChangeConfirmCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<EmailChangeConfirmResponse>>;
+    public authEmailChangeConfirmCreate(requestParameters: AuthEmailChangeConfirmCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const emailChangeConfirmRequest = requestParameters?.emailChangeConfirmRequest;
+        if (emailChangeConfirmRequest === null || emailChangeConfirmRequest === undefined) {
+            throw new Error('Required parameter emailChangeConfirmRequest was null or undefined when calling authEmailChangeConfirmCreate.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'application/x-www-form-urlencoded',
+            'multipart/form-data'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/auth/email/change/confirm/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<EmailChangeConfirmResponse>('post', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: emailChangeConfirmRequest,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

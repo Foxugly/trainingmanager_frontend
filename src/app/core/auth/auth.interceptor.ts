@@ -13,6 +13,9 @@ const AUTH_PATHS = [
   '/auth/email/resend/',
   '/auth/password/reset/',
   '/auth/password/reset/confirm/',
+  // Public — confirming an email change works from the link even if logged out.
+  // (The REQUEST endpoint /me/email/change/ stays authenticated, not listed here.)
+  '/auth/email/change/confirm/',
   '/auth/magic-link/request/',
   '/auth/magic-link/exchange/',
 ];
