@@ -1,13 +1,5 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  OnInit,
-  effect,
-  inject,
-  signal,
-} from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -16,7 +8,7 @@ import { Button } from 'primeng/button';
 import { Checkbox } from 'primeng/checkbox';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { TableModule } from 'primeng/table';
-import { catchError, finalize, of, tap } from 'rxjs';
+import { Observable, catchError, finalize, of, switchMap, tap } from 'rxjs';
 import { EnergySystemsService } from '../../../../api/api/energy-systems.service';
 import { EnergySystem } from '../../../../api/model/energy-system';
 
@@ -36,7 +28,7 @@ import { EnergySystem } from '../../../../api/model/energy-system';
   providers: [ConfirmationService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EnergySystemsListComponent implements OnInit {
+export class EnergySystemsListComponent {
   private readonly energySystemsService = inject(EnergySystemsService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
@@ -48,35 +40,32 @@ export class EnergySystemsListComponent implements OnInit {
   protected readonly includeInactive = signal(false);
 
   constructor() {
-    effect(() => {
-      const include = this.includeInactive();
-      this.load(include);
-    });
+    // switchMap cancels an in-flight request on rapid toggle (convention > effect()).
+    toObservable(this.includeInactive)
+      .pipe(
+        switchMap((include) => this.fetch(include)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
   }
 
-  ngOnInit(): void {
-    // initial load handled by the effect (fires once on init too)
-  }
-
-  private load(includeInactive: boolean): void {
+  private fetch(includeInactive: boolean): Observable<unknown> {
     this.loading.set(true);
-    this.energySystemsService
+    return this.energySystemsService
       .energySystemsList({ includeInactive: includeInactive || undefined })
       .pipe(
         tap((res) => this.energySystems.set(res.results ?? [])),
         catchError(() => {
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('admin.energy_systems.errors.unknown'),
-          });
+          this.notifyUnknownError();
           this.energySystems.set([]);
           return of(null);
         }),
         finalize(() => this.loading.set(false)),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe();
+      );
+  }
+
+  private reload(): void {
+    this.fetch(this.includeInactive()).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
   }
 
   protected confirmDelete(es: EnergySystem): void {
@@ -98,7 +87,7 @@ export class EnergySystemsListComponent implements OnInit {
             summary: this.transloco.translate('common.success'),
             detail: this.transloco.translate('admin.energy_systems.actions.deleted'),
           });
-          this.load(this.includeInactive());
+          this.reload();
         },
         error: () => this.notifyUnknownError(),
       });
@@ -115,7 +104,7 @@ export class EnergySystemsListComponent implements OnInit {
             summary: this.transloco.translate('common.success'),
             detail: this.transloco.translate('admin.energy_systems.actions.restored'),
           });
-          this.load(this.includeInactive());
+          this.reload();
         },
         error: () => this.notifyUnknownError(),
       });

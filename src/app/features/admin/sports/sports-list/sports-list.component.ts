@@ -1,13 +1,5 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  OnInit,
-  effect,
-  inject,
-  signal,
-} from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -16,7 +8,7 @@ import { Button } from 'primeng/button';
 import { Checkbox } from 'primeng/checkbox';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { TableModule } from 'primeng/table';
-import { catchError, finalize, of, tap } from 'rxjs';
+import { Observable, catchError, finalize, of, switchMap, tap } from 'rxjs';
 import { SportsService } from '../../../../api/api/sports.service';
 import { Sport } from '../../../../api/model/sport';
 
@@ -36,7 +28,7 @@ import { Sport } from '../../../../api/model/sport';
   providers: [ConfirmationService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SportsListComponent implements OnInit {
+export class SportsListComponent {
   private readonly sportsService = inject(SportsService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly messageService = inject(MessageService);
@@ -48,35 +40,39 @@ export class SportsListComponent implements OnInit {
   protected readonly includeInactive = signal(false);
 
   constructor() {
-    effect(() => {
-      const include = this.includeInactive();
-      this.loadSports(include);
-    });
-  }
-
-  ngOnInit(): void {
-    // initial load handled by the effect above (fires once on init too)
-  }
-
-  private loadSports(includeInactive: boolean): void {
-    this.loading.set(true);
-    this.sportsService
-      .sportsList({ includeInactive: includeInactive || undefined })
+    // Reload whenever the include-inactive toggle flips; switchMap cancels an
+    // in-flight request on a rapid re-toggle (the repo convention over effect()).
+    toObservable(this.includeInactive)
       .pipe(
-        tap((res) => this.sports.set(res.results ?? [])),
-        catchError(() => {
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('admin.sports.errors.unknown'),
-          });
-          this.sports.set([]);
-          return of(null);
-        }),
-        finalize(() => this.loading.set(false)),
+        switchMap((include) => this.fetch(include)),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
+  }
+
+  private fetch(includeInactive: boolean): Observable<unknown> {
+    this.loading.set(true);
+    return this.sportsService.sportsList({ includeInactive: includeInactive || undefined }).pipe(
+      tap((res) => this.sports.set(res.results ?? [])),
+      catchError(() => {
+        this.notifyUnknownError();
+        this.sports.set([]);
+        return of(null);
+      }),
+      finalize(() => this.loading.set(false)),
+    );
+  }
+
+  private reload(): void {
+    this.fetch(this.includeInactive()).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+  }
+
+  private notifyUnknownError(): void {
+    this.messageService.add({
+      severity: 'error',
+      summary: this.transloco.translate('common.error'),
+      detail: this.transloco.translate('admin.sports.errors.unknown'),
+    });
   }
 
   protected confirmDelete(sport: Sport): void {
@@ -98,15 +94,9 @@ export class SportsListComponent implements OnInit {
             summary: this.transloco.translate('common.success'),
             detail: this.transloco.translate('admin.sports.actions.deleted'),
           });
-          this.loadSports(this.includeInactive());
+          this.reload();
         },
-        error: () => {
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('admin.sports.errors.unknown'),
-          });
-        },
+        error: () => this.notifyUnknownError(),
       });
   }
 
@@ -121,15 +111,9 @@ export class SportsListComponent implements OnInit {
             summary: this.transloco.translate('common.success'),
             detail: this.transloco.translate('admin.sports.actions.restored'),
           });
-          this.loadSports(this.includeInactive());
+          this.reload();
         },
-        error: () => {
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('admin.sports.errors.unknown'),
-          });
-        },
+        error: () => this.notifyUnknownError(),
       });
   }
 

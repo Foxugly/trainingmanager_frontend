@@ -1,13 +1,5 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  OnInit,
-  effect,
-  inject,
-  signal,
-} from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
@@ -16,7 +8,7 @@ import { Button } from 'primeng/button';
 import { Checkbox } from 'primeng/checkbox';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { TableModule } from 'primeng/table';
-import { catchError, finalize, of, tap } from 'rxjs';
+import { Observable, catchError, finalize, of, switchMap, tap } from 'rxjs';
 import { SportsService } from '../../../../api/api/sports.service';
 import { Modality } from '../../../../api/model/modality';
 import { Sport } from '../../../../api/model/sport';
@@ -53,11 +45,18 @@ export class ModalitiesListComponent implements OnInit {
   protected readonly includeInactive = signal(false);
 
   constructor() {
-    effect(() => {
-      const id = this.sportId();
-      if (id == null) return;
-      this.load(id, this.includeInactive());
-    });
+    // Reload on include-inactive toggle (sportId is set once, in ngOnInit, from
+    // the route). switchMap cancels an in-flight request on a rapid re-toggle;
+    // the initial load is kicked from ngOnInit once sportId is known.
+    toObservable(this.includeInactive)
+      .pipe(
+        switchMap((include) => {
+          const id = this.sportId();
+          return id == null ? of(null) : this.fetch(id, include);
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
   }
 
   ngOnInit(): void {
@@ -81,12 +80,15 @@ export class ModalitiesListComponent implements OnInit {
           }),
       });
 
-    this.sportId.set(sportId); // triggers the effect → first load
+    this.sportId.set(sportId);
+    // The include-inactive stream's initial emission runs after this ngOnInit
+    // (lifecycle hooks fire before effects flush), so sportId is already set
+    // and that emission performs the first load — no explicit reload here.
   }
 
-  private load(sportId: number, includeInactive: boolean): void {
+  private fetch(sportId: number, includeInactive: boolean): Observable<unknown> {
     this.loading.set(true);
-    this.sportsService
+    return this.sportsService
       .sportsModalitiesList({ sportPk: sportId, includeInactive: includeInactive || undefined })
       .pipe(
         tap((res) => this.modalities.set(res.results ?? [])),
@@ -96,9 +98,13 @@ export class ModalitiesListComponent implements OnInit {
           return of(null);
         }),
         finalize(() => this.loading.set(false)),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe();
+      );
+  }
+
+  private reload(): void {
+    const id = this.sportId();
+    if (id == null) return;
+    this.fetch(id, this.includeInactive()).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
   }
 
   protected confirmDelete(modality: Modality): void {
@@ -122,7 +128,7 @@ export class ModalitiesListComponent implements OnInit {
             summary: this.transloco.translate('common.success'),
             detail: this.transloco.translate('admin.modalities.actions.deleted'),
           });
-          this.load(sportId, this.includeInactive());
+          this.reload();
         },
         error: () => this.notifyUnknownError(),
       });
@@ -146,7 +152,7 @@ export class ModalitiesListComponent implements OnInit {
             summary: this.transloco.translate('common.success'),
             detail: this.transloco.translate('admin.modalities.actions.restored'),
           });
-          this.load(sportId, this.includeInactive());
+          this.reload();
         },
         error: () => this.notifyUnknownError(),
       });
