@@ -261,8 +261,8 @@
                     {{ item.event.date | date: 'EEE d MMM' }}
                   }
                   @if (item.event.hour_start) {
-                    · {{ item.event.hour_start.slice(0, 5)
-                    }}@if (item.event.hour_end) {
+                    · {{ item.event.hour_start.slice(0, 5) }}
+                    @if (item.event.hour_end) {
                       &nbsp;– {{ item.event.hour_end.slice(0, 5) }}
                     }
                   }
@@ -446,8 +446,8 @@
                     {{ item.event.date | date: 'EEE d MMM' }}
                   }
                   @if (item.event.hour_start) {
-                    · {{ item.event.hour_start.slice(0, 5)
-                    }}@if (item.event.hour_end) {
+                    · {{ item.event.hour_start.slice(0, 5) }}
+                    @if (item.event.hour_end) {
                       &nbsp;– {{ item.event.hour_end.slice(0, 5) }}
                     }
                   }
@@ -458,7 +458,9 @@
         </ul>
         @if (memberUpcomingOverflow() > 0) {
           <p class="text-xs text-gray-500 mt-2">
-            {{ 'dashboard.upcoming_events.overflow' | transloco: { count: memberUpcomingOverflow() } }}
+            {{
+              'dashboard.upcoming_events.overflow' | transloco: { count: memberUpcomingOverflow() }
+            }}
           </p>
         }
       }
@@ -505,7 +507,9 @@
               </div>
               <span
                 class="text-xs font-semibold px-2 py-1 rounded"
-                [style.background-color]="item.status?.color ? item.status!.color + '20' : '#E5E7EB'"
+                [style.background-color]="
+                  item.status?.color ? item.status!.color + '20' : '#E5E7EB'
+                "
                 [style.color]="item.status?.color || '#374151'"
               >
                 {{ item.status?.label ?? item.attendance.status_code }}
@@ -570,17 +574,29 @@
             </div>
           }
         </div>
-        <app-performance-panel
-          [teamId]="perfTeam.id"
-          [memberId]="myMemberId()"
-          [canEdit]="true"
-        />
+        <app-performance-panel [teamId]="perfTeam.id" [memberId]="myMemberId()" [canEdit]="true" />
       </section>
     } @else if (myPerformances().length > 0) {
       <!-- Read-only self-scoped list (pure coach / no linked athlete Member). -->
       <section class="mb-10">
         <h2 class="text-lg font-semibold mb-3">{{ 'performance.my_title' | transloco }}</h2>
         <app-performance-panel [performances]="myPerformances()" [canEdit]="false" />
+      </section>
+    } @else if (myPerformancesError()) {
+      <!-- A load failure must not look like "no performances": offer a retry. -->
+      <section class="mb-10">
+        <h2 class="text-lg font-semibold mb-3">{{ 'performance.my_title' | transloco }}</h2>
+        <div class="flex items-center gap-3 text-sm text-gray-500">
+          <span>{{ 'common.load_failed' | transloco }}</span>
+          <p-button
+            [label]="'common.retry' | transloco"
+            icon="pi pi-refresh"
+            size="small"
+            severity="secondary"
+            [outlined]="true"
+            (onClick)="loadMyPerformances()"
+          />
+        </div>
       </section>
     }
 

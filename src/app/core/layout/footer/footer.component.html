@@ -9,6 +9,10 @@
     <span class="footer-meta footer-copyright">
       © {{ year }}
       <a href="https://www.foxugly.com" target="_blank" rel="noopener noreferrer" class="footer-author-link">
+        <!-- NgOptimizedImage exemption: a 0.9rem decorative (aria-hidden) SVG with
+             CSS width:auto — NgOptimizedImage targets raster LCP images and needs
+             fixed intrinsic dims, which would fight this inline icon's styling.
+             Same exemption rationale as the event-print QR data-URL. -->
         <img src="/foxugly-logo.svg" alt="" class="footer-author-logo" aria-hidden="true" />
         {{ 'footer.author' | transloco }}</a>{{ 'footer.rights' | transloco }}
     </span>

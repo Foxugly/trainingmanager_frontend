@@ -102,6 +102,7 @@ export class DashboardComponent implements OnInit {
 
   /** The caller's own performance records across all teams (read-only self-view). */
   protected readonly myPerformances = signal<Performance[]>([]);
+  protected readonly myPerformancesError = signal(false);
 
   protected readonly greetingName = computed(() => {
     const user = this.authService.currentUser();
@@ -230,13 +231,22 @@ export class DashboardComponent implements OnInit {
    * Self-scoped performances: no member/team filter — the backend returns the
    * caller's own records across teams. Read-only; coaches with none see nothing.
    */
-  private loadMyPerformances(): void {
+  protected loadMyPerformances(): void {
+    this.myPerformancesError.set(false);
     this.performancesService
       .performancesList()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (res) => this.myPerformances.set(res.results ?? []),
-        error: () => this.myPerformances.set([]),
+        next: (res) => {
+          this.myPerformances.set(res.results ?? []);
+          this.myPerformancesError.set(false);
+        },
+        // A transient failure must not masquerade as "you have no performances":
+        // flag it so the template can offer a retry instead of a silent empty.
+        error: () => {
+          this.myPerformances.set([]);
+          this.myPerformancesError.set(true);
+        },
       });
   }
 
