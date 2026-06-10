@@ -132,6 +132,8 @@ model/event-share-response.ts
 model/event.ts
 model/exercise-request.ts
 model/exercise.ts
+model/explain-session-response.ts
+model/explain-tokens-used.ts
 model/generate-plan-request-request.ts
 model/generate-plan-response.ts
 model/generate-plan-tokens-used.ts

@@ -37,6 +37,8 @@ import { EventShareRequestRequest } from '../model/event-share-request-request';
 // @ts-ignore
 import { EventShareResponse } from '../model/event-share-response';
 // @ts-ignore
+import { ExplainSessionResponse } from '../model/explain-session-response';
+// @ts-ignore
 import { GenerateTrainingRequestRequest } from '../model/generate-training-request-request';
 // @ts-ignore
 import { GenerateTrainingResponse } from '../model/generate-training-response';
@@ -78,6 +80,7 @@ import {
     EventsDebriefRetrieveRequestParams,
     EventsDestroyRequestParams,
     EventsDuplicateCreateRequestParams,
+    EventsExplainCreateRequestParams,
     EventsGenerateTrainingCreateRequestParams,
     EventsListRequestParams,
     EventsPartialUpdateRequestParams,
@@ -908,6 +911,66 @@ export class EventsService extends BaseService implements EventsServiceInterface
             {
                 context: localVarHttpContext,
                 body: duplicateEventRequestRequest,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Generate a short, plain-language brief of this session FOR THE ATHLETES and store it on the event (ai_athlete_brief). Managers of the event\&#39;s team only. The brief is shown to athletes only when they may see the goal (vis_goal). Throttled.
+     * @endpoint post /api/v1/events/{id}/explain/
+     * @param requestParameters
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public eventsExplainCreate(requestParameters: EventsExplainCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ExplainSessionResponse>;
+    public eventsExplainCreate(requestParameters: EventsExplainCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ExplainSessionResponse>>;
+    public eventsExplainCreate(requestParameters: EventsExplainCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ExplainSessionResponse>>;
+    public eventsExplainCreate(requestParameters: EventsExplainCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling eventsExplainCreate.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (jwtAuth) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/events/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/explain/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<ExplainSessionResponse>('post', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

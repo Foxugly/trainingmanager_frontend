@@ -72,6 +72,7 @@ export interface Event {
     readonly ai_response: string;
     readonly ai_generated_at: string | null;
     debrief?: string;
+    readonly ai_athlete_brief: string;
     readonly created_at: string;
     readonly updated_at: string;
 }

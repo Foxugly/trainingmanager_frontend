@@ -35,7 +35,9 @@ const team: Team = {
   id: 4,
   name: 'RBP WP Senior',
   sport,
-  sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null }],
+  sports: [
+    { id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null },
+  ],
   owner: ownerUser,
   managers: [],
   language: LanguageEnum.Fr,
@@ -70,9 +72,15 @@ const program: Program = {
   updated_at: '2026-04-01T00:00:00Z',
 };
 
-const program2: Program = { ...program, id: 5, name: 'Plan B', team: { id: 5, name: 'Coach2', language: LanguageEnum.Fr } };
+const program2: Program = {
+  ...program,
+  id: 5,
+  name: 'Plan B',
+  team: { id: 5, name: 'Coach2', language: LanguageEnum.Fr },
+};
 
 const event1: Event = {
+  ai_athlete_brief: '',
   id: 100,
   name: 'Séance lundi',
   goal: null,
@@ -154,16 +162,14 @@ describe('EventsCalendarComponent', () => {
         ),
     };
     programsMock = {
-      programsList: vi.fn().mockImplementation(
-        (params: { team?: number } = {}) => {
-          if (opts.programsListFails) return throwError(() => new Error('boom'));
-          // single-object request params (ProgramsListRequestParams)
-          const teamId = params.team;
-          if (teamId === 4) return of({ count: 1, results: [program] });
-          if (teamId === 5) return of({ count: 1, results: [program2] });
-          return of({ count: 0, results: [] });
-        },
-      ),
+      programsList: vi.fn().mockImplementation((params: { team?: number } = {}) => {
+        if (opts.programsListFails) return throwError(() => new Error('boom'));
+        // single-object request params (ProgramsListRequestParams)
+        const teamId = params.team;
+        if (teamId === 4) return of({ count: 1, results: [program] });
+        if (teamId === 5) return of({ count: 1, results: [program2] });
+        return of({ count: 0, results: [] });
+      }),
     };
     eventsMock = {
       eventsList: vi.fn().mockImplementation((params: { referProgram?: number } = {}) => {
@@ -243,9 +249,11 @@ describe('EventsCalendarComponent', () => {
 
   it('filteredAvailablePrograms restricts programs to selected teams', () => {
     access(component).selectedTeamIdsModel = [4];
-    expect(access(component).filteredAvailablePrograms().every((p) => p.team!.id === 4)).toBe(
-      true,
-    );
+    expect(
+      access(component)
+        .filteredAvailablePrograms()
+        .every((p) => p.team!.id === 4),
+    ).toBe(true);
   });
 
   it('selectedProgramIds drops orphans when teams selection changes', () => {

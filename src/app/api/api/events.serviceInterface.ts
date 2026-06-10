@@ -21,6 +21,7 @@ import { EventDebrief } from '../model/models';
 import { EventRequest } from '../model/models';
 import { EventShareRequestRequest } from '../model/models';
 import { EventShareResponse } from '../model/models';
+import { ExplainSessionResponse } from '../model/models';
 import { GenerateTrainingRequestRequest } from '../model/models';
 import { GenerateTrainingResponse } from '../model/models';
 import { PaginatedAttendanceList } from '../model/models';
@@ -93,6 +94,10 @@ export interface EventsDestroyRequestParams {
 export interface EventsDuplicateCreateRequestParams {
     id: number;
     duplicateEventRequestRequest: DuplicateEventRequestRequest;
+}
+
+export interface EventsExplainCreateRequestParams {
+    id: number;
 }
 
 export interface EventsGenerateTrainingCreateRequestParams {
@@ -254,6 +259,14 @@ export interface EventsServiceInterface {
 * @param requestParameters
      */
     eventsDuplicateCreate(requestParameters: EventsDuplicateCreateRequestParams, extraHttpRequestParams?: any): Observable<DuplicateEventResponse>;
+
+    /**
+     * 
+     * Generate a short, plain-language brief of this session FOR THE ATHLETES and store it on the event (ai_athlete_brief). Managers of the event\&#39;s team only. The brief is shown to athletes only when they may see the goal (vis_goal). Throttled.
+     * @endpoint post /api/v1/events/{id}/explain/
+* @param requestParameters
+     */
+    eventsExplainCreate(requestParameters: EventsExplainCreateRequestParams, extraHttpRequestParams?: any): Observable<ExplainSessionResponse>;
 
     /**
      * 

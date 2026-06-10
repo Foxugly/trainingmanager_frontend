@@ -32,7 +32,9 @@ const team: Team = {
   id: 4,
   name: 'RBP WP Senior',
   sport,
-  sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null }],
+  sports: [
+    { id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null },
+  ],
   owner: { id: 17, username: 'owner', first_name: '', last_name: '' },
   managers: [],
   language: LanguageEnum.Fr,
@@ -70,6 +72,7 @@ const program: Program = {
 };
 
 const eventFromBackend: Event = {
+  ai_athlete_brief: '',
   id: 7,
   name: 'Séance 1',
   goal: 'Endurance',
@@ -376,9 +379,7 @@ describe('EventsFormComponent', () => {
   });
 
   it('toasts a global error (no field errors) instead of inline display', () => {
-    eventsMock.eventsCreate.mockReturnValueOnce(
-      throwError(() => ({ error: { detail: 'boom' } })),
-    );
+    eventsMock.eventsCreate.mockReturnValueOnce(throwError(() => ({ error: { detail: 'boom' } })));
     access(component).form.patchValue({
       name: 'X',
       refer_program_id: 4,
@@ -386,9 +387,7 @@ describe('EventsFormComponent', () => {
     });
     access(component).submit();
     expect(access(component).fieldErrors()).toBeNull();
-    expect(messageService.add).toHaveBeenCalledWith(
-      expect.objectContaining({ severity: 'error' }),
-    );
+    expect(messageService.add).toHaveBeenCalledWith(expect.objectContaining({ severity: 'error' }));
   });
 
   it('exposes field errors via fieldError() helper', () => {
@@ -418,9 +417,7 @@ describe('EventsFormComponent', () => {
 
   it('toasts an error when an event fails to load in edit mode', async () => {
     await setup('7', null);
-    expect(messageService.add).toHaveBeenCalledWith(
-      expect.objectContaining({ severity: 'error' }),
-    );
+    expect(messageService.add).toHaveBeenCalledWith(expect.objectContaining({ severity: 'error' }));
   });
 
   it('prefills vis_* from the selected program team defaults on create', async () => {
@@ -503,7 +500,9 @@ describe('EventsFormComponent', () => {
     await setup('7');
     access(component).form.patchValue({ place_id: 9 });
     access(component).submit();
-    expect(eventsMock.eventsPartialUpdate.mock.calls[0][0].patchedEventRequest).toMatchObject({ place_id: 9 });
+    expect(eventsMock.eventsPartialUpdate.mock.calls[0][0].patchedEventRequest).toMatchObject({
+      place_id: 9,
+    });
   });
 
   it('pre-selects the event place and clears the legacy location hint on edit', async () => {

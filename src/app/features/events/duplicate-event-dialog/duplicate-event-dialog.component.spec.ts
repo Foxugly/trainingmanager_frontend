@@ -65,8 +65,7 @@ describe('DuplicateEventDialogComponent', () => {
     fixture = TestBed.createComponent(HostComponent);
     fixture.detectChanges();
     host = fixture.componentInstance;
-    component = fixture.debugElement.children[0]
-      .componentInstance as DuplicateEventDialogComponent;
+    component = fixture.debugElement.children[0].componentInstance as DuplicateEventDialogComponent;
   });
 
   it('defaults the copy date to sourceDate + 7 days when opened', () => {

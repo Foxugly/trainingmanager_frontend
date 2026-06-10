@@ -330,6 +330,14 @@
       "note_label": "Note di debrief",
       "note_placeholder": "Com'è andata la sessione? Note per la prossima volta…",
       "saved": "Debrief salvato."
+    },
+    "athlete_brief": {
+      "title": "Brief atleti",
+      "generate": "Genera",
+      "regenerate": "Rigenera",
+      "empty": "Nessun brief atleti.",
+      "generated": "Brief atleti generato.",
+      "error": "Impossibile generare il brief."
     }
   },
   "programs": {

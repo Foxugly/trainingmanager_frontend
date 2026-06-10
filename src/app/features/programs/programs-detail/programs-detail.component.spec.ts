@@ -38,7 +38,9 @@ const fullTeam: Team = {
   id: 4,
   name: 'RBP WP Senior',
   sport,
-  sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null }],
+  sports: [
+    { id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null },
+  ],
   owner: ownerUser,
   managers: [],
   language: LanguageEnum.Fr,
@@ -103,14 +105,37 @@ interface ProtectedFields {
 }
 
 const eventA: Event = {
-  id: 100, name: 'Séance A', goal: null, color: '#FF5733',
-  date: '2026-06-05', hour_start: '18:00:00', hour_end: '19:30:00', total: 0,
-  refer_program: { id: 7, name: 'Plan IA été' }, sport,
-  place: null, equipment_items: [], rounds_detail: [],
-  rounds: [], members: [], generated_by_ai: false, ai_response: '',
-  ai_generated_at: null, created_at: '', updated_at: '', is_public: false, public_token: null,
+  ai_athlete_brief: '',
+  id: 100,
+  name: 'Séance A',
+  goal: null,
+  color: '#FF5733',
+  date: '2026-06-05',
+  hour_start: '18:00:00',
+  hour_end: '19:30:00',
+  total: 0,
+  refer_program: { id: 7, name: 'Plan IA été' },
+  sport,
+  place: null,
+  equipment_items: [],
+  rounds_detail: [],
+  rounds: [],
+  members: [],
+  generated_by_ai: false,
+  ai_response: '',
+  ai_generated_at: null,
+  created_at: '',
+  updated_at: '',
+  is_public: false,
+  public_token: null,
 };
-const eventB: Event = { ...eventA, id: 101, name: 'Séance B', date: '2026-06-12', hour_start: '17:00:00' };
+const eventB: Event = {
+  ...eventA,
+  id: 101,
+  name: 'Séance B',
+  date: '2026-06-12',
+  hour_start: '17:00:00',
+};
 const eventOutsideMonth: Event = { ...eventA, id: 102, name: 'Séance juillet', date: '2026-07-15' };
 
 describe('ProgramsDetailComponent', () => {
@@ -312,16 +337,28 @@ describe('ProgramsDetailComponent', () => {
   it('eventsForMonth returns only events whose date falls in the displayed month, sorted asc', () => {
     const monthEvents = access(component).eventsForMonth();
     expect(monthEvents.map((e) => e.id)).toEqual([100, 101]);
-    expect(access(component).events().map((e) => e.id)).toEqual([100, 101, 102]);
+    expect(
+      access(component)
+        .events()
+        .map((e) => e.id),
+    ).toEqual([100, 101, 102]);
   });
 
   it('previousMonth/nextMonth shift currentMonth by ±1 and shift the eventsForMonth list', () => {
     access(component).nextMonth();
     expect(access(component).currentMonth().getMonth()).toBe(6);
-    expect(access(component).eventsForMonth().map((e) => e.id)).toEqual([102]);
+    expect(
+      access(component)
+        .eventsForMonth()
+        .map((e) => e.id),
+    ).toEqual([102]);
     access(component).previousMonth();
     expect(access(component).currentMonth().getMonth()).toBe(5);
-    expect(access(component).eventsForMonth().map((e) => e.id)).toEqual([100, 101]);
+    expect(
+      access(component)
+        .eventsForMonth()
+        .map((e) => e.id),
+    ).toEqual([100, 101]);
   });
 
   it('goToProgramStart() snaps back to the program.date_start month', () => {
@@ -351,9 +388,25 @@ describe('ProgramsDetailComponent', () => {
   });
 
   it('eventsByDateAsc breaks date ties using hour_start ascending', async () => {
-    const sameDayEarly: Event = { ...eventA, id: 200, name: 'Early', date: '2026-06-05', hour_start: '06:00:00' };
-    const sameDayLate: Event = { ...eventA, id: 201, name: 'Late', date: '2026-06-05', hour_start: '20:00:00' };
+    const sameDayEarly: Event = {
+      ...eventA,
+      id: 200,
+      name: 'Early',
+      date: '2026-06-05',
+      hour_start: '06:00:00',
+    };
+    const sameDayLate: Event = {
+      ...eventA,
+      id: 201,
+      name: 'Late',
+      date: '2026-06-05',
+      hour_start: '20:00:00',
+    };
     await setup('7', program, ownerUser, [sameDayLate, sameDayEarly]);
-    expect(access(component).eventsByDateAsc().map((e) => e.id)).toEqual([200, 201]);
+    expect(
+      access(component)
+        .eventsByDateAsc()
+        .map((e) => e.id),
+    ).toEqual([200, 201]);
   });
 });

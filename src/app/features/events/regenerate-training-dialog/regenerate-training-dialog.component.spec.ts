@@ -56,7 +56,8 @@ describe('RegenerateTrainingDialogComponent', () => {
     fixture = TestBed.createComponent(HostComponent);
     fixture.detectChanges();
     host = fixture.componentInstance;
-    component = fixture.debugElement.children[0].componentInstance as RegenerateTrainingDialogComponent;
+    component = fixture.debugElement.children[0]
+      .componentInstance as RegenerateTrainingDialogComponent;
   });
 
   it('emits the trimmed additionalPrompt on confirm', () => {

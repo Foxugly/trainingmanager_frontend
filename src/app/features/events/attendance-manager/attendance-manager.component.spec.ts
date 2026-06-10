@@ -81,7 +81,9 @@ describe('AttendanceManagerComponent', () => {
       eventsAttendanceList: vi.fn().mockReturnValue(
         of({
           count: 1,
-          results: [{ event: 7, member: 10, status: 2, status_code: 'present', member_fullname: 'Alice' }],
+          results: [
+            { event: 7, member: 10, status: 2, status_code: 'present', member_fullname: 'Alice' },
+          ],
         }),
       ),
       eventsAttendanceBulkCreate: vi.fn().mockReturnValue(of({ count: 1, results: [] })),
@@ -162,7 +164,9 @@ describe('AttendanceManagerComponent', () => {
     await new Promise((r) => setTimeout(r, 350));
     await new Promise((r) => setTimeout(r, 0));
 
-    const row = access(component).rows().find((r) => r.member_id === 10)!;
+    const row = access(component)
+      .rows()
+      .find((r) => r.member_id === 10)!;
     expect(row.status_code).toBe('present');
     expect(row.saving).toBe(false);
   });

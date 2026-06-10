@@ -47,7 +47,9 @@ const team: Team = {
   id: 4,
   name: 'RBP WP Senior',
   sport,
-  sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null }],
+  sports: [
+    { id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null },
+  ],
   owner: ownerUser,
   managers: [],
   language: LanguageEnum.Fr,
@@ -81,6 +83,7 @@ const program: Program = {
 };
 
 const eventNoRounds: Event = {
+  ai_athlete_brief: '',
   id: 7,
   name: 'Séance 1',
   goal: null,
@@ -131,7 +134,13 @@ const exercise1 = {
   t_break: '00:30',
   modality: { id: 1, name: 'Crawl', sport, is_active: true },
   modality_id: 1,
-  energysegment: { id: 1, abv: 'Z2', description: '', energy_system: { id: 1, name: 'Aérobie', abbreviation: 'AE' }, is_active: true },
+  energysegment: {
+    id: 1,
+    abv: 'Z2',
+    description: '',
+    energy_system: { id: 1, name: 'Aérobie', abbreviation: 'AE' },
+    is_active: true,
+  },
   energysegment_id: 1,
   language: LanguageEnum.Fr,
   usage_count: 0,
@@ -240,9 +249,7 @@ describe('EventsDetailComponent', () => {
       eventsRetrieve: vi
         .fn()
         .mockReturnValue(
-          eventResult
-            ? of(eventResult)
-            : throwError(() => new HttpErrorResponse({ status: 404 })),
+          eventResult ? of(eventResult) : throwError(() => new HttpErrorResponse({ status: 404 })),
         ),
       eventsGenerateTrainingCreate: vi.fn().mockReturnValue(
         of({
@@ -258,12 +265,22 @@ describe('EventsDetailComponent', () => {
       eventsPartialUpdate: vi
         .fn()
         .mockImplementation((p: { patchedEventRequest?: { total?: number } }) =>
-          of({ ...(eventResult ?? eventNoRounds), total: p?.patchedEventRequest?.total ?? 0 } as Event),
+          of({
+            ...(eventResult ?? eventNoRounds),
+            total: p?.patchedEventRequest?.total ?? 0,
+          } as Event),
         ),
       eventsRotiRetrieve: vi
         .fn()
         .mockReturnValue(
-          of([{ average: 3.4, count: 5, distribution: { '1': 0, '2': 1, '3': 2, '4': 1, '5': 1 }, my_score: 4 }]),
+          of([
+            {
+              average: 3.4,
+              count: 5,
+              distribution: { '1': 0, '2': 1, '3': 2, '4': 1, '5': 1 },
+              my_score: 4,
+            },
+          ]),
         ),
       eventsRotiUpdate: vi
         .fn()
@@ -281,16 +298,14 @@ describe('EventsDetailComponent', () => {
           ],
         }),
       ),
-      eventsRsvpUpdate: vi
-        .fn()
-        .mockImplementation((p: { rsvpUpsertRequest: { status: string } }) =>
-          of({
-            counts: { going: 3, maybe: 1, not_going: 1, no_response: 0 },
-            total_members: 5,
-            my_status: p.rsvpUpsertRequest.status,
-            by_member: [],
-          }),
-        ),
+      eventsRsvpUpdate: vi.fn().mockImplementation((p: { rsvpUpsertRequest: { status: string } }) =>
+        of({
+          counts: { going: 3, maybe: 1, not_going: 1, no_response: 0 },
+          total_members: 5,
+          my_status: p.rsvpUpsertRequest.status,
+          by_member: [],
+        }),
+      ),
       eventsRsvpApplyToAttendance: vi.fn().mockReturnValue(of({ applied: 3, skipped: 1 })),
     };
     programsMock = { programsRetrieve: vi.fn().mockReturnValue(of(program)) };
@@ -300,9 +315,9 @@ describe('EventsDetailComponent', () => {
       roundsRetrieve: vi.fn().mockImplementation((id: number) => of({ ...round1, id })),
     };
     exercisesMock = {
-      exercisesRetrieve: vi.fn().mockImplementation((id: number) =>
-        of(id === 201 ? exercise1 : exercise2),
-      ),
+      exercisesRetrieve: vi
+        .fn()
+        .mockImplementation((id: number) => of(id === 201 ? exercise1 : exercise2)),
       exercisesDestroy: vi.fn().mockReturnValue(of(null)),
       exercisesCreate: vi
         .fn()
@@ -474,7 +489,10 @@ describe('EventsDetailComponent', () => {
     access(component).onRegenerateConfirmed('whatever');
     await new Promise((r) => setTimeout(r, 0));
     expect(addSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ severity: 'warn', detail: 'events.detail.regenerate_past_blocked' }),
+      expect.objectContaining({
+        severity: 'warn',
+        detail: 'events.detail.regenerate_past_blocked',
+      }),
     );
   });
 
@@ -502,7 +520,6 @@ describe('EventsDetailComponent', () => {
       generateTrainingRequestRequest: { additional_prompt: 'with kickboard' },
     });
   });
-
 
   it('canManage is true for owner and false for member-only user', async () => {
     expect(access(component).canManage()).toBe(true);
@@ -555,7 +572,6 @@ describe('EventsDetailComponent', () => {
     tab.set('attendance');
     expect(access(component).activeTab()).toBe('attendance');
   });
-
 
   // --- ROTI (session difficulty) — the tab UI + fetch live in app-event-roti
   //     (covered by event-roti.component.spec); the parent only exposes the
@@ -709,7 +725,9 @@ describe('EventsDetailComponent', () => {
     );
     // Not applied until the confirm is accepted.
     expect(eventsMock.eventsPartialUpdate).not.toHaveBeenCalledWith(
-      expect.objectContaining({ patchedEventRequest: { training_type: TrainingTypeEnum.Freeform } }),
+      expect.objectContaining({
+        patchedEventRequest: { training_type: TrainingTypeEnum.Freeform },
+      }),
     );
   });
 
@@ -752,7 +770,9 @@ describe('EventsDetailComponent', () => {
     access(component).onTrainingTypeChange(TrainingTypeEnum.Freeform);
     // No PATCH fires for a rejected switch.
     expect(eventsMock.eventsPartialUpdate).not.toHaveBeenCalledWith(
-      expect.objectContaining({ patchedEventRequest: { training_type: TrainingTypeEnum.Freeform } }),
+      expect.objectContaining({
+        patchedEventRequest: { training_type: TrainingTypeEnum.Freeform },
+      }),
     );
     // The revert is real: the control value is written back to the original type.
     expect(access(component).trainingTypeControl.value).toBe(TrainingTypeEnum.Structured);

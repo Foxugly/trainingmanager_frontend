@@ -42,6 +42,7 @@ import { TeamRole, computeTeamRole } from '../../teams/teams-list/teams-list.com
 import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-header.component';
 import { AttachmentListComponent } from '../../../shared/ui/attachment-list/attachment-list.component';
 import { AttendanceManagerComponent } from '../attendance-manager/attendance-manager.component';
+import { EventAthleteBriefComponent } from '../event-athlete-brief/event-athlete-brief.component';
 import { EventDebriefComponent } from '../event-debrief/event-debrief.component';
 import { EventRotiComponent } from '../event-roti/event-roti.component';
 import { EventRsvpComponent } from '../event-rsvp/event-rsvp.component';
@@ -79,6 +80,7 @@ import { EventShareResponse } from '../../../api/model/event-share-response';
     AttendanceManagerComponent,
     EventRotiComponent,
     EventDebriefComponent,
+    EventAthleteBriefComponent,
     EventRsvpComponent,
     EventTrainingComponent,
     EventFreeformComponent,

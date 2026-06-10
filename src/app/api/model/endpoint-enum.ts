@@ -10,7 +10,7 @@
 
 
 /**
- * * `ping` - Ping * `plan` - Generate plan * `training` - Generate training * `training_freeform` - Generate free-text training * `review` - Review training block
+ * * `ping` - Ping * `plan` - Generate plan * `training` - Generate training * `training_freeform` - Generate free-text training * `review` - Review training block * `explain` - Explain session for athletes
  */
 export enum EndpointEnum {
 
@@ -22,6 +22,8 @@ export enum EndpointEnum {
 
     TrainingFreeform = 'training_freeform',
 
-    Review = 'review'
+    Review = 'review',
+
+    Explain = 'explain'
 }
 

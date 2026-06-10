@@ -13,7 +13,9 @@ describe('EventFreeformComponent', () => {
   let translocoMock: { translate: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
-    eventsMock = { eventsPartialUpdate: vi.fn().mockReturnValue(of({ id: 7, training_richtext: '<p>x</p>' })) };
+    eventsMock = {
+      eventsPartialUpdate: vi.fn().mockReturnValue(of({ id: 7, training_richtext: '<p>x</p>' })),
+    };
     messageMock = { add: vi.fn() };
     // Echo the key so we can assert which i18n key was translated (not a raw key passthrough).
     translocoMock = { translate: vi.fn((key: string) => `t:${key}`) };
@@ -27,17 +29,26 @@ describe('EventFreeformComponent', () => {
   });
 
   it('saves the richtext via eventsPartialUpdate({id, patchedEventRequest})', () => {
-    const c = fixture.componentInstance as unknown as { draft: { set(v: string): void }; save(): void };
+    const c = fixture.componentInstance as unknown as {
+      draft: { set(v: string): void };
+      save(): void;
+    };
     fixture.componentRef.setInput('event', { id: 7, training_richtext: '' });
     fixture.componentRef.setInput('canManage', true);
     c.draft.set('<p>new</p>');
     c.save();
-    expect(eventsMock.eventsPartialUpdate).toHaveBeenCalledWith({ id: 7, patchedEventRequest: { training_richtext: '<p>new</p>' } });
+    expect(eventsMock.eventsPartialUpdate).toHaveBeenCalledWith({
+      id: 7,
+      patchedEventRequest: { training_richtext: '<p>new</p>' },
+    });
   });
 
   it('toasts a translated save_failed error (not a raw i18n key) when the save fails', () => {
     eventsMock.eventsPartialUpdate.mockReturnValue(throwError(() => new Error('boom')));
-    const c = fixture.componentInstance as unknown as { draft: { set(v: string): void }; save(): void };
+    const c = fixture.componentInstance as unknown as {
+      draft: { set(v: string): void };
+      save(): void;
+    };
     fixture.componentRef.setInput('event', { id: 7, training_richtext: '' });
     fixture.componentRef.setInput('canManage', true);
     c.draft.set('<p>new</p>');

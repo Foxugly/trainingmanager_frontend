@@ -72,6 +72,7 @@ const roundDetail1 = {
 } as unknown as EventRoundDetail;
 
 const eventWithRounds: Event = {
+  ai_athlete_brief: '',
   id: 7,
   name: 'Séance 1',
   goal: null,
@@ -117,10 +118,7 @@ describe('EventPrintComponent', () => {
 
   const access = (c: EventPrintComponent) => c as unknown as ProtectedFields;
 
-  async function setup(
-    idParam: string | null = '7',
-    eventResult: Event | null = eventWithRounds,
-  ) {
+  async function setup(idParam: string | null = '7', eventResult: Event | null = eventWithRounds) {
     TestBed.resetTestingModule();
     routeIdParam = idParam;
     eventsMock = {
@@ -240,7 +238,10 @@ describe('EventPrintComponent', () => {
         provideNoopAnimations(),
         provideRouter([]),
         { provide: EventsService, useValue: eventsMock },
-        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => routeIdParam } } } },
+        {
+          provide: ActivatedRoute,
+          useValue: { snapshot: { paramMap: { get: () => routeIdParam } } },
+        },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(EventPrintComponent);

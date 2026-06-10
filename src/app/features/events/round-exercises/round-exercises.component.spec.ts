@@ -33,9 +33,24 @@ interface Protected {
   } | null;
 }
 
-const exercise1 = { id: 201, order: 1, repetition: 4, distance: 50, modality: { id: 1 }, energysegment: { id: 1 } } as unknown as Exercise;
-const exercise2 = { id: 202, order: 2, repetition: 4, distance: 100, t_break: '00:30', modality: { id: 1 }, energysegment: { id: 1 } } as unknown as Exercise;
-const round = ({ id: 11, order: 1, count: 2, exercises: [201, 202] } as unknown as Round);
+const exercise1 = {
+  id: 201,
+  order: 1,
+  repetition: 4,
+  distance: 50,
+  modality: { id: 1 },
+  energysegment: { id: 1 },
+} as unknown as Exercise;
+const exercise2 = {
+  id: 202,
+  order: 2,
+  repetition: 4,
+  distance: 100,
+  t_break: '00:30',
+  modality: { id: 1 },
+  energysegment: { id: 1 },
+} as unknown as Exercise;
+const round = { id: 11, order: 1, count: 2, exercises: [201, 202] } as unknown as Round;
 
 describe('RoundExercisesComponent', () => {
   let fixture: ComponentFixture<RoundExercisesComponent>;
@@ -126,7 +141,11 @@ describe('RoundExercisesComponent', () => {
   beforeEach(() => setup());
 
   it('mirrors the exercises input into a local working copy', () => {
-    expect(access(component).localExercises().map((e) => e.id)).toEqual([201, 202]);
+    expect(
+      access(component)
+        .localExercises()
+        .map((e) => e.id),
+    ).toEqual([201, 202]);
   });
 
   it('loads modality + energy-segment options from the sport input', async () => {
@@ -154,7 +173,11 @@ describe('RoundExercisesComponent', () => {
     expect(exercisesMock.exercisesCreate).toHaveBeenCalledTimes(1);
     expect(exercisesMock.exercisesCreate.mock.calls[0][0].exerciseRequest.round_id).toBe(round.id);
     expect(access(component).newRows().length).toBe(0);
-    expect(access(component).localExercises().some((e) => e.id === 999)).toBe(true);
+    expect(
+      access(component)
+        .localExercises()
+        .some((e) => e.id === 999),
+    ).toBe(true);
     expect(changed.at(-1)?.some((e) => e.id === 999)).toBe(true);
   });
 
@@ -178,9 +201,17 @@ describe('RoundExercisesComponent', () => {
   it('moveExercise reorders within the round, persists the order and emits the new list', () => {
     const changed: Exercise[][] = [];
     component.exercisesChanged.subscribe((l) => changed.push(l));
-    expect(access(component).localExercises().map((e) => e.id)).toEqual([201, 202]);
+    expect(
+      access(component)
+        .localExercises()
+        .map((e) => e.id),
+    ).toEqual([201, 202]);
     access(component).moveExercise(exercise1, 'down');
-    expect(access(component).localExercises().map((e) => e.id)).toEqual([202, 201]);
+    expect(
+      access(component)
+        .localExercises()
+        .map((e) => e.id),
+    ).toEqual([202, 201]);
     expect(roundsMock.roundsExercisesReorderCreate).toHaveBeenCalledWith({
       id: round.id,
       reorderExercisesRequestRequest: { exercise_ids: [202, 201] },

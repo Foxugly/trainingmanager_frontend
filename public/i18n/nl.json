@@ -330,6 +330,14 @@
       "note_label": "Debriefnotities",
       "note_placeholder": "Hoe ging de sessie? Notities voor de volgende keer…",
       "saved": "Debrief opgeslagen."
+    },
+    "athlete_brief": {
+      "title": "Atletenbriefing",
+      "generate": "Genereren",
+      "regenerate": "Opnieuw genereren",
+      "empty": "Nog geen atletenbriefing.",
+      "generated": "Atletenbriefing gegenereerd.",
+      "error": "Kon de briefing niet genereren."
     }
   },
   "programs": {

@@ -69,6 +69,8 @@ export * from './event-share-request-request';
 export * from './event-share-response';
 export * from './exercise';
 export * from './exercise-request';
+export * from './explain-session-response';
+export * from './explain-tokens-used';
 export * from './generate-plan-request-request';
 export * from './generate-plan-response';
 export * from './generate-plan-tokens-used';

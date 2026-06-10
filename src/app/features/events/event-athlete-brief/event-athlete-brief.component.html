@@ -1,0 +1,29 @@
+@if (current() || canManage()) {
+  <div class="rounded-lg border border-indigo-100 bg-indigo-50/50 p-4 mb-4">
+    <div class="flex items-center justify-between gap-3 mb-1 flex-wrap">
+      <h4 class="text-sm font-semibold text-indigo-800 flex items-center gap-2">
+        <i class="pi pi-sparkles" aria-hidden="true"></i>
+        {{ 'events.athlete_brief.title' | transloco }}
+      </h4>
+      @if (canManage()) {
+        <p-button
+          [label]="
+            (current() ? 'events.athlete_brief.regenerate' : 'events.athlete_brief.generate')
+              | transloco
+          "
+          icon="pi pi-sparkles"
+          severity="help"
+          size="small"
+          [text]="true"
+          [loading]="generating()"
+          (onClick)="generate()"
+        />
+      }
+    </div>
+    @if (current()) {
+      <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{{ current() }}</p>
+    } @else {
+      <p class="text-sm text-gray-500">{{ 'events.athlete_brief.empty' | transloco }}</p>
+    }
+  </div>
+}

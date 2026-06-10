@@ -283,6 +283,11 @@
       <p-tabpanels>
         <!-- TAB 1 — TRAINING -->
         <p-tabpanel value="training">
+          <app-event-athlete-brief
+            [eventId]="e.id"
+            [brief]="e.ai_athlete_brief"
+            [canManage]="canManage()"
+          />
           @if (canManage()) {
             <div class="mb-4 flex items-center gap-3">
               <label for="training_type" class="text-sm font-medium text-gray-600">

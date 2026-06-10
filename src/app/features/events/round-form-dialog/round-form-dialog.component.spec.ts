@@ -68,8 +68,7 @@ describe('RoundFormDialogComponent', () => {
   ) {
     TestBed.resetTestingModule();
     roundsMock = {
-      roundsCreate:
-        mocks.roundsCreate ?? vi.fn().mockReturnValue(of({ ...seedRound, id: 99 })),
+      roundsCreate: mocks.roundsCreate ?? vi.fn().mockReturnValue(of({ ...seedRound, id: 99 })),
       roundsPartialUpdate:
         mocks.roundsPartialUpdate ?? vi.fn().mockReturnValue(of({ ...seedRound, count: 5 })),
     };
@@ -179,9 +178,7 @@ describe('RoundFormDialogComponent', () => {
       },
     );
     access(component).submit();
-    expect(messageMock.add).toHaveBeenCalledWith(
-      expect.objectContaining({ severity: 'error' }),
-    );
+    expect(messageMock.add).toHaveBeenCalledWith(expect.objectContaining({ severity: 'error' }));
   });
 
   it('onCancel emits closed(null)', async () => {

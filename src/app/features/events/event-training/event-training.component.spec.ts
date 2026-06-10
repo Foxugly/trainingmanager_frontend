@@ -30,8 +30,23 @@ interface Protected {
   moveRound(r: Round, direction: 'up' | 'down'): void;
 }
 
-const exercise1 = { id: 201, order: 1, repetition: 4, distance: 50, modality: { id: 1 }, energysegment: { id: 1 } } as unknown as Exercise;
-const exercise2 = { id: 202, order: 2, repetition: 4, distance: 100, t_break: '00:30', modality: { id: 1 }, energysegment: { id: 1 } } as unknown as Exercise;
+const exercise1 = {
+  id: 201,
+  order: 1,
+  repetition: 4,
+  distance: 50,
+  modality: { id: 1 },
+  energysegment: { id: 1 },
+} as unknown as Exercise;
+const exercise2 = {
+  id: 202,
+  order: 2,
+  repetition: 4,
+  distance: 100,
+  t_break: '00:30',
+  modality: { id: 1 },
+  energysegment: { id: 1 },
+} as unknown as Exercise;
 const round = (id: number): Round =>
   ({ id, order: id - 10, count: 2, exercises: [201, 202] }) as unknown as Round;
 /** A rounds_detail entry as the backend embeds it on the event (retrieve). */
@@ -52,7 +67,12 @@ const eventWithRounds = {
   rounds_detail: [roundDetail(11), roundDetail(12), roundDetail(13)],
   sport: { id: 1 },
 } as unknown as Event;
-const eventNoRounds = { id: 7, rounds: [], rounds_detail: [], sport: { id: 1 } } as unknown as Event;
+const eventNoRounds = {
+  id: 7,
+  rounds: [],
+  rounds_detail: [],
+  sport: { id: 1 },
+} as unknown as Event;
 
 describe('EventTrainingComponent', () => {
   let fixture: ComponentFixture<EventTrainingComponent>;
@@ -187,9 +207,17 @@ describe('EventTrainingComponent', () => {
   });
 
   it('moveRound reorders the rounds list and persists the new order', () => {
-    expect(access(component).rounds().map((r) => r.id)).toEqual([11, 12, 13]);
+    expect(
+      access(component)
+        .rounds()
+        .map((r) => r.id),
+    ).toEqual([11, 12, 13]);
     access(component).moveRound(round(11), 'down');
-    expect(access(component).rounds().map((r) => r.id)).toEqual([12, 11, 13]);
+    expect(
+      access(component)
+        .rounds()
+        .map((r) => r.id),
+    ).toEqual([12, 11, 13]);
     expect(eventsMock.eventsRoundsReorderCreate).toHaveBeenCalledWith({
       id: 7,
       reorderRoundsRequestRequest: { round_ids: [12, 11, 13] },
