@@ -13,12 +13,13 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Fieldset } from 'primeng/fieldset';
 import { Tooltip } from 'primeng/tooltip';
 import { firstValueFrom } from 'rxjs';
+import { ToastService } from '../../../core/notifications/toast.service';
 import { EventsService } from '../../../api/api/events.service';
 import { RoundsService } from '../../../api/api/rounds.service';
 import { Event } from '../../../api/model/event';
@@ -70,8 +71,8 @@ export class EventTrainingComponent {
   private readonly eventsService = inject(EventsService);
   private readonly roundsService = inject(RoundsService);
   private readonly confirmationService = inject(ConfirmationService);
-  private readonly messageService = inject(MessageService);
   private readonly transloco = inject(TranslocoService);
+  private readonly toast = inject(ToastService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly event = input.required<Event>();
@@ -233,15 +234,11 @@ export class EventTrainingComponent {
     this.showRoundDialog.set(false);
     this.editingRound.set(null);
     if (round) {
-      this.messageService.add({
-        severity: 'success',
-        summary: this.transloco.translate('common.success'),
-        detail: this.transloco.translate(
-          this.roundDialogMode() === 'create'
-            ? 'events.round_form.created'
-            : 'events.round_form.updated',
-        ),
-      });
+      this.toast.success(
+        this.roundDialogMode() === 'create'
+          ? 'events.round_form.created'
+          : 'events.round_form.updated',
+      );
       this.reloadRequested.emit();
     }
   }
@@ -288,11 +285,7 @@ export class EventTrainingComponent {
       body?.code && REORDER_CODES.has(body.code)
         ? `events.detail.reorder_errors.${body.code}`
         : 'events.detail.reorder_errors.unknown';
-    this.messageService.add({
-      severity: 'error',
-      summary: this.transloco.translate('common.error'),
-      detail: this.transloco.translate(i18nKey),
-    });
+    this.toast.error(i18nKey);
   }
 
   protected confirmDeleteRound(r: Round): void {
@@ -312,11 +305,7 @@ export class EventTrainingComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('events.detail.confirm_delete_round.deleted'),
-          });
+          this.toast.success('events.detail.confirm_delete_round.deleted');
           this.reloadRequested.emit();
         },
         error: (err: HttpErrorResponse) => this.notifyMutationError(err),
@@ -325,10 +314,6 @@ export class EventTrainingComponent {
 
   private notifyMutationError(err: HttpErrorResponse): void {
     const detailKey = err?.status === 403 ? 'events.errors.forbidden' : 'events.errors.unknown';
-    this.messageService.add({
-      severity: 'error',
-      summary: this.transloco.translate('common.error'),
-      detail: this.transloco.translate(detailKey),
-    });
+    this.toast.error(detailKey);
   }
 }

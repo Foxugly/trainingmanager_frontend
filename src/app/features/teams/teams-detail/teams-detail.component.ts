@@ -1,4 +1,4 @@
-import { CommonModule, KeyValuePipe } from '@angular/common';
+import { DatePipe, KeyValuePipe, UpperCasePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -62,8 +62,9 @@ interface FieldErrors {
 @Component({
   selector: 'app-teams-detail',
   imports: [
-    CommonModule,
+    DatePipe,
     KeyValuePipe,
+    UpperCasePipe,
     FormsModule,
     ReactiveFormsModule,
     RouterLink,

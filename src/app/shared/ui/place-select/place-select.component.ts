@@ -18,13 +18,13 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { Textarea } from 'primeng/textarea';
 import { Tooltip } from 'primeng/tooltip';
+import { ToastService } from '../../../core/notifications/toast.service';
 import { PlacesService } from '../../../api/api/places.service';
 import { Place } from '../../../api/model/place';
 import { PlaceRequest } from '../../../api/model/place-request';
@@ -70,8 +70,8 @@ export class PlaceSelectComponent implements ControlValueAccessor {
   readonly inputId = input<string>('place_id');
 
   private readonly placesService = inject(PlacesService);
-  private readonly messageService = inject(MessageService);
   private readonly transloco = inject(TranslocoService);
+  private readonly toast = inject(ToastService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -173,20 +173,12 @@ export class PlaceSelectComponent implements ControlValueAccessor {
           this.dialogVisible.set(false);
           this.places.update((cur) => [...cur, created]);
           this.onSelectChange(created.id);
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('place.created'),
-          });
+          this.toast.success('place.created');
           this.cdr.markForCheck();
         },
         error: () => {
           this.creating.set(false);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('place.error_create'),
-          });
+          this.toast.error('place.error_create');
           this.cdr.markForCheck();
         },
       });

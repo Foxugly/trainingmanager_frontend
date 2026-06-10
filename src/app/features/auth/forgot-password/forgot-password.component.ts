@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   AfterViewInit,
@@ -34,7 +33,6 @@ interface TurnstileRenderOptions {
 @Component({
   selector: 'app-forgot-password',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     RouterLink,
     InputText,

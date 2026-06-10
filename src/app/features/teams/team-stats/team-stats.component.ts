@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -58,7 +58,7 @@ const SEGMENT_PALETTE = [
 @Component({
   selector: 'app-team-stats',
   imports: [
-    CommonModule,
+    DatePipe,
     FormsModule,
     TranslocoPipe,
     Button,

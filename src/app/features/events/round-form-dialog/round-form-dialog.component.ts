@@ -11,8 +11,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { Dialog } from 'primeng/dialog';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
@@ -20,6 +19,7 @@ import { RoundsService } from '../../../api/api/rounds.service';
 import { LanguageEnum } from '../../../api/model/language-enum';
 import { Round } from '../../../api/model/round';
 import { type FieldErrors, extractServerError } from '../../../shared/forms/notify-error';
+import { ToastService } from '../../../core/notifications/toast.service';
 import { FormFooterComponent } from '../../../shared/ui/form-footer/form-footer.component';
 import { MetaFieldComponent } from '../../../shared/ui/meta-field/meta-field.component';
 import { timeMmSsValidator } from '../shared/time-validator';
@@ -41,8 +41,7 @@ import { timeMmSsValidator } from '../shared/time-validator';
 export class RoundFormDialogComponent {
   private readonly fb = inject(FormBuilder);
   private readonly roundsService = inject(RoundsService);
-  private readonly messageService = inject(MessageService);
-  private readonly transloco = inject(TranslocoService);
+  private readonly toast = inject(ToastService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly visible = input.required<boolean>();
@@ -172,10 +171,6 @@ export class RoundFormDialogComponent {
   }
 
   private notifyGlobalError(detailKey: string): void {
-    this.messageService.add({
-      severity: 'error',
-      summary: this.transloco.translate('common.error'),
-      detail: this.transloco.translate(detailKey),
-    });
+    this.toast.error(detailKey);
   }
 }

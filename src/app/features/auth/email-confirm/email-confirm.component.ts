@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -19,7 +18,7 @@ type Phase = 'loading' | 'success' | 'invalid_token' | 'unknown_error';
 
 @Component({
   selector: 'app-email-confirm',
-  imports: [CommonModule, RouterLink, Button, TranslocoPipe],
+  imports: [RouterLink, Button, TranslocoPipe],
   templateUrl: './email-confirm.component.html',
   styleUrl: './email-confirm.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -43,6 +43,7 @@ import { VisibilityMode } from '../../../api/model/visibility-mode';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AVAILABLE_LANGUAGES, LanguageCode } from '../../../core/i18n/available-languages';
 import { type FieldErrors, extractServerError } from '../../../shared/forms/notify-error';
+import { ToastService } from '../../../core/notifications/toast.service';
 import { openContactEmail } from '../../../shared/contact';
 import { buildVisibilityOptions } from '../../../shared/forms/visibility-options';
 import {
@@ -105,6 +106,7 @@ export class TeamsFormComponent implements OnInit {
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly transloco = inject(TranslocoService);
+  private readonly toast = inject(ToastService);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly teamId = signal<number | null>(null);
@@ -528,11 +530,7 @@ export class TeamsFormComponent implements OnInit {
   }
 
   private notifyLogoTooLarge(): void {
-    this.messageService.add({
-      severity: 'warn',
-      summary: this.transloco.translate('common.error'),
-      detail: this.transloco.translate('teams.form.logo_too_large'),
-    });
+    this.toast.warn('teams.form.logo_too_large');
   }
 
   /**
@@ -733,11 +731,7 @@ export class TeamsFormComponent implements OnInit {
   }
 
   private notifySaved(detailKey: string): void {
-    this.messageService.add({
-      severity: 'success',
-      summary: this.transloco.translate('common.success'),
-      detail: this.transloco.translate(detailKey),
-    });
+    this.toast.success(detailKey);
   }
 
   private applyServerError(err: HttpErrorResponse): void {
@@ -764,24 +758,14 @@ export class TeamsFormComponent implements OnInit {
     const { fields, detail } = extractServerError(err);
     this.fieldErrors.set(fields);
     if (!fields) {
-      this.messageService.add({
-        severity: 'error',
-        summary: this.transloco.translate('common.error'),
-        detail: detail
-          ? this.transloco.translate(detail)
-          : this.transloco.translate('teams.errors.unknown'),
-      });
+      this.toast.error(detail ?? 'teams.errors.unknown');
     }
   }
 
   /** Error toast for a form-section loader, instead of swallowing the failure
    *  silently (the section just stays empty otherwise). */
   private notifyLoadError(): void {
-    this.messageService.add({
-      severity: 'error',
-      summary: this.transloco.translate('common.error'),
-      detail: this.transloco.translate('common.load_failed'),
-    });
+    this.toast.error('common.load_failed');
   }
 
   // ── Équipements (enable a subset of the sport catalog) ──────────────────

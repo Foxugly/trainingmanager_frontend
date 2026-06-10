@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { UpperCasePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -33,7 +33,7 @@ export interface TeamWithRole extends Team {
 
 @Component({
   selector: 'app-teams-list',
-  imports: [CommonModule, RouterLink, Button, Skeleton, Tooltip, EmptyStateComponent, TranslocoPipe],
+  imports: [UpperCasePipe, RouterLink, Button, Skeleton, Tooltip, EmptyStateComponent, TranslocoPipe],
   templateUrl: './teams-list.component.html',
   styleUrl: './teams-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

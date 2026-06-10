@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -21,7 +20,6 @@ import { AuthService } from '../../../core/auth/auth.service';
 @Component({
   selector: 'app-teams-discover',
   imports: [
-    CommonModule,
     RouterLink,
     InputText,
     Skeleton,

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -20,7 +20,7 @@ import { Exercise } from '../../../api/model/exercise';
 
 @Component({
   selector: 'app-event-print',
-  imports: [CommonModule, RouterLink, Button, TranslocoPipe],
+  imports: [DatePipe, RouterLink, Button, TranslocoPipe],
   templateUrl: './event-print.component.html',
   styleUrl: './event-print.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

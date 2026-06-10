@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -18,7 +17,7 @@ type Phase = 'loading' | 'success' | 'invalid_token' | 'expired' | 'unknown_erro
  */
 @Component({
   selector: 'app-email-change-confirm',
-  imports: [CommonModule, RouterLink, Button, Message, TranslocoPipe],
+  imports: [RouterLink, Button, Message, TranslocoPipe],
   templateUrl: './email-change-confirm.component.html',
   styleUrl: './email-change-confirm.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

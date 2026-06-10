@@ -38,6 +38,14 @@ import {
   ActiveToggleComponent,
   ActiveToggleLabels,
 } from '../../../shared/ui/active-toggle/active-toggle.component';
+import {
+  dayKey,
+  endOfMonth,
+  endOfWeekMonday,
+  isoDate,
+  startOfMonth,
+  startOfWeekMonday,
+} from '../../../shared/date/calendar';
 
 const HEX_RE = /^#([0-9a-f]{6}|[0-9a-f]{3})$/i;
 
@@ -49,46 +57,6 @@ function normalizeHex(value: string | null | undefined): string | null {
     return `#${v[1]}${v[1]}${v[2]}${v[2]}${v[3]}${v[3]}`.toUpperCase();
   }
   return v.toUpperCase();
-}
-
-function startOfDay(d: Date): Date {
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
-}
-
-function isoDate(d: Date): string {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-}
-
-function startOfMonth(d: Date): Date {
-  return new Date(d.getFullYear(), d.getMonth(), 1);
-}
-
-function endOfMonth(d: Date): Date {
-  return new Date(d.getFullYear(), d.getMonth() + 1, 0);
-}
-
-function startOfWeekMonday(d: Date): Date {
-  const x = startOfDay(d);
-  const dow = x.getDay();
-  const offset = dow === 0 ? -6 : 1 - dow;
-  x.setDate(x.getDate() + offset);
-  return x;
-}
-
-function endOfWeekMonday(d: Date): Date {
-  const x = startOfWeekMonday(d);
-  x.setDate(x.getDate() + 6);
-  return x;
-}
-
-function dayKey(d: Date): string {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
 }
 
 function eventDateAsDate(e: Event): Date | null {

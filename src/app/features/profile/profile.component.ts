@@ -37,6 +37,7 @@ import { getRuntimeConfig } from '../../core/runtime-config';
 import { AVAILABLE_LANGUAGES, LanguageCode } from '../../core/i18n/available-languages';
 import { LanguageService } from '../../core/i18n/language.service';
 import { type FieldErrors, extractServerError } from '../../shared/forms/notify-error';
+import { ToastService } from '../../core/notifications/toast.service';
 import { FormFooterComponent } from '../../shared/ui/form-footer/form-footer.component';
 import { MetaFieldComponent } from '../../shared/ui/meta-field/meta-field.component';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header.component';
@@ -87,6 +88,7 @@ export class ProfileComponent implements OnInit {
   private readonly languageService = inject(LanguageService);
   private readonly transloco = inject(TranslocoService);
   private readonly messageService = inject(MessageService);
+  private readonly toast = inject(ToastService);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly languages = AVAILABLE_LANGUAGES;
@@ -202,19 +204,11 @@ export class ProfileComponent implements OnInit {
         next: (rows) => {
           this.prefs.set(rows);
           this.prefsSaving.set(false);
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('notifications.prefs_saved'),
-          });
+          this.toast.success('notifications.prefs_saved');
         },
         error: () => {
           this.prefsSaving.set(false);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('profile.errors.unknown'),
-          });
+          this.toast.error('profile.errors.unknown');
         },
       });
   }
@@ -242,22 +236,14 @@ export class ProfileComponent implements OnInit {
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            this.messageService.add({
-              severity: 'success',
-              summary: this.transloco.translate('common.success'),
-              detail: this.transloco.translate('rgpd.export.toast'),
-            });
+            this.toast.success('rgpd.export.toast');
           } finally {
             this.exporting.set(false);
           }
         },
         error: () => {
           this.exporting.set(false);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('rgpd.export.error'),
-          });
+          this.toast.error('rgpd.export.error');
         },
       });
   }
@@ -268,11 +254,7 @@ export class ProfileComponent implements OnInit {
     const url = this.calendarUrl();
     if (!url) return;
     void navigator.clipboard.writeText(url).then(() => {
-      this.messageService.add({
-        severity: 'success',
-        summary: this.transloco.translate('common.success'),
-        detail: this.transloco.translate('profile.calendar_copied'),
-      });
+      this.toast.success('profile.calendar_copied');
     });
   }
 
@@ -295,19 +277,11 @@ export class ProfileComponent implements OnInit {
             this.authService.setCurrentUser(updated);
           }
           this.calendarRotating.set(false);
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('profile.calendar_regenerated'),
-          });
+          this.toast.success('profile.calendar_regenerated');
         },
         error: () => {
           this.calendarRotating.set(false);
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('profile.errors.unknown'),
-          });
+          this.toast.error('profile.errors.unknown');
         },
       });
   }
@@ -355,11 +329,7 @@ export class ProfileComponent implements OnInit {
           }
           this.authService.setCurrentUser(updated);
           this.user.set(updated);
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('profile.saved'),
-          });
+          this.toast.success('profile.saved');
           this.loading.set(false);
         },
         error: (err: HttpErrorResponse) => {
@@ -373,13 +343,7 @@ export class ProfileComponent implements OnInit {
     const { fields, detail } = extractServerError(err);
     this.fieldErrors.set(fields);
     if (!fields) {
-      this.messageService.add({
-        severity: 'error',
-        summary: this.transloco.translate('common.error'),
-        detail: detail
-          ? this.transloco.translate(detail)
-          : this.transloco.translate('profile.errors.unknown'),
-      });
+      this.toast.error(detail ?? 'profile.errors.unknown');
     }
   }
 
@@ -429,11 +393,7 @@ export class ProfileComponent implements OnInit {
         next: () => {
           this.changePwLoading.set(false);
           this.changePwOpen.set(false);
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('profile.password_changed'),
-          });
+          this.toast.success('profile.password_changed');
         },
         error: (err: HttpErrorResponse) => {
           this.changePwLoading.set(false);
@@ -470,11 +430,7 @@ export class ProfileComponent implements OnInit {
         next: () => {
           this.emailChangeLoading.set(false);
           this.emailChangeOpen.set(false);
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('profile.email_change.requested_toast'),
-          });
+          this.toast.success('profile.email_change.requested_toast');
         },
         error: (err: HttpErrorResponse) => {
           this.emailChangeLoading.set(false);
@@ -490,11 +446,7 @@ export class ProfileComponent implements OnInit {
             this.emailChangeErrors.set(fields);
             return;
           }
-          this.messageService.add({
-            severity: 'error',
-            summary: this.transloco.translate('common.error'),
-            detail: this.transloco.translate('profile.email_change.errors.generic'),
-          });
+          this.toast.error('profile.email_change.errors.generic');
         },
       });
   }
@@ -518,13 +470,7 @@ export class ProfileComponent implements OnInit {
       this.changePwErrors.set(fields);
       return;
     }
-    this.messageService.add({
-      severity: 'error',
-      summary: this.transloco.translate('common.error'),
-      detail: detail
-        ? this.transloco.translate(detail)
-        : this.transloco.translate('profile.errors.unknown'),
-    });
+    this.toast.error(detail ?? 'profile.errors.unknown');
   }
 
   // --- Delete account ---
@@ -565,11 +511,7 @@ export class ProfileComponent implements OnInit {
         next: () => {
           this.deleteLoading.set(false);
           this.deleteOpen.set(false);
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('profile.account_deleted'),
-          });
+          this.toast.success('profile.account_deleted');
           this.authService.logout();
         },
         error: (err: HttpErrorResponse) => {
@@ -600,12 +542,6 @@ export class ProfileComponent implements OnInit {
       this.deleteErrors.set(fields);
       return;
     }
-    this.messageService.add({
-      severity: 'error',
-      summary: this.transloco.translate('common.error'),
-      detail: detail
-        ? this.transloco.translate(detail)
-        : this.transloco.translate('profile.errors.unknown'),
-    });
+    this.toast.error(detail ?? 'profile.errors.unknown');
   }
 }

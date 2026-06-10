@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -25,7 +24,7 @@ const RESEND_DEBOUNCE_SECONDS = 30;
 
 @Component({
   selector: 'app-check-your-email',
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, InputText, Button, Message, TranslocoPipe],
+  imports: [ReactiveFormsModule, RouterLink, InputText, Button, Message, TranslocoPipe],
   templateUrl: './check-your-email.component.html',
   styleUrl: './check-your-email.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -29,6 +29,7 @@ import { Program } from '../../../api/model/program';
 import { Team } from '../../../api/model/team';
 import { AuthService } from '../../../core/auth/auth.service';
 import { type FieldErrors, extractServerError } from '../../../shared/forms/notify-error';
+import { ToastService } from '../../../core/notifications/toast.service';
 import {
   ActiveToggleComponent,
   type ActiveToggleLabels,
@@ -92,6 +93,7 @@ export class ProgramsFormComponent implements OnInit {
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly transloco = inject(TranslocoService);
+  private readonly toast = inject(ToastService);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly programId = signal<number | null>(null);
@@ -303,11 +305,7 @@ export class ProgramsFormComponent implements OnInit {
       .subscribe({
         next: () => {
           this.saving.set(false);
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('programs.form.deleted'),
-          });
+          this.toast.success('programs.form.deleted');
           this.router.navigate(teamId != null ? ['/teams', teamId] : ['/programs']);
         },
         error: (err: HttpErrorResponse) => {
@@ -318,32 +316,18 @@ export class ProgramsFormComponent implements OnInit {
   }
 
   private notifySaved(detailKey: string): void {
-    this.messageService.add({
-      severity: 'success',
-      summary: this.transloco.translate('common.success'),
-      detail: this.transloco.translate(detailKey),
-    });
+    this.toast.success(detailKey);
   }
 
   private notifyLoadError(): void {
-    this.messageService.add({
-      severity: 'error',
-      summary: this.transloco.translate('common.error'),
-      detail: this.transloco.translate('programs.errors.unknown'),
-    });
+    this.toast.error('programs.errors.unknown');
   }
 
   private applyServerError(err: HttpErrorResponse): void {
     const { fields, detail } = extractServerError(err);
     this.fieldErrors.set(fields);
     if (!fields) {
-      this.messageService.add({
-        severity: 'error',
-        summary: this.transloco.translate('common.error'),
-        detail: detail
-          ? this.transloco.translate(detail)
-          : this.transloco.translate('programs.errors.unknown'),
-      });
+      this.toast.error(detail ?? 'programs.errors.unknown');
     }
   }
 }

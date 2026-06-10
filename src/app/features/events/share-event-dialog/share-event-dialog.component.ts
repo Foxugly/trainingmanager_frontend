@@ -8,12 +8,12 @@ import {
   output,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
 import { ToggleSwitch } from 'primeng/toggleswitch';
+import { ToastService } from '../../../core/notifications/toast.service';
 
 @Component({
   selector: 'app-share-event-dialog',
@@ -22,8 +22,7 @@ import { ToggleSwitch } from 'primeng/toggleswitch';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ShareEventDialogComponent {
-  private readonly transloco = inject(TranslocoService);
-  private readonly messageService = inject(MessageService);
+  private readonly toast = inject(ToastService);
 
   readonly visible = model<boolean>(false);
   /** Whether the session is currently shared publicly. */
@@ -57,17 +56,9 @@ export class ShareEventDialogComponent {
     if (!url) return;
     try {
       await navigator.clipboard.writeText(url);
-      this.messageService.add({
-        severity: 'success',
-        summary: this.transloco.translate('common.success'),
-        detail: this.transloco.translate('public_share.event.copied'),
-      });
+      this.toast.success('public_share.event.copied');
     } catch {
-      this.messageService.add({
-        severity: 'error',
-        summary: this.transloco.translate('common.error'),
-        detail: this.transloco.translate('public_share.event.copy_failed'),
-      });
+      this.toast.error('public_share.event.copy_failed');
     }
   }
 }

@@ -37,6 +37,7 @@ import { TeamSportRead } from '../../../api/model/team-sport-read';
 import { VisibilityMode } from '../../../api/model/visibility-mode';
 import { loadProgramsForTeams } from '../../programs/program-fanout';
 import { type FieldErrors, extractServerError } from '../../../shared/forms/notify-error';
+import { ToastService } from '../../../core/notifications/toast.service';
 import { buildVisibilityOptions } from '../../../shared/forms/visibility-options';
 import { FormFooterComponent } from '../../../shared/ui/form-footer/form-footer.component';
 import { MetaFieldComponent } from '../../../shared/ui/meta-field/meta-field.component';
@@ -118,6 +119,7 @@ export class EventsFormComponent implements OnInit {
   private readonly programsService = inject(ProgramsService);
   private readonly messageService = inject(MessageService);
   private readonly transloco = inject(TranslocoService);
+  private readonly toast = inject(ToastService);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly eventId = signal<number | null>(null);
@@ -309,11 +311,7 @@ export class EventsFormComponent implements OnInit {
   }
 
   private notifyLoadProgramsError(): void {
-    this.messageService.add({
-      severity: 'error',
-      summary: this.transloco.translate('common.error'),
-      detail: this.transloco.translate('events.form.errors.load_programs_failed'),
-    });
+    this.toast.error('events.form.errors.load_programs_failed');
   }
 
   private loadEvent(id: number): void {
@@ -359,11 +357,7 @@ export class EventsFormComponent implements OnInit {
   }
 
   private notifyLoadError(): void {
-    this.messageService.add({
-      severity: 'error',
-      summary: this.transloco.translate('common.error'),
-      detail: this.transloco.translate('events.errors.unknown'),
-    });
+    this.toast.error('events.errors.unknown');
   }
 
   protected fieldError(name: string): string | null {
@@ -461,22 +455,14 @@ export class EventsFormComponent implements OnInit {
   }
 
   private notifySaved(): void {
-    this.messageService.add({
-      severity: 'success',
-      summary: this.transloco.translate('common.success'),
-      detail: this.transloco.translate('events.form.saved'),
-    });
+    this.toast.success('events.form.saved');
   }
 
   private applyServerError(err: HttpErrorResponse): void {
     const { fields, detail } = extractServerError(err);
     this.fieldErrors.set(fields);
     if (!fields) {
-      this.messageService.add({
-        severity: 'error',
-        summary: this.transloco.translate('common.error'),
-        detail: detail ? this.transloco.translate(detail) : this.transloco.translate('events.errors.unknown'),
-      });
+      this.toast.error(detail ?? 'events.errors.unknown');
     }
   }
 }

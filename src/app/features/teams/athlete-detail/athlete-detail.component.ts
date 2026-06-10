@@ -8,6 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { catchError, forkJoin, of, switchMap, tap } from 'rxjs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { MembersService } from '../../../api/api/members.service';
@@ -82,17 +83,54 @@ export class AthleteDetailComponent {
 
   constructor() {
     // React to :teamId / :memberId param changes (reuse for another athlete).
-    this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
-      const teamId = Number(params.get('teamId'));
-      const memberId = Number(params.get('memberId'));
-      if (!Number.isFinite(teamId) || !Number.isFinite(memberId)) {
-        this.notFound.set(true);
-        return;
-      }
-      this.teamId.set(teamId);
-      this.memberId.set(memberId);
-      this.load(teamId, memberId);
-    });
+    // A data stream (not a side-effecting load()): switchMap cancels the stale
+    // in-flight fetches when the params change mid-flight, so overlapping
+    // responses can never land out of order. The two fetches are independent,
+    // so forkJoin runs them in parallel; each guards its own failure so one
+    // erroring doesn't abort the other.
+    this.route.paramMap
+      .pipe(
+        tap((params) => {
+          const teamId = Number(params.get('teamId'));
+          const memberId = Number(params.get('memberId'));
+          if (!Number.isFinite(teamId) || !Number.isFinite(memberId)) {
+            this.notFound.set(true);
+            return;
+          }
+          this.teamId.set(teamId);
+          this.memberId.set(memberId);
+          this.loading.set(true);
+          this.notFound.set(false);
+          this.member.set(null);
+        }),
+        switchMap((params) => {
+          const teamId = Number(params.get('teamId'));
+          const memberId = Number(params.get('memberId'));
+          if (!Number.isFinite(teamId) || !Number.isFinite(memberId)) {
+            return of(null);
+          }
+          return forkJoin({
+            team: this.teamsService.teamsRetrieve({ id: teamId }).pipe(
+              tap((t) => this.team.set(t)),
+              catchError(() => {
+                this.router.navigate(['/teams']);
+                return of(null);
+              }),
+            ),
+            member: this.membersService.membersRetrieve({ id: memberId }).pipe(
+              tap((m) => this.member.set(m)),
+              catchError(() => {
+                this.notFound.set(true);
+                return of(null);
+              }),
+            ),
+          });
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((result) => {
+        if (result !== null) this.loading.set(false);
+      });
 
     // Once the team has resolved, redirect non-managers away (coach-only page).
     effect(() => {
@@ -101,33 +139,5 @@ export class AthleteDetailComponent {
         this.router.navigate(['/teams', t.id]);
       }
     });
-  }
-
-  private load(teamId: number, memberId: number): void {
-    this.loading.set(true);
-    this.notFound.set(false);
-    this.member.set(null);
-
-    this.teamsService
-      .teamsRetrieve({ id: teamId })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (t) => this.team.set(t),
-        error: () => this.router.navigate(['/teams']),
-      });
-
-    this.membersService
-      .membersRetrieve({ id: memberId })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (m) => {
-          this.member.set(m);
-          this.loading.set(false);
-        },
-        error: () => {
-          this.notFound.set(true);
-          this.loading.set(false);
-        },
-      });
   }
 }
