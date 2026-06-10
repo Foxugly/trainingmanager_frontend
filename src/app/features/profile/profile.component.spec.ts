@@ -59,11 +59,13 @@ interface ProtectedFields {
   // change-password
   changePwOpen(): boolean;
   changePwForm: {
-    patchValue: (v: Partial<{
-      current_password: string;
-      new_password: string;
-      new_password_confirm: string;
-    }>) => void;
+    patchValue: (
+      v: Partial<{
+        current_password: string;
+        new_password: string;
+        new_password_confirm: string;
+      }>,
+    ) => void;
   };
   changePwErrors(): { [k: string]: string[] } | null;
   changePwFieldError(name: string): string | null;
@@ -93,8 +95,18 @@ interface ProtectedFields {
 }
 
 const prefRows: NotificationPreference[] = [
-  { type: 'note_for_coach', label: 'Note added', in_app: true, email: true } as NotificationPreference,
-  { type: 'message_new_reply', label: 'New reply', in_app: true, email: false } as NotificationPreference,
+  {
+    type: 'note_for_coach',
+    label: 'Note added',
+    in_app: true,
+    email: true,
+  } as NotificationPreference,
+  {
+    type: 'message_new_reply',
+    label: 'New reply',
+    in_app: true,
+    email: false,
+  } as NotificationPreference,
 ];
 
 describe('ProfileComponent', () => {
@@ -187,6 +199,7 @@ describe('ProfileComponent', () => {
       last_name: 'Anderson',
       language: 'fr',
       weekly_recap_opt_in: true,
+      digest_email: false,
     });
     expect(access(component).form.valid).toBe(true);
   });
@@ -209,6 +222,7 @@ describe('ProfileComponent', () => {
         last_name: 'Anderson',
         language: 'fr',
         weekly_recap_opt_in: true,
+        digest_email: false,
       },
     });
     expect(authMock.setCurrentUser).toHaveBeenCalled();
@@ -434,13 +448,9 @@ describe('ProfileComponent', () => {
   });
 
   it('savePreferences toasts an error on failure', () => {
-    notifMock.notificationsPreferencesUpdate.mockReturnValue(
-      throwError(() => ({ status: 500 })),
-    );
+    notifMock.notificationsPreferencesUpdate.mockReturnValue(throwError(() => ({ status: 500 })));
     access(component).savePreferences();
-    expect(messageService.add).toHaveBeenCalledWith(
-      expect.objectContaining({ severity: 'error' }),
-    );
+    expect(messageService.add).toHaveBeenCalledWith(expect.objectContaining({ severity: 'error' }));
     expect(access(component).prefsSaving()).toBe(false);
   });
 
@@ -513,9 +523,7 @@ describe('ProfileComponent', () => {
 
     access(component).regenerateCalendarUrl();
 
-    expect(messageService.add).toHaveBeenCalledWith(
-      expect.objectContaining({ severity: 'error' }),
-    );
+    expect(messageService.add).toHaveBeenCalledWith(expect.objectContaining({ severity: 'error' }));
     expect(access(component).calendarRotating()).toBe(false);
     confirmSpy.mockRestore();
   });
@@ -524,9 +532,7 @@ describe('ProfileComponent', () => {
 
   it('downloadMyData calls meExportRetrieve and toasts success', () => {
     meMock.meExportRetrieve.mockReturnValue(of({ profile: { username: 'alice' } }));
-    const createUrl = vi
-      .spyOn(URL, 'createObjectURL')
-      .mockReturnValue('blob:fake');
+    const createUrl = vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:fake');
     const revokeUrl = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => undefined);
     // jsdom doesn't implement <a>.click navigation; stub it to a no-op.
     const clickSpy = vi
@@ -554,9 +560,7 @@ describe('ProfileComponent', () => {
 
     access(component).downloadMyData();
 
-    expect(messageService.add).toHaveBeenCalledWith(
-      expect.objectContaining({ severity: 'error' }),
-    );
+    expect(messageService.add).toHaveBeenCalledWith(expect.objectContaining({ severity: 'error' }));
     expect(access(component).exporting()).toBe(false);
   });
 });

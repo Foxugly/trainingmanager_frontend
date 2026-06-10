@@ -1234,7 +1234,9 @@
     "calendar_copied": "Link copiato",
     "calendar_regenerate": "Rigenera il link",
     "calendar_regenerate_confirm": "Il vecchio link smetterà di funzionare. Continuare?",
-    "calendar_regenerated": "Nuovo link generato"
+    "calendar_regenerated": "Nuovo link generato",
+    "digest_email": "E-mail digest giornaliera",
+    "digest_email_help": "Ricevi un unico riepilogo giornaliero delle notifiche invece di un'e-mail per evento."
   },
   "admin": {
     "title": "Amministrazione",

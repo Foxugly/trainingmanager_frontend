@@ -47,6 +47,7 @@ interface ProfileFormValue {
   last_name: string;
   language: LanguageCode;
   weekly_recap_opt_in: boolean;
+  digest_email: boolean;
 }
 
 @Component({
@@ -122,6 +123,7 @@ export class ProfileComponent implements OnInit {
     last_name: ['', Validators.required],
     language: ['fr' as LanguageCode, Validators.required],
     weekly_recap_opt_in: [true],
+    digest_email: [false],
   });
 
   // --- Change-password dialog ---
@@ -227,37 +229,37 @@ export class ProfileComponent implements OnInit {
       .meExportRetrieve()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-      next: (data) => {
-        try {
-          const blob = new Blob([JSON.stringify(data, null, 2)], {
-            type: 'application/json',
-          });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = 'trainingmanager-export.json';
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-          this.messageService.add({
-            severity: 'success',
-            summary: this.transloco.translate('common.success'),
-            detail: this.transloco.translate('rgpd.export.toast'),
-          });
-        } finally {
+        next: (data) => {
+          try {
+            const blob = new Blob([JSON.stringify(data, null, 2)], {
+              type: 'application/json',
+            });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'trainingmanager-export.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            this.messageService.add({
+              severity: 'success',
+              summary: this.transloco.translate('common.success'),
+              detail: this.transloco.translate('rgpd.export.toast'),
+            });
+          } finally {
+            this.exporting.set(false);
+          }
+        },
+        error: () => {
           this.exporting.set(false);
-        }
-      },
-      error: () => {
-        this.exporting.set(false);
-        this.messageService.add({
-          severity: 'error',
-          summary: this.transloco.translate('common.error'),
-          detail: this.transloco.translate('rgpd.export.error'),
-        });
-      },
-    });
+          this.messageService.add({
+            severity: 'error',
+            summary: this.transloco.translate('common.error'),
+            detail: this.transloco.translate('rgpd.export.error'),
+          });
+        },
+      });
   }
 
   // --- iCal calendar subscription ---
@@ -284,30 +286,30 @@ export class ProfileComponent implements OnInit {
       .meCalendarTokenRotate()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-      next: (res) => {
-        this.calendarToken.set(res.calendar_token);
-        const current = this.user();
-        if (current) {
-          const updated: Me = { ...current, calendar_token: res.calendar_token };
-          this.user.set(updated);
-          this.authService.setCurrentUser(updated);
-        }
-        this.calendarRotating.set(false);
-        this.messageService.add({
-          severity: 'success',
-          summary: this.transloco.translate('common.success'),
-          detail: this.transloco.translate('profile.calendar_regenerated'),
-        });
-      },
-      error: () => {
-        this.calendarRotating.set(false);
-        this.messageService.add({
-          severity: 'error',
-          summary: this.transloco.translate('common.error'),
-          detail: this.transloco.translate('profile.errors.unknown'),
-        });
-      },
-    });
+        next: (res) => {
+          this.calendarToken.set(res.calendar_token);
+          const current = this.user();
+          if (current) {
+            const updated: Me = { ...current, calendar_token: res.calendar_token };
+            this.user.set(updated);
+            this.authService.setCurrentUser(updated);
+          }
+          this.calendarRotating.set(false);
+          this.messageService.add({
+            severity: 'success',
+            summary: this.transloco.translate('common.success'),
+            detail: this.transloco.translate('profile.calendar_regenerated'),
+          });
+        },
+        error: () => {
+          this.calendarRotating.set(false);
+          this.messageService.add({
+            severity: 'error',
+            summary: this.transloco.translate('common.error'),
+            detail: this.transloco.translate('profile.errors.unknown'),
+          });
+        },
+      });
   }
 
   private hydrate(me: Me): void {
@@ -318,6 +320,7 @@ export class ProfileComponent implements OnInit {
       last_name: me.last_name ?? '',
       language: (me.language ?? 'fr') as LanguageCode,
       weekly_recap_opt_in: me.weekly_recap_opt_in ?? true,
+      digest_email: me.digest_email ?? false,
     });
   }
 
@@ -338,31 +341,32 @@ export class ProfileComponent implements OnInit {
       last_name: value.last_name,
       language: value.language as LanguageEnum,
       weekly_recap_opt_in: value.weekly_recap_opt_in,
+      digest_email: value.digest_email,
     };
 
     this.meService
       .mePartialUpdate({ patchedMeRequest: payload })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-      next: (updated) => {
-        const previousLang = this.transloco.getActiveLang() as LanguageCode;
-        if (value.language !== previousLang) {
-          this.languageService.applyToTranslocoOnly(value.language);
-        }
-        this.authService.setCurrentUser(updated);
-        this.user.set(updated);
-        this.messageService.add({
-          severity: 'success',
-          summary: this.transloco.translate('common.success'),
-          detail: this.transloco.translate('profile.saved'),
-        });
-        this.loading.set(false);
-      },
-      error: (err: HttpErrorResponse) => {
-        this.applyServerError(err);
-        this.loading.set(false);
-      },
-    });
+        next: (updated) => {
+          const previousLang = this.transloco.getActiveLang() as LanguageCode;
+          if (value.language !== previousLang) {
+            this.languageService.applyToTranslocoOnly(value.language);
+          }
+          this.authService.setCurrentUser(updated);
+          this.user.set(updated);
+          this.messageService.add({
+            severity: 'success',
+            summary: this.transloco.translate('common.success'),
+            detail: this.transloco.translate('profile.saved'),
+          });
+          this.loading.set(false);
+        },
+        error: (err: HttpErrorResponse) => {
+          this.applyServerError(err);
+          this.loading.set(false);
+        },
+      });
   }
 
   private applyServerError(err: HttpErrorResponse): void {
@@ -422,20 +426,20 @@ export class ProfileComponent implements OnInit {
       .authPasswordChangeCreate({ passwordChangeRequest: payload })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-      next: () => {
-        this.changePwLoading.set(false);
-        this.changePwOpen.set(false);
-        this.messageService.add({
-          severity: 'success',
-          summary: this.transloco.translate('common.success'),
-          detail: this.transloco.translate('profile.password_changed'),
-        });
-      },
-      error: (err: HttpErrorResponse) => {
-        this.changePwLoading.set(false);
-        this.applyChangePwError(err);
-      },
-    });
+        next: () => {
+          this.changePwLoading.set(false);
+          this.changePwOpen.set(false);
+          this.messageService.add({
+            severity: 'success',
+            summary: this.transloco.translate('common.success'),
+            detail: this.transloco.translate('profile.password_changed'),
+          });
+        },
+        error: (err: HttpErrorResponse) => {
+          this.changePwLoading.set(false);
+          this.applyChangePwError(err);
+        },
+      });
   }
 
   protected emailChangeFieldError(name: string): string | null {
@@ -558,21 +562,21 @@ export class ProfileComponent implements OnInit {
       .authAccountDeleteCreate({ accountDeleteRequest: payload })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-      next: () => {
-        this.deleteLoading.set(false);
-        this.deleteOpen.set(false);
-        this.messageService.add({
-          severity: 'success',
-          summary: this.transloco.translate('common.success'),
-          detail: this.transloco.translate('profile.account_deleted'),
-        });
-        this.authService.logout();
-      },
-      error: (err: HttpErrorResponse) => {
-        this.deleteLoading.set(false);
-        this.applyDeleteError(err);
-      },
-    });
+        next: () => {
+          this.deleteLoading.set(false);
+          this.deleteOpen.set(false);
+          this.messageService.add({
+            severity: 'success',
+            summary: this.transloco.translate('common.success'),
+            detail: this.transloco.translate('profile.account_deleted'),
+          });
+          this.authService.logout();
+        },
+        error: (err: HttpErrorResponse) => {
+          this.deleteLoading.set(false);
+          this.applyDeleteError(err);
+        },
+      });
   }
 
   private applyDeleteError(err: HttpErrorResponse): void {

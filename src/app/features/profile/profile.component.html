@@ -99,6 +99,14 @@
                     inputId="weekly_recap_opt_in"
                   />
                 </app-meta-field>
+                <app-meta-field
+                  [full]="true"
+                  for="digest_email"
+                  [label]="'profile.digest_email' | transloco"
+                  [tooltip]="'profile.digest_email_help' | transloco"
+                >
+                  <p-toggleSwitch formControlName="digest_email" inputId="digest_email" />
+                </app-meta-field>
               </div>
 
               <section class="notif-prefs">

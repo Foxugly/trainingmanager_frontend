@@ -1234,7 +1234,9 @@
     "calendar_copied": "Link gekopieerd",
     "calendar_regenerate": "Link opnieuw genereren",
     "calendar_regenerate_confirm": "De oude link werkt niet meer. Doorgaan?",
-    "calendar_regenerated": "Nieuwe link gegenereerd"
+    "calendar_regenerated": "Nieuwe link gegenereerd",
+    "digest_email": "Dagelijkse digest-e-mail",
+    "digest_email_help": "Ontvang één dagelijkse samenvatting van je notificaties in plaats van een e-mail per gebeurtenis."
   },
   "admin": {
     "title": "Beheer",

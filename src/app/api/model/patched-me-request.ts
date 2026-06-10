@@ -18,6 +18,10 @@ export interface PatchedMeRequest {
      * Per-user preference for the weekly recap email. Opt-out model: default True. When False, this user receives no weekly recap even for teams they own/manage that have it enabled.
      */
     weekly_recap_opt_in?: boolean;
+    /**
+     * When True, suppress immediate notification emails and instead send a single daily digest of the day\'s notifications. Opt-in (default False).
+     */
+    digest_email?: boolean;
 }
 
 

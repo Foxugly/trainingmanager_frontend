@@ -1234,7 +1234,9 @@
     "calendar_copied": "Link copied",
     "calendar_regenerate": "Regenerate link",
     "calendar_regenerate_confirm": "The old link will stop working. Continue?",
-    "calendar_regenerated": "New link generated"
+    "calendar_regenerated": "New link generated",
+    "digest_email": "Daily digest email",
+    "digest_email_help": "Receive one daily summary of your notifications instead of an email per event."
   },
   "admin": {
     "title": "Administration",
