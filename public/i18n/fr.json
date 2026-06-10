@@ -1394,6 +1394,16 @@
       "no_shows": "Absences",
       "rate": "Fiabilité",
       "hint": "Part des RSVP « présent » réellement honorés."
+    },
+    "roti_drift": {
+      "title": "Dérive d'effort perçu (ROTI)",
+      "squad_average": "Moy. équipe",
+      "average": "Moy.",
+      "delta": "vs équipe",
+      "flag": "Signal",
+      "flag_high": "Trouve plus dur",
+      "flag_low": "Trouve plus facile",
+      "hint": "Compare la difficulté perçue de chaque athlète à l'équipe — signal possible de sur/sous-entraînement."
     }
   },
   "notes": {

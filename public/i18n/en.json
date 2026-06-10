@@ -1394,6 +1394,16 @@
       "no_shows": "No-shows",
       "rate": "Reliability",
       "hint": "Share of GOING RSVPs the athlete actually attended."
+    },
+    "roti_drift": {
+      "title": "Perceived-effort drift (ROTI)",
+      "squad_average": "Squad avg",
+      "average": "Avg",
+      "delta": "vs squad",
+      "flag": "Signal",
+      "flag_high": "Rates harder",
+      "flag_low": "Rates easier",
+      "hint": "How each athlete's perceived difficulty compares to the squad — a possible over/under-training signal."
     }
   },
   "notes": {

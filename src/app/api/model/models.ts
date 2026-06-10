@@ -181,6 +181,8 @@ export * from './review-finding';
 export * from './review-tokens-used';
 export * from './roster-history-entry';
 export * from './roster-history-response';
+export * from './roti-drift-entry';
+export * from './roti-drift-response';
 export * from './roti-summary';
 export * from './roti-upsert-request';
 export * from './round';

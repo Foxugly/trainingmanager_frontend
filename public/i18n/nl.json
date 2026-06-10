@@ -1394,6 +1394,16 @@
       "no_shows": "No-shows",
       "rate": "Betrouwbaarheid",
       "hint": "Aandeel GOING-RSVP's dat de atleet echt bijwoonde."
+    },
+    "roti_drift": {
+      "title": "Afwijking ervaren inspanning (ROTI)",
+      "squad_average": "Teamgem.",
+      "average": "Gem.",
+      "delta": "vs team",
+      "flag": "Signaal",
+      "flag_high": "Vindt zwaarder",
+      "flag_low": "Vindt lichter",
+      "hint": "Hoe de ervaren zwaarte per atleet zich tot het team verhoudt — mogelijk over/onder-trainingssignaal."
     }
   },
   "notes": {

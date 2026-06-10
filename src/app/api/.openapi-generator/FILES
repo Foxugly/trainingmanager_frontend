@@ -245,6 +245,8 @@ model/review-finding.ts
 model/review-tokens-used.ts
 model/roster-history-entry.ts
 model/roster-history-response.ts
+model/roti-drift-entry.ts
+model/roti-drift-response.ts
 model/roti-summary.ts
 model/roti-upsert-request.ts
 model/round-request.ts

@@ -27,6 +27,7 @@ import { StatsVolumeByMember } from '../../../api/model/stats-volume-by-member';
 import { TeamStats } from '../../../api/model/team-stats';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { RsvpReliabilityComponent } from '../rsvp-reliability/rsvp-reliability.component';
+import { RotiDriftComponent } from '../roti-drift/roti-drift.component';
 import { buildStatsCsv } from './stats-csv';
 
 interface ChartConfig {
@@ -67,6 +68,7 @@ const SEGMENT_PALETTE = [
     TableModule,
     EmptyStateComponent,
     RsvpReliabilityComponent,
+    RotiDriftComponent,
   ],
   templateUrl: './team-stats.component.html',
   styleUrl: './team-stats.component.scss',

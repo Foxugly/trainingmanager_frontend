@@ -1394,6 +1394,16 @@
       "no_shows": "Assenze",
       "rate": "Affidabilità",
       "hint": "Quota di RSVP « presente » realmente onorati."
+    },
+    "roti_drift": {
+      "title": "Deriva sforzo percepito (ROTI)",
+      "squad_average": "Media squadra",
+      "average": "Media",
+      "delta": "vs squadra",
+      "flag": "Segnale",
+      "flag_high": "Percepisce più duro",
+      "flag_low": "Percepisce più facile",
+      "hint": "Confronta la difficoltà percepita di ogni atleta con la squadra — possibile segnale di sovra/sotto-allenamento."
     }
   },
   "notes": {

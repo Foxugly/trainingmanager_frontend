@@ -47,6 +47,8 @@ import { ReviewBlockResponse } from '../model/review-block-response';
 // @ts-ignore
 import { RosterHistoryResponse } from '../model/roster-history-response';
 // @ts-ignore
+import { RotiDriftResponse } from '../model/roti-drift-response';
+// @ts-ignore
 import { RsvpReliabilityResponse } from '../model/rsvp-reliability-response';
 // @ts-ignore
 import { Team } from '../model/team';
@@ -102,6 +104,7 @@ import {
     TeamsRetrieveRequestParams,
     TeamsReviewBlockCreateRequestParams,
     TeamsRosterHistoryRetrieveRequestParams,
+    TeamsRotiDriftRetrieveRequestParams,
     TeamsRsvpReliabilityRetrieveRequestParams,
     TeamsStatsRetrieveRequestParams,
     TeamsTopicsCreateRequestParams,
@@ -1888,6 +1891,90 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         return this.httpClient.request<RosterHistoryResponse>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Per-athlete ROTI drift vs the squad
+     * Manager-only. Over the [from, to] window (same params as /stats/), compares each athlete\&#39;s mean ROTI (perceived session difficulty, 1..5) to the squad mean. flag&#x3D;high (&gt;&#x3D; +0.75) flags possible overreaching; flag&#x3D;low (&lt;&#x3D; -0.75) possible under-challenge. Sorted by |delta| desc (most divergent first).
+     * @endpoint get /api/v1/teams/{id}/roti-drift/
+     * @param requestParameters
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public teamsRotiDriftRetrieve(requestParameters: TeamsRotiDriftRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<RotiDriftResponse>;
+    public teamsRotiDriftRetrieve(requestParameters: TeamsRotiDriftRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<RotiDriftResponse>>;
+    public teamsRotiDriftRetrieve(requestParameters: TeamsRotiDriftRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<RotiDriftResponse>>;
+    public teamsRotiDriftRetrieve(requestParameters: TeamsRotiDriftRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling teamsRotiDriftRetrieve.');
+        }
+        const from = requestParameters?.from;
+        const to = requestParameters?.to;
+
+        let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'from',
+            <any>from,
+            QueryParamStyle.Form,
+            true,
+        );
+
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'to',
+            <any>to,
+            QueryParamStyle.Form,
+            true,
+        );
+
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (jwtAuth) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/teams/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/roti-drift/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<RotiDriftResponse>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

@@ -1394,6 +1394,16 @@
       "no_shows": "Ausencias",
       "rate": "Fiabilidad",
       "hint": "Proporción de RSVP « voy » realmente cumplidos."
+    },
+    "roti_drift": {
+      "title": "Desviación de esfuerzo percibido (ROTI)",
+      "squad_average": "Media equipo",
+      "average": "Media",
+      "delta": "vs equipo",
+      "flag": "Señal",
+      "flag_high": "Lo siente más duro",
+      "flag_low": "Lo siente más fácil",
+      "hint": "Compara la dificultad percibida de cada atleta con el equipo — posible señal de sobre/infraentrenamiento."
     }
   },
   "notes": {

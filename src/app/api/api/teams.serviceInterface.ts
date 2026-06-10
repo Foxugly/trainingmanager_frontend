@@ -26,6 +26,7 @@ import { PatchedTrainingSlotRequest } from '../model/models';
 import { ReviewBlockRequestRequest } from '../model/models';
 import { ReviewBlockResponse } from '../model/models';
 import { RosterHistoryResponse } from '../model/models';
+import { RotiDriftResponse } from '../model/models';
 import { RsvpReliabilityResponse } from '../model/models';
 import { Team } from '../model/models';
 import { TeamMembership } from '../model/models';
@@ -177,6 +178,12 @@ export interface TeamsReviewBlockCreateRequestParams {
 
 export interface TeamsRosterHistoryRetrieveRequestParams {
     id: number;
+}
+
+export interface TeamsRotiDriftRetrieveRequestParams {
+    id: number;
+    from?: string;
+    to?: string;
 }
 
 export interface TeamsRsvpReliabilityRetrieveRequestParams {
@@ -475,6 +482,14 @@ export interface TeamsServiceInterface {
 * @param requestParameters
      */
     teamsRosterHistoryRetrieve(requestParameters: TeamsRosterHistoryRetrieveRequestParams, extraHttpRequestParams?: any): Observable<RosterHistoryResponse>;
+
+    /**
+     * Per-athlete ROTI drift vs the squad
+     * Manager-only. Over the [from, to] window (same params as /stats/), compares each athlete\&#39;s mean ROTI (perceived session difficulty, 1..5) to the squad mean. flag&#x3D;high (&gt;&#x3D; +0.75) flags possible overreaching; flag&#x3D;low (&lt;&#x3D; -0.75) possible under-challenge. Sorted by |delta| desc (most divergent first).
+     * @endpoint get /api/v1/teams/{id}/roti-drift/
+* @param requestParameters
+     */
+    teamsRotiDriftRetrieve(requestParameters: TeamsRotiDriftRetrieveRequestParams, extraHttpRequestParams?: any): Observable<RotiDriftResponse>;
 
     /**
      * Per-athlete RSVP reliability (going-but-absent)
