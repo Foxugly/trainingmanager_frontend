@@ -10,11 +10,11 @@
 
 
 /**
- * Serializer for Note. team/member/author are derived from the URL and the request user; they are read-only here. The \'content\' field is sanitized via bleach on every write.
+ * Serializer for Note. team/member/author are derived from the URL and the request user; they are read-only here. The \'content\' field is sanitized via nh3 on every write.
  */
 export interface PatchedNoteRequest { 
     /**
-     * Rich HTML content (sanitized via bleach on save).
+     * Rich HTML content (sanitized via nh3 on save).
      */
     content?: string;
     /**

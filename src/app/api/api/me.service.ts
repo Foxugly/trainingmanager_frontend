@@ -230,7 +230,7 @@ export class MeService extends BaseService implements MeServiceInterface {
     }
 
     /**
-     * GET/PATCH du profil de l\&#39;utilisateur connecté.  PUT is intentionally disabled to prevent partial bodies from resetting unspecified writable fields (first_name, last_name, language) to their defaults. Use PATCH for any update.  &#x60;email&#x60; is read-only here; changing the email requires admin intervention in v1 (a verified change-email flow is deferred to v2).
+     * GET/PATCH du profil de l\&#39;utilisateur connecté.  PUT is intentionally disabled to prevent partial bodies from resetting unspecified writable fields (first_name, last_name, language) to their defaults. Use PATCH for any update.  &#x60;email&#x60; is read-only here: it is changed through the dedicated verified change-email flow (EmailChangeRequestView → EmailChangeConfirmView), which re-verifies the new address before swapping the primary EmailAddress — it is never mutated directly via this endpoint.
      * @endpoint patch /api/v1/me/
      * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
@@ -299,7 +299,7 @@ export class MeService extends BaseService implements MeServiceInterface {
     }
 
     /**
-     * GET/PATCH du profil de l\&#39;utilisateur connecté.  PUT is intentionally disabled to prevent partial bodies from resetting unspecified writable fields (first_name, last_name, language) to their defaults. Use PATCH for any update.  &#x60;email&#x60; is read-only here; changing the email requires admin intervention in v1 (a verified change-email flow is deferred to v2).
+     * GET/PATCH du profil de l\&#39;utilisateur connecté.  PUT is intentionally disabled to prevent partial bodies from resetting unspecified writable fields (first_name, last_name, language) to their defaults. Use PATCH for any update.  &#x60;email&#x60; is read-only here: it is changed through the dedicated verified change-email flow (EmailChangeRequestView → EmailChangeConfirmView), which re-verifies the new address before swapping the primary EmailAddress — it is never mutated directly via this endpoint.
      * @endpoint get /api/v1/me/
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.

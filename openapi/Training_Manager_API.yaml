@@ -3298,8 +3298,10 @@ paths:
         unspecified writable fields (first_name, last_name, language) to their
         defaults. Use PATCH for any update.
 
-        `email` is read-only here; changing the email requires admin intervention
-        in v1 (a verified change-email flow is deferred to v2).
+        `email` is read-only here: it is changed through the dedicated verified
+        change-email flow (EmailChangeRequestView → EmailChangeConfirmView), which
+        re-verifies the new address before swapping the primary EmailAddress — it is
+        never mutated directly via this endpoint.
       tags:
       - me
       security:
@@ -3320,8 +3322,10 @@ paths:
         unspecified writable fields (first_name, last_name, language) to their
         defaults. Use PATCH for any update.
 
-        `email` is read-only here; changing the email requires admin intervention
-        in v1 (a verified change-email flow is deferred to v2).
+        `email` is read-only here: it is changed through the dedicated verified
+        change-email flow (EmailChangeRequestView → EmailChangeConfirmView), which
+        re-verifies the new address before swapping the primary EmailAddress — it is
+        never mutated directly via this endpoint.
       tags:
       - me
       requestBody:
@@ -5630,6 +5634,31 @@ paths:
           description: AI configuration error
         '502':
           description: AI service error
+  /api/v1/teams/{id}/roster-history/:
+    get:
+      operationId: teams_roster_history_retrieve
+      description: Manager-only. Every membership row — active AND past — with the
+        member's name and joined_at/left_at, for season-review / churn analysis (TeamMembership
+        keeps full join/leave history). Ordered by member name then join date.
+      summary: Team roster history (membership periods)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this team.
+        required: true
+      tags:
+      - teams
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RosterHistoryResponse'
+          description: ''
   /api/v1/teams/{id}/stats/:
     get:
       operationId: teams_stats_retrieve
@@ -9384,7 +9413,7 @@ components:
       description: |-
         Serializer for Note. team/member/author are derived from the URL
         and the request user; they are read-only here. The 'content' field
-        is sanitized via bleach on every write.
+        is sanitized via nh3 on every write.
       properties:
         id:
           type: integer
@@ -9406,7 +9435,7 @@ components:
           readOnly: true
         content:
           type: string
-          description: Rich HTML content (sanitized via bleach on save).
+          description: Rich HTML content (sanitized via nh3 on save).
         visible_to_athlete:
           type: boolean
           default: false
@@ -9439,12 +9468,12 @@ components:
       description: |-
         Serializer for Note. team/member/author are derived from the URL
         and the request user; they are read-only here. The 'content' field
-        is sanitized via bleach on every write.
+        is sanitized via nh3 on every write.
       properties:
         content:
           type: string
           minLength: 1
-          description: Rich HTML content (sanitized via bleach on save).
+          description: Rich HTML content (sanitized via nh3 on save).
         visible_to_athlete:
           type: boolean
           default: false
@@ -10665,12 +10694,12 @@ components:
       description: |-
         Serializer for Note. team/member/author are derived from the URL
         and the request user; they are read-only here. The 'content' field
-        is sanitized via bleach on every write.
+        is sanitized via nh3 on every write.
       properties:
         content:
           type: string
           minLength: 1
-          description: Rich HTML content (sanitized via bleach on save).
+          description: Rich HTML content (sanitized via nh3 on save).
         visible_to_athlete:
           type: boolean
           default: false
@@ -11021,12 +11050,12 @@ components:
       type: object
       description: |-
         A single message. ``author`` is the nested public user; ``content``
-        is sanitized via bleach on every write.
+        is sanitized via nh3 on every write.
       properties:
         content:
           type: string
           minLength: 1
-          description: Rich HTML content (sanitized via bleach on save).
+          description: Rich HTML content (sanitized via nh3 on save).
     PatchedTrainingSlotRequest:
       type: object
       description: |-
@@ -11593,6 +11622,44 @@ components:
       required:
       - input
       - output
+    RosterHistoryEntry:
+      type: object
+      description: One membership period (active or past) for the roster-history timeline.
+      properties:
+        member_id:
+          type: integer
+        name:
+          type: string
+        joined_at:
+          type: string
+          format: date-time
+        left_at:
+          type: string
+          format: date-time
+          nullable: true
+        active:
+          type: boolean
+      required:
+      - active
+      - joined_at
+      - left_at
+      - member_id
+      - name
+    RosterHistoryResponse:
+      type: object
+      description: |-
+        Object wrapper for the roster-history list.
+
+        A plain ``many=True`` response on this (paginated) ViewSet would make
+        drf-spectacular emit a paginated envelope the view does not actually return;
+        wrapping in ``{entries: [...]}`` keeps the schema honest (single object).
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/RosterHistoryEntry'
+      required:
+      - entries
     RotiSummary:
       type: object
       description: |-
@@ -12970,14 +13037,14 @@ components:
       type: object
       description: |-
         A single message. ``author`` is the nested public user; ``content``
-        is sanitized via bleach on every write.
+        is sanitized via nh3 on every write.
       properties:
         id:
           type: integer
           readOnly: true
         content:
           type: string
-          description: Rich HTML content (sanitized via bleach on save).
+          description: Rich HTML content (sanitized via nh3 on save).
         author:
           allOf:
           - $ref: '#/components/schemas/CustomUserPublic'
@@ -13002,12 +13069,12 @@ components:
       type: object
       description: |-
         A single message. ``author`` is the nested public user; ``content``
-        is sanitized via bleach on every write.
+        is sanitized via nh3 on every write.
       properties:
         content:
           type: string
           minLength: 1
-          description: Rich HTML content (sanitized via bleach on save).
+          description: Rich HTML content (sanitized via nh3 on save).
       required:
       - content
     TopicRequest:
@@ -13169,6 +13236,7 @@ components:
       - message_new_topic
       - message_new_reply
       - performance_logged
+      - pb_beaten
       - plan_generated
       - session_reminder
       type: string
@@ -13178,6 +13246,7 @@ components:
         * `message_new_topic` - A new topic was created in your team
         * `message_new_reply` - A new message was posted in a topic
         * `performance_logged` - A performance was logged for you
+        * `pb_beaten` - You beat a personal best
         * `plan_generated` - A new training plan was scheduled
         * `session_reminder` - You have a session tomorrow
     UnitEnum:

@@ -25,6 +25,7 @@ import { PatchedTopicMessageRequest } from '../model/models';
 import { PatchedTrainingSlotRequest } from '../model/models';
 import { ReviewBlockRequestRequest } from '../model/models';
 import { ReviewBlockResponse } from '../model/models';
+import { RosterHistoryResponse } from '../model/models';
 import { Team } from '../model/models';
 import { TeamMembership } from '../model/models';
 import { TeamMembershipRequest } from '../model/models';
@@ -171,6 +172,10 @@ export interface TeamsReviewBlockCreateRequestParams {
     from?: string;
     to?: string;
     reviewBlockRequestRequest?: ReviewBlockRequestRequest;
+}
+
+export interface TeamsRosterHistoryRetrieveRequestParams {
+    id: number;
 }
 
 export interface TeamsStatsRetrieveRequestParams {
@@ -455,6 +460,14 @@ export interface TeamsServiceInterface {
 * @param requestParameters
      */
     teamsReviewBlockCreate(requestParameters: TeamsReviewBlockCreateRequestParams, extraHttpRequestParams?: any): Observable<ReviewBlockResponse>;
+
+    /**
+     * Team roster history (membership periods)
+     * Manager-only. Every membership row — active AND past — with the member\&#39;s name and joined_at/left_at, for season-review / churn analysis (TeamMembership keeps full join/leave history). Ordered by member name then join date.
+     * @endpoint get /api/v1/teams/{id}/roster-history/
+* @param requestParameters
+     */
+    teamsRosterHistoryRetrieve(requestParameters: TeamsRosterHistoryRetrieveRequestParams, extraHttpRequestParams?: any): Observable<RosterHistoryResponse>;
 
     /**
      * Team statistics (attendance, volume, intensity)

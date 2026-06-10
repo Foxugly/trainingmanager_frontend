@@ -39,6 +39,7 @@ import { ProgramsListComponent } from '../../programs/programs-list/programs-lis
 import { TeamRequestsComponent } from '../team-requests/team-requests.component';
 import { TeamStatsComponent } from '../team-stats/team-stats.component';
 import { TeamAuditLogComponent } from '../team-audit-log/team-audit-log.component';
+import { TeamRosterHistoryComponent } from '../team-roster-history/team-roster-history.component';
 import { MemberNotesComponent } from '../member-notes/member-notes.component';
 import { PerformancePanelComponent } from '../../../shared/ui/performance-panel/performance-panel.component';
 import {
@@ -81,6 +82,7 @@ interface FieldErrors {
     TranslocoPipe,
     ProgramsListComponent,
     TeamStatsComponent,
+    TeamRosterHistoryComponent,
     TeamRequestsComponent,
     TeamAuditLogComponent,
     MemberNotesComponent,
@@ -171,7 +173,9 @@ export class TeamsDetailComponent implements OnInit {
     return role === 'owner' || role === 'manager' || role === 'member' ? role : null;
   });
 
-  protected readonly currentUserId = computed<number>(() => this.authService.currentUser()?.id ?? 0);
+  protected readonly currentUserId = computed<number>(
+    () => this.authService.currentUser()?.id ?? 0,
+  );
 
   /** Optional deep-link target topic id from ?topic=<id>. */
   protected readonly initialTopicId = signal<number | null>(null);

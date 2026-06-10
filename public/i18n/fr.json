@@ -795,6 +795,16 @@
       "edited": "modifié",
       "emoji": "Emoji",
       "message_updated": "Message modifié."
+    },
+    "roster_history": {
+      "tab": "Historique d'effectif",
+      "empty": "Aucun historique d'adhésion.",
+      "member": "Membre",
+      "joined": "Arrivée",
+      "left": "Départ",
+      "status": "Statut",
+      "active": "Actif",
+      "left_badge": "Parti"
     }
   },
   "common": {

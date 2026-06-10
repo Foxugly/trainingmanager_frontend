@@ -10,7 +10,7 @@
 
 
 /**
- * * `note_for_coach` - Note added on an athlete * `note_for_athlete` - A note was shared with you * `message_new_topic` - A new topic was created in your team * `message_new_reply` - A new message was posted in a topic * `performance_logged` - A performance was logged for you * `plan_generated` - A new training plan was scheduled * `session_reminder` - You have a session tomorrow
+ * * `note_for_coach` - Note added on an athlete * `note_for_athlete` - A note was shared with you * `message_new_topic` - A new topic was created in your team * `message_new_reply` - A new message was posted in a topic * `performance_logged` - A performance was logged for you * `pb_beaten` - You beat a personal best * `plan_generated` - A new training plan was scheduled * `session_reminder` - You have a session tomorrow
  */
 export enum TypeEnum {
 
@@ -23,6 +23,8 @@ export enum TypeEnum {
     MessageNewReply = 'message_new_reply',
 
     PerformanceLogged = 'performance_logged',
+
+    PbBeaten = 'pb_beaten',
 
     PlanGenerated = 'plan_generated',
 

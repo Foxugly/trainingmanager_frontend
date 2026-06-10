@@ -10,11 +10,11 @@
 
 
 /**
- * A single message. ``author`` is the nested public user; ``content`` is sanitized via bleach on every write.
+ * A single message. ``author`` is the nested public user; ``content`` is sanitized via nh3 on every write.
  */
 export interface PatchedTopicMessageRequest { 
     /**
-     * Rich HTML content (sanitized via bleach on save).
+     * Rich HTML content (sanitized via nh3 on save).
      */
     content?: string;
 }

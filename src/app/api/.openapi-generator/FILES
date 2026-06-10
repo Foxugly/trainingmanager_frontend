@@ -243,6 +243,8 @@ model/review-block-request-request.ts
 model/review-block-response.ts
 model/review-finding.ts
 model/review-tokens-used.ts
+model/roster-history-entry.ts
+model/roster-history-response.ts
 model/roti-summary.ts
 model/roti-upsert-request.ts
 model/round-request.ts

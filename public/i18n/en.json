@@ -795,6 +795,16 @@
       "edited": "edited",
       "emoji": "Emoji",
       "message_updated": "Message updated."
+    },
+    "roster_history": {
+      "tab": "Roster history",
+      "empty": "No membership history yet.",
+      "member": "Member",
+      "joined": "Joined",
+      "left": "Left",
+      "status": "Status",
+      "active": "Active",
+      "left_badge": "Left"
     }
   },
   "common": {

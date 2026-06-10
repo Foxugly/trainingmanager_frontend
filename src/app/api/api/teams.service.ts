@@ -45,6 +45,8 @@ import { ReviewBlockRequestRequest } from '../model/review-block-request-request
 // @ts-ignore
 import { ReviewBlockResponse } from '../model/review-block-response';
 // @ts-ignore
+import { RosterHistoryResponse } from '../model/roster-history-response';
+// @ts-ignore
 import { Team } from '../model/team';
 // @ts-ignore
 import { TeamMembership } from '../model/team-membership';
@@ -97,6 +99,7 @@ import {
     TeamsPoolsRetrieveRequestParams,
     TeamsRetrieveRequestParams,
     TeamsReviewBlockCreateRequestParams,
+    TeamsRosterHistoryRetrieveRequestParams,
     TeamsStatsRetrieveRequestParams,
     TeamsTopicsCreateRequestParams,
     TeamsTopicsDestroyRequestParams,
@@ -1821,6 +1824,67 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
                 context: localVarHttpContext,
                 body: reviewBlockRequestRequest,
                 params: localVarQueryParameters.toHttpParams(),
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Team roster history (membership periods)
+     * Manager-only. Every membership row — active AND past — with the member\&#39;s name and joined_at/left_at, for season-review / churn analysis (TeamMembership keeps full join/leave history). Ordered by member name then join date.
+     * @endpoint get /api/v1/teams/{id}/roster-history/
+     * @param requestParameters
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public teamsRosterHistoryRetrieve(requestParameters: TeamsRosterHistoryRetrieveRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<RosterHistoryResponse>;
+    public teamsRosterHistoryRetrieve(requestParameters: TeamsRosterHistoryRetrieveRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<RosterHistoryResponse>>;
+    public teamsRosterHistoryRetrieve(requestParameters: TeamsRosterHistoryRetrieveRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<RosterHistoryResponse>>;
+    public teamsRosterHistoryRetrieve(requestParameters: TeamsRosterHistoryRetrieveRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling teamsRosterHistoryRetrieve.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (jwtAuth) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/teams/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/roster-history/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<RosterHistoryResponse>('get', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,

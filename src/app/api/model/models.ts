@@ -179,6 +179,8 @@ export * from './review-block-request-request';
 export * from './review-block-response';
 export * from './review-finding';
 export * from './review-tokens-used';
+export * from './roster-history-entry';
+export * from './roster-history-response';
 export * from './roti-summary';
 export * from './roti-upsert-request';
 export * from './round';

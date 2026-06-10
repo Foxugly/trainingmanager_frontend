@@ -166,6 +166,12 @@
           </p-tab>
         }
         @if (canManage()) {
+          <p-tab value="roster">
+            <i class="pi pi-users mr-2" aria-hidden="true"></i>
+            {{ 'teams.roster_history.tab' | transloco }}
+          </p-tab>
+        }
+        @if (canManage()) {
           <p-tab value="audit">
             <i class="pi pi-history mr-2" aria-hidden="true"></i>
             {{ 'audit.tab' | transloco }}
@@ -410,6 +416,15 @@
           <!-- TAB: MY STATISTICS (athlete self-view) -->
           <p-tabpanel value="my-stats">
             <app-team-stats [teamId]="t.id" [memberId]="myMemberId()" />
+          </p-tabpanel>
+        }
+
+        <!-- TAB: ROSTER HISTORY (manager/owner only) -->
+        @if (canManage()) {
+          <p-tabpanel value="roster">
+            @if (activeTab() === 'roster') {
+              <app-team-roster-history [teamId]="t.id" />
+            }
           </p-tabpanel>
         }
 

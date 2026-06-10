@@ -795,6 +795,16 @@
       "edited": "bewerkt",
       "emoji": "Emoji",
       "message_updated": "Bericht bijgewerkt."
+    },
+    "roster_history": {
+      "tab": "Ledenhistoriek",
+      "empty": "Nog geen ledenhistoriek.",
+      "member": "Lid",
+      "joined": "Toegetreden",
+      "left": "Vertrokken",
+      "status": "Status",
+      "active": "Actief",
+      "left_badge": "Vertrokken"
     }
   },
   "common": {
