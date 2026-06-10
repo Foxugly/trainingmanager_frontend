@@ -20,6 +20,7 @@ import {
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { MessageService } from 'primeng/api';
+import { handleInvalidSubmit } from '../../../shared/form-validation';
 import { Button } from 'primeng/button';
 import { ColorPicker } from 'primeng/colorpicker';
 import { DatePicker } from 'primeng/datepicker';
@@ -375,7 +376,7 @@ export class EventsFormComponent implements OnInit {
   }
 
   protected submit(): void {
-    if (this.form.invalid) return;
+    if (handleInvalidSubmit(this.form, this.messageService, this.transloco)) return;
     this.saving.set(true);
     this.fieldErrors.set(null);
 

@@ -798,6 +798,8 @@
     }
   },
   "common": {
+    "form_invalid_summary": "Onvolledig formulier",
+    "form_invalid_detail": "Vul de gemarkeerde verplichte velden in.",
     "restore": "Herstellen",
     "skip_to_content": "Naar inhoud gaan",
     "print": "Afdrukken",

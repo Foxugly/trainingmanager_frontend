@@ -798,6 +798,8 @@
     }
   },
   "common": {
+    "form_invalid_summary": "Formulario incompleto",
+    "form_invalid_detail": "Completa los campos obligatorios resaltados.",
     "restore": "Restaurar",
     "skip_to_content": "Saltar al contenido",
     "print": "Imprimir",

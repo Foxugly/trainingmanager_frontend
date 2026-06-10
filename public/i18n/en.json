@@ -798,6 +798,8 @@
     }
   },
   "common": {
+    "form_invalid_summary": "Incomplete form",
+    "form_invalid_detail": "Please complete the highlighted required fields.",
     "restore": "Restore",
     "skip_to_content": "Skip to content",
     "print": "Print",

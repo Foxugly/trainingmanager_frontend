@@ -13,6 +13,7 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { handleInvalidSubmit } from '../../../shared/form-validation';
 import { Button } from 'primeng/button';
 import { Checkbox } from 'primeng/checkbox';
 import { ConfirmDialog } from 'primeng/confirmdialog';
@@ -585,7 +586,7 @@ export class TeamsFormComponent implements OnInit {
   }
 
   protected submit(): void {
-    if (this.form.invalid) {
+    if (handleInvalidSubmit(this.form, this.messageService, this.transloco)) {
       return;
     }
     this.saving.set(true);

@@ -798,6 +798,8 @@
     }
   },
   "common": {
+    "form_invalid_summary": "Formulaire incomplet",
+    "form_invalid_detail": "Veuillez compléter les champs requis en surbrillance.",
     "restore": "Restaurer",
     "skip_to_content": "Aller au contenu",
     "print": "Imprimer",
