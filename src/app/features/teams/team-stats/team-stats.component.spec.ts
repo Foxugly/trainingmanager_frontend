@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TeamsService } from '../../../api/api/teams.service';
+import { ReviewBlockResponse } from '../../../api/model/review-block-response';
 import { TeamStats } from '../../../api/model/team-stats';
 import { TeamStatsComponent } from './team-stats.component';
 
@@ -75,12 +76,33 @@ interface ProtectedFields {
   exportVisible(): boolean;
   exportCsv(): void;
   exportPdf(): void;
+  reviewVisible(): boolean;
+  reviewDialogVisible(): boolean;
+  reviewLoading(): boolean;
+  reviewError(): boolean;
+  review(): ReviewBlockResponse | null;
+  runReview(): void;
+  severityClass(s: string): string;
 }
+
+const reviewResult: ReviewBlockResponse = {
+  period: { from: '2026-03-01', to: '2026-05-24' },
+  summary: 'Solid aerobic base.',
+  load_assessment: 'balanced',
+  findings: [{ area: 'attendance', severity: 'warning', observation: 'Dip mid-block.' }],
+  adjustments: [{ recommendation: 'Add a threshold set.', rationale: 'Broaden zones.' }],
+  confidence: 'medium',
+  model: 'claude-haiku-4-5',
+  tokens_used: { input: 300, output: 400 },
+};
 
 describe('TeamStatsComponent', () => {
   let fixture: ComponentFixture<TeamStatsComponent>;
   let component: TeamStatsComponent;
-  let teamsMock: { teamsStatsRetrieve: ReturnType<typeof vi.fn> };
+  let teamsMock: {
+    teamsStatsRetrieve: ReturnType<typeof vi.fn>;
+    teamsReviewBlockCreate: ReturnType<typeof vi.fn>;
+  };
 
   const access = (c: TeamStatsComponent) => c as unknown as ProtectedFields;
 
@@ -88,6 +110,7 @@ describe('TeamStatsComponent', () => {
     TestBed.resetTestingModule();
     teamsMock = {
       teamsStatsRetrieve: vi.fn().mockReturnValue(of(result ?? aggregateStats)),
+      teamsReviewBlockCreate: vi.fn().mockReturnValue(of(reviewResult)),
     };
     await TestBed.configureTestingModule({
       imports: [
@@ -176,6 +199,49 @@ describe('TeamStatsComponent', () => {
     expect(spy).not.toHaveBeenCalled();
   });
 
+  // ---- AI review ----------------------------------------------------------
+
+  it('review button is hidden unless canReview + aggregate + interactive', async () => {
+    expect(access(component).reviewVisible()).toBe(false); // canReview defaults false
+    fixture.componentRef.setInput('canReview', true);
+    fixture.detectChanges();
+    expect(access(component).reviewVisible()).toBe(true);
+    // not on a per-athlete scope
+    await setup(23);
+    fixture.componentRef.setInput('canReview', true);
+    fixture.detectChanges();
+    expect(access(component).reviewVisible()).toBe(false);
+  });
+
+  it('runReview opens the dialog and stores the structured critique', () => {
+    fixture.componentRef.setInput('canReview', true);
+    fixture.detectChanges();
+    access(component).runReview();
+    expect(teamsMock.teamsReviewBlockCreate).toHaveBeenCalledTimes(1);
+    const { id, from, to } = teamsMock.teamsReviewBlockCreate.mock.calls[0][0];
+    expect(id).toBe(4);
+    expect(from).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(to).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(access(component).reviewDialogVisible()).toBe(true);
+    expect(access(component).reviewLoading()).toBe(false);
+    expect(access(component).review()?.load_assessment).toBe('balanced');
+    expect(access(component).reviewError()).toBe(false);
+  });
+
+  it('runReview surfaces an error flag when the call fails', () => {
+    teamsMock.teamsReviewBlockCreate.mockReturnValue(throwError(() => new Error('boom')));
+    access(component).runReview();
+    expect(access(component).reviewError()).toBe(true);
+    expect(access(component).reviewLoading()).toBe(false);
+    expect(access(component).review()).toBeNull();
+  });
+
+  it('severityClass maps severities to colors', () => {
+    expect(access(component).severityClass('critical')).toContain('red');
+    expect(access(component).severityClass('warning')).toContain('amber');
+    expect(access(component).severityClass('info')).toContain('gray');
+  });
+
   it('setPreset updates the range and refetches', () => {
     teamsMock.teamsStatsRetrieve.mockClear();
     access(component).setPreset('all'); // ~2 years back, clearly differs from the 12-wk default
@@ -209,7 +275,10 @@ describe('TeamStatsComponent', () => {
 
   it('seeds the range from initialFrom/initialTo and refetches with them', async () => {
     TestBed.resetTestingModule();
-    teamsMock = { teamsStatsRetrieve: vi.fn().mockReturnValue(of(aggregateStats)) };
+    teamsMock = {
+      teamsStatsRetrieve: vi.fn().mockReturnValue(of(aggregateStats)),
+      teamsReviewBlockCreate: vi.fn().mockReturnValue(of(reviewResult)),
+    };
     await TestBed.configureTestingModule({
       imports: [
         TeamStatsComponent,
@@ -234,9 +303,7 @@ describe('TeamStatsComponent', () => {
   });
 
   it('exportCsv triggers a Blob download with a scoped filename', () => {
-    const createUrl = vi
-      .spyOn(URL, 'createObjectURL')
-      .mockReturnValue('blob:mock');
+    const createUrl = vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:mock');
     const revokeUrl = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => undefined);
     const clicked: HTMLAnchorElement[] = [];
     const origCreate = document.createElement.bind(document);

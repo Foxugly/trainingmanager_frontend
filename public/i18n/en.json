@@ -1349,7 +1349,34 @@
     "export_csv": "Export CSV",
     "export_pdf": "PDF",
     "print_title": "Statistics",
-    "select_team": "Team"
+    "select_team": "Team",
+    "review": {
+      "button": "AI review",
+      "title": "AI training review",
+      "loading": "Analysing the training block…",
+      "error": "The review could not be generated. Please try again.",
+      "findings": "Findings",
+      "adjustments": "Recommended adjustments",
+      "confidence": "Confidence",
+      "disclaimer": "AI-generated — review before acting on it.",
+      "confidence_low": "low",
+      "confidence_medium": "medium",
+      "confidence_high": "high",
+      "load": {
+        "too_light": "Load: too light",
+        "balanced": "Load: balanced",
+        "too_heavy": "Load: too heavy",
+        "uncertain": "Load: uncertain"
+      },
+      "area": {
+        "volume": "Volume",
+        "intensity": "Intensity",
+        "attendance": "Attendance",
+        "recovery": "Recovery",
+        "consistency": "Consistency",
+        "progression": "Progression"
+      }
+    }
   },
   "notes": {
     "title": "Notes",

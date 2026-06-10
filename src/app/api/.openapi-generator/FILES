@@ -238,6 +238,11 @@ model/register-response-code-enum.ts
 model/register-response.ts
 model/reorder-exercises-request-request.ts
 model/reorder-rounds-request-request.ts
+model/review-adjustment.ts
+model/review-block-request-request.ts
+model/review-block-response.ts
+model/review-finding.ts
+model/review-tokens-used.ts
 model/roti-summary.ts
 model/roti-upsert-request.ts
 model/round-request.ts

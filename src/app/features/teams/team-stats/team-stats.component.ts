@@ -18,8 +18,10 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { UIChart } from 'primeng/chart';
 import { DatePicker } from 'primeng/datepicker';
+import { Dialog } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
 import { TeamsService } from '../../../api/api/teams.service';
+import { ReviewBlockResponse } from '../../../api/model/review-block-response';
 import { StatsAttendanceByMember } from '../../../api/model/stats-attendance-by-member';
 import { StatsVolumeByMember } from '../../../api/model/stats-volume-by-member';
 import { TeamStats } from '../../../api/model/team-stats';
@@ -60,6 +62,7 @@ const SEGMENT_PALETTE = [
     Button,
     UIChart,
     DatePicker,
+    Dialog,
     TableModule,
     EmptyStateComponent,
   ],
@@ -81,6 +84,8 @@ export class TeamStatsComponent {
 
   /** Shows the CSV / PDF export buttons in the header (hidden in print mode). */
   readonly showExport = input(true);
+  /** Enables the manager-only "AI review" button (team aggregate only). */
+  readonly canReview = input(false);
   /** Print mode: hides the interactive date-range + export controls for a clean printable sheet. */
   readonly print = input(false);
   /** Optional ISO (YYYY-MM-DD) seeds for the date range, e.g. from print-route query params. */
@@ -102,6 +107,16 @@ export class TeamStatsComponent {
   protected readonly loading = signal(false);
 
   protected readonly isAggregate = computed(() => this.memberId() === null);
+
+  /** The AI "review block" button shows for managers, on the team aggregate,
+   * outside print mode. */
+  protected readonly reviewVisible = computed(
+    () => this.canReview() && this.isAggregate() && !this.print(),
+  );
+  protected readonly reviewDialogVisible = signal(false);
+  protected readonly reviewLoading = signal(false);
+  protected readonly reviewError = signal(false);
+  protected readonly review = signal<ReviewBlockResponse | null>(null);
 
   /**
    * The fetch trigger as a [id, from, to, member] tuple, or null while the
@@ -200,6 +215,44 @@ export class TeamStatsComponent {
   protected onMemberRowClick(memberId: number): void {
     if (this.isAggregate()) {
       this.selectMember.emit(memberId);
+    }
+  }
+
+  // ---- AI review -----------------------------------------------------------
+
+  /** Run the team-level AI critique over the current range. Opens the dialog
+   * immediately (showing a spinner) so the click feels responsive. */
+  protected runReview(): void {
+    const p = this.fetchParams();
+    if (!p || this.reviewLoading()) return;
+    this.reviewDialogVisible.set(true);
+    this.reviewLoading.set(true);
+    this.reviewError.set(false);
+    this.review.set(null);
+    this.teamsService
+      .teamsReviewBlockCreate({ id: p.id, from: p.from, to: p.to })
+      .pipe(
+        catchError(() => {
+          this.reviewError.set(true);
+          return of(null);
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((res) => {
+        if (res) this.review.set(res);
+        this.reviewLoading.set(false);
+      });
+  }
+
+  /** Tailwind severity → text color for a finding badge. */
+  protected severityClass(severity: string): string {
+    switch (severity) {
+      case 'critical':
+        return 'text-red-600';
+      case 'warning':
+        return 'text-amber-600';
+      default:
+        return 'text-gray-500';
     }
   }
 
@@ -439,10 +492,12 @@ export class TeamStatsComponent {
   private scopeSlug(): string {
     const s = this.stats();
     const raw = s?.member?.name ?? `team-${this.teamId()}`;
-    return raw
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '') || 'stats';
+    return (
+      raw
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '') || 'stats'
+    );
   }
 
   /** Build a CSV from the loaded stats and trigger a client-side download. */

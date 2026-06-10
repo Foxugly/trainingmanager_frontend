@@ -1349,7 +1349,34 @@
     "export_csv": "Exportar CSV",
     "export_pdf": "PDF",
     "print_title": "Estadísticas",
-    "select_team": "Equipo"
+    "select_team": "Equipo",
+    "review": {
+      "button": "Análisis IA",
+      "title": "Análisis IA del entrenamiento",
+      "loading": "Analizando el bloque de entrenamiento…",
+      "error": "No se pudo generar el análisis. Inténtalo de nuevo.",
+      "findings": "Observaciones",
+      "adjustments": "Ajustes recomendados",
+      "confidence": "Confianza",
+      "disclaimer": "Generado por IA — verifica antes de actuar.",
+      "confidence_low": "baja",
+      "confidence_medium": "media",
+      "confidence_high": "alta",
+      "load": {
+        "too_light": "Carga: demasiado ligera",
+        "balanced": "Carga: equilibrada",
+        "too_heavy": "Carga: demasiado alta",
+        "uncertain": "Carga: incierta"
+      },
+      "area": {
+        "volume": "Volumen",
+        "intensity": "Intensidad",
+        "attendance": "Asistencia",
+        "recovery": "Recuperación",
+        "consistency": "Regularidad",
+        "progression": "Progresión"
+      }
+    }
   },
   "notes": {
     "title": "Notas",

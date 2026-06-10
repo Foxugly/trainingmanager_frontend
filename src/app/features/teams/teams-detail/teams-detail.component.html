@@ -402,6 +402,7 @@
             <app-team-stats
               [teamId]="t.id"
               [memberId]="selectedStatsMember()"
+              [canReview]="true"
               (selectMember)="selectedStatsMember.set($event)"
             />
           </p-tabpanel>

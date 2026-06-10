@@ -1349,7 +1349,34 @@
     "export_csv": "CSV exporteren",
     "export_pdf": "PDF",
     "print_title": "Statistieken",
-    "select_team": "Team"
+    "select_team": "Team",
+    "review": {
+      "button": "AI-analyse",
+      "title": "AI-trainingsanalyse",
+      "loading": "Trainingsblok wordt geanalyseerd…",
+      "error": "De analyse kon niet worden gegenereerd. Probeer het opnieuw.",
+      "findings": "Bevindingen",
+      "adjustments": "Aanbevolen aanpassingen",
+      "confidence": "Betrouwbaarheid",
+      "disclaimer": "AI-gegenereerd — controleer voordat u handelt.",
+      "confidence_low": "laag",
+      "confidence_medium": "gemiddeld",
+      "confidence_high": "hoog",
+      "load": {
+        "too_light": "Belasting: te licht",
+        "balanced": "Belasting: in balans",
+        "too_heavy": "Belasting: te zwaar",
+        "uncertain": "Belasting: onzeker"
+      },
+      "area": {
+        "volume": "Volume",
+        "intensity": "Intensiteit",
+        "attendance": "Aanwezigheid",
+        "recovery": "Herstel",
+        "consistency": "Regelmaat",
+        "progression": "Progressie"
+      }
+    }
   },
   "notes": {
     "title": "Notities",

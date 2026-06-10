@@ -4,7 +4,9 @@
     <div class="card flex flex-wrap items-center gap-3">
       @if (showControls()) {
         <div class="flex flex-col gap-1">
-          <label for="stats-period" class="text-xs font-medium text-gray-500">{{ 'stats.period' | transloco }}</label>
+          <label for="stats-period" class="text-xs font-medium text-gray-500">{{
+            'stats.period' | transloco
+          }}</label>
           <p-datepicker
             inputId="stats-period"
             selectionMode="range"
@@ -56,8 +58,96 @@
           />
         </div>
       }
+      @if (reviewVisible()) {
+        <div class="flex items-end gap-2 pb-0.5" [class.ml-auto]="!exportVisible()">
+          <p-button
+            [label]="'stats.review.button' | transloco"
+            icon="pi pi-sparkles"
+            severity="help"
+            size="small"
+            [disabled]="isEmpty() || reviewLoading()"
+            (onClick)="runReview()"
+          />
+        </div>
+      }
     </div>
   }
+
+  <!-- AI review dialog (manager-only, team aggregate) -->
+  <p-dialog
+    [header]="'stats.review.title' | transloco"
+    [(visible)]="reviewDialogVisible"
+    [modal]="true"
+    [dismissableMask]="true"
+    [style]="{ width: '40rem', maxWidth: '95vw' }"
+  >
+    @if (reviewLoading()) {
+      <div class="flex items-center gap-3 py-6 text-gray-500">
+        <i class="pi pi-spin pi-spinner text-xl"></i>
+        <span>{{ 'stats.review.loading' | transloco }}</span>
+      </div>
+    } @else if (reviewError()) {
+      <p class="py-4 text-red-600">{{ 'stats.review.error' | transloco }}</p>
+    } @else if (review(); as r) {
+      <div class="flex flex-col gap-4">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="rounded-full bg-purple-100 px-3 py-1 text-sm font-medium text-purple-700">
+            {{ 'stats.review.load.' + r.load_assessment | transloco }}
+          </span>
+          <span class="text-xs text-gray-500">
+            {{ 'stats.review.confidence' | transloco }}:
+            {{ 'stats.review.confidence_' + r.confidence | transloco }}
+          </span>
+        </div>
+
+        <p class="leading-relaxed text-gray-700">{{ r.summary }}</p>
+
+        @if (r.findings.length) {
+          <div>
+            <h4 class="mb-2 text-sm font-semibold text-gray-600">
+              {{ 'stats.review.findings' | transloco }}
+            </h4>
+            <ul class="flex flex-col gap-2">
+              @for (f of r.findings; track $index) {
+                <li class="flex gap-2 text-sm">
+                  <i
+                    class="pi pi-circle-fill mt-1 text-[0.5rem]"
+                    [class]="severityClass(f.severity)"
+                  ></i>
+                  <span>
+                    <span class="font-medium"
+                      >{{ 'stats.review.area.' + f.area | transloco }}:</span
+                    >
+                    {{ f.observation }}
+                  </span>
+                </li>
+              }
+            </ul>
+          </div>
+        }
+
+        @if (r.adjustments.length) {
+          <div>
+            <h4 class="mb-2 text-sm font-semibold text-gray-600">
+              {{ 'stats.review.adjustments' | transloco }}
+            </h4>
+            <ul class="flex flex-col gap-2">
+              @for (a of r.adjustments; track $index) {
+                <li class="text-sm">
+                  <span class="font-medium text-gray-700">{{ a.recommendation }}</span>
+                  @if (a.rationale) {
+                    <span class="text-gray-500"> — {{ a.rationale }}</span>
+                  }
+                </li>
+              }
+            </ul>
+          </div>
+        }
+
+        <p class="text-right text-xs text-gray-400">{{ 'stats.review.disclaimer' | transloco }}</p>
+      </div>
+    }
+  </p-dialog>
 
   @if (loading()) {
     <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
@@ -90,7 +180,9 @@
 
       @if (rotiChart(); as rc) {
         <div class="chart-wrap mt-4">
-          <h4 class="text-sm font-medium text-gray-600 mb-2">{{ 'stats.roti_trend' | transloco }}</h4>
+          <h4 class="text-sm font-medium text-gray-600 mb-2">
+            {{ 'stats.roti_trend' | transloco }}
+          </h4>
           <p-chart type="line" [data]="rc.data" [options]="rc.options" />
         </div>
       }

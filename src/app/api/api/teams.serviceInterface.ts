@@ -23,6 +23,8 @@ import { PatchedNoteRequest } from '../model/models';
 import { PatchedTeamRequest } from '../model/models';
 import { PatchedTopicMessageRequest } from '../model/models';
 import { PatchedTrainingSlotRequest } from '../model/models';
+import { ReviewBlockRequestRequest } from '../model/models';
+import { ReviewBlockResponse } from '../model/models';
 import { Team } from '../model/models';
 import { TeamMembership } from '../model/models';
 import { TeamMembershipRequest } from '../model/models';
@@ -162,6 +164,13 @@ export interface TeamsPoolsRetrieveRequestParams {
 
 export interface TeamsRetrieveRequestParams {
     id: number;
+}
+
+export interface TeamsReviewBlockCreateRequestParams {
+    id: number;
+    from?: string;
+    to?: string;
+    reviewBlockRequestRequest?: ReviewBlockRequestRequest;
 }
 
 export interface TeamsStatsRetrieveRequestParams {
@@ -438,6 +447,14 @@ export interface TeamsServiceInterface {
 * @param requestParameters
      */
     teamsRetrieve(requestParameters: TeamsRetrieveRequestParams, extraHttpRequestParams?: any): Observable<Team>;
+
+    /**
+     * AI review / critique of the team\&#39;s training block
+     * Managers only. Runs an AI analysis over the team\&#39;s recorded training data for the [from, to] window (same window params as /stats/) and returns a structured critique: overall load assessment, findings, and recommended adjustments. Throttled to 10/hour per user.
+     * @endpoint post /api/v1/teams/{id}/review-block/
+* @param requestParameters
+     */
+    teamsReviewBlockCreate(requestParameters: TeamsReviewBlockCreateRequestParams, extraHttpRequestParams?: any): Observable<ReviewBlockResponse>;
 
     /**
      * Team statistics (attendance, volume, intensity)

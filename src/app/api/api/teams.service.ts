@@ -41,6 +41,10 @@ import { PatchedTopicMessageRequest } from '../model/patched-topic-message-reque
 // @ts-ignore
 import { PatchedTrainingSlotRequest } from '../model/patched-training-slot-request';
 // @ts-ignore
+import { ReviewBlockRequestRequest } from '../model/review-block-request-request';
+// @ts-ignore
+import { ReviewBlockResponse } from '../model/review-block-response';
+// @ts-ignore
 import { Team } from '../model/team';
 // @ts-ignore
 import { TeamMembership } from '../model/team-membership';
@@ -92,6 +96,7 @@ import {
     TeamsPartialUpdateRequestParams,
     TeamsPoolsRetrieveRequestParams,
     TeamsRetrieveRequestParams,
+    TeamsReviewBlockCreateRequestParams,
     TeamsStatsRetrieveRequestParams,
     TeamsTopicsCreateRequestParams,
     TeamsTopicsDestroyRequestParams,
@@ -1719,6 +1724,103 @@ export class TeamsService extends BaseService implements TeamsServiceInterface {
         return this.httpClient.request<Team>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                responseType: <any>responseType_,
+                ...(withCredentials ? { withCredentials } : {}),
+                headers: localVarHeaders,
+                observe: observe,
+                ...(localVarTransferCache !== undefined ? { transferCache: localVarTransferCache } : {}),
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * AI review / critique of the team\&#39;s training block
+     * Managers only. Runs an AI analysis over the team\&#39;s recorded training data for the [from, to] window (same window params as /stats/) and returns a structured critique: overall load assessment, findings, and recommended adjustments. Throttled to 10/hour per user.
+     * @endpoint post /api/v1/teams/{id}/review-block/
+     * @param requestParameters
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     * @param options additional options
+     */
+    public teamsReviewBlockCreate(requestParameters: TeamsReviewBlockCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ReviewBlockResponse>;
+    public teamsReviewBlockCreate(requestParameters: TeamsReviewBlockCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ReviewBlockResponse>>;
+    public teamsReviewBlockCreate(requestParameters: TeamsReviewBlockCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ReviewBlockResponse>>;
+    public teamsReviewBlockCreate(requestParameters: TeamsReviewBlockCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const id = requestParameters?.id;
+        if (id === null || id === undefined) {
+            throw new Error('Required parameter id was null or undefined when calling teamsReviewBlockCreate.');
+        }
+        const from = requestParameters?.from;
+        const to = requestParameters?.to;
+        const reviewBlockRequestRequest = requestParameters?.reviewBlockRequestRequest;
+
+        let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'from',
+            <any>from,
+            QueryParamStyle.Form,
+            true,
+        );
+
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'to',
+            <any>to,
+            QueryParamStyle.Form,
+            true,
+        );
+
+
+        let localVarHeaders = this.defaultHeaders;
+
+        // authentication (jwtAuth) required
+        localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
+
+        const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
+            'application/json'
+        ]);
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        const localVarHttpContext: HttpContext = options?.context ?? new HttpContext();
+
+        const localVarTransferCache: boolean = options?.transferCache ?? true;
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'application/x-www-form-urlencoded',
+            'multipart/form-data'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/teams/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/review-block/`;
+        const { basePath, withCredentials } = this.configuration;
+        return this.httpClient.request<ReviewBlockResponse>('post', `${basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: reviewBlockRequestRequest,
+                params: localVarQueryParameters.toHttpParams(),
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
