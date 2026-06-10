@@ -53,7 +53,8 @@ describe('EventFreeformComponent', () => {
     fixture.componentRef.setInput('canManage', true);
     c.draft.set('<p>new</p>');
     c.save();
-    expect(translocoMock.translate).toHaveBeenCalledWith('common.save_failed');
+    // ToastService.error(key) calls translate(key, params) — params is undefined here.
+    expect(translocoMock.translate).toHaveBeenCalledWith('common.save_failed', undefined);
     expect(messageMock.add).toHaveBeenCalledWith(
       expect.objectContaining({
         severity: 'error',

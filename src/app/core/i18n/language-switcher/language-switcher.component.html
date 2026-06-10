@@ -5,14 +5,15 @@
     [attr.aria-label]="'common.language_switcher.aria' | transloco"
     [attr.aria-haspopup]="'menu'"
     [attr.aria-expanded]="open()"
+    [attr.aria-controls]="'ls-menu'"
     (click)="toggle()"
   >
     <span class="ls-code">{{ current() | uppercase }}</span>
   </button>
 
   @if (open()) {
-    <div role="menu" class="ls-menu">
-      @for (lang of languages; track lang.code) {
+    <div role="menu" id="ls-menu" class="ls-menu">
+      @for (lang of languages; track lang.code; let i = $index) {
         <button
           #menuitem
           type="button"
@@ -20,7 +21,7 @@
           class="ls-item"
           [class.is-active]="lang.code === current()"
           [attr.aria-current]="lang.code === current() ? 'true' : null"
-          [attr.tabindex]="lang.code === current() ? 0 : -1"
+          [attr.tabindex]="i === focusedIndex() ? 0 : -1"
           (click)="select(lang.code)"
         >
           <span class="ls-chip">{{ lang.code }}</span>

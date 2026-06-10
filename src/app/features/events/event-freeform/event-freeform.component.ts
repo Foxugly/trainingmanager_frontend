@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
-  Injector,
   computed,
   effect,
   inject,
@@ -13,11 +12,11 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
+import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
-import { MessageService } from 'primeng/api';
 import { EventsService } from '../../../api/api/events.service';
 import { Event } from '../../../api/model/event';
+import { ToastService } from '../../../core/notifications/toast.service';
 import { RichEditorComponent } from '../../../shared/ui/rich-editor/rich-editor.component';
 
 /**
@@ -35,7 +34,7 @@ import { RichEditorComponent } from '../../../shared/ui/rich-editor/rich-editor.
 })
 export class EventFreeformComponent {
   private readonly eventsService = inject(EventsService);
-  private readonly injector = inject(Injector);
+  private readonly toast = inject(ToastService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly event = input.required<Event>();
@@ -69,15 +68,7 @@ export class EventFreeformComponent {
         },
         error: () => {
           this.saving.set(false);
-          // Resolved lazily so the component constructs even where MessageService
-          // / TranslocoService are not provided (logic-only test harness); the
-          // error path is the only consumer.
-          const transloco = this.injector.get(TranslocoService);
-          this.injector.get(MessageService).add({
-            severity: 'error',
-            summary: transloco.translate('common.error'),
-            detail: transloco.translate('common.save_failed'),
-          });
+          this.toast.error('common.save_failed');
         },
       });
   }

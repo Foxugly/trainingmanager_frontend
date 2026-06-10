@@ -20,14 +20,40 @@ const AUTH_PATHS = [
   '/auth/magic-link/exchange/',
 ];
 
+/** Pathname of a request URL (absolute or relative), or null if unparseable. */
+function requestPathname(url: string): string | null {
+  try {
+    return new URL(url, window.location.origin).pathname;
+  } catch {
+    return null;
+  }
+}
+
+/** True only when the request targets the configured API origin (exact origin
+ * match + path prefix), not merely a string that starts with the base — guards
+ * against prefix confusion (`https://api.example.com.evil.com`). */
+function isApiUrl(url: string): boolean {
+  try {
+    const base = new URL(getRuntimeConfig().apiBaseUrl, window.location.origin);
+    const target = new URL(url, window.location.origin);
+    const basePath = base.pathname.replace(/\/+$/, '');
+    return target.origin === base.origin && target.pathname.startsWith(basePath);
+  } catch {
+    return false;
+  }
+}
+
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const tokenStorage = inject(TokenStorage);
   const authService = inject(AuthService);
 
-  const isAuthEndpoint = AUTH_PATHS.some((path) => req.url.includes(path));
-  const isApiCall = req.url.startsWith(getRuntimeConfig().apiBaseUrl);
+  // Anchor the auth-path match to the request PATHNAME (endsWith) instead of a
+  // bare substring, so a query param or resource path containing '/auth/...'
+  // can't flip a normal API call into the no-token branch.
+  const path = requestPathname(req.url);
+  const isAuthEndpoint = path !== null && AUTH_PATHS.some((p) => path.endsWith(p));
 
-  if (!isApiCall || isAuthEndpoint) {
+  if (!isApiUrl(req.url) || isAuthEndpoint) {
     return next(req);
   }
 

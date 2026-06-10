@@ -13,6 +13,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { AuthService } from '../../../core/auth/auth.service';
+import { safeReturnUrl } from '../shared/safe-return-url';
 
 type ExchangeState = 'loading' | 'expired' | 'invalid';
 
@@ -43,19 +44,10 @@ export class MagicLinkComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
-          // Only allow same-origin, app-internal paths. Reject protocol-relative
-          // ('//evil.com'), backslash ('/\evil.com') and absolute-URL forms to
-          // prevent open redirect — the old `.startsWith('/')` check let '//host'
-          // through.
-          const safeNext =
-            returnUrl &&
-            returnUrl.startsWith('/') &&
-            !returnUrl.startsWith('//') &&
-            !returnUrl.startsWith('/\\') &&
-            !returnUrl.includes('://')
-              ? returnUrl
-              : '/dashboard';
+          const safeNext = safeReturnUrl(
+            this.route.snapshot.queryParamMap.get('returnUrl'),
+            '/dashboard',
+          );
           this.router.navigateByUrl(safeNext);
         },
         error: (err: HttpErrorResponse) => {

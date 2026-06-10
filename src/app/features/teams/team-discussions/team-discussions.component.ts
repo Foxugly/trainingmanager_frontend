@@ -424,9 +424,11 @@ export class TeamDiscussionsComponent {
                   }
                 : t,
             );
-            return [...updated].sort(
-              (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(),
-            );
+            // Coalesce a missing updated_at to 0 so a null/undefined value
+            // can't produce NaN and scramble the ordering.
+            const ts = (t: { updated_at?: string | null }) =>
+              t.updated_at ? new Date(t.updated_at).getTime() : 0;
+            return [...updated].sort((a, b) => ts(b) - ts(a));
           });
         },
         error: (err: HttpErrorResponse) => {

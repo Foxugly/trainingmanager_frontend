@@ -7,6 +7,7 @@ import {
   inject,
   input,
   output,
+  untracked,
   viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -76,12 +77,18 @@ export class BellComponent {
       .subscribe(() => this.firePollIfActive());
 
     effect(() => {
-      if (this.auth.currentUser() !== null) {
-        this.startPolling();
-      } else {
-        this.stopPolling();
-        this.reset.emit();
-      }
+      const user = this.auth.currentUser();
+      // Track only currentUser(); run the side effects (polling timers + the
+      // reset output emit) untracked so emitting an output can't re-enter
+      // change detection or register spurious dependencies.
+      untracked(() => {
+        if (user !== null) {
+          this.startPolling();
+        } else {
+          this.stopPolling();
+          this.reset.emit();
+        }
+      });
     });
 
     document.addEventListener('visibilitychange', this.onVisibilityChange);

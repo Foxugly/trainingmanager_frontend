@@ -103,6 +103,9 @@ export class ForgotPasswordComponent implements AfterViewInit, OnDestroy {
   }
 
   protected submit(): void {
+    // Block submits during a rate-limit cooldown / in-flight request even if the
+    // disabled button is bypassed (Enter key / programmatic submit).
+    if (this.submitDisabled()) return;
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;

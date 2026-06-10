@@ -433,6 +433,11 @@ export class EventsDetailComponent implements OnInit {
     this.loading.set(true);
     this.notFound.set(false);
     this.loadError.set(false);
+    // Clear any training-editor state from the previously-shown event (or from
+    // before a structured->freeform switch): a stale totalDistance would make
+    // the auto-patch effect overwrite the freshly loaded event.total. The
+    // structured training editor re-emits its state once it re-renders.
+    this.trainingState.set(null);
     this.eventsService
       .eventsRetrieve({ id })
       .pipe(takeUntilDestroyed(this.destroyRef))

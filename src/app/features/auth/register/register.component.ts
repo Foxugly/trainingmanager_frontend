@@ -164,6 +164,9 @@ export class RegisterComponent implements AfterViewInit, OnDestroy {
   }
 
   protected submit(): void {
+    // Don't fire during a rate-limit cooldown or an in-flight submit, even if
+    // the disabled button is bypassed (Enter key / programmatic submit).
+    if (this.submitDisabled()) return;
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       this.errorMessage.set('auth.register.fix_errors_below');

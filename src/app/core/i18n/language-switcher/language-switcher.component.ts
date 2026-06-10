@@ -7,8 +7,8 @@ import {
   signal,
   viewChildren,
 } from '@angular/core';
-import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { TranslocoPipe } from '@jsverse/transloco';
+import { ToastService } from '../../notifications/toast.service';
 import { AVAILABLE_LANGUAGES, LanguageCode } from '../available-languages';
 import { LanguageService } from '../language.service';
 
@@ -31,8 +31,7 @@ import { LanguageService } from '../language.service';
 export class LanguageSwitcherComponent {
   private readonly elementRef = inject(ElementRef<HTMLElement>);
   private readonly languageService = inject(LanguageService);
-  private readonly messageService = inject(MessageService);
-  private readonly transloco = inject(TranslocoService);
+  private readonly toast = inject(ToastService);
 
   protected readonly languages = AVAILABLE_LANGUAGES;
   protected readonly current = this.languageService.activeLang;
@@ -71,13 +70,7 @@ export class LanguageSwitcherComponent {
     this.close();
     if (code === this.current()) return;
     this.languageService.switchLanguage(code).subscribe({
-      error: () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: this.transloco.translate('common.error'),
-          detail: this.transloco.translate('profile.language_switch_failed'),
-        });
-      },
+      error: () => this.toast.error('profile.language_switch_failed'),
     });
   }
 

@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  OnDestroy,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -11,6 +19,7 @@ import { Message } from 'primeng/message';
 import { Password } from 'primeng/password';
 import { AuthService } from '../../../core/auth/auth.service';
 import { parseRetryAfterSeconds } from '../shared/retry-after';
+import { safeReturnUrl } from '../shared/safe-return-url';
 
 @Component({
   selector: 'app-login',
@@ -28,7 +37,7 @@ import { parseRetryAfterSeconds } from '../shared/retry-after';
   styleUrl: './login.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LoginComponent {
+export class LoginComponent implements OnDestroy {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
@@ -66,7 +75,14 @@ export class LoginComponent {
 
   private countdownTimer: ReturnType<typeof setInterval> | null = null;
 
+  ngOnDestroy(): void {
+    // Stop the rate-limit countdown if the user navigates away mid-cooldown,
+    // otherwise the interval keeps firing on a destroyed component.
+    if (this.countdownTimer !== null) clearInterval(this.countdownTimer);
+  }
+
   protected submit(): void {
+    if (this.submitDisabled()) return;
     if (this.form.controls.username.invalid || this.form.controls.password.invalid) return;
     this.loading.set(true);
     this.errorMessage.set(null);
@@ -81,7 +97,10 @@ export class LoginComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '/';
+          const returnUrl = safeReturnUrl(
+            this.route.snapshot.queryParamMap.get('returnUrl'),
+            '/',
+          );
           this.router.navigateByUrl(returnUrl);
         },
         error: (err: HttpErrorResponse) => {
