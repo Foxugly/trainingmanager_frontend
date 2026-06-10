@@ -78,12 +78,8 @@ export class TeamTemplatesComponent {
           this.error.set(false);
         }),
         switchMap((id) =>
-          // The list is already scoped to the caller's managed teams server-side;
-          // filter to THIS team client-side (no ?team query param on the client).
-          this.templatesService.eventTemplatesList({}).pipe(
-            tap((res) =>
-              this.templates.set((res.results ?? []).filter((t) => t.team === id)),
-            ),
+          this.templatesService.eventTemplatesList({ team: id }).pipe(
+            tap((res) => this.templates.set(res.results ?? [])),
             catchError(() => {
               this.error.set(true);
               return of(null);
@@ -96,11 +92,10 @@ export class TeamTemplatesComponent {
   }
 
   private reload(): void {
-    const id = this.teamId();
     this.templatesService
-      .eventTemplatesList({})
+      .eventTemplatesList({ team: this.teamId() })
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((res) => this.templates.set((res.results ?? []).filter((t) => t.team === id)));
+      .subscribe((res) => this.templates.set(res.results ?? []));
   }
 
   protected openInstantiate(tpl: EventTemplate): void {
@@ -112,7 +107,10 @@ export class TeamTemplatesComponent {
     this.programsService
       .programsList({ team: this.teamId() })
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: (res) => this.programs.set(res.results ?? []) });
+      .subscribe({
+        next: (res) => this.programs.set(res.results ?? []),
+        error: () => this.toast.error(),
+      });
   }
 
   protected instantiate(): void {

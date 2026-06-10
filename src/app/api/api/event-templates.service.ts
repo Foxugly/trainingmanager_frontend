@@ -254,6 +254,7 @@ export class EventTemplatesService extends BaseService implements EventTemplates
         const page = requestParameters?.page;
         const pageSize = requestParameters?.pageSize;
         const search = requestParameters?.search;
+        const team = requestParameters?.team;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -288,6 +289,15 @@ export class EventTemplatesService extends BaseService implements EventTemplates
             localVarQueryParameters,
             'search',
             <any>search,
+            QueryParamStyle.Form,
+            true,
+        );
+
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'team',
+            <any>team,
             QueryParamStyle.Form,
             true,
         );

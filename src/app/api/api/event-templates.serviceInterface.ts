@@ -34,6 +34,7 @@ export interface EventTemplatesListRequestParams {
     page?: number;
     pageSize?: number;
     search?: string;
+    team?: number;
 }
 
 export interface EventTemplatesRetrieveRequestParams {

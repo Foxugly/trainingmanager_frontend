@@ -399,7 +399,9 @@
         <!-- TAB 6 — DEBRIEF (manager-only) -->
         @if (canManage()) {
           <p-tabpanel value="debrief">
-            <app-event-debrief [eventId]="e.id" />
+            @if (activeTab() === 'debrief') {
+              <app-event-debrief [eventId]="e.id" />
+            }
           </p-tabpanel>
         }
       </p-tabpanels>
