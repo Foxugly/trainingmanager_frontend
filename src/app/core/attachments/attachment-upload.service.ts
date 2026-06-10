@@ -28,7 +28,7 @@ export class AttachmentUploadService {
    */
   async upload(
     file: File,
-    targetType: 'event' | 'message',
+    targetType: 'event' | 'message' | 'program' | 'performance',
     targetId: number,
   ): Promise<Attachment> {
     const presign = await firstValueFrom(

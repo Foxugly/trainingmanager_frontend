@@ -10,12 +10,16 @@
 
 
 /**
- * * `event` - event * `message` - message
+ * * `event` - event * `message` - message * `program` - program * `performance` - performance
  */
 export enum TargetTypeEnum {
 
     Event = 'event',
 
-    Message = 'message'
+    Message = 'message',
+
+    Program = 'program',
+
+    Performance = 'performance'
 }
 

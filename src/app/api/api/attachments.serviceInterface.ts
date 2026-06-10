@@ -35,7 +35,7 @@ export interface AttachmentsDownloadRetrieveRequestParams {
 
 export interface AttachmentsListRequestParams {
     targetId: number;
-    targetType: 'event' | 'message';
+    targetType: 'event' | 'message' | 'performance' | 'program';
     ordering?: string;
     page?: number;
     pageSize?: number;

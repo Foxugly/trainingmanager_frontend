@@ -334,6 +334,13 @@
       </section>
     </div>
 
+    @if (program(); as p) {
+      <section class="mb-8">
+        <h2 class="text-lg font-semibold mb-3">{{ 'attachments.title' | transloco }}</h2>
+        <app-attachment-list targetType="program" [targetId]="p.id" [canEdit]="canManage()" />
+      </section>
+    }
+
     @if (program()) {
       <app-generate-events-dialog
         [program]="program()!"

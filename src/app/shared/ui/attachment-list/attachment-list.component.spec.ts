@@ -57,7 +57,7 @@ describe('AttachmentListComponent', () => {
     opts: {
       items?: Attachment[];
       canEdit?: boolean;
-      targetType?: 'event' | 'message';
+      targetType?: 'event' | 'message' | 'program' | 'performance';
       targetId?: number;
     } = {},
   ) {

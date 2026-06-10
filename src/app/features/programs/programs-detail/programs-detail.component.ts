@@ -33,6 +33,7 @@ import {
   GenerateEventsDialogComponent,
   GenerateEventsResult,
 } from '../generate-events-dialog/generate-events-dialog.component';
+import { AttachmentListComponent } from '../../../shared/ui/attachment-list/attachment-list.component';
 import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-header.component';
 import {
   ActiveToggleComponent,
@@ -111,6 +112,7 @@ function eventDateAsDate(e: Event): Date | null {
     Tooltip,
     TranslocoPipe,
     DetailHeaderComponent,
+    AttachmentListComponent,
     ActiveToggleComponent,
   ],
   templateUrl: './programs-detail.component.html',

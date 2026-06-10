@@ -51,7 +51,7 @@ export class AttachmentListComponent {
   private readonly transloco = inject(TranslocoService);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly targetType = input.required<'event' | 'message'>();
+  readonly targetType = input.required<'event' | 'message' | 'program' | 'performance'>();
   readonly targetId = input.required<number>();
   readonly canEdit = input<boolean>(false);
 
@@ -72,7 +72,7 @@ export class AttachmentListComponent {
     });
   }
 
-  private load(targetId: number, targetType: 'event' | 'message'): void {
+  private load(targetId: number, targetType: 'event' | 'message' | 'program' | 'performance'): void {
     this.loading.set(true);
     this.attachments
       .attachmentsList({ targetId, targetType })
