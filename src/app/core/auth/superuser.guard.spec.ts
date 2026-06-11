@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { LanguageEnum } from '../../api/model/language-enum';
 import { Me } from '../../api/model/me';
 import { AuthService } from './auth.service';
-import { staffGuard } from './staff.guard';
+import { superuserGuard } from './superuser.guard';
 
 const baseUser: Me = {
   id: 1,
@@ -17,6 +17,7 @@ const baseUser: Me = {
   last_login: null,
   date_joined: '2026-01-01T00:00:00Z',
   is_staff: false,
+  is_superuser: false,
   member_id: null,
   team_quota: { used: 0, max: 0, can_create: false },
   calendar_token: 'tok-test',
@@ -24,11 +25,11 @@ const baseUser: Me = {
 
 function runGuard(state: RouterStateSnapshot) {
   return TestBed.runInInjectionContext(() =>
-    staffGuard({} as ActivatedRouteSnapshot, state),
+    superuserGuard({} as ActivatedRouteSnapshot, state),
   );
 }
 
-describe('staffGuard', () => {
+describe('superuserGuard', () => {
   let userSignal: ReturnType<typeof signal<Me | null>>;
   let isAuthenticated: boolean;
   let router: Router;
@@ -60,18 +61,18 @@ describe('staffGuard', () => {
     expect(router.serializeUrl(result as UrlTree)).toBe(router.serializeUrl(expected));
   });
 
-  it('redirects authenticated non-staff users to /', () => {
+  it('redirects authenticated non-superuser users to / (staff alone is not enough)', () => {
     isAuthenticated = true;
-    userSignal.set({ ...baseUser, is_staff: false });
+    userSignal.set({ ...baseUser, is_staff: true, is_superuser: false });
 
     const result = runGuard({ url: '/admin/sports' } as RouterStateSnapshot);
     expect(result).toBeInstanceOf(UrlTree);
     expect(router.serializeUrl(result as UrlTree)).toBe(router.serializeUrl(router.createUrlTree(['/'])));
   });
 
-  it('lets staff users through', () => {
+  it('lets superuser users through', () => {
     isAuthenticated = true;
-    userSignal.set({ ...baseUser, is_staff: true });
+    userSignal.set({ ...baseUser, is_superuser: true });
 
     const result = runGuard({ url: '/admin/sports' } as RouterStateSnapshot);
     expect(result).toBe(true);

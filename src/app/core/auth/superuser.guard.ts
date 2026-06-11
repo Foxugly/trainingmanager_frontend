@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from './auth.service';
 
-export const staffGuard: CanActivateFn = (_route, state) => {
+export const superuserGuard: CanActivateFn = (_route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
@@ -12,7 +12,7 @@ export const staffGuard: CanActivateFn = (_route, state) => {
     });
   }
 
-  if (!authService.currentUser()?.is_staff) {
+  if (!authService.currentUser()?.is_superuser) {
     return router.createUrlTree(['/']);
   }
 

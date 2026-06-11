@@ -230,54 +230,13 @@
 
       <div class="footer-actions">
         <p-button type="button" severity="secondary" [outlined]="true" icon="pi pi-lock"
-          [label]="'profile.change_password' | transloco" (onClick)="openChangePassword()" />
+          [label]="'profile.change_password' | transloco" [routerLink]="['/profile/password']" />
         <span class="flex-1"></span>
         <p-button type="button" icon="pi pi-save" [label]="'common.save' | transloco"
           [loading]="loading()" [disabled]="form.invalid" (onClick)="submit()" />
       </div>
     </div>
   }
-
-  <!-- Change-password dialog -->
-  <p-dialog
-    [visible]="changePwOpen()"
-    (visibleChange)="onChangePwVisibleChange($event)"
-    [modal]="true"
-    [closable]="!changePwLoading()"
-    [style]="{ width: '30rem' }"
-    [header]="'profile.change_password' | transloco"
-  >
-    <form [formGroup]="changePwForm">
-      <div class="meta-grid">
-        <app-meta-field #currentPwField [full]="true" [label]="'profile.confirm_password' | transloco"
-          for="current_password" [error]="changePwFieldError('current_password')">
-          <p-password inputId="current_password" formControlName="current_password"
-            [feedback]="false" [toggleMask]="true" autocomplete="current-password" [fluid]="true"
-            [appAriaDescribes]="changePwFieldError('current_password') ? currentPwField.errorId() : null" />
-        </app-meta-field>
-        <app-meta-field #newPwField [full]="true" [label]="'profile.new_password' | transloco"
-          for="new_password" [error]="changePwFieldError('new_password')">
-          <p-password inputId="new_password" formControlName="new_password"
-            [feedback]="false" [toggleMask]="true" autocomplete="new-password" [fluid]="true"
-            [appAriaDescribes]="changePwFieldError('new_password') ? newPwField.errorId() : null" />
-        </app-meta-field>
-        <app-meta-field #newPwConfirmField [full]="true" [label]="'profile.new_password_confirm' | transloco"
-          for="new_password_confirm" [error]="changePwFieldError('new_password_confirm')">
-          <p-password inputId="new_password_confirm" formControlName="new_password_confirm"
-            [feedback]="false" [toggleMask]="true" autocomplete="new-password" [fluid]="true"
-            [appAriaDescribes]="changePwFieldError('new_password_confirm') ? newPwConfirmField.errorId() : null" />
-        </app-meta-field>
-      </div>
-    </form>
-    <app-form-footer
-      [saving]="changePwLoading()"
-      [disabled]="changePwForm.invalid"
-      [cancelLabel]="'common.cancel' | transloco"
-      [saveLabel]="'common.save' | transloco"
-      (cancel)="cancelChangePassword()"
-      (save)="submitChangePassword()"
-    />
-  </p-dialog>
 
   <!-- Change-email dialog (verified flow) -->
   <p-dialog

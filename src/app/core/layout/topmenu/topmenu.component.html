@@ -42,6 +42,11 @@
       <a [routerLink]="['/contribute']" routerLinkActive="active" class="nav-cta">
         <i class="pi pi-heart" aria-hidden="true"></i> {{ 'public.nav.support' | transloco }}
       </a>
+      @if (isSuperuser()) {
+        <a [routerLink]="['/admin']" routerLinkActive="active">
+          <i class="pi pi-cog" aria-hidden="true"></i> {{ 'public.nav.admin' | transloco }}
+        </a>
+      }
     }
   </nav>
 
@@ -120,6 +125,11 @@
           >
             <i class="pi pi-heart" aria-hidden="true"></i> {{ 'public.nav.support' | transloco }}
           </a>
+          @if (isSuperuser()) {
+            <a [routerLink]="['/admin']" routerLinkActive="active" (click)="closeMobile()">
+              <i class="pi pi-cog" aria-hidden="true"></i> {{ 'public.nav.admin' | transloco }}
+            </a>
+          }
         }
       </nav>
       <div class="actions actions--mobile">

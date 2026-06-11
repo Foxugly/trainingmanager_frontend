@@ -1,7 +1,7 @@
 import { CanActivateFn, Router, Routes } from '@angular/router';
 import { inject } from '@angular/core';
 import { authGuard } from './core/auth/auth.guard';
-import { staffGuard } from './core/auth/staff.guard';
+import { superuserGuard } from './core/auth/superuser.guard';
 import { unsavedChangesGuard } from './core/guards/unsaved-changes.guard';
 import { AuthService } from './core/auth/auth.service';
 import { AdminLayoutComponent } from './core/layout/admin-layout/admin-layout.component';
@@ -131,7 +131,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: MainLayoutComponent,
-    canActivate: [authGuard, staffGuard],
+    canActivate: [authGuard, superuserGuard],
     children: [
       {
         path: '',
@@ -205,6 +205,13 @@ export const routes: Routes = [
         path: 'profile',
         loadComponent: () =>
           import('./features/profile/profile.component').then((m) => m.ProfileComponent),
+      },
+      {
+        path: 'profile/password',
+        loadComponent: () =>
+          import('./features/profile/change-password/change-password.component').then(
+            (m) => m.ChangePasswordComponent,
+          ),
       },
       {
         path: 'events',

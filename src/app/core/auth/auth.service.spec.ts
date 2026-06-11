@@ -19,6 +19,7 @@ const fakeUser: Me = {
   last_login: null,
   date_joined: '2026-01-01T00:00:00Z',
   is_staff: false,
+  is_superuser: false,
   member_id: null,
   team_quota: { used: 0, max: 3, can_create: true },
   calendar_token: 'tok-test',

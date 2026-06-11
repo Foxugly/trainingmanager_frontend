@@ -26,6 +26,7 @@ const baseUser: Me = {
   last_login: null,
   date_joined: '2026-01-01T00:00:00Z',
   is_staff: false,
+  is_superuser: false,
   member_id: null,
   weekly_recap_opt_in: true,
   team_quota: { used: 0, max: 0, can_create: false },
@@ -56,21 +57,6 @@ interface ProtectedFields {
   fieldError(name: string): string | null;
   user(): Me | null;
   submit(): void;
-  // change-password
-  changePwOpen(): boolean;
-  changePwForm: {
-    patchValue: (
-      v: Partial<{
-        current_password: string;
-        new_password: string;
-        new_password_confirm: string;
-      }>,
-    ) => void;
-  };
-  changePwErrors(): { [k: string]: string[] } | null;
-  changePwFieldError(name: string): string | null;
-  openChangePassword(): void;
-  submitChangePassword(): void;
   // delete-account
   deleteOpen(): boolean;
   deleteForm: { patchValue: (v: Partial<{ current_password: string }>) => void };
@@ -124,7 +110,6 @@ describe('ProfileComponent', () => {
     logout: ReturnType<typeof vi.fn>;
   };
   let authApiMock: {
-    authPasswordChangeCreate: ReturnType<typeof vi.fn>;
     authAccountDeleteCreate: ReturnType<typeof vi.fn>;
   };
   let langMock: { applyToTranslocoOnly: ReturnType<typeof vi.fn> };
@@ -151,7 +136,6 @@ describe('ProfileComponent', () => {
       logout: vi.fn(),
     };
     authApiMock = {
-      authPasswordChangeCreate: vi.fn(),
       authAccountDeleteCreate: vi.fn(),
     };
     langMock = { applyToTranslocoOnly: vi.fn() };
@@ -279,94 +263,6 @@ describe('ProfileComponent', () => {
     expect(messageService.add).toHaveBeenCalledWith(
       expect.objectContaining({ severity: 'error', detail: 'Account locked' }),
     );
-  });
-
-  // --- Change-password flow ---
-
-  it('submitChangePassword() blocks client-side when new != confirm', () => {
-    access(component).openChangePassword();
-    access(component).changePwForm.patchValue({
-      current_password: 'old',
-      new_password: 'newpass1',
-      new_password_confirm: 'newpass2',
-    });
-
-    access(component).submitChangePassword();
-
-    expect(authApiMock.authPasswordChangeCreate).not.toHaveBeenCalled();
-    expect(access(component).changePwFieldError('new_password_confirm')).not.toBeNull();
-  });
-
-  it('submitChangePassword() calls the API and closes on success', () => {
-    authApiMock.authPasswordChangeCreate.mockReturnValue(of({ detail: 'ok' }));
-    access(component).openChangePassword();
-    access(component).changePwForm.patchValue({
-      current_password: 'old',
-      new_password: 'newpass1',
-      new_password_confirm: 'newpass1',
-    });
-
-    access(component).submitChangePassword();
-
-    expect(authApiMock.authPasswordChangeCreate).toHaveBeenCalledWith({
-      passwordChangeRequest: {
-        current_password: 'old',
-        new_password: 'newpass1',
-      },
-    });
-    expect(access(component).changePwOpen()).toBe(false);
-    expect(messageService.add).toHaveBeenCalledWith(
-      expect.objectContaining({ severity: 'success' }),
-    );
-  });
-
-  it('submitChangePassword() maps current_password_invalid to a field error', () => {
-    authApiMock.authPasswordChangeCreate.mockReturnValue(
-      throwError(() => ({ status: 400, error: { code: 'current_password_invalid' } })),
-    );
-    access(component).openChangePassword();
-    access(component).changePwForm.patchValue({
-      current_password: 'wrong',
-      new_password: 'newpass1',
-      new_password_confirm: 'newpass1',
-    });
-
-    access(component).submitChangePassword();
-
-    expect(access(component).changePwFieldError('current_password')).not.toBeNull();
-    expect(access(component).changePwOpen()).toBe(true);
-  });
-
-  it('submitChangePassword() maps password_unchanged to the new_password field', () => {
-    authApiMock.authPasswordChangeCreate.mockReturnValue(
-      throwError(() => ({ status: 400, error: { code: 'password_unchanged' } })),
-    );
-    access(component).openChangePassword();
-    access(component).changePwForm.patchValue({
-      current_password: 'old',
-      new_password: 'old',
-      new_password_confirm: 'old',
-    });
-
-    access(component).submitChangePassword();
-
-    expect(access(component).changePwFieldError('new_password')).not.toBeNull();
-  });
-
-  it('submitChangePassword() maps fields.new_password inline', () => {
-    authApiMock.authPasswordChangeCreate.mockReturnValue(
-      throwError(() => ({ status: 400, error: { fields: { new_password: ['Too short.'] } } })),
-    );
-    access(component).openChangePassword();
-    access(component).changePwForm.patchValue({
-      current_password: 'old',
-      new_password: 'x',
-      new_password_confirm: 'x',
-    });
-
-    access(component).submitChangePassword();
-
-    expect(access(component).changePwFieldError('new_password')).toBe('Too short.');
   });
 
   // --- Delete-account flow ---

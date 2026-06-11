@@ -18,6 +18,7 @@ const baseUser: Me = {
   email: 'r@example.com',
   language: 'fr',
   is_staff: false,
+  is_superuser: false,
 } as unknown as Me;
 
 const staffUser: Me = { ...baseUser, is_staff: true };

@@ -30,9 +30,11 @@ const baseUser: Me = {
   email: 'r@example.com',
   language: 'fr',
   is_staff: false,
+  is_superuser: false,
 } as unknown as Me;
 
 const staffUser: Me = { ...baseUser, is_staff: true } as Me;
+const superuser: Me = { ...baseUser, is_superuser: true } as Me;
 
 describe('TopmenuComponent', () => {
   let fixture: ComponentFixture<TopmenuComponent>;
@@ -139,12 +141,29 @@ describe('TopmenuComponent', () => {
     expect(html).toContain('public.nav.support');
   });
 
-  it('authenticated mode does NOT render an Admin link in the center nav (even for staff)', async () => {
+  it('authenticated mode does NOT render an Admin link for non-superusers (even staff)', async () => {
     await setup({ mode: 'authenticated', user: baseUser });
-    expect(fixture.nativeElement.innerHTML).not.toContain('nav.admin');
+    expect(fixture.nativeElement.innerHTML).not.toContain('public.nav.admin');
 
     await setup({ mode: 'authenticated', user: staffUser });
-    expect(fixture.nativeElement.innerHTML).not.toContain('nav.admin');
+    expect(fixture.nativeElement.innerHTML).not.toContain('public.nav.admin');
+  });
+
+  it('authenticated mode renders an Admin link to /admin for superusers', async () => {
+    await setup({ mode: 'authenticated', user: superuser });
+    const html = fixture.nativeElement.innerHTML as string;
+    expect(html).toContain('public.nav.admin');
+    const adminLink = Array.from(
+      fixture.nativeElement.querySelectorAll('a'),
+    ).find((a) => (a as HTMLAnchorElement).getAttribute('href') === '/admin') as
+      | HTMLAnchorElement
+      | undefined;
+    expect(adminLink).toBeTruthy();
+  });
+
+  it('public mode never renders the Admin link', async () => {
+    await setup({ mode: 'public', user: superuser });
+    expect(fixture.nativeElement.innerHTML).not.toContain('public.nav.admin');
   });
 
   it('authenticated mode renders the Soutenir CTA as a nav-cta link to /contribute', async () => {

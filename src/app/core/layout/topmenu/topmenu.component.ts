@@ -52,7 +52,9 @@ export class TopmenuComponent {
   private readonly destroyRef = inject(DestroyRef);
 
   readonly mode = input<TopmenuMode>('public');
-  protected readonly isStaff = computed(() => this.authService.currentUser()?.is_staff === true);
+  protected readonly isSuperuser = computed(
+    () => this.authService.currentUser()?.is_superuser === true,
+  );
   protected readonly mobileMenuOpen = signal(false);
 
   private readonly hamburgerBtn = viewChild<ElementRef<HTMLButtonElement>>('hamburgerBtn');

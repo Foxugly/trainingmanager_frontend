@@ -30,7 +30,6 @@ import { AccountDeleteRequest } from '../../api/model/account-delete-request';
 import { LanguageEnum } from '../../api/model/language-enum';
 import { Me } from '../../api/model/me';
 import { EmailChangeRequestRequest } from '../../api/model/email-change-request-request';
-import { PasswordChangeRequest } from '../../api/model/password-change-request';
 import { PatchedMeRequest } from '../../api/model/patched-me-request';
 import { AuthService } from '../../core/auth/auth.service';
 import { getRuntimeConfig } from '../../core/runtime-config';
@@ -130,16 +129,6 @@ export class ProfileComponent implements OnInit {
     language: ['fr' as LanguageCode, Validators.required],
     weekly_recap_opt_in: [true],
     digest_email: [false],
-  });
-
-  // --- Change-password dialog ---
-  protected readonly changePwOpen = signal(false);
-  protected readonly changePwLoading = signal(false);
-  protected readonly changePwErrors = signal<FieldErrors | null>(null);
-  protected readonly changePwForm = this.fb.nonNullable.group({
-    current_password: ['', Validators.required],
-    new_password: ['', Validators.required],
-    new_password_confirm: ['', Validators.required],
   });
 
   // --- Change-email dialog (verified flow) ---
@@ -359,61 +348,6 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  // --- Change-password ---
-
-  protected changePwFieldError(name: string): string | null {
-    return this.changePwErrors()?.[name]?.join(', ') ?? null;
-  }
-
-  protected openChangePassword(): void {
-    this.changePwForm.reset({ current_password: '', new_password: '', new_password_confirm: '' });
-    this.changePwErrors.set(null);
-    this.changePwOpen.set(true);
-  }
-
-  protected cancelChangePassword(): void {
-    if (this.changePwLoading()) return;
-    this.changePwOpen.set(false);
-  }
-
-  protected onChangePwVisibleChange(value: boolean): void {
-    if (!value && !this.changePwLoading()) {
-      this.changePwOpen.set(false);
-    }
-  }
-
-  protected submitChangePassword(): void {
-    if (this.changePwForm.invalid || this.changePwLoading()) return;
-    const value = this.changePwForm.getRawValue();
-    if (value.new_password !== value.new_password_confirm) {
-      this.changePwErrors.set({
-        new_password_confirm: [this.transloco.translate('profile.password_mismatch')],
-      });
-      return;
-    }
-    this.changePwLoading.set(true);
-    this.changePwErrors.set(null);
-
-    const payload: PasswordChangeRequest = {
-      current_password: value.current_password,
-      new_password: value.new_password,
-    };
-    this.authApi
-      .authPasswordChangeCreate({ passwordChangeRequest: payload })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.changePwLoading.set(false);
-          this.changePwOpen.set(false);
-          this.toast.success('profile.password_changed');
-        },
-        error: (err: HttpErrorResponse) => {
-          this.changePwLoading.set(false);
-          this.applyChangePwError(err);
-        },
-      });
-  }
-
   protected emailChangeFieldError(name: string): string | null {
     return this.emailChangeErrors()?.[name]?.join(', ') ?? null;
   }
@@ -461,28 +395,6 @@ export class ProfileComponent implements OnInit {
           this.toast.error('profile.email_change.errors.generic');
         },
       });
-  }
-
-  private applyChangePwError(err: HttpErrorResponse): void {
-    const code = (err?.error as { code?: string } | null | undefined)?.code;
-    if (code === 'current_password_invalid') {
-      this.changePwErrors.set({
-        current_password: [this.transloco.translate('profile.errors.current_password_invalid')],
-      });
-      return;
-    }
-    if (code === 'password_unchanged') {
-      this.changePwErrors.set({
-        new_password: [this.transloco.translate('profile.errors.password_unchanged')],
-      });
-      return;
-    }
-    const { fields, detail } = extractServerError(err);
-    if (fields) {
-      this.changePwErrors.set(fields);
-      return;
-    }
-    this.toast.error(detail ?? 'profile.errors.unknown');
   }
 
   // --- Delete account ---

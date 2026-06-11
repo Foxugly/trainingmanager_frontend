@@ -81,6 +81,7 @@ function makeMe(quota: TeamQuotaStatus): Me {
     last_login: null,
     date_joined: '2026-01-01T00:00:00Z',
     is_staff: false,
+    is_superuser: false,
     member_id: null,
     team_quota: quota,
     calendar_token: 'tok-test',

@@ -19,7 +19,6 @@ export class UserMenuComponent {
 
   protected readonly currentUser = this.authService.currentUser;
   protected readonly isAuthenticated = computed(() => this.currentUser() !== null);
-  protected readonly isStaff = computed(() => this.currentUser()?.is_staff === true);
 
   protected readonly displayName = computed<string>(() => {
     const u = this.currentUser();
@@ -37,14 +36,12 @@ export class UserMenuComponent {
         icon: 'pi pi-user',
         routerLink: ['/profile'],
       },
+      {
+        label: this.transloco.translate('public.user_menu.change_password'),
+        icon: 'pi pi-key',
+        routerLink: ['/profile/password'],
+      },
     ];
-    if (this.isStaff()) {
-      items.push({
-        label: this.transloco.translate('public.user_menu.admin'),
-        icon: 'pi pi-cog',
-        routerLink: ['/admin'],
-      });
-    }
     items.push({ separator: true });
     items.push({
       label: this.transloco.translate('public.user_menu.logout'),

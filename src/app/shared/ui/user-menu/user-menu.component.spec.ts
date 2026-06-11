@@ -17,13 +17,13 @@ const baseUser: Me = {
   email: 'r@example.com',
   language: 'fr',
   is_staff: false,
+  is_superuser: false,
 } as unknown as Me;
 
-const staffUser: Me = { ...baseUser, id: 1, username: 'admin', is_staff: true };
+const superuser: Me = { ...baseUser, id: 1, username: 'admin', is_superuser: true };
 
 interface ProtectedFields {
   isAuthenticated(): boolean;
-  isStaff(): boolean;
   displayName(): string;
   menuItems(): MenuItem[];
   logout(): void;
@@ -75,34 +75,37 @@ describe('UserMenuComponent', () => {
     it('isAuthenticated is false', () => {
       expect(access(component).isAuthenticated()).toBe(false);
     });
-
-    it('isStaff is false', () => {
-      expect(access(component).isStaff()).toBe(false);
-    });
   });
 
-  describe('logged in (non-staff)', () => {
+  describe('logged in', () => {
     beforeEach(async () => {
       await setup(baseUser);
     });
 
-    it('isAuthenticated is true and isStaff is false', () => {
+    it('isAuthenticated is true', () => {
       expect(access(component).isAuthenticated()).toBe(true);
-      expect(access(component).isStaff()).toBe(false);
     });
 
     it('displayName uses "first last" when both are present', () => {
       expect(access(component).displayName()).toBe('Renaud Vilain');
     });
 
-    it('menu items contain Profile + Logout, no Admin', () => {
+    it('menu items contain Profile + Change password + Logout, no Admin', () => {
       const labels = access(component)
         .menuItems()
         .map((i) => i.label)
         .filter((l): l is string => typeof l === 'string');
       expect(labels).toContain('public.user_menu.profile');
+      expect(labels).toContain('public.user_menu.change_password');
       expect(labels).toContain('public.user_menu.logout');
       expect(labels).not.toContain('public.user_menu.admin');
+    });
+
+    it('the change-password item links to /profile/password', () => {
+      const item = access(component)
+        .menuItems()
+        .find((i) => i.label === 'public.user_menu.change_password');
+      expect(item?.routerLink).toEqual(['/profile/password']);
     });
 
     it('Logout menu item triggers AuthService.logout()', () => {
@@ -114,21 +117,21 @@ describe('UserMenuComponent', () => {
     });
   });
 
-  describe('logged in (staff)', () => {
+  describe('logged in (superuser)', () => {
     beforeEach(async () => {
-      await setup(staffUser);
+      await setup(superuser);
     });
 
-    it('menu items include Admin entry', () => {
+    it('menu items do NOT include an Admin entry (admin moved to the top menu)', () => {
       const labels = access(component)
         .menuItems()
         .map((i) => i.label)
         .filter((l): l is string => typeof l === 'string');
-      expect(labels).toContain('public.user_menu.admin');
+      expect(labels).not.toContain('public.user_menu.admin');
     });
 
     it('displayName falls back to username when first/last names are empty', async () => {
-      await setup({ ...staffUser, first_name: '', last_name: '' } as Me);
+      await setup({ ...superuser, first_name: '', last_name: '' } as Me);
       expect(access(component).displayName()).toBe('admin');
     });
   });
