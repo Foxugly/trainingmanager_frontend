@@ -1079,6 +1079,7 @@ export class EventsService extends BaseService implements EventsServiceInterface
         const page = requestParameters?.page;
         const pageSize = requestParameters?.pageSize;
         const referProgram = requestParameters?.referProgram;
+        const referProgramIn = requestParameters?.referProgramIn;
         const search = requestParameters?.search;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
@@ -1152,6 +1153,15 @@ export class EventsService extends BaseService implements EventsServiceInterface
             <any>referProgram,
             QueryParamStyle.Form,
             true,
+        );
+
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'refer_program__in',
+            <any>referProgramIn,
+            QueryParamStyle.Form,
+            false,
         );
 
 

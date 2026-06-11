@@ -25,7 +25,6 @@ import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { Tooltip } from 'primeng/tooltip';
 import { catchError, firstValueFrom, of, switchMap } from 'rxjs';
 import { EventsService } from '../../../api/api/events.service';
-import { ProgramsService } from '../../../api/api/programs.service';
 import { RoundsService } from '../../../api/api/rounds.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { Event } from '../../../api/model/event';
@@ -101,7 +100,6 @@ export class EventsDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly eventsService = inject(EventsService);
-  private readonly programsService = inject(ProgramsService);
   private readonly teamsService = inject(TeamsService);
   private readonly roundsService = inject(RoundsService);
   private readonly authService = inject(AuthService);
@@ -450,8 +448,11 @@ export class EventsDetailComponent implements OnInit {
             emitEvent: false,
           });
           this.loading.set(false);
-          if (e.refer_program?.id != null) {
-            this.loadProgramTeam(e.refer_program.id);
+          if (e.team_id != null) {
+            // Fetch the team directly via the event's team_id (now embedded),
+            // instead of chaining programsRetrieve -> teamsRetrieve (one fewer
+            // round-trip before role/permission gating resolves).
+            this.loadTeam(e.team_id);
           }
           // The training editor (app-event-training) loads its own rounds from
           // the event's round id list.
@@ -472,19 +473,12 @@ export class EventsDetailComponent implements OnInit {
       });
   }
 
-  private loadProgramTeam(programId: number): void {
-    this.programsService
-      .programsRetrieve({ id: programId })
-      .pipe(
-        switchMap((p) =>
-          p.team?.id != null ? this.teamsService.teamsRetrieve({ id: p.team.id }) : of(null),
-        ),
-        takeUntilDestroyed(this.destroyRef),
-      )
+  private loadTeam(teamId: number): void {
+    this.teamsService
+      .teamsRetrieve({ id: teamId })
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (t) => {
-          if (t) this.team.set(t);
-        },
+        next: (t) => this.team.set(t),
         error: () => {
           // The team drives role/permission gating; if it can't be resolved the
           // viewer is treated as a restricted (non-manager) viewer. Surface a

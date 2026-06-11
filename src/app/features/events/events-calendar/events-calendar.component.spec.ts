@@ -90,6 +90,7 @@ const event1: Event = {
   hour_end: null,
   total: 0,
   refer_program: { id: 4, name: 'Cycle aérobie' },
+  team_id: 4,
   sport,
   place: null,
   equipment_items: [],
@@ -162,22 +163,31 @@ describe('EventsCalendarComponent', () => {
         ),
     };
     programsMock = {
-      programsList: vi.fn().mockImplementation((params: { team?: number } = {}) => {
-        if (opts.programsListFails) return throwError(() => new Error('boom'));
-        // single-object request params (ProgramsListRequestParams)
-        const teamId = params.team;
-        if (teamId === 4) return of({ count: 1, results: [program] });
-        if (teamId === 5) return of({ count: 1, results: [program2] });
-        return of({ count: 0, results: [] });
-      }),
+      // The component now loads all teams' programs in ONE request
+      // (programsList({ teamIn })); keep single-team back-compat just in case.
+      programsList: vi
+        .fn()
+        .mockImplementation((params: { team?: number; teamIn?: number[] } = {}) => {
+          if (opts.programsListFails) return throwError(() => new Error('boom'));
+          const ids = params.teamIn ?? (params.team != null ? [params.team] : []);
+          const results = [
+            ...(ids.includes(4) ? [program] : []),
+            ...(ids.includes(5) ? [program2] : []),
+          ];
+          return of({ count: results.length, results });
+        }),
     };
     eventsMock = {
-      eventsList: vi.fn().mockImplementation((params: { referProgram?: number } = {}) => {
-        // single-object request params (EventsListRequestParams)
-        const referProgram = params.referProgram;
-        if (referProgram === 4) return of({ count: 2, results: [event1, event2] });
-        return of({ count: 0, results: [] });
-      }),
+      // The component now fetches all selected programs' events in ONE request
+      // (eventsList({ referProgramIn })); keep single-program back-compat.
+      eventsList: vi
+        .fn()
+        .mockImplementation((params: { referProgram?: number; referProgramIn?: number[] } = {}) => {
+          const ids =
+            params.referProgramIn ?? (params.referProgram != null ? [params.referProgram] : []);
+          if (ids.includes(4)) return of({ count: 2, results: [event1, event2] });
+          return of({ count: 0, results: [] });
+        }),
     };
 
     await TestBed.configureTestingModule({

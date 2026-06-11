@@ -286,21 +286,17 @@ export class EventsCalendarComponent implements OnInit {
     try {
       const start = this.gridStart();
       const end = this.gridEnd();
-      const gte = isoDate(start);
-      const lte = isoDate(end);
-      const requests = programIds.map((pid) =>
-        firstValueFrom(
-          this.eventsService.eventsList({
-            dateGte: gte,
-            dateLte: lte,
-            ordering: 'date',
-            referProgram: pid,
-          }),
-        ),
+      // One request for all selected programs (?refer_program__in=) instead of
+      // one per program (the previous fan-out grew with the program count).
+      const res = await firstValueFrom(
+        this.eventsService.eventsList({
+          dateGte: isoDate(start),
+          dateLte: isoDate(end),
+          ordering: 'date',
+          referProgramIn: programIds,
+        }),
       );
-      const responses = await Promise.all(requests);
-      const all: Event[] = responses.flatMap((r) => r.results ?? []);
-      this.events.set(all);
+      this.events.set(res.results ?? []);
     } catch {
       this.events.set([]);
     } finally {

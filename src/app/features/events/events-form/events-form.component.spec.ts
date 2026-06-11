@@ -82,6 +82,7 @@ const eventFromBackend: Event = {
   hour_end: '19:30:00',
   total: 1500,
   refer_program: { id: 4, name: 'Cycle aérobie' },
+  team_id: 4,
   sport,
   place: null,
   equipment_items: [],

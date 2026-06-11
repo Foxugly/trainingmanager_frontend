@@ -44,6 +44,7 @@ export interface Event {
     hour_end?: string | null;
     total?: number;
     readonly refer_program: ProgramMinimal;
+    readonly team_id: number;
     readonly sport: Sport;
     readonly rounds: Array<number>;
     readonly rounds_detail: Array<EventRoundDetail>;

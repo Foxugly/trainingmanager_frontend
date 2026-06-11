@@ -115,6 +115,7 @@ const eventA: Event = {
   hour_end: '19:30:00',
   total: 0,
   refer_program: { id: 7, name: 'Plan IA été' },
+  team_id: 1,
   sport,
   place: null,
   equipment_items: [],

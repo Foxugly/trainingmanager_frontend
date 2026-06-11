@@ -93,6 +93,7 @@ const eventNoRounds: Event = {
   hour_end: null,
   total: undefined,
   refer_program: { id: 4, name: 'Cycle aérobie' },
+  team_id: 4,
   sport,
   place: null,
   equipment_items: [],
@@ -401,9 +402,11 @@ describe('EventsDetailComponent', () => {
     await setup();
   });
 
-  it('loads the event for route :id and resolves the team for role', () => {
+  it('loads the event for route :id and resolves the team directly via event.team_id', () => {
     expect(eventsMock.eventsRetrieve).toHaveBeenCalledWith({ id: 7 });
-    expect(programsMock.programsRetrieve).toHaveBeenCalledWith({ id: 4 });
+    // team is fetched directly from the embedded team_id — no programsRetrieve
+    // hop (the previous event->program->team cascade was collapsed to event->team).
+    expect(programsMock.programsRetrieve).not.toHaveBeenCalled();
     expect(teamsMock.teamsRetrieve).toHaveBeenCalledWith({ id: 4 });
     expect(access(component).event()?.id).toBe(7);
     expect(access(component).canRegenerate()).toBe(true);

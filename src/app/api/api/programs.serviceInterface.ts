@@ -46,6 +46,7 @@ export interface ProgramsListRequestParams {
     pageSize?: number;
     search?: string;
     team?: number;
+    teamIn?: Array<number>;
 }
 
 export interface ProgramsPartialUpdateRequestParams {

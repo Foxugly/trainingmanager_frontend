@@ -285,6 +285,7 @@ export class ProgramsService extends BaseService implements ProgramsServiceInter
         const pageSize = requestParameters?.pageSize;
         const search = requestParameters?.search;
         const team = requestParameters?.team;
+        const teamIn = requestParameters?.teamIn;
 
         let localVarQueryParameters = new OpenApiHttpParams(this.encoder);
 
@@ -375,6 +376,15 @@ export class ProgramsService extends BaseService implements ProgramsServiceInter
             <any>team,
             QueryParamStyle.Form,
             true,
+        );
+
+
+        localVarQueryParameters = this.addToHttpParams(
+            localVarQueryParameters,
+            'team__in',
+            <any>teamIn,
+            QueryParamStyle.Form,
+            false,
         );
 
 

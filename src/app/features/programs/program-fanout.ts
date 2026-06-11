@@ -3,27 +3,22 @@ import { ProgramsService } from '../../api/api/programs.service';
 import { Program } from '../../api/model/program';
 
 /**
- * Fan out one `programsList({ team })` request per team id, await them all, then
- * merge + de-duplicate the results by program id (a program could in principle
- * surface under more than one team query). Returns the deduped program list.
+ * Load every program belonging to the given teams in a SINGLE request
+ * (`programsList({ teamIn })`, server-side `?team__in=`), de-duplicated by
+ * program id. Previously this fanned out one request per team.
  *
- * Shared by events-form (program dropdown) and events-calendar (program filter),
- * which previously each carried a near-identical copy of this logic.
+ * Shared by events-form (program dropdown) and events-calendar (program filter).
  *
- * Returns an empty array when `teamIds` is empty. Rejects if any underlying
- * request fails (callers surface their own load-error toast).
+ * Returns an empty array when `teamIds` is empty. Rejects if the request fails
+ * (callers surface their own load-error toast).
  */
 export async function loadProgramsForTeams(
   programsService: ProgramsService,
   teamIds: number[],
 ): Promise<Program[]> {
   if (teamIds.length === 0) return [];
-  const requests = teamIds.map((teamId) =>
-    firstValueFrom(programsService.programsList({ team: teamId })),
-  );
-  const responses = await Promise.all(requests);
-  const all: Program[] = responses.flatMap((r) => r.results ?? []);
+  const res = await firstValueFrom(programsService.programsList({ teamIn: teamIds }));
   const dedup = new Map<number, Program>();
-  for (const p of all) dedup.set(p.id, p);
+  for (const p of res.results ?? []) dedup.set(p.id, p);
   return Array.from(dedup.values());
 }

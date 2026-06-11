@@ -116,6 +116,7 @@ export interface EventsListRequestParams {
     page?: number;
     pageSize?: number;
     referProgram?: number;
+    referProgramIn?: Array<number>;
     search?: string;
 }
 
