@@ -572,7 +572,7 @@
         type="submit"
         [label]="'teams.member_dialog.submit' | transloco"
         [loading]="addingMember()"
-        [disabled]="addMemberForm.invalid"
+        [disabled]="addMemberForm.invalid || addingMember()"
       />
     </div>
   </form>

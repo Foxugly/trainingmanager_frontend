@@ -94,6 +94,7 @@ export class RegisterComponent implements AfterViewInit, OnDestroy {
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly fieldErrors = signal<FieldErrors | null>(null);
   protected readonly captchaError = signal<boolean>(false);
+  protected readonly turnstileFailed = signal<boolean>(false);
   protected readonly retryAfterSeconds = signal<number | null>(null);
   protected readonly retryCountdown = signal<number | null>(null);
 
@@ -146,7 +147,12 @@ export class RegisterComponent implements AfterViewInit, OnDestroy {
   private tryRenderTurnstile(attempts: number): void {
     if (typeof window === 'undefined') return;
     if (!window.turnstile?.render) {
-      if (attempts >= 20) return;
+      if (attempts >= 20) {
+        // The script never became ready (ad-blocker, network) — surface a
+        // hint + retry rather than leaving an empty box that fails on submit.
+        this.turnstileFailed.set(true);
+        return;
+      }
       this.turnstileRetryTimer = setTimeout(
         () => this.tryRenderTurnstile(attempts + 1),
         500,
@@ -159,6 +165,12 @@ export class RegisterComponent implements AfterViewInit, OnDestroy {
     this.turnstileWidgetId = window.turnstile.render(container, {
       sitekey: this.turnstileSiteKey,
     });
+  }
+
+  /** User-triggered retry after the widget failed to load. */
+  protected retryTurnstile(): void {
+    this.turnstileFailed.set(false);
+    this.tryRenderTurnstile(0);
   }
 
   protected submit(): void {

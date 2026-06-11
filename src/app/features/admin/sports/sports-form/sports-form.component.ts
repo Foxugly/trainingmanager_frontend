@@ -25,6 +25,7 @@ import { SportsService } from '../../../../api/api/sports.service';
 import { EnergySystem } from '../../../../api/model/energy-system';
 import { TrainingTypeEnum } from '../../../../api/model/training-type-enum';
 import { ToastService } from '../../../../core/notifications/toast.service';
+import { atLeastOneName } from '../../../../shared/forms/at-least-one-name.validator';
 import { type FieldErrors, extractServerError } from '../../../../shared/forms/notify-error';
 import {
   ActiveToggleComponent,
@@ -94,16 +95,19 @@ export class SportsFormComponent implements OnInit {
     errorDetail: this.transloco.translate('common.update_failed'),
   }));
 
-  protected readonly form = this.fb.nonNullable.group({
-    name_fr: [''],
-    name_nl: [''],
-    name_en: [''],
-    name_it: [''],
-    name_es: [''],
-    slug: ['', Validators.required],
-    energy_systems: [[] as number[]],
-    default_training_type: ['structured'],
-  });
+  protected readonly form = this.fb.nonNullable.group(
+    {
+      name_fr: [''],
+      name_nl: [''],
+      name_en: [''],
+      name_it: [''],
+      name_es: [''],
+      slug: ['', Validators.required],
+      energy_systems: [[] as number[]],
+      default_training_type: ['structured'],
+    },
+    { validators: [atLeastOneName] },
+  );
 
   /** Training-type select options, re-translated on language change. */
   protected readonly trainingTypeOptions = computed(() => {

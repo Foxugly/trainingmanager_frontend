@@ -60,6 +60,7 @@ export class DuplicateEventDialogComponent {
     date: this.fb.nonNullable.control<Date | null>(null, [Validators.required]),
     repeat_weekly: this.fb.nonNullable.control<boolean>(false),
     occurrences: this.fb.nonNullable.control<number>(4, [
+      Validators.required,
       Validators.min(2),
       Validators.max(52),
     ]),
@@ -94,7 +95,11 @@ export class DuplicateEventDialogComponent {
   protected readonly repeatWeekly = () => this.form.controls.repeat_weekly.value;
 
   protected canSubmit(): boolean {
-    return this.form.controls.date.value != null && !this.loading();
+    return (
+      this.form.controls.date.value != null &&
+      (!this.repeatWeekly() || this.form.controls.occurrences.valid) &&
+      !this.loading()
+    );
   }
 
   protected onConfirm(): void {

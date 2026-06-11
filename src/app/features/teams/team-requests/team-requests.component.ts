@@ -259,6 +259,7 @@ export class TeamRequestsComponent {
   }
 
   protected submitInvite(): void {
+    if (this.inviting()) return;
     const id = this.teamId();
     if (this.inviteForm.invalid) return;
     this.inviting.set(true);

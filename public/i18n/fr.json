@@ -1121,6 +1121,7 @@
       "rate_limit_countdown": "Trop de tentatives. Réessayez dans {{seconds}}s.",
       "back_to_login": "← Retour à la connexion"
     },
+    "turnstile_failed": "Le widget de vérification n'a pas pu se charger. Vérifiez votre bloqueur de publicités / votre connexion, puis réessayez.",
     "forgot_password_sent": {
       "title": "Vérifiez vos emails",
       "body_with_email": "Si un compte correspond à {{email}}, un lien de réinitialisation vient d'être envoyé.",
@@ -1237,6 +1238,7 @@
     "calendar_copied": "Lien copié",
     "calendar_regenerate": "Régénérer le lien",
     "calendar_regenerate_confirm": "L'ancien lien cessera de fonctionner. Continuer ?",
+    "calendar_regenerate_confirm_title": "Régénérer le lien du calendrier ?",
     "calendar_regenerated": "Nouveau lien généré",
     "digest_email": "E-mail digest quotidien",
     "digest_email_help": "Recevoir un seul résumé quotidien de vos notifications au lieu d'un e-mail par événement."
@@ -1244,6 +1246,9 @@
   "admin": {
     "title": "Administration",
     "coming_soon": "Bientôt disponible",
+    "common": {
+      "name_required": "Indiquez un nom dans au moins une langue."
+    },
     "nav": {
       "sports": "Sports",
       "energy_systems": "Systèmes énergétiques",

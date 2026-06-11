@@ -3,7 +3,7 @@ import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AuthService as AuthApi } from '../../api/api/auth.service';
@@ -486,11 +486,18 @@ describe('ProfileComponent', () => {
     );
   });
 
-  it('regenerateCalendarUrl rotates and updates the URL on confirm', () => {
-    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+  // The rotation now goes through PrimeNG's ConfirmationService (themed dialog),
+  // not native window.confirm. Drive accept/reject via the captured confirm options.
+  const confirmService = () =>
+    fixture.debugElement.injector.get(ConfirmationService);
+
+  it('regenerateCalendarUrl rotates and updates the URL on confirm-accept', () => {
+    const confirmSpy = vi.spyOn(confirmService(), 'confirm');
     meMock.meCalendarTokenRotate.mockReturnValue(of({ calendar_token: 'tok-new999' }));
 
     access(component).regenerateCalendarUrl();
+    // Simulate the user accepting the confirmation dialog.
+    confirmSpy.mock.calls[0][0].accept?.();
 
     expect(meMock.meCalendarTokenRotate).toHaveBeenCalled();
     expect(access(component).calendarUrl()).toBe(
@@ -502,30 +509,30 @@ describe('ProfileComponent', () => {
     expect(messageService.add).toHaveBeenCalledWith(
       expect.objectContaining({ severity: 'success' }),
     );
-    confirmSpy.mockRestore();
   });
 
-  it('regenerateCalendarUrl is a no-op when the user cancels the confirm', () => {
-    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
+  it('regenerateCalendarUrl is a no-op when the user rejects the confirm', () => {
+    const confirmSpy = vi.spyOn(confirmService(), 'confirm');
 
     access(component).regenerateCalendarUrl();
+    // User dismisses the dialog: the accept callback is never invoked.
 
+    expect(confirmSpy).toHaveBeenCalled();
     expect(meMock.meCalendarTokenRotate).not.toHaveBeenCalled();
     expect(access(component).calendarUrl()).toBe(
       'http://localhost:8000/api/v1/calendar/tok-abc123.ics',
     );
-    confirmSpy.mockRestore();
   });
 
   it('regenerateCalendarUrl toasts an error on failure', () => {
-    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const confirmSpy = vi.spyOn(confirmService(), 'confirm');
     meMock.meCalendarTokenRotate.mockReturnValue(throwError(() => ({ status: 500 })));
 
     access(component).regenerateCalendarUrl();
+    confirmSpy.mock.calls[0][0].accept?.();
 
     expect(messageService.add).toHaveBeenCalledWith(expect.objectContaining({ severity: 'error' }));
     expect(access(component).calendarRotating()).toBe(false);
-    confirmSpy.mockRestore();
   });
 
   // --- RGPD data export ---

@@ -29,13 +29,17 @@
           }
           <p-button
             type="button"
-            [label]="'auth.login.resend_email_button' | transloco"
+            [label]="
+              resendCooldownActive()
+                ? ('auth.check_email.resend_cooldown' | transloco: { seconds: resendCooldown() })
+                : ('auth.login.resend_email_button' | transloco)
+            "
             icon="pi pi-refresh"
             severity="secondary"
             [outlined]="true"
             size="small"
             [loading]="resending()"
-            [disabled]="resending() || resendDone()"
+            [disabled]="resending() || resendCooldownActive()"
             (onClick)="resendVerification()"
           />
         </div>

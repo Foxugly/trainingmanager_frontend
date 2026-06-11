@@ -593,6 +593,7 @@ export class TeamsDetailComponent implements OnInit {
   }
 
   protected submitAddMember(): void {
+    if (this.addingMember()) return;
     const id = this.teamId();
     if (id === null || this.addMemberForm.invalid) return;
 

@@ -57,6 +57,7 @@ export class EventFreeformComponent {
   }
 
   protected save(): void {
+    if (this.saving()) return;
     this.saving.set(true);
     this.eventsService
       .eventsPartialUpdate({ id: this.event().id, patchedEventRequest: { training_richtext: this.draft() } })

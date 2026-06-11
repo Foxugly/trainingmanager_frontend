@@ -92,9 +92,11 @@ describe('EnergySystemsFormComponent', () => {
     await setup();
   });
 
-  it('starts in create mode (no esId, form is valid even when empty)', () => {
+  it('starts in create mode (no esId, form invalid until at least one name is set)', () => {
     expect(access(component).esId()).toBeNull();
-    // No required fields → valid by default
+    // Group-level atLeastOneName validator: empty → invalid.
+    expect(access(component).form.invalid).toBe(true);
+    access(component).form.patchValue({ name_fr: 'Endurance' });
     expect(access(component).form.valid).toBe(true);
   });
 
@@ -168,6 +170,7 @@ describe('EnergySystemsFormComponent', () => {
         error: { fields: { name_fr: ['Required.'] } },
       })),
     );
+    access(component).form.patchValue({ name_fr: 'Endurance' });
     access(component).submit();
 
     expect(access(component).fieldErrors()).toEqual({ name_fr: ['Required.'] });
@@ -178,6 +181,7 @@ describe('EnergySystemsFormComponent', () => {
     serviceMock.energySystemsCreate.mockReturnValue(
       throwError(() => ({ status: 500, error: { detail: 'Server unhappy' } })),
     );
+    access(component).form.patchValue({ name_fr: 'Endurance' });
     access(component).submit();
 
     expect(access(component).fieldErrors()).toBeNull();

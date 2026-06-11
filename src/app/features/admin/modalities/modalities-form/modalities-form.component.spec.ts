@@ -123,6 +123,9 @@ describe('ModalitiesFormComponent', () => {
     expect(access(component).sportId()).toBe(1);
     expect(access(component).modalityId()).toBeNull();
     expect(serviceMock.sportsRetrieve).toHaveBeenCalledWith({ id: 1, includeInactive: true });
+    // Group-level atLeastOneName validator: empty → invalid until a name is set.
+    expect(access(component).form.invalid).toBe(true);
+    access(component).form.patchValue({ name_fr: 'Crawl' });
     expect(access(component).form.valid).toBe(true);
   });
 
@@ -202,6 +205,7 @@ describe('ModalitiesFormComponent', () => {
         error: { fields: { name_fr: ['Required.'] } },
       })),
     );
+    access(component).form.patchValue({ name_fr: 'Crawl' });
     access(component).submit();
 
     expect(access(component).fieldErrors()).toEqual({ name_fr: ['Required.'] });
@@ -212,6 +216,7 @@ describe('ModalitiesFormComponent', () => {
     serviceMock.sportsModalitiesCreate.mockReturnValue(
       throwError(() => ({ status: 500, error: { detail: 'Server unhappy' } })),
     );
+    access(component).form.patchValue({ name_fr: 'Crawl' });
     access(component).submit();
 
     expect(access(component).fieldErrors()).toBeNull();

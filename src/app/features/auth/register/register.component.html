@@ -130,8 +130,19 @@
         />
       </div>
 
-      <div class="flex justify-center my-2">
+      <div class="flex flex-col items-center gap-2 my-2">
         <div #turnstile></div>
+        @if (turnstileFailed()) {
+          <p-message severity="warn" [text]="'auth.turnstile_failed' | transloco" />
+          <p-button
+            type="button"
+            severity="secondary"
+            [text]="true"
+            icon="pi pi-refresh"
+            [label]="'common.retry' | transloco"
+            (onClick)="retryTurnstile()"
+          />
+        }
       </div>
 
       @if (errorMessage(); as msg) {

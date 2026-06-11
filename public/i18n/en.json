@@ -1121,6 +1121,7 @@
       "rate_limit_countdown": "Too many attempts. Try again in {{seconds}}s.",
       "back_to_login": "← Back to sign in"
     },
+    "turnstile_failed": "The verification widget failed to load. Check your ad-blocker / network, then retry.",
     "forgot_password_sent": {
       "title": "Check your inbox",
       "body_with_email": "If an account matches {{email}}, a reset link has just been sent.",
@@ -1237,6 +1238,7 @@
     "calendar_copied": "Link copied",
     "calendar_regenerate": "Regenerate link",
     "calendar_regenerate_confirm": "The old link will stop working. Continue?",
+    "calendar_regenerate_confirm_title": "Regenerate the calendar link?",
     "calendar_regenerated": "New link generated",
     "digest_email": "Daily digest email",
     "digest_email_help": "Receive one daily summary of your notifications instead of an email per event."
@@ -1244,6 +1246,9 @@
   "admin": {
     "title": "Administration",
     "coming_soon": "Coming soon",
+    "common": {
+      "name_required": "Provide a name in at least one language."
+    },
     "nav": {
       "sports": "Sports",
       "energy_systems": "Energy Systems",

@@ -182,7 +182,7 @@
         [label]="'teams.invite_dialog.submit' | transloco"
         icon="pi pi-send"
         [loading]="inviting()"
-        [disabled]="inviteForm.invalid"
+        [disabled]="inviteForm.invalid || inviting()"
       />
     </div>
   </form>

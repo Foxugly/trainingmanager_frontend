@@ -12,8 +12,9 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
+import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Dialog } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
 import { Password } from 'primeng/password';
@@ -60,6 +61,7 @@ interface ProfileFormValue {
     InputText,
     Select,
     Button,
+    ConfirmDialog,
     Dialog,
     Password,
     Tabs,
@@ -77,6 +79,7 @@ interface ProfileFormValue {
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
+  providers: [ConfirmationService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfileComponent implements OnInit {
@@ -88,6 +91,7 @@ export class ProfileComponent implements OnInit {
   private readonly languageService = inject(LanguageService);
   private readonly transloco = inject(TranslocoService);
   private readonly messageService = inject(MessageService);
+  private readonly confirmationService = inject(ConfirmationService);
   private readonly toast = inject(ToastService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -260,9 +264,17 @@ export class ProfileComponent implements OnInit {
 
   protected regenerateCalendarUrl(): void {
     if (this.calendarRotating()) return;
-    if (!window.confirm(this.transloco.translate('profile.calendar_regenerate_confirm'))) {
-      return;
-    }
+    this.confirmationService.confirm({
+      header: this.transloco.translate('profile.calendar_regenerate_confirm_title'),
+      message: this.transloco.translate('profile.calendar_regenerate_confirm'),
+      acceptLabel: this.transloco.translate('profile.calendar_regenerate'),
+      rejectLabel: this.transloco.translate('common.cancel'),
+      accept: () => this.rotateCalendarToken(),
+    });
+  }
+
+  private rotateCalendarToken(): void {
+    if (this.calendarRotating()) return;
     this.calendarRotating.set(true);
     this.meService
       .meCalendarTokenRotate()

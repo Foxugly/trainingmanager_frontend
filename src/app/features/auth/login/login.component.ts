@@ -23,6 +23,8 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { parseRetryAfterSeconds } from '../shared/retry-after';
 import { safeReturnUrl } from '../shared/safe-return-url';
 
+const RESEND_COOLDOWN_SECONDS = 30;
+
 @Component({
   selector: 'app-login',
   imports: [
@@ -69,6 +71,12 @@ export class LoginComponent implements OnDestroy {
   protected readonly resendDone = signal(false);
   protected readonly resendError = signal<string | null>(null);
   protected readonly retryCountdown = signal<number | null>(null);
+  /** Timed cooldown after a resend so the button re-enables (no permanent lock). */
+  protected readonly resendCooldown = signal<number | null>(null);
+  protected readonly resendCooldownActive = computed(() => {
+    const v = this.resendCooldown();
+    return v !== null && v > 0;
+  });
 
   protected readonly submitDisabled = computed(() => {
     if (this.loading()) return true;
@@ -77,11 +85,13 @@ export class LoginComponent implements OnDestroy {
   });
 
   private countdownTimer: ReturnType<typeof setInterval> | null = null;
+  private resendCooldownTimer: ReturnType<typeof setInterval> | null = null;
 
   ngOnDestroy(): void {
     // Stop the rate-limit countdown if the user navigates away mid-cooldown,
     // otherwise the interval keeps firing on a destroyed component.
     if (this.countdownTimer !== null) clearInterval(this.countdownTimer);
+    if (this.resendCooldownTimer !== null) clearInterval(this.resendCooldownTimer);
   }
 
   protected submit(): void {
@@ -189,16 +199,38 @@ export class LoginComponent implements OnDestroy {
         next: () => {
           this.resending.set(false);
           this.resendDone.set(true);
+          // Timed cooldown rather than a permanent lock: the user can retry
+          // once it elapses if the email never arrives.
+          this.startResendCooldown(RESEND_COOLDOWN_SECONDS);
         },
         error: (err: HttpErrorResponse) => {
           this.resending.set(false);
           if (err.status === 429) {
+            const retryAfter = parseRetryAfterSeconds(err.headers);
+            this.startResendCooldown(retryAfter ?? RESEND_COOLDOWN_SECONDS);
             this.resendError.set('auth.login.resend_rate_limited');
           } else {
             this.resendError.set('auth.errors.unknown');
           }
         },
       });
+  }
+
+  private startResendCooldown(seconds: number): void {
+    this.resendCooldown.set(seconds);
+    if (this.resendCooldownTimer !== null) clearInterval(this.resendCooldownTimer);
+    this.resendCooldownTimer = setInterval(() => {
+      const v = this.resendCooldown();
+      if (v === null || v <= 1) {
+        this.resendCooldown.set(null);
+        if (this.resendCooldownTimer !== null) {
+          clearInterval(this.resendCooldownTimer);
+          this.resendCooldownTimer = null;
+        }
+      } else {
+        this.resendCooldown.set(v - 1);
+      }
+    }, 1000);
   }
 
   private startRetryCountdown(seconds: number): void {

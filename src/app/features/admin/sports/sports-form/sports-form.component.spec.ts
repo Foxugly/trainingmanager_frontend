@@ -100,10 +100,13 @@ describe('SportsFormComponent', () => {
     await setup();
   });
 
-  it('starts in create mode (no sportId, slug-required form invalid until filled)', () => {
+  it('starts in create mode (no sportId, form invalid until slug + a name are filled)', () => {
     expect(access(component).sportId()).toBeNull();
     expect(access(component).form.invalid).toBe(true);
+    // Slug alone no longer suffices — the atLeastOneName group validator also requires a name.
     access(component).form.patchValue({ slug: 'tennis' });
+    expect(access(component).form.invalid).toBe(true);
+    access(component).form.patchValue({ name_fr: 'Tennis' });
     expect(access(component).form.valid).toBe(true);
   });
 
@@ -172,7 +175,7 @@ describe('SportsFormComponent', () => {
 
   it('includes default_training_type in the create payload', () => {
     vi.spyOn(router, 'navigate').mockResolvedValue(true);
-    access(component).form.patchValue({ slug: 'tennis', default_training_type: 'freeform' });
+    access(component).form.patchValue({ slug: 'tennis', name_fr: 'Tennis', default_training_type: 'freeform' });
     access(component).submit();
     expect(sportsServiceMock.sportsCreate).toHaveBeenCalledWith({
       sportAdminRequest: expect.objectContaining({ default_training_type: 'freeform' }),
@@ -193,7 +196,7 @@ describe('SportsFormComponent', () => {
         error: { fields: { slug: ['Already exists.'] } },
       })),
     );
-    access(component).form.patchValue({ slug: 'duplicate' });
+    access(component).form.patchValue({ slug: 'duplicate', name_fr: 'Duplicate' });
     access(component).submit();
 
     expect(access(component).fieldErrors()).toEqual({ slug: ['Already exists.'] });
@@ -204,7 +207,7 @@ describe('SportsFormComponent', () => {
     sportsServiceMock.sportsCreate.mockReturnValue(
       throwError(() => ({ status: 500, error: { detail: 'Server unhappy' } })),
     );
-    access(component).form.patchValue({ slug: 'whatever' });
+    access(component).form.patchValue({ slug: 'whatever', name_fr: 'Whatever' });
     access(component).submit();
 
     expect(access(component).fieldErrors()).toBeNull();

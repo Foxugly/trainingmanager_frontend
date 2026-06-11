@@ -29,6 +29,8 @@ interface ProtectedFields {
   resending(): boolean;
   resendDone(): boolean;
   resendError(): string | null;
+  resendCooldown(): number | null;
+  resendCooldownActive(): boolean;
   retryCountdown(): number | null;
   submit(): void;
   resendVerification(): void;
@@ -182,12 +184,15 @@ describe('LoginComponent', () => {
     expect(authMock.resendEmail).not.toHaveBeenCalled();
   });
 
-  it('resendVerification(): success → resendDone=true', () => {
+  it('resendVerification(): success → resendDone=true and a timed cooldown starts', () => {
     authMock.resendEmail.mockReturnValue(of({ detail: 'ok' }));
     access(component).form.patchValue({ email: 'a@b.c' });
     access(component).resendVerification();
     expect(authMock.resendEmail).toHaveBeenCalledWith('a@b.c');
     expect(access(component).resendDone()).toBe(true);
+    // Cooldown (not a permanent lock) so the button re-enables once it elapses.
+    expect(access(component).resendCooldownActive()).toBe(true);
+    expect(access(component).resendCooldown()).toBeGreaterThan(0);
   });
 
   it('resendVerification(): 429 → resendError=resend_rate_limited', () => {

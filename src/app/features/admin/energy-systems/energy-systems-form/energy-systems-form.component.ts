@@ -19,6 +19,7 @@ import { InputText } from 'primeng/inputtext';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { EnergySystemsService } from '../../../../api/api/energy-systems.service';
 import { ToastService } from '../../../../core/notifications/toast.service';
+import { atLeastOneName } from '../../../../shared/forms/at-least-one-name.validator';
 import { type FieldErrors, extractServerError } from '../../../../shared/forms/notify-error';
 import {
   ActiveToggleComponent,
@@ -85,13 +86,16 @@ export class EnergySystemsFormComponent implements OnInit {
     errorDetail: this.transloco.translate('common.update_failed'),
   }));
 
-  protected readonly form = this.fb.nonNullable.group({
-    name_fr: [''],
-    name_nl: [''],
-    name_en: [''],
-    name_it: [''],
-    name_es: [''],
-  });
+  protected readonly form = this.fb.nonNullable.group(
+    {
+      name_fr: [''],
+      name_nl: [''],
+      name_en: [''],
+      name_it: [''],
+      name_es: [''],
+    },
+    { validators: [atLeastOneName] },
+  );
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');

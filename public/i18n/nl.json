@@ -1146,6 +1146,7 @@
       "rate_limit_countdown": "Te veel pogingen. Probeer over {{seconds}}s opnieuw.",
       "back_to_login": "← Terug naar inloggen"
     },
+    "turnstile_failed": "De verificatiewidget kon niet worden geladen. Controleer je adblocker / netwerk en probeer het opnieuw.",
     "forgot_password_sent": {
       "title": "Controleer je inbox",
       "body_with_email": "Als er een account is dat overeenkomt met {{email}}, is er net een resetlink verstuurd.",
@@ -1237,6 +1238,7 @@
     "calendar_copied": "Link gekopieerd",
     "calendar_regenerate": "Link opnieuw genereren",
     "calendar_regenerate_confirm": "De oude link werkt niet meer. Doorgaan?",
+    "calendar_regenerate_confirm_title": "Kalenderlink opnieuw genereren?",
     "calendar_regenerated": "Nieuwe link gegenereerd",
     "digest_email": "Dagelijkse digest-e-mail",
     "digest_email_help": "Ontvang één dagelijkse samenvatting van je notificaties in plaats van een e-mail per gebeurtenis."
@@ -1244,6 +1246,9 @@
   "admin": {
     "title": "Beheer",
     "coming_soon": "Binnenkort beschikbaar",
+    "common": {
+      "name_required": "Geef een naam op in ten minste één taal."
+    },
     "nav": {
       "sports": "Sporten",
       "energy_systems": "Energiesystemen",

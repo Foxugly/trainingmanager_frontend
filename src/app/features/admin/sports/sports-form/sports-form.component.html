@@ -86,6 +86,9 @@
           </p-tabs>
         </app-meta-field>
       </div>
+      @if (form.errors?.['nameRequired'] && form.dirty) {
+        <small class="text-xs text-red-700">{{ 'admin.common.name_required' | transloco }}</small>
+      }
     </form>
 
     <app-form-footer
