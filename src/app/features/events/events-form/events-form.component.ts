@@ -27,6 +27,7 @@ import { DatePicker } from 'primeng/datepicker';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
+import { Skeleton } from 'primeng/skeleton';
 import { EventsService } from '../../../api/api/events.service';
 import { ProgramsService } from '../../../api/api/programs.service';
 import { TeamsService } from '../../../api/api/teams.service';
@@ -98,6 +99,7 @@ function timeRangeValidator(group: AbstractControl): ValidationErrors | null {
     DatePicker,
     ColorPicker,
     Button,
+    Skeleton,
     PageHeaderComponent,
     MetaFieldComponent,
     FormFooterComponent,

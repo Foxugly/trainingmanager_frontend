@@ -67,6 +67,7 @@
       "filter_teams": "Filtrer par équipe",
       "filter_programs": "Filtrer par programme",
       "no_programs": "Aucun programme pour les équipes sélectionnées",
+      "no_programs_selected": "Sélectionnez une équipe et un programme pour afficher les séances.",
       "new_event": "Nouvelle séance"
     },
     "detail": {
@@ -76,6 +77,7 @@
       "team_load_failed": "Impossible de charger l'équipe de cette séance.",
       "not_found": "Séance introuvable",
       "training_blocks": "Blocs d'entraînement",
+      "no_training_yet": "Aucun entraînement pour le moment.",
       "block_label": "Bloc",
       "start": "Départ",
       "break": "Récup",

@@ -23,6 +23,7 @@ import { Dialog } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { Select } from 'primeng/select';
+import { Skeleton } from 'primeng/skeleton';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { Textarea } from 'primeng/textarea';
 import { Tooltip } from 'primeng/tooltip';
@@ -78,6 +79,7 @@ interface FieldErrors {
     InputText,
     Message,
     Select,
+    Skeleton,
     Tab,
     TabList,
     TabPanel,

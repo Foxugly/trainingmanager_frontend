@@ -584,6 +584,13 @@
           <p-skeleton width="100%" height="16rem" />
         }
       </section>
+    } @else if (myPerformancesLoading()) {
+      <!-- Loading the read-only self-scoped list: keep a placeholder so the
+           section doesn't silently pop in once the fetch resolves. -->
+      <section class="mb-10">
+        <h2 class="text-lg font-semibold mb-3">{{ 'performance.my_title' | transloco }}</h2>
+        <p-skeleton width="100%" height="16rem" />
+      </section>
     } @else if (myPerformances().length > 0) {
       <!-- Read-only self-scoped list (pure coach / no linked athlete Member). -->
       <section class="mb-10">

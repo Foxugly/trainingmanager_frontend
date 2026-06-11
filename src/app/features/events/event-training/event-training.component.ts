@@ -27,6 +27,7 @@ import { Exercise } from '../../../api/model/exercise';
 import { Round } from '../../../api/model/round';
 import { Team } from '../../../api/model/team';
 import { VisibilityMode } from '../../../api/model/visibility-mode';
+import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { RoundExercisesComponent } from '../round-exercises/round-exercises.component';
 import { RoundFormDialogComponent } from '../round-form-dialog/round-form-dialog.component';
 
@@ -60,6 +61,7 @@ export interface TrainingState {
     Fieldset,
     Tooltip,
     TranslocoPipe,
+    EmptyStateComponent,
     RoundExercisesComponent,
     RoundFormDialogComponent,
   ],

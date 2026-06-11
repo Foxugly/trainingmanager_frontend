@@ -11,7 +11,7 @@
     [binary]="true"
     inputId="seg_include_inactive"
   />
-  <label for="seg_include_inactive" class="text-sm text-gray-700 cursor-pointer">
+  <label for="seg_include_inactive" class="text-sm cursor-pointer" style="color: var(--p-text-color)">
     {{ 'admin.energy_segments.show_inactive' | transloco }}
   </label>
 </div>
@@ -21,7 +21,7 @@
   [loading]="loading()"
   [paginator]="true"
   [rows]="20"
-  styleClass="bg-white rounded shadow-sm"
+  styleClass="rounded shadow-sm"
 >
   <ng-template pTemplate="header">
     <tr>
@@ -34,8 +34,8 @@
   </ng-template>
   <ng-template pTemplate="body" let-seg>
     <tr>
-      <td><code class="text-xs text-gray-700">{{ seg.abv }}</code></td>
-      <td class="text-sm text-gray-600">{{ seg.description || '—' }}</td>
+      <td><code class="text-xs" style="color: var(--p-text-color)">{{ seg.abv }}</code></td>
+      <td class="text-sm" style="color: var(--p-text-muted-color)">{{ seg.description || '—' }}</td>
       <td>{{ seg.energy_system?.name || '—' }}</td>
       <td>
         <app-status-badge
@@ -89,7 +89,7 @@
           </div>
         </td>
       } @else {
-        <td colspan="5" class="text-center py-4 text-gray-500">—</td>
+        <td colspan="5" class="text-center py-4" style="color: var(--p-text-muted-color)">—</td>
       }
     </tr>
   </ng-template>

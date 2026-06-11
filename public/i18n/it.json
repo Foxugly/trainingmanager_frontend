@@ -67,6 +67,7 @@
       "filter_teams": "Filtra per squadra",
       "filter_programs": "Filtra per programma",
       "no_programs": "Nessun programma per le squadre selezionate",
+      "no_programs_selected": "Seleziona una squadra e un programma per mostrare le sessioni.",
       "new_event": "Nuova sessione"
     },
     "detail": {
@@ -76,6 +77,7 @@
       "team_load_failed": "Impossibile caricare la squadra di questa sessione.",
       "not_found": "Sessione non trovata",
       "training_blocks": "Blocchi di allenamento",
+      "no_training_yet": "Ancora nessun allenamento.",
       "block_label": "Blocco",
       "start": "Partenza",
       "break": "Recupero",

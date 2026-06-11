@@ -21,6 +21,7 @@ import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { MultiSelect } from 'primeng/multiselect';
 import { Select } from 'primeng/select';
+import { Skeleton } from 'primeng/skeleton';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { ToggleSwitch } from 'primeng/toggleswitch';
 import { AttendanceStatusesService } from '../../../api/api/attendance-statuses.service';
@@ -80,6 +81,7 @@ import { TeamSlotsEditorComponent } from '../team-slots-editor/team-slots-editor
     Button,
     Message,
     ConfirmDialog,
+    Skeleton,
     Tabs,
     TabList,
     Tab,

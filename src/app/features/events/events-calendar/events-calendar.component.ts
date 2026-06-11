@@ -24,6 +24,7 @@ import { TeamsService } from '../../../api/api/teams.service';
 import { Event } from '../../../api/model/event';
 import { Program } from '../../../api/model/program';
 import { Team } from '../../../api/model/team';
+import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../core/auth/auth.service';
 import { LanguageService } from '../../../core/i18n/language.service';
@@ -73,6 +74,7 @@ function normalizeHex(value: string | null | undefined): string | null {
     ButtonDirective,
     MultiSelect,
     Skeleton,
+    EmptyStateComponent,
     TranslocoPipe,
   ],
   templateUrl: './events-calendar.component.html',

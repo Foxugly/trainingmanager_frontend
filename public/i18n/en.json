@@ -67,6 +67,7 @@
       "filter_teams": "Filter by team",
       "filter_programs": "Filter by program",
       "no_programs": "No program for the selected teams",
+      "no_programs_selected": "Select a team and a program to show its sessions.",
       "new_event": "New session"
     },
     "detail": {
@@ -76,6 +77,7 @@
       "team_load_failed": "Could not load this session's team.",
       "not_found": "Session not found",
       "training_blocks": "Training blocks",
+      "no_training_yet": "No training yet.",
       "block_label": "Block",
       "start": "Start",
       "break": "Rest",

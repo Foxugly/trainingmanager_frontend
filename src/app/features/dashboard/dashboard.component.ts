@@ -105,6 +105,7 @@ export class DashboardComponent implements OnInit {
   /** The caller's own performance records across all teams (read-only self-view). */
   protected readonly myPerformances = signal<Performance[]>([]);
   protected readonly myPerformancesError = signal(false);
+  protected readonly myPerformancesLoading = signal(false);
 
   protected readonly greetingName = computed(() => {
     const user = this.authService.currentUser();
@@ -226,15 +227,21 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.bootstrap();
-    this.loadMyPerformances();
   }
 
   /**
    * Self-scoped performances: no member/team filter — the backend returns the
    * caller's own records across teams. Read-only; coaches with none see nothing.
+   *
+   * Only loaded when the editable performance panel is NOT shown
+   * (`!canLogOwnPerformances()`): that panel fetches its own team-scoped
+   * records, so fetching the self-scoped list too would double the work at
+   * open. Called from `bootstrap()` once `memberTeams()` is resolved (the
+   * gate depends on it) and from the template's retry button.
    */
   protected loadMyPerformances(): void {
     this.myPerformancesError.set(false);
+    this.myPerformancesLoading.set(true);
     this.performancesService
       .performancesList()
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -242,12 +249,14 @@ export class DashboardComponent implements OnInit {
         next: (res) => {
           this.myPerformances.set(res.results ?? []);
           this.myPerformancesError.set(false);
+          this.myPerformancesLoading.set(false);
         },
         // A transient failure must not masquerade as "you have no performances":
         // flag it so the template can offer a retry instead of a silent empty.
         error: () => {
           this.myPerformances.set([]);
           this.myPerformancesError.set(true);
+          this.myPerformancesLoading.set(false);
         },
       });
   }
@@ -281,6 +290,12 @@ export class DashboardComponent implements OnInit {
           this.memberTeams.set(member);
           this.buildCoachSections(managed, summary);
           this.buildAthleteSections(member, summary);
+          // The editable perf panel fetches its own team-scoped records; only
+          // load the read-only self-scoped list when that panel isn't shown,
+          // so exactly one source loads. The gate needs memberTeams() resolved.
+          if (!this.canLogOwnPerformances()) {
+            this.loadMyPerformances();
+          }
           this.bootstrapped.set(true);
         },
         error: () => {

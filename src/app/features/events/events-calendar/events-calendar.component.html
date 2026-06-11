@@ -74,6 +74,13 @@
     </div>
   </div>
 
+  @if (selectedProgramIds().length === 0 && !loading()) {
+    <app-empty-state
+      tone="gray"
+      icon="calendar"
+      [title]="'events.calendar.no_programs_selected' | transloco"
+    />
+  } @else {
   <div class="grid grid-cols-7 gap-px bg-gray-200 rounded overflow-hidden border border-gray-200">
     @for (label of weekDayLabels(); track label) {
       <div class="bg-gray-50 px-2 py-1.5 text-xs font-semibold text-gray-700 text-center capitalize">
@@ -118,4 +125,5 @@
       </div>
     }
   </div>
+  }
 </div>

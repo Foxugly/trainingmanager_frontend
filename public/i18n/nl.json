@@ -67,6 +67,7 @@
       "filter_teams": "Filter op team",
       "filter_programs": "Filter op programma",
       "no_programs": "Geen programma voor de geselecteerde teams",
+      "no_programs_selected": "Selecteer een team en een programma om de sessies te tonen.",
       "new_event": "Nieuwe sessie"
     },
     "detail": {
@@ -76,6 +77,7 @@
       "team_load_failed": "Kan het team van deze sessie niet laden.",
       "not_found": "Sessie niet gevonden",
       "training_blocks": "Trainingsblokken",
+      "no_training_yet": "Nog geen training.",
       "block_label": "Blok",
       "start": "Start",
       "break": "Rust",

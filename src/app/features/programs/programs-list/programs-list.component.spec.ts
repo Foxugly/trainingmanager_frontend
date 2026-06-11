@@ -111,6 +111,7 @@ describe('ProgramsListComponent', () => {
 
   async function setup(opts?: {
     teamFilter?: number | null;
+    canCreateOverride?: boolean | null;
     results?: Program[];
     user?: CustomUserPublic | null;
     isStaff?: boolean;
@@ -163,6 +164,9 @@ describe('ProgramsListComponent', () => {
     if (teamFilter !== null) {
       fixture.componentRef.setInput('teamFilter', teamFilter);
     }
+    if (opts?.canCreateOverride !== undefined) {
+      fixture.componentRef.setInput('canCreateOverride', opts.canCreateOverride);
+    }
     fixture.detectChanges();
   }
 
@@ -178,6 +182,21 @@ describe('ProgramsListComponent', () => {
   it('passes the team filter to the API when teamFilter input is set', async () => {
     await setup({ teamFilter: 4 });
     expect(serviceMock.programsList).toHaveBeenCalledWith({ ordering: '-date_start', team: 4 });
+  });
+
+  it('skips the all-teams fetch when embedded (teamFilter set) and uses the override', async () => {
+    await setup({ teamFilter: 4, canCreateOverride: true });
+    // No superfluous teamsList when the parent already knows the role.
+    expect(teamsMock.teamsList).not.toHaveBeenCalled();
+    expect(access(component).canCreate()).toBe(true);
+    expect(access(component).canShowArchivedToggle()).toBe(true);
+  });
+
+  it('embedded with a false override hides create + archived affordances', async () => {
+    await setup({ teamFilter: 4, canCreateOverride: false });
+    expect(teamsMock.teamsList).not.toHaveBeenCalled();
+    expect(access(component).canCreate()).toBe(false);
+    expect(access(component).canShowArchivedToggle()).toBe(false);
   });
 
   it('reloads with includeInactive=true when showArchived is toggled on', () => {

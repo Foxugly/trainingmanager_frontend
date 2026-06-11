@@ -18,6 +18,9 @@ import { filter } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
 
 const POLL_INTERVAL_MS = 60_000;
+/** Minimum gap before a navigation can re-trigger a poll (the interval +
+ *  visibilitychange catch-up keep the data fresh between navigations). */
+const NAV_POLL_THROTTLE_MS = 15_000;
 
 /**
  * Presentational "bell" shell shared by the notification and message bells:
@@ -67,6 +70,8 @@ export class BellComponent {
   });
 
   private pollTimer: ReturnType<typeof setInterval> | null = null;
+  /** Timestamp (ms) of the last poll emit; used to throttle the nav trigger. */
+  private lastPollTs = 0;
 
   constructor() {
     this.router.events
@@ -74,7 +79,14 @@ export class BellComponent {
         filter((e): e is NavigationEnd => e instanceof NavigationEnd),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(() => this.firePollIfActive());
+      // Throttle ONLY the navigation trigger: with 2 bells × (desktop+mobile)
+      // mounted, every internal navigation would otherwise fan out several
+      // unread requests. The 60s interval + visibilitychange catch-up still
+      // keep the counts fresh.
+      .subscribe(() => {
+        if (Date.now() - this.lastPollTs < NAV_POLL_THROTTLE_MS) return;
+        this.firePollIfActive();
+      });
 
     effect(() => {
       const user = this.auth.currentUser();
@@ -127,6 +139,7 @@ export class BellComponent {
   private firePollIfActive(): void {
     if (this.auth.currentUser() === null) return;
     if (document.hidden) return;
+    this.lastPollTs = Date.now();
     this.poll.emit();
   }
 }

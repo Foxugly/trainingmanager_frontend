@@ -50,16 +50,30 @@ export class ProgramsListComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   readonly teamFilter = input<number | null>(null);
+  /**
+   * Embedded usage (inside teams-detail) passes the user's manage-ability for
+   * the filtered team so we can skip the standalone-route teamsList() fetch.
+   * Only consulted when `teamFilter()` is non-null; null on the standalone
+   * `/programs` route, where managerTeamIds (fetched) drives the affordances.
+   */
+  readonly canCreateOverride = input<boolean | null>(null);
 
   protected readonly programs = signal<Program[]>([]);
   protected readonly loading = signal(false);
   protected readonly showArchived = signal(false);
   protected readonly managerTeamIds = signal<Set<number>>(new Set());
 
-  protected readonly canCreate = computed(() => this.managerTeamIds().size > 0);
+  protected readonly canCreate = computed(() => {
+    // Embedded: the parent already knows the role for the filtered team, so we
+    // never fetch all teams here — trust the override.
+    if (this.teamFilter() !== null) return this.canCreateOverride() === true;
+    return this.managerTeamIds().size > 0;
+  });
 
   protected readonly canShowArchivedToggle = computed(() => {
     if (this.authService.currentUser()?.is_staff) return true;
+    // Embedded: a manager of the filtered team may show archived programs.
+    if (this.teamFilter() !== null) return this.canCreateOverride() === true;
     return this.managerTeamIds().size > 0;
   });
 
@@ -105,7 +119,11 @@ export class ProgramsListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadManagerTeamIds();
+    // Standalone /programs route only: the embedded (teamFilter set) case gets
+    // its affordances from canCreateOverride, so the all-teams fetch is skipped.
+    if (this.teamFilter() === null) {
+      this.loadManagerTeamIds();
+    }
   }
 
   private loadManagerTeamIds(): void {

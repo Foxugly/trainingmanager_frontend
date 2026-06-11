@@ -11,12 +11,13 @@ import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { Message } from 'primeng/message';
+import { Skeleton } from 'primeng/skeleton';
 import { SportsService } from '../../../../api/api/sports.service';
 import { Sport } from '../../../../api/model/sport';
 
 @Component({
   selector: 'app-modalities-hub',
-  imports: [RouterLink, Button, Message, TranslocoPipe],
+  imports: [RouterLink, Button, Message, Skeleton, TranslocoPipe],
   templateUrl: './modalities-hub.component.html',
   styleUrl: './modalities-hub.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

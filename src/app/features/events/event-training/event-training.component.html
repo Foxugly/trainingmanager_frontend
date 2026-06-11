@@ -138,6 +138,15 @@
         }
       </div>
   </section>
+} @else if (!roundsHidden()) {
+  <!-- No rounds and no editor (athlete on a non-freeform session): show an
+       empty hint instead of a blank tab. The hidden-rounds path above already
+       renders its own message. -->
+  <app-empty-state
+    tone="gray"
+    icon="bolt"
+    [title]="'events.detail.no_training_yet' | transloco"
+  />
 }
 
 @if (event(); as e) {

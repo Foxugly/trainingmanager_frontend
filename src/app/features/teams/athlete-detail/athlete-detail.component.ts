@@ -10,6 +10,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, catchError, of, switchMap, tap } from 'rxjs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { Skeleton } from 'primeng/skeleton';
 import { MembersService } from '../../../api/api/members.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { Member } from '../../../api/model/member';
@@ -35,6 +36,7 @@ import { TeamStatsComponent } from '../team-stats/team-stats.component';
   imports: [
     RouterLink,
     TranslocoPipe,
+    Skeleton,
     DetailHeaderComponent,
     EmptyStateComponent,
     TeamStatsComponent,
