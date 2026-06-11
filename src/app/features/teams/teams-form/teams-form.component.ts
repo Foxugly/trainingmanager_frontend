@@ -18,6 +18,7 @@ import { Button } from 'primeng/button';
 import { Checkbox } from 'primeng/checkbox';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { InputText } from 'primeng/inputtext';
+import { Message } from 'primeng/message';
 import { MultiSelect } from 'primeng/multiselect';
 import { Select } from 'primeng/select';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
@@ -77,6 +78,7 @@ import { TeamSlotsEditorComponent } from '../team-slots-editor/team-slots-editor
     Checkbox,
     ToggleSwitch,
     Button,
+    Message,
     ConfirmDialog,
     Tabs,
     TabList,
@@ -118,6 +120,11 @@ export class TeamsFormComponent implements OnInit {
   protected readonly teamId = signal<number | null>(null);
   protected readonly team = signal<Team | null>(null);
   protected readonly loading = signal(false);
+  // Edit-mode load failure: keep distinct from the (empty) new-team form so a
+  // failed retrieve never renders a blank edit form (which a Save would PATCH,
+  // overwriting the real team with defaults). notFound = 404, loadError = other.
+  protected readonly loadError = signal(false);
+  protected readonly notFound = signal(false);
   protected readonly saving = signal(false);
   protected readonly availableSports = signal<Sport[]>([]);
   protected readonly availableLevels = signal<Level[]>([]);
@@ -350,76 +357,98 @@ export class TeamsFormComponent implements OnInit {
         return;
       }
       this.teamId.set(id);
-      this.loading.set(true);
-      this.teamsService
-        .teamsRetrieve({ id })
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: (t) => {
-            this.team.set(t);
-            this.activeValue.set(t.is_active ?? true);
-            this.logoValue.set(t.logo ?? '');
-            this.availableManagers.set(t.managers ?? []);
-            this.partitionStatuses(this.availableStatuses(), t.attendance_statuses ?? null);
-            // Multi-sport: the team's set of sports + its default.
-            const sportIds = (t.sports ?? []).map((s) => s.id);
-            const defaultSportId =
-              (t.sports ?? []).find((s) => s.is_default)?.id ?? t.sport?.id ?? null;
-            // Equipment stays mono-sport (default sport's catalog); the venue
-            // pool spans every sport the team practises (union) — loaded by the
-            // place-pool child from teamSportIds.
-            if (defaultSportId != null) {
-              this.loadEquipmentCatalog(defaultSportId);
-            } else {
-              this.equipmentCatalog.set([]);
-            }
-            this.teamSportIds.set(sportIds);
-            // Seed the per-sport training-type overrides from the read model.
-            const overrides = new Map<number, SportTrainingTypeWriteRequestTrainingTypeEnum | null>();
-            for (const s of t.sports ?? []) {
-              overrides.set(
-                s.id,
-                (s.training_type as SportTrainingTypeWriteRequestTrainingTypeEnum | null) ?? null,
-              );
-            }
-            this.sportTrainingTypes.set(overrides);
-            this.form.reset({
-              name: t.name,
-              sport_ids: sportIds,
-              default_sport_id: defaultSportId,
-              level_id: t.level?.id ?? null,
-              language: (t.language as LanguageCode) ?? 'fr',
-              is_public: t.is_public ?? false,
-              logo: t.logo ?? '',
-              roti_enabled: t.roti_enabled ?? false,
-              rsvp_enabled: t.rsvp_enabled ?? false,
-              weekly_recap_enabled: t.weekly_recap_enabled ?? false,
-              managers_ids: (t.managers ?? []).map((m) => m.id),
-              equipment_ids: (t.equipment ?? []).map((e) => e.id),
-              place_ids: (t.places ?? []).map((p) => p.id),
-              default_place_id: t.default_place?.id ?? null,
-              auto_accept_policy: t.join_request_policy === JoinRequestPolicyEnum.Auto,
-              topic_creation: t.topic_creation ?? TopicCreationEnum.Coaches,
-              notify_managers_on_join_request: t.notify_managers_on_join_request ?? true,
-              notify_coaches_on_note: t.notify_coaches_on_note ?? true,
-              notify_athlete_on_visible_note: t.notify_athlete_on_visible_note ?? true,
-              timezone: t.timezone || 'Europe/Brussels',
-              vis_distance: t.vis_distance ?? VisibilityMode.Always,
-              vis_goal: t.vis_goal ?? VisibilityMode.Always,
-              vis_rounds: t.vis_rounds ?? VisibilityMode.Always,
-              public_sharing_enabled: t.public_sharing_enabled ?? false,
-              public_show_distance: t.public_show_distance ?? true,
-              public_show_goal: t.public_show_goal ?? false,
-              public_show_rounds: t.public_show_rounds ?? true,
-            });
-            this.placeIdsValue.set((t.places ?? []).map((p) => p.id));
-            this.loading.set(false);
-          },
-          error: () => {
-            this.errorMessage.set('teams.errors.unknown');
-            this.loading.set(false);
-          },
-        });
+      this.loadTeam(id);
+    }
+  }
+
+  /** (Re)fetch the team being edited. On failure flags notFound (404) or
+   *  loadError (any other status) so the template shows an error + retry
+   *  instead of a blank edit form — which a Save would PATCH, overwriting the
+   *  real team with default values. */
+  protected loadTeam(id: number): void {
+    this.loadError.set(false);
+    this.notFound.set(false);
+    this.loading.set(true);
+    this.teamsService
+      .teamsRetrieve({ id })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (t) => {
+          this.team.set(t);
+          this.activeValue.set(t.is_active ?? true);
+          this.logoValue.set(t.logo ?? '');
+          this.availableManagers.set(t.managers ?? []);
+          this.partitionStatuses(this.availableStatuses(), t.attendance_statuses ?? null);
+          // Multi-sport: the team's set of sports + its default.
+          const sportIds = (t.sports ?? []).map((s) => s.id);
+          const defaultSportId =
+            (t.sports ?? []).find((s) => s.is_default)?.id ?? t.sport?.id ?? null;
+          // Equipment stays mono-sport (default sport's catalog); the venue
+          // pool spans every sport the team practises (union) — loaded by the
+          // place-pool child from teamSportIds.
+          if (defaultSportId != null) {
+            this.loadEquipmentCatalog(defaultSportId);
+          } else {
+            this.equipmentCatalog.set([]);
+          }
+          this.teamSportIds.set(sportIds);
+          // Seed the per-sport training-type overrides from the read model.
+          const overrides = new Map<number, SportTrainingTypeWriteRequestTrainingTypeEnum | null>();
+          for (const s of t.sports ?? []) {
+            overrides.set(
+              s.id,
+              (s.training_type as SportTrainingTypeWriteRequestTrainingTypeEnum | null) ?? null,
+            );
+          }
+          this.sportTrainingTypes.set(overrides);
+          this.form.reset({
+            name: t.name,
+            sport_ids: sportIds,
+            default_sport_id: defaultSportId,
+            level_id: t.level?.id ?? null,
+            language: (t.language as LanguageCode) ?? 'fr',
+            is_public: t.is_public ?? false,
+            logo: t.logo ?? '',
+            roti_enabled: t.roti_enabled ?? false,
+            rsvp_enabled: t.rsvp_enabled ?? false,
+            weekly_recap_enabled: t.weekly_recap_enabled ?? false,
+            managers_ids: (t.managers ?? []).map((m) => m.id),
+            equipment_ids: (t.equipment ?? []).map((e) => e.id),
+            place_ids: (t.places ?? []).map((p) => p.id),
+            default_place_id: t.default_place?.id ?? null,
+            auto_accept_policy: t.join_request_policy === JoinRequestPolicyEnum.Auto,
+            topic_creation: t.topic_creation ?? TopicCreationEnum.Coaches,
+            notify_managers_on_join_request: t.notify_managers_on_join_request ?? true,
+            notify_coaches_on_note: t.notify_coaches_on_note ?? true,
+            notify_athlete_on_visible_note: t.notify_athlete_on_visible_note ?? true,
+            timezone: t.timezone || 'Europe/Brussels',
+            vis_distance: t.vis_distance ?? VisibilityMode.Always,
+            vis_goal: t.vis_goal ?? VisibilityMode.Always,
+            vis_rounds: t.vis_rounds ?? VisibilityMode.Always,
+            public_sharing_enabled: t.public_sharing_enabled ?? false,
+            public_show_distance: t.public_show_distance ?? true,
+            public_show_goal: t.public_show_goal ?? false,
+            public_show_rounds: t.public_show_rounds ?? true,
+          });
+          this.placeIdsValue.set((t.places ?? []).map((p) => p.id));
+          this.loading.set(false);
+        },
+        error: (err: unknown) => {
+          if (err instanceof HttpErrorResponse && err.status === 404) {
+            this.notFound.set(true);
+          } else {
+            this.loadError.set(true);
+          }
+          this.loading.set(false);
+        },
+      });
+  }
+
+  /** Retry button handler for the edit-mode load-failure state. */
+  protected reloadTeam(): void {
+    const id = this.teamId();
+    if (id != null) {
+      this.loadTeam(id);
     }
   }
 
