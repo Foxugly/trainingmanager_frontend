@@ -13,18 +13,35 @@
           [attr.aria-label]="'attachments.add' | transloco"
           (change)="onFilesSelected($event)"
         />
-        <p-button
-          icon="pi pi-plus"
-          severity="success"
-          size="small"
-          [label]="'attachments.add' | transloco"
-          [disabled]="isUploading()"
-          (onClick)="triggerFilePicker(fileInput)"
-        />
+        @if (compact()) {
+          <p-button
+            icon="pi pi-paperclip"
+            severity="secondary"
+            [text]="true"
+            [rounded]="true"
+            size="small"
+            [ariaLabel]="'attachments.add' | transloco"
+            [pTooltip]="'attachments.add' | transloco"
+            tooltipPosition="top"
+            [disabled]="isUploading()"
+            (onClick)="triggerFilePicker(fileInput)"
+          />
+        } @else {
+          <p-button
+            icon="pi pi-plus"
+            severity="success"
+            size="small"
+            [label]="'attachments.add' | transloco"
+            [disabled]="isUploading()"
+            (onClick)="triggerFilePicker(fileInput)"
+          />
+        }
       </div>
     }
     @if (items().length === 0 && !isUploading()) {
-      <app-empty-state icon="paperclip" tone="gray" [title]="'attachments.empty' | transloco" />
+      @if (!compact()) {
+        <app-empty-state icon="paperclip" tone="gray" [title]="'attachments.empty' | transloco" />
+      }
     } @else {
       <ul class="att-list">
         @for (item of items(); track item.id) {

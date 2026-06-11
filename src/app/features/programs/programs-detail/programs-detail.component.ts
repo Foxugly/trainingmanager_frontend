@@ -358,15 +358,28 @@ export class ProgramsDetailComponent implements OnInit {
     this.loadTeam$.next(teamId);
   }
 
+  private parseIsoDate(s: string | null | undefined): Date | null {
+    if (!s) return null;
+    const [y, m, d] = s.split('-').map(Number);
+    if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) return null;
+    return new Date(y, m - 1, d);
+  }
+
+  /** Default calendar month: the CURRENT month when the program is still
+   *  relevant (its end date is on/after the 1st of the current month), otherwise
+   *  the program's START month — so a fully-past program opens on its own
+   *  (populated) start month instead of an empty current month. */
   private initCalendarMonth(p: Program): void {
-    if (p.date_start) {
-      const [y, m] = p.date_start.split('-').map(Number);
-      if (Number.isFinite(y) && Number.isFinite(m)) {
-        this.currentMonth.set(new Date(y, m - 1, 1));
-        return;
-      }
+    const firstOfCurrentMonth = startOfMonth(new Date());
+    const end = this.parseIsoDate(p.date_end);
+    if (end && end.getTime() >= firstOfCurrentMonth.getTime()) {
+      this.currentMonth.set(firstOfCurrentMonth);
+      return;
     }
-    this.currentMonth.set(startOfMonth(new Date()));
+    const start = this.parseIsoDate(p.date_start);
+    this.currentMonth.set(
+      start ? new Date(start.getFullYear(), start.getMonth(), 1) : firstOfCurrentMonth,
+    );
   }
 
   private invalidateEventsCache(): void {

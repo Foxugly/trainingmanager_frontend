@@ -55,6 +55,10 @@ export class AttachmentListComponent {
   readonly targetType = input.required<'event' | 'message' | 'program' | 'performance'>();
   readonly targetId = input.required<number>();
   readonly canEdit = input<boolean>(false);
+  /** Compact mode (e.g. inline under a chat message): a discreet paperclip
+   *  icon-button instead of the full "+ Ajouter" CTA, and no empty-state — the
+   *  attachment list only renders when there actually are attachments. */
+  readonly compact = input<boolean>(false);
 
   protected readonly accept = ACCEPT;
 
