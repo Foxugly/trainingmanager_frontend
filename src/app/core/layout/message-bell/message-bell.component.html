@@ -13,7 +13,19 @@
     </div>
 
     <div class="msg-list">
-      @if (topics().length === 0) {
+      @if (error() && topics().length === 0) {
+        <div class="msg-empty">
+          <p-message severity="error" [text]="'common.load_failed' | transloco" />
+          <p-button
+            [label]="'common.retry' | transloco"
+            icon="pi pi-refresh"
+            severity="secondary"
+            [outlined]="true"
+            size="small"
+            (onClick)="retry()"
+          />
+        </div>
+      } @else if (topics().length === 0) {
         <div class="msg-empty">
           <i class="pi pi-inbox" aria-hidden="true"></i>
           <span>{{ 'messages.bell.empty' | transloco }}</span>

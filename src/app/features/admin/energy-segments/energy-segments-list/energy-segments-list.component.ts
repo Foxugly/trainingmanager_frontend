@@ -6,6 +6,7 @@ import { ConfirmationService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { Checkbox } from 'primeng/checkbox';
 import { ConfirmDialog } from 'primeng/confirmdialog';
+import { Message } from 'primeng/message';
 import { TableModule } from 'primeng/table';
 import { Observable } from 'rxjs';
 import { EnergySegmentsService } from '../../../../api/api/energy-segments.service';
@@ -20,6 +21,7 @@ import { Paginated, TaxonomyListBase } from '../../shared/taxonomy-list.base';
     TableModule,
     Checkbox,
     Button,
+    Message,
     ConfirmDialog,
     TranslocoPipe,
   ],

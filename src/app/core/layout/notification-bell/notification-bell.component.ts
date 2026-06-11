@@ -8,6 +8,8 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { Button } from 'primeng/button';
+import { Message } from 'primeng/message';
 import { Notification } from '../../../api/model/notification';
 import { LanguageService } from '../../i18n/language.service';
 import { NotificationService } from '../../notifications/notification.service';
@@ -15,7 +17,7 @@ import { BellComponent } from '../bell/bell.component';
 
 @Component({
   selector: 'app-notification-bell',
-  imports: [TranslocoPipe, BellComponent],
+  imports: [TranslocoPipe, BellComponent, Button, Message],
   templateUrl: './notification-bell.component.html',
   styleUrl: './notification-bell.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,6 +32,9 @@ export class NotificationBellComponent {
   protected readonly unreadCount = this.notifications.unreadCount;
   protected readonly items = this.notifications.items;
   protected readonly loading = signal(false);
+  // Distinguish a backend failure from a genuinely empty list, so an error
+  // doesn't masquerade as "no notifications" (esp. while the badge is > 0).
+  protected readonly error = signal(false);
   protected readonly hasUnread = computed(() => this.unreadCount() > 0);
 
   /** Poll tick from the shell — only fires while authenticated and visible. */
@@ -45,9 +50,13 @@ export class NotificationBellComponent {
   /** Popover opened — lazy-load the recent list. */
   protected loadRecent(): void {
     this.loading.set(true);
+    this.error.set(false);
     this.notifications.loadRecent().subscribe({
       next: () => this.loading.set(false),
-      error: () => this.loading.set(false),
+      error: () => {
+        this.error.set(true);
+        this.loading.set(false);
+      },
     });
   }
 

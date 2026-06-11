@@ -32,6 +32,9 @@ export abstract class TaxonomyListBase<T extends TaxonomyEntity> {
 
   protected readonly entities = signal<T[]>([]);
   protected readonly loading = signal(false);
+  // Distinguish a backend failure from a genuinely empty list, so an error
+  // doesn't masquerade as "no entries".
+  protected readonly error = signal(false);
   protected readonly includeInactive = signal(false);
 
   /** i18n key prefix, e.g. 'admin.sports'. */
@@ -53,10 +56,12 @@ export abstract class TaxonomyListBase<T extends TaxonomyEntity> {
 
   private fetch(includeInactive: boolean): Observable<unknown> {
     this.loading.set(true);
+    this.error.set(false);
     return this.list(includeInactive).pipe(
       tap((res) => this.entities.set(res.results ?? [])),
       catchError(() => {
         this.notifyUnknownError();
+        this.error.set(true);
         this.entities.set([]);
         return of(null);
       }),
@@ -66,6 +71,11 @@ export abstract class TaxonomyListBase<T extends TaxonomyEntity> {
 
   private reload(): void {
     this.fetch(this.includeInactive()).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+  }
+
+  /** Re-run the current load after a failure (retry affordance). */
+  protected retry(): void {
+    this.reload();
   }
 
   protected confirmDelete(entity: T): void {

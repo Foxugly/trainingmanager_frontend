@@ -1,5 +1,20 @@
 @if (loadingAudit() && auditRows().length === 0) {
   <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+} @else if (error()) {
+  <app-empty-state
+    tone="rose"
+    icon="exclamation-triangle"
+    [title]="'common.load_failed' | transloco"
+  >
+    <p-button
+      [label]="'common.retry' | transloco"
+      icon="pi pi-refresh"
+      severity="secondary"
+      [outlined]="true"
+      size="small"
+      (onClick)="reload()"
+    />
+  </app-empty-state>
 } @else if (auditRows().length === 0) {
   <app-empty-state icon="history" tone="gray" [title]="'audit.empty' | transloco" />
 } @else {

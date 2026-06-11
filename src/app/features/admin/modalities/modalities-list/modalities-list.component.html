@@ -81,7 +81,23 @@
     </ng-template>
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="3" class="text-center py-4 text-gray-500">—</td>
+        @if (error()) {
+          <td colspan="3" class="text-center py-4">
+            <div class="inline-flex flex-col items-center gap-2">
+              <p-message severity="error" [text]="'common.load_failed' | transloco" />
+              <p-button
+                [label]="'common.retry' | transloco"
+                icon="pi pi-refresh"
+                severity="secondary"
+                [outlined]="true"
+                size="small"
+                (onClick)="retry()"
+              />
+            </div>
+          </td>
+        } @else {
+          <td colspan="3" class="text-center py-4 text-gray-500">—</td>
+        }
       </tr>
     </ng-template>
   </p-table>

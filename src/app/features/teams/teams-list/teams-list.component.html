@@ -86,6 +86,21 @@
         </div>
       }
     </div>
+  } @else if (error()) {
+    <app-empty-state
+      tone="rose"
+      icon="exclamation-triangle"
+      [title]="'common.load_failed' | transloco"
+    >
+      <p-button
+        [label]="'common.retry' | transloco"
+        icon="pi pi-refresh"
+        severity="secondary"
+        [outlined]="true"
+        size="small"
+        (onClick)="load()"
+      />
+    </app-empty-state>
   } @else if (teamsWithRole().length === 0) {
     <app-empty-state
       icon="users"

@@ -53,6 +53,9 @@ export class TeamAuditLogComponent {
   protected readonly auditRows = signal<AuditRow[]>([]);
   protected readonly loadingAudit = signal(false);
   protected readonly auditLoaded = signal(false);
+  // Distinguish a backend failure from a genuinely empty journal, so an error
+  // doesn't masquerade as "no audit entries".
+  protected readonly error = signal(false);
   private readonly auditNextPage = signal<number | null>(null);
   protected readonly auditHasMore = computed(() => this.auditNextPage() !== null);
 
@@ -66,6 +69,7 @@ export class TeamAuditLogComponent {
           this.auditRows.set([]);
           this.auditNextPage.set(null);
           this.auditLoaded.set(false);
+          this.error.set(false);
           this.loadingAudit.set(true);
         }),
         // auditLogList(ordering, page, pageSize, search, team) — newest-first by default.
@@ -80,10 +84,17 @@ export class TeamAuditLogComponent {
         if (res) {
           this.auditRows.set((res.results ?? []).map((e) => this.toAuditRow(e)));
           this.auditNextPage.set(res.next ? 2 : null);
+        } else {
+          this.error.set(true);
         }
         this.loadingAudit.set(false);
         this.auditLoaded.set(true);
       });
+  }
+
+  /** Retry the initial page-1 load after a failure. */
+  protected reload(): void {
+    this.loadAuditLog(1);
   }
 
   protected loadMoreAudit(): void {
@@ -95,6 +106,7 @@ export class TeamAuditLogComponent {
     const id = this.teamId();
     if (this.loadingAudit()) return;
     this.loadingAudit.set(true);
+    if (page === 1) this.error.set(false);
     // auditLogList(ordering, page, pageSize, search, team) — newest-first by default.
     this.auditLogService
       .auditLogList({ page, team: id })
@@ -108,6 +120,7 @@ export class TeamAuditLogComponent {
           this.auditLoaded.set(true);
         },
         error: () => {
+          if (page === 1) this.error.set(true);
           this.loadingAudit.set(false);
           this.auditLoaded.set(true);
         },

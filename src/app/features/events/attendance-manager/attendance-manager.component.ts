@@ -16,6 +16,7 @@ import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
+import { Message } from 'primeng/message';
 import { Tooltip } from 'primeng/tooltip';
 import { firstValueFrom, forkJoin } from 'rxjs';
 import { AttendanceStatusesService } from '../../../api/api/attendance-statuses.service';
@@ -47,7 +48,7 @@ const SAVE_DEBOUNCE_MS = 300;
 
 @Component({
   selector: 'app-attendance-manager',
-  imports: [CommonModule, RouterLink, Button, Tooltip, TranslocoPipe],
+  imports: [CommonModule, RouterLink, Button, Message, Tooltip, TranslocoPipe],
   templateUrl: './attendance-manager.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -71,6 +72,9 @@ export class AttendanceManagerComponent implements OnInit, OnDestroy {
   protected readonly rows = signal<AttendanceRow[]>([]);
   protected readonly loading = signal(false);
   protected readonly noStatuses = signal(false);
+  // Distinguish a backend failure from a genuinely empty roster, so an error
+  // doesn't masquerade as "no members".
+  protected readonly loadError = signal(false);
 
   private readonly pendingTimers = new Map<number, ReturnType<typeof setTimeout>>();
   private readonly originalStatusByMember = new Map<number, string>();
@@ -105,8 +109,10 @@ export class AttendanceManagerComponent implements OnInit, OnDestroy {
     this.pendingTimers.clear();
   }
 
-  private load(): void {
+  protected load(): void {
     this.loading.set(true);
+    this.loadError.set(false);
+    this.noStatuses.set(false);
     forkJoin({
       attendances: this.eventsService.eventsAttendanceList({ eventPk: this.event().id }),
       statuses: this.statusesService.attendanceStatusesList(),
@@ -147,7 +153,10 @@ export class AttendanceManagerComponent implements OnInit, OnDestroy {
           this.rows.set(rows);
           this.loading.set(false);
         },
-        error: () => this.loading.set(false),
+        error: () => {
+          this.loadError.set(true);
+          this.loading.set(false);
+        },
       });
   }
 

@@ -28,6 +28,9 @@ export abstract class NestedTaxonomyListBase<T extends TaxonomyEntity, P> {
   protected readonly parent = signal<P | null>(null);
   protected readonly entities = signal<T[]>([]);
   protected readonly loading = signal(false);
+  // Distinguish a backend failure from a genuinely empty list, so an error
+  // doesn't masquerade as "no entries".
+  protected readonly error = signal(false);
   protected readonly includeInactive = signal(false);
 
   /** i18n key prefix, e.g. 'admin.modalities'. */
@@ -63,10 +66,12 @@ export abstract class NestedTaxonomyListBase<T extends TaxonomyEntity, P> {
 
   private fetch(parentId: number, includeInactive: boolean): Observable<unknown> {
     this.loading.set(true);
+    this.error.set(false);
     return this.list(parentId, includeInactive).pipe(
       tap((res) => this.entities.set(res.results ?? [])),
       catchError(() => {
         this.toast.error(`${this.i18nPrefix}.errors.unknown`);
+        this.error.set(true);
         this.entities.set([]);
         return of(null);
       }),
@@ -78,6 +83,11 @@ export abstract class NestedTaxonomyListBase<T extends TaxonomyEntity, P> {
     const id = this.parentId();
     if (id == null) return;
     this.fetch(id, this.includeInactive()).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+  }
+
+  /** Re-run the current load after a failure (retry affordance). */
+  protected retry(): void {
+    this.reload();
   }
 
   protected confirmDelete(entity: T): void {

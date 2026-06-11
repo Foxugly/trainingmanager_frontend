@@ -10,6 +10,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { Button } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { Skeleton } from 'primeng/skeleton';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
@@ -21,6 +22,7 @@ import { AuthService } from '../../../core/auth/auth.service';
   selector: 'app-teams-discover',
   imports: [
     RouterLink,
+    Button,
     InputText,
     Skeleton,
     EmptyStateComponent,
@@ -36,6 +38,9 @@ export class TeamsDiscoverComponent implements OnInit {
 
   protected readonly teams = signal<Team[]>([]);
   protected readonly loading = signal(false);
+  // Distinguish a backend failure from a genuinely empty list, so an error
+  // doesn't masquerade as "nothing to discover".
+  protected readonly error = signal(false);
   protected readonly query = signal('');
 
   protected readonly discoverable = computed<Team[]>(() => {
@@ -62,7 +67,12 @@ export class TeamsDiscoverComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    this.load();
+  }
+
+  protected load(): void {
     this.loading.set(true);
+    this.error.set(false);
     this.teamsService
       .teamsList({ isActive: true })
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -71,7 +81,10 @@ export class TeamsDiscoverComponent implements OnInit {
           this.teams.set(res.results ?? []);
           this.loading.set(false);
         },
-        error: () => this.loading.set(false),
+        error: () => {
+          this.error.set(true);
+          this.loading.set(false);
+        },
       });
   }
 }

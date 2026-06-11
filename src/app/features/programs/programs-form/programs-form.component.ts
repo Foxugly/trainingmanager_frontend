@@ -19,6 +19,7 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 import { DatePicker } from 'primeng/datepicker';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
+import { Message } from 'primeng/message';
 import { Select } from 'primeng/select';
 import { Tooltip } from 'primeng/tooltip';
 import { ProgramsService } from '../../../api/api/programs.service';
@@ -67,6 +68,7 @@ function fromIsoDate(s: string | null | undefined): Date | null {
     DatePicker,
     Select,
     Button,
+    Message,
     RichEditorComponent,
     ConfirmDialog,
     Tooltip,
@@ -99,6 +101,10 @@ export class ProgramsFormComponent implements OnInit {
   protected readonly programId = signal<number | null>(null);
   protected readonly program = signal<Program | null>(null);
   protected readonly loading = signal(false);
+  // Edit-mode load failure: never render a blank edit form (a Save would PATCH
+  // the real program with defaults). notFound = 404, loadError = other.
+  protected readonly loadError = signal(false);
+  protected readonly notFound = signal(false);
   protected readonly saving = signal(false);
   protected readonly availableTeams = signal<Team[]>([]);
   protected readonly fieldErrors = signal<FieldErrors | null>(null);
@@ -158,8 +164,10 @@ export class ProgramsFormComponent implements OnInit {
     }
   }
 
-  private loadProgram(id: number): void {
+  protected loadProgram(id: number): void {
     this.loading.set(true);
+    this.loadError.set(false);
+    this.notFound.set(false);
     this.programsService
       .programsRetrieve({ id, includeInactive: true })
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -188,11 +196,23 @@ export class ProgramsFormComponent implements OnInit {
           this.form.controls.team_id.disable();
           this.loading.set(false);
         },
-        error: () => {
-          this.notifyLoadError();
+        error: (err: unknown) => {
+          if (err instanceof HttpErrorResponse && err.status === 404) {
+            this.notFound.set(true);
+          } else {
+            this.loadError.set(true);
+          }
           this.loading.set(false);
         },
       });
+  }
+
+  /** Retry button handler for the edit-mode load-failure state. */
+  protected reloadProgram(): void {
+    const id = this.programId();
+    if (id != null) {
+      this.loadProgram(id);
+    }
   }
 
   private loadManagerTeams(): void {

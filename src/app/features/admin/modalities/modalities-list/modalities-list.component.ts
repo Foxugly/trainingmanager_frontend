@@ -6,6 +6,7 @@ import { ConfirmationService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { Checkbox } from 'primeng/checkbox';
 import { ConfirmDialog } from 'primeng/confirmdialog';
+import { Message } from 'primeng/message';
 import { TableModule } from 'primeng/table';
 import { Observable, map } from 'rxjs';
 import { SportsService } from '../../../../api/api/sports.service';
@@ -23,6 +24,7 @@ import { NestedTaxonomyListBase } from '../../shared/nested-taxonomy-list.base';
     TableModule,
     Checkbox,
     Button,
+    Message,
     ConfirmDialog,
     TranslocoPipe,
   ],

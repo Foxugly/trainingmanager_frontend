@@ -75,6 +75,8 @@ interface ProtectedFields {
   isEditMode(): boolean;
   hasLinkedEvents(): boolean;
   saving(): boolean;
+  loadError(): boolean;
+  notFound(): boolean;
   activeValue(): boolean;
   fieldErrors(): { [k: string]: string[] } | null;
   fieldError(name: string): string | null;
@@ -291,9 +293,14 @@ describe('ProgramsFormComponent', () => {
     expect(messageService.add).toHaveBeenCalledWith(expect.objectContaining({ severity: 'error' }));
   });
 
-  it('toasts an error when a program fails to load in edit mode', async () => {
+  it('flags loadError (not a blank form) when a program fails to load in edit mode', async () => {
     await setup('7', null);
-    expect(messageService.add).toHaveBeenCalledWith(expect.objectContaining({ severity: 'error' }));
+    // A failed retrieve must NOT render the edit form (a Save would PATCH the
+    // real program with defaults). The non-404 error path sets loadError so the
+    // template shows an inline error + retry instead.
+    expect(access(component).loadError()).toBe(true);
+    expect(access(component).notFound()).toBe(false);
+    expect(access(component).program()).toBeNull();
   });
 
   it('cancel() navigates back to /programs in create mode', () => {

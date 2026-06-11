@@ -45,6 +45,9 @@ export class TeamsListComponent implements OnInit {
 
   protected readonly teams = signal<Team[]>([]);
   protected readonly loading = signal(false);
+  // Distinguish a backend failure from a genuinely empty list, so an error
+  // doesn't masquerade as "no teams".
+  protected readonly error = signal(false);
 
   protected readonly teamsWithRole = computed<TeamWithRole[]>(() => {
     const userId = this.authService.currentUser()?.id;
@@ -72,7 +75,12 @@ export class TeamsListComponent implements OnInit {
   };
 
   ngOnInit(): void {
+    this.load();
+  }
+
+  protected load(): void {
     this.loading.set(true);
+    this.error.set(false);
     this.teamsService
       .teamsList({ isActive: true })
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -81,7 +89,10 @@ export class TeamsListComponent implements OnInit {
           this.teams.set(res.results ?? []);
           this.loading.set(false);
         },
-        error: () => this.loading.set(false),
+        error: () => {
+          this.error.set(true);
+          this.loading.set(false);
+        },
       });
   }
 }

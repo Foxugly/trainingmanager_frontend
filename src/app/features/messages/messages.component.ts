@@ -46,15 +46,26 @@ export class MessagesComponent implements OnInit {
 
   protected readonly rows = signal<TopicRow[]>([]);
   protected readonly loading = signal(false);
+  // Distinguish a backend failure from a genuinely empty list, so an error
+  // doesn't masquerade as "no discussions".
+  protected readonly error = signal(false);
 
   ngOnInit(): void {
+    this.load();
+  }
+
+  protected load(): void {
     this.loading.set(true);
+    this.error.set(false);
     this.teamsService
       .teamsList({ isActive: true })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => this.loadTopics(res.results ?? []),
-        error: () => this.loading.set(false),
+        error: () => {
+          this.error.set(true);
+          this.loading.set(false);
+        },
       });
   }
 
@@ -82,7 +93,10 @@ export class MessagesComponent implements OnInit {
           this.rows.set(merged);
           this.loading.set(false);
         },
-        error: () => this.loading.set(false),
+        error: () => {
+          this.error.set(true);
+          this.loading.set(false);
+        },
       });
   }
 

@@ -1,13 +1,22 @@
-import { ChangeDetectionStrategy, Component, computed, inject, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { Button } from 'primeng/button';
+import { Message } from 'primeng/message';
 import { UnreadTopic } from '../../../api/model/unread-topic';
 import { MessagesService } from '../../messages/messages.service';
 import { BellComponent } from '../bell/bell.component';
 
 @Component({
   selector: 'app-message-bell',
-  imports: [TranslocoPipe, BellComponent],
+  imports: [TranslocoPipe, BellComponent, Button, Message],
   templateUrl: './message-bell.component.html',
   styleUrl: './message-bell.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,11 +29,20 @@ export class MessageBellComponent {
 
   protected readonly unreadCount = this.messages.unreadCount;
   protected readonly topics = this.messages.topics;
+  // Distinguish a backend failure from a genuinely empty list, so an error
+  // doesn't masquerade as "no discussions" (esp. while the badge is > 0).
+  protected readonly error = signal(false);
   protected readonly hasUnread = computed(() => this.unreadCount() > 0);
 
   /** Poll tick from the shell — only fires while authenticated and visible. */
   protected onPoll(): void {
-    this.messages.refreshUnread().subscribe({ error: () => {} });
+    this.error.set(false);
+    this.messages.refreshUnread().subscribe({ error: () => this.error.set(true) });
+  }
+
+  /** Retry the unread/topics fetch after a failure. */
+  protected retry(): void {
+    this.onPoll();
   }
 
   /** Auth dropped — clear cached unread state. */
