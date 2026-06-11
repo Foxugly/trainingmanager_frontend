@@ -33,6 +33,7 @@
     "empty_subtitle": "Aún no hay debates en tus equipos.",
     "bell": {
       "label": "Mensajes no leídos",
+      "unread_count": "mensajes no leídos",
       "empty": "No hay mensajes no leídos",
       "view_all": "Ver todos los mensajes"
     }

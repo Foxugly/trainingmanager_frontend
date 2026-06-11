@@ -13,6 +13,7 @@ import { SportsService } from '../../../../api/api/sports.service';
 import { Modality } from '../../../../api/model/modality';
 import { Sport } from '../../../../api/model/sport';
 import { TrainingTypeEnum } from '../../../../api/model/training-type-enum';
+import { StatusBadgeComponent } from '../../../../shared/ui/status-badge/status-badge.component';
 import { Paginated } from '../../shared/taxonomy-list.base';
 import { NestedTaxonomyListBase } from '../../shared/nested-taxonomy-list.base';
 
@@ -26,6 +27,7 @@ import { NestedTaxonomyListBase } from '../../shared/nested-taxonomy-list.base';
     Button,
     Message,
     ConfirmDialog,
+    StatusBadgeComponent,
     TranslocoPipe,
   ],
   templateUrl: './modalities-list.component.html',

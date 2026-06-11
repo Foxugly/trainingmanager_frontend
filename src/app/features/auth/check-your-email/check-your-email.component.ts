@@ -13,11 +13,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { AuthService } from '../../../core/auth/auth.service';
+import { ToastService } from '../../../core/notifications/toast.service';
 import { parseRetryAfterSeconds } from '../shared/retry-after';
 
 const RESEND_DEBOUNCE_SECONDS = 30;
@@ -34,7 +34,7 @@ export class CheckYourEmailComponent implements OnInit, OnDestroy {
   private readonly authService = inject(AuthService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly messageService = inject(MessageService);
+  private readonly toast = inject(ToastService);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly email = signal<string | null>(null);
@@ -89,11 +89,7 @@ export class CheckYourEmailComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.resending.set(false);
-          this.messageService.add({
-            severity: 'success',
-            summary: 'common.success',
-            detail: 'auth.check_email.resent_toast',
-          });
+          this.toast.success('auth.check_email.resent_toast');
           this.startCooldown(RESEND_DEBOUNCE_SECONDS);
         },
         error: (err: HttpErrorResponse) => {

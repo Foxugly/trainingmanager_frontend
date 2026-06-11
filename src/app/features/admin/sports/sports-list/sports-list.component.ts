@@ -11,6 +11,7 @@ import { TableModule } from 'primeng/table';
 import { Observable } from 'rxjs';
 import { SportsService } from '../../../../api/api/sports.service';
 import { Sport } from '../../../../api/model/sport';
+import { StatusBadgeComponent } from '../../../../shared/ui/status-badge/status-badge.component';
 import { Paginated, TaxonomyListBase } from '../../shared/taxonomy-list.base';
 
 @Component({
@@ -23,6 +24,7 @@ import { Paginated, TaxonomyListBase } from '../../shared/taxonomy-list.base';
     Button,
     Message,
     ConfirmDialog,
+    StatusBadgeComponent,
     TranslocoPipe,
   ],
   templateUrl: './sports-list.component.html',

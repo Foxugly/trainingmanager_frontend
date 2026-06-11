@@ -12,6 +12,7 @@ import { ActivatedRoute } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { PublicService } from '../../api/api/public.service';
+import { LanguageService } from '../../core/i18n/language.service';
 import { EventPublic } from '../../api/model/event-public';
 import { APP_VERSION } from '../../shared/app-version';
 import { shortTime } from '../../shared/datetime/short-time';
@@ -62,6 +63,7 @@ function asNumber(value: unknown): number | null {
 export class PublicSessionComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly publicService = inject(PublicService);
+  private readonly languageService = inject(LanguageService);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly loading = signal(true);
@@ -76,7 +78,7 @@ export class PublicSessionComponent implements OnInit {
     if (!date) return null;
     const d = new Date(`${date}T00:00:00`);
     if (Number.isNaN(d.getTime())) return date;
-    return d.toLocaleDateString(undefined, {
+    return d.toLocaleDateString(this.languageService.activeLang(), {
       weekday: 'long',
       year: 'numeric',
       month: 'long',

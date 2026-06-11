@@ -2,7 +2,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  Injector,
   OnDestroy,
+  afterNextRender,
   computed,
   inject,
   signal,
@@ -43,6 +45,7 @@ export class LoginComponent implements OnDestroy {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly transloco = inject(TranslocoService);
+  private readonly injector = inject(Injector);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly form = this.fb.nonNullable.group({
@@ -110,7 +113,7 @@ export class LoginComponent implements OnDestroy {
           if (err.status === 429) {
             const retryAfter = parseRetryAfterSeconds(err.headers);
             if (retryAfter !== null) this.startRetryCountdown(retryAfter);
-            this.errorMessage.set('auth.login.rate_limit_message');
+            this.errorMessage.set(this.transloco.translate('auth.login.rate_limit_message'));
             return;
           }
 
@@ -135,6 +138,12 @@ export class LoginComponent implements OnDestroy {
     this.magicLinkError.set(null);
     this.magicLinkSent.set(false);
     this.magicLinkMode.update((v) => !v);
+    // After the form swaps, move focus to the now-visible input so keyboard
+    // users land where they expect instead of staying on the toggle button.
+    const targetId = this.magicLinkMode() ? 'magic-email' : 'username';
+    afterNextRender(() => document.getElementById(targetId)?.focus(), {
+      injector: this.injector,
+    });
   }
 
   protected submitMagicLink(): void {

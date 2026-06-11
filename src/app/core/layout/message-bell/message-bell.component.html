@@ -32,7 +32,20 @@
         </div>
       } @else {
         @for (topic of topics(); track topic.topic_id) {
-          <button type="button" class="msg-item" (click)="onSelect(topic)">
+          <button
+            type="button"
+            class="msg-item"
+            [attr.aria-label]="
+              topic.title +
+              ' · ' +
+              topic.team_name +
+              ' · ' +
+              topic.unread_count +
+              ' ' +
+              ('messages.bell.unread_count' | transloco)
+            "
+            (click)="onSelect(topic)"
+          >
             <span class="msg-dot" aria-hidden="true"></span>
             <span class="msg-body">
               <span class="msg-item-title">{{ topic.title }}</span>

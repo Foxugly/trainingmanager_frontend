@@ -33,6 +33,7 @@
     "empty_subtitle": "Nog geen discussies in je teams.",
     "bell": {
       "label": "Ongelezen berichten",
+      "unread_count": "ongelezen berichten",
       "empty": "Geen ongelezen berichten",
       "view_all": "Alle berichten bekijken"
     }

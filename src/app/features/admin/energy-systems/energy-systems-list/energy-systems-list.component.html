@@ -34,11 +34,10 @@
     <tr>
       <td>{{ es.name }}</td>
       <td>
-        @if (es.is_active) {
-          <span class="text-green-600" [attr.aria-label]="'common.active' | transloco">●</span>
-        } @else {
-          <span class="text-red-500" [attr.aria-label]="'common.inactive' | transloco">●</span>
-        }
+        <app-status-badge
+          [kind]="es.is_active ? 'active' : 'inactive'"
+          [label]="(es.is_active ? 'common.active' : 'common.inactive') | transloco"
+        />
       </td>
       <td class="flex gap-1">
         <a [routerLink]="[es.id, 'edit']">

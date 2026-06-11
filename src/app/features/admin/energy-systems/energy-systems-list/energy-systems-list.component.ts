@@ -11,6 +11,7 @@ import { TableModule } from 'primeng/table';
 import { Observable } from 'rxjs';
 import { EnergySystemsService } from '../../../../api/api/energy-systems.service';
 import { EnergySystem } from '../../../../api/model/energy-system';
+import { StatusBadgeComponent } from '../../../../shared/ui/status-badge/status-badge.component';
 import { Paginated, TaxonomyListBase } from '../../shared/taxonomy-list.base';
 
 @Component({
@@ -23,6 +24,7 @@ import { Paginated, TaxonomyListBase } from '../../shared/taxonomy-list.base';
     Button,
     Message,
     ConfirmDialog,
+    StatusBadgeComponent,
     TranslocoPipe,
   ],
   templateUrl: './energy-systems-list.component.html',

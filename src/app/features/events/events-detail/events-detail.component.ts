@@ -15,7 +15,7 @@ import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { Button } from 'primeng/button';
+import { Button, ButtonDirective } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Message } from 'primeng/message';
 import { ProgressSpinner } from 'primeng/progressspinner';
@@ -65,6 +65,7 @@ import { LocalizedDatePipe } from '../../../shared/datetime/localized-date.pipe'
     FormsModule,
     RouterLink,
     Button,
+    ButtonDirective,
     ConfirmDialog,
     Message,
     ProgressSpinner,

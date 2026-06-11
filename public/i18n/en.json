@@ -33,6 +33,7 @@
     "empty_subtitle": "No discussions in your teams yet.",
     "bell": {
       "label": "Unread messages",
+      "unread_count": "unread messages",
       "empty": "No unread messages",
       "view_all": "View all messages"
     }

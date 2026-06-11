@@ -92,29 +92,31 @@
         </span>
       }
 
-      <a detailHeaderActions [routerLink]="['/events', e.id, 'print']">
-        <p-button
-          icon="pi pi-print"
-          severity="secondary"
+      <a
+        detailHeaderActions
+        pButton
+        [routerLink]="['/events', e.id, 'print']"
+        icon="pi pi-print"
+        severity="secondary"
+        [outlined]="true"
+        [rounded]="true"
+        [pTooltip]="'events.actions.print' | transloco"
+        tooltipPosition="bottom"
+        [attr.aria-label]="'events.actions.print' | transloco"
+      ></a>
+      @if (canManage()) {
+        <a
+          detailHeaderActions
+          pButton
+          [routerLink]="['/events', e.id, 'edit']"
+          icon="pi pi-pencil"
+          severity="info"
           [outlined]="true"
           [rounded]="true"
-          [pTooltip]="'events.actions.print' | transloco"
+          [pTooltip]="'events.actions.edit' | transloco"
           tooltipPosition="bottom"
-          [ariaLabel]="'events.actions.print' | transloco"
-        />
-      </a>
-      @if (canManage()) {
-        <a detailHeaderActions [routerLink]="['/events', e.id, 'edit']">
-          <p-button
-            icon="pi pi-pencil"
-            severity="info"
-            [outlined]="true"
-            [rounded]="true"
-            [pTooltip]="'events.actions.edit' | transloco"
-            tooltipPosition="bottom"
-            [ariaLabel]="'events.actions.edit' | transloco"
-          />
-        </a>
+          [attr.aria-label]="'events.actions.edit' | transloco"
+        ></a>
       }
       @if (canManage()) {
         <p-button

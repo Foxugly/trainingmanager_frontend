@@ -14,7 +14,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { Button } from 'primeng/button';
+import { Button, ButtonDirective } from 'primeng/button';
 import { MultiSelect } from 'primeng/multiselect';
 import { Skeleton } from 'primeng/skeleton';
 import { firstValueFrom } from 'rxjs';
@@ -70,6 +70,7 @@ function normalizeHex(value: string | null | undefined): string | null {
     FormsModule,
     RouterLink,
     Button,
+    ButtonDirective,
     MultiSelect,
     Skeleton,
     TranslocoPipe,

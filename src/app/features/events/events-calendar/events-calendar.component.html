@@ -29,13 +29,13 @@
         (onClick)="goToToday()"
       />
       @if (canCreate()) {
-        <a [routerLink]="['/events', 'new']">
-          <p-button
-            [label]="'events.calendar.new_event' | transloco"
-            icon="pi pi-plus"
-            severity="success"
-          />
-        </a>
+        <a
+          pButton
+          [routerLink]="['/events', 'new']"
+          [label]="'events.calendar.new_event' | transloco"
+          icon="pi pi-plus"
+          severity="success"
+        ></a>
       }
     </div>
   </div>

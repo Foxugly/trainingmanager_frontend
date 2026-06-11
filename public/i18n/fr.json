@@ -33,6 +33,7 @@
     "empty_subtitle": "Aucune discussion dans vos équipes pour le moment.",
     "bell": {
       "label": "Messages non lus",
+      "unread_count": "messages non lus",
       "empty": "Aucun message non lu",
       "view_all": "Voir tous les messages"
     }
