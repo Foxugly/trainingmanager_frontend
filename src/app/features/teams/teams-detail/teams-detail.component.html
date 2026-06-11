@@ -375,19 +375,26 @@
         <!-- TAB: DISCUSSIONS (any team member) -->
         @if (isMemberOrAbove() && discussionRole(); as role) {
           <p-tabpanel value="discussions">
-            <app-team-discussions
-              [teamId]="t.id"
-              [team]="t"
-              [role]="role"
-              [currentUserId]="currentUserId()"
-              [initialTopicId]="initialTopicId()"
-            />
+            @if (activeTab() === 'discussions') {
+              <app-team-discussions
+                [teamId]="t.id"
+                [team]="t"
+                [role]="role"
+                [currentUserId]="currentUserId()"
+                [initialTopicId]="initialTopicId()"
+              />
+            }
           </p-tabpanel>
         }
 
         <!-- TAB 3: DEMANDES & INVITATIONS (manager-only) -->
         @if (canManage()) {
           <p-tabpanel value="requests">
+            <!-- NOT gated on activeTab: app-team-requests emits (countChange)
+                 which feeds the tab badge ("N pending requests"), so a manager
+                 must see the count at team-open, before opening the tab. The
+                 two list calls it makes are light; the heavy tabs (stats =
+                 chart.js, discussions = Quill) are the ones gated below. -->
             <app-team-requests
               [teamId]="t.id"
               (countChange)="onRequestsCountChange($event)"
@@ -399,29 +406,33 @@
         <!-- TAB: STATISTICS (manager/owner aggregate + drill-down) -->
         @if (canManage()) {
           <p-tabpanel value="stats">
-            @if (selectedStatsMember() !== null) {
-              <div class="mb-3">
-                <p-button
-                  [label]="'stats.back_to_team' | transloco"
-                  icon="pi pi-arrow-left"
-                  severity="secondary"
-                  [text]="true"
-                  size="small"
-                  (onClick)="selectedStatsMember.set(null)"
-                />
-              </div>
+            @if (activeTab() === 'stats') {
+              @if (selectedStatsMember() !== null) {
+                <div class="mb-3">
+                  <p-button
+                    [label]="'stats.back_to_team' | transloco"
+                    icon="pi pi-arrow-left"
+                    severity="secondary"
+                    [text]="true"
+                    size="small"
+                    (onClick)="selectedStatsMember.set(null)"
+                  />
+                </div>
+              }
+              <app-team-stats
+                [teamId]="t.id"
+                [memberId]="selectedStatsMember()"
+                [canReview]="true"
+                (selectMember)="selectedStatsMember.set($event)"
+              />
             }
-            <app-team-stats
-              [teamId]="t.id"
-              [memberId]="selectedStatsMember()"
-              [canReview]="true"
-              (selectMember)="selectedStatsMember.set($event)"
-            />
           </p-tabpanel>
         } @else if (isAthleteMember()) {
           <!-- TAB: MY STATISTICS (athlete self-view) -->
           <p-tabpanel value="my-stats">
-            <app-team-stats [teamId]="t.id" [memberId]="myMemberId()" />
+            @if (activeTab() === 'my-stats') {
+              <app-team-stats [teamId]="t.id" [memberId]="myMemberId()" />
+            }
           </p-tabpanel>
         }
 

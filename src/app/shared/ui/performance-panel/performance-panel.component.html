@@ -32,14 +32,18 @@
           </header>
 
           <div class="perf-chart mb-3">
-            <p-chart
-              type="line"
-              [data]="group.chart.data"
-              [options]="group.chart.options"
-              [attr.aria-label]="
-                ('performance.chart_aria' | transloco: { label: group.label })
-              "
-            />
+            @defer (on viewport) {
+              <p-chart
+                type="line"
+                [data]="group.chart.data"
+                [options]="group.chart.options"
+                [attr.aria-label]="
+                  ('performance.chart_aria' | transloco: { label: group.label })
+                "
+              />
+            } @placeholder {
+              <p-skeleton width="100%" height="12rem" />
+            }
           </div>
 
           <ul class="divide-y divide-gray-100 text-sm">

@@ -547,7 +547,11 @@
           }
         </div>
         @if (activeStatsMemberId(); as memberId) {
-          <app-team-stats [teamId]="statsTeam.id" [memberId]="memberId" />
+          @defer (on viewport) {
+            <app-team-stats [teamId]="statsTeam.id" [memberId]="memberId" />
+          } @placeholder {
+            <p-skeleton width="100%" height="20rem" />
+          }
         }
       </section>
     }
@@ -574,13 +578,21 @@
             </div>
           }
         </div>
-        <app-performance-panel [teamId]="perfTeam.id" [memberId]="myMemberId()" [canEdit]="true" />
+        @defer (on viewport) {
+          <app-performance-panel [teamId]="perfTeam.id" [memberId]="myMemberId()" [canEdit]="true" />
+        } @placeholder {
+          <p-skeleton width="100%" height="16rem" />
+        }
       </section>
     } @else if (myPerformances().length > 0) {
       <!-- Read-only self-scoped list (pure coach / no linked athlete Member). -->
       <section class="mb-10">
         <h2 class="text-lg font-semibold mb-3">{{ 'performance.my_title' | transloco }}</h2>
-        <app-performance-panel [performances]="myPerformances()" [canEdit]="false" />
+        @defer (on viewport) {
+          <app-performance-panel [performances]="myPerformances()" [canEdit]="false" />
+        } @placeholder {
+          <p-skeleton width="100%" height="16rem" />
+        }
       </section>
     } @else if (myPerformancesError()) {
       <!-- A load failure must not look like "no performances": offer a retry. -->

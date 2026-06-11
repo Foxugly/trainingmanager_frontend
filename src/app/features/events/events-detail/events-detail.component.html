@@ -372,7 +372,9 @@
         <!-- TAB 3 — DIFFICULTY (ROTI) -->
         @if (rotiEnabled()) {
           <p-tabpanel value="difficulty">
-            <app-event-roti [eventId]="e.id" [isAthlete]="isAthlete()" [canManage]="canManage()" />
+            @if (activeTab() === 'difficulty') {
+              <app-event-roti [eventId]="e.id" [isAthlete]="isAthlete()" [canManage]="canManage()" />
+            }
           </p-tabpanel>
         }
 
@@ -393,7 +395,9 @@
 
         <!-- TAB 5 — ATTACHMENTS (Pièces jointes) -->
         <p-tabpanel value="attachments">
-          <app-attachment-list targetType="event" [targetId]="e.id" [canEdit]="canManage()" />
+          @if (activeTab() === 'attachments') {
+            <app-attachment-list targetType="event" [targetId]="e.id" [canEdit]="canManage()" />
+          }
         </p-tabpanel>
 
         <!-- TAB 6 — DEBRIEF (manager-only) -->

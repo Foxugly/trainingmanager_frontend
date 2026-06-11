@@ -21,6 +21,7 @@ import { Dialog } from 'primeng/dialog';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
+import { Skeleton } from 'primeng/skeleton';
 import { Tag } from 'primeng/tag';
 import { Textarea } from 'primeng/textarea';
 import { PerformancesService } from '../../../api/api/performances.service';
@@ -82,6 +83,7 @@ const SECONDS_IN_MINUTE = 60;
     InputNumber,
     InputText,
     Select,
+    Skeleton,
     Tag,
     Textarea,
     EmptyStateComponent,

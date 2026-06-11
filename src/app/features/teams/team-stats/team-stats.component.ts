@@ -18,6 +18,7 @@ import { Button } from 'primeng/button';
 import { UIChart } from 'primeng/chart';
 import { DatePicker } from 'primeng/datepicker';
 import { Dialog } from 'primeng/dialog';
+import { Skeleton } from 'primeng/skeleton';
 import { TableModule } from 'primeng/table';
 import { TeamsService } from '../../../api/api/teams.service';
 import { ReviewBlockResponse } from '../../../api/model/review-block-response';
@@ -66,6 +67,7 @@ const SEGMENT_PALETTE = [
     UIChart,
     DatePicker,
     Dialog,
+    Skeleton,
     TableModule,
     EmptyStateComponent,
     RsvpReliabilityComponent,
