@@ -123,18 +123,28 @@ export class EventTrainingComponent {
     this.event()?.vis_rounds === VisibilityMode.Never ? 'never' : 'after',
   );
 
-  private loadedRoundIds: string | null = null;
+  private loadedRoundsFingerprint: string | null = null;
 
   constructor() {
-    // Rebuild rounds + exercises whenever the event's round id LIST changes.
+    // Rebuild rounds + exercises whenever the rounds_detail CONTENT changes.
     // The data is embedded in the event (rounds_detail) — no fetch — so this is
-    // synchronous. Keying on the id list (not the whole event) means a
-    // total-only patch, which mutates the event reference, doesn't rebuild.
+    // synchronous. We key on a fingerprint of the round content the editor
+    // renders (id + order + count + start/break times + each round's exercise
+    // id list), NOT just the round id list: editing a round's count/départ/récup
+    // keeps the same ids, so an id-only key would skip the rebuild and leave the
+    // block legend stale. A total-only patch leaves this fingerprint unchanged,
+    // so it still doesn't trigger a needless rebuild.
     effect(() => {
-      const ids = this.event().rounds ?? [];
-      const key = ids.join(',');
-      if (this.loadedRoundIds === key) return;
-      this.loadedRoundIds = key;
+      const detail = this.event().rounds_detail ?? [];
+      const key = detail
+        .map(
+          (rd) =>
+            `${rd.id}:${rd.order ?? 0}:${rd.count ?? 1}:${rd.t_start ?? ''}:${rd.t_break ?? ''}:` +
+            (rd.exercises ?? []).map((e) => e.id).join('-'),
+        )
+        .join('|');
+      if (this.loadedRoundsFingerprint === key) return;
+      this.loadedRoundsFingerprint = key;
       untracked(() => this.rebuildFromEvent());
     });
 

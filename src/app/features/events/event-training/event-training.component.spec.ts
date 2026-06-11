@@ -146,6 +146,28 @@ describe('EventTrainingComponent', () => {
     expect(access(component).rounds()).toEqual([]);
   });
 
+  it('rebuilds the rounds when a block content changes even if the round id list is unchanged', () => {
+    // Regression: editing a block's count / départ / récup keeps the same round
+    // ids, so an id-list-keyed rebuild would skip it and leave the legend stale.
+    expect(access(component).rounds()[0].t_start ?? null).toBeNull();
+
+    const edited = {
+      ...eventWithRounds,
+      rounds_detail: [
+        { ...roundDetail(11), count: 5, t_start: '01:30', t_break: '00:45' },
+        roundDetail(12),
+        roundDetail(13),
+      ],
+    } as unknown as Event;
+    fixture.componentRef.setInput('event', edited);
+    fixture.detectChanges();
+
+    const first = access(component).rounds()[0];
+    expect(first.count).toBe(5);
+    expect(first.t_start).toBe('01:30');
+    expect(first.t_break).toBe('00:45');
+  });
+
   it('exposes the sport id (event sport, team fallback) for the row option lists', () => {
     expect(access(component).sportId()).toBe(1);
   });
