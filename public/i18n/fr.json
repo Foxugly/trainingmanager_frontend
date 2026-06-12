@@ -150,7 +150,7 @@
         "count_help": "Combien de fois ce bloc est répété dans la séance.",
         "t_start": "Départ",
         "t_break": "Récup",
-        "time_placeholder": "0:30"
+        "time_placeholder": "0:00"
       },
       "save": "Enregistrer",
       "cancel": "Annuler",
@@ -172,7 +172,7 @@
         "distance": "Distance",
         "t_start": "Départ",
         "t_break": "Récup",
-        "time_placeholder": "0:30",
+        "time_placeholder": "0:00",
         "notes": "Notes"
       },
       "save": "Enregistrer",

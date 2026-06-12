@@ -150,7 +150,7 @@
         "count_help": "Hoe vaak dit blok in de sessie wordt herhaald.",
         "t_start": "Start",
         "t_break": "Rust",
-        "time_placeholder": "0:30"
+        "time_placeholder": "0:00"
       },
       "save": "Opslaan",
       "cancel": "Annuleren",
@@ -172,7 +172,7 @@
         "distance": "Afstand",
         "t_start": "Start",
         "t_break": "Rust",
-        "time_placeholder": "0:30",
+        "time_placeholder": "0:00",
         "notes": "Notities"
       },
       "save": "Opslaan",
