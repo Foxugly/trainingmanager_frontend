@@ -340,7 +340,9 @@
       "regenerate": "Opnieuw genereren",
       "empty": "Nog geen atletenbriefing.",
       "generated": "Atletenbriefing gegenereerd.",
-      "error": "Kon de briefing niet genereren."
+      "error": "Kon de briefing niet genereren.",
+      "saved": "Atletenbriefing opgeslagen.",
+      "placeholder": "Briefing voor de atleten (AI-gegenereerd, bewerkbaar)…"
     },
     "templates": {
       "tab": "Sjablonen",

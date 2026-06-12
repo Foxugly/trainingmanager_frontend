@@ -287,7 +287,7 @@
         <p-tabpanel value="training">
           <app-event-athlete-brief
             [eventId]="e.id"
-            [brief]="e.ai_athlete_brief"
+            [brief]="e.ai_athlete_brief ?? ''"
             [canManage]="canManage()"
           />
           @if (canManage()) {

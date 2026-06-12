@@ -340,7 +340,9 @@
       "regenerate": "Regenerar",
       "empty": "Aún no hay brief de atletas.",
       "generated": "Brief de atletas generado.",
-      "error": "No se pudo generar el brief."
+      "error": "No se pudo generar el brief.",
+      "saved": "Resumen para atletas guardado.",
+      "placeholder": "Resumen dirigido a los atletas (generado por IA, editable)…"
     },
     "templates": {
       "tab": "Plantillas",

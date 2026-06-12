@@ -52,6 +52,7 @@ export interface PatchedEventRequest {
      */
     vis_rounds?: VisibilityMode;
     debrief?: string;
+    ai_athlete_brief?: string;
 }
 
 

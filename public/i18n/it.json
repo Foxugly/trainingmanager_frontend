@@ -340,7 +340,9 @@
       "regenerate": "Rigenera",
       "empty": "Nessun brief atleti.",
       "generated": "Brief atleti generato.",
-      "error": "Impossibile generare il brief."
+      "error": "Impossibile generare il brief.",
+      "saved": "Brief atleti salvato.",
+      "placeholder": "Brief rivolto agli atleti (generato dall’IA, modificabile)…"
     },
     "templates": {
       "tab": "Modelli",

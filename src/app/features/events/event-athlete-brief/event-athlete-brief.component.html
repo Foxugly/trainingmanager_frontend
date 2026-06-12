@@ -1,4 +1,4 @@
-@if (current() || canManage()) {
+@if (draft() || canManage()) {
   <div class="rounded-lg border border-indigo-100 bg-indigo-50/50 p-4 mb-4">
     <div class="flex items-center justify-between gap-3 mb-1 flex-wrap">
       <h4 class="text-sm font-semibold text-indigo-800 flex items-center gap-2">
@@ -8,7 +8,7 @@
       @if (canManage()) {
         <p-button
           [label]="
-            (current() ? 'events.athlete_brief.regenerate' : 'events.athlete_brief.generate')
+            (draft() ? 'events.athlete_brief.regenerate' : 'events.athlete_brief.generate')
               | transloco
           "
           icon="pi pi-sparkles"
@@ -20,10 +20,30 @@
         />
       }
     </div>
-    @if (current()) {
-      <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{{ current() }}</p>
+
+    @if (canManage()) {
+      <!-- Editable: the AI seeds the brief, the coach can tweak + save it. -->
+      <textarea
+        pTextarea
+        id="athlete-brief"
+        rows="4"
+        [ngModel]="draft()"
+        (ngModelChange)="draft.set($event)"
+        [placeholder]="'events.athlete_brief.placeholder' | transloco"
+        class="w-full mt-1"
+      ></textarea>
+      <div class="mt-2">
+        <p-button
+          [label]="'common.save' | transloco"
+          icon="pi pi-check"
+          size="small"
+          [loading]="saving()"
+          (onClick)="save()"
+        />
+      </div>
     } @else {
-      <p class="text-sm text-gray-500">{{ 'events.athlete_brief.empty' | transloco }}</p>
+      <!-- Athlete: read-only. -->
+      <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{{ brief() }}</p>
     }
   </div>
 }

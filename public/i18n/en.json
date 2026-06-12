@@ -340,7 +340,9 @@
       "regenerate": "Regenerate",
       "empty": "No athlete brief yet.",
       "generated": "Athlete brief generated.",
-      "error": "Could not generate the brief."
+      "error": "Could not generate the brief.",
+      "saved": "Athlete brief saved.",
+      "placeholder": "Brief addressed to the athletes (AI-generated, editable)…"
     },
     "templates": {
       "tab": "Templates",
