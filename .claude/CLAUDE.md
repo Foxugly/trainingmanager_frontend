@@ -34,10 +34,11 @@ All providers live in `src/app/app.config.ts`; routes in `src/app/app.routes.ts`
   `/invitation/:token`. Hosts the public marketing nav + UserMenu when
   authenticated.
 - **MainLayoutComponent** — authenticated app shell (`canActivate: [authGuard]`):
-  `/dashboard`, `/profile`, `/events`, `/programs`, `/teams`,
+  `/dashboard`, `/profile`, `/profile/password` (change-password is a **dedicated
+  page**, not a dialog), `/messages`, `/events`, `/programs`, `/teams`,
   `/teams/discover`, `/team-join-requests/magic-action/:token`.
 - **AdminLayoutComponent** — nested inside MainLayout under `/admin` with
-  `[authGuard, staffGuard]`; taxonomy CRUD (sports, energy-systems, energy-segments, modalities).
+  `[authGuard, superuserGuard]` (`core/auth/superuser.guard.ts`); taxonomy CRUD (sports, energy-systems, energy-segments, modalities). The admin entry in the topmenu is gated the same way (`isSuperuser` computed off `Me.is_superuser`) — superuser, **not** plain staff.
 
 ### Per-feature convention
 
@@ -165,7 +166,7 @@ Prettier: 100-col, single quotes, Angular parser for `*.html`. 2-space indent (`
 - Most specs use `overrideComponent({ set: { template: '', imports: [] } })` to bypass PrimeNG rendering and test logic only via a `ProtectedFields` helper interface that exposes signal getters / methods.
 - ngOnInit fires API calls — set mocks BEFORE `fixture.detectChanges()`. The common pattern is a `setup({ ...overrides })` helper that recreates the TestBed per test for isolation.
 - AuthService mocks need `refreshMe: vi.fn()` (used after team mutations).
-- `Me` fixtures must include `team_quota: { used, max, can_create }` (required field in the codegen).
+- `Me` fixtures must include `team_quota: { used, max, can_create }` and `is_superuser` (both required in the codegen; `is_superuser` drives the admin-link / `superuserGuard` gating).
 - **`vi.fn()` with setter usage** (e.g. `Object.defineProperty(window, 'location', {value: { set href(v){ spy(v) } }})`) needs an explicit generic under TS strict: `vi.fn<(v: string) => void>()`. Bare `vi.fn()` resolves to `Mock<Procedure|Constructable>` and TS rejects the call site.
 - **Router stub**: use `provideRouter([])` AND patch `events` via `Object.defineProperty(router, 'events', { value: subject.asObservable() })`. Fully replacing the `Router` token (`{ provide: Router, useValue: ... }`) breaks `RouterLink`/`RouterLinkActive` directives at DI resolution.
 - **`vi.mock` / `vi.spyOn` are blocked** for relative-import ESM bindings under the Angular unit-test runner. Stub `window.location` (with try/finally restore) to observe `mailto:` side effects instead.
@@ -174,6 +175,7 @@ Prettier: 100-col, single quotes, Angular parser for `*.html`. 2-space indent (`
 ## Gotchas
 
 - **Turnstile (Cloudflare)**: the `<script>` is in `index.html`, but Cloudflare's auto-render only scans the DOM on script load. For lazy SPA routes the `<div>` arrives later, so render explicitly via `window.turnstile.render(container, {sitekey})` with a retry loop (20 × 500ms) until the script is ready. Pattern shared by `RegisterComponent` and `ForgotPasswordComponent`.
+- **CSP (enforced in prod)**: the SPA is served under a strict, nonce-based `Content-Security-Policy` defined in `deploy/nginx/tm-frontend.conf` (the `index.html` location) — **enforced**, not Report-Only, since 2026-06-11; violations report to Sentry via a `report-uri` the runtime-fetch script derives from the Sentry DSN. `script-src` has **no `'unsafe-inline'`** (inline `<script>` must carry `'nonce-$request_id'`). When you add an external resource you MUST widen the matching directive or it is silently blocked in prod: a new API/S3/analytics origin → `connect-src`; remote images → `img-src` (own API images e.g. team logos are already allowed via `https://tm-api.foxugly.com`); third-party widgets → `script-src`/`frame-src` (Cloudflare Turnstile is allowlisted). Inline `on*` handlers are narrowly re-allowed via `script-src-attr 'unsafe-inline'` (Turnstile relies on it) — do **not** lean on that for app code. Rollback = rename the header to `Content-Security-Policy-Report-Only` and redeploy. After any policy-touching change, verify against the Sentry CSP reports.
 - **NG8107**: `?.` on non-nullable codegen types — drop the `?.` when the field is required by the schema.
 - **Windows LF→CRLF** git warnings on every commit are noise, not errors.
 - **Reset password URL**: `/auth/reset-password/:key` (no trailing slash). `:key` is `uid-token` with a dash — treat as opaque.
