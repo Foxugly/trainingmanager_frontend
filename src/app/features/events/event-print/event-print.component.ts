@@ -13,11 +13,13 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import QRCode from 'qrcode';
 import { EventsService } from '../../../api/api/events.service';
+import { TeamsService } from '../../../api/api/teams.service';
 import { ShortTimePipe } from '../../../shared/datetime/short-time.pipe';
 import { LocalizedDatePipe } from '../../../shared/datetime/localized-date.pipe';
 import { Event } from '../../../api/model/event';
 import { EventRoundDetail } from '../../../api/model/event-round-detail';
 import { Exercise } from '../../../api/model/exercise';
+import { Team } from '../../../api/model/team';
 
 @Component({
   selector: 'app-event-print',
@@ -29,10 +31,14 @@ import { Exercise } from '../../../api/model/exercise';
 export class EventPrintComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly eventsService = inject(EventsService);
+  private readonly teamsService = inject(TeamsService);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly eventId = signal<number | null>(null);
   protected readonly event = signal<Event | null>(null);
+  /** The session's team — fetched separately (Event only carries `team_id`) to
+   * surface the team logo + name in the printed header. */
+  protected readonly team = signal<Team | null>(null);
   protected readonly rounds = signal<EventRoundDetail[]>([]);
   protected readonly exercisesByRound = signal<Map<number, Exercise[]>>(new Map());
   protected readonly loading = signal(false);
@@ -117,11 +123,24 @@ export class EventPrintComponent implements OnInit {
           this.event.set(e);
           this.loading.set(false);
           this.buildFromRoundsDetail(e.rounds_detail ?? []);
+          this.loadTeam(e.team_id);
         },
         error: () => {
           this.notFound.set(true);
           this.loading.set(false);
         },
+      });
+  }
+
+  /** Fetch the team purely for its logo + name in the printed header. A failed
+   * load must not block the sheet — the header just falls back to no logo. */
+  private loadTeam(teamId: number): void {
+    this.teamsService
+      .teamsRetrieve({ id: teamId })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (t) => this.team.set(t),
+        error: () => this.team.set(null),
       });
   }
 

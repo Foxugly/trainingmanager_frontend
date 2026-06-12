@@ -35,6 +35,16 @@
   margin-bottom: 1.25rem;
 }
 
+.brand-logo {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  // Force the logo to ink on paper (browsers strip backgrounds/images by default).
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
 .sheet-heading {
   min-width: 0;
   flex: 1;

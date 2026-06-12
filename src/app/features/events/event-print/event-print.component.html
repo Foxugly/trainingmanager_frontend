@@ -22,6 +22,10 @@
 
   <article class="sheet">
     <header class="sheet-header">
+      @if (team()?.logo_url; as logoUrl) {
+        <img class="brand-logo" [src]="logoUrl" [alt]="team()?.name ?? ''" />
+      }
+
       <div class="sheet-heading">
         <h1>{{ e.name }}</h1>
         <dl class="meta">

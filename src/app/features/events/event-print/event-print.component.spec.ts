@@ -14,11 +14,13 @@ vi.mock('qrcode', () => ({
   },
 }));
 import { EventsService } from '../../../api/api/events.service';
+import { TeamsService } from '../../../api/api/teams.service';
 import { Event } from '../../../api/model/event';
 import { EventRoundDetail } from '../../../api/model/event-round-detail';
 import { Exercise } from '../../../api/model/exercise';
 import { LanguageEnum } from '../../../api/model/language-enum';
 import { Sport } from '../../../api/model/sport';
+import { Team } from '../../../api/model/team';
 import { TrainingTypeEnum } from '../../../api/model/training-type-enum';
 import { EventPrintComponent } from './event-print.component';
 
@@ -98,6 +100,13 @@ const eventWithRounds: Event = {
   public_token: null,
 };
 
+// Minimal team carrying a logo_url so the printed header's logo path is testable.
+const team = {
+  id: 4,
+  name: 'Dauphins',
+  logo_url: 'https://tm-api.foxugly.com/api/v1/teams/4/logo/',
+} as unknown as Team;
+
 interface ProtectedFields {
   event(): Event | null;
   notFound(): boolean;
@@ -115,6 +124,7 @@ describe('EventPrintComponent', () => {
   let fixture: ComponentFixture<EventPrintComponent>;
   let component: EventPrintComponent;
   let eventsMock: { eventsRetrieve: ReturnType<typeof vi.fn> };
+  let teamsMock: { teamsRetrieve: ReturnType<typeof vi.fn> };
   let routeIdParam: string | null;
 
   const access = (c: EventPrintComponent) => c as unknown as ProtectedFields;
@@ -127,6 +137,7 @@ describe('EventPrintComponent', () => {
         .fn()
         .mockReturnValue(eventResult ? of(eventResult) : throwError(() => new Error('404'))),
     };
+    teamsMock = { teamsRetrieve: vi.fn().mockReturnValue(of(team)) };
 
     await TestBed.configureTestingModule({
       imports: [
@@ -140,6 +151,7 @@ describe('EventPrintComponent', () => {
         provideNoopAnimations(),
         provideRouter([]),
         { provide: EventsService, useValue: eventsMock },
+        { provide: TeamsService, useValue: teamsMock },
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: { get: () => routeIdParam } } },
@@ -179,6 +191,10 @@ describe('EventPrintComponent', () => {
   it('loads the event for the route :id', () => {
     expect(eventsMock.eventsRetrieve).toHaveBeenCalledWith({ id: 7 });
     expect(access(component).event()?.id).toBe(7);
+  });
+
+  it("fetches the event's team (for the header logo) by team_id", () => {
+    expect(teamsMock.teamsRetrieve).toHaveBeenCalledWith({ id: 4 });
   });
 
   it('flags notFound when the id is not numeric', async () => {
@@ -227,6 +243,7 @@ describe('EventPrintComponent', () => {
     TestBed.resetTestingModule();
     routeIdParam = '7';
     eventsMock = { eventsRetrieve: vi.fn().mockReturnValue(of(eventResult)) };
+    teamsMock = { teamsRetrieve: vi.fn().mockReturnValue(of(team)) };
     await TestBed.configureTestingModule({
       imports: [
         EventPrintComponent,
@@ -239,6 +256,7 @@ describe('EventPrintComponent', () => {
         provideNoopAnimations(),
         provideRouter([]),
         { provide: EventsService, useValue: eventsMock },
+        { provide: TeamsService, useValue: teamsMock },
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: { get: () => routeIdParam } } },
@@ -265,5 +283,16 @@ describe('EventPrintComponent', () => {
     await new Promise((r) => setTimeout(r, 0));
     fixture.detectChanges();
     expect((fixture.nativeElement as HTMLElement).querySelector('table.exercises')).not.toBeNull();
+  });
+
+  it('renders the team logo in the header when the team has a logo_url', async () => {
+    await setupRendered(eventWithRounds);
+    await new Promise((r) => setTimeout(r, 0));
+    fixture.detectChanges();
+    const logo = (fixture.nativeElement as HTMLElement).querySelector<HTMLImageElement>(
+      'img.brand-logo',
+    );
+    expect(logo).not.toBeNull();
+    expect(logo?.getAttribute('src')).toBe(team.logo_url);
   });
 });
