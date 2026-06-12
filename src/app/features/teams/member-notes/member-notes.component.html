@@ -2,23 +2,22 @@
   @if (canEdit()) {
     <!-- Add / edit note (coach only) -->
     <form [formGroup]="form" class="flex flex-col gap-3 rounded-lg border border-gray-200 p-3">
-      <h3 class="text-sm font-semibold">
-        @if (editingId() !== null) {
-          {{ 'common.edit' | transloco }}
-        } @else {
-          {{ 'notes.add' | transloco }}
-        }
-      </h3>
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <h3 class="text-sm font-semibold">
+          @if (editingId() !== null) {
+            {{ 'common.edit' | transloco }}
+          } @else {
+            {{ 'notes.add' | transloco }}
+          }
+        </h3>
+        <div class="flex items-center gap-2">
+          <label class="text-sm text-gray-600" for="note_visible_to_athlete">
+            {{ 'notes.visible_to_athlete' | transloco }}
+          </label>
+          <p-toggleSwitch formControlName="visible_to_athlete" inputId="note_visible_to_athlete" />
+        </div>
+      </div>
       <app-rich-editor formControlName="content" [style]="{ height: '10rem' }" />
-      <app-meta-field
-        [label]="'notes.visible_to_athlete' | transloco"
-        for="note_visible_to_athlete"
-      >
-        <p-toggleSwitch
-          formControlName="visible_to_athlete"
-          inputId="note_visible_to_athlete"
-        />
-      </app-meta-field>
       <div class="flex items-center justify-end gap-2">
         @if (editingId() !== null) {
           <p-button

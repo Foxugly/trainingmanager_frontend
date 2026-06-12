@@ -23,7 +23,6 @@ import { ToastService } from '../../../core/notifications/toast.service';
 import { Note } from '../../../api/model/note';
 import { NoteRequest } from '../../../api/model/note-request';
 import { PatchedNoteRequest } from '../../../api/model/patched-note-request';
-import { MetaFieldComponent } from '../../../shared/ui/meta-field/meta-field.component';
 import { RichEditorComponent } from '../../../shared/ui/rich-editor/rich-editor.component';
 import { LocalizedDatePipe } from '../../../shared/datetime/localized-date.pipe';
 
@@ -50,7 +49,6 @@ import { LocalizedDatePipe } from '../../../shared/datetime/localized-date.pipe'
     Tag,
     ToggleSwitch,
     Tooltip,
-    MetaFieldComponent,
     TranslocoPipe,
   ],
   templateUrl: './member-notes.component.html',
