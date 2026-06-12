@@ -37,8 +37,8 @@
 
 .brand-logo {
   flex-shrink: 0;
-  width: 64px;
-  height: 64px;
+  width: 120px;
+  height: 120px;
   object-fit: contain;
   // Force the logo to ink on paper (browsers strip backgrounds/images by default).
   -webkit-print-color-adjust: exact;

@@ -11,6 +11,7 @@ import { EMPTY, catchError, of, switchMap, tap } from 'rxjs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { Skeleton } from 'primeng/skeleton';
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
 import { MembersService } from '../../../api/api/members.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { Member } from '../../../api/model/member';
@@ -37,6 +38,11 @@ import { TeamStatsComponent } from '../team-stats/team-stats.component';
     RouterLink,
     TranslocoPipe,
     Skeleton,
+    Tab,
+    TabList,
+    TabPanel,
+    TabPanels,
+    Tabs,
     DetailHeaderComponent,
     EmptyStateComponent,
     TeamStatsComponent,
@@ -62,6 +68,9 @@ export class AthleteDetailComponent {
   protected readonly team = signal<Team | null>(null);
   protected readonly loading = signal(false);
   protected readonly notFound = signal(false);
+
+  /** Selected tab (stats / performances / notes). */
+  protected readonly activeTab = signal<string>('stats');
 
   /** Manager/owner of THIS team — gates the whole page. */
   protected readonly canManage = computed<boolean>(() => {

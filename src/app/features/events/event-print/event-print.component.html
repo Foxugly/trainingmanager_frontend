@@ -23,7 +23,7 @@
   <article class="sheet">
     <header class="sheet-header">
       @if (team()?.logo_url; as logoUrl) {
-        <img class="brand-logo" [src]="logoUrl" [alt]="team()?.name ?? ''" />
+        <img class="brand-logo" [src]="logoUrl" [alt]="team()?.name ?? ''" width="120" height="120" />
       }
 
       <div class="sheet-heading">

@@ -37,30 +37,38 @@
       icon="pi-user"
     />
 
-    <div class="space-y-8">
-      <!-- Statistiques : présences / volume / intensité -->
-      <section>
-        <h2 class="mb-3 text-lg font-semibold text-gray-900">
+    <p-tabs [value]="activeTab()" (valueChange)="activeTab.set($any($event))">
+      <p-tablist>
+        <p-tab value="stats">
+          <i class="pi pi-chart-bar mr-2" aria-hidden="true"></i>
           {{ 'athlete.sections.stats' | transloco }}
-        </h2>
-        <app-team-stats [teamId]="teamId()!" [memberId]="memberId()" [showExport]="true" />
-      </section>
-
-      <!-- Performances -->
-      <section>
-        <h2 class="mb-3 text-lg font-semibold text-gray-900">
+        </p-tab>
+        <p-tab value="performances">
+          <i class="pi pi-bolt mr-2" aria-hidden="true"></i>
           {{ 'athlete.sections.performances' | transloco }}
-        </h2>
-        <app-performance-panel [teamId]="teamId()!" [memberId]="memberId()" [canEdit]="true" />
-      </section>
-
-      <!-- Notes du coach -->
-      <section>
-        <h2 class="mb-3 text-lg font-semibold text-gray-900">
+        </p-tab>
+        <p-tab value="notes">
+          <i class="pi pi-comment mr-2" aria-hidden="true"></i>
           {{ 'athlete.sections.notes' | transloco }}
-        </h2>
-        <app-member-notes [teamId]="teamId()!" [memberId]="memberId()!" [canEdit]="true" />
-      </section>
-    </div>
+        </p-tab>
+      </p-tablist>
+
+      <p-tabpanels>
+        <!-- Statistiques : présences / volume / intensité -->
+        <p-tabpanel value="stats">
+          <app-team-stats [teamId]="teamId()!" [memberId]="memberId()" [showExport]="true" />
+        </p-tabpanel>
+
+        <!-- Performances -->
+        <p-tabpanel value="performances">
+          <app-performance-panel [teamId]="teamId()!" [memberId]="memberId()" [canEdit]="true" />
+        </p-tabpanel>
+
+        <!-- Notes du coach -->
+        <p-tabpanel value="notes">
+          <app-member-notes [teamId]="teamId()!" [memberId]="memberId()!" [canEdit]="true" />
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
   }
 </div>
