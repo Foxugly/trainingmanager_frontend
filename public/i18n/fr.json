@@ -1032,7 +1032,7 @@
       "title": "Connexion",
       "remember_me_label": "Se souvenir de moi",
       "forgot_password_link": "Mot de passe oublié ?",
-      "username": "Nom d'utilisateur",
+      "email": "Email",
       "password": "Mot de passe",
       "submit": "Se connecter",
       "rate_limit_message": "Trop de tentatives. Réessayez dans quelques minutes.",
@@ -1071,7 +1071,6 @@
       "title": "Créer un compte",
       "subtitle": "Inscrivez-vous gratuitement pour gérer vos équipes et vos entraînements.",
       "fields": {
-        "username": "Nom d'utilisateur",
         "email": "Email",
         "password": "Mot de passe",
         "confirm_password": "Confirmer le mot de passe",
@@ -1158,8 +1157,6 @@
   "invitation_accept": {
     "title": "Vous êtes invité",
     "greeting": "Vous avez été invité à rejoindre l'équipe {{team}}. Créez votre compte avec l'adresse {{email}} pour rejoindre l'équipe.",
-    "username": "Nom d'utilisateur",
-    "username_help": "Le nom que vous utiliserez pour vous connecter.",
     "password": "Mot de passe",
     "password_confirm": "Confirmer le mot de passe",
     "submit": "Créer mon compte et rejoindre",
@@ -1204,7 +1201,6 @@
       }
     },
     "title": "Profil",
-    "username": "Nom d'utilisateur",
     "email": "Email",
     "email_readonly_help": "L'adresse email ne peut être changée que par un administrateur.",
     "first_name": "Prénom",

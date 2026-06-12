@@ -10,11 +10,11 @@
 
 
 /**
- * Block JWT login when the user has an unverified primary email.  Legacy users predating allauth integration have no EmailAddress row; they are treated as verified to preserve backwards compatibility (no data migration). Once an EmailAddress exists for a user, the `verified` flag becomes authoritative.  Optional `remember` flag (default False) extends the refresh token lifetime to settings.SIMPLE_JWT[\"REFRESH_TOKEN_LIFETIME_REMEMBER\"] (30 days) instead of the standard REFRESH_TOKEN_LIFETIME (7 days). The access token TTL is unchanged either way.
+ * Block JWT login when the user\'s email is not yet confirmed.  simplejwt authenticates on the USERNAME_FIELD, which is now ``email`` (no username) — the request field is therefore ``email``. The gate is ``user.email_confirmed`` (the boolean that replaced allauth\'s EmailAddress.verified flag).  Optional `remember` flag (default False) extends the refresh token lifetime to settings.SIMPLE_JWT[\"REFRESH_TOKEN_LIFETIME_REMEMBER\"] (30 days) instead of the standard REFRESH_TOKEN_LIFETIME (7 days). The access token TTL is unchanged either way.
  */
 export interface VerifiedTokenObtainPairRequest { 
     remember?: boolean;
-    username: string;
+    email: string;
     password: string;
 }
 

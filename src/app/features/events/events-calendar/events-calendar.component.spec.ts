@@ -19,7 +19,7 @@ import { Team } from '../../../api/model/team';
 import { AuthService } from '../../../core/auth/auth.service';
 import { EventsCalendarComponent } from './events-calendar.component';
 
-const ownerUser = { id: 17, username: 'testfrontend' } as CustomUserPublic;
+const ownerUser = { id: 17, first_name: 'testfrontend', last_name: '' } as CustomUserPublic;
 
 const sport: Sport = {
   id: 1,
@@ -300,7 +300,7 @@ describe('EventsCalendarComponent', () => {
   });
 
   it('canCreate is false when current user is member-only of every team', async () => {
-    const stranger = { id: 999, username: 'guest' } as CustomUserPublic;
+    const stranger = { id: 999, first_name: 'guest', last_name: '' } as CustomUserPublic;
     await setup(stranger);
     expect(access(component).canCreate()).toBe(false);
   });

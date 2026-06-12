@@ -51,9 +51,8 @@ export class LoginComponent implements OnDestroy {
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly form = this.fb.nonNullable.group({
-    username: ['', Validators.required],
+    email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required],
-    email: [''],
     remember: [false],
   });
 
@@ -61,7 +60,7 @@ export class LoginComponent implements OnDestroy {
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly emailNotVerified = signal(false);
 
-  // Magic-link (passwordless) mode: swaps the username/password form for an
+  // Magic-link (passwordless) mode: swaps the email/password form for an
   // email-only "send me a sign-in link" form within the same card.
   protected readonly magicLinkMode = signal(false);
   protected readonly magicLinkSubmitting = signal(false);
@@ -96,24 +95,21 @@ export class LoginComponent implements OnDestroy {
 
   protected submit(): void {
     if (this.submitDisabled()) return;
-    if (this.form.controls.username.invalid || this.form.controls.password.invalid) return;
+    if (this.form.controls.email.invalid || this.form.controls.password.invalid) return;
     this.loading.set(true);
     this.errorMessage.set(null);
     this.emailNotVerified.set(false);
     this.resendDone.set(false);
     this.resendError.set(null);
 
-    const { username, password, remember } = this.form.getRawValue();
+    const { email, password, remember } = this.form.getRawValue();
 
     this.authService
-      .login(username, password, remember)
+      .login(email, password, remember)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          const returnUrl = safeReturnUrl(
-            this.route.snapshot.queryParamMap.get('returnUrl'),
-            '/',
-          );
+          const returnUrl = safeReturnUrl(this.route.snapshot.queryParamMap.get('returnUrl'), '/');
           this.router.navigateByUrl(returnUrl);
         },
         error: (err: HttpErrorResponse) => {
@@ -150,7 +146,7 @@ export class LoginComponent implements OnDestroy {
     this.magicLinkMode.update((v) => !v);
     // After the form swaps, move focus to the now-visible input so keyboard
     // users land where they expect instead of staying on the toggle button.
-    const targetId = this.magicLinkMode() ? 'magic-email' : 'username';
+    const targetId = this.magicLinkMode() ? 'magic-email' : 'email';
     afterNextRender(() => document.getElementById(targetId)?.focus(), {
       injector: this.injector,
     });

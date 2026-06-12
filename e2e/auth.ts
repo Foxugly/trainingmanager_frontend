@@ -15,10 +15,10 @@ import { SEED } from './seed';
  * redirects to /login -> the authed page never renders. Logging in fresh gives
  * each spec its own token pair, so no refresh token is ever presented twice.
  *
- * Login form (src/app/features/auth/login): #username (pInputText — the backend
- * accepts the email as username) + #password (inner input of <p-password>) + a
- * submit button. On success AuthService navigates to `/`, which redirects an
- * authenticated user to /dashboard.
+ * Login form (src/app/features/auth/login): #email (pInputText — email-only auth)
+ * + #password (inner input of <p-password>) + a submit button. On success
+ * AuthService navigates to `/`, which redirects an authenticated user to
+ * /dashboard.
  */
 export type SeedRole = 'manager' | 'athlete';
 
@@ -26,7 +26,7 @@ export async function loginAs(page: Page, role: SeedRole): Promise<void> {
   const { email, password } = SEED[role];
   await page.goto('/login');
   // Stable, locale-independent ids from the login template.
-  await page.locator('#username').fill(email);
+  await page.locator('#email').fill(email);
   await page.locator('#password').fill(password);
   await page.locator('button[type="submit"]').click();
   // Authenticated landing is /dashboard (post-login redirect via `/`).

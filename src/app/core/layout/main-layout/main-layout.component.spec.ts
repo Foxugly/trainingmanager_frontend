@@ -12,10 +12,10 @@ import { MainLayoutComponent } from './main-layout.component';
 
 const baseUser: Me = {
   id: 17,
-  username: 'coach',
   first_name: 'Renaud',
   last_name: 'V',
   email: 'r@example.com',
+  email_confirmed: true,
   language: 'fr',
   is_staff: false,
   is_superuser: false,
@@ -50,7 +50,10 @@ describe('MainLayoutComponent', () => {
         },
         {
           provide: LanguageService,
-          useValue: { activeLang: signal('fr').asReadonly(), switchLanguage: () => ({ subscribe: () => undefined }) },
+          useValue: {
+            activeLang: signal('fr').asReadonly(),
+            switchLanguage: () => ({ subscribe: () => undefined }),
+          },
         },
       ],
     }).compileComponents();

@@ -29,7 +29,7 @@ function makeTeam(partial: Partial<Team>): Team {
     name: 'T',
     sport,
     sport_id: 1,
-    owner: { id: 17, username: 'me' },
+    owner: { id: 17, first_name: 'M', last_name: 'E' },
     managers: [],
     language: LanguageEnum.Fr,
     is_active: true,
@@ -47,7 +47,7 @@ function makeTopic(partial: Partial<Topic>): Topic {
     title: 'Topic',
     audience: AudienceEnum.Team,
     allow_athlete_replies: true,
-    author: { id: 17, username: 'me', first_name: 'M', last_name: 'E' },
+    author: { id: 17, first_name: 'M', last_name: 'E' },
     message_count: 0,
     created_at: '2026-04-01T00:00:00Z',
     updated_at: '2026-04-01T00:00:00Z',
@@ -70,11 +70,13 @@ describe('MessagesComponent', () => {
 
   const access = (c: MessagesComponent) => c as unknown as ProtectedFields;
 
-  async function setup(opts: {
-    teams?: Team[];
-    topicsByTeam?: Record<number, Topic[]>;
-    failTeamId?: number;
-  } = {}) {
+  async function setup(
+    opts: {
+      teams?: Team[];
+      topicsByTeam?: Record<number, Topic[]>;
+      failTeamId?: number;
+    } = {},
+  ) {
     TestBed.resetTestingModule();
     const teams = opts.teams ?? [];
     const topicsByTeam = opts.topicsByTeam ?? {};

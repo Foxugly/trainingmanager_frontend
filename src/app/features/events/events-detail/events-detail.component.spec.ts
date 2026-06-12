@@ -30,8 +30,8 @@ import { VisibilityMode } from '../../../api/model/visibility-mode';
 import { AuthService } from '../../../core/auth/auth.service';
 import { EventsDetailComponent } from './events-detail.component';
 
-const ownerUser = { id: 17, username: 'testfrontend' } as CustomUserPublic;
-const otherUser = { id: 99, username: 'someone' } as CustomUserPublic;
+const ownerUser = { id: 17, first_name: 'testfrontend', last_name: '' } as CustomUserPublic;
+const otherUser = { id: 99, first_name: 'someone', last_name: '' } as CustomUserPublic;
 
 const sport: Sport = {
   id: 1,
@@ -271,18 +271,16 @@ describe('EventsDetailComponent', () => {
             total: p?.patchedEventRequest?.total ?? 0,
           } as Event),
         ),
-      eventsRotiRetrieve: vi
-        .fn()
-        .mockReturnValue(
-          of([
-            {
-              average: 3.4,
-              count: 5,
-              distribution: { '1': 0, '2': 1, '3': 2, '4': 1, '5': 1 },
-              my_score: 4,
-            },
-          ]),
-        ),
+      eventsRotiRetrieve: vi.fn().mockReturnValue(
+        of([
+          {
+            average: 3.4,
+            count: 5,
+            distribution: { '1': 0, '2': 1, '3': 2, '4': 1, '5': 1 },
+            my_score: 4,
+          },
+        ]),
+      ),
       eventsRotiUpdate: vi
         .fn()
         .mockImplementation((_id: number, body: { score: number }) =>

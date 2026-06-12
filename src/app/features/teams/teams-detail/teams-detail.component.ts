@@ -170,7 +170,7 @@ export class TeamsDetailComponent implements OnInit {
     if (!t || !me) return null;
     if (t.owner?.id === me.id) return 'owner';
     if (t.managers?.some((m) => m.id === me.id)) return 'manager';
-    if (this.memberships().some((mb) => mb.member_username === me.username)) return 'member';
+    if (this.memberships().some((mb) => mb.member_username === me.email)) return 'member';
     return null;
   });
 
@@ -239,7 +239,7 @@ export class TeamsDetailComponent implements OnInit {
   protected readonly myMembership = computed(() => {
     const me = this.authService.currentUser();
     if (!me) return null;
-    return this.memberships().find((mb) => mb.member_username === me.username) ?? null;
+    return this.memberships().find((mb) => mb.member_username === me.email) ?? null;
   });
 
   /**

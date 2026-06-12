@@ -13,7 +13,6 @@ import { RegisterResponseCodeEnum } from './register-response-code-enum';
 export interface RegisterResponse { 
     detail: string;
     code: RegisterResponseCodeEnum;
-    username: string;
     email: string;
 }
 

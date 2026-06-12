@@ -11,10 +11,9 @@ import { LanguageEnum } from './language-enum';
 
 
 /**
- * Public registration payload for POST /api/v1/auth/register/.  Validates uniqueness against both CustomUser AND allauth.EmailAddress (allauth allows two unverified entries for the same email otherwise).  `turnstile_token` is required: server-side verification with Cloudflare happens in the view (not here, because we need the request to extract the remote IP). The serializer just enforces presence.
+ * Public registration payload for POST /api/v1/auth/register/.  Email-only: there is no username. Uniqueness is enforced against CustomUser.email (the unique constraint is the DB backstop).  `turnstile_token` is required: server-side verification with Cloudflare happens in the view (not here, because we need the request to extract the remote IP). The serializer just enforces presence.
  */
 export interface RegisterRequest { 
-    username: string;
     email: string;
     password: string;
     first_name: string;

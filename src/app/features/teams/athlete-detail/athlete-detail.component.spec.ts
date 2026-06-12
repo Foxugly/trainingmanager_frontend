@@ -16,8 +16,8 @@ import { Team } from '../../../api/model/team';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AthleteDetailComponent } from './athlete-detail.component';
 
-const ownerUser = { id: 17, username: 'coach' } as CustomUserPublic;
-const otherUser = { id: 99, username: 'someone' } as CustomUserPublic;
+const ownerUser = { id: 17, first_name: 'coach', last_name: '' } as CustomUserPublic;
+const otherUser = { id: 99, first_name: 'someone', last_name: '' } as CustomUserPublic;
 
 const sport: Sport = {
   id: 1,
@@ -33,7 +33,9 @@ const team: Team = {
   id: 4,
   name: 'RBP WP Senior',
   sport,
-  sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null }],
+  sports: [
+    { id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null },
+  ],
   owner: ownerUser,
   managers: [],
   language: LanguageEnum.Fr,
@@ -56,7 +58,7 @@ const member: Member = {
   lastname: 'Vilain',
   fullname: 'Renaud Vilain',
   teams: [4],
-  user: { id: 17, username: 'coach' } as CustomUserPublic,
+  user: { id: 17, first_name: 'coach', last_name: '' } as CustomUserPublic,
   created_at: '2026-04-10T00:00:00Z',
   updated_at: '2026-04-10T00:00:00Z',
 };

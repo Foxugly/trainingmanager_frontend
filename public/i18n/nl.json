@@ -1022,8 +1022,6 @@
   "invitation_accept": {
     "title": "Je bent uitgenodigd",
     "greeting": "Je bent uitgenodigd om bij {{team}} te komen. Maak een account aan met {{email}} om je bij het team aan te sluiten.",
-    "username": "Gebruikersnaam",
-    "username_help": "De naam die je gebruikt om in te loggen.",
     "password": "Wachtwoord",
     "password_confirm": "Wachtwoord bevestigen",
     "submit": "Account aanmaken en deelnemen",
@@ -1057,7 +1055,7 @@
       "title": "Inloggen",
       "remember_me_label": "Mij onthouden",
       "forgot_password_link": "Wachtwoord vergeten?",
-      "username": "Gebruikersnaam",
+      "email": "E-mail",
       "password": "Wachtwoord",
       "submit": "Aanmelden",
       "rate_limit_message": "Te veel pogingen. Probeer het over enkele minuten opnieuw.",
@@ -1096,7 +1094,6 @@
       "title": "Account aanmaken",
       "subtitle": "Registreer je gratis om je teams en trainingen te beheren.",
       "fields": {
-        "username": "Gebruikersnaam",
         "email": "E-mail",
         "password": "Wachtwoord",
         "confirm_password": "Wachtwoord bevestigen",
@@ -1204,7 +1201,6 @@
       }
     },
     "title": "Profiel",
-    "username": "Gebruikersnaam",
     "email": "E-mail",
     "email_readonly_help": "Het e-mailadres kan alleen door een beheerder worden gewijzigd.",
     "first_name": "Voornaam",

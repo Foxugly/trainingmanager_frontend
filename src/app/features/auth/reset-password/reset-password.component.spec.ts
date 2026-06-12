@@ -22,8 +22,8 @@ interface Protected {
 
 const fakeUser: Me = {
   id: 1,
-  username: 'alice',
   email: 'a@b.com',
+  email_confirmed: true,
   first_name: 'Alice',
   last_name: 'A',
   language: LanguageEnum.Fr,

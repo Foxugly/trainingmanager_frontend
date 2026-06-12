@@ -21,67 +21,115 @@ import { Team } from '../../api/model/team';
 import { AuthService } from '../../core/auth/auth.service';
 import { DashboardComponent } from './dashboard.component';
 
-const ownerUser = { id: 17, username: 'coach' } as CustomUserPublic;
-const athleteUser = { id: 88, username: 'athlete' } as CustomUserPublic;
+const ownerUser = { id: 17, first_name: 'coach', last_name: '' } as CustomUserPublic;
+const athleteUser = { id: 88, first_name: 'athlete', last_name: '' } as CustomUserPublic;
 
 const sport: Sport = {
-  id: 1, name: 'Natation', slug: 'natation', is_active: true, energy_systems: [],
+  id: 1,
+  name: 'Natation',
+  slug: 'natation',
+  is_active: true,
+  energy_systems: [],
   created_at: '2026-04-01T00:00:00Z',
   default_training_type: TrainingTypeEnum.Structured,
 };
 
 const ownedTeam: Team = {
-  id: 4, name: 'Coach Team', sport,
-  sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null }],
-  owner: ownerUser, managers: [],
-  language: LanguageEnum.Fr, is_active: true, is_public: false, attendance_statuses: [],
-  level: null, default_pool: '', places: [], default_place: null, equipment: [], logo_url: null,
-  created_at: '', updated_at: '',
+  id: 4,
+  name: 'Coach Team',
+  sport,
+  sports: [
+    { id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null },
+  ],
+  owner: ownerUser,
+  managers: [],
+  language: LanguageEnum.Fr,
+  is_active: true,
+  is_public: false,
+  attendance_statuses: [],
+  level: null,
+  default_pool: '',
+  places: [],
+  default_place: null,
+  equipment: [],
+  logo_url: null,
+  created_at: '',
+  updated_at: '',
 };
 
 // Owned by someone else → computeTeamRole yields 'member' for our athlete.
 const externalTeam: Team = {
-  ...ownedTeam, id: 9, name: 'External Team',
-  owner: { id: 999 } as CustomUserPublic, managers: [],
+  ...ownedTeam,
+  id: 9,
+  name: 'External Team',
+  owner: { id: 999 } as CustomUserPublic,
+  managers: [],
 };
 const externalTeam2: Team = {
-  ...ownedTeam, id: 10, name: 'External Team 2',
-  owner: { id: 998 } as CustomUserPublic, managers: [],
+  ...ownedTeam,
+  id: 10,
+  name: 'External Team 2',
+  owner: { id: 998 } as CustomUserPublic,
+  managers: [],
 };
 
 const presentStatus: AttendanceStatus = {
-  id: 1, code: 'present', label: 'Présent', is_default: true, order: 1, color: '#22C55E', is_active: true,
+  id: 1,
+  code: 'present',
+  label: 'Présent',
+  is_default: true,
+  order: 1,
+  color: '#22C55E',
+  is_active: true,
 };
 
 function dEvent(id: number, name: string): DashboardEvent {
   return {
-    id, name, date: '2026-06-09', hour_start: '18:00:00', hour_end: '19:30:00',
-    location: '', place: null,
+    id,
+    name,
+    date: '2026-06-09',
+    hour_start: '18:00:00',
+    hour_end: '19:30:00',
+    location: '',
+    place: null,
   };
 }
 
 function eventItem(eventId: number, teamId: number, teamName: string): DashboardEventItem {
   return {
     event: dEvent(eventId, `Ev ${eventId}`),
-    team_id: teamId, team_name: teamName, program_id: 1, program_name: 'Plan',
+    team_id: teamId,
+    team_name: teamName,
+    program_id: 1,
+    program_name: 'Plan',
   };
 }
 
 function historyItem(eventId: number, teamId: number): DashboardHistoryItem {
   return {
     event: dEvent(eventId, `Past ${eventId}`),
-    team_id: teamId, team_name: 'T', program_id: 1, program_name: 'Plan',
-    attendance_id: 900 + eventId, status_code: 'present', status: presentStatus,
+    team_id: teamId,
+    team_name: 'T',
+    program_id: 1,
+    program_name: 'Plan',
+    attendance_id: 900 + eventId,
+    status_code: 'present',
+    status: presentStatus,
   };
 }
 
 function emptySummary(): DashboardSummary {
   return {
-    coach_teams: [], member_teams: [],
-    coach_upcoming: [], coach_upcoming_total: 0,
-    coach_attendance_pending: [], coach_pending_truncated: false,
-    member_upcoming: [], member_upcoming_total: 0,
-    member_attendance_history: [], member_history_truncated: false,
+    coach_teams: [],
+    member_teams: [],
+    coach_upcoming: [],
+    coach_upcoming_total: 0,
+    coach_attendance_pending: [],
+    coach_pending_truncated: false,
+    member_upcoming: [],
+    member_upcoming_total: 0,
+    member_attendance_history: [],
+    member_history_truncated: false,
   };
 }
 
@@ -111,7 +159,10 @@ interface ProtectedFields {
   multiplePerfTeams(): boolean;
   selectedPerfTeam: { set(t: Team | null): void };
   memberUpcomingDisplayed(): { event: DashboardEvent; teamName: string; programName: string }[];
-  attendanceHistory(): { attendance: { id: number; status_code: string }; status: AttendanceStatus | null }[];
+  attendanceHistory(): {
+    attendance: { id: number; status_code: string };
+    status: AttendanceStatus | null;
+  }[];
   historyAuditTruncated(): boolean;
   loadingTeams(): boolean;
   loadingHistory(): boolean;
@@ -292,8 +343,16 @@ describe('DashboardComponent', () => {
     });
 
     it('separates coach upcoming from athlete upcoming', () => {
-      expect(access(component).upcomingDisplayed().map((e) => e.event.id)).toEqual([200]);
-      expect(access(component).memberUpcomingDisplayed().map((e) => e.event.id)).toEqual([300]);
+      expect(
+        access(component)
+          .upcomingDisplayed()
+          .map((e) => e.event.id),
+      ).toEqual([200]);
+      expect(
+        access(component)
+          .memberUpcomingDisplayed()
+          .map((e) => e.event.id),
+      ).toEqual([300]);
     });
   });
 
@@ -320,7 +379,11 @@ describe('DashboardComponent', () => {
     });
 
     it('exposes both teams as stats targets and flags multi-team', () => {
-      expect(access(component).statsTeams().map((t) => t.id)).toEqual([9, 10]);
+      expect(
+        access(component)
+          .statsTeams()
+          .map((t) => t.id),
+      ).toEqual([9, 10]);
       expect(access(component).multipleStatsTeams()).toBe(true);
     });
 
@@ -337,7 +400,7 @@ describe('DashboardComponent', () => {
   });
 
   describe('Mes performances — athlete self-service', () => {
-    const athleteWithMemberId = { id: 88, username: 'athlete', member_id: 77 } as unknown as CustomUserPublic;
+    const athleteWithMemberId = { id: 88, member_id: 77 } as unknown as CustomUserPublic;
     const memberSummary: DashboardSummary = {
       ...emptySummary(),
       member_teams: [{ team_id: 9, members_count: 2, my_member_id: 77 }],
@@ -378,7 +441,7 @@ describe('DashboardComponent', () => {
     it('does NOT offer self-service when member_id set but no member teams', async () => {
       await setup({
         teams: [ownedTeam],
-        user: { id: 17, username: 'coach', member_id: 5 } as unknown as CustomUserPublic,
+        user: { id: 17, member_id: 5 } as unknown as CustomUserPublic,
       });
       expect(access(component).myMemberId()).toBe(5);
       expect(access(component).canLogOwnPerformances()).toBe(false);
@@ -412,7 +475,11 @@ describe('DashboardComponent', () => {
       await setup({
         summary: { ...emptySummary(), coach_attendance_pending: [eventItem(202, 4, 'Coach Team')] },
       });
-      expect(access(component).attendancePending().map((p) => p.event.id)).toEqual([202]);
+      expect(
+        access(component)
+          .attendancePending()
+          .map((p) => p.event.id),
+      ).toEqual([202]);
     });
 
     it('a failing summary call sets the error flags and clears loading', async () => {

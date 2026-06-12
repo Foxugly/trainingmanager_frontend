@@ -14,8 +14,8 @@ import { Team } from '../../../api/model/team';
 import { AuthService } from '../../../core/auth/auth.service';
 import { TeamsDiscoverComponent } from './teams-discover.component';
 
-const me = { id: 17, username: 'me' } as CustomUserPublic;
-const otherOwner = { id: 99, username: 'other' } as CustomUserPublic;
+const me = { id: 17, first_name: 'me', last_name: '' } as CustomUserPublic;
+const otherOwner = { id: 99, first_name: 'other', last_name: '' } as CustomUserPublic;
 
 const sport: Sport = {
   id: 1,
@@ -32,7 +32,9 @@ function makeTeam(overrides: Partial<Team>): Team {
     id: 0,
     name: '',
     sport,
-    sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null }],
+    sports: [
+      { id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null },
+    ],
     owner: otherOwner,
     managers: [],
     language: LanguageEnum.Fr,
@@ -101,20 +103,36 @@ describe('TeamsDiscoverComponent', () => {
       makeTeam({ id: 2, name: 'My Owned Team', is_public: true, owner: me }),
       makeTeam({ id: 3, name: 'I Manage', is_public: true, managers: [me], owner: otherOwner }),
       makeTeam({ id: 4, name: 'Other Public 2', is_public: true, owner: otherOwner }),
-      makeTeam({ id: 5, name: 'Other Inactive', is_public: true, is_active: false, owner: otherOwner }),
+      makeTeam({
+        id: 5,
+        name: 'Other Inactive',
+        is_public: true,
+        is_active: false,
+        owner: otherOwner,
+      }),
     ]);
   });
 
   it('lists only public, active teams the user is not owner/manager of', () => {
-    const ids = access(component).discoverable().map((t) => t.id);
+    const ids = access(component)
+      .discoverable()
+      .map((t) => t.id);
     expect(ids).toEqual([1, 4]);
   });
 
   it('filtered() narrows by case-insensitive name or sport', async () => {
     (access(component) as unknown as { query: { set(v: string): void } }).query.set('public 2');
-    expect(access(component).filtered().map((t) => t.id)).toEqual([4]);
+    expect(
+      access(component)
+        .filtered()
+        .map((t) => t.id),
+    ).toEqual([4]);
 
     (access(component) as unknown as { query: { set(v: string): void } }).query.set('NATATION');
-    expect(access(component).filtered().map((t) => t.id)).toEqual([1, 4]);
+    expect(
+      access(component)
+        .filtered()
+        .map((t) => t.id),
+    ).toEqual([1, 4]);
   });
 });

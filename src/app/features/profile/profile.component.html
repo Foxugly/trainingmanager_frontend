@@ -1,7 +1,14 @@
 <div class="page page--narrow">
   <app-page-header [title]="'profile.title' | transloco">
-    <p-button slot="left" type="button" severity="secondary" [outlined]="true"
-      icon="pi pi-arrow-left" [label]="'common.back' | transloco" [routerLink]="['/dashboard']" />
+    <p-button
+      slot="left"
+      type="button"
+      severity="secondary"
+      [outlined]="true"
+      icon="pi pi-arrow-left"
+      [label]="'common.back' | transloco"
+      [routerLink]="['/dashboard']"
+    />
   </app-page-header>
 
   @if (user(); as me) {
@@ -19,31 +26,64 @@
           <p-tabpanels>
             <p-tabpanel value="profile">
               <div class="meta-grid">
-                <app-meta-field [label]="'profile.username' | transloco">
-                  <span>{{ me.username }}</span>
-                </app-meta-field>
-                <app-meta-field [label]="'profile.email' | transloco"
-                  [tooltip]="'profile.email_readonly_help' | transloco">
+                <app-meta-field
+                  [label]="'profile.email' | transloco"
+                  [tooltip]="'profile.email_readonly_help' | transloco"
+                >
                   <div class="flex items-center gap-3 flex-wrap">
                     <span>{{ me.email }}</span>
-                    <p-button [text]="true" size="small"
+                    <p-button
+                      [text]="true"
+                      size="small"
                       [label]="'profile.email_change.button' | transloco"
-                      (onClick)="openEmailChange()" />
+                      (onClick)="openEmailChange()"
+                    />
                   </div>
                 </app-meta-field>
-                <app-meta-field #firstNameField [label]="'profile.first_name' | transloco" for="first_name"
-                  [error]="fieldError('first_name')">
-                  <input pInputText id="first_name" formControlName="first_name" autocomplete="given-name"
-                    [attr.aria-describedby]="fieldError('first_name') ? firstNameField.errorId() : null" />
+                <app-meta-field
+                  #firstNameField
+                  [label]="'profile.first_name' | transloco"
+                  for="first_name"
+                  [error]="fieldError('first_name')"
+                >
+                  <input
+                    pInputText
+                    id="first_name"
+                    formControlName="first_name"
+                    autocomplete="given-name"
+                    [attr.aria-describedby]="
+                      fieldError('first_name') ? firstNameField.errorId() : null
+                    "
+                  />
                 </app-meta-field>
-                <app-meta-field #lastNameField [label]="'profile.last_name' | transloco" for="last_name"
-                  [error]="fieldError('last_name')">
-                  <input pInputText id="last_name" formControlName="last_name" autocomplete="family-name"
-                    [attr.aria-describedby]="fieldError('last_name') ? lastNameField.errorId() : null" />
+                <app-meta-field
+                  #lastNameField
+                  [label]="'profile.last_name' | transloco"
+                  for="last_name"
+                  [error]="fieldError('last_name')"
+                >
+                  <input
+                    pInputText
+                    id="last_name"
+                    formControlName="last_name"
+                    autocomplete="family-name"
+                    [attr.aria-describedby]="
+                      fieldError('last_name') ? lastNameField.errorId() : null
+                    "
+                  />
                 </app-meta-field>
-                <app-meta-field [full]="true" [label]="'profile.language' | transloco" for="language">
-                  <p-select inputId="language" formControlName="language" [options]="languages"
-                    optionLabel="nativeName" optionValue="code" />
+                <app-meta-field
+                  [full]="true"
+                  [label]="'profile.language' | transloco"
+                  for="language"
+                >
+                  <p-select
+                    inputId="language"
+                    formControlName="language"
+                    [options]="languages"
+                    optionLabel="nativeName"
+                    optionValue="code"
+                  />
                 </app-meta-field>
                 <app-meta-field [label]="'profile.date_joined' | transloco">
                   <span>{{ me.date_joined | localizedDate: 'medium' }}</span>
@@ -77,11 +117,19 @@
                 </h2>
                 <div class="flex items-center justify-between gap-3 flex-wrap">
                   <div>
-                    <strong class="text-red-900">{{ 'profile.delete_account_title' | transloco }}</strong>
-                    <p class="text-sm text-red-800">{{ 'profile.delete_account_help' | transloco }}</p>
+                    <strong class="text-red-900">{{
+                      'profile.delete_account_title' | transloco
+                    }}</strong>
+                    <p class="text-sm text-red-800">
+                      {{ 'profile.delete_account_help' | transloco }}
+                    </p>
                   </div>
-                  <p-button severity="danger" icon="pi pi-trash"
-                    [label]="'profile.delete_account_cta' | transloco" (onClick)="openDeleteDialog()" />
+                  <p-button
+                    severity="danger"
+                    icon="pi pi-trash"
+                    [label]="'profile.delete_account_cta' | transloco"
+                    (onClick)="openDeleteDialog()"
+                  />
                 </div>
               </section>
             </p-tabpanel>
@@ -202,11 +250,7 @@
                       (onClick)="copyCalendarUrl()"
                     />
                     @if (calendarWebcalUrl(); as webcalUrl) {
-                      <a
-                        class="calendar-sub-webcal"
-                        [href]="webcalUrl"
-                        rel="noopener"
-                      >
+                      <a class="calendar-sub-webcal" [href]="webcalUrl" rel="noopener">
                         <i class="pi pi-external-link"></i> webcal://
                       </a>
                     }
@@ -229,11 +273,23 @@
       </form>
 
       <div class="footer-actions">
-        <p-button type="button" severity="secondary" [outlined]="true" icon="pi pi-lock"
-          [label]="'profile.change_password' | transloco" [routerLink]="['/profile/password']" />
+        <p-button
+          type="button"
+          severity="secondary"
+          [outlined]="true"
+          icon="pi pi-lock"
+          [label]="'profile.change_password' | transloco"
+          [routerLink]="['/profile/password']"
+        />
         <span class="flex-1"></span>
-        <p-button type="button" icon="pi pi-save" [label]="'common.save' | transloco"
-          [loading]="loading()" [disabled]="form.invalid" (onClick)="submit()" />
+        <p-button
+          type="button"
+          icon="pi pi-save"
+          [label]="'common.save' | transloco"
+          [loading]="loading()"
+          [disabled]="form.invalid"
+          (onClick)="submit()"
+        />
       </div>
     </div>
   }
@@ -250,12 +306,22 @@
     <p class="text-sm text-gray-600 mb-3">{{ 'profile.email_change.help' | transloco }}</p>
     <form [formGroup]="emailChangeForm">
       <div class="meta-grid">
-        <app-meta-field #newEmailField [full]="true"
+        <app-meta-field
+          #newEmailField
+          [full]="true"
           [label]="'profile.email_change.new_email_label' | transloco"
-          for="new_email" [error]="emailChangeFieldError('new_email')">
-          <input pInputText id="new_email" type="email" formControlName="new_email" class="w-full"
+          for="new_email"
+          [error]="emailChangeFieldError('new_email')"
+        >
+          <input
+            pInputText
+            id="new_email"
+            type="email"
+            formControlName="new_email"
+            class="w-full"
             autocomplete="email"
-            [appAriaDescribes]="emailChangeFieldError('new_email') ? newEmailField.errorId() : null" />
+            [appAriaDescribes]="emailChangeFieldError('new_email') ? newEmailField.errorId() : null"
+          />
         </app-meta-field>
       </div>
     </form>
@@ -283,20 +349,46 @@
     </div>
     <form [formGroup]="deleteForm">
       <div class="meta-grid">
-        <app-meta-field #deletePwField [full]="true" [label]="'profile.confirm_password' | transloco"
-          for="delete_current_password" [error]="deleteFieldError('current_password')">
-          <p-password inputId="delete_current_password" formControlName="current_password"
-            [feedback]="false" [toggleMask]="true" autocomplete="current-password" [fluid]="true"
-            [appAriaDescribes]="deleteFieldError('current_password') ? deletePwField.errorId() : null" />
+        <app-meta-field
+          #deletePwField
+          [full]="true"
+          [label]="'profile.confirm_password' | transloco"
+          for="delete_current_password"
+          [error]="deleteFieldError('current_password')"
+        >
+          <p-password
+            inputId="delete_current_password"
+            formControlName="current_password"
+            [feedback]="false"
+            [toggleMask]="true"
+            autocomplete="current-password"
+            [fluid]="true"
+            [appAriaDescribes]="
+              deleteFieldError('current_password') ? deletePwField.errorId() : null
+            "
+          />
         </app-meta-field>
       </div>
     </form>
     <div class="footer-actions">
-      <p-button type="button" severity="secondary" [outlined]="true" icon="pi pi-times"
-        [label]="'common.cancel' | transloco" [disabled]="deleteLoading()" (onClick)="cancelDelete()" />
-      <p-button type="button" severity="danger" icon="pi pi-trash"
-        [label]="'profile.delete_account_cta' | transloco" [loading]="deleteLoading()"
-        [disabled]="deleteForm.invalid" (onClick)="submitDelete()" />
+      <p-button
+        type="button"
+        severity="secondary"
+        [outlined]="true"
+        icon="pi pi-times"
+        [label]="'common.cancel' | transloco"
+        [disabled]="deleteLoading()"
+        (onClick)="cancelDelete()"
+      />
+      <p-button
+        type="button"
+        severity="danger"
+        icon="pi pi-trash"
+        [label]="'profile.delete_account_cta' | transloco"
+        [loading]="deleteLoading()"
+        [disabled]="deleteForm.invalid"
+        (onClick)="submitDelete()"
+      />
     </div>
   </p-dialog>
 

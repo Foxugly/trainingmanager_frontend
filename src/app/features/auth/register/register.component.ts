@@ -28,7 +28,7 @@ import { Password } from 'primeng/password';
 import { Select } from 'primeng/select';
 import { getRuntimeConfig } from '../../../core/runtime-config';
 import { LanguageEnum } from '../../../api/model/language-enum';
-import { Register } from '../../../api/model/register';
+import { RegisterRequest } from '../../../api/model/register-request';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AVAILABLE_LANGUAGES, LanguageCode } from '../../../core/i18n/available-languages';
 import { LanguageService } from '../../../core/i18n/language.service';
@@ -109,7 +109,6 @@ export class RegisterComponent implements AfterViewInit, OnDestroy {
 
   protected readonly form = this.fb.nonNullable.group(
     {
-      username: ['', [Validators.required, Validators.maxLength(150)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirm_password: ['', [Validators.required]],
@@ -153,10 +152,7 @@ export class RegisterComponent implements AfterViewInit, OnDestroy {
         this.turnstileFailed.set(true);
         return;
       }
-      this.turnstileRetryTimer = setTimeout(
-        () => this.tryRenderTurnstile(attempts + 1),
-        500,
-      );
+      this.turnstileRetryTimer = setTimeout(() => this.tryRenderTurnstile(attempts + 1), 500);
       return;
     }
     const container = this.turnstileContainer?.nativeElement;
@@ -199,8 +195,7 @@ export class RegisterComponent implements AfterViewInit, OnDestroy {
     }
 
     const value = this.form.getRawValue();
-    const payload: Register = {
-      username: value.username,
+    const payload: RegisterRequest = {
       email: value.email,
       password: value.password,
       first_name: value.first_name,

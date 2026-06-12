@@ -11,7 +11,7 @@ import { EndpointEnum } from './endpoint-enum';
 
 
 /**
- * Single AI call row, with username for display.
+ * Single AI call row, with the user\'s email for display.
  */
 export interface AIUsageDetail { 
     readonly id: number;

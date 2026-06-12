@@ -6,8 +6,8 @@ import { CustomUserPublic } from '../../../api/model/custom-user-public';
 import { TeamManagersComponent } from './team-managers.component';
 
 const candidates = [
-  { id: 1, username: 'alice', first_name: 'Alice', last_name: 'Martin' },
-  { id: 99, username: 'coach', first_name: '', last_name: '' },
+  { id: 1, first_name: 'Alice', last_name: 'Martin' },
+  { id: 99, first_name: '', last_name: '' },
 ] as CustomUserPublic[];
 
 interface Protected {
@@ -48,16 +48,24 @@ describe('TeamManagersComponent', () => {
   beforeEach(() => setup([1]));
 
   it('selectedManagers reflects the managerIds input', () => {
-    expect(access(component).selectedManagers().map((m) => m.id)).toEqual([1]);
+    expect(
+      access(component)
+        .selectedManagers()
+        .map((m) => m.id),
+    ).toEqual([1]);
   });
 
   it('addableManagers excludes already-selected managers', () => {
-    expect(access(component).addableManagers().map((m) => m.id)).toEqual([99]);
+    expect(
+      access(component)
+        .addableManagers()
+        .map((m) => m.id),
+    ).toEqual([99]);
   });
 
-  it('managerInitials builds two-letter initials, falling back to the username', () => {
+  it('managerInitials builds two-letter initials, falling back to "?"', () => {
     expect(access(component).managerInitials(candidates[0])).toBe('AM');
-    expect(access(component).managerInitials(candidates[1])).toBe('C');
+    expect(access(component).managerInitials(candidates[1])).toBe('?');
   });
 
   it('removeManager emits the id list without the removed id', () => {

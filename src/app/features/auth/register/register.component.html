@@ -5,7 +5,9 @@
   ></div>
   <div class="w-full max-w-lg p-8 bg-white rounded-2xl shadow-md border border-gray-200">
     <div class="flex flex-col items-center text-center mb-6">
-      <div class="size-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mb-4">
+      <div
+        class="size-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mb-4"
+      >
         <i class="pi pi-user-plus text-xl" aria-hidden="true"></i>
       </div>
       <h1 class="text-2xl font-bold mb-1">{{ 'auth.register.title' | transloco }}</h1>
@@ -47,32 +49,10 @@
       </div>
 
       <div class="flex flex-col gap-2">
-        <label for="username" class="text-sm font-medium text-gray-700">
-          {{ 'auth.register.fields.username' | transloco }}
-        </label>
-        <input
-          pInputText
-          id="username"
-          formControlName="username"
-          autocomplete="username"
-          maxlength="150"
-        />
-        @if (fieldErrors()?.['username']; as msgs) {
-          <small class="text-xs text-red-700">{{ msgs.join(' · ') }}</small>
-        }
-      </div>
-
-      <div class="flex flex-col gap-2">
         <label for="email" class="text-sm font-medium text-gray-700">
           {{ 'auth.register.fields.email' | transloco }}
         </label>
-        <input
-          pInputText
-          id="email"
-          type="email"
-          formControlName="email"
-          autocomplete="email"
-        />
+        <input pInputText id="email" type="email" formControlName="email" autocomplete="email" />
         @if (fieldErrors()?.['email']; as msgs) {
           <small class="text-xs text-red-700">{{ msgs.join(' · ') }}</small>
         }
@@ -157,7 +137,11 @@
 
       <p-button
         type="submit"
-        [label]="loading() ? ('auth.register.signing_up' | transloco) : ('auth.register.submit' | transloco)"
+        [label]="
+          loading()
+            ? ('auth.register.signing_up' | transloco)
+            : ('auth.register.submit' | transloco)
+        "
         [loading]="loading()"
         [disabled]="submitDisabled()"
         styleClass="w-full"

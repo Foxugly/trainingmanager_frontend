@@ -179,7 +179,7 @@ export interface AuthServiceInterface {
 
     /**
      * 
-     * POST /api/v1/auth/register/ — public self-signup.  Creates a CustomUser (is_active&#x3D;True) plus an unverified EmailAddress via allauth, then sends a confirmation email. No JWT is returned — the caller must verify their email before obtaining tokens.  Rate-limited to 5 requests per hour per IP (anti-bot signup).
+     * POST /api/v1/auth/register/ — public self-signup.  Creates a CustomUser (is_active&#x3D;True, email_confirmed&#x3D;False), then sends a confirmation email carrying a Django default_token_generator link. No JWT is returned — the caller must confirm their email before obtaining tokens.  Rate-limited to 5 requests per hour per IP (anti-bot signup).
      * @endpoint post /api/v1/auth/register/
 * @param requestParameters
      */

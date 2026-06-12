@@ -49,13 +49,13 @@ export class TeamManagersComponent {
     if (first || last) {
       return `${first.charAt(0)}${last.charAt(0)}`.toUpperCase() || first.charAt(0).toUpperCase();
     }
-    return (m.username ?? '?').charAt(0).toUpperCase();
+    return '?';
   }
 
   /** Friendly display label for a candidate in the picker. */
   protected managerLabel(m: CustomUserPublic): string {
     const name = `${m.first_name ?? ''} ${m.last_name ?? ''}`.trim();
-    return name ? `${name} (@${m.username})` : `@${m.username}`;
+    return name || `#${m.id}`;
   }
 
   protected removeManager(id: number): void {

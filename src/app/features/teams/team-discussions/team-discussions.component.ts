@@ -283,12 +283,9 @@ export class TeamDiscussionsComponent {
     return msg.author?.id === this.currentUserId();
   }
 
-  protected authorName(
-    user: { first_name: string; last_name: string; username: string } | undefined,
-  ): string {
+  protected authorName(user: { first_name: string; last_name: string } | undefined): string {
     if (!user) return '';
-    const full = `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim();
-    return full || user.username || '';
+    return `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim();
   }
 
   protected openTopic(topic: Topic): void {

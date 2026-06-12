@@ -35,7 +35,7 @@ const team: Team = {
   sports: [
     { id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null },
   ],
-  owner: { id: 17, username: 'owner', first_name: '', last_name: '' },
+  owner: { id: 17, first_name: '', last_name: '' },
   managers: [],
   language: LanguageEnum.Fr,
   is_active: true,

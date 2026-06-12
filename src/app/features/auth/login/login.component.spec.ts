@@ -16,12 +16,7 @@ interface ProtectedFields {
   form: {
     invalid: boolean;
     valid: boolean;
-    patchValue: (v: {
-      username?: string;
-      password?: string;
-      email?: string;
-      remember?: boolean;
-    }) => void;
+    patchValue: (v: { password?: string; email?: string; remember?: boolean }) => void;
   };
   loading(): boolean;
   errorMessage(): string | null;
@@ -94,7 +89,7 @@ describe('LoginComponent', () => {
   });
 
   it('becomes valid when both fields are filled', () => {
-    access(component).form.patchValue({ username: 'alice', password: 'pw' });
+    access(component).form.patchValue({ email: 'alice@example.com', password: 'pw' });
     expect(access(component).form.valid).toBe(true);
   });
 
@@ -102,10 +97,10 @@ describe('LoginComponent', () => {
     authMock.login.mockReturnValue(of({ id: 1 }));
     const navigate = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
 
-    access(component).form.patchValue({ username: 'alice', password: 'pw' });
+    access(component).form.patchValue({ email: 'alice@example.com', password: 'pw' });
     access(component).submit();
 
-    expect(authMock.login).toHaveBeenCalledWith('alice', 'pw', false);
+    expect(authMock.login).toHaveBeenCalledWith('alice@example.com', 'pw', false);
     expect(navigate).toHaveBeenCalledWith('/');
   });
 
@@ -114,13 +109,13 @@ describe('LoginComponent', () => {
     vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
 
     access(component).form.patchValue({
-      username: 'alice',
+      email: 'alice@example.com',
       password: 'pw',
       remember: true,
     });
     access(component).submit();
 
-    expect(authMock.login).toHaveBeenCalledWith('alice', 'pw', true);
+    expect(authMock.login).toHaveBeenCalledWith('alice@example.com', 'pw', true);
   });
 
   it('navigates to returnUrl when present in query params', () => {
@@ -128,7 +123,7 @@ describe('LoginComponent', () => {
     authMock.login.mockReturnValue(of({ id: 1 }));
     const navigate = vi.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
 
-    access(component).form.patchValue({ username: 'alice', password: 'pw' });
+    access(component).form.patchValue({ email: 'alice@example.com', password: 'pw' });
     access(component).submit();
 
     expect(navigate).toHaveBeenCalledWith('/teams/42');
@@ -139,7 +134,7 @@ describe('LoginComponent', () => {
       throwError(() => ({ status: 401, error: { code: 'authentication_failed' } })),
     );
 
-    access(component).form.patchValue({ username: 'alice', password: 'wrong' });
+    access(component).form.patchValue({ email: 'alice@example.com', password: 'wrong' });
     access(component).submit();
 
     expect(access(component).errorMessage()).toBe('auth.errors.invalid_credentials');
@@ -151,7 +146,7 @@ describe('LoginComponent', () => {
       throwError(() => ({ status: 400, error: { detail: 'Account locked' } })),
     );
 
-    access(component).form.patchValue({ username: 'alice', password: 'pw' });
+    access(component).form.patchValue({ email: 'alice@example.com', password: 'pw' });
     access(component).submit();
 
     expect(access(component).errorMessage()).toBe('Account locked');
@@ -160,7 +155,7 @@ describe('LoginComponent', () => {
   it('falls back to the unknown i18n key when no detail and no recognised code', () => {
     authMock.login.mockReturnValue(throwError(() => ({ status: 500 })));
 
-    access(component).form.patchValue({ username: 'alice', password: 'pw' });
+    access(component).form.patchValue({ email: 'alice@example.com', password: 'pw' });
     access(component).submit();
 
     expect(access(component).errorMessage()).toBe('auth.errors.unknown');
@@ -171,7 +166,7 @@ describe('LoginComponent', () => {
       throwError(() => ({ status: 400, error: { code: 'email_not_verified' } })),
     );
 
-    access(component).form.patchValue({ username: 'alice', password: 'pw' });
+    access(component).form.patchValue({ email: 'alice@example.com', password: 'pw' });
     access(component).submit();
 
     expect(access(component).emailNotVerified()).toBe(true);
@@ -234,10 +229,12 @@ describe('LoginComponent', () => {
   });
 
   it('login 429 → rate_limit_message + retryCountdown set from Retry-After header', () => {
-    const mockHeaders = { get: (name: string) => (name.toLowerCase() === 'retry-after' ? '42' : null) };
+    const mockHeaders = {
+      get: (name: string) => (name.toLowerCase() === 'retry-after' ? '42' : null),
+    };
     authMock.login.mockReturnValue(throwError(() => ({ status: 429, headers: mockHeaders })));
 
-    access(component).form.patchValue({ username: 'alice', password: 'pw' });
+    access(component).form.patchValue({ email: 'alice@example.com', password: 'pw' });
     access(component).submit();
 
     expect(access(component).errorMessage()).toBe('auth.login.rate_limit_message');

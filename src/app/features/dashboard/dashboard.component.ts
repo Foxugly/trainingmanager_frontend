@@ -109,7 +109,7 @@ export class DashboardComponent implements OnInit {
 
   protected readonly greetingName = computed(() => {
     const user = this.authService.currentUser();
-    return user?.first_name || user?.username || '';
+    return user?.first_name || user?.email || '';
   });
 
   /** The caller's linked athlete Member id (null for pure coaches). */

@@ -9,8 +9,10 @@
  */
 
 
+/**
+ * Finalize an invitation. Email-only: the account email comes from the invitation itself, so the invitee only chooses a password.
+ */
 export interface CompleteInvitationRequest { 
-    username: string;
     password: string;
 }
 

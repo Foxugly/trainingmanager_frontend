@@ -16,7 +16,7 @@ import { PasswordResetRequest } from '../../api/model/password-reset-request';
 import { PasswordResetRequestResponse } from '../../api/model/password-reset-request-response';
 import { EmailConfirmResponse } from '../../api/model/email-confirm-response';
 import { EmailResendResponse } from '../../api/model/email-resend-response';
-import { Register } from '../../api/model/register';
+import { RegisterRequest } from '../../api/model/register-request';
 import { RegisterResponse } from '../../api/model/register-response';
 import { TokenRefresh } from '../../api/model/token-refresh';
 import { VerifiedTokenObtainPairRequest } from '../../api/model/verified-token-obtain-pair-request';
@@ -47,8 +47,8 @@ export class AuthService {
     );
   }
 
-  login(username: string, password: string, remember = false): Observable<Me> {
-    const payload: VerifiedTokenObtainPairRequest = { username, password, remember };
+  login(email: string, password: string, remember = false): Observable<Me> {
+    const payload: VerifiedTokenObtainPairRequest = { email, password, remember };
     return this.apiAuth.authTokenCreate({ verifiedTokenObtainPairRequest: payload }).pipe(
       tap((tokens) => this.tokenStorage.setTokens(tokens.access, tokens.refresh)),
       switchMap(() => this.fetchMe()),
@@ -102,7 +102,7 @@ export class AuthService {
     this._currentUser.set(user);
   }
 
-  register(payload: Register): Observable<RegisterResponse> {
+  register(payload: RegisterRequest): Observable<RegisterResponse> {
     return this.apiAuth.authRegisterCreate({ registerRequest: payload });
   }
 

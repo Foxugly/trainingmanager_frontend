@@ -13,11 +13,11 @@ import { LanguageEnum } from './language-enum';
 
 export interface Me { 
     readonly id: number;
-    /**
-     * Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
-     */
-    readonly username: string;
     readonly email: string;
+    /**
+     * True once the user has proven control of their email address (registration confirmation, password reset, or a verified email change). The login + magic-link gates require this. Replaces the former allauth EmailAddress.verified flag.
+     */
+    readonly email_confirmed: boolean;
     first_name?: string;
     last_name?: string;
     language?: LanguageEnum;

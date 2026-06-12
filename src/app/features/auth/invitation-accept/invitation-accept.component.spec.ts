@@ -72,12 +72,12 @@ describe('InvitationAcceptComponent', () => {
       invitationsLookupRetrieve: lookupRetrieve,
       invitationsLookupCreate: vi
         .fn()
-        .mockReturnValue(of({ detail: 'ok', username: 'u', access: 'A', refresh: 'R' })),
+        .mockReturnValue(of({ detail: 'ok', email: 'u@example.com', access: 'A', refresh: 'R' })),
     };
     const userSig = signal<Me | null>(null);
     authMock = {
       currentUser: userSig,
-      loginWithTokens: vi.fn().mockReturnValue(of({ id: 1, username: 'u' })),
+      loginWithTokens: vi.fn().mockReturnValue(of({ id: 1, email: 'u@example.com' })),
       logout: vi.fn(),
     };
 
@@ -147,7 +147,6 @@ describe('InvitationAcceptComponent', () => {
 
   it('rejects submit when passwords do not match', () => {
     access(component).form.patchValue({
-      username: 'newathlete',
       password: 'StrongPass1!',
       password_confirm: 'StrongPass2!',
     });
@@ -158,7 +157,6 @@ describe('InvitationAcceptComponent', () => {
 
   it('on submit success calls accept then loginWithTokens then navigates to /teams', () => {
     access(component).form.patchValue({
-      username: 'newathlete',
       password: 'StrongPass1!',
       password_confirm: 'StrongPass1!',
     });
@@ -166,7 +164,6 @@ describe('InvitationAcceptComponent', () => {
     expect(invitationsMock.invitationsLookupCreate).toHaveBeenCalledWith({
       token: 'tok-abc',
       completeInvitationRequest: {
-        username: 'newathlete',
         password: 'StrongPass1!',
       },
     });
@@ -174,23 +171,22 @@ describe('InvitationAcceptComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/teams']);
   });
 
-  it('maps username_taken field error from accept response', () => {
+  it('maps a field error from the accept response', () => {
     invitationsMock.invitationsLookupCreate.mockReturnValueOnce(
       throwError(() => ({
         error: {
           code: 'validation_error',
-          fields: { username: [{ code: 'username_taken', detail: 'taken' }] },
+          fields: { password: [{ code: 'password_too_weak', detail: 'too weak' }] },
         },
       })),
     );
     access(component).form.patchValue({
-      username: 'taken',
       password: 'StrongPass1!',
       password_confirm: 'StrongPass1!',
     });
     access(component).submit();
     expect(access(component).fieldErrors()).not.toBeNull();
-    expect(access(component).fieldErrors()?.['username']).toBeDefined();
+    expect(access(component).fieldErrors()?.['password']).toBeDefined();
   });
 
   it('promotes invitation_expired returned at submit-time to a lookup error', () => {
@@ -198,7 +194,6 @@ describe('InvitationAcceptComponent', () => {
       throwError(() => ({ error: { code: 'invitation_expired' } })),
     );
     access(component).form.patchValue({
-      username: 'newathlete',
       password: 'StrongPass1!',
       password_confirm: 'StrongPass1!',
     });

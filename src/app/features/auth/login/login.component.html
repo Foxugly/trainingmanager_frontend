@@ -3,7 +3,9 @@
     <h1 class="text-2xl font-bold mb-6 text-center">{{ 'auth.login.title' | transloco }}</h1>
 
     @if (emailNotVerified()) {
-      <div class="mb-6 rounded border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 flex flex-col gap-3">
+      <div
+        class="mb-6 rounded border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 flex flex-col gap-3"
+      >
         <div>
           <i class="pi pi-exclamation-triangle mr-1" aria-hidden="true"></i>
           {{ 'auth.login.email_not_verified_banner' | transloco }}
@@ -49,14 +51,15 @@
     @if (!magicLinkMode()) {
       <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
         <div class="flex flex-col gap-2">
-          <label for="username" class="text-sm font-medium text-gray-700">
-            {{ 'auth.login.username' | transloco }}
+          <label for="email" class="text-sm font-medium text-gray-700">
+            {{ 'auth.login.email' | transloco }}
           </label>
           <input
             pInputText
-            id="username"
-            formControlName="username"
-            autocomplete="username"
+            id="email"
+            type="email"
+            formControlName="email"
+            autocomplete="email"
             class="w-full"
           />
         </div>

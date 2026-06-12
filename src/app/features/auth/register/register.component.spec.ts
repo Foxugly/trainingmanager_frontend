@@ -97,7 +97,6 @@ describe('RegisterComponent', () => {
 
   function fillValidForm(): void {
     access(component).form.patchValue({
-      username: 'alice',
       email: 'a@b.c',
       password: 'longenough',
       confirm_password: 'longenough',
@@ -119,13 +118,14 @@ describe('RegisterComponent', () => {
   it('on 201 success → router.navigate to /check-your-email with email in state', () => {
     fillValidForm();
     ensureTurnstileInput('TOKEN_OK');
-    authMock.register.mockReturnValue(of({ detail: 'ok', code: 'registration_pending_verification', username: 'alice', email: 'a@b.c' }));
+    authMock.register.mockReturnValue(
+      of({ detail: 'ok', code: 'registration_pending_verification', email: 'a@b.c' }),
+    );
 
     access(component).submit();
 
     expect(authMock.register).toHaveBeenCalledTimes(1);
     expect(authMock.register.mock.calls[0][0]).toMatchObject({
-      username: 'alice',
       email: 'a@b.c',
       turnstile_token: 'TOKEN_OK',
     });
@@ -138,7 +138,10 @@ describe('RegisterComponent', () => {
     fillValidForm();
     ensureTurnstileInput('TOKEN_BAD');
     authMock.register.mockReturnValue(
-      throwError(() => ({ status: 400, error: { code: 'captcha_failed', detail: 'Captcha verification failed.' } })),
+      throwError(() => ({
+        status: 400,
+        error: { code: 'captcha_failed', detail: 'Captcha verification failed.' },
+      })),
     );
 
     access(component).submit();
@@ -154,19 +157,21 @@ describe('RegisterComponent', () => {
     authMock.register.mockReturnValue(
       throwError(() => ({
         status: 400,
-        error: { fields: { username: ['Username already taken'] } },
+        error: { fields: { email: ['Email already taken'] } },
       })),
     );
 
     access(component).submit();
 
-    expect(access(component).fieldErrors()?.['username']).toEqual(['Username already taken']);
+    expect(access(component).fieldErrors()?.['email']).toEqual(['Email already taken']);
   });
 
   it('on 429 → rate_limit_message + retryCountdown set from Retry-After header', () => {
     fillValidForm();
     ensureTurnstileInput('TOKEN_OK');
-    const mockHeaders = { get: (name: string) => (name.toLowerCase() === 'retry-after' ? '120' : null) };
+    const mockHeaders = {
+      get: (name: string) => (name.toLowerCase() === 'retry-after' ? '120' : null),
+    };
     authMock.register.mockReturnValue(throwError(() => ({ status: 429, headers: mockHeaders })));
 
     access(component).submit();

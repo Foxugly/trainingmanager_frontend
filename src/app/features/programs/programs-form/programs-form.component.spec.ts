@@ -17,7 +17,7 @@ import { Team } from '../../../api/model/team';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ProgramsFormComponent } from './programs-form.component';
 
-const ownerUser = { id: 17, username: 'testfrontend' } as CustomUserPublic;
+const ownerUser = { id: 17, first_name: 'testfrontend', last_name: '' } as CustomUserPublic;
 
 const sport: Sport = {
   id: 1,
@@ -33,7 +33,9 @@ const ownedTeam: Team = {
   id: 4,
   name: 'RBP WP Senior',
   sport,
-  sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null }],
+  sports: [
+    { id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null },
+  ],
   owner: ownerUser,
   managers: [],
   language: LanguageEnum.Fr,

@@ -14,8 +14,8 @@ import { TopicMessage } from '../../../api/model/topic-message';
 import { MessagesService } from '../../../core/messages/messages.service';
 import { TeamDiscussionsComponent, DiscussionRole } from './team-discussions.component';
 
-const me: CustomUserPublic = { id: 1, username: 'me', first_name: 'Me', last_name: 'User' };
-const other: CustomUserPublic = { id: 2, username: 'other', first_name: 'O', last_name: 'Ther' };
+const me: CustomUserPublic = { id: 1, first_name: 'Me', last_name: 'User' };
+const other: CustomUserPublic = { id: 2, first_name: 'O', last_name: 'Ther' };
 
 function makeTeam(over: Partial<Team> = {}): Team {
   return {

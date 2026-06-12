@@ -11,16 +11,16 @@ import { UserMenuComponent } from './user-menu.component';
 
 const baseUser: Me = {
   id: 17,
-  username: 'coach',
   first_name: 'Renaud',
   last_name: 'Vilain',
   email: 'r@example.com',
+  email_confirmed: true,
   language: 'fr',
   is_staff: false,
   is_superuser: false,
 } as unknown as Me;
 
-const superuser: Me = { ...baseUser, id: 1, username: 'admin', is_superuser: true };
+const superuser: Me = { ...baseUser, id: 1, email: 'admin@example.com', is_superuser: true };
 
 interface ProtectedFields {
   isAuthenticated(): boolean;
@@ -130,9 +130,9 @@ describe('UserMenuComponent', () => {
       expect(labels).not.toContain('public.user_menu.admin');
     });
 
-    it('displayName falls back to username when first/last names are empty', async () => {
+    it('displayName falls back to email when first/last names are empty', async () => {
       await setup({ ...superuser, first_name: '', last_name: '' } as Me);
-      expect(access(component).displayName()).toBe('admin');
+      expect(access(component).displayName()).toBe('admin@example.com');
     });
   });
 });

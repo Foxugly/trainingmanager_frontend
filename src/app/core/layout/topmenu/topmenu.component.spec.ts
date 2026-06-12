@@ -24,10 +24,10 @@ interface ProtectedFields {
 
 const baseUser: Me = {
   id: 1,
-  username: 'coach',
   first_name: 'R',
   last_name: 'V',
   email: 'r@example.com',
+  email_confirmed: true,
   language: 'fr',
   is_staff: false,
   is_superuser: false,
@@ -153,11 +153,9 @@ describe('TopmenuComponent', () => {
     await setup({ mode: 'authenticated', user: superuser });
     const html = fixture.nativeElement.innerHTML as string;
     expect(html).toContain('public.nav.admin');
-    const adminLink = Array.from(
-      fixture.nativeElement.querySelectorAll('a'),
-    ).find((a) => (a as HTMLAnchorElement).getAttribute('href') === '/admin') as
-      | HTMLAnchorElement
-      | undefined;
+    const adminLink = Array.from(fixture.nativeElement.querySelectorAll('a')).find(
+      (a) => (a as HTMLAnchorElement).getAttribute('href') === '/admin',
+    ) as HTMLAnchorElement | undefined;
     expect(adminLink).toBeTruthy();
   });
 
@@ -269,9 +267,7 @@ describe('TopmenuComponent', () => {
     expect(fixture.nativeElement.querySelector('app-message-bell')).toBeFalsy();
 
     await setup({ mode: 'authenticated', user: baseUser });
-    expect(
-      fixture.nativeElement.querySelector('.actions--desktop app-message-bell'),
-    ).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('.actions--desktop app-message-bell')).toBeTruthy();
   });
 
   it('orders the desktop actions cluster: messages, bell, language switcher, user menu', async () => {

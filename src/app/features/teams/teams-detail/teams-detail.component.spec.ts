@@ -26,8 +26,18 @@ import { MemberMembershipService } from '../member-membership.service';
 import { TeamRole } from '../teams-list/teams-list.component';
 import { TeamsDetailComponent } from './teams-detail.component';
 
-const ownerUser = { id: 17, username: 'testfrontend' } as CustomUserPublic;
-const otherUser = { id: 99, username: 'someone' } as CustomUserPublic;
+const ownerUser = {
+  id: 17,
+  first_name: 'testfrontend',
+  last_name: '',
+  email: 'owner@example.com',
+} as unknown as CustomUserPublic;
+const otherUser = {
+  id: 99,
+  first_name: 'someone',
+  last_name: '',
+  email: 'someone@example.com',
+} as unknown as CustomUserPublic;
 const sport: Sport = {
   id: 1,
   name: 'Natation',
@@ -41,7 +51,9 @@ const team: Team = {
   id: 4,
   name: 'RBP WP Senior',
   sport,
-  sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null }],
+  sports: [
+    { id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null },
+  ],
   owner: ownerUser,
   managers: [],
   language: LanguageEnum.Fr,
@@ -288,7 +300,7 @@ describe('TeamsDetailComponent', () => {
     // currentUserRole now reads memberships to detect 'member' (instead of
     // defaulting to 'member' for non-owner/non-manager). Mock the membership
     // so that otherUser appears as a real member.
-    const memberOther: TeamMembership = { ...mb1, member_username: 'someone' };
+    const memberOther: TeamMembership = { ...mb1, member_username: 'someone@example.com' };
     await setup('4', team, otherUser, { memberships: [memberOther] });
     expect(access(component).currentUserRole()).toBe('member');
     expect(access(component).canManage()).toBe(false);
@@ -556,7 +568,7 @@ describe('TeamsDetailComponent', () => {
   });
 
   it('myMembership resolves to the current user’s membership entry when present', async () => {
-    const myMb: TeamMembership = { ...mb1, member_username: otherUser.username };
+    const myMb: TeamMembership = { ...mb1, member_username: 'someone@example.com' };
     await setup('4', { ...team, is_public: true }, otherUser, {
       memberships: [myMb],
       joinRequestsList: { count: 0, results: [] },
@@ -589,7 +601,7 @@ describe('TeamsDetailComponent', () => {
   });
 
   it('athlete-member (non-manager) resolves myMemberId and gets the athlete tab', async () => {
-    const myMb: TeamMembership = { ...mb1, member: 23, member_username: otherUser.username };
+    const myMb: TeamMembership = { ...mb1, member: 23, member_username: 'someone@example.com' };
     await setup('4', { ...team, is_public: true }, otherUser, {
       memberships: [myMb],
       joinRequestsList: { count: 0, results: [] },

@@ -26,7 +26,7 @@ export class UserMenuComponent {
     const f = u.first_name?.trim();
     const l = u.last_name?.trim();
     if (f && l) return `${f} ${l}`;
-    return f || l || u.username;
+    return f || l || u.email;
   });
 
   protected readonly menuItems = computed<MenuItem[]>(() => {

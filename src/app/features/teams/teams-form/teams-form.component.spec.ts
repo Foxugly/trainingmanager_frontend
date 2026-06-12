@@ -24,10 +24,9 @@ import { VisibilityMode } from '../../../api/model/visibility-mode';
 import { AuthService } from '../../../core/auth/auth.service';
 import { TeamsFormComponent } from './teams-form.component';
 
-const ownerUser = { id: 17, username: 'testfrontend' } as CustomUserPublic;
+const ownerUser = { id: 17, first_name: 'testfrontend', last_name: '' } as CustomUserPublic;
 const managerUser = {
   id: 99,
-  username: 'mgr',
   first_name: 'M',
   last_name: 'Gr',
 } as CustomUserPublic;
@@ -54,7 +53,9 @@ const level: Level = {
 const team: Team = {
   id: 5,
   name: 'Team P9',
-  sports: [{ id: 1, name: 'Natation', slug: 'natation', is_default: true, order: 0, training_type: null }],
+  sports: [
+    { id: 1, name: 'Natation', slug: 'natation', is_default: true, order: 0, training_type: null },
+  ],
   sport,
   level,
   owner: ownerUser,
@@ -252,7 +253,10 @@ describe('TeamsFormComponent', () => {
         { provide: AttendanceStatusesService, useValue: statusesMock },
         { provide: EquipmentService, useValue: equipmentMock },
         { provide: PlacesService, useValue: placesMock },
-        { provide: AuthService, useValue: { currentUser: userSig.asReadonly(), refreshMe: vi.fn() } },
+        {
+          provide: AuthService,
+          useValue: { currentUser: userSig.asReadonly(), refreshMe: vi.fn() },
+        },
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: { get: () => routeIdParam } } },
@@ -406,10 +410,18 @@ describe('TeamsFormComponent', () => {
   it('maps server field errors into fieldErrors signal', () => {
     teamsMock.teamsCreate.mockReturnValueOnce(
       throwError(() => ({
-        error: { code: 'validation_error', fields: { name: [{ code: 'required', detail: 'required' }] } },
+        error: {
+          code: 'validation_error',
+          fields: { name: [{ code: 'required', detail: 'required' }] },
+        },
       })),
     );
-    access(component).form.patchValue({ name: 'X', sport_ids: [1], default_sport_id: 1, language: 'fr' });
+    access(component).form.patchValue({
+      name: 'X',
+      sport_ids: [1],
+      default_sport_id: 1,
+      language: 'fr',
+    });
     access(component).submit();
     expect(access(component).fieldErrors()).not.toBeNull();
   });
@@ -501,8 +513,15 @@ describe('TeamsFormComponent', () => {
         },
       })),
     );
-    const authService = TestBed.inject(AuthService) as unknown as { refreshMe: ReturnType<typeof vi.fn> };
-    access(component).form.patchValue({ name: 'X', sport_ids: [1], default_sport_id: 1, language: 'fr' });
+    const authService = TestBed.inject(AuthService) as unknown as {
+      refreshMe: ReturnType<typeof vi.fn>;
+    };
+    access(component).form.patchValue({
+      name: 'X',
+      sport_ids: [1],
+      default_sport_id: 1,
+      language: 'fr',
+    });
     access(component).submit();
     expect(access(component).quotaExceeded()).toEqual({ used: 3, max: 3 });
     expect(access(component).errorMessage()).toBe('You have reached your team quota.');
@@ -557,7 +576,10 @@ describe('TeamsFormComponent', () => {
     access(component).submit();
     expect(teamsMock.teamsPartialUpdate).toHaveBeenCalledWith({
       id: 5,
-      patchedTeamRequest: expect.objectContaining({ logo: 'data:image/png;base64,X', roti_enabled: true }),
+      patchedTeamRequest: expect.objectContaining({
+        logo: 'data:image/png;base64,X',
+        roti_enabled: true,
+      }),
     });
   });
 
@@ -701,7 +723,11 @@ describe('TeamsFormComponent', () => {
       { id: 9, sports: [1], name: 'P9', address: '' } as Place,
     ]);
     access(component).onPlaceIdsChange([9]);
-    expect(access(component).selectedPlaces().map((p) => p.id)).toEqual([9]);
+    expect(
+      access(component)
+        .selectedPlaces()
+        .map((p) => p.id),
+    ).toEqual([9]);
   });
 
   it('submit forces the default place into place_ids', async () => {
@@ -726,9 +752,9 @@ describe('TeamsFormComponent', () => {
 
   it('onManagerIdsChange writes the emitted id list to managers_ids', async () => {
     await setup('5');
-    (access(component) as unknown as { onManagerIdsChange(ids: number[]): void }).onManagerIdsChange([
-      1, 2, 3,
-    ]);
+    (
+      access(component) as unknown as { onManagerIdsChange(ids: number[]): void }
+    ).onManagerIdsChange([1, 2, 3]);
     expect(mgrControls(component).managers_ids.value).toEqual([1, 2, 3]);
   });
 
@@ -787,7 +813,10 @@ describe('TeamsFormComponent', () => {
         { provide: AttendanceStatusesService, useValue: statusesMock },
         { provide: EquipmentService, useValue: equipmentMock },
         { provide: PlacesService, useValue: placesMock },
-        { provide: AuthService, useValue: { currentUser: userSig.asReadonly(), refreshMe: vi.fn() } },
+        {
+          provide: AuthService,
+          useValue: { currentUser: userSig.asReadonly(), refreshMe: vi.fn() },
+        },
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: { get: () => routeIdParam } } },

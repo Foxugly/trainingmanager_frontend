@@ -21,8 +21,8 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { LanguageService } from '../../../core/i18n/language.service';
 import { ProgramsDetailComponent } from './programs-detail.component';
 
-const ownerUser = { id: 17, username: 'testfrontend' } as CustomUserPublic;
-const otherUser = { id: 99, username: 'someone' } as CustomUserPublic;
+const ownerUser = { id: 17, first_name: 'testfrontend', last_name: '' } as CustomUserPublic;
+const otherUser = { id: 99, first_name: 'someone', last_name: '' } as CustomUserPublic;
 
 const sport: Sport = {
   id: 1,

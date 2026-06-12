@@ -21,10 +21,7 @@
             {{ managerInitials(m) }}
           </span>
           <span class="manager-name">
-            {{ m.first_name || m.username }}
-            @if (m.first_name && m.username) {
-              <span class="manager-handle">&#64;{{ m.username }}</span>
-            }
+            {{ managerLabel(m) }}
           </span>
           <p-button
             type="button"
@@ -72,7 +69,7 @@
       [ngModelOptions]="{ standalone: true }"
       optionValue="id"
       [filter]="true"
-      filterBy="first_name,last_name,username"
+      filterBy="first_name,last_name"
       [placeholder]="'teams.form.manager_pick_placeholder' | transloco"
       [emptyMessage]="'teams.form.managers_empty' | transloco"
       appendTo="body"

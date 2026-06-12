@@ -9,8 +9,8 @@ import { superuserGuard } from './superuser.guard';
 
 const baseUser: Me = {
   id: 1,
-  username: 'alice',
   email: 'alice@example.com',
+  email_confirmed: true,
   first_name: 'Alice',
   last_name: 'A',
   language: LanguageEnum.Fr,
@@ -24,9 +24,7 @@ const baseUser: Me = {
 };
 
 function runGuard(state: RouterStateSnapshot) {
-  return TestBed.runInInjectionContext(() =>
-    superuserGuard({} as ActivatedRouteSnapshot, state),
-  );
+  return TestBed.runInInjectionContext(() => superuserGuard({} as ActivatedRouteSnapshot, state));
 }
 
 describe('superuserGuard', () => {
@@ -67,7 +65,9 @@ describe('superuserGuard', () => {
 
     const result = runGuard({ url: '/admin/sports' } as RouterStateSnapshot);
     expect(result).toBeInstanceOf(UrlTree);
-    expect(router.serializeUrl(result as UrlTree)).toBe(router.serializeUrl(router.createUrlTree(['/'])));
+    expect(router.serializeUrl(result as UrlTree)).toBe(
+      router.serializeUrl(router.createUrlTree(['/'])),
+    );
   });
 
   it('lets superuser users through', () => {

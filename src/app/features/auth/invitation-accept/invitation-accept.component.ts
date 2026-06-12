@@ -10,7 +10,13 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { MessageService } from 'primeng/api';
@@ -81,7 +87,6 @@ export class InvitationAcceptComponent implements OnInit {
 
   protected readonly form = this.fb.nonNullable.group(
     {
-      username: ['', [Validators.required, Validators.maxLength(150)]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       password_confirm: ['', [Validators.required]],
     },
@@ -124,7 +129,6 @@ export class InvitationAcceptComponent implements OnInit {
 
     const value = this.form.getRawValue();
     const payload: CompleteInvitationRequest = {
-      username: value.username,
       password: value.password,
     };
 

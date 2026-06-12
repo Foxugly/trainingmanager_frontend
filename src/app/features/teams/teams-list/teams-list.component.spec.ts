@@ -16,8 +16,8 @@ import { TeamQuotaStatus } from '../../../api/model/team-quota-status';
 import { AuthService } from '../../../core/auth/auth.service';
 import { TeamsListComponent, TeamRole, computeTeamRole } from './teams-list.component';
 
-const ownerUser = { id: 17, username: 'testfrontend' } as CustomUserPublic;
-const otherUser = { id: 20, username: 'coach2' } as CustomUserPublic;
+const ownerUser = { id: 17, first_name: 'testfrontend', last_name: '' } as CustomUserPublic;
+const otherUser = { id: 20, first_name: 'coach2', last_name: '' } as CustomUserPublic;
 const sport: Sport = {
   id: 1,
   name: 'Natation',
@@ -33,7 +33,9 @@ function makeTeam(partial: Partial<Team>): Team {
     id: 0,
     name: 'T',
     sport,
-    sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null }],
+    sports: [
+      { id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null },
+    ],
     owner: ownerUser,
     managers: [],
     language: LanguageEnum.Fr,
@@ -73,8 +75,8 @@ interface ProtectedFields {
 function makeMe(quota: TeamQuotaStatus): Me {
   return {
     id: 17,
-    username: 'testfrontend',
     email: 'test@example.com',
+    email_confirmed: true,
     first_name: '',
     last_name: '',
     language: LanguageEnum.Fr,

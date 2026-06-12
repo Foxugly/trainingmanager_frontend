@@ -1032,7 +1032,7 @@
       "title": "Sign in",
       "remember_me_label": "Remember me",
       "forgot_password_link": "Forgot password?",
-      "username": "Username",
+      "email": "Email",
       "password": "Password",
       "submit": "Sign in",
       "rate_limit_message": "Too many attempts. Try again in a few minutes.",
@@ -1071,7 +1071,6 @@
       "title": "Create an account",
       "subtitle": "Sign up for free to manage your teams and your training.",
       "fields": {
-        "username": "Username",
         "email": "Email",
         "password": "Password",
         "confirm_password": "Confirm password",
@@ -1158,8 +1157,6 @@
   "invitation_accept": {
     "title": "You're invited",
     "greeting": "You have been invited to join {{team}}. Create your account with {{email}} to join the team.",
-    "username": "Username",
-    "username_help": "The name you'll use to sign in.",
     "password": "Password",
     "password_confirm": "Confirm password",
     "submit": "Create account and join",
@@ -1204,7 +1201,6 @@
       }
     },
     "title": "Profile",
-    "username": "Username",
     "email": "Email",
     "email_readonly_help": "The email address can only be changed by an administrator.",
     "first_name": "First name",

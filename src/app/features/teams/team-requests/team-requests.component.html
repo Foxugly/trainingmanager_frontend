@@ -33,7 +33,7 @@
                   {{ req.user_fullname || req.user_username }}
                 </span>
                 @if (req.user_fullname && req.user_username) {
-                  <span class="text-xs text-gray-500">&#64;{{ req.user_username }}</span>
+                  <span class="text-xs text-gray-500">{{ req.user_username }}</span>
                 }
                 <span class="text-xs text-gray-500">
                   · {{ req.requested_at | localizedDate: 'medium' }}

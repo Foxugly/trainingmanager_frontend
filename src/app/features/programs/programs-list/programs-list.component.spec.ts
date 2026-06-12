@@ -28,14 +28,16 @@ const sport: Sport = {
   default_training_type: TrainingTypeEnum.Structured,
 };
 
-const ownerUser = { id: 17, username: 'testfrontend' } as CustomUserPublic;
-const memberUser = { id: 88, username: 'athlete' } as CustomUserPublic;
+const ownerUser = { id: 17, first_name: 'testfrontend', last_name: '' } as CustomUserPublic;
+const memberUser = { id: 88, first_name: 'athlete', last_name: '' } as CustomUserPublic;
 
 const ownedTeam: Team = {
   id: 4,
   name: 'RBP WP Senior',
   sport,
-  sports: [{ id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null }],
+  sports: [
+    { id: 1, name: 'Sport', slug: 'sport', is_default: true, order: 0, training_type: null },
+  ],
   owner: ownerUser,
   managers: [],
   language: LanguageEnum.Fr,
@@ -52,7 +54,12 @@ const ownedTeam: Team = {
   updated_at: '2026-04-01T00:00:00Z',
 };
 
-const memberOnlyTeam: Team = { ...ownedTeam, id: 9, owner: { id: 999 } as CustomUserPublic, managers: [] };
+const memberOnlyTeam: Team = {
+  ...ownedTeam,
+  id: 9,
+  owner: { id: 999 } as CustomUserPublic,
+  managers: [],
+};
 
 const teamMinimal = { id: 4, name: 'RBP WP Senior', language: LanguageEnum.Fr } as const;
 
@@ -201,7 +208,9 @@ describe('ProgramsListComponent', () => {
 
   it('reloads with includeInactive=true when showArchived is toggled on', () => {
     serviceMock.programsList.mockClear();
-    (component as unknown as { showArchived: { set: (v: boolean) => void } }).showArchived.set(true);
+    (component as unknown as { showArchived: { set: (v: boolean) => void } }).showArchived.set(
+      true,
+    );
     fixture.detectChanges();
     expect(serviceMock.programsList).toHaveBeenLastCalledWith({
       includeInactive: true,
@@ -215,7 +224,9 @@ describe('ProgramsListComponent', () => {
   });
 
   it('exposes a program flagged as AI-generated', () => {
-    const ai = access(component).programs().find((p) => p.generated_by_ai);
+    const ai = access(component)
+      .programs()
+      .find((p) => p.generated_by_ai);
     expect(ai?.id).toBe(2);
     expect(ai?.ai_generated_at).toBe('2026-04-15T00:00:00Z');
   });
@@ -241,9 +252,7 @@ describe('ProgramsListComponent', () => {
 
   it('toasts a load error when loading manager team ids fails', async () => {
     await setup({ teamsListError: true });
-    expect(messageMock.add).toHaveBeenCalledWith(
-      expect.objectContaining({ severity: 'error' }),
-    );
+    expect(messageMock.add).toHaveBeenCalledWith(expect.objectContaining({ severity: 'error' }));
     // canCreate silently stays false, but the failure is now surfaced.
     expect(access(component).canCreate()).toBe(false);
   });

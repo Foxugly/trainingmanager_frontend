@@ -11,8 +11,8 @@ import { Me } from '../../api/model/me';
 
 const fakeUser: Me = {
   id: 1,
-  username: 'alice',
   email: 'alice@example.com',
+  email_confirmed: true,
   first_name: 'Alice',
   last_name: 'Anderson',
   language: LanguageEnum.Fr,
@@ -65,11 +65,13 @@ describe('AuthService', () => {
     apiAuth.authTokenCreate.mockReturnValue(of({ access: 'a1', refresh: 'r1' }));
     meService.meRetrieve.mockReturnValue(of(fakeUser));
 
-    const emitted = await new Promise<Me>((resolve) => service.login('alice', 'pw').subscribe(resolve));
+    const emitted = await new Promise<Me>((resolve) =>
+      service.login('alice@example.com', 'pw').subscribe(resolve),
+    );
 
     expect(apiAuth.authTokenCreate).toHaveBeenCalledWith({
       verifiedTokenObtainPairRequest: {
-        username: 'alice',
+        email: 'alice@example.com',
         password: 'pw',
         remember: false,
       },
@@ -112,7 +114,9 @@ describe('AuthService', () => {
 
   it('refresh() persists the new access token', async () => {
     tokenStorage.setRefresh('old-refresh');
-    apiAuth.authTokenRefreshCreate.mockReturnValue(of({ access: 'new-access', refresh: 'old-refresh' }));
+    apiAuth.authTokenRefreshCreate.mockReturnValue(
+      of({ access: 'new-access', refresh: 'old-refresh' }),
+    );
 
     await new Promise((resolve) => service.refresh().subscribe(resolve));
 
@@ -172,12 +176,12 @@ describe('AuthService', () => {
     meService.meRetrieve.mockReturnValue(of(fakeUser));
 
     await new Promise((resolve) =>
-      service.login('alice', 'pw', true).subscribe(resolve),
+      service.login('alice@example.com', 'pw', true).subscribe(resolve),
     );
 
     expect(apiAuth.authTokenCreate).toHaveBeenCalledWith({
       verifiedTokenObtainPairRequest: {
-        username: 'alice',
+        email: 'alice@example.com',
         password: 'pw',
         remember: true,
       },
@@ -190,9 +194,7 @@ describe('AuthService', () => {
     );
 
     const res = await new Promise((resolve) =>
-      service
-        .requestPasswordReset({ email: 'a@b.com', turnstile_token: 'tok' })
-        .subscribe(resolve),
+      service.requestPasswordReset({ email: 'a@b.com', turnstile_token: 'tok' }).subscribe(resolve),
     );
 
     expect(apiAuth.authPasswordResetCreate).toHaveBeenCalledWith({

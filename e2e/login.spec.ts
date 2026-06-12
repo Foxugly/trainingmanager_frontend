@@ -10,7 +10,7 @@ test('manager can log in and reach the dashboard', async ({ page }) => {
   await page.goto('/login');
 
   // Locale-independent stable ids from the login template.
-  await page.locator('#username').fill(SEED.manager.email);
+  await page.locator('#email').fill(SEED.manager.email);
   await page.locator('#password').fill(SEED.manager.password);
   await page.locator('button[type="submit"]').click();
 

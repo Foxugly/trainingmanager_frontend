@@ -13,8 +13,8 @@ import { PRIMENG_TRANSLATIONS } from './primeng-translations';
 
 const updatedMe: Me = {
   id: 1,
-  username: 'alice',
   email: 'alice@example.com',
+  email_confirmed: true,
   first_name: 'Alice',
   last_name: 'Anderson',
   language: LanguageEnum.Nl,

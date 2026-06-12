@@ -1022,8 +1022,6 @@
   "invitation_accept": {
     "title": "Estás invitado",
     "greeting": "Has sido invitado a unirte al equipo {{team}}. Crea tu cuenta con {{email}} para unirte al equipo.",
-    "username": "Nombre de usuario",
-    "username_help": "El nombre que usarás para iniciar sesión.",
     "password": "Contraseña",
     "password_confirm": "Confirmar contraseña",
     "submit": "Crear cuenta y unirme",
@@ -1057,7 +1055,7 @@
       "title": "Iniciar sesión",
       "remember_me_label": "Recuérdame",
       "forgot_password_link": "¿Contraseña olvidada?",
-      "username": "Nombre de usuario",
+      "email": "Correo electrónico",
       "password": "Contraseña",
       "submit": "Iniciar sesión",
       "rate_limit_message": "Demasiados intentos. Inténtalo de nuevo en unos minutos.",
@@ -1096,7 +1094,6 @@
       "title": "Crear una cuenta",
       "subtitle": "Regístrate gratis para gestionar tus equipos y tus entrenamientos.",
       "fields": {
-        "username": "Nombre de usuario",
         "email": "Correo electrónico",
         "password": "Contraseña",
         "confirm_password": "Confirmar contraseña",
@@ -1204,7 +1201,6 @@
       }
     },
     "title": "Perfil",
-    "username": "Nombre de usuario",
     "email": "Correo",
     "email_readonly_help": "La dirección de correo solo puede ser modificada por un administrador.",
     "first_name": "Nombre",

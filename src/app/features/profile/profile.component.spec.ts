@@ -18,8 +18,8 @@ import { ProfileComponent } from './profile.component';
 
 const baseUser: Me = {
   id: 1,
-  username: 'alice',
   email: 'alice@example.com',
+  email_confirmed: true,
   first_name: 'Alice',
   last_name: 'Anderson',
   language: LanguageEnum.Fr,
@@ -384,8 +384,7 @@ describe('ProfileComponent', () => {
 
   // The rotation now goes through PrimeNG's ConfirmationService (themed dialog),
   // not native window.confirm. Drive accept/reject via the captured confirm options.
-  const confirmService = () =>
-    fixture.debugElement.injector.get(ConfirmationService);
+  const confirmService = () => fixture.debugElement.injector.get(ConfirmationService);
 
   it('regenerateCalendarUrl rotates and updates the URL on confirm-accept', () => {
     const confirmSpy = vi.spyOn(confirmService(), 'confirm');
