@@ -372,7 +372,8 @@
       "empty": "No program yet",
       "empty_subtitle": "You don't have any program yet. Create one to plan your sessions.",
       "show_archived": "Show archived",
-      "archived_badge": "Archived"
+      "archived_badge": "Archived",
+      "current_badge": "Current"
     },
     "detail": {
       "not_found": "Program not found",

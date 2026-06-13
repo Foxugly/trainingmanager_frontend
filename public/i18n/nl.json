@@ -372,7 +372,8 @@
       "empty": "Nog geen programma",
       "empty_subtitle": "Je hebt nog geen programma. Maak er een aan om je sessies te plannen.",
       "show_archived": "Gearchiveerde tonen",
-      "archived_badge": "Gearchiveerd"
+      "archived_badge": "Gearchiveerd",
+      "current_badge": "Lopend"
     },
     "detail": {
       "not_found": "Programma niet gevonden",

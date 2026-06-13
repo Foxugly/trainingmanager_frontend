@@ -372,7 +372,8 @@
       "empty": "Aucun programme",
       "empty_subtitle": "Vous n'avez pas encore de programme. Créez-en un pour planifier vos entraînements.",
       "show_archived": "Afficher les archivés",
-      "archived_badge": "Archivé"
+      "archived_badge": "Archivé",
+      "current_badge": "En cours"
     },
     "detail": {
       "not_found": "Programme introuvable",

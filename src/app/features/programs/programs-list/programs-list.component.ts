@@ -77,6 +77,30 @@ export class ProgramsListComponent implements OnInit {
     return this.managerTeamIds().size > 0;
   });
 
+  /** Today as a local YYYY-MM-DD string — computed once (not in the template). */
+  private readonly today = (() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  })();
+
+  /** A program is "current" when it's running today: date_start <= today <= date_end
+   * (both bounds required; ISO strings are sliced to the date part for comparison). */
+  protected isCurrent(p: Program): boolean {
+    if (!p.date_start || !p.date_end || p.is_active === false) return false;
+    return p.date_start.slice(0, 10) <= this.today && this.today <= p.date_end.slice(0, 10);
+  }
+
+  /** Card classes: archived (greyed) / current (emerald ring highlight) / default. */
+  protected cardClass(p: Program): string {
+    const base =
+      'group block rounded-xl border p-5 transition duration-200 hover:-translate-y-0.5 hover:shadow-md';
+    if (p.is_active === false) return `${base} border-gray-300 bg-gray-50 opacity-75`;
+    if (this.isCurrent(p)) {
+      return `${base} border-emerald-400 bg-emerald-50 ring-2 ring-emerald-300 hover:border-emerald-400`;
+    }
+    return `${base} border-gray-200 bg-white hover:border-emerald-300`;
+  }
+
   /** Static "new program" link; the team pre-selection rides in newQueryParams. */
   protected readonly newRouterLink = ['/programs', 'new'];
 

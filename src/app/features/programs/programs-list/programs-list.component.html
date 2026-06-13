@@ -72,11 +72,7 @@
       @for (p of programs(); track p.id) {
         <a
           [routerLink]="['/programs', p.id]"
-          [class]="
-            p.is_active === false
-              ? 'group block rounded-xl border border-gray-300 bg-gray-50 p-5 transition duration-200 hover:-translate-y-0.5 hover:shadow-md opacity-75'
-              : 'group block rounded-xl border border-gray-200 bg-white p-5 transition duration-200 hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md'
-          "
+          [class]="cardClass(p)"
         >
           <div class="flex items-start gap-3">
             <div
@@ -119,6 +115,12 @@
           </div>
           <div class="mt-4 flex items-center justify-between gap-2 flex-wrap">
             <div class="flex items-center gap-1.5 flex-wrap">
+              @if (isCurrent(p)) {
+                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-medium text-emerald-700">
+                  <i class="pi pi-circle-fill text-[8px]" aria-hidden="true"></i>
+                  {{ 'programs.list.current_badge' | transloco }}
+                </span>
+              }
               @if (p.is_active === false) {
                 <span class="inline-flex items-center gap-1 rounded-full bg-gray-200 px-2 py-0.5 text-[11px] font-medium text-gray-700">
                   <i class="pi pi-box text-[9px]" aria-hidden="true"></i>

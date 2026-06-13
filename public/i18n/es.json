@@ -372,7 +372,8 @@
       "empty": "Aún ningún programa",
       "empty_subtitle": "Aún no tienes ningún programa. Crea uno para planificar tus sesiones.",
       "show_archived": "Mostrar archivados",
-      "archived_badge": "Archivado"
+      "archived_badge": "Archivado",
+      "current_badge": "En curso"
     },
     "detail": {
       "not_found": "Programa no encontrado",
