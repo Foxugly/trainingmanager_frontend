@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { MenuItem } from 'primeng/api';
@@ -29,26 +30,27 @@ export class UserMenuComponent {
     return f || l || u.email;
   });
 
+  // selectTranslate (not the bare translate()) so the labels recompute once the
+  // active-language catalog has loaded AND on every language switch. A plain
+  // translate() inside computed() ran once before the catalog was ready and
+  // froze the raw keys (public.user_menu.*) as the labels.
+  private readonly menuLabels = toSignal(
+    this.transloco.selectTranslate<string[]>([
+      'public.user_menu.profile',
+      'public.user_menu.change_password',
+      'public.user_menu.logout',
+    ]),
+    { initialValue: ['', '', ''] as string[] },
+  );
+
   protected readonly menuItems = computed<MenuItem[]>(() => {
-    const items: MenuItem[] = [
-      {
-        label: this.transloco.translate('public.user_menu.profile'),
-        icon: 'pi pi-user',
-        routerLink: ['/profile'],
-      },
-      {
-        label: this.transloco.translate('public.user_menu.change_password'),
-        icon: 'pi pi-key',
-        routerLink: ['/profile/password'],
-      },
+    const [profile, changePassword, logout] = this.menuLabels();
+    return [
+      { label: profile, icon: 'pi pi-user', routerLink: ['/profile'] },
+      { label: changePassword, icon: 'pi pi-key', routerLink: ['/profile/password'] },
+      { separator: true },
+      { label: logout, icon: 'pi pi-sign-out', command: () => this.logout() },
     ];
-    items.push({ separator: true });
-    items.push({
-      label: this.transloco.translate('public.user_menu.logout'),
-      icon: 'pi pi-sign-out',
-      command: () => this.logout(),
-    });
-    return items;
   });
 
   protected logout(): void {

@@ -3,6 +3,12 @@
   position: sticky;
   top: 0;
   z-index: 50;
+  // Full-width navy bar; content is centred + capped below (mirrors QuizOnline:
+  // the bar background spans edge-to-edge, the content lines up with the footer).
+  background:
+    linear-gradient(135deg, #082f49fa, #0f172af5),
+    linear-gradient(90deg, #38bdf82e, #10b9811f);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .topbar {
@@ -11,10 +17,10 @@
   gap: 1rem;
   padding: 0.45rem 1.1rem;
   min-height: 60px;
-  background:
-    linear-gradient(135deg, #082f49fa, #0f172af5),
-    linear-gradient(90deg, #38bdf82e, #10b9811f);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  // Cap + centre the content at the same width as the footer (QuizOnline parity).
+  max-width: 1440px;
+  width: 100%;
+  margin-inline: auto;
   color: #fff;
   position: relative;
 }
