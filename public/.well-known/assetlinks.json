@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.foxugly.trainingmanager_app",
+      "sha256_cert_fingerprints": [
+        "6A:2D:5D:A9:DC:A6:FB:20:7D:B2:0F:D8:70:A5:6C:35:88:88:94:B8:84:55:CA:14:22:DD:3C:42:8E:A7:54:A7"
+      ]
+    }
+  }
+]
