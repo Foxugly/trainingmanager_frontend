@@ -15,6 +15,8 @@ api/auth.service.ts
 api/auth.serviceInterface.ts
 api/dashboard.service.ts
 api/dashboard.serviceInterface.ts
+api/devices.service.ts
+api/devices.serviceInterface.ts
 api/discussions.service.ts
 api/discussions.serviceInterface.ts
 api/energy-segments.service.ts
@@ -100,6 +102,10 @@ model/dashboard-summary.ts
 model/debrief-attendance.ts
 model/debrief-roti.ts
 model/debrief-rsvp.ts
+model/device-read-status-enum.ts
+model/device-read.ts
+model/device-register-request.ts
+model/device-unregister-request.ts
 model/duplicate-event-created.ts
 model/duplicate-event-request-request.ts
 model/duplicate-event-response.ts
@@ -234,6 +240,7 @@ model/performance.ts
 model/place-minimal.ts
 model/place-request.ts
 model/place.ts
+model/platform-enum.ts
 model/presign-upload-headers.ts
 model/presign-upload-request-request.ts
 model/presign-upload-response.ts

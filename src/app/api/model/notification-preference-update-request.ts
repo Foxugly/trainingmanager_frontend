@@ -11,7 +11,7 @@ import { NotificationPreferenceRequest } from './notification-preference-request
 
 
 /**
- * Request body for PUT /notifications/preferences/.  A list of {type, in_app, email} entries to upsert. Types are validated against NotificationType; duplicates of the same type are rejected.
+ * Request body for PUT /notifications/preferences/.  A list of {type, in_app, email, push} entries to upsert. Types are validated against NotificationType; duplicates of the same type are rejected.
  */
 export interface NotificationPreferenceUpdateRequest { 
     preferences: Array<NotificationPreferenceRequest>;

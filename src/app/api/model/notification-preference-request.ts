@@ -17,6 +17,7 @@ export interface NotificationPreferenceRequest {
     type: TypeEnum;
     in_app: boolean;
     email: boolean;
+    push?: boolean;
 }
 
 
