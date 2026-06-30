@@ -1,0 +1,78 @@
+name: API client drift
+
+# Fails if the vendored OpenAPI schema or the generated client has drifted from
+# the backend's source schema.
+#
+# The backend (Foxugly/trainingmanager_server) owns openapi-schema.yaml and keeps
+# it in lockstep with its serializers via its own CI "schema drift guard". This
+# frontend vendors a COPY at openapi/Training_Manager_API.yaml and generates the
+# typed client (src/app/api) from it. Nothing otherwise checks that the copy is
+# current, so it silently lagged the backend once (~18 days behind: it was missing
+# the devices/ endpoints and the `push` notification preference). This guard
+# re-vendors the backend schema, regenerates the client, and fails if either
+# differs from what is committed.
+#
+# Reuses the existing E2E_BACKEND_TOKEN secret (read access to the backend repo) —
+# no new secret needed.
+
+on:
+  pull_request:
+  push:
+    branches:
+      - "**"
+  workflow_dispatch:
+
+concurrency:
+  group: api-drift-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout frontend
+        uses: actions/checkout@v5
+
+      # Only the backend's schema file is needed — sparse checkout keeps it fast.
+      - name: Checkout backend schema
+        uses: actions/checkout@v5
+        with:
+          repository: Foxugly/trainingmanager_server
+          ref: main
+          token: ${{ secrets.E2E_BACKEND_TOKEN }}
+          path: backend
+          sparse-checkout: |
+            openapi-schema.yaml
+          sparse-checkout-cone-mode: false
+
+      - name: Set up Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: npm
+
+      # openapi-generator-cli runs a Java jar.
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check client is in sync with the backend schema
+        run: |
+          cp backend/openapi-schema.yaml openapi/Training_Manager_API.yaml
+          npm run api:gen
+          # --ignore-cr-at-eol: the vendored yaml is CRLF, the generator emits LF;
+          # only real content changes should fail the guard.
+          if git diff --ignore-cr-at-eol --quiet -- openapi/ src/app/api/; then
+            echo "OpenAPI client in sync with the backend ✅"
+          else
+            echo "::error::OpenAPI client out of sync with the backend. Re-vendor the schema (copy the backend openapi-schema.yaml to openapi/Training_Manager_API.yaml), run 'npm run api:gen', and commit the result."
+            git diff --ignore-cr-at-eol --stat -- openapi/ src/app/api/
+            git diff --ignore-cr-at-eol -- openapi/ src/app/api/ | head -120
+            exit 1
+          fi
