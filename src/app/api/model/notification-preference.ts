@@ -18,6 +18,7 @@ export interface NotificationPreference {
     readonly label: string;
     in_app: boolean;
     email: boolean;
+    push?: boolean;
 }
 
 
