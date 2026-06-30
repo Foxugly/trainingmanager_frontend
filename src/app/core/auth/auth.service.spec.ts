@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AuthService } from './auth.service';
 import { TokenStorage } from './token.storage';
@@ -8,6 +8,7 @@ import { AuthService as ApiAuthService } from '../../api/api/auth.service';
 import { MeService } from '../../api/api/me.service';
 import { LanguageEnum } from '../../api/model/language-enum';
 import { Me } from '../../api/model/me';
+import { TokenRefresh } from '../../api/model/token-refresh';
 
 const fakeUser: Me = {
   id: 1,
@@ -124,6 +125,33 @@ describe('AuthService', () => {
       tokenRefreshRequest: { refresh: 'old-refresh' },
     });
     expect(tokenStorage.getAccess()).toBe('new-access');
+  });
+
+  it('refresh() shares a single in-flight request across concurrent callers and persists the rotated token', () => {
+    tokenStorage.setRefresh('old-refresh');
+    const backend = new Subject<TokenRefresh>();
+    apiAuth.authTokenRefreshCreate.mockReturnValue(backend.asObservable());
+
+    const seen: TokenRefresh[] = [];
+    service.refresh().subscribe((t) => seen.push(t));
+    service.refresh().subscribe((t) => seen.push(t));
+
+    // Both callers share the one in-flight POST — only one hits the backend,
+    // so the second never presents the soon-to-be-blacklisted token.
+    expect(apiAuth.authTokenRefreshCreate).toHaveBeenCalledTimes(1);
+
+    backend.next({ access: 'new-access', refresh: 'rotated-refresh' });
+    backend.complete();
+
+    expect(seen).toHaveLength(2);
+    expect(tokenStorage.getAccess()).toBe('new-access');
+    expect(tokenStorage.getRefresh()).toBe('rotated-refresh');
+
+    // After completion the shared observable is released, so a later refresh
+    // issues a fresh request.
+    apiAuth.authTokenRefreshCreate.mockReturnValue(of({ access: 'a3', refresh: 'r3' }));
+    service.refresh().subscribe();
+    expect(apiAuth.authTokenRefreshCreate).toHaveBeenCalledTimes(2);
   });
 
   it('refresh() throws synchronously when no refresh token is stored', async () => {

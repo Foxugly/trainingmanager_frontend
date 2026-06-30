@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, catchError, map, of, switchMap, tap, throwError } from 'rxjs';
+import { Observable, catchError, finalize, map, of, shareReplay, switchMap, tap, throwError } from 'rxjs';
 import { TokenStorage } from './token.storage';
 import { AuthService as ApiAuthService } from '../../api/api/auth.service';
 import { MeService } from '../../api/api/me.service';
@@ -31,6 +31,13 @@ export class AuthService {
   private readonly _currentUser = signal<Me | null>(null);
   readonly currentUser = this._currentUser.asReadonly();
   readonly isAuthenticated = computed(() => this._currentUser() !== null);
+
+  // In-flight refresh shared across concurrent callers. The backend rotates +
+  // blacklists the refresh token on every refresh (ROTATE_REFRESH_TOKENS +
+  // BLACKLIST_AFTER_ROTATION), so two parallel 401s each POSTing the same
+  // refresh would let only the first win — the rest present a now-blacklisted
+  // token, 401, and get logged out. Sharing one in-flight refresh prevents it.
+  private refresh$: Observable<TokenRefresh> | null = null;
 
   bootstrap(): Observable<boolean> {
     if (!this.tokenStorage.hasRefresh()) {
@@ -71,17 +78,30 @@ export class AuthService {
     if (!refreshToken) {
       return throwError(() => new Error('NO_REFRESH_TOKEN'));
     }
+    // De-duplicate concurrent refreshes: several requests can 401 in parallel
+    // (cold start, mid-session expiry) and each would otherwise fire its own
+    // POST with the same — soon blacklisted — refresh token.
+    if (this.refresh$) {
+      return this.refresh$;
+    }
     const payload = { refresh: refreshToken };
-    return this.apiAuth.authTokenRefreshCreate({ tokenRefreshRequest: payload }).pipe(
+    this.refresh$ = this.apiAuth.authTokenRefreshCreate({ tokenRefreshRequest: payload }).pipe(
       tap((tokens) => {
         if (tokens.access) {
           this.tokenStorage.setAccess(tokens.access);
         }
+        // Persist the rotated refresh from the response — the one we just
+        // presented has been blacklisted server-side.
         if (tokens.refresh) {
           this.tokenStorage.setRefresh(tokens.refresh);
         }
       }),
+      finalize(() => {
+        this.refresh$ = null;
+      }),
+      shareReplay(1),
     );
+    return this.refresh$;
   }
 
   fetchMe(): Observable<Me> {
