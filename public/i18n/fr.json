@@ -77,6 +77,7 @@
       "regenerate": "Régénérer la séance",
       "regenerate_past_blocked": "Impossible de régénérer une séance passée.",
       "regenerate_needs_volume": "Définissez d'abord un volume cible pour cette séance.",
+      "volume_computed_target_hint": "Volume réalisé (somme des rounds) / volume cible",
       "load_failed": "Impossible de charger la séance. Veuillez réessayer.",
       "team_load_failed": "Impossible de charger l'équipe de cette séance.",
       "not_found": "Séance introuvable",
