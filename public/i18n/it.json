@@ -77,6 +77,7 @@
       "regenerate": "Rigenera la sessione",
       "regenerate_past_blocked": "Impossibile rigenerare una sessione passata.",
       "regenerate_needs_volume": "Imposta prima un volume obiettivo per questa sessione.",
+      "volume_computed_target_hint": "Volume realizzato (somma dei round) / volume obiettivo",
       "load_failed": "Impossibile caricare la sessione. Riprova.",
       "team_load_failed": "Impossibile caricare la squadra di questa sessione.",
       "not_found": "Sessione non trovata",

@@ -77,6 +77,7 @@
       "regenerate": "Sessie opnieuw genereren",
       "regenerate_past_blocked": "Een voorbije sessie kan niet opnieuw worden gegenereerd.",
       "regenerate_needs_volume": "Stel eerst een doelvolume in voor deze sessie.",
+      "volume_computed_target_hint": "Gerealiseerd volume (som van de rondes) / doelvolume",
       "load_failed": "Kan de sessie niet laden. Probeer het opnieuw.",
       "team_load_failed": "Kan het team van deze sessie niet laden.",
       "not_found": "Sessie niet gevonden",
