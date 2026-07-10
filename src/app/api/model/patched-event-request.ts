@@ -37,6 +37,7 @@ export interface PatchedEventRequest {
     hour_start?: string | null;
     hour_end?: string | null;
     total?: number;
+    total_target?: number;
     refer_program_id?: number;
     sport_id?: number | null;
     /**

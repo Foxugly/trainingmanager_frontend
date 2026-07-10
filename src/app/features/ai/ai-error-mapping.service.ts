@@ -44,6 +44,12 @@ export class AiErrorMappingService {
         if (entries.some((f) => f?.code === 'additional_prompt_too_long')) {
           return { i18nKey: 'ai.errors.additional_prompt_too_long', fields };
         }
+        if (entries.some((f) => f?.code === 'date_start_before_program')) {
+          return { i18nKey: 'ai.errors.date_start_before_program', fields };
+        }
+        if (entries.some((f) => f?.code === 'date_end_after_program')) {
+          return { i18nKey: 'ai.errors.date_end_after_program', fields };
+        }
       }
       return { i18nKey: 'ai.errors.validation', fields };
     }
@@ -54,6 +60,10 @@ export class AiErrorMappingService {
 
     if (err.status === 409 && code === 'event_has_rounds') {
       return { i18nKey: 'ai.errors.event_has_rounds' };
+    }
+
+    if (err.status === 409 && code === 'event_without_volume') {
+      return { i18nKey: 'ai.errors.event_without_volume' };
     }
 
     if (err.status === 500 && code === 'ai_configuration_error') {

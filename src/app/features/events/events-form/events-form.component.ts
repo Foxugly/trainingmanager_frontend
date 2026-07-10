@@ -181,7 +181,10 @@ export class EventsFormComponent implements OnInit {
       date: this.fb.nonNullable.control<Date | null>(null, [Validators.required]),
       hour_start: this.fb.nonNullable.control<Date | null>(null),
       hour_end: this.fb.nonNullable.control<Date | null>(null),
-      total: this.fb.nonNullable.control<number>(0, [Validators.min(0)]),
+      // The coach's TARGET volume (event.total_target) — the objective the AI
+      // aims for. Distinct from the realized `total` (sum of rounds), which the
+      // training editor owns and auto-syncs; editing that here would be clobbered.
+      total_target: this.fb.nonNullable.control<number>(0, [Validators.min(0)]),
       color: ['#3B82F6', [Validators.maxLength(10)]],
       vis_distance: this.fb.nonNullable.control<VisibilityMode>(VisibilityMode.Always),
       vis_goal: this.fb.nonNullable.control<VisibilityMode>(VisibilityMode.Always),
@@ -333,7 +336,7 @@ export class EventsFormComponent implements OnInit {
             date: parseDate(e.date),
             hour_start: parseTime(e.hour_start),
             hour_end: parseTime(e.hour_end),
-            total: e.total ?? 0,
+            total_target: e.total_target ?? 0,
             color: e.color || '#3B82F6',
             vis_distance: e.vis_distance ?? VisibilityMode.Always,
             vis_goal: e.vis_goal ?? VisibilityMode.Always,
@@ -398,7 +401,7 @@ export class EventsFormComponent implements OnInit {
         date: toIsoDate(value.date),
         hour_start: toIsoTime(value.hour_start),
         hour_end: toIsoTime(value.hour_end),
-        total: value.total,
+        total_target: value.total_target,
         color: value.color,
         vis_distance: value.vis_distance,
         vis_goal: value.vis_goal,
@@ -432,7 +435,7 @@ export class EventsFormComponent implements OnInit {
       date: toIsoDate(value.date) ?? undefined,
       hour_start: toIsoTime(value.hour_start) ?? undefined,
       hour_end: toIsoTime(value.hour_end) ?? undefined,
-      total: value.total,
+      total_target: value.total_target,
       color: value.color,
       vis_distance: value.vis_distance,
       vis_goal: value.vis_goal,

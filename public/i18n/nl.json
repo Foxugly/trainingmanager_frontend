@@ -50,6 +50,9 @@
       "validation": "Ongeldige gegevens. Controleer het formulier.",
       "not_a_manager": "Alleen de eigenaar en managers kunnen genereren.",
       "event_has_rounds": "Deze sessie heeft al oefeningen. Verwijder ze voordat je opnieuw genereert.",
+      "event_without_volume": "Stel een doelvolume in voor deze sessie voordat je de training genereert.",
+      "date_start_before_program": "De begindatum kan niet vóór de begindatum van het programma liggen.",
+      "date_end_after_program": "De einddatum kan niet ná de einddatum van het programma liggen.",
       "configuration": "AI-service onjuist geconfigureerd. Neem contact op met de beheerder.",
       "service": "De AI-service is mislukt of tijdelijk niet beschikbaar. Probeer het over enkele minuten opnieuw.",
       "unknown": "Er is iets misgegaan. Probeer het opnieuw."
@@ -73,6 +76,7 @@
     "detail": {
       "regenerate": "Sessie opnieuw genereren",
       "regenerate_past_blocked": "Een voorbije sessie kan niet opnieuw worden gegenereerd.",
+      "regenerate_needs_volume": "Stel eerst een doelvolume in voor deze sessie.",
       "load_failed": "Kan de sessie niet laden. Probeer het opnieuw.",
       "team_load_failed": "Kan het team van deze sessie niet laden.",
       "not_found": "Sessie niet gevonden",
@@ -239,6 +243,8 @@
       "hour_start": "Starttijd",
       "hour_end": "Eindtijd",
       "total": "Volume",
+      "total_target": "Doelvolume",
+      "total_target_tooltip": "Het volume dat je nastreeft; de AI genereert de training om dit te benaderen. Stel het in voordat je genereert.",
       "color": "Kleur",
       "save": "Opslaan",
       "saved": "Sessie opgeslagen",

@@ -143,20 +143,41 @@ export class GenerateEventsDialogComponent {
     },
   ]);
 
+  /** Program start — the earliest a session may be generated (issue #12). */
+  protected readonly minDate = computed(() => parseDate(this.program().date_start));
+  /** Program end — the latest a session may be generated (issue #12). */
+  protected readonly maxDate = computed(() => parseDate(this.program().date_end));
+
   constructor() {
     effect(() => {
       if (!this.visible()) return;
       const p = this.program();
       this.form.reset({
-        date_start: parseDate(p.date_start),
+        date_start: this.defaultStartDate(p),
         date_end: parseDate(p.date_end),
-        frequency_per_week: p.frequency_per_week ?? 3,
+        frequency_per_week: 3,
         description: p.description ?? '',
         overlap_strategy: 'add_only',
       });
       this.errorMessage.set(null);
       this.loadTemplate(p);
     });
+  }
+
+  /**
+   * Default generation start (issue #12): today when it falls inside the
+   * program window, otherwise the program's own start date. Never earlier than
+   * the program start.
+   */
+  private defaultStartDate(p: Program): Date | null {
+    const start = parseDate(p.date_start);
+    const end = parseDate(p.date_end);
+    if (start && end) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (today >= start && today <= end) return today;
+    }
+    return start;
   }
 
   /**
@@ -188,18 +209,16 @@ export class GenerateEventsDialogComponent {
       });
   }
 
-  /** Toggle the frequency validators + prefill the season window from a template. */
+  /**
+   * Toggle the frequency validators from the template. The generation window is
+   * governed by the program's own dates (issue #12), so the team's season window
+   * no longer overrides date_start/date_end here.
+   */
   private applyTemplate(tpl: TrainingTemplate | null): void {
     const freq = this.form.controls.frequency_per_week;
     if (tpl && (tpl.slots?.length ?? 0) > 0) {
       freq.clearValidators();
       freq.updateValueAndValidity();
-      const seasonStart = parseDate(tpl.season_start);
-      const seasonEnd = parseDate(tpl.season_end);
-      this.form.patchValue({
-        ...(seasonStart ? { date_start: seasonStart } : {}),
-        ...(seasonEnd ? { date_end: seasonEnd } : {}),
-      });
     } else {
       freq.setValidators([Validators.required, Validators.min(1), Validators.max(14)]);
       freq.updateValueAndValidity();

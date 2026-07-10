@@ -150,30 +150,6 @@
           </app-meta-field>
         </div>
 
-        <!-- Frequency (kept; not part of the 3 spec rows). -->
-        <div class="meta-grid cols-2">
-          <app-meta-field
-            #frequencyField
-            [label]="'programs.form.frequency' | transloco"
-            for="frequency_per_week"
-            [tooltip]="'programs.form.frequency_help' | transloco"
-            [error]="fieldError('frequency_per_week')"
-          >
-            <p-inputnumber
-              inputId="frequency_per_week"
-              formControlName="frequency_per_week"
-              [min]="0"
-              [max]="14"
-              [showButtons]="true"
-              buttonLayout="horizontal"
-              spinnerMode="horizontal"
-              [ariaDescribedBy]="fieldError('frequency_per_week') ? frequencyField.errorId() : undefined"
-              decrementButtonIcon="pi pi-minus"
-              incrementButtonIcon="pi pi-plus"
-            />
-          </app-meta-field>
-        </div>
-
         <!-- Row 3 — Description (rich editor, ~3 lines). -->
         <div class="meta-grid">
           <app-meta-field

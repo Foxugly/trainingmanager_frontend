@@ -109,10 +109,12 @@
         </div>
 
         <div class="meta-grid cols-2">
-          <app-meta-field #totalField [label]="'events.form.total' | transloco" for="total" [error]="fieldError('total')">
-            <p-inputnumber inputId="total" formControlName="total" [min]="0" [showButtons]="true"
+          <app-meta-field #totalField [label]="'events.form.total_target' | transloco"
+            [tooltip]="'events.form.total_target_tooltip' | transloco"
+            for="total_target" [error]="fieldError('total_target')">
+            <p-inputnumber inputId="total_target" formControlName="total_target" [min]="0" [showButtons]="true"
               buttonLayout="horizontal" spinnerMode="horizontal"
-              [ariaDescribedBy]="fieldError('total') ? totalField.errorId() : undefined"
+              [ariaDescribedBy]="fieldError('total_target') ? totalField.errorId() : undefined"
               decrementButtonIcon="pi pi-minus" incrementButtonIcon="pi pi-plus" />
           </app-meta-field>
           <app-meta-field [label]="'events.form.color' | transloco">

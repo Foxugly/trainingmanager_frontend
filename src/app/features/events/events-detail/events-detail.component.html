@@ -149,7 +149,13 @@
       @if (canRegenerate()) {
         <span
           detailHeaderActions
-          [pTooltip]="isPastEvent() ? ('events.detail.regenerate_past_blocked' | transloco) : ''"
+          [pTooltip]="
+            isPastEvent()
+              ? ('events.detail.regenerate_past_blocked' | transloco)
+              : missingTargetVolume()
+                ? ('events.detail.regenerate_needs_volume' | transloco)
+                : ''
+          "
           tooltipPosition="bottom"
         >
           <p-button
@@ -158,7 +164,7 @@
             [outlined]="true"
             [rounded]="true"
             [loading]="regenerating()"
-            [disabled]="isPastEvent()"
+            [disabled]="isPastEvent() || missingTargetVolume()"
             [ariaLabel]="'events.detail.regenerate' | transloco"
             (onClick)="confirmRegenerate()"
           />

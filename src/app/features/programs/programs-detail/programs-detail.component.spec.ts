@@ -6,7 +6,7 @@ import { ActivatedRoute, Router, provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { of, throwError } from 'rxjs';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { EventsService } from '../../../api/api/events.service';
 import { ProgramsService } from '../../../api/api/programs.service';
 import { TeamsService } from '../../../api/api/teams.service';
@@ -66,7 +66,6 @@ const program: Program = {
   date_end: '2026-08-31',
   team: teamMinimal,
   events: [10, 11, 12],
-  frequency_per_week: 4,
   description: 'Cycle estival généré par IA.',
   generated_by_ai: true,
   ai_response: '...',
@@ -219,7 +218,16 @@ describe('ProgramsDetailComponent', () => {
   }
 
   beforeEach(async () => {
+    // Pin "today" to the program's start month so the default calendar month
+    // (initCalendarMonth reads new Date()) is deterministic regardless of when
+    // the suite runs. Only Date is faked, so setTimeout/microtasks are untouched.
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-06-15T09:00:00Z'));
     await setup();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it('loads the program for the route :id on init with includeInactive=true', () => {

@@ -61,7 +61,6 @@ const program: Program = {
   date_end: '2026-08-31',
   team: { id: 4, name: 'RBP WP Senior', language: LanguageEnum.Fr },
   events: [],
-  frequency_per_week: 3,
   description: '',
   generated_by_ai: false,
   ai_response: '',
@@ -81,6 +80,7 @@ const eventFromBackend: Event = {
   hour_start: '18:00:00',
   hour_end: '19:30:00',
   total: 1500,
+  total_target: 1500,
   refer_program: { id: 4, name: 'Cycle aérobie' },
   team_id: 4,
   sport,
@@ -324,7 +324,7 @@ describe('EventsFormComponent', () => {
       name: 'Séance 1',
       refer_program_id: 4,
       goal: 'Endurance',
-      total: 1500,
+      total_target: 1500,
       color: '#FF5733',
     });
     expect(access(component).form.controls.refer_program_id.disabled).toBe(true);

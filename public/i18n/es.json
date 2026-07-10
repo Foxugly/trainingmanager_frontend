@@ -50,6 +50,9 @@
       "validation": "Datos no válidos. Revisa el formulario.",
       "not_a_manager": "Solo el propietario y los managers pueden generar.",
       "event_has_rounds": "Esta sesión ya tiene ejercicios. Elimínalos antes de regenerar.",
+      "event_without_volume": "Define un volumen objetivo para esta sesión antes de generar su entrenamiento.",
+      "date_start_before_program": "La fecha de inicio no puede ser anterior a la fecha de inicio del programa.",
+      "date_end_after_program": "La fecha de fin no puede ser posterior a la fecha de fin del programa.",
       "configuration": "Servicio IA mal configurado. Contacta con el administrador.",
       "service": "El servicio IA ha fallado o no está disponible temporalmente. Inténtalo de nuevo en unos minutos.",
       "unknown": "Se ha producido un error. Inténtalo de nuevo."
@@ -73,6 +76,7 @@
     "detail": {
       "regenerate": "Regenerar la sesión",
       "regenerate_past_blocked": "No se puede regenerar una sesión pasada.",
+      "regenerate_needs_volume": "Define primero un volumen objetivo para esta sesión.",
       "load_failed": "No se pudo cargar la sesión. Inténtalo de nuevo.",
       "team_load_failed": "No se pudo cargar el equipo de esta sesión.",
       "not_found": "Sesión no encontrada",
@@ -239,6 +243,8 @@
       "hour_start": "Hora de inicio",
       "hour_end": "Hora de fin",
       "total": "Volumen",
+      "total_target": "Volumen objetivo",
+      "total_target_tooltip": "El volumen que buscas; la IA genera el entrenamiento para acercarse a él. Defínelo antes de generar.",
       "color": "Color",
       "save": "Guardar",
       "saved": "Sesión guardada",

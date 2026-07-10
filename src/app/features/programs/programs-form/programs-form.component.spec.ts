@@ -61,7 +61,6 @@ const program: Program = {
   date_end: '2026-08-31',
   team: teamMinimal,
   events: [],
-  frequency_per_week: 3,
   description: 'Existant',
   generated_by_ai: false,
   ai_response: '',
@@ -209,7 +208,6 @@ describe('ProgramsFormComponent', () => {
     expect(access(component).form.getRawValue()).toMatchObject({
       name: 'Cycle aérobie',
       team_id: 4,
-      frequency_per_week: 3,
       description: 'Existant',
     });
   });
