@@ -50,6 +50,9 @@
       "validation": "Invalid data. Check the form.",
       "not_a_manager": "Only the owner and managers can generate.",
       "event_has_rounds": "This session already has exercises. Remove them before regenerating.",
+      "event_without_volume": "Set a target volume for this session before generating its training.",
+      "date_start_before_program": "The start date cannot precede the program's start date.",
+      "date_end_after_program": "The end date cannot follow the program's end date.",
       "configuration": "AI service misconfigured. Contact the administrator.",
       "service": "The AI service failed or is temporarily unavailable. Try again in a few minutes.",
       "unknown": "Something went wrong. Try again."
@@ -73,6 +76,7 @@
     "detail": {
       "regenerate": "Regenerate session",
       "regenerate_past_blocked": "Cannot regenerate a past session.",
+      "regenerate_needs_volume": "Set a target volume for this session first.",
       "load_failed": "Could not load the session. Please try again.",
       "team_load_failed": "Could not load this session's team.",
       "not_found": "Session not found",
@@ -239,6 +243,8 @@
       "hour_start": "Start time",
       "hour_end": "End time",
       "total": "Volume",
+      "total_target": "Target volume",
+      "total_target_tooltip": "The volume you aim for; the AI generates the training to approach it. Set it before generating.",
       "color": "Color",
       "save": "Save",
       "saved": "Session saved",

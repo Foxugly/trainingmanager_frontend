@@ -17,7 +17,6 @@ import { handleInvalidSubmit } from '../../../shared/form-validation';
 import { Button } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { DatePicker } from 'primeng/datepicker';
-import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { Select } from 'primeng/select';
@@ -64,7 +63,6 @@ function fromIsoDate(s: string | null | undefined): Date | null {
     ReactiveFormsModule,
     RouterLink,
     InputText,
-    InputNumber,
     DatePicker,
     Select,
     Button,
@@ -136,7 +134,6 @@ export class ProgramsFormComponent implements OnInit {
     team_id: this.fb.nonNullable.control<number | null>(null, [Validators.required]),
     date_start: this.fb.nonNullable.control<Date | null>(null),
     date_end: this.fb.nonNullable.control<Date | null>(null),
-    frequency_per_week: this.fb.nonNullable.control<number | null>(null),
     description: [''],
   });
 
@@ -190,7 +187,6 @@ export class ProgramsFormComponent implements OnInit {
             team_id: p.team?.id ?? null,
             date_start: fromIsoDate(p.date_start),
             date_end: fromIsoDate(p.date_end),
-            frequency_per_week: p.frequency_per_week ?? null,
             description: p.description ?? '',
           });
           this.form.controls.team_id.disable();
@@ -262,7 +258,6 @@ export class ProgramsFormComponent implements OnInit {
         team_id: value.team_id!,
         date_start: toIsoDate(value.date_start),
         date_end: toIsoDate(value.date_end),
-        frequency_per_week: value.frequency_per_week,
         description: value.description,
       };
       this.programsService
@@ -287,7 +282,6 @@ export class ProgramsFormComponent implements OnInit {
       name: value.name,
       date_start: toIsoDate(value.date_start),
       date_end: toIsoDate(value.date_end),
-      frequency_per_week: value.frequency_per_week,
       description: value.description,
     };
     this.programsService

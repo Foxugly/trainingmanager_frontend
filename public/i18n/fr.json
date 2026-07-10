@@ -50,6 +50,9 @@
       "validation": "Données invalides. Vérifiez le formulaire.",
       "not_a_manager": "Seuls le propriétaire et les managers peuvent générer.",
       "event_has_rounds": "Cette séance a déjà des exercices. Supprimez-les avant de régénérer.",
+      "event_without_volume": "Définissez un volume cible pour cette séance avant de générer son entraînement.",
+      "date_start_before_program": "La date de début ne peut pas précéder la date de début du programme.",
+      "date_end_after_program": "La date de fin ne peut pas dépasser la date de fin du programme.",
       "configuration": "Service IA mal configuré. Contactez l'administrateur.",
       "service": "Le service IA a échoué ou est temporairement indisponible. Réessayez dans quelques minutes.",
       "unknown": "Une erreur est survenue. Réessayez."
@@ -73,6 +76,7 @@
     "detail": {
       "regenerate": "Régénérer la séance",
       "regenerate_past_blocked": "Impossible de régénérer une séance passée.",
+      "regenerate_needs_volume": "Définissez d'abord un volume cible pour cette séance.",
       "load_failed": "Impossible de charger la séance. Veuillez réessayer.",
       "team_load_failed": "Impossible de charger l'équipe de cette séance.",
       "not_found": "Séance introuvable",
@@ -239,6 +243,8 @@
       "hour_start": "Heure de début",
       "hour_end": "Heure de fin",
       "total": "Volume",
+      "total_target": "Volume cible",
+      "total_target_tooltip": "Volume visé pour la séance ; l'IA génère l'entraînement pour l'approcher. À définir avant de générer.",
       "color": "Couleur",
       "save": "Enregistrer",
       "saved": "Séance enregistrée",

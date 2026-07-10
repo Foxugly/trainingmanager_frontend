@@ -14,7 +14,6 @@ export interface ProgramRequest {
     date_start?: string | null;
     date_end?: string | null;
     team_id: number;
-    frequency_per_week?: number | null;
     description?: string;
     is_active?: boolean;
 }

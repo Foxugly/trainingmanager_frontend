@@ -192,6 +192,20 @@ export class EventsDetailComponent implements OnInit {
     return date < this.todayLocalIso();
   });
 
+  /**
+   * A structured session cannot be generated without a target volume — the AI
+   * has nothing to size it against (issue #9). The backend refuses with HTTP 409
+   * `event_without_volume`; we disable the action and explain why up-front.
+   * Freeform sessions need no volume, so this never blocks them.
+   */
+  protected readonly missingTargetVolume = computed(() => {
+    const e = this.event();
+    if (!e) return false;
+    const isStructured =
+      (e.training_type ?? TrainingTypeEnum.Structured) === TrainingTypeEnum.Structured;
+    return isStructured && !e.total_target;
+  });
+
   /** Local calendar date as a yyyy-mm-dd string (not UTC). */
   private todayLocalIso(): string {
     const now = new Date();

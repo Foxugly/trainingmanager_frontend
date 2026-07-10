@@ -50,6 +50,9 @@
       "validation": "Dati non validi. Controlla il modulo.",
       "not_a_manager": "Solo il proprietario e i manager possono generare.",
       "event_has_rounds": "Questa sessione ha già esercizi. Rimuovili prima di rigenerare.",
+      "event_without_volume": "Imposta un volume obiettivo per questa sessione prima di generare l'allenamento.",
+      "date_start_before_program": "La data di inizio non può precedere la data di inizio del programma.",
+      "date_end_after_program": "La data di fine non può superare la data di fine del programma.",
       "configuration": "Servizio AI configurato male. Contatta l'amministratore.",
       "service": "Il servizio AI ha fallito o è temporaneamente non disponibile. Riprova tra qualche minuto.",
       "unknown": "Si è verificato un errore. Riprova."
@@ -73,6 +76,7 @@
     "detail": {
       "regenerate": "Rigenera la sessione",
       "regenerate_past_blocked": "Impossibile rigenerare una sessione passata.",
+      "regenerate_needs_volume": "Imposta prima un volume obiettivo per questa sessione.",
       "load_failed": "Impossibile caricare la sessione. Riprova.",
       "team_load_failed": "Impossibile caricare la squadra di questa sessione.",
       "not_found": "Sessione non trovata",
@@ -239,6 +243,8 @@
       "hour_start": "Ora di inizio",
       "hour_end": "Ora di fine",
       "total": "Volume",
+      "total_target": "Volume obiettivo",
+      "total_target_tooltip": "Il volume che punti a raggiungere; l'IA genera l'allenamento per avvicinarlo. Impostalo prima di generare.",
       "color": "Colore",
       "save": "Salva",
       "saved": "Sessione salvata",

@@ -4,7 +4,7 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { of, throwError } from 'rxjs';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ProgramsService } from '../../../api/api/programs.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { LanguageEnum } from '../../../api/model/language-enum';
@@ -23,7 +23,6 @@ const program: Program = {
   date_end: '2026-08-31',
   team,
   events: [],
-  frequency_per_week: 3,
   description: 'Programme de test',
   generated_by_ai: false,
   ai_response: '',
@@ -110,7 +109,15 @@ describe('GenerateEventsDialogComponent', () => {
   }
 
   beforeEach(async () => {
+    // Pin the clock before the program window so the default start date is
+    // deterministic (today < program start ⇒ default = program start, per #12).
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-04-15T09:00:00Z'));
     await setup();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it('pre-fills form from the program when dialog becomes visible', () => {
@@ -206,11 +213,27 @@ describe('GenerateEventsDialogComponent', () => {
     expect(payload.frequency_per_week).toBeUndefined();
   });
 
-  it('with slots: prefills date_start/date_end from the season window', async () => {
+  it('with slots: the window is still the program dates, not the team season (#12)', async () => {
     await setup(true, richTemplate);
     const value = access(component).form.getRawValue();
-    expect((value['date_start'] as Date).toISOString().slice(0, 10)).toBe('2026-09-01');
-    expect((value['date_end'] as Date).toISOString().slice(0, 10)).toBe('2027-06-30');
+    // Program 2026-05-01…2026-08-31 governs the window; the team season
+    // (2026-09-01…2027-06-30) no longer overrides it.
+    expect((value['date_start'] as Date).toISOString().slice(0, 10)).toBe('2026-05-01');
+    expect((value['date_end'] as Date).toISOString().slice(0, 10)).toBe('2026-08-31');
+  });
+
+  it('defaults date_start to today when today is inside the program window (#12)', async () => {
+    vi.setSystemTime(new Date('2026-06-15T09:00:00Z'));
+    await setup(true, emptyTemplate);
+    const value = access(component).form.getRawValue();
+    // `today` is a local-midnight Date, so compare its local calendar day
+    // (toISOString would shift it a day in positive-offset zones).
+    const d = value['date_start'] as Date;
+    const localDay = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
+      d.getDate(),
+    ).padStart(2, '0')}`;
+    // 2026-06-15 ∈ [2026-05-01, 2026-08-31] ⇒ default start = today.
+    expect(localDay).toBe('2026-06-15');
   });
 
   it('with slots: builds a readable template summary', async () => {

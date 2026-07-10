@@ -73,7 +73,6 @@ const program: Program = {
   date_end: '2026-08-31',
   team: { id: 4, name: 'RBP WP Senior', language: LanguageEnum.Fr },
   events: [],
-  frequency_per_week: 3,
   description: '',
   generated_by_ai: false,
   ai_response: '',

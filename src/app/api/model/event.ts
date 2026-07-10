@@ -43,6 +43,7 @@ export interface Event {
     hour_start?: string | null;
     hour_end?: string | null;
     total?: number;
+    total_target?: number;
     readonly refer_program: ProgramMinimal;
     readonly team_id: number;
     readonly sport: Sport;
