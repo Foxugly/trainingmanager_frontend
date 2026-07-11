@@ -52,3 +52,24 @@
     font-style: italic;
   }
 }
+
+// Skip-to-content (a11y) : caché, révélé au focus clavier (standard flotte).
+.skip-link {
+  position: absolute;
+  left: 0.75rem;
+  top: 0.75rem;
+  z-index: 1200;
+  transform: translateY(-150%);
+  background: var(--surface);
+  color: var(--accent-strong);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.18);
+  text-decoration: none;
+  transition: transform 120ms ease;
+}
+.skip-link:focus {
+  transform: translateY(0);
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
