@@ -1,28 +1,32 @@
-# Backlog — harmonisation layout · trainingmanager_frontend
+# Backlog — harmonisation layout · trainingmanager_frontend (A21)
 
-> **Cible :** `STANDARD-frontend-layout.md` (repo `foxugly-ops`).
-> TM est la **référence** de plusieurs briques (langue, user, cloches, shell, footer,
-> page-header, About) — l'écart est surtout **thème + retrait Tailwind**.
-> **Statut :** à faire (audit 2026-07-10). Bon **point d'entrée** de l'harmonisation.
+> **Cible :** `STANDARD-frontend-layout.md` (repo `foxugly-ops`) ; réf = `FoxRunner_frontend`.
+> **Statut : ~25-30 % conforme** (audit exhaustif 2026-07-11) — **le plus lourd de la flotte** (Tailwind massif).
+> Travailler sur branche dédiée — **jamais `main`** (auto-deploy).
 
-## ✅ Déjà conforme (souvent la réf)
-- `app-topmenu` · `core/layout/topmenu/` · `[mode]` public/authenticated.
-- Cloches msg + notif ; `app-language-switcher` (Transloco, 5 langues) ; `app-user-menu` + login « Login ».
-- Shell `main`/`public`/`admin-layout` + **skip-link** ; `app-footer` (version runtime, dark).
-- `app-page-header` 3 colonnes (slots) ; About en `p-tabs` ; `app-empty-state` + skeletons.
+## ✅ Déjà conforme
+- **i18n Transloco 5 langues** (fr/nl/en/it/es, `public/i18n/*.json`) — systématique.
+- `app-page-header` (3-col + slots), About (p-tabs Company/Legal/Technical, SCSS sémantique), skeletons (`p-skeleton`).
+- Chrome présent : `app-topmenu` (core/layout, `[mode]`, 3 zones, drawer, CTA Soutenir), `app-user-menu`, `app-footer` (core/layout, version runtime, dark), `app-language-switcher` (a11y) — **mais couleurs en dur + breakpoints/BEM à corriger**.
+- Turnstile sur register ✓ ; severities correctes sur les pages admin ; `p-table` (rows=20) sur le CRUD admin.
 
-## Phase 1 — structurel
-- [ ] **Thème** : ajouter le **toggle + `ThemeService`** (aujourd'hui `.dark-mode` configuré mais **aucune UI**) → `localStorage['theme']`, `.dark-mode`, **anti-FOUC** inline. Placer le bouton avant la langue.
-- [ ] **Classes topmenu** : `.topbar/.nav/.actions` (plat) → **BEM `topbar__*`**.
-- [ ] **Breakpoints** : 960/480 → échelle `sm 640 / md 768 / lg 1024 / xl 1280` ; topmenu drawer à **1024**.
-- [ ] **Largeur** : unifier le double 1280/1440 → **`--content-max: 80rem`** partout (topbar/page/footer alignés).
-- [ ] **Page-header** : **supprimer le `detail-header`** résiduel → migrer les pages de détail vers `app-page-header`.
-- [ ] **Login** : libellé « Login » → **« Se connecter »**.
-- [ ] **Bouton login** : garder l'intégration dans `app-user-menu` (déjà OK).
+## Lot 1 — Fondation CSS (safe, indépendant du look)
+- [ ] **`_tokens.scss`** : noms non-canoniques → canonique (`--text`→`--ink`, `--text-strong`→`--ink-soft`/`--ink`, `--surface-soft`→`--surface-2`, ajouter `--accent*`, `--chrome-*`, `--success/--warn/--danger`, `--content-max`/`--content-pad`) + `.dark-mode` complet.
+- [ ] **`_breakpoints.scss`** : 640/768/1024/1280 + mixin `below()` ; corriger **960→1024** et **480** (`topmenu.scss:111/168`).
+- [ ] **Largeur unique** : `max-width: 1440px` → `var(--content-max)` (topmenu/main-layout/footer) + `padding-inline: var(--content-pad)`.
+- [ ] **ThemeService + dark toggle + anti-FOUC** (ABSENT — copie FoxRunner) ; toggle rectangulaire ; ordre cloches→**thème**→langue→user.
+- [ ] Tokeniser les couleurs en dur du chrome (topmenu/footer/language-switcher/user-menu : `#cbd5e1`, `#fff`, `#f8fafc`, `#334155`…) → `--chrome-*`/`--surface-2`/`--ink*`.
 
-## Phase 2 — CSS (le gros morceau de TM)
-- [ ] **Retirer Tailwind** (~879 usages) → SCSS/BEM + CSS moderne. Commencer par la page **Features** (Tailwind) → grille CSS-grid native.
-- [ ] Désinstaller `tailwindcss` quand le dernier usage a disparu.
+## Lot 2 — Retrait Tailwind (TRÈS gros : ~2242 classes, 78/85 fichiers HTML)
+- [ ] Dépréciation immédiate (pas de nouvel usage) ; retrait **opportuniste** en réécrivant chaque zone en SCSS/BEM + tokens ; désinstaller `tailwindcss`/`@tailwindcss/postcss` + `@import "tailwindcss"` (`styles.scss:7`) **quand le dernier usage a disparu**.
+- [ ] Prioriser : skip-link (`main-layout`/`public-layout`), pages publiques (home/features/contribute), pages auth, `app-empty-state`, listes (`grid grid-cols-*`→`repeat(auto-fit,minmax(16rem,1fr))`).
 
-## i18n
-- [ ] ✅ Déjà Transloco 5 langues — rien à migrer.
+## Lot 3 — Auth + composant partagé
+- [ ] Créer **`app-auth-card`** (ABSENT — copie FoxRunner : `[icon]`+`[title]` centrés, ~420px, slot) ; l'appliquer à login/register/forgot (dé-dupliquer la chrome Tailwind).
+- [ ] Ajouter la page **`/privacy`** (ABSENTE — réutiliser le légal de `/about`).
+
+## Lot 4 — Pages détail / admin
+- [ ] Migrer **`detail-header` → `app-page-header`** partout puis **supprimer** `shared/ui/detail-header/`.
+- [ ] Severities cohérentes aussi sur public/auth (aujourd'hui gradient Tailwind en dur).
+
+_Effort estimé (audit) : ~150-170 j·p au total — TM est le plus gros chantier._
