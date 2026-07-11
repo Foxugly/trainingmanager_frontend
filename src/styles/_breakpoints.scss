@@ -1,0 +1,11 @@
+// Breakpoints — flotte Foxugly (custom properties inutilisables en @media).
+$bp-sm: 640px;
+$bp-md: 768px;
+$bp-lg: 1024px;
+$bp-xl: 1280px;
+
+@mixin below($bp) {
+  @media (max-width: $bp) {
+    @content;
+  }
+}

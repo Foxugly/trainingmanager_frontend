@@ -44,7 +44,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
       min-width: 0;
       font-size: 1.5rem;
       line-height: 1.2;
-      color: var(--text-strong);
+      color: var(--ink);
     }
     .page-header__slot {
       display: inline-flex;
