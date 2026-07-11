@@ -970,7 +970,8 @@
   "footer": {
     "author": "Foxugly",
     "version_label": "Versie",
-    "rights": ". Alle rechten voorbehouden."
+    "privacy": "Privacy",
+    "rights": "Alle rechten voorbehouden."
   },
   "public": {
     "nav": {

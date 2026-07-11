@@ -51,6 +51,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'privacy',
+        loadComponent: () =>
+          import('./features/privacy-page/privacy-page.component').then(
+            (m) => m.PrivacyPageComponent,
+          ),
+      },
+      {
         path: 'login',
         loadComponent: () =>
           import('./features/auth/login/login.component').then((m) => m.LoginComponent),

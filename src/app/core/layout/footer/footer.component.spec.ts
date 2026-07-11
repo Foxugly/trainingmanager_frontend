@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { FooterComponent } from './footer.component';
@@ -16,6 +17,7 @@ describe('FooterComponent', () => {
           translocoConfig: { availableLangs: ['fr'], defaultLang: 'fr' },
         }),
       ],
+      providers: [provideRouter([])],
     }).compileComponents();
     fixture = TestBed.createComponent(FooterComponent);
     fixture.detectChanges();
@@ -40,10 +42,10 @@ describe('FooterComponent', () => {
     expect(text).toMatch(/\d+\.\d+\.\d+/);
   });
 
-  it('renders 2 separator dots between the segments', () => {
-    // brand · tagline [fill] version · copyright(© year + author + rights)
+  it('renders 4 separator dots between the segments', () => {
+    // brand · tagline [fill] version · copyright(© year + author) · privacy · rights
     const seps = fixture.nativeElement.querySelectorAll('.footer-sep');
-    expect(seps.length).toBe(2);
+    expect(seps.length).toBe(4);
   });
 
   it('renders the Foxugly author link with logo + rights', () => {
@@ -51,5 +53,12 @@ describe('FooterComponent', () => {
     expect(html).toContain('footer.author');
     expect(html).toContain('footer.rights');
     expect(fixture.nativeElement.querySelector('.footer-author-logo')).toBeTruthy();
+  });
+
+  it('renders a Privacy link pointing at /privacy', () => {
+    const link = fixture.nativeElement.querySelector('.footer-privacy-link') as HTMLAnchorElement;
+    expect(link).toBeTruthy();
+    expect(link.getAttribute('href')).toBe('/privacy');
+    expect(fixture.nativeElement.innerHTML as string).toContain('footer.privacy');
   });
 });

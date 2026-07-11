@@ -61,6 +61,15 @@
   text-decoration: underline;
 }
 
+.footer-privacy-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.footer-privacy-link:hover {
+  text-decoration: underline;
+}
+
 .footer-author-logo {
   height: 0.9rem;
   width: auto;
