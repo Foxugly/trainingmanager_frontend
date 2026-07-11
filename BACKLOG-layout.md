@@ -1,9 +1,11 @@
 # Backlog — harmonisation layout · trainingmanager_frontend
 
 > **Cible :** `STANDARD-frontend-layout.md` (repo `foxugly-ops`).
-> TM est la **référence** de plusieurs briques (langue, user, cloches, shell, footer,
-> page-header, About) — l'écart est surtout **thème + retrait Tailwind**.
-> **Statut :** à faire (audit 2026-07-10). Bon **point d'entrée** de l'harmonisation.
+> Le standard est **VALIDÉ 2026-07-11** ; l'implémentation de **référence complète** est désormais
+> **`FoxRunner_frontend`** (copier ses tokens, son chrome, ses pages). TM a inspiré plusieurs briques
+> (langue, user, cloches, footer, page-header, About) mais l'écart restant est surtout **thème +
+> retrait Tailwind (~879) + adoption des tokens/chrome de la réf**.
+> Exécuter sur branche **`feat/scss-standard`** — **jamais `main`** (auto-deploy prod).
 
 ## ✅ Déjà conforme (souvent la réf)
 - `app-topmenu` · `core/layout/topmenu/` · `[mode]` public/authenticated.
