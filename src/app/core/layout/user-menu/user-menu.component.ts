@@ -5,7 +5,7 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { MenuItem } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { Menu } from 'primeng/menu';
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-user-menu',

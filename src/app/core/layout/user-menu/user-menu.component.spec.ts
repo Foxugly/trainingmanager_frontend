@@ -6,7 +6,7 @@ import { TranslocoTestingModule } from '@jsverse/transloco';
 import { MenuItem } from 'primeng/api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Me } from '../../../api/model/me';
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService } from '../../auth/auth.service';
 import { UserMenuComponent } from './user-menu.component';
 
 const baseUser: Me = {

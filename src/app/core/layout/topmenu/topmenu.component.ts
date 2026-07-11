@@ -17,7 +17,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { filter } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
 import { LanguageSwitcherComponent } from '../../i18n/language-switcher/language-switcher.component';
-import { UserMenuComponent } from '../../../shared/ui/user-menu/user-menu.component';
+import { UserMenuComponent } from '../user-menu/user-menu.component';
 import { NotificationBellComponent } from '../notification-bell/notification-bell.component';
 import { MessageBellComponent } from '../message-bell/message-bell.component';
 
