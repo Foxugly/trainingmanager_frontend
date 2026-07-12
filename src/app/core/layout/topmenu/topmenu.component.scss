@@ -25,7 +25,7 @@
   position: relative;
 }
 
-.brand {
+.topbar__brand {
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
@@ -36,7 +36,7 @@
   letter-spacing: -0.01em;
 }
 
-.brand-mark {
+.topbar__brand-icon {
   display: inline-block;
   width: 42px;
   height: 42px;
@@ -46,14 +46,14 @@
   padding: 4px;
 }
 
-.nav--desktop {
+.topbar__nav--desktop {
   display: flex;
   flex: 1;
   justify-content: center;
   gap: 0.1rem;
 }
 
-.nav a {
+.topbar__link {
   padding: 0.45rem 0.7rem;
   font-size: 0.9rem;
   font-weight: 500;
@@ -63,10 +63,10 @@
   transition: color 0.15s ease, background 0.15s ease;
 }
 
-.nav a:hover { color: #fff; }
-.nav a.active { color: #fff; font-weight: 600; }
+.topbar__link:hover { color: #fff; }
+.topbar__link.active { color: #fff; font-weight: 600; }
 
-.nav a.nav-cta {
+.topbar__link--support {
   background: linear-gradient(135deg, var(--accent), var(--accent-strong));
   color: #fff;
   padding: 0.45rem 0.95rem;
@@ -76,22 +76,22 @@
   transition: filter 0.15s ease, box-shadow 0.15s ease;
 }
 
-.nav a.nav-cta:hover {
+.topbar__link--support:hover {
   filter: brightness(1.1);
   color: #fff;
 }
 
-.nav a.nav-cta.active {
+.topbar__link--support.active {
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4), 0 1px 2px rgba(15, 23, 42, 0.18);
 }
 
-.actions--desktop {
+.topbar__actions--desktop {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.hamburger {
+.topbar__toggle {
   display: none;
   background: transparent;
   border: 0;
@@ -102,9 +102,9 @@
   cursor: pointer;
 }
 
-.hamburger:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
+.topbar__toggle:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
 
-.drawer {
+.topbar__drawer {
   display: none;
 }
 
@@ -113,10 +113,10 @@
     padding: 0.4rem 0.85rem;
     min-height: 56px;
   }
-  .nav--desktop, .actions--desktop { display: none; }
-  .hamburger { display: inline-flex; align-items: center; justify-content: center; margin-left: auto; }
+  .topbar__nav--desktop, .topbar__actions--desktop { display: none; }
+  .topbar__toggle { display: inline-flex; align-items: center; justify-content: center; margin-left: auto; }
 
-  .drawer {
+  .topbar__drawer {
     display: block;
     position: absolute;
     top: 100%;
@@ -128,22 +128,22 @@
     box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
   }
 
-  .drawer .nav--mobile {
+  .topbar__drawer .topbar__nav--mobile {
     display: flex;
     flex-direction: column;
     gap: 0;
   }
 
-  .drawer .nav--mobile a {
+  .topbar__drawer .topbar__link {
     color: #475569;
     padding: 0.6rem 0.5rem;
     border-radius: 0.4rem;
   }
 
-  .drawer .nav--mobile a:hover { background: #f1f5f9; color: #0f172a; }
-  .drawer .nav--mobile a.active { color: var(--accent-strong); font-weight: 600; }
+  .topbar__drawer .topbar__link:hover { background: #f1f5f9; color: #0f172a; }
+  .topbar__drawer .topbar__link.active { color: var(--accent-strong); font-weight: 600; }
 
-  .drawer .nav--mobile a.nav-cta {
+  .topbar__drawer .topbar__link--support {
     background: linear-gradient(135deg, var(--accent), var(--accent-strong));
     color: #fff;
     padding: 0.55rem 0.95rem;
@@ -152,9 +152,9 @@
     text-align: center;
     margin-top: 0.25rem;
   }
-  .drawer .nav--mobile a.nav-cta:hover { filter: brightness(1.05); color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent-strong)); }
+  .topbar__drawer .topbar__link--support:hover { filter: brightness(1.05); color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent-strong)); }
 
-  .drawer .actions--mobile {
+  .topbar__drawer .topbar__actions--mobile {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -169,5 +169,5 @@
   .topbar {
     padding: 0.35rem 0.7rem;
   }
-  .brand-mark { width: 36px; height: 36px; }
+  .topbar__brand-icon { width: 36px; height: 36px; }
 }

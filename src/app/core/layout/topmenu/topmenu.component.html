@@ -1,7 +1,7 @@
 <header class="topbar">
-  <a [routerLink]="['/']" class="brand" (click)="closeMobile()">
+  <a [routerLink]="['/']" class="topbar__brand" (click)="closeMobile()">
     <img
-      class="brand-mark"
+      class="topbar__brand-icon"
       ngSrc="/favicon.ico"
       width="42"
       height="42"
@@ -9,48 +9,48 @@
       aria-hidden="true"
       priority
     />
-    <span class="brand-label">{{ 'app.title' | transloco }}</span>
+    <span class="topbar__brand-name">{{ 'app.title' | transloco }}</span>
   </a>
 
-  <nav class="nav nav--desktop" [attr.aria-label]="'app.title' | transloco">
+  <nav class="topbar__nav topbar__nav--desktop" [attr.aria-label]="'app.title' | transloco">
     @if (mode() === 'public') {
-      <a [routerLink]="['/']" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <a class="topbar__link" [routerLink]="['/']" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
         <i class="pi pi-home" aria-hidden="true"></i> {{ 'public.nav.home' | transloco }}
       </a>
-      <a [routerLink]="['/features']" routerLinkActive="active">
+      <a class="topbar__link" [routerLink]="['/features']" routerLinkActive="active">
         <i class="pi pi-sparkles" aria-hidden="true"></i> {{ 'public.nav.features' | transloco }}
       </a>
-      <a [routerLink]="['/contribute']" routerLinkActive="active" class="nav-cta">
+      <a class="topbar__link topbar__link--support" [routerLink]="['/contribute']" routerLinkActive="active">
         <i class="pi pi-heart" aria-hidden="true"></i> {{ 'public.nav.contribute' | transloco }}
       </a>
-      <a [routerLink]="['/about']" routerLinkActive="active">
+      <a class="topbar__link" [routerLink]="['/about']" routerLinkActive="active">
         <i class="pi pi-info-circle" aria-hidden="true"></i> {{ 'public.nav.about' | transloco }}
       </a>
     } @else {
-      <a [routerLink]="['/dashboard']" routerLinkActive="active">
+      <a class="topbar__link" [routerLink]="['/dashboard']" routerLinkActive="active">
         <i class="pi pi-th-large" aria-hidden="true"></i> {{ 'nav.dashboard' | transloco }}
       </a>
-      <a [routerLink]="['/teams']" routerLinkActive="active">
+      <a class="topbar__link" [routerLink]="['/teams']" routerLinkActive="active">
         <i class="pi pi-users" aria-hidden="true"></i> {{ 'nav.teams' | transloco }}
       </a>
-      <a [routerLink]="['/programs']" routerLinkActive="active">
+      <a class="topbar__link" [routerLink]="['/programs']" routerLinkActive="active">
         <i class="pi pi-book" aria-hidden="true"></i> {{ 'nav.programs' | transloco }}
       </a>
-      <a [routerLink]="['/events']" routerLinkActive="active">
+      <a class="topbar__link" [routerLink]="['/events']" routerLinkActive="active">
         <i class="pi pi-calendar" aria-hidden="true"></i> {{ 'nav.calendar' | transloco }}
       </a>
-      <a [routerLink]="['/contribute']" routerLinkActive="active" class="nav-cta">
+      <a class="topbar__link topbar__link--support" [routerLink]="['/contribute']" routerLinkActive="active">
         <i class="pi pi-heart" aria-hidden="true"></i> {{ 'public.nav.support' | transloco }}
       </a>
       @if (isSuperuser()) {
-        <a [routerLink]="['/admin']" routerLinkActive="active">
+        <a class="topbar__link" [routerLink]="['/admin']" routerLinkActive="active">
           <i class="pi pi-cog" aria-hidden="true"></i> {{ 'public.nav.admin' | transloco }}
         </a>
       }
     }
   </nav>
 
-  <div class="actions actions--desktop">
+  <div class="topbar__actions topbar__actions--desktop">
     @if (mode() === 'authenticated') {
       <app-message-bell />
       <app-notification-bell />
@@ -63,7 +63,7 @@
   <button
     #hamburgerBtn
     type="button"
-    class="hamburger"
+    class="topbar__toggle"
     [attr.aria-expanded]="mobileMenuOpen()"
     [attr.aria-controls]="'topmenu-drawer'"
     [attr.aria-label]="(mobileMenuOpen() ? 'topmenu.close' : 'topmenu.open') | transloco"
@@ -78,10 +78,11 @@
   </button>
 
   @if (mobileMenuOpen()) {
-    <div #drawerEl id="topmenu-drawer" class="drawer">
-      <nav class="nav nav--mobile" [attr.aria-label]="'app.title' | transloco">
+    <div #drawerEl id="topmenu-drawer" class="topbar__drawer">
+      <nav class="topbar__nav topbar__nav--mobile" [attr.aria-label]="'app.title' | transloco">
         @if (mode() === 'public') {
           <a
+            class="topbar__link"
             [routerLink]="['/']"
             routerLinkActive="active"
             [routerLinkActiveOptions]="{ exact: true }"
@@ -89,51 +90,51 @@
           >
             <i class="pi pi-home" aria-hidden="true"></i> {{ 'public.nav.home' | transloco }}
           </a>
-          <a [routerLink]="['/features']" routerLinkActive="active" (click)="closeMobile()">
+          <a class="topbar__link" [routerLink]="['/features']" routerLinkActive="active" (click)="closeMobile()">
             <i class="pi pi-sparkles" aria-hidden="true"></i>
             {{ 'public.nav.features' | transloco }}
           </a>
           <a
+            class="topbar__link topbar__link--support"
             [routerLink]="['/contribute']"
             routerLinkActive="active"
-            class="nav-cta"
             (click)="closeMobile()"
           >
             <i class="pi pi-heart" aria-hidden="true"></i> {{ 'public.nav.contribute' | transloco }}
           </a>
-          <a [routerLink]="['/about']" routerLinkActive="active" (click)="closeMobile()">
+          <a class="topbar__link" [routerLink]="['/about']" routerLinkActive="active" (click)="closeMobile()">
             <i class="pi pi-info-circle" aria-hidden="true"></i>
             {{ 'public.nav.about' | transloco }}
           </a>
         } @else {
-          <a [routerLink]="['/dashboard']" routerLinkActive="active" (click)="closeMobile()">
+          <a class="topbar__link" [routerLink]="['/dashboard']" routerLinkActive="active" (click)="closeMobile()">
             <i class="pi pi-th-large" aria-hidden="true"></i> {{ 'nav.dashboard' | transloco }}
           </a>
-          <a [routerLink]="['/teams']" routerLinkActive="active" (click)="closeMobile()">
+          <a class="topbar__link" [routerLink]="['/teams']" routerLinkActive="active" (click)="closeMobile()">
             <i class="pi pi-users" aria-hidden="true"></i> {{ 'nav.teams' | transloco }}
           </a>
-          <a [routerLink]="['/programs']" routerLinkActive="active" (click)="closeMobile()">
+          <a class="topbar__link" [routerLink]="['/programs']" routerLinkActive="active" (click)="closeMobile()">
             <i class="pi pi-book" aria-hidden="true"></i> {{ 'nav.programs' | transloco }}
           </a>
-          <a [routerLink]="['/events']" routerLinkActive="active" (click)="closeMobile()">
+          <a class="topbar__link" [routerLink]="['/events']" routerLinkActive="active" (click)="closeMobile()">
             <i class="pi pi-calendar" aria-hidden="true"></i> {{ 'nav.calendar' | transloco }}
           </a>
           <a
+            class="topbar__link topbar__link--support"
             [routerLink]="['/contribute']"
             routerLinkActive="active"
-            class="nav-cta"
             (click)="closeMobile()"
           >
             <i class="pi pi-heart" aria-hidden="true"></i> {{ 'public.nav.support' | transloco }}
           </a>
           @if (isSuperuser()) {
-            <a [routerLink]="['/admin']" routerLinkActive="active" (click)="closeMobile()">
+            <a class="topbar__link" [routerLink]="['/admin']" routerLinkActive="active" (click)="closeMobile()">
               <i class="pi pi-cog" aria-hidden="true"></i> {{ 'public.nav.admin' | transloco }}
             </a>
           }
         }
       </nav>
-      <div class="actions actions--mobile">
+      <div class="topbar__actions topbar__actions--mobile">
         @if (mode() === 'authenticated') {
           <app-message-bell />
           <app-notification-bell />
