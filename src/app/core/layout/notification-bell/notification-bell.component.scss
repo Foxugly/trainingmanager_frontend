@@ -23,7 +23,7 @@
 .notif-markall {
   border: 0;
   background: transparent;
-  color: var(--p-primary-color, #4f46e5);
+  color: var(--p-primary-color, var(--accent-strong));
   font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;
@@ -76,7 +76,7 @@
 }
 
 .notif-item--unread {
-  background: color-mix(in srgb, var(--p-primary-color, #4f46e5) 6%, transparent);
+  background: color-mix(in srgb, var(--p-primary-color, var(--accent-strong)) 6%, transparent);
 }
 
 .notif-dot {
@@ -84,8 +84,8 @@
   width: 8px;
   height: 8px;
   margin-top: 0.35rem;
-  border-radius: 999px;
-  background: var(--p-primary-color, #4f46e5);
+  border-radius: var(--radius);
+  background: var(--p-primary-color, var(--accent-strong));
 }
 
 .notif-body {
