@@ -6,8 +6,8 @@
   [style]="{ width: '32rem' }"
   [header]="(hasRounds() ? 'events.regenerate.has_rounds_title' : 'events.regenerate.confirm_title') | transloco"
 >
-  <div class="flex flex-col gap-4">
-    <p class="text-sm text-gray-700">
+  <div class="regen-dialog__body">
+    <p class="regen-dialog__message">
       @if (hasRounds()) {
         {{ 'events.regenerate.has_rounds_message' | transloco }}
       } @else {
@@ -15,8 +15,8 @@
       }
     </p>
 
-    <div class="flex flex-col gap-2">
-      <label for="ai_additional_prompt" class="text-sm font-medium text-gray-700">
+    <div class="regen-dialog__field">
+      <label for="ai_additional_prompt" class="regen-dialog__label">
         {{ 'events.regenerate.additional_prompt' | transloco }}
       </label>
       <textarea
@@ -30,21 +30,20 @@
         [placeholder]="'events.regenerate.additional_prompt_placeholder' | transloco"
         [disabled]="loading()"
       ></textarea>
-      <div class="flex items-center justify-between gap-2">
-        <small class="text-xs text-gray-500">
+      <div class="regen-dialog__meta">
+        <small class="regen-dialog__help">
           {{ 'events.regenerate.additional_prompt_help' | transloco }}
         </small>
         <small
-          class="text-xs tabular-nums shrink-0"
-          [class.text-gray-500]="additionalPrompt().length < MAX_PROMPT_LEN"
-          [class.text-amber-700]="additionalPrompt().length === MAX_PROMPT_LEN"
+          class="regen-dialog__count"
+          [class.regen-dialog__count--warn]="additionalPrompt().length === MAX_PROMPT_LEN"
         >
           {{ additionalPrompt().length }}/{{ MAX_PROMPT_LEN }}
         </small>
       </div>
     </div>
 
-    <div class="flex justify-end gap-2 pt-1">
+    <div class="regen-dialog__actions">
       <p-button
         type="button"
         severity="secondary"

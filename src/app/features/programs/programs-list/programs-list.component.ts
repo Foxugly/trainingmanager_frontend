@@ -90,15 +90,13 @@ export class ProgramsListComponent implements OnInit {
     return p.date_start.slice(0, 10) <= this.today && this.today <= p.date_end.slice(0, 10);
   }
 
-  /** Card classes: archived (greyed) / current (emerald ring highlight) / default. */
+  /** Card classes: archived (greyed) / current (emerald ring highlight) / default.
+   *  Token-based BEM (styles in the SCSS) so the card dark-adapts. */
   protected cardClass(p: Program): string {
-    const base =
-      'group block rounded-xl border p-5 transition duration-200 hover:-translate-y-0.5 hover:shadow-md';
-    if (p.is_active === false) return `${base} border-gray-300 bg-gray-50 opacity-75`;
-    if (this.isCurrent(p)) {
-      return `${base} border-emerald-400 bg-emerald-50 ring-2 ring-emerald-300 hover:border-emerald-400`;
-    }
-    return `${base} border-gray-200 bg-white hover:border-emerald-300`;
+    const base = 'program-card';
+    if (p.is_active === false) return `${base} program-card--archived`;
+    if (this.isCurrent(p)) return `${base} program-card--current`;
+    return base;
   }
 
   /** Static "new program" link; the team pre-selection rides in newQueryParams. */

@@ -10,14 +10,16 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, catchError, of, switchMap, tap } from 'rxjs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { ButtonDirective } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
+import { Tooltip } from 'primeng/tooltip';
 import { MembersService } from '../../../api/api/members.service';
 import { TeamsService } from '../../../api/api/teams.service';
 import { Member } from '../../../api/model/member';
 import { Team } from '../../../api/model/team';
 import { AuthService } from '../../../core/auth/auth.service';
-import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-header.component';
+import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { PerformancePanelComponent } from '../../../shared/ui/performance-panel/performance-panel.component';
 import { MemberNotesComponent } from '../member-notes/member-notes.component';
@@ -37,13 +39,15 @@ import { TeamStatsComponent } from '../team-stats/team-stats.component';
   imports: [
     RouterLink,
     TranslocoPipe,
+    ButtonDirective,
+    Tooltip,
     Skeleton,
     Tab,
     TabList,
     TabPanel,
     TabPanels,
     Tabs,
-    DetailHeaderComponent,
+    PageHeaderComponent,
     EmptyStateComponent,
     TeamStatsComponent,
     PerformancePanelComponent,

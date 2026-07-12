@@ -1,18 +1,16 @@
 @if (roundsHidden()) {
-  <section class="mb-6">
-    <div
-      class="flex items-center gap-2 rounded-md border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-500 italic"
-    >
-      <i class="pi pi-lock text-gray-400" aria-hidden="true"></i>
+  <section class="training__section">
+    <div class="training__hidden">
+      <i class="pi pi-lock training__lock" aria-hidden="true"></i>
       {{ 'events.detail.hidden_rounds.' + roundsHiddenVariant() | transloco }}
     </div>
   </section>
 }
 
 @if (rounds().length > 0 || (canManage() && team())) {
-  <section class="mb-6">
-    <div class="flex items-center justify-between gap-3 flex-wrap mb-3">
-      <h2 class="text-lg font-semibold">
+  <section class="training__section">
+    <div class="training__head">
+      <h2 class="training__title">
         {{ 'events.detail.training_blocks' | transloco }}
       </h2>
       @if (canManage() && team()) {
@@ -25,22 +23,22 @@
         />
       }
     </div>
-    <div class="space-y-3">
+    <div class="training__rounds">
         @for (round of rounds(); track round.id; let rIdx = $index; let rFirst = $first; let rLast = $last) {
           <p-fieldset styleClass="condensed-fieldset">
             <ng-template #header>
-              <div class="flex items-center gap-2 flex-wrap">
-                <span class="inline-flex items-baseline gap-1 rounded-full bg-emerald-50 px-3 py-0.5 text-sm font-semibold text-emerald-900 border border-emerald-100">
+              <div class="training__round-head">
+                <span class="training__badge">
                   <span>
                     {{ 'events.detail.block_label' | transloco }} {{ round.order ?? 1 }}
                   </span>
                   @if (roundTotalDistance(round) > 0) {
-                    <span class="font-normal">
+                    <span class="training__badge-dist">
                       ({{ formatDistance(roundTotalDistance(round)) }})
                     </span>
                   }
                   @if ((round.count ?? 1) > 1) {
-                    <span class="text-xs font-normal text-emerald-700">
+                    <span class="training__badge-sub">
                       @if (roundDistancePerIteration(round) > 0) {
                         : {{ round.count }} × {{ formatDistance(roundDistancePerIteration(round)) }}
                       } @else {
@@ -49,18 +47,18 @@
                     </span>
                   }
                   @if (hasNonZeroTime(round.t_start)) {
-                    <span class="text-xs font-normal text-emerald-700">
+                    <span class="training__badge-sub">
                       · {{ 'events.detail.start' | transloco }} {{ round.t_start }}
                     </span>
                   }
                   @if (hasNonZeroTime(round.t_break)) {
-                    <span class="text-xs font-normal text-emerald-700">
+                    <span class="training__badge-sub">
                       · {{ 'events.detail.break' | transloco }} {{ round.t_break }}
                     </span>
                   }
                 </span>
                 @if (canManage()) {
-                  <span class="inline-flex items-center gap-1">
+                  <span class="training__round-actions">
                     <p-button
                       icon="pi pi-arrow-up"
                       severity="secondary"

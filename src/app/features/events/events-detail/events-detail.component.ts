@@ -38,7 +38,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { ToastService } from '../../../core/notifications/toast.service';
 import { AiErrorMappingService } from '../../ai/ai-error-mapping.service';
 import { TeamRole, computeTeamRole } from '../../teams/teams-list/teams-list.component';
-import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-header.component';
+import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
 import { AttachmentListComponent } from '../../../shared/ui/attachment-list/attachment-list.component';
 import { AttendanceManagerComponent } from '../attendance-manager/attendance-manager.component';
 import { EventAthleteBriefComponent } from '../event-athlete-brief/event-athlete-brief.component';
@@ -77,7 +77,7 @@ import { LocalizedDatePipe } from '../../../shared/datetime/localized-date.pipe'
     Tabs,
     Tooltip,
     TranslocoPipe,
-    DetailHeaderComponent,
+    PageHeaderComponent,
     AttachmentListComponent,
     AttendanceManagerComponent,
     EventRotiComponent,

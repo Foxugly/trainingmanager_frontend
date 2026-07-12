@@ -1,10 +1,10 @@
-<div class="flex flex-col gap-4">
+<div class="team-stats">
   <!-- Date range + presets + export -->
   @if (showControls() || exportVisible()) {
-    <div class="card flex flex-wrap items-center gap-3">
+    <div class="card team-stats__controls">
       @if (showControls()) {
-        <div class="flex flex-col gap-1">
-          <label for="stats-period" class="text-xs font-medium text-gray-500">{{
+        <div class="team-stats__field">
+          <label for="stats-period" class="team-stats__field-label">{{
             'stats.period' | transloco
           }}</label>
           <p-datepicker
@@ -16,10 +16,10 @@
             [readonlyInput]="true"
             appendTo="body"
             [showButtonBar]="true"
-            styleClass="w-72"
+            styleClass="team-stats__datepicker"
           />
         </div>
-        <div class="flex items-end gap-2 pb-0.5">
+        <div class="team-stats__group">
           <p-button
             [label]="'stats.preset_12w' | transloco"
             severity="secondary"
@@ -37,7 +37,7 @@
         </div>
       }
       @if (exportVisible()) {
-        <div class="flex items-end gap-2 pb-0.5 ml-auto">
+        <div class="team-stats__group team-stats__group--push">
           <p-button
             [label]="'stats.export_csv' | transloco"
             icon="pi pi-file-export"
@@ -59,7 +59,7 @@
         </div>
       }
       @if (reviewVisible()) {
-        <div class="flex items-end gap-2 pb-0.5" [class.ml-auto]="!exportVisible()">
+        <div class="team-stats__group" [class.team-stats__group--push]="!exportVisible()">
           <p-button
             [label]="'stats.review.button' | transloco"
             icon="pi pi-sparkles"
@@ -82,40 +82,40 @@
     [style]="{ width: '40rem', maxWidth: '95vw' }"
   >
     @if (reviewLoading()) {
-      <div class="flex items-center gap-3 py-6 text-gray-500">
-        <i class="pi pi-spin pi-spinner text-xl"></i>
+      <div class="team-stats__review-loading">
+        <i class="pi pi-spin pi-spinner team-stats__spinner"></i>
         <span>{{ 'stats.review.loading' | transloco }}</span>
       </div>
     } @else if (reviewError()) {
-      <p class="py-4 text-red-600">{{ 'stats.review.error' | transloco }}</p>
+      <p class="team-stats__review-error">{{ 'stats.review.error' | transloco }}</p>
     } @else if (review(); as r) {
-      <div class="flex flex-col gap-4">
-        <div class="flex flex-wrap items-center gap-2">
-          <span class="rounded-full bg-purple-100 px-3 py-1 text-sm font-medium text-purple-700">
+      <div class="team-stats__review-body">
+        <div class="team-stats__review-head">
+          <span class="team-stats__load-chip">
             {{ 'stats.review.load.' + r.load_assessment | transloco }}
           </span>
-          <span class="text-xs text-gray-500">
+          <span class="team-stats__review-confidence">
             {{ 'stats.review.confidence' | transloco }}:
             {{ 'stats.review.confidence_' + r.confidence | transloco }}
           </span>
         </div>
 
-        <p class="leading-relaxed text-gray-700">{{ r.summary }}</p>
+        <p class="team-stats__review-summary">{{ r.summary }}</p>
 
         @if (r.findings.length) {
           <div>
-            <h4 class="mb-2 text-sm font-semibold text-gray-600">
+            <h4 class="team-stats__review-subtitle">
               {{ 'stats.review.findings' | transloco }}
             </h4>
-            <ul class="flex flex-col gap-2">
+            <ul class="team-stats__findings">
               @for (f of r.findings; track $index) {
-                <li class="flex gap-2 text-sm">
+                <li class="team-stats__finding">
                   <i
-                    class="pi pi-circle-fill mt-1 text-[0.5rem]"
+                    class="pi pi-circle-fill team-stats__finding-bullet"
                     [class]="severityClass(f.severity)"
                   ></i>
                   <span>
-                    <span class="font-medium"
+                    <span class="team-stats__finding-area"
                       >{{ 'stats.review.area.' + f.area | transloco }}:</span
                     >
                     {{ f.observation }}
@@ -128,15 +128,15 @@
 
         @if (r.adjustments.length) {
           <div>
-            <h4 class="mb-2 text-sm font-semibold text-gray-600">
+            <h4 class="team-stats__review-subtitle">
               {{ 'stats.review.adjustments' | transloco }}
             </h4>
-            <ul class="flex flex-col gap-2">
+            <ul class="team-stats__findings">
               @for (a of r.adjustments; track $index) {
-                <li class="text-sm">
-                  <span class="font-medium text-gray-700">{{ a.recommendation }}</span>
+                <li class="team-stats__adjustment">
+                  <span class="team-stats__adjustment-rec">{{ a.recommendation }}</span>
                   @if (a.rationale) {
-                    <span class="text-gray-500"> — {{ a.rationale }}</span>
+                    <span class="team-stats__adjustment-rationale"> — {{ a.rationale }}</span>
                   }
                 </li>
               }
@@ -144,30 +144,30 @@
           </div>
         }
 
-        <p class="text-right text-xs text-gray-400">{{ 'stats.review.disclaimer' | transloco }}</p>
+        <p class="team-stats__disclaimer">{{ 'stats.review.disclaimer' | transloco }}</p>
       </div>
     }
   </p-dialog>
 
   @if (loading()) {
-    <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+    <p class="team-stats__loading">{{ 'common.loading' | transloco }}…</p>
   } @else if (isEmpty()) {
     <app-empty-state icon="chart-bar" tone="gray" [title]="'stats.empty' | transloco" />
   } @else if (stats(); as s) {
     <!-- 1. ATTENDANCE -->
     <section class="card">
-      <div class="flex items-baseline justify-between gap-3 mb-3 flex-wrap">
-        <h3 class="text-base font-semibold">{{ 'stats.attendance' | transloco }}</h3>
-        <div class="flex items-baseline gap-2">
-          <span class="text-2xl font-bold text-indigo-600">
+      <div class="team-stats__section-head">
+        <h3 class="team-stats__section-title">{{ 'stats.attendance' | transloco }}</h3>
+        <div class="team-stats__metric">
+          <span class="team-stats__metric-value team-stats__metric-value--indigo">
             {{ attendanceRatePct() === null ? '—' : attendanceRatePct() + '%' }}
           </span>
-          <span class="text-xs text-gray-500">{{ 'stats.attendance_rate' | transloco }}</span>
+          <span class="team-stats__metric-label">{{ 'stats.attendance_rate' | transloco }}</span>
         </div>
         @if (attendanceStreak() !== null) {
-          <div class="flex items-baseline gap-2">
-            <span class="text-2xl font-bold text-emerald-600">{{ attendanceStreak() }}</span>
-            <span class="text-xs text-gray-500">{{ 'stats.streak' | transloco }}</span>
+          <div class="team-stats__metric">
+            <span class="team-stats__metric-value team-stats__metric-value--emerald">{{ attendanceStreak() }}</span>
+            <span class="team-stats__metric-label">{{ 'stats.streak' | transloco }}</span>
           </div>
         }
       </div>
@@ -183,8 +183,8 @@
       }
 
       @if (rotiChart(); as rc) {
-        <div class="chart-wrap mt-4">
-          <h4 class="text-sm font-medium text-gray-600 mb-2">
+        <div class="chart-wrap team-stats__roti-chart">
+          <h4 class="team-stats__chart-title">
             {{ 'stats.roti_trend' | transloco }}
           </h4>
           @defer (on viewport) {
@@ -201,16 +201,16 @@
             [value]="attendanceByMember()"
             [sortField]="'rate'"
             [sortOrder]="-1"
-            styleClass="mt-4 p-datatable-sm"
+            styleClass="team-stats__table p-datatable-sm"
             responsiveLayout="scroll"
           >
             <ng-template pTemplate="header">
               <tr>
                 <th pSortableColumn="name">{{ 'stats.member' | transloco }}</th>
-                <th pSortableColumn="rate" class="text-right">
+                <th pSortableColumn="rate" class="team-stats__right">
                   {{ 'stats.attendance_rate' | transloco }}
                 </th>
-                <th class="text-right">
+                <th class="team-stats__right">
                   {{ 'stats.present' | transloco }}/{{ 'stats.total' | transloco }}
                 </th>
                 <th>{{ 'stats.last_present' | transloco }}</th>
@@ -218,7 +218,7 @@
             </ng-template>
             <ng-template pTemplate="body" let-row>
               <tr
-                class="cursor-pointer"
+                class="team-stats__row"
                 role="button"
                 [attr.aria-label]="'stats.view_member_stats' | transloco: { name: row.name }"
                 (click)="onMemberRowClick(row.member_id)"
@@ -226,9 +226,9 @@
                 (keydown.space)="$event.preventDefault(); onMemberRowClick(row.member_id)"
                 tabindex="0"
               >
-                <td class="font-medium text-indigo-700">{{ row.name }}</td>
-                <td class="text-right">{{ ratePct(row.rate) }}</td>
-                <td class="text-right">{{ row.present }}/{{ row.total }}</td>
+                <td class="team-stats__member-cell">{{ row.name }}</td>
+                <td class="team-stats__right">{{ ratePct(row.rate) }}</td>
+                <td class="team-stats__right">{{ row.present }}/{{ row.total }}</td>
                 <td>
                   {{ row.last_present_date ? (row.last_present_date | localizedDate: 'mediumDate') : '—' }}
                 </td>
@@ -239,16 +239,16 @@
       } @else {
         <!-- Member mode: personal attendance timeline (present/absent per session) -->
         @if (s.attendance.by_session.length > 0) {
-          <ul class="mt-4 divide-y divide-gray-200 border border-gray-200 rounded">
+          <ul class="team-stats__list">
             @for (sess of s.attendance.by_session; track sess.event_id) {
-              <li class="px-3 py-1.5 flex items-center gap-2 text-sm">
+              <li class="team-stats__list-item">
                 @if (sess.present > 0) {
-                  <i class="pi pi-check-circle text-emerald-500" aria-hidden="true"></i>
+                  <i class="pi pi-check-circle team-stats__icon--present" aria-hidden="true"></i>
                 } @else {
-                  <i class="pi pi-times-circle text-rose-400" aria-hidden="true"></i>
+                  <i class="pi pi-times-circle team-stats__icon--absent" aria-hidden="true"></i>
                 }
-                <span class="font-medium truncate">{{ sess.name }}</span>
-                <span class="ml-auto text-xs text-gray-500 shrink-0">
+                <span class="team-stats__item-name">{{ sess.name }}</span>
+                <span class="team-stats__item-meta">
                   {{ sess.date ? (sess.date | localizedDate: 'mediumDate') : '—' }}
                 </span>
               </li>
@@ -260,11 +260,11 @@
 
     <!-- 2. VOLUME -->
     <section class="card">
-      <div class="flex items-baseline justify-between gap-3 mb-3 flex-wrap">
-        <h3 class="text-base font-semibold">{{ 'stats.volume' | transloco }}</h3>
-        <div class="flex items-baseline gap-2">
-          <span class="text-2xl font-bold text-emerald-600">{{ totalDistanceLabel() }}</span>
-          <span class="text-xs text-gray-500">{{ 'stats.total_volume' | transloco }}</span>
+      <div class="team-stats__section-head">
+        <h3 class="team-stats__section-title">{{ 'stats.volume' | transloco }}</h3>
+        <div class="team-stats__metric">
+          <span class="team-stats__metric-value team-stats__metric-value--emerald">{{ totalDistanceLabel() }}</span>
+          <span class="team-stats__metric-label">{{ 'stats.total_volume' | transloco }}</span>
         </div>
       </div>
 
@@ -283,21 +283,21 @@
           [value]="volumeByMember()"
           [sortField]="'distance'"
           [sortOrder]="-1"
-          styleClass="mt-4 p-datatable-sm"
+          styleClass="team-stats__table p-datatable-sm"
           responsiveLayout="scroll"
         >
           <ng-template pTemplate="header">
             <tr>
               <th pSortableColumn="name">{{ 'stats.member' | transloco }}</th>
-              <th pSortableColumn="distance" class="text-right">
+              <th pSortableColumn="distance" class="team-stats__right">
                 {{ 'stats.distance' | transloco }}
               </th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-row>
             <tr>
-              <td class="font-medium">{{ row.name }}</td>
-              <td class="text-right">{{ formatDistance(row.distance) }}</td>
+              <td class="team-stats__strong">{{ row.name }}</td>
+              <td class="team-stats__right">{{ formatDistance(row.distance) }}</td>
             </tr>
           </ng-template>
         </p-table>
@@ -306,7 +306,7 @@
 
     <!-- 3. INTENSITY -->
     <section class="card">
-      <h3 class="text-base font-semibold mb-3">{{ 'stats.intensity' | transloco }}</h3>
+      <h3 class="team-stats__section-title team-stats__section-title--spaced">{{ 'stats.intensity' | transloco }}</h3>
       @if (intensityChart(); as c) {
         <div class="chart-wrap chart-wrap--doughnut">
           @defer (on viewport) {
@@ -315,21 +315,21 @@
             <p-skeleton width="100%" height="16rem" />
           }
         </div>
-        <ul class="intensity-legend mt-4">
+        <ul class="intensity-legend">
           @for (seg of intensityLegend(); track seg.label) {
-            <li class="flex items-center gap-2 text-sm">
+            <li class="team-stats__legend-item">
               <span
-                class="size-3 shrink-0 rounded-sm"
+                class="team-stats__legend-swatch"
                 [style.background-color]="seg.color"
                 aria-hidden="true"
               ></span>
-              <span class="truncate text-gray-700">{{ seg.label }}</span>
-              <span class="ml-auto shrink-0 font-medium text-gray-900">{{ seg.distance }}</span>
+              <span class="team-stats__legend-label">{{ seg.label }}</span>
+              <span class="team-stats__legend-value">{{ seg.distance }}</span>
             </li>
           }
         </ul>
       } @else {
-        <p class="text-gray-500 text-sm">{{ 'stats.empty' | transloco }}</p>
+        <p class="team-stats__empty-text">{{ 'stats.empty' | transloco }}</p>
       }
     </section>
   }

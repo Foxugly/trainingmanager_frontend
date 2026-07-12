@@ -28,6 +28,7 @@ import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.
   selector: 'app-event-roti',
   imports: [DecimalPipe, Button, Tooltip, EmptyStateComponent, TranslocoPipe],
   templateUrl: './event-roti.component.html',
+  styleUrl: './event-roti.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EventRotiComponent {

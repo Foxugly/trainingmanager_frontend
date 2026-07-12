@@ -236,10 +236,10 @@ describe('TeamStatsComponent', () => {
     expect(access(component).review()).toBeNull();
   });
 
-  it('severityClass maps severities to colors', () => {
-    expect(access(component).severityClass('critical')).toContain('red');
-    expect(access(component).severityClass('warning')).toContain('amber');
-    expect(access(component).severityClass('info')).toContain('gray');
+  it('severityClass maps severities to token-based modifiers', () => {
+    expect(access(component).severityClass('critical')).toContain('--critical');
+    expect(access(component).severityClass('warning')).toContain('--warning');
+    expect(access(component).severityClass('info')).toContain('--info');
   });
 
   it('setPreset updates the range and refetches', () => {

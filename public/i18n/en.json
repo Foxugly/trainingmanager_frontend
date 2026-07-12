@@ -24,7 +24,8 @@
   "topmenu": {
     "open": "Open menu",
     "close": "Close menu",
-    "messages": "Messages"
+    "messages": "Messages",
+    "theme": "Toggle theme"
   },
   "messages": {
     "title": "Messages",
@@ -970,7 +971,8 @@
   "footer": {
     "author": "Foxugly",
     "version_label": "Version",
-    "rights": ". All rights reserved."
+    "privacy": "Privacy",
+    "rights": "All rights reserved."
   },
   "public": {
     "nav": {

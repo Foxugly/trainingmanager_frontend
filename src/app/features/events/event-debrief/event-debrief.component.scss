@@ -1,0 +1,88 @@
+:host {
+  display: block;
+}
+
+.debrief__loading {
+  color: var(--muted);
+}
+
+.debrief__error {
+  padding-block: 1rem;
+  color: var(--danger);
+}
+
+.debrief__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.debrief__cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.debrief__card {
+  text-align: center;
+}
+
+.debrief__stat {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+
+  &--present {
+    color: var(--info);
+  }
+
+  &--roti {
+    color: var(--accent-strong);
+  }
+
+  &--rsvp {
+    color: var(--warn);
+  }
+
+  &--attach {
+    color: var(--ink-soft);
+  }
+}
+
+.debrief__stat-sub {
+  font-size: 1rem;
+  color: var(--muted);
+}
+
+.debrief__stat-label {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.debrief__note {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.debrief__note-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.debrief__textarea {
+  width: 100%;
+}
+
+// --warn (#b45309) is too dark for a large stat number on a dark surface;
+// lighten just this stat so it stays legible in dark mode.
+:host-context(.dark-mode) {
+  .debrief__stat--rsvp {
+    color: var(--warn-soft);
+  }
+}

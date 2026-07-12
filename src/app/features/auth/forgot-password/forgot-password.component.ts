@@ -41,6 +41,7 @@ interface TurnstileRenderOptions {
     TranslocoPipe,
   ],
   templateUrl: './forgot-password.component.html',
+  styleUrl: './forgot-password.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ForgotPasswordComponent implements AfterViewInit, OnDestroy {

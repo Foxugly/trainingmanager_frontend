@@ -14,8 +14,8 @@
   [dismissableMask]="true"
   [style]="{ width: '28rem', maxWidth: '95vw' }"
 >
-  <div class="flex flex-col gap-3">
-    <label for="tpl-name" class="text-sm font-medium text-gray-600">
+  <div class="save-tpl__body">
+    <label for="tpl-name" class="save-tpl__label">
       {{ 'events.templates.name_label' | transloco }}
     </label>
     <input
@@ -24,9 +24,9 @@
       [ngModel]="name()"
       (ngModelChange)="name.set($event)"
       [placeholder]="'events.templates.name_placeholder' | transloco"
-      class="w-full"
+      class="save-tpl__input"
     />
-    <div class="flex justify-end gap-2">
+    <div class="save-tpl__actions">
       <p-button
         [label]="'common.cancel' | transloco"
         severity="secondary"

@@ -1,0 +1,86 @@
+:host {
+  display: block;
+}
+
+.team-place-pool {
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  &__section-title {
+    margin-bottom: 0;
+  }
+
+  &__hint {
+    margin-bottom: 0.5rem;
+  }
+
+  &__center {
+    text-align: center;
+  }
+
+  &__right {
+    text-align: right;
+  }
+
+  &__actions-cell {
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  &__cell--muted {
+    color: var(--muted);
+  }
+
+  &__check {
+    color: var(--accent);
+  }
+
+  &__dialog-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-top: 0.25rem;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  &__label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+
+  &__option {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__muted-sm {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  &__create {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    border-top: 1px solid var(--border);
+    padding-top: 0.75rem;
+  }
+
+  &__error {
+    color: var(--danger);
+  }
+
+  &__ac-full {
+    width: 100%;
+  }
+}

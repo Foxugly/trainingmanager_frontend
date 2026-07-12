@@ -23,6 +23,7 @@ import { loadOn } from '../../../shared/data/load-on';
   selector: 'app-roti-drift',
   imports: [TableModule, Tag, TranslocoPipe],
   templateUrl: './roti-drift.component.html',
+  styleUrl: './roti-drift.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RotiDriftComponent {

@@ -1,4 +1,4 @@
-<div class="flex justify-end mb-3">
+<div class="team-requests__toolbar">
   <p-button
     [label]="'teams.invitations.invite' | transloco"
     icon="pi pi-plus"
@@ -8,12 +8,12 @@
   />
 </div>
 
-<section class="mb-8">
-  <h3 class="text-base font-semibold mb-2">
+<section class="team-requests__section">
+  <h3 class="team-requests__section-title">
     {{ 'teams.join_requests.title' | transloco }} ({{ joinRequests().length }})
   </h3>
   @if (loadingJoinRequests()) {
-    <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+    <p class="team-requests__loading">{{ 'common.loading' | transloco }}…</p>
   } @else if (joinRequests().length === 0) {
     <app-empty-state
       icon="inbox"
@@ -22,34 +22,34 @@
       [subtitle]="'teams.join_requests.empty_subtitle' | transloco"
     />
   } @else {
-    <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
+    <ul class="team-requests__list">
       @for (req of joinRequests(); track req.id) {
-        <li class="p-3 flex flex-col gap-2">
-          <div class="flex items-start justify-between gap-3 flex-wrap">
-            <div class="min-w-0 flex-1">
-              <div class="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-sm">
-                <i class="pi pi-user text-gray-400 self-center" aria-hidden="true"></i>
-                <span class="font-medium text-gray-900">
+        <li class="team-requests__item">
+          <div class="team-requests__item-row">
+            <div class="team-requests__item-main">
+              <div class="team-requests__identity">
+                <i class="pi pi-user team-requests__identity-icon" aria-hidden="true"></i>
+                <span class="team-requests__name">
                   {{ req.user_fullname || req.user_username }}
                 </span>
                 @if (req.user_fullname && req.user_username) {
-                  <span class="text-xs text-gray-500">{{ req.user_username }}</span>
+                  <span class="team-requests__muted">{{ req.user_username }}</span>
                 }
-                <span class="text-xs text-gray-500">
+                <span class="team-requests__muted">
                   · {{ req.requested_at | localizedDate: 'medium' }}
                 </span>
               </div>
               @if (req.message) {
-                <p class="mt-1 text-sm text-gray-700 whitespace-pre-line">
+                <p class="team-requests__message">
                   {{ req.message }}
                 </p>
               } @else {
-                <p class="mt-1 text-xs italic text-gray-400">
+                <p class="team-requests__no-message">
                   {{ 'teams.join_requests.no_message' | transloco }}
                 </p>
               }
             </div>
-            <div class="flex items-center gap-2 shrink-0">
+            <div class="team-requests__item-actions">
               <p-button
                 [label]="'teams.join_requests.reject' | transloco"
                 icon="pi pi-times"
@@ -75,11 +75,11 @@
 </section>
 
 <section>
-  <h3 class="text-base font-semibold mb-2">
+  <h3 class="team-requests__section-title">
     {{ 'teams.invitations.title' | transloco }} ({{ invitations().length }})
   </h3>
   @if (loadingInvitations()) {
-    <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+    <p class="team-requests__loading">{{ 'common.loading' | transloco }}…</p>
   } @else if (invitations().length === 0) {
     <app-empty-state
       icon="envelope"
@@ -97,12 +97,12 @@
       />
     </app-empty-state>
   } @else {
-    <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
+    <ul class="team-requests__list">
       @for (inv of invitations(); track inv.id) {
-        <li class="p-3 flex justify-between items-center gap-2">
+        <li class="team-requests__invitation">
           <div>
-            <div class="font-medium">{{ inv.email }}</div>
-            <div class="text-xs text-gray-500">
+            <div class="team-requests__invitation-email">{{ inv.email }}</div>
+            <div class="team-requests__muted">
               {{ 'teams.invitations.sent_at' | transloco }}
               {{ inv.created_at | localizedDate: 'mediumDate' }}
               @if (inv.expires_at) {
@@ -136,24 +136,24 @@
   [style]="{ width: '32rem' }"
   [header]="'teams.invite_dialog.title' | transloco"
 >
-  <form [formGroup]="inviteForm" (ngSubmit)="submitInvite()" class="flex flex-col gap-4">
-    <div class="flex flex-col gap-2">
-      <label for="invite_email" class="text-sm font-medium text-gray-700">
+  <form [formGroup]="inviteForm" (ngSubmit)="submitInvite()" class="team-requests__form">
+    <div class="team-requests__field">
+      <label for="invite_email" class="team-requests__label">
         {{ 'teams.invite_dialog.email' | transloco }}
       </label>
-      <input pInputText id="invite_email" formControlName="email" type="email" class="w-full" />
+      <input pInputText id="invite_email" formControlName="email" type="email" class="team-requests__input" />
     </div>
-    <div class="flex flex-col gap-2">
-      <label for="invite_firstname" class="text-sm font-medium text-gray-700">
+    <div class="team-requests__field">
+      <label for="invite_firstname" class="team-requests__label">
         {{ 'teams.invite_dialog.firstname' | transloco }}
       </label>
-      <input pInputText id="invite_firstname" formControlName="firstname" class="w-full" />
+      <input pInputText id="invite_firstname" formControlName="firstname" class="team-requests__input" />
     </div>
-    <div class="flex flex-col gap-2">
-      <label for="invite_lastname" class="text-sm font-medium text-gray-700">
+    <div class="team-requests__field">
+      <label for="invite_lastname" class="team-requests__label">
         {{ 'teams.invite_dialog.lastname' | transloco }}
       </label>
-      <input pInputText id="invite_lastname" formControlName="lastname" class="w-full" />
+      <input pInputText id="invite_lastname" formControlName="lastname" class="team-requests__input" />
     </div>
 
     @if (inviteError(); as msg) {
@@ -161,14 +161,14 @@
     }
 
     @if (inviteFieldErrors(); as errors) {
-      <div class="flex flex-col gap-1">
+      <div class="team-requests__messages">
         @for (entry of errors | keyvalue; track entry.key) {
           <p-message severity="warn" [text]="entry.key + ': ' + entry.value.join(', ')" />
         }
       </div>
     }
 
-    <div class="flex justify-end gap-2 pt-2">
+    <div class="team-requests__actions">
       <p-button
         type="button"
         severity="secondary"
@@ -196,19 +196,19 @@
   [style]="{ width: '32rem' }"
   [header]="'teams.join_requests.reject_dialog_title' | transloco"
 >
-  <div class="flex flex-col gap-3">
-    <p class="text-sm text-gray-700">
+  <div class="team-requests__dialog-body">
+    <p class="team-requests__help">
       {{ 'teams.join_requests.reject_dialog_help' | transloco }}
     </p>
     <textarea
       pTextarea
       rows="3"
-      class="w-full"
+      class="team-requests__input"
       [value]="rejectMessage()"
       (input)="rejectMessage.set($any($event.target).value)"
       [placeholder]="'teams.join_requests.reject_message_placeholder' | transloco"
     ></textarea>
-    <div class="flex justify-end gap-2 pt-1">
+    <div class="team-requests__actions team-requests__actions--tight">
       <p-button
         type="button"
         severity="secondary"

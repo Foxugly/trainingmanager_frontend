@@ -30,6 +30,7 @@ import { RichEditorComponent } from '../../../shared/ui/rich-editor/rich-editor.
   selector: 'app-event-freeform',
   imports: [FormsModule, TranslocoPipe, Button, RichEditorComponent],
   templateUrl: './event-freeform.component.html',
+  styleUrl: './event-freeform.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EventFreeformComponent {

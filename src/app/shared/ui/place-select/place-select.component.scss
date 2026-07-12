@@ -1,0 +1,47 @@
+.place-select__control {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.place-select__field {
+  flex: 1 1 0%;
+  min-width: 0;
+}
+
+.place-select__option {
+  display: flex;
+  flex-direction: column;
+}
+
+.place-select__option-sub {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.place-select__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 0.25rem;
+}
+
+.place-select__field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.place-select__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+.place-select__error {
+  color: var(--danger);
+}
+
+.place-select__textarea {
+  width: 100%;
+}

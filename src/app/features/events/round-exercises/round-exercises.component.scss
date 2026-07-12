@@ -1,0 +1,144 @@
+:host {
+  display: block;
+}
+
+.rx__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.875rem;
+
+  > * + * {
+    border-top: 1px solid var(--surface-2);
+  }
+}
+
+.rx__row {
+  padding-block: 0.25rem;
+  background: var(--surface);
+
+  &--display {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+}
+
+.rx__drag {
+  cursor: grab;
+  color: var(--muted);
+  padding-inline: 0.25rem;
+  flex-shrink: 0;
+  background: none;
+  border: 0;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  &:hover {
+    color: var(--ink-soft);
+  }
+}
+
+.rx__info {
+  flex: 1 1 0%;
+}
+
+.rx__primary {
+  font-weight: 500;
+}
+
+.rx__muted {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.rx__modality {
+  color: var(--ink-soft);
+}
+
+.rx__seg {
+  color: var(--muted);
+  margin-left: 0.25rem;
+}
+
+.rx__detail {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-left: 0.25rem;
+}
+
+.rx__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.rx__empty {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.rx__new-row {
+  padding-block: 0.25rem;
+  border-top: 1px solid var(--surface-2);
+}
+
+.rx__form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.rx__field {
+  display: flex;
+  flex-direction: column;
+
+  &--xs {
+    width: 5rem;
+  }
+
+  &--sm {
+    width: 7rem;
+  }
+
+  &--grow {
+    min-width: 9rem;
+    flex: 1 1 0%;
+  }
+
+  &--notes {
+    flex-grow: 1;
+    min-width: 8rem;
+  }
+}
+
+.rx__label {
+  margin-bottom: 0.125rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.rx__error {
+  color: var(--danger);
+}
+
+.rx__form-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+  padding-bottom: 0.125rem;
+}
+
+// `rx__input` also targets the native input rendered inside p-inputNumber
+// (via inputStyleClass), which lives in the child component's view.
+:host ::ng-deep .rx__input {
+  width: 100%;
+}

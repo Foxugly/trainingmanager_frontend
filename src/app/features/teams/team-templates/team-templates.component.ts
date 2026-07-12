@@ -45,6 +45,7 @@ import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.
     EmptyStateComponent,
   ],
   templateUrl: './team-templates.component.html',
+  styleUrl: './team-templates.component.scss',
   providers: [ConfirmationService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -1,7 +1,7 @@
 <div class="builder-pane">
   <!-- Section: Lieux — the team's linked venues as a table. -->
-  <div class="flex items-center justify-between mb-2">
-    <h3 class="builder-section-title !mb-0">{{ 'place.title_plural' | transloco }}</h3>
+  <div class="team-place-pool__head">
+    <h3 class="builder-section-title team-place-pool__section-title">{{ 'place.title_plural' | transloco }}</h3>
     <p-button
       type="button"
       severity="success"
@@ -11,7 +11,7 @@
       (onClick)="openAddPlace()"
     />
   </div>
-  <p class="meta-hint mb-2">{{ 'place.table_help' | transloco }}</p>
+  <p class="meta-hint team-place-pool__hint">{{ 'place.table_help' | transloco }}</p>
 
   @if (placesLoading()) {
     <p class="meta-hint">{{ 'common.loading' | transloco }}…</p>
@@ -28,24 +28,24 @@
         <tr>
           <th>{{ 'place.col_name' | transloco }}</th>
           <th>{{ 'place.col_address' | transloco }}</th>
-          <th class="text-center">{{ 'place.col_default' | transloco }}</th>
-          <th class="text-right">{{ 'common.actions' | transloco }}</th>
+          <th class="team-place-pool__center">{{ 'place.col_default' | transloco }}</th>
+          <th class="team-place-pool__right">{{ 'common.actions' | transloco }}</th>
         </tr>
       </ng-template>
       <ng-template #body let-place>
         <tr>
           <td>{{ place.name }}</td>
-          <td [class.text-gray-500]="!place.address">{{ place.address || '—' }}</td>
-          <td class="text-center">
+          <td [class.team-place-pool__cell--muted]="!place.address">{{ place.address || '—' }}</td>
+          <td class="team-place-pool__center">
             @if (isDefaultPlace(place.id)) {
               <i
-                class="pi pi-check text-emerald-600"
+                class="pi pi-check team-place-pool__check"
                 [attr.aria-label]="'place.is_default' | transloco"
                 [pTooltip]="'place.is_default' | transloco"
               ></i>
             }
           </td>
-          <td class="text-right whitespace-nowrap">
+          <td class="team-place-pool__actions-cell">
             <p-button
               type="button"
               icon="pi pi-star"
@@ -86,10 +86,10 @@
   [style]="{ width: '30rem' }"
   appendTo="body"
 >
-  <div class="flex flex-col gap-4 pt-1">
+  <div class="team-place-pool__dialog-body">
     <!-- Step 1: link an existing pool place via autocomplete. -->
-    <div class="flex flex-col gap-1">
-      <label for="place_pool_search" class="text-sm font-medium text-gray-700">
+    <div class="team-place-pool__field">
+      <label for="place_pool_search" class="team-place-pool__label">
         {{ 'place.link_existing' | transloco }}
       </label>
       <p-autoComplete
@@ -106,13 +106,13 @@
         [placeholder]="'place.search_placeholder' | transloco"
         [emptyMessage]="'place.search_empty' | transloco"
         appendTo="body"
-        styleClass="w-full"
+        styleClass="team-place-pool__ac-full"
       >
         <ng-template let-place #item>
-          <div class="flex flex-col">
+          <div class="team-place-pool__option">
             <span>{{ place.name }}</span>
             @if (place.address) {
-              <span class="text-xs text-gray-500">{{ place.address }}</span>
+              <span class="team-place-pool__muted-sm">{{ place.address }}</span>
             }
           </div>
         </ng-template>
@@ -131,9 +131,9 @@
         (onClick)="enterCreateMode()"
       />
     } @else {
-      <div class="flex flex-col gap-3 border-t border-gray-200 pt-3">
-        <div class="flex flex-col gap-1">
-          <label for="place_form_name" class="text-sm font-medium text-gray-700">
+      <div class="team-place-pool__create">
+        <div class="team-place-pool__field">
+          <label for="place_form_name" class="team-place-pool__label">
             {{ 'place.name' | transloco }}
           </label>
           <input
@@ -146,11 +146,11 @@
             [attr.aria-invalid]="placeNameError() ? 'true' : null"
           />
           @if (placeNameError()) {
-            <small class="text-red-600">{{ placeNameError() }}</small>
+            <small class="team-place-pool__error">{{ placeNameError() }}</small>
           }
         </div>
-        <div class="flex flex-col gap-1">
-          <label for="place_form_address" class="text-sm font-medium text-gray-700">
+        <div class="team-place-pool__field">
+          <label for="place_form_address" class="team-place-pool__label">
             {{ 'place.address' | transloco }}
           </label>
           <p-autoComplete
@@ -164,9 +164,9 @@
             [placeholder]="'place.address_placeholder' | transloco"
             [emptyMessage]="'place.address_empty' | transloco"
             appendTo="body"
-            styleClass="w-full"
+            styleClass="team-place-pool__ac-full"
           />
-          <small class="text-xs text-gray-500">{{ 'place.address_hint' | transloco }}</small>
+          <small class="team-place-pool__muted-sm">{{ 'place.address_hint' | transloco }}</small>
         </div>
       </div>
     }

@@ -1,14 +1,14 @@
 <div class="page page--narrow">
-  <header class="mb-2">
-    <h1 class="text-2xl font-bold">{{ 'messages.title' | transloco }}</h1>
-    <p class="text-sm text-gray-600 mt-1">{{ 'messages.subtitle' | transloco }}</p>
+  <header class="messages__header">
+    <h1 class="messages__title">{{ 'messages.title' | transloco }}</h1>
+    <p class="messages__subtitle">{{ 'messages.subtitle' | transloco }}</p>
   </header>
 
   @if (loading()) {
-    <ul class="flex flex-col gap-3" aria-hidden="true">
+    <ul class="messages__list" aria-hidden="true">
       @for (_ of [1, 2, 3]; track $index) {
-        <li class="p-4 bg-white border border-gray-200 rounded-lg">
-          <p-skeleton width="50%" height="1rem" styleClass="mb-2" />
+        <li class="messages__skeleton">
+          <p-skeleton width="50%" height="1rem" styleClass="messages__skeleton-line" />
           <p-skeleton width="30%" height="0.75rem" />
         </li>
       }
@@ -45,25 +45,17 @@
       </a>
     </app-empty-state>
   } @else {
-    <ul class="flex flex-col gap-3">
+    <ul class="messages__list">
       @for (row of rows(); track row.teamId + '-' + row.topic.id) {
         <li>
-          <button
-            type="button"
-            class="topic-row group w-full text-left rounded-xl border border-gray-200 bg-white p-4 transition duration-200 hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md"
-            (click)="openTopic(row)"
-          >
-            <div class="flex items-start gap-3">
-              <div
-                class="shrink-0 size-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center"
-              >
-                <i class="pi pi-comments text-lg" aria-hidden="true"></i>
+          <button type="button" class="messages__topic" (click)="openTopic(row)">
+            <div class="messages__topic-body">
+              <div class="messages__icon">
+                <i class="pi pi-comments" aria-hidden="true"></i>
               </div>
-              <div class="min-w-0 flex-1">
-                <div class="flex items-center gap-2 flex-wrap">
-                  <span class="text-base font-semibold text-gray-900 truncate">{{
-                    row.topic.title
-                  }}</span>
+              <div class="messages__topic-main">
+                <div class="messages__topic-head">
+                  <span class="messages__topic-title">{{ row.topic.title }}</span>
                   <p-tag
                     [value]="
                       (row.topic.audience === AudienceEnum.Coaches
@@ -74,18 +66,15 @@
                     [severity]="row.topic.audience === AudienceEnum.Coaches ? 'warn' : 'info'"
                   />
                 </div>
-                <p class="text-xs text-gray-500 truncate mt-0.5">{{ row.teamName }}</p>
-                <div class="flex items-center gap-3 text-xs text-gray-400 mt-1">
+                <p class="messages__team">{{ row.teamName }}</p>
+                <div class="messages__topic-meta">
                   <span>
                     <i class="pi pi-comment" aria-hidden="true"></i> {{ row.topic.message_count }}
                   </span>
                   <span>{{ row.topic.updated_at | localizedDate: 'short' }}</span>
                 </div>
               </div>
-              <i
-                class="pi pi-arrow-right text-xs text-emerald-700 opacity-0 transition group-hover:opacity-100"
-                aria-hidden="true"
-              ></i>
+              <i class="pi pi-arrow-right messages__arrow" aria-hidden="true"></i>
             </div>
           </button>
         </li>

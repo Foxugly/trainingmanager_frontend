@@ -1,27 +1,27 @@
 <div>
   @if (loading()) {
-    <div class="mt-4" aria-hidden="true">
+    <div class="teams-detail__skeleton" aria-hidden="true">
       <!-- Header skeleton (mirrors the detail-header toolbar) -->
-      <div class="flex items-center justify-between gap-4 mb-8">
+      <div class="teams-detail__skeleton-head">
         <p-skeleton width="2.5rem" height="2.5rem" borderRadius="9999px" />
-        <div class="flex flex-1 flex-col items-center gap-2">
+        <div class="teams-detail__skeleton-head-center">
           <p-skeleton width="6rem" height="0.75rem" />
           <p-skeleton width="14rem" height="1.75rem" />
         </div>
-        <div class="flex items-center gap-2">
+        <div class="teams-detail__skeleton-head-actions">
           <p-skeleton width="2.5rem" height="2.5rem" borderRadius="9999px" />
         </div>
       </div>
       <!-- Body skeleton: a few field lines -->
-      <p-skeleton width="40%" height="1.25rem" styleClass="mb-3" />
+      <p-skeleton width="40%" height="1.25rem" styleClass="teams-detail__skeleton-title" />
       @for (_ of [1, 2, 3, 4]; track $index) {
-        <p-skeleton width="100%" height="2.5rem" borderRadius="0.375rem" styleClass="mb-2" />
+        <p-skeleton width="100%" height="2.5rem" borderRadius="0.375rem" styleClass="teams-detail__skeleton-row" />
       }
     </div>
   } @else if (notFound()) {
-    <p class="mt-4 text-gray-500">{{ 'teams.detail.not_found' | transloco }}</p>
+    <p class="teams-detail__state">{{ 'teams.detail.not_found' | transloco }}</p>
   } @else if (loadError()) {
-    <div class="mt-4 flex flex-col items-start gap-3">
+    <div class="teams-detail__error">
       <p-message severity="error" [text]="'common.load_failed' | transloco" />
       <p-button
         icon="pi pi-refresh"
@@ -32,31 +32,28 @@
       />
     </div>
   } @else if (team(); as t) {
-    <app-detail-header
-      [eyebrow]="'common.entity.team' | transloco"
-      [title]="t.name"
-      [backLink]="['/teams']"
-      icon="pi-users"
-    >
-      @if (t.logo) {
-        <div detailHeaderBanner class="flex justify-center mb-3">
-          <img
-            [src]="t.logo"
-            [alt]="t.name"
-            class="size-16 rounded-lg object-cover border border-gray-200 shadow-sm"
-          />
-        </div>
-      }
-
+    <app-page-header [title]="t.name" icon="pi-users">
+      <a
+        slot="left"
+        pButton
+        [routerLink]="['/teams']"
+        icon="pi pi-arrow-left"
+        severity="secondary"
+        [outlined]="true"
+        [rounded]="true"
+        [pTooltip]="'common.back' | transloco"
+        tooltipPosition="bottom"
+        [attr.aria-label]="'common.back' | transloco"
+      ></a>
       @if (currentUserRole(); as role) {
-        <span detailHeaderTitleSuffix [class]="roleClasses[role] + ' text-sm'">
+        <span slot="title-after" [class]="roleClasses[role] + ' teams-detail__role'">
           {{ 'teams.roles.' + role | transloco }}
         </span>
       }
 
       @if (canManage()) {
         <app-active-toggle
-          detailHeaderActions
+          slot="right"
           [entityId]="t.id"
           [value]="activeValue()"
           [patch]="patchActive"
@@ -65,7 +62,7 @@
         />
       }
       @if (canManage()) {
-        <a detailHeaderActions [routerLink]="['/teams', t.id, 'edit']">
+        <a slot="right" [routerLink]="['/teams', t.id, 'edit']">
           <p-button
             icon="pi pi-pencil"
             severity="info"
@@ -78,23 +75,32 @@
         </a>
       }
 
-      <dl
-        detailHeaderMeta
-        class="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm"
-      >
+    </app-page-header>
+
+    @if (t.logo) {
+      <div class="teams-detail__logo-wrap">
+        <img
+          [src]="t.logo"
+          [alt]="t.name"
+          class="teams-detail__logo"
+        />
+      </div>
+    }
+
+    <dl class="teams-detail__meta">
         @if (t.sports.length) {
-          <div class="flex items-center gap-2">
-            <i class="pi pi-tag text-gray-400" aria-hidden="true"></i>
-            <dt class="text-gray-500">
+          <div class="teams-detail__meta-item">
+            <i class="pi pi-tag teams-detail__icon-muted" aria-hidden="true"></i>
+            <dt class="teams-detail__meta-term">
               {{ (t.sports.length > 1 ? 'teams.fields.sports' : 'teams.fields.sport') | transloco }}
             </dt>
-            <dd class="font-medium text-gray-900 flex flex-wrap items-center gap-x-1">
+            <dd class="teams-detail__meta-def teams-detail__meta-def--wrap">
               @for (s of t.sports; track s.id) {
-                <span class="inline-flex items-center gap-1">
+                <span class="teams-detail__sport">
                   {{ s.name }}
                   @if (s.is_default && t.sports.length > 1) {
                     <i
-                      class="pi pi-star-fill text-amber-400 text-xs"
+                      class="pi pi-star-fill teams-detail__sport-default"
                       [attr.aria-label]="'teams.form.default_sport' | transloco"
                       [pTooltip]="'teams.form.default_sport' | transloco"
                     ></i>
@@ -108,34 +114,31 @@
           </div>
         }
         @if (t.level?.name) {
-          <div class="flex items-center gap-2">
-            <i class="pi pi-chart-line text-gray-400" aria-hidden="true"></i>
-            <dt class="text-gray-500">{{ 'teams.detail.level' | transloco }}</dt>
-            <dd class="font-medium text-gray-900">{{ t.level?.name }}</dd>
+          <div class="teams-detail__meta-item">
+            <i class="pi pi-chart-line teams-detail__icon-muted" aria-hidden="true"></i>
+            <dt class="teams-detail__meta-term">{{ 'teams.detail.level' | transloco }}</dt>
+            <dd class="teams-detail__meta-def">{{ t.level?.name }}</dd>
           </div>
         }
         @if (t.language) {
-          <div class="flex items-center gap-2">
-            <i class="pi pi-globe text-gray-400" aria-hidden="true"></i>
-            <dt class="text-gray-500">{{ 'teams.fields.language' | transloco }}</dt>
-            <dd class="font-medium text-gray-900">{{ t.language | uppercase }}</dd>
+          <div class="teams-detail__meta-item">
+            <i class="pi pi-globe teams-detail__icon-muted" aria-hidden="true"></i>
+            <dt class="teams-detail__meta-term">{{ 'teams.fields.language' | transloco }}</dt>
+            <dd class="teams-detail__meta-def">{{ t.language | uppercase }}</dd>
           </div>
         }
-        <div class="flex items-center gap-2">
-          <i class="pi pi-user text-gray-400" aria-hidden="true"></i>
-          <dt class="text-gray-500">{{ 'teams.fields.owner' | transloco }}</dt>
-          <dd class="font-medium text-gray-900">
+        <div class="teams-detail__meta-item">
+          <i class="pi pi-user teams-detail__icon-muted" aria-hidden="true"></i>
+          <dt class="teams-detail__meta-term">{{ 'teams.fields.owner' | transloco }}</dt>
+          <dd class="teams-detail__meta-def">
             {{ (t.owner.first_name + ' ' + t.owner.last_name).trim() || '—' }}
           </dd>
         </div>
-      </dl>
-    </app-detail-header>
+    </dl>
 
     @if (!t.is_active) {
-      <div
-        class="mb-6 rounded border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900"
-      >
-        <i class="pi pi-exclamation-triangle mr-1.5" aria-hidden="true"></i>
+      <div class="teams-detail__archived">
+        <i class="pi pi-exclamation-triangle teams-detail__archived-icon" aria-hidden="true"></i>
         {{ 'teams.detail.archived_banner' | transloco }}
       </div>
     }
@@ -143,64 +146,64 @@
     <p-tabs [value]="activeTab()" (valueChange)="onTabChange($any($event))">
       <p-tablist>
         <p-tab value="programs">
-          <i class="pi pi-list mr-2" aria-hidden="true"></i>
+          <i class="pi pi-list teams-detail__tab-icon" aria-hidden="true"></i>
           {{ 'teams.detail.tabs.programs' | transloco }}
         </p-tab>
         <p-tab value="managers">
-          <i class="pi pi-id-card mr-2" aria-hidden="true"></i>
+          <i class="pi pi-id-card teams-detail__tab-icon" aria-hidden="true"></i>
           {{ 'teams.detail.tabs.managers' | transloco }}
           @if (t.managers.length > 0) {
-            <p-badge [value]="t.managers.length.toString()" severity="info" styleClass="ml-2" />
+            <p-badge [value]="t.managers.length.toString()" severity="info" styleClass="teams-detail__tab-badge" />
           }
         </p-tab>
         <p-tab value="members">
-          <i class="pi pi-users mr-2" aria-hidden="true"></i>
+          <i class="pi pi-users teams-detail__tab-icon" aria-hidden="true"></i>
           {{ 'teams.detail.tabs.members' | transloco }}
           @if (memberships().length > 0) {
-            <p-badge [value]="memberships().length.toString()" severity="info" styleClass="ml-2" />
+            <p-badge [value]="memberships().length.toString()" severity="info" styleClass="teams-detail__tab-badge" />
           }
         </p-tab>
         @if (isMemberOrAbove()) {
           <p-tab value="discussions">
-            <i class="pi pi-comments mr-2" aria-hidden="true"></i>
+            <i class="pi pi-comments teams-detail__tab-icon" aria-hidden="true"></i>
             {{ 'teams.detail.tabs.discussions' | transloco }}
           </p-tab>
         }
         @if (canManage()) {
           <p-tab value="requests">
-            <i class="pi pi-inbox mr-2" aria-hidden="true"></i>
+            <i class="pi pi-inbox teams-detail__tab-icon" aria-hidden="true"></i>
             {{ 'teams.detail.tabs.requests_invitations' | transloco }}
             @if (requestsCount() > 0) {
-              <p-badge [value]="requestsCount().toString()" severity="info" styleClass="ml-2" />
+              <p-badge [value]="requestsCount().toString()" severity="info" styleClass="teams-detail__tab-badge" />
             }
           </p-tab>
         }
         @if (canManage()) {
           <p-tab value="stats">
-            <i class="pi pi-chart-bar mr-2" aria-hidden="true"></i>
+            <i class="pi pi-chart-bar teams-detail__tab-icon" aria-hidden="true"></i>
             {{ 'stats.tab' | transloco }}
           </p-tab>
         } @else if (isAthleteMember()) {
           <p-tab value="my-stats">
-            <i class="pi pi-chart-bar mr-2" aria-hidden="true"></i>
+            <i class="pi pi-chart-bar teams-detail__tab-icon" aria-hidden="true"></i>
             {{ 'stats.my_tab' | transloco }}
           </p-tab>
         }
         @if (canManage()) {
           <p-tab value="templates">
-            <i class="pi pi-bookmark mr-2" aria-hidden="true"></i>
+            <i class="pi pi-bookmark teams-detail__tab-icon" aria-hidden="true"></i>
             {{ 'events.templates.tab' | transloco }}
           </p-tab>
         }
         @if (canManage()) {
           <p-tab value="roster">
-            <i class="pi pi-users mr-2" aria-hidden="true"></i>
+            <i class="pi pi-users teams-detail__tab-icon" aria-hidden="true"></i>
             {{ 'teams.roster_history.tab' | transloco }}
           </p-tab>
         }
         @if (canManage()) {
           <p-tab value="audit">
-            <i class="pi pi-history mr-2" aria-hidden="true"></i>
+            <i class="pi pi-history teams-detail__tab-icon" aria-hidden="true"></i>
             {{ 'audit.tab' | transloco }}
           </p-tab>
         }
@@ -215,7 +218,7 @@
         <!-- TAB 2: MANAGERS -->
         <p-tabpanel value="managers">
           @if (isOwner()) {
-            <div class="flex justify-end mb-3">
+            <div class="teams-detail__toolbar">
               <p-button
                 [label]="'teams.detail.add_manager' | transloco"
                 icon="pi pi-plus"
@@ -227,11 +230,11 @@
             </div>
           }
           @if (t.managers && t.managers.length > 0) {
-            <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
+            <ul class="teams-detail__list">
               @for (m of t.managers; track m.id) {
-                <li class="px-3 py-1.5 flex items-center gap-2 text-sm">
-                  <i class="pi pi-user text-gray-400" aria-hidden="true"></i>
-                  <span class="font-medium">{{
+                <li class="teams-detail__list-item">
+                  <i class="pi pi-user teams-detail__icon-muted" aria-hidden="true"></i>
+                  <span class="teams-detail__strong">{{
                     (m.first_name + ' ' + m.last_name).trim() || '—'
                   }}</span>
                 </li>
@@ -261,9 +264,7 @@
         <!-- TAB 3: MEMBRES -->
         <p-tabpanel value="members">
           @if (myMembership(); as mb) {
-            <div
-              class="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-xs text-emerald-800"
-            >
+            <div class="teams-detail__member-chip">
               <i class="pi pi-check-circle" aria-hidden="true"></i>
               {{
                 'teams.detail.member_since'
@@ -271,16 +272,16 @@
               }}
             </div>
             @if (isAthleteMember() && myMemberId() !== null && teamId() !== null) {
-              <section class="mb-6">
-                <h3 class="mb-2 text-base font-semibold">{{ 'notes.my_title' | transloco }}</h3>
+              <section class="teams-detail__section">
+                <h3 class="teams-detail__section-title">{{ 'notes.my_title' | transloco }}</h3>
                 <app-member-notes
                   [teamId]="teamId()!"
                   [memberId]="myMemberId()!"
                   [canEdit]="false"
                 />
               </section>
-              <section class="mb-6">
-                <h3 class="mb-2 text-base font-semibold">{{ 'performance.title' | transloco }}</h3>
+              <section class="teams-detail__section">
+                <h3 class="teams-detail__section-title">{{ 'performance.title' | transloco }}</h3>
                 <app-performance-panel
                   [teamId]="teamId()!"
                   [memberId]="myMemberId()!"
@@ -289,11 +290,9 @@
               </section>
             }
           } @else if (myPendingRequest()) {
-            <div class="mb-4 flex flex-wrap items-center gap-3">
-              <span
-                class="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1.5 text-sm font-medium text-amber-800"
-              >
-                <i class="pi pi-clock text-xs" aria-hidden="true"></i>
+            <div class="teams-detail__pending">
+              <span class="teams-detail__pending-chip">
+                <i class="pi pi-clock teams-detail__chip-icon" aria-hidden="true"></i>
                 {{ 'teams.join_request.pending_chip' | transloco }}
               </span>
               <p-button
@@ -307,7 +306,7 @@
               />
             </div>
           } @else if (canRequestJoin()) {
-            <div class="mb-4">
+            <div class="teams-detail__cta">
               <p-button
                 [label]="'teams.join_request.cta' | transloco"
                 icon="pi pi-user-plus"
@@ -316,16 +315,16 @@
             </div>
           }
 
-          <div class="flex items-center justify-between mb-2 gap-2 flex-wrap">
-            <div class="flex items-center gap-2 flex-1 min-w-0">
-              <span class="p-input-icon-left flex-1 max-w-xs">
+          <div class="teams-detail__members-bar">
+            <div class="teams-detail__members-search">
+              <span class="p-input-icon-left teams-detail__search-field">
                 <input
                   pInputText
                   type="search"
                   [value]="memberFilter()"
                   (input)="memberFilter.set($any($event.target).value)"
                   [placeholder]="'teams.detail.filter_members_placeholder' | transloco"
-                  class="w-full"
+                  class="teams-detail__input"
                 />
               </span>
             </div>
@@ -340,31 +339,31 @@
             }
           </div>
           @if (memberships().length === 0) {
-            <p class="text-gray-500">{{ 'teams.detail.no_members' | transloco }}</p>
+            <p class="teams-detail__muted">{{ 'teams.detail.no_members' | transloco }}</p>
           } @else if (filteredMemberships().length === 0) {
-            <p class="text-gray-500 text-sm">{{ 'teams.detail.no_members_match' | transloco }}</p>
+            <p class="teams-detail__muted teams-detail__muted--sm">{{ 'teams.detail.no_members_match' | transloco }}</p>
           } @else {
-            <ul class="divide-y divide-gray-200 border border-gray-200 rounded">
+            <ul class="teams-detail__list">
               @for (mb of filteredMemberships(); track mb.id) {
-                <li class="px-3 py-1.5 flex items-center gap-2 text-sm">
+                <li class="teams-detail__list-item">
                   @if (canManage()) {
                     <a
                       [routerLink]="['/teams', t.id, 'members', mb.member]"
-                      class="font-medium truncate text-emerald-700 hover:text-emerald-900 hover:underline"
+                      class="teams-detail__member-link"
                     >
                       {{ mb.member_fullname || mb.member_username }}
                     </a>
                   } @else {
-                    <span class="font-medium truncate">
+                    <span class="teams-detail__member-name">
                       {{ mb.member_fullname || mb.member_username }}
                     </span>
                   }
                   @if (mb.member_fullname && mb.member_username) {
-                    <span class="text-gray-500 text-xs truncate">{{ mb.member_username }}</span>
+                    <span class="teams-detail__member-sub">{{ mb.member_username }}</span>
                   }
                   @if (canManage()) {
                     <p-button
-                      class="ml-auto"
+                      class="teams-detail__push"
                       icon="pi pi-file-edit"
                       severity="secondary"
                       [text]="true"
@@ -426,7 +425,7 @@
           <p-tabpanel value="stats">
             @if (activeTab() === 'stats') {
               @if (selectedStatsMember() !== null) {
-                <div class="mb-3">
+                <div class="teams-detail__back">
                   <p-button
                     [label]="'stats.back_to_team' | transloco"
                     icon="pi pi-arrow-left"
@@ -501,18 +500,18 @@
   @if (notesDialogOpen() && notesMembership(); as mb) {
     @if (teamId() !== null) {
       <app-member-notes [teamId]="teamId()!" [memberId]="mb.member" [canEdit]="true" />
-      <section class="mt-6 border-t border-gray-200 pt-4">
-        <h4 class="mb-2 text-base font-semibold">{{ 'performance.title' | transloco }}</h4>
+      <section class="teams-detail__divider-section">
+        <h4 class="teams-detail__subtitle">{{ 'performance.title' | transloco }}</h4>
         <app-performance-panel [teamId]="teamId()!" [memberId]="mb.member" [canEdit]="true" />
       </section>
 
       @if (canManage()) {
-        <section class="mt-6 rounded-xl border border-red-200 bg-red-50 p-4">
-          <h4 class="text-sm font-semibold uppercase tracking-wide text-red-700 mb-1">
+        <section class="teams-detail__danger-zone">
+          <h4 class="teams-detail__danger-title">
             {{ 'rgpd.anonymize.section' | transloco }}
           </h4>
-          <div class="flex items-center justify-between gap-3 flex-wrap">
-            <p class="text-sm text-red-800 flex-1 min-w-0">
+          <div class="teams-detail__danger-row">
+            <p class="teams-detail__danger-text">
               {{ 'rgpd.anonymize.help' | transloco }}
             </p>
             <p-button
@@ -539,30 +538,30 @@
   [style]="{ width: '32rem' }"
   [header]="'teams.member_dialog.title' | transloco"
 >
-  <form [formGroup]="addMemberForm" (ngSubmit)="submitAddMember()" class="flex flex-col gap-4">
-    <div class="flex flex-col gap-2">
-      <label for="firstname" class="text-sm font-medium text-gray-700">
+  <form [formGroup]="addMemberForm" (ngSubmit)="submitAddMember()" class="teams-detail__form">
+    <div class="teams-detail__form-row">
+      <label for="firstname" class="teams-detail__label">
         {{ 'teams.member_dialog.firstname' | transloco }}
       </label>
-      <input pInputText id="firstname" formControlName="firstname" class="w-full" />
+      <input pInputText id="firstname" formControlName="firstname" class="teams-detail__input" />
     </div>
-    <div class="flex flex-col gap-2">
-      <label for="lastname" class="text-sm font-medium text-gray-700">
+    <div class="teams-detail__form-row">
+      <label for="lastname" class="teams-detail__label">
         {{ 'teams.member_dialog.lastname' | transloco }}
       </label>
-      <input pInputText id="lastname" formControlName="lastname" class="w-full" />
+      <input pInputText id="lastname" formControlName="lastname" class="teams-detail__input" />
     </div>
-    <div class="flex flex-col gap-2">
-      <label for="email" class="text-sm font-medium text-gray-700">
+    <div class="teams-detail__form-row">
+      <label for="email" class="teams-detail__label">
         {{ 'teams.member_dialog.email' | transloco }}
       </label>
-      <input pInputText id="email" formControlName="email" type="email" class="w-full" />
+      <input pInputText id="email" formControlName="email" type="email" class="teams-detail__input" />
     </div>
-    <div class="flex flex-col gap-2">
-      <label for="phonenumber" class="text-sm font-medium text-gray-700">
+    <div class="teams-detail__form-row">
+      <label for="phonenumber" class="teams-detail__label">
         {{ 'teams.member_dialog.phonenumber' | transloco }}
       </label>
-      <input pInputText id="phonenumber" formControlName="phonenumber" class="w-full" />
+      <input pInputText id="phonenumber" formControlName="phonenumber" class="teams-detail__input" />
     </div>
 
     @if (addMemberError(); as msg) {
@@ -570,14 +569,14 @@
     }
 
     @if (addMemberFieldErrors(); as errors) {
-      <div class="flex flex-col gap-1">
+      <div class="teams-detail__form-errors">
         @for (entry of errors | keyvalue; track entry.key) {
           <p-message severity="warn" [text]="entry.key + ': ' + entry.value.join(', ')" />
         }
       </div>
     }
 
-    <div class="flex justify-end gap-2 pt-2">
+    <div class="teams-detail__form-actions">
       <p-button
         type="button"
         severity="secondary"
@@ -604,8 +603,8 @@
   [style]="{ width: '32rem' }"
   [header]="'teams.join_request.dialog_title' | transloco"
 >
-  <div class="flex flex-col gap-3">
-    <p class="text-sm text-gray-700">
+  <div class="teams-detail__dialog-body">
+    <p class="teams-detail__dialog-text">
       @if (team(); as t) {
         {{ 'teams.join_request.dialog_help' | transloco: { team: t.name } }}
       }
@@ -613,7 +612,7 @@
     <textarea
       pTextarea
       rows="3"
-      class="w-full"
+      class="teams-detail__input"
       [value]="joinMessage()"
       (input)="joinMessage.set($any($event.target).value)"
       [placeholder]="'teams.join_request.message_placeholder' | transloco"
@@ -621,7 +620,7 @@
     @if (joinError(); as msg) {
       <p-message severity="error" [text]="msg | transloco" />
     }
-    <div class="flex justify-end gap-2 pt-1">
+    <div class="teams-detail__form-actions teams-detail__form-actions--tight">
       <p-button
         type="button"
         severity="secondary"
@@ -649,9 +648,9 @@
   [style]="{ width: '28rem' }"
   [header]="'teams.manager_dialog.title' | transloco"
 >
-  <form (ngSubmit)="submitAddManager()" class="flex flex-col gap-4">
-    <div class="flex flex-col gap-2">
-      <label for="new_manager" class="text-sm font-medium text-gray-700">
+  <form (ngSubmit)="submitAddManager()" class="teams-detail__form">
+    <div class="teams-detail__form-row">
+      <label for="new_manager" class="teams-detail__label">
         {{ 'teams.manager_dialog.member' | transloco }}
       </label>
       @if (promotableMembers().length === 0) {
@@ -668,7 +667,7 @@
           [filter]="true"
           [placeholder]="'teams.manager_dialog.member_placeholder' | transloco"
           appendTo="body"
-          styleClass="w-full"
+          styleClass="teams-detail__input"
         />
       }
     </div>
@@ -677,7 +676,7 @@
       <p-message severity="error" [text]="msg | transloco" />
     }
 
-    <div class="flex justify-end gap-2 pt-2">
+    <div class="teams-detail__form-actions">
       <p-button
         type="button"
         severity="secondary"

@@ -25,6 +25,7 @@ import { loadOn } from '../../../shared/data/load-on';
   selector: 'app-event-debrief',
   imports: [FormsModule, Button, Textarea, TranslocoPipe],
   templateUrl: './event-debrief.component.html',
+  styleUrl: './event-debrief.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EventDebriefComponent {

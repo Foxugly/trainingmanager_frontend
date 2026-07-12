@@ -23,6 +23,7 @@ import { ToastService } from '../../../core/notifications/toast.service';
   selector: 'app-save-as-template-button',
   imports: [FormsModule, Button, Dialog, InputText, TranslocoPipe],
   templateUrl: './save-as-template-button.component.html',
+  styleUrl: './save-as-template-button.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SaveAsTemplateButtonComponent {

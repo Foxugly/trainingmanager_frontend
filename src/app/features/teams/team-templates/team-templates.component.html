@@ -1,7 +1,7 @@
 @if (loading()) {
-  <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+  <p class="templates__status">{{ 'common.loading' | transloco }}…</p>
 } @else if (error()) {
-  <p class="py-4 text-red-600">{{ 'common.load_failed' | transloco }}</p>
+  <p class="templates__error">{{ 'common.load_failed' | transloco }}</p>
 } @else if (templates().length === 0) {
   <app-empty-state
     icon="bookmark"
@@ -14,15 +14,15 @@
     <ng-template pTemplate="header">
       <tr>
         <th>{{ 'events.templates.name_label' | transloco }}</th>
-        <th class="text-right">{{ 'events.templates.rounds' | transloco }}</th>
-        <th class="text-right">{{ 'common.actions' | transloco }}</th>
+        <th class="templates__col-right">{{ 'events.templates.rounds' | transloco }}</th>
+        <th class="templates__col-right">{{ 'common.actions' | transloco }}</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-tpl>
       <tr>
         <td>{{ tpl.name }}</td>
-        <td class="text-right">{{ tpl.rounds_count }}</td>
-        <td class="text-right whitespace-nowrap">
+        <td class="templates__col-right">{{ tpl.rounds_count }}</td>
+        <td class="templates__col-right templates__actions">
           <p-button
             [label]="'events.templates.use' | transloco"
             icon="pi pi-calendar-plus"
@@ -52,12 +52,12 @@
   [style]="{ width: '30rem', maxWidth: '95vw' }"
 >
   @if (selected(); as tpl) {
-    <div class="flex flex-col gap-4">
-      <p class="text-sm text-gray-600">
+    <div class="templates__dialog-body">
+      <p class="templates__intro">
         {{ 'events.templates.use_intro' | transloco: { name: tpl.name } }}
       </p>
-      <div class="flex flex-col gap-1">
-        <label for="tpl-program" class="text-sm font-medium text-gray-600">
+      <div class="templates__field">
+        <label for="tpl-program" class="templates__label">
           {{ 'events.templates.program' | transloco }}
         </label>
         <p-select
@@ -68,12 +68,12 @@
           [ngModel]="programId()"
           (ngModelChange)="programId.set($event)"
           [placeholder]="'events.templates.program_placeholder' | transloco"
-          styleClass="w-full"
+          styleClass="u-full"
           appendTo="body"
         />
       </div>
-      <div class="flex flex-col gap-1">
-        <label for="tpl-date" class="text-sm font-medium text-gray-600">
+      <div class="templates__field">
+        <label for="tpl-date" class="templates__label">
           {{ 'events.templates.date' | transloco }}
         </label>
         <p-datepicker
@@ -83,10 +83,10 @@
           dateFormat="yy-mm-dd"
           [showButtonBar]="true"
           appendTo="body"
-          styleClass="w-full"
+          styleClass="u-full"
         />
       </div>
-      <div class="flex justify-end gap-2">
+      <div class="templates__dialog-actions">
         <p-button
           [label]="'common.cancel' | transloco"
           severity="secondary"

@@ -35,6 +35,7 @@ import { AriaDescribesDirective } from '../../../shared/a11y/aria-describes.dire
     TranslocoPipe,
   ],
   templateUrl: './change-password.component.html',
+  styleUrl: './change-password.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChangePasswordComponent {

@@ -1,0 +1,21 @@
+.save-tpl__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.save-tpl__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.save-tpl__input {
+  width: 100%;
+}
+
+.save-tpl__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}

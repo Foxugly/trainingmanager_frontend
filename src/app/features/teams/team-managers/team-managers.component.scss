@@ -2,11 +2,45 @@
   display: block;
 }
 
+// Encadrement: header row (title + add button).
+.managers__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+
+  .builder-section-title {
+    margin-bottom: 0;
+  }
+}
+
+.managers__hint {
+  margin-bottom: 0.5rem;
+}
+
+// Add-manager dialog: labelled select field.
+.managers__pick-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding-top: 0.25rem;
+}
+
+.managers__pick-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+.managers__select {
+  width: 100%;
+}
+
 // Section heading inside the builder pane (matches teams-form).
 .builder-section-title {
   font-size: 0.95rem;
   font-weight: 600;
-  color: var(--text-strong);
+  color: var(--ink);
   margin: 0 0 0.5rem;
 }
 
@@ -25,7 +59,7 @@
   align-items: center;
   gap: 0.65rem;
   padding: 0.5rem 0.75rem;
-  background: var(--surface-soft);
+  background: var(--surface-2);
 
   & + & {
     border-top: 1px solid var(--border);
@@ -50,7 +84,7 @@
   flex: 1 1 auto;
   min-width: 0;
   font-size: 0.92rem;
-  color: var(--text-strong);
+  color: var(--ink);
 }
 
 .manager-handle {

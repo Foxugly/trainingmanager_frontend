@@ -25,11 +25,12 @@ export class FeaturesPageComponent {
     { key: 'roles', icon: 'pi-id-card', tone: 'rose' },
   ];
 
+  // Token-based BEM modifiers on `.features-page__icon` (styles in the SCSS).
   protected readonly toneClasses: Record<FeatureSection['tone'], string> = {
-    emerald: 'bg-emerald-100 text-emerald-700',
-    amber: 'bg-amber-100 text-amber-700',
-    rose: 'bg-rose-100 text-rose-700',
-    cyan: 'bg-cyan-100 text-cyan-700',
-    teal: 'bg-teal-100 text-teal-700',
+    emerald: 'features-page__icon--emerald',
+    amber: 'features-page__icon--amber',
+    rose: 'features-page__icon--rose',
+    cyan: 'features-page__icon--cyan',
+    teal: 'features-page__icon--teal',
   };
 }

@@ -74,7 +74,7 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
 
-  .is-active & { background: #d1fae5; color: #059669; }
+  .is-active & { background: var(--accent-soft); color: var(--accent-strong); }
 }
 
-.ls-check { color: #059669; font-size: 0.8rem; }
+.ls-check { color: var(--accent-strong); font-size: 0.8rem; }

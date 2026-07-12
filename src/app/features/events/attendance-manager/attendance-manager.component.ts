@@ -50,6 +50,7 @@ const SAVE_DEBOUNCE_MS = 300;
   selector: 'app-attendance-manager',
   imports: [CommonModule, RouterLink, Button, Message, Tooltip, TranslocoPipe],
   templateUrl: './attendance-manager.component.html',
+  styleUrl: './attendance-manager.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AttendanceManagerComponent implements OnInit, OnDestroy {

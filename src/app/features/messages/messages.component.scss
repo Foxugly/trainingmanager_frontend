@@ -1,3 +1,126 @@
 :host {
   display: block;
 }
+
+.messages {
+  &__header {
+    margin-bottom: 0.5rem;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  &__subtitle {
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: var(--ink-soft);
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  &__skeleton {
+    padding: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  &__topic {
+    width: 100%;
+    text-align: left;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateY(-0.125rem);
+      border-color: var(--accent);
+      box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.1);
+    }
+
+    &:hover .messages__arrow {
+      opacity: 1;
+    }
+  }
+
+  &__topic-body {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-lg);
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    i {
+      font-size: 1.125rem;
+    }
+  }
+
+  &__topic-main {
+    min-width: 0;
+    flex: 1 1 0%;
+  }
+
+  &__topic-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  &__topic-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__team {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 0.125rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__topic-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 0.25rem;
+  }
+
+  &__arrow {
+    font-size: 0.75rem;
+    color: var(--accent-strong);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+}
+
+:host ::ng-deep .messages__skeleton-line {
+  margin-bottom: 0.5rem;
+}

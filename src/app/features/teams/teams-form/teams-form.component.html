@@ -30,16 +30,16 @@
 
   @if (loading()) {
     <div class="card" aria-hidden="true">
-      <p-skeleton width="40%" height="1.5rem" styleClass="mb-4" />
+      <p-skeleton width="40%" height="1.5rem" styleClass="teams-form__sk-title" />
       @for (_ of [1, 2, 3, 4]; track $index) {
-        <p-skeleton width="6rem" height="0.75rem" styleClass="mb-1" />
-        <p-skeleton width="100%" height="2.5rem" borderRadius="0.375rem" styleClass="mb-3" />
+        <p-skeleton width="6rem" height="0.75rem" styleClass="teams-form__sk-label" />
+        <p-skeleton width="100%" height="2.5rem" borderRadius="0.375rem" styleClass="teams-form__sk-input" />
       }
     </div>
   } @else if (notFound()) {
     <div class="card"><p class="meta-hint">{{ 'teams.detail.not_found' | transloco }}</p></div>
   } @else if (loadError()) {
-    <div class="card flex flex-col items-start gap-3">
+    <div class="card teams-form__error-card">
       <p-message severity="error" [text]="'common.load_failed' | transloco" />
       <p-button
         icon="pi pi-refresh"
@@ -194,18 +194,18 @@
                     [label]="'teams.form.logo' | transloco"
                     [tooltip]="'teams.form.logo_help' | transloco"
                   >
-                    <div class="flex items-center gap-3 flex-wrap">
+                    <div class="teams-form__logo-row">
                       @if (logoValue()) {
                         <img
                           [src]="logoValue()"
                           [alt]="'teams.form.logo' | transloco"
-                          class="size-16 rounded-lg object-cover border border-gray-200"
+                          class="teams-form__logo-img"
                         />
                       }
                       <input
                         #logoInput
                         type="file"
-                        class="hidden"
+                        class="teams-form__file-input"
                         accept="image/png,image/jpeg,image/webp,image/svg+xml"
                         (change)="onLogoSelected($event)"
                       />
@@ -282,7 +282,7 @@
                 </div>
 
                 <!-- Section: public sharing (merged from the former tab) -->
-                <h3 class="builder-section-title mt-6">
+                <h3 class="builder-section-title builder-section-title--spaced">
                   {{ 'public_share.team.section_title' | transloco }}
                 </h3>
                 <div class="meta-grid cols-4">
@@ -362,12 +362,12 @@
                   <h3 class="builder-section-title">
                     {{ 'equipment.title_plural' | transloco }}
                   </h3>
-                  <p class="meta-hint mb-2">{{ 'equipment.enable_help' | transloco }}</p>
+                  <p class="meta-hint teams-form__hint">{{ 'equipment.enable_help' | transloco }}</p>
 
                   @if (equipmentLoading()) {
                     <p class="meta-hint">{{ 'common.loading' | transloco }}…</p>
                   } @else if (equipmentCatalog().length === 0) {
-                    <p class="meta-hint mb-2">{{ 'equipment.none_for_sport' | transloco }}</p>
+                    <p class="meta-hint teams-form__hint">{{ 'equipment.none_for_sport' | transloco }}</p>
                   } @else {
                     <ul class="status-checklist">
                       @for (item of equipmentCatalog(); track item.id) {
@@ -540,22 +540,22 @@
       </form>
 
       @if (quotaExceeded(); as q) {
-        <div class="rounded-md border border-red-200 bg-red-50 p-4 flex flex-col gap-3">
-          <div class="flex items-start gap-2">
-            <i class="pi pi-exclamation-triangle text-red-600 mt-0.5" aria-hidden="true"></i>
+        <div class="teams-form__quota">
+          <div class="teams-form__quota-head">
+            <i class="pi pi-exclamation-triangle teams-form__quota-icon" aria-hidden="true"></i>
             <div>
-              <p class="font-semibold text-red-900">
+              <p class="teams-form__quota-title">
                 {{ 'teams.quota.exceeded_title' | transloco }}
               </p>
-              <p class="text-sm text-red-800">
+              <p class="teams-form__quota-text">
                 {{ errorMessage() }}
               </p>
-              <p class="text-xs text-red-700/80 mt-1">
+              <p class="teams-form__quota-meta">
                 {{ 'teams.quota.chip_label' | transloco: q }}
               </p>
             </div>
           </div>
-          <div class="flex flex-wrap gap-2 ml-7">
+          <div class="teams-form__quota-actions">
             <a [routerLink]="['/teams']">
               <p-button
                 type="button"

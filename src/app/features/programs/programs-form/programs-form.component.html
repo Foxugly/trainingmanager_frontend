@@ -58,7 +58,7 @@
   } @else if (notFound()) {
     <div class="card"><p class="meta-hint">{{ 'programs.detail.not_found' | transloco }}</p></div>
   } @else if (loadError()) {
-    <div class="card flex flex-col items-start gap-3">
+    <div class="card programs-form__error">
       <p-message severity="error" [text]="'common.load_failed' | transloco" />
       <p-button
         icon="pi pi-refresh"

@@ -1,0 +1,18 @@
+:host {
+  display: block;
+}
+
+.email-change {
+  max-width: 28rem;
+  margin-inline: auto;
+  padding: 1.5rem;
+  text-align: center;
+
+  &__text {
+    color: var(--muted);
+  }
+
+  &__actions {
+    margin-top: 1rem;
+  }
+}

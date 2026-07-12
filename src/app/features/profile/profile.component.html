@@ -30,7 +30,7 @@
                   [label]="'profile.email' | transloco"
                   [tooltip]="'profile.email_readonly_help' | transloco"
                 >
-                  <div class="flex items-center gap-3 flex-wrap">
+                  <div class="profile__email-row">
                     <span>{{ me.email }}</span>
                     <p-button
                       [text]="true"
@@ -90,13 +90,13 @@
                 </app-meta-field>
               </div>
 
-              <section class="mt-8 rounded-xl border border-gray-200 bg-gray-50 p-4">
-                <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-700 mb-1">
+              <section class="profile__panel">
+                <h2 class="profile__panel-title">
                   {{ 'rgpd.export.section' | transloco }}
                 </h2>
-                <div class="flex items-center justify-between gap-3 flex-wrap">
+                <div class="profile__panel-row">
                   <div>
-                    <p class="text-sm text-gray-700">{{ 'rgpd.export.help' | transloco }}</p>
+                    <p class="profile__panel-text">{{ 'rgpd.export.help' | transloco }}</p>
                   </div>
                   <p-button
                     type="button"
@@ -111,16 +111,16 @@
                 </div>
               </section>
 
-              <section class="mt-8 rounded-xl border border-red-200 bg-red-50 p-4">
-                <h2 class="text-sm font-semibold uppercase tracking-wide text-red-700 mb-1">
+              <section class="profile__panel profile__panel--danger">
+                <h2 class="profile__panel-title profile__panel-title--danger">
                   {{ 'profile.danger_zone' | transloco }}
                 </h2>
-                <div class="flex items-center justify-between gap-3 flex-wrap">
+                <div class="profile__panel-row">
                   <div>
-                    <strong class="text-red-900">{{
+                    <strong class="profile__danger-title">{{
                       'profile.delete_account_title' | transloco
                     }}</strong>
-                    <p class="text-sm text-red-800">
+                    <p class="profile__panel-text profile__panel-text--danger">
                       {{ 'profile.delete_account_help' | transloco }}
                     </p>
                   </div>
@@ -235,7 +235,7 @@
                         [value]="calUrl"
                         readonly
                         (focus)="$any($event.target).select()"
-                        class="w-full"
+                        class="profile__input--full"
                       />
                     </app-meta-field>
                   </div>
@@ -254,7 +254,7 @@
                         <i class="pi pi-external-link"></i> webcal://
                       </a>
                     }
-                    <span class="flex-1"></span>
+                    <span class="profile__spacer"></span>
                     <p-button
                       type="button"
                       severity="danger"
@@ -281,7 +281,7 @@
           [label]="'profile.change_password' | transloco"
           [routerLink]="['/profile/password']"
         />
-        <span class="flex-1"></span>
+        <span class="profile__spacer"></span>
         <p-button
           type="button"
           icon="pi pi-save"
@@ -303,7 +303,7 @@
     [style]="{ width: '30rem' }"
     [header]="'profile.email_change.dialog_title' | transloco"
   >
-    <p class="text-sm text-gray-600 mb-3">{{ 'profile.email_change.help' | transloco }}</p>
+    <p class="profile__dialog-text">{{ 'profile.email_change.help' | transloco }}</p>
     <form [formGroup]="emailChangeForm">
       <div class="meta-grid">
         <app-meta-field
@@ -318,7 +318,7 @@
             id="new_email"
             type="email"
             formControlName="new_email"
-            class="w-full"
+            class="profile__input--full"
             autocomplete="email"
             [appAriaDescribes]="emailChangeFieldError('new_email') ? newEmailField.errorId() : null"
           />
@@ -344,7 +344,7 @@
     [style]="{ width: '30rem' }"
     [header]="'profile.delete_account_title' | transloco"
   >
-    <div class="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+    <div class="profile__dialog-warning">
       {{ 'profile.delete_account_help' | transloco }}
     </div>
     <form [formGroup]="deleteForm">

@@ -41,6 +41,7 @@ interface AuditRow {
   selector: 'app-team-audit-log',
   imports: [TranslocoPipe, Button, EmptyStateComponent],
   templateUrl: './team-audit-log.component.html',
+  styleUrl: './team-audit-log.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TeamAuditLogComponent {
@@ -150,20 +151,21 @@ export class TeamAuditLogComponent {
     });
   }
 
-  /** Colored pill per action category: destructive=danger, share=info, config=neutral. */
+  /** Colored pill per action category: destructive=danger, share=info, config=neutral.
+   *  Token-based BEM (styles in the SCSS) so pills dark-adapt. */
   private auditTagClass(action: ActionEnum): string {
-    const base = 'inline-block text-xs font-medium px-2 py-0.5 rounded';
+    const base = 'audit-log__tag';
     switch (action) {
       case 'member_anonymized':
       case 'member_removed':
       case 'account_deleted':
       case 'attachment_deleted':
-        return `${base} bg-rose-100 text-rose-800`;
+        return `${base} audit-log__tag--danger`;
       case 'session_shared':
       case 'session_unshared':
-        return `${base} bg-sky-100 text-sky-800`;
+        return `${base} audit-log__tag--info`;
       default:
-        return `${base} bg-gray-100 text-gray-700`;
+        return `${base} audit-log__tag--neutral`;
     }
   }
 }

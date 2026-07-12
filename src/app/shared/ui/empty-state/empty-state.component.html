@@ -1,22 +1,18 @@
-<div class="flex flex-col items-center justify-center text-center px-4 py-10 sm:py-12">
+<div class="empty-state">
   <div
-    class="size-14 rounded-2xl flex items-center justify-center mb-4"
-    [class.bg-indigo-100]="tone() === 'indigo'"
-    [class.text-indigo-600]="tone() === 'indigo'"
-    [class.bg-emerald-100]="tone() === 'emerald'"
-    [class.text-emerald-600]="tone() === 'emerald'"
-    [class.bg-rose-100]="tone() === 'rose'"
-    [class.text-rose-600]="tone() === 'rose'"
-    [class.bg-gray-100]="tone() === 'gray'"
-    [class.text-gray-500]="tone() === 'gray'"
+    class="empty-state__icon"
+    [class.empty-state__icon--indigo]="tone() === 'indigo'"
+    [class.empty-state__icon--emerald]="tone() === 'emerald'"
+    [class.empty-state__icon--rose]="tone() === 'rose'"
+    [class.empty-state__icon--gray]="tone() === 'gray'"
   >
-    <i [class]="'pi pi-' + icon() + ' text-2xl'" aria-hidden="true"></i>
+    <i [class]="'pi pi-' + icon()" class="empty-state__icon-glyph" aria-hidden="true"></i>
   </div>
-  <h3 class="text-base font-semibold text-gray-900 mb-1">{{ title() }}</h3>
+  <h3 class="empty-state__title">{{ title() }}</h3>
   @if (subtitle()) {
-    <p class="text-sm text-gray-600 max-w-md">{{ subtitle() }}</p>
+    <p class="empty-state__subtitle">{{ subtitle() }}</p>
   }
-  <div class="mt-5 flex flex-wrap items-center justify-center gap-2 empty:hidden">
+  <div class="empty-state__actions">
     <ng-content />
   </div>
 </div>

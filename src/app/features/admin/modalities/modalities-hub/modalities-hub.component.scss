@@ -1,3 +1,73 @@
 :host {
   display: block;
 }
+
+.modalities-hub__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.modalities-hub__subtitle {
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+}
+
+.modalities-hub__skel-title {
+  margin-bottom: 1rem;
+}
+
+.modalities-hub__skel-row {
+  margin-bottom: 0.5rem;
+}
+
+.modalities-hub__error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.modalities-hub__empty {
+  color: var(--muted);
+}
+
+.modalities-hub__grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.modalities-hub__card {
+  display: block;
+  padding: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: all 0.15s ease;
+
+  &:hover {
+    box-shadow: var(--shadow-card);
+    border-color: var(--info);
+  }
+}
+
+.modalities-hub__card-title {
+  font-weight: 600;
+  font-size: 1.125rem;
+  color: var(--ink);
+}
+
+.modalities-hub__card-link {
+  font-size: 0.875rem;
+  color: var(--info);
+  margin-top: 0.5rem;
+}

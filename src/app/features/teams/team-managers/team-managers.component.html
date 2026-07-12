@@ -1,6 +1,6 @@
 <div class="builder-pane">
-  <div class="flex items-center justify-between mb-2">
-    <h3 class="builder-section-title !mb-0">{{ 'teams.form.managers' | transloco }}</h3>
+  <div class="managers__head">
+    <h3 class="builder-section-title">{{ 'teams.form.managers' | transloco }}</h3>
     <p-button
       type="button"
       severity="success"
@@ -11,7 +11,7 @@
       (onClick)="openAddManager()"
     />
   </div>
-  <p class="meta-hint mb-2">{{ 'teams.form.managers_help' | transloco }}</p>
+  <p class="meta-hint managers__hint">{{ 'teams.form.managers_help' | transloco }}</p>
 
   @if (selectedManagers().length > 0) {
     <ul class="manager-list">
@@ -57,8 +57,8 @@
   [style]="{ width: '26rem' }"
   appendTo="body"
 >
-  <div class="flex flex-col gap-1 pt-1">
-    <label for="manager_pick" class="text-sm font-medium text-gray-700">
+  <div class="managers__pick-field">
+    <label for="manager_pick" class="managers__pick-label">
       {{ 'teams.form.manager_pick_label' | transloco }}
     </label>
     <p-select
@@ -73,7 +73,7 @@
       [placeholder]="'teams.form.manager_pick_placeholder' | transloco"
       [emptyMessage]="'teams.form.managers_empty' | transloco"
       appendTo="body"
-      styleClass="w-full"
+      styleClass="managers__select"
     >
       <ng-template let-m #selectedItem>
         @if (m) {

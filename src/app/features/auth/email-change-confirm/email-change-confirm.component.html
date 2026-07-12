@@ -1,26 +1,26 @@
-<div class="mx-auto max-w-md p-6 text-center">
+<div class="email-change">
   @switch (phase()) {
     @case ('loading') {
-      <p class="text-gray-600">{{ 'auth.email_change_confirm.loading' | transloco }}…</p>
+      <p class="email-change__text">{{ 'auth.email_change_confirm.loading' | transloco }}…</p>
     }
     @case ('success') {
       <p-message severity="success" [text]="'auth.email_change_confirm.success' | transloco" />
     }
     @case ('expired') {
       <p-message severity="warn" [text]="'auth.email_change_confirm.expired' | transloco" />
-      <div class="mt-4">
+      <div class="email-change__actions">
         <p-button [routerLink]="['/profile']" [label]="'auth.email_change_confirm.back_to_profile' | transloco" />
       </div>
     }
     @case ('invalid_token') {
       <p-message severity="error" [text]="'auth.email_change_confirm.invalid_token' | transloco" />
-      <div class="mt-4">
+      <div class="email-change__actions">
         <p-button [routerLink]="['/profile']" [label]="'auth.email_change_confirm.back_to_profile' | transloco" />
       </div>
     }
     @default {
       <p-message severity="error" [text]="'auth.email_change_confirm.unknown_error' | transloco" />
-      <div class="mt-4">
+      <div class="email-change__actions">
         <p-button [routerLink]="['/profile']" [label]="'auth.email_change_confirm.back_to_profile' | transloco" />
       </div>
     }

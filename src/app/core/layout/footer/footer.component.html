@@ -14,7 +14,11 @@
              fixed intrinsic dims, which would fight this inline icon's styling.
              Same exemption rationale as the event-print QR data-URL. -->
         <img src="/foxugly-logo.svg" alt="" class="footer-author-logo" aria-hidden="true" />
-        {{ 'footer.author' | transloco }}</a>{{ 'footer.rights' | transloco }}
+        {{ 'footer.author' | transloco }}</a>
     </span>
+    <span class="footer-sep">·</span>
+    <a routerLink="/privacy" class="footer-meta footer-privacy-link">{{ 'footer.privacy' | transloco }}</a>
+    <span class="footer-sep">·</span>
+    <span class="footer-meta">{{ 'footer.rights' | transloco }}</span>
   </div>
 </footer>

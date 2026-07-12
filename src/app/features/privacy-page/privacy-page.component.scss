@@ -1,0 +1,106 @@
+:host {
+  display: block;
+}
+
+.privacy-page {
+  margin: -1.5rem;
+}
+
+.privacy-section {
+  padding: 3rem 1.5rem;
+
+  &:nth-of-type(odd) { background: #ffffff; }
+  &:nth-of-type(even) { background: #f8fafc; }
+}
+
+.privacy-section-inner {
+  max-width: 48rem;
+  margin: 0 auto;
+}
+
+.privacy-section[data-slug='intro'] h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #0f172a;
+}
+
+.privacy-block {
+  & + & { margin-top: 1.75rem; }
+
+  h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: #475569;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+}
+
+.lead {
+  color: #475569;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-top: 0.75rem;
+}
+
+.privacy-email {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.email-display {
+  font-variant-numeric: tabular-nums;
+  color: #0f172a;
+}
+
+.email-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  background: #fff;
+  color: #0f172a;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover { background: #f1f5f9; }
+  &:focus-visible {
+    outline: 2px solid #10b981;
+    outline-offset: 2px;
+  }
+}
+
+:host-context(.dark-mode) {
+  .privacy-section {
+    &:nth-of-type(odd) { background: #0f172a; }
+    &:nth-of-type(even) { background: #1e293b; }
+  }
+
+  .privacy-section[data-slug='intro'] h1 { color: #f8fafc; }
+  .privacy-block h2 { color: #f8fafc; }
+  .privacy-block p,
+  .lead { color: #cbd5e1; }
+  .email-display { color: #f8fafc; }
+
+  .email-cta {
+    background: #1e293b;
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #f8fafc;
+
+    &:hover { background: #334155; }
+  }
+}

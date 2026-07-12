@@ -1,3 +1,399 @@
 :host {
   display: block;
 }
+
+.dashboard {
+  // ── Welcome hero ──────────────────────────────────────────────────────
+  &__welcome {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.5rem;
+    border: 1px solid var(--accent-soft);
+    background: linear-gradient(135deg, var(--accent-soft), var(--surface) 55%, var(--accent-soft));
+    padding: 1.5rem;
+    margin-bottom: 2.5rem;
+
+    @media (min-width: 640px) {
+      padding: 2.5rem;
+    }
+  }
+
+  &__welcome-blob {
+    pointer-events: none;
+    position: absolute;
+    top: -6rem;
+    right: -4rem;
+    width: 18rem;
+    height: 18rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(110, 231, 183, 0.4), rgba(153, 246, 228, 0.3));
+    filter: blur(64px);
+  }
+
+  &__welcome-grid {
+    position: relative;
+    display: grid;
+    gap: 1.5rem;
+
+    @media (min-width: 768px) {
+      grid-template-columns: 1fr auto;
+      align-items: center;
+    }
+  }
+
+  &__welcome-eyebrow {
+    margin-bottom: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--accent-strong);
+  }
+
+  &__welcome-eyebrow-icon {
+    font-size: 0.625rem;
+    margin-right: 0.25rem;
+  }
+
+  &__welcome-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+
+    @media (min-width: 640px) {
+      font-size: 1.875rem;
+    }
+  }
+
+  &__welcome-text {
+    margin-top: 0.75rem;
+    max-width: 36rem;
+    color: var(--ink-soft);
+  }
+
+  &__welcome-cta {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  &__welcome-art {
+    display: none;
+    height: 10rem;
+    width: auto;
+    color: var(--accent);
+    opacity: 0.8;
+
+    @media (min-width: 768px) {
+      display: block;
+    }
+  }
+
+  &__welcome-tips {
+    position: relative;
+    margin-top: 2rem;
+    display: grid;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+
+    @media (min-width: 640px) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  &__welcome-tip {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  &__welcome-tip-icon {
+    margin-top: 0.125rem;
+    color: var(--accent);
+  }
+
+  &__welcome-tip-text {
+    color: var(--ink-soft);
+  }
+
+  // ── Page header ───────────────────────────────────────────────────────
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  &__subtitle {
+    font-size: 0.875rem;
+    color: var(--muted);
+    margin-top: 0.25rem;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  // ── Sections ──────────────────────────────────────────────────────────
+  &__section {
+    margin-bottom: 2.5rem;
+  }
+
+  &__section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+
+    &--flush {
+      margin-bottom: 0;
+    }
+  }
+
+  &__section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  // ── Card grids ────────────────────────────────────────────────────────
+  &__cards {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1rem;
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @media (min-width: 1024px) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  &__skel-card {
+    padding: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  &__skel-mini {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  &__card {
+    display: block;
+    padding: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateY(-0.125rem);
+      box-shadow: var(--shadow-card);
+      border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+    }
+  }
+
+  &__card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 0.25rem;
+
+    &--flush {
+      margin-bottom: 0;
+    }
+  }
+
+  &__card-sub {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+
+  &__card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  &__badge {
+    font-size: 0.75rem;
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+    padding: 0.125rem 0.5rem;
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+  }
+
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+    text-align: center;
+
+    &--single {
+      display: block;
+    }
+  }
+
+  &__stat-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  &__stat-value {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  // ── Lists ─────────────────────────────────────────────────────────────
+  &__list {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+
+    > * + * {
+      border-top: 1px solid var(--border);
+    }
+  }
+
+  &__list-item {
+    padding: 0.75rem;
+
+    &--row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    &--wrap {
+      flex-wrap: wrap;
+    }
+  }
+
+  &__list-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__list-main {
+    min-width: 0;
+  }
+
+  &__list-name {
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  &__list-meta {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-left: 0.5rem;
+  }
+
+  &__list-place {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 0.125rem;
+  }
+
+  &__list-place-icon {
+    font-size: 0.625rem;
+    margin-right: 0.25rem;
+  }
+
+  &__list-when {
+    font-size: 0.875rem;
+    color: var(--ink-soft);
+    flex-shrink: 0;
+  }
+
+  &__overflow {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 0.5rem;
+  }
+
+  &__skel-grow {
+    flex: 1 1 0%;
+  }
+
+  &__uptodate {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--accent-strong);
+  }
+
+  &__history-status {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+  }
+
+  // ── Team selector / misc ──────────────────────────────────────────────
+  &__select-inline {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__select-label {
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  &__retry {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+}
+
+:host ::ng-deep {
+  .dashboard__mb-1 {
+    margin-bottom: 0.25rem;
+  }
+
+  .dashboard__mb-3 {
+    margin-bottom: 0.75rem;
+  }
+
+  .dashboard__select-w {
+    width: 14rem;
+  }
+}

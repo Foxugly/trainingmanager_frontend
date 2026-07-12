@@ -1,9 +1,9 @@
 <p-confirmDialog />
 
-<div class="discussions flex flex-col gap-4">
+<div class="discussions">
   @if (selectedTopic(); as topic) {
     <!-- THREAD VIEW -->
-    <div class="thread flex flex-col gap-4">
+    <div class="thread">
       <div class="thread-header">
         <p-button
           icon="pi pi-arrow-left"
@@ -40,7 +40,7 @@
         }
       </div>
 
-      <div class="messages flex flex-col gap-[0.65rem]">
+      <div class="messages">
         @if (loadingMessages()) {
           <p class="muted">{{ 'common.loading' | transloco }}</p>
         } @else if (messages().length === 0) {
@@ -83,7 +83,7 @@
               </div>
 
               @if (editingMessageId() === msg.id) {
-                <div class="message-edit flex flex-col gap-2">
+                <div class="message-edit">
                   <app-rich-editor [(ngModel)]="editContentModel" [style]="{ height: '6rem' }" />
                   <div class="editor-toolbar">
                     <p-button
@@ -114,9 +114,9 @@
                   </div>
                 </div>
               } @else {
-                <div class="message-body [word-break:break-word]" [innerHTML]="msg.content"></div>
+                <div class="message-body" [innerHTML]="msg.content"></div>
                 <app-attachment-list
-                  class="message-attachments block mt-2"
+                  class="message-attachments"
                   targetType="message"
                   [targetId]="msg.id"
                   [canEdit]="canAttachToMessage(msg)"
@@ -154,14 +154,14 @@
           </div>
         </div>
       } @else {
-        <p class="muted replies-disabled py-2">
+        <p class="muted replies-disabled">
           {{ 'teams.discussions.replies_disabled' | transloco }}
         </p>
       }
     </div>
   } @else {
     <!-- TOPIC LIST -->
-    <div class="list-header flex justify-end">
+    <div class="list-header">
       @if (canCreateTopic()) {
         <p-button
           [label]="'teams.discussions.new_topic' | transloco"
@@ -177,12 +177,12 @@
     } @else if (topics().length === 0) {
       <app-empty-state icon="comments" [title]="'teams.discussions.empty' | transloco" />
     } @else {
-      <ul class="topic-list list-none m-0 p-0 flex flex-col gap-2">
+      <ul class="topic-list">
         @for (topic of topics(); track topic.id) {
           <li class="topic-card">
             <button type="button" class="topic-main" (click)="openTopic(topic)">
-              <div class="topic-title-row flex items-center gap-2">
-                <span class="topic-title font-semibold">{{ topic.title }}</span>
+              <div class="topic-title-row">
+                <span class="topic-title">{{ topic.title }}</span>
                 <p-tag
                   [value]="
                     (topic.audience === AudienceEnum.Coaches
@@ -227,9 +227,9 @@
   [style]="{ width: '32rem' }"
   [dismissableMask]="true"
 >
-  <div class="dialog-body flex flex-col gap-4 pt-1">
+  <div class="dialog-body">
     <label class="field">
-      <span class="field-label font-semibold text-[0.85rem]">{{ 'teams.discussions.title_label' | transloco }}</span>
+      <span class="field-label">{{ 'teams.discussions.title_label' | transloco }}</span>
       <input
         pInputText
         [(ngModel)]="newTopicTitleModel"
@@ -239,7 +239,7 @@
 
     @if (isCoach()) {
       <label class="field">
-        <span class="field-label font-semibold text-[0.85rem]">{{ 'teams.discussions.audience' | transloco }}</span>
+        <span class="field-label">{{ 'teams.discussions.audience' | transloco }}</span>
         <p-select
           [options]="audienceOptions()"
           [(ngModel)]="newTopicAudienceModel"
@@ -250,13 +250,13 @@
       </label>
     } @else {
       <div class="field">
-        <span class="field-label font-semibold text-[0.85rem]">{{ 'teams.discussions.audience' | transloco }}</span>
+        <span class="field-label">{{ 'teams.discussions.audience' | transloco }}</span>
         <p-tag [value]="'teams.discussions.audience_team' | transloco" severity="info" />
       </div>
     }
 
     @if (newTopicAudience() === AudienceEnum.Team) {
-      <label class="field-inline flex items-center gap-2">
+      <label class="field-inline">
         <p-checkbox
           [binary]="true"
           inputId="allow_athlete_replies"

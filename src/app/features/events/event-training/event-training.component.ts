@@ -66,6 +66,7 @@ export interface TrainingState {
     RoundFormDialogComponent,
   ],
   templateUrl: './event-training.component.html',
+  styleUrl: './event-training.component.scss',
   providers: [ConfirmationService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

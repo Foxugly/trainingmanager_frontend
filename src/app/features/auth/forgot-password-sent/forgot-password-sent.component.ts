@@ -6,6 +6,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
   selector: 'app-forgot-password-sent',
   imports: [RouterLink, TranslocoPipe],
   templateUrl: './forgot-password-sent.component.html',
+  styleUrl: './forgot-password-sent.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ForgotPasswordSentComponent {

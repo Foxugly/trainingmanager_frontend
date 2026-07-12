@@ -1,9 +1,9 @@
-<section class="mx-auto max-w-xl">
+<section class="roti">
   <!-- Athlete: rate the session difficulty -->
   @if (isAthlete()) {
-    <h2 class="text-lg font-semibold mb-1 text-center">{{ 'events.roti.your_rating' | transloco }}</h2>
-    <p class="text-sm text-gray-500 mb-3 text-center">{{ 'events.roti.title' | transloco }}</p>
-    <div class="flex flex-wrap items-center justify-center gap-2">
+    <h2 class="roti__title roti__title--tight">{{ 'events.roti.your_rating' | transloco }}</h2>
+    <p class="roti__subtitle">{{ 'events.roti.title' | transloco }}</p>
+    <div class="roti__scale">
       @for (s of rotiScores; track s) {
         <p-button
           [label]="s.toString()"
@@ -21,7 +21,7 @@
       }
     </div>
     @if (rotiSummary()?.my_score; as mine) {
-      <p class="mt-2 text-xs text-gray-500 text-center">
+      <p class="roti__my-label">
         {{ 'events.roti.scale.' + mine | transloco }}
       </p>
     }
@@ -29,36 +29,36 @@
 
   <!-- Manager: aggregate (read-only). Shown also to a manager-athlete below their rating. -->
   @if (canManage()) {
-    <div [class.mt-6]="isAthlete()">
-      <h2 class="text-lg font-semibold mb-3 text-center">{{ 'events.roti.title' | transloco }}</h2>
+    <div class="roti__manager" [class.roti__manager--spaced]="isAthlete()">
+      <h2 class="roti__title">{{ 'events.roti.title' | transloco }}</h2>
       @if (rotiSummary(); as summary) {
         @if (summary.count > 0) {
           <!-- KPI cards -->
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5">
-            <div class="rounded-lg border border-gray-200 bg-white px-4 py-3">
-              <div class="text-2xl font-bold text-emerald-700 leading-none">
+          <div class="roti__kpis">
+            <div class="roti__kpi">
+              <div class="roti__kpi-value">
                 {{ summary.average !== null ? (summary.average | number: '1.1-1') : '—' }}
-                <span class="text-base font-medium text-gray-400">/ 5</span>
+                <span class="roti__kpi-unit">/ 5</span>
               </div>
-              <div class="mt-1 text-xs font-medium text-gray-500">
+              <div class="roti__kpi-label">
                 {{ 'events.roti.average' | transloco }}
               </div>
             </div>
-            <div class="rounded-lg border border-gray-200 bg-white px-4 py-3">
-              <div class="text-2xl font-bold text-gray-900 leading-none">
+            <div class="roti__kpi">
+              <div class="roti__kpi-value roti__kpi-value--neutral">
                 {{ summary.count }}
               </div>
-              <div class="mt-1 text-xs font-medium text-gray-500">
+              <div class="roti__kpi-label">
                 {{ 'events.roti.responses_label' | transloco }}
               </div>
             </div>
             @if (summary.my_score !== null) {
-              <div class="rounded-lg border border-gray-200 bg-white px-4 py-3">
-                <div class="text-2xl font-bold text-gray-900 leading-none">
+              <div class="roti__kpi">
+                <div class="roti__kpi-value roti__kpi-value--neutral">
                   {{ summary.my_score }}
-                  <span class="text-base font-medium text-gray-400">/ 5</span>
+                  <span class="roti__kpi-unit">/ 5</span>
                 </div>
-                <div class="mt-1 text-xs font-medium text-gray-500">
+                <div class="roti__kpi-label">
                   {{ 'events.roti.my_score' | transloco }}
                 </div>
               </div>
@@ -66,21 +66,21 @@
           </div>
 
           <!-- Distribution bars -->
-          <h3 class="text-sm font-semibold text-gray-700 mb-2">
+          <h3 class="roti__dist-title">
             {{ 'events.roti.distribution' | transloco }}
           </h3>
-          <ul class="space-y-2">
+          <ul class="roti__bars">
             @for (bar of rotiDistribution(); track bar.score) {
-              <li class="flex items-center gap-3 text-sm">
+              <li class="roti__bar">
                 <span
-                  class="w-28 shrink-0 text-gray-600"
+                  class="roti__bar-label"
                   [pTooltip]="'events.roti.scale.' + bar.score | transloco"
                   tooltipPosition="top"
                 >
                   {{ 'events.roti.scale.' + bar.score | transloco }}
                 </span>
                 <div
-                  class="flex-1 h-3 rounded-full bg-gray-100 overflow-hidden"
+                  class="roti__bar-track"
                   role="meter"
                   [attr.aria-valuenow]="bar.count"
                   [attr.aria-valuemin]="0"
@@ -92,11 +92,11 @@
                   "
                 >
                   <div
-                    class="h-full rounded-full bg-emerald-500 transition-[width]"
+                    class="roti__bar-fill"
                     [style.width.%]="(bar.count / rotiMaxCount()) * 100"
                   ></div>
                 </div>
-                <span class="w-6 text-right font-medium text-gray-700">{{ bar.count }}</span>
+                <span class="roti__bar-count">{{ bar.count }}</span>
               </li>
             }
           </ul>
@@ -108,7 +108,7 @@
           />
         }
       } @else {
-        <p class="text-sm text-gray-500">{{ 'common.loading' | transloco }}…</p>
+        <p class="roti__hint">{{ 'common.loading' | transloco }}…</p>
       }
     </div>
   }

@@ -6,6 +6,48 @@
 .builder-section-title {
   font-size: 0.95rem;
   font-weight: 600;
-  color: var(--text-strong);
+  color: var(--ink);
   margin: 0 0 0.5rem;
+}
+
+.slots-editor {
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+
+    // Flush the heading's default bottom margin inside the flex row.
+    .builder-section-title {
+      margin-bottom: 0;
+    }
+  }
+
+  &__help {
+    margin-bottom: 0.5rem;
+  }
+
+  &__error {
+    display: block;
+    margin-top: 0.25rem;
+    color: var(--danger);
+  }
+
+  &__cell--right {
+    text-align: right;
+  }
+
+  &__cell--muted {
+    color: var(--muted);
+  }
+
+  &__actions {
+    text-align: right;
+    white-space: nowrap;
+  }
+}
+
+// Full-width PrimeNG form controls (reached via styleClass on the host).
+:host ::ng-deep .slots-editor__field {
+  width: 100%;
 }

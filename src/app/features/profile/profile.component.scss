@@ -71,10 +71,84 @@
   gap: 0.75rem;
   margin-top: 1rem;
   flex-wrap: wrap;
+}
 
-  .flex-1 {
-    flex: 1 1 auto;
+.profile__spacer {
+  flex: 1 1 auto;
+}
+
+.profile__email-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.profile__input--full {
+  width: 100%;
+}
+
+.profile__panel {
+  margin-top: 2rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  padding: 1rem;
+
+  &--danger {
+    border-color: var(--danger-soft);
+    background: var(--danger-soft);
   }
+}
+
+.profile__panel-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  color: var(--ink-soft);
+  margin-bottom: 0.25rem;
+
+  &--danger {
+    color: var(--danger);
+  }
+}
+
+.profile__panel-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.profile__panel-text {
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+
+  &--danger {
+    color: var(--danger);
+  }
+}
+
+.profile__danger-title {
+  color: var(--danger);
+}
+
+.profile__dialog-text {
+  font-size: 0.875rem;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+}
+
+.profile__dialog-warning {
+  margin-bottom: 1rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--danger-soft);
+  background: var(--danger-soft);
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--danger);
 }
 
 .calendar-sub-webcal {
@@ -82,7 +156,7 @@
   align-items: center;
   gap: 0.3rem;
   font-size: 0.85rem;
-  color: var(--p-primary-color, #4f46e5);
+  color: var(--p-primary-color, #10b981);
   text-decoration: none;
 
   &:hover {

@@ -263,15 +263,15 @@ export class TeamStatsComponent {
       });
   }
 
-  /** Tailwind severity → text color for a finding badge. */
+  /** Severity → token-based BEM modifier for a finding bullet (styles in SCSS). */
   protected severityClass(severity: string): string {
     switch (severity) {
       case 'critical':
-        return 'text-red-600';
+        return 'team-stats__finding-bullet--critical';
       case 'warning':
-        return 'text-amber-600';
+        return 'team-stats__finding-bullet--warning';
       default:
-        return 'text-gray-500';
+        return 'team-stats__finding-bullet--info';
     }
   }
 

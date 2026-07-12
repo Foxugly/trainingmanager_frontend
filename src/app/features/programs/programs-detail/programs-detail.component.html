@@ -1,36 +1,36 @@
 <div>
   @if (loading()) {
-    <div class="mt-4" aria-hidden="true">
+    <div class="programs-detail__skel" aria-hidden="true">
       <!-- Header skeleton (mirrors the detail-header toolbar) -->
-      <div class="flex items-center justify-between gap-4 mb-8">
+      <div class="programs-detail__skel-head">
         <p-skeleton width="2.5rem" height="2.5rem" borderRadius="9999px" />
-        <div class="flex flex-1 flex-col items-center gap-2">
+        <div class="programs-detail__skel-title">
           <p-skeleton width="6rem" height="0.75rem" />
           <p-skeleton width="14rem" height="1.75rem" />
         </div>
-        <div class="flex items-center gap-2">
+        <div class="programs-detail__skel-actions">
           <p-skeleton width="2.5rem" height="2.5rem" borderRadius="9999px" />
           <p-skeleton width="2.5rem" height="2.5rem" borderRadius="9999px" />
         </div>
       </div>
       <!-- Body skeleton: two-column calendar + list -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="programs-detail__skel-body">
         <div>
-          <p-skeleton width="40%" height="1.25rem" styleClass="mb-3" />
+          <p-skeleton width="40%" height="1.25rem" styleClass="programs-detail__mb-3" />
           <p-skeleton width="100%" height="18rem" borderRadius="0.5rem" />
         </div>
         <div>
-          <p-skeleton width="40%" height="1.25rem" styleClass="mb-3" />
+          <p-skeleton width="40%" height="1.25rem" styleClass="programs-detail__mb-3" />
           @for (_ of [1, 2, 3, 4]; track $index) {
-            <p-skeleton width="100%" height="3rem" borderRadius="0.375rem" styleClass="mb-2" />
+            <p-skeleton width="100%" height="3rem" borderRadius="0.375rem" styleClass="programs-detail__mb-2" />
           }
         </div>
       </div>
     </div>
   } @else if (notFound()) {
-    <p class="mt-4 text-gray-500">{{ 'programs.detail.not_found' | transloco }}</p>
+    <p class="programs-detail__notfound">{{ 'programs.detail.not_found' | transloco }}</p>
   } @else if (loadError()) {
-    <div class="mt-4 flex flex-col items-start gap-3">
+    <div class="programs-detail__error">
       <p-message severity="error" [text]="'common.load_failed' | transloco" />
       <p-button
         icon="pi pi-refresh"
@@ -41,37 +41,32 @@
       />
     </div>
   } @else if (program(); as p) {
-    <app-detail-header
-      [eyebrow]="'common.entity.program' | transloco"
-      [title]="p.name"
-      [backLink]="['/programs']"
-      icon="pi-list"
-    >
+    <app-page-header [title]="p.name" icon="pi-list">
+      <a
+        slot="left"
+        pButton
+        [routerLink]="['/programs']"
+        icon="pi pi-arrow-left"
+        severity="secondary"
+        [outlined]="true"
+        [rounded]="true"
+        [pTooltip]="'common.back' | transloco"
+        tooltipPosition="bottom"
+        [attr.aria-label]="'common.back' | transloco"
+      ></a>
       @if (isArchived()) {
-        <div
-          detailHeaderBanner
-          class="mb-4 flex items-center justify-between gap-3 flex-wrap rounded border border-amber-200 bg-amber-50 p-4"
-        >
-          <div class="flex items-center gap-2 text-amber-900">
-            <i class="pi pi-box" aria-hidden="true"></i>
-            <span class="font-medium">{{ 'programs.detail.archived_banner' | transloco }}</span>
-          </div>
-        </div>
-      }
-
-      @if (isArchived()) {
-        <span detailHeaderBadges class="rounded bg-gray-200 px-2 py-1 text-xs text-gray-700">
+        <span slot="title-after" class="programs-detail__archived-badge">
           {{ 'programs.list.archived_badge' | transloco }}
         </span>
       }
 
       @if (canManage()) {
-        <app-active-toggle detailHeaderActions
+        <app-active-toggle slot="right"
           [entityId]="p.id" [value]="activeValue()" [patch]="patchActive"
           [labels]="activeLabels()" (valueChange)="activeValue.set($event)" />
       }
       @if (canManage()) {
-        <a detailHeaderActions [routerLink]="['/programs', p.id, 'edit']">
+        <a slot="right" [routerLink]="['/programs', p.id, 'edit']">
           <p-button
             icon="pi pi-pencil"
             severity="info"
@@ -84,15 +79,26 @@
         </a>
       }
 
-      <dl detailHeaderMeta class="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm">
+    </app-page-header>
+
+    @if (isArchived()) {
+      <div class="programs-detail__banner">
+        <div class="programs-detail__banner-label">
+          <i class="pi pi-box" aria-hidden="true"></i>
+          <span class="programs-detail__banner-title">{{ 'programs.detail.archived_banner' | transloco }}</span>
+        </div>
+      </div>
+    }
+
+    <dl class="programs-detail__meta">
         @if (p.team) {
-          <div class="flex items-center gap-2">
-            <i class="pi pi-users text-gray-400" aria-hidden="true"></i>
-            <dt class="text-gray-500">{{ 'programs.fields.team' | transloco }}</dt>
-            <dd class="font-medium">
+          <div class="programs-detail__meta-item">
+            <i class="pi pi-users programs-detail__meta-icon" aria-hidden="true"></i>
+            <dt class="programs-detail__meta-label">{{ 'programs.fields.team' | transloco }}</dt>
+            <dd class="programs-detail__meta-value">
               <a
                 [routerLink]="['/teams', p.team.id]"
-                class="text-emerald-700 hover:underline"
+                class="programs-detail__meta-link"
               >
                 {{ p.team.name }}
               </a>
@@ -100,36 +106,35 @@
           </div>
         }
         @if (p.date_start) {
-          <div class="flex items-center gap-2">
-            <i class="pi pi-calendar text-gray-400" aria-hidden="true"></i>
-            <dt class="text-gray-500">{{ 'programs.fields.date_start' | transloco }}</dt>
-            <dd class="font-medium text-gray-900">{{ p.date_start | localizedDate: 'mediumDate' }}</dd>
+          <div class="programs-detail__meta-item">
+            <i class="pi pi-calendar programs-detail__meta-icon" aria-hidden="true"></i>
+            <dt class="programs-detail__meta-label">{{ 'programs.fields.date_start' | transloco }}</dt>
+            <dd class="programs-detail__meta-value programs-detail__meta-value--strong">{{ p.date_start | localizedDate: 'mediumDate' }}</dd>
           </div>
         }
         @if (p.date_end) {
-          <div class="flex items-center gap-2">
-            <i class="pi pi-calendar-times text-gray-400" aria-hidden="true"></i>
-            <dt class="text-gray-500">{{ 'programs.fields.date_end' | transloco }}</dt>
-            <dd class="font-medium text-gray-900">{{ p.date_end | localizedDate: 'mediumDate' }}</dd>
+          <div class="programs-detail__meta-item">
+            <i class="pi pi-calendar-times programs-detail__meta-icon" aria-hidden="true"></i>
+            <dt class="programs-detail__meta-label">{{ 'programs.fields.date_end' | transloco }}</dt>
+            <dd class="programs-detail__meta-value programs-detail__meta-value--strong">{{ p.date_end | localizedDate: 'mediumDate' }}</dd>
           </div>
         }
-      </dl>
-    </app-detail-header>
+    </dl>
 
     @if (lastGenerationResult(); as result) {
-      <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded">
-        <h3 class="font-semibold text-emerald-900 mb-2 flex items-center gap-2">
+      <div class="programs-detail__success">
+        <h3 class="programs-detail__success-title">
           <i class="pi pi-check-circle"></i>
           {{ 'programs.generate.success_title' | transloco }}
         </h3>
-        <p class="text-sm text-emerald-800 mb-2">
+        <p class="programs-detail__success-text">
           {{
             'programs.generate.success_summary'
               | transloco: { created: result.created, deleted: result.deleted }
           }}
         </p>
         @if (result.rationale) {
-          <div class="text-sm text-gray-700 italic whitespace-pre-line">
+          <div class="programs-detail__success-rationale">
             {{ result.rationale }}
           </div>
         }
@@ -137,22 +142,22 @@
     }
 
     @if (program()?.description) {
-      <section class="mb-8 max-w-2xl">
-        <h2 class="text-lg font-semibold mb-2">
+      <section class="programs-detail__section programs-detail__section--narrow">
+        <h2 class="programs-detail__h2 programs-detail__h2--tight">
           {{ 'programs.fields.description' | transloco }}
         </h2>
-        <div class="text-gray-700 rich-text" [innerHTML]="p.description"></div>
+        <div class="programs-detail__desc rich-text" [innerHTML]="p.description"></div>
       </section>
     }
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <div class="programs-detail__grid">
       <!-- LEFT: Calendar -->
       <section>
-        <div class="flex items-center justify-between mb-3 gap-2 flex-wrap">
-          <h2 class="text-lg font-semibold">
+        <div class="programs-detail__panel-head">
+          <h2 class="programs-detail__h2">
             {{ 'programs.detail.calendar_section_title' | transloco }}
           </h2>
-          <div class="flex items-center gap-1.5 flex-wrap">
+          <div class="programs-detail__cal-nav">
             <p-button
               icon="pi pi-chevron-left"
               severity="secondary"
@@ -162,7 +167,7 @@
               [ariaLabel]="'programs.detail.calendar.previous_month' | transloco"
               (onClick)="previousMonth()"
             />
-            <span class="text-sm font-semibold capitalize min-w-[8rem] text-center">
+            <span class="programs-detail__cal-month">
               {{ monthLabel() }}
             </span>
             <p-button
@@ -185,44 +190,40 @@
         </div>
 
         @if (loadingEvents()) {
-          <p class="text-gray-500 text-sm mb-3">{{ 'common.loading' | transloco }}…</p>
+          <p class="programs-detail__cal-loading">{{ 'common.loading' | transloco }}…</p>
         }
 
-        <div class="grid grid-cols-7 gap-px bg-gray-200 rounded overflow-hidden border border-gray-200">
+        <div class="programs-detail__calendar">
           @for (label of weekDayLabels(); track label) {
-            <div class="bg-gray-50 px-1 py-1.5 text-xs font-semibold text-gray-700 text-center capitalize">
+            <div class="programs-detail__weekday">
               {{ label }}
             </div>
           }
           @for (day of daysInGrid(); track dayKey(day)) {
             <div
-              class="bg-white min-h-[6rem] p-1.5"
-              [class.bg-gray-50]="!isSameMonth(day, currentMonth())"
-              [class.opacity-60]="!isSameMonth(day, currentMonth())"
+              class="programs-detail__day"
+              [class.programs-detail__day--outside]="!isSameMonth(day, currentMonth())"
             >
               <div
-                class="text-xs mb-1 inline-flex items-center justify-center w-6 h-6 rounded-full"
-                [class.bg-emerald-600]="isToday(day)"
-                [class.text-white]="isToday(day)"
-                [class.font-semibold]="isToday(day)"
-                [class.text-gray-500]="!isToday(day)"
+                class="programs-detail__daynum"
+                [class.programs-detail__daynum--today]="isToday(day)"
               >
                 {{ day | localizedDate: 'd' }}
               </div>
               @for (event of eventsByDay().get(dayKey(day)) || []; track event.id) {
                 <a
                   [routerLink]="['/events', event.id]"
-                  class="block text-xs px-2 py-1 mb-1 rounded font-medium truncate cursor-pointer hover:opacity-90 transition border-l-4 text-gray-900"
+                  class="programs-detail__chip"
                   [style.background-color]="eventBgColor(event)"
                   [style.border-left-color]="eventTextColor(event)"
                   [title]="event.name"
                 >
                   @if (event.hour_start) {
-                    <span class="font-semibold tabular-nums mr-1">{{ event.hour_start | shortTime }}</span>
+                    <span class="programs-detail__chip-time">{{ event.hour_start | shortTime }}</span>
                   }
                   {{ event.name }}
                   @if (event.total) {
-                    <span class="opacity-75">({{ event.total }}{{ 'common.units.meters_short' | transloco }})</span>
+                    <span class="programs-detail__chip-total">({{ event.total }}{{ 'common.units.meters_short' | transloco }})</span>
                   }
                 </a>
               }
@@ -231,7 +232,7 @@
         </div>
 
         @if (!loadingEvents() && events().length === 0) {
-          <p class="mt-3 text-sm text-gray-500 text-center">
+          <p class="programs-detail__cal-empty">
             {{ 'programs.detail.no_events_yet' | transloco }}
           </p>
         }
@@ -239,14 +240,14 @@
 
       <!-- RIGHT: Events list (all events of the program, asc) -->
       <section>
-        <div class="flex items-center justify-between mb-3 gap-2 flex-wrap">
-          <h2 class="text-lg font-semibold">
+        <div class="programs-detail__panel-head">
+          <h2 class="programs-detail__h2">
             {{ 'programs.detail.events_list_title' | transloco }}
             @if (eventsByDateAsc().length > 0) {
-              <span class="text-sm font-normal text-gray-500">({{ eventsByDateAsc().length }})</span>
+              <span class="programs-detail__count">({{ eventsByDateAsc().length }})</span>
             }
           </h2>
-          <div class="flex items-center gap-2 flex-wrap">
+          <div class="programs-detail__list-actions">
             @if (canManage() && !isArchived()) {
               <a
                 [routerLink]="['/events', 'new']"
@@ -276,34 +277,34 @@
         </div>
 
         @if (loadingEvents()) {
-          <p class="text-gray-500 text-sm">{{ 'common.loading' | transloco }}…</p>
+          <p class="programs-detail__list-loading">{{ 'common.loading' | transloco }}…</p>
         } @else if (eventsByDateAsc().length === 0) {
-          <div class="rounded border border-dashed border-gray-300 p-8 text-center">
-            <i class="pi pi-calendar text-2xl text-gray-400 mb-2 block" aria-hidden="true"></i>
-            <p class="text-sm text-gray-500">
+          <div class="programs-detail__list-empty">
+            <i class="pi pi-calendar programs-detail__list-empty-icon" aria-hidden="true"></i>
+            <p class="programs-detail__list-empty-text">
               {{ 'programs.detail.no_events_yet' | transloco }}
             </p>
           </div>
         } @else {
-          <ul class="divide-y divide-gray-200 border border-gray-200 rounded max-h-[36rem] overflow-y-auto">
+          <ul class="programs-detail__list">
             @for (event of eventsByDateAsc(); track event.id) {
-              <li class="hover:bg-gray-50 transition">
+              <li class="programs-detail__list-item">
                 <a
                   [routerLink]="['/events', event.id]"
-                  class="flex items-stretch gap-3 p-3"
+                  class="programs-detail__list-link"
                 >
                   <span
-                    class="w-1 rounded-sm shrink-0"
+                    class="programs-detail__list-bar"
                     [style.background-color]="eventTextColor(event)"
                     aria-hidden="true"
                   ></span>
-                  <div class="min-w-0 flex-1">
-                    <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
-                      <span class="font-medium text-gray-900">
+                  <div class="programs-detail__list-main">
+                    <div class="programs-detail__list-namerow">
+                      <span class="programs-detail__list-name">
                         {{ event.name }}
                       </span>
                     </div>
-                    <div class="text-xs text-gray-500 mt-0.5">
+                    <div class="programs-detail__list-date">
                       @if (event.date) {
                         {{ event.date | localizedDate: 'EEE d MMM y' }}
                       }
@@ -313,11 +314,11 @@
                     </div>
                   </div>
                   @if (event.total) {
-                    <span class="self-center shrink-0 inline-flex items-center rounded-full bg-emerald-50 border border-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 tabular-nums">
+                    <span class="programs-detail__list-total">
                       {{ event.total }}{{ 'common.units.meters_short' | transloco }}
                     </span>
                   }
-                  <i class="pi pi-chevron-right text-gray-300 self-center" aria-hidden="true"></i>
+                  <i class="pi pi-chevron-right programs-detail__list-chevron" aria-hidden="true"></i>
                 </a>
               </li>
             }
@@ -327,8 +328,8 @@
     </div>
 
     @if (program(); as p) {
-      <section class="mb-8">
-        <h2 class="text-lg font-semibold mb-3">{{ 'attachments.title' | transloco }}</h2>
+      <section class="programs-detail__section">
+        <h2 class="programs-detail__h2">{{ 'attachments.title' | transloco }}</h2>
         <app-attachment-list targetType="program" [targetId]="p.id" [canEdit]="canManage()" />
       </section>
     }

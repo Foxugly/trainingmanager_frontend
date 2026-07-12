@@ -1,9 +1,9 @@
-<h3 class="text-sm font-semibold mb-2">{{ 'events.training.freeform_heading' | transloco }}</h3>
+<h3 class="freeform__heading">{{ 'events.training.freeform_heading' | transloco }}</h3>
 @if (canManage()) {
   <app-rich-editor [style]="{ height: '12rem' }" [ngModel]="content()" (ngModelChange)="draft.set($event)" />
-  <div class="mt-2">
+  <div class="freeform__actions">
     <p-button [label]="'common.save' | transloco" [loading]="saving()" [disabled]="saving()" (onClick)="save()" />
   </div>
 } @else {
-  <div class="prose max-w-none" [innerHTML]="content()"></div>
+  <div class="rich-text" [innerHTML]="content()"></div>
 }

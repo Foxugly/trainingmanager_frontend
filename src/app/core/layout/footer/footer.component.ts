@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { getRuntimeConfig } from '../../runtime-config';
 
 @Component({
   selector: 'app-footer',
-  imports: [TranslocoPipe],
+  imports: [TranslocoPipe, RouterLink],
   templateUrl: './footer.component.html',
   styleUrl: './footer.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

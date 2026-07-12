@@ -1,16 +1,14 @@
-<section class="flex min-h-[60vh] items-center justify-center px-4 py-12 md:py-16">
-  <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-md border border-gray-200">
-    <h1 class="text-2xl font-bold mb-6 text-center">{{ 'auth.login.title' | transloco }}</h1>
+<section class="login">
+  <div class="login__card">
+    <h1 class="login__title">{{ 'auth.login.title' | transloco }}</h1>
 
     @if (emailNotVerified()) {
-      <div
-        class="mb-6 rounded border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 flex flex-col gap-3"
-      >
+      <div class="login__banner">
         <div>
-          <i class="pi pi-exclamation-triangle mr-1" aria-hidden="true"></i>
+          <i class="pi pi-exclamation-triangle login__banner-icon" aria-hidden="true"></i>
           {{ 'auth.login.email_not_verified_banner' | transloco }}
         </div>
-        <div class="flex flex-col gap-2">
+        <div class="login__banner-fields">
           <input
             pInputText
             type="email"
@@ -21,11 +19,11 @@
             autocomplete="email"
           />
           @if (resendError(); as msg) {
-            <small class="text-xs text-red-700">{{ msg | transloco }}</small>
+            <small class="login__error">{{ msg | transloco }}</small>
           }
           @if (resendDone()) {
-            <small class="text-xs text-emerald-700">
-              <i class="pi pi-check mr-1" aria-hidden="true"></i>
+            <small class="login__success">
+              <i class="pi pi-check login__success-icon" aria-hidden="true"></i>
               {{ 'auth.login.resend_email_sent' | transloco }}
             </small>
           }
@@ -49,9 +47,9 @@
     }
 
     @if (!magicLinkMode()) {
-      <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
-        <div class="flex flex-col gap-2">
-          <label for="email" class="text-sm font-medium text-gray-700">
+      <form [formGroup]="form" (ngSubmit)="submit()" class="login__form">
+        <div class="login__field">
+          <label for="email" class="login__label">
             {{ 'auth.login.email' | transloco }}
           </label>
           <input
@@ -60,12 +58,12 @@
             type="email"
             formControlName="email"
             autocomplete="email"
-            class="w-full"
+            class="login__input"
           />
         </div>
 
-        <div class="flex flex-col gap-2">
-          <label for="password" class="text-sm font-medium text-gray-700">
+        <div class="login__field">
+          <label for="password" class="login__label">
             {{ 'auth.login.password' | transloco }}
           </label>
           <p-password
@@ -74,21 +72,21 @@
             [toggleMask]="true"
             inputId="password"
             autocomplete="current-password"
-            styleClass="w-full"
+            styleClass="u-full"
             [inputStyle]="{ width: '100%' }"
           />
         </div>
 
-        <div class="flex items-center justify-between gap-2">
-          <div class="flex items-center gap-2">
+        <div class="login__row">
+          <div class="login__remember">
             <p-checkbox formControlName="remember" [binary]="true" inputId="remember" />
-            <label for="remember" class="text-sm text-gray-700 cursor-pointer">
+            <label for="remember" class="login__remember-label">
               {{ 'auth.login.remember_me_label' | transloco }}
             </label>
           </div>
           <a
             [routerLink]="['/auth/forgot-password']"
-            class="text-xs text-emerald-700 hover:underline"
+            class="login__forgot"
           >
             {{ 'auth.login.forgot_password_link' | transloco }}
           </a>
@@ -109,41 +107,41 @@
           [label]="'auth.login.submit' | transloco"
           [loading]="loading()"
           [disabled]="submitDisabled() || form.invalid"
-          styleClass="w-full"
+          styleClass="u-full"
         />
       </form>
 
-      <div class="mt-4 flex items-center gap-3 text-xs text-gray-400">
-        <span class="h-px flex-1 bg-gray-200"></span>
+      <div class="login__divider">
+        <span class="login__divider-line"></span>
         <span>{{ 'auth.login.or' | transloco }}</span>
-        <span class="h-px flex-1 bg-gray-200"></span>
+        <span class="login__divider-line"></span>
       </div>
 
       <button
         type="button"
-        class="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-100"
+        class="login__magic-btn"
         (click)="toggleMagicLinkMode()"
       >
         <i class="pi pi-envelope" aria-hidden="true"></i>
         {{ 'auth.magic_link.login_cta' | transloco }}
       </button>
 
-      <p class="text-center text-sm text-gray-600 mt-4">
+      <p class="login__footer">
         {{ 'auth.login.no_account_yet' | transloco }}
-        <a [routerLink]="['/register']" class="text-emerald-600 hover:underline font-medium">
+        <a [routerLink]="['/register']" class="login__link">
           {{ 'auth.login.no_account_yet_link' | transloco }}
         </a>
       </p>
     } @else {
-      <div class="flex flex-col gap-4">
-        <p class="text-sm text-gray-600">{{ 'auth.magic_link.intro' | transloco }}</p>
+      <div class="login__stack">
+        <p class="login__intro">{{ 'auth.magic_link.intro' | transloco }}</p>
 
         @if (magicLinkSent()) {
           <p-message severity="success" [text]="'auth.magic_link.sent' | transloco" />
         } @else {
-          <form [formGroup]="form" (ngSubmit)="submitMagicLink()" class="flex flex-col gap-4">
-            <div class="flex flex-col gap-2">
-              <label for="magic-email" class="text-sm font-medium text-gray-700">
+          <form [formGroup]="form" (ngSubmit)="submitMagicLink()" class="login__form">
+            <div class="login__field">
+              <label for="magic-email" class="login__label">
                 {{ 'auth.magic_link.email_label' | transloco }}
               </label>
               <input
@@ -153,7 +151,7 @@
                 formControlName="email"
                 autocomplete="email"
                 [placeholder]="'auth.magic_link.email_placeholder' | transloco"
-                class="w-full"
+                class="login__input"
               />
             </div>
 
@@ -167,14 +165,14 @@
               icon="pi pi-envelope"
               [loading]="magicLinkSubmitting()"
               [disabled]="magicLinkSubmitting()"
-              styleClass="w-full"
+              styleClass="u-full"
             />
           </form>
         }
 
         <button
           type="button"
-          class="text-center text-sm text-emerald-700 hover:underline"
+          class="login__back"
           (click)="toggleMagicLinkMode()"
         >
           {{ 'auth.magic_link.back_to_password' | transloco }}

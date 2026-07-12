@@ -52,7 +52,7 @@
   text-decoration: none;
   transition: border-color 0.15s ease, color 0.15s ease;
 
-  &:hover { border-color: #818cf8; color: #4338ca; }
+  &:hover { border-color: var(--accent); color: var(--accent-strong); }
 }
 
 .tab-content {
@@ -164,7 +164,7 @@
     border-color: rgba(255, 255, 255, 0.1);
     color: #e2e8f0;
 
-    &:hover { border-color: #818cf8; color: #c7d2fe; }
+    &:hover { border-color: var(--accent); color: var(--accent-soft); }
   }
 
   .about-dl {

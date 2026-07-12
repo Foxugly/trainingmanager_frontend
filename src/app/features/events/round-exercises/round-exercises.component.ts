@@ -90,6 +90,7 @@ interface NewExerciseRow {
     TranslocoPipe,
   ],
   templateUrl: './round-exercises.component.html',
+  styleUrl: './round-exercises.component.scss',
   providers: [ConfirmationService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

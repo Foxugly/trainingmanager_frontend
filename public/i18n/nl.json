@@ -24,7 +24,8 @@
   "topmenu": {
     "open": "Menu openen",
     "close": "Menu sluiten",
-    "messages": "Berichten"
+    "messages": "Berichten",
+    "theme": "Thema wisselen"
   },
   "messages": {
     "title": "Berichten",
@@ -970,7 +971,8 @@
   "footer": {
     "author": "Foxugly",
     "version_label": "Versie",
-    "rights": ". Alle rechten voorbehouden."
+    "privacy": "Privacy",
+    "rights": "Alle rechten voorbehouden."
   },
   "public": {
     "nav": {

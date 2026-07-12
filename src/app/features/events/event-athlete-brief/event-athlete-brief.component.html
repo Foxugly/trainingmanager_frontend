@@ -1,7 +1,7 @@
 @if (draft() || canManage()) {
-  <div class="rounded-lg border border-indigo-100 bg-indigo-50/50 p-4 mb-4">
-    <div class="flex items-center justify-between gap-3 mb-1 flex-wrap">
-      <h4 class="text-sm font-semibold text-indigo-800 flex items-center gap-2">
+  <div class="athlete-brief">
+    <div class="athlete-brief__head">
+      <h4 class="athlete-brief__title">
         <i class="pi pi-sparkles" aria-hidden="true"></i>
         {{ 'events.athlete_brief.title' | transloco }}
       </h4>
@@ -30,9 +30,9 @@
         [ngModel]="draft()"
         (ngModelChange)="draft.set($event)"
         [placeholder]="'events.athlete_brief.placeholder' | transloco"
-        class="w-full mt-1"
+        class="athlete-brief__textarea"
       ></textarea>
-      <div class="mt-2">
+      <div class="athlete-brief__actions">
         <p-button
           [label]="'common.save' | transloco"
           icon="pi pi-check"
@@ -43,7 +43,7 @@
       </div>
     } @else {
       <!-- Athlete: read-only. -->
-      <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{{ brief() }}</p>
+      <p class="athlete-brief__text">{{ brief() }}</p>
     }
   </div>
 }

@@ -1,6 +1,6 @@
 <div class="performance-panel">
   @if (canMutate()) {
-    <div class="mb-4 flex justify-end">
+    <div class="performance-panel__add">
       <p-button
         icon="pi pi-plus"
         [label]="'performance.add' | transloco"
@@ -12,7 +12,7 @@
   }
 
   @if (loading()) {
-    <p class="text-gray-500 text-sm">{{ 'common.loading' | transloco }}…</p>
+    <p class="performance-panel__loading">{{ 'common.loading' | transloco }}…</p>
   } @else if (isEmpty()) {
     <app-empty-state
       icon="chart-line"
@@ -20,18 +20,18 @@
       [title]="'performance.empty' | transloco"
     />
   } @else {
-    <div class="flex flex-col gap-6">
+    <div class="performance-panel__groups">
       @for (group of groups(); track group.label) {
-        <section class="rounded-lg border border-gray-200 p-4">
-          <header class="mb-3 flex flex-wrap items-center gap-2">
-            <h4 class="text-base font-semibold text-gray-900">{{ group.label }}</h4>
+        <section class="performance-panel__group">
+          <header class="performance-panel__group-head">
+            <h4 class="performance-panel__group-title">{{ group.label }}</h4>
             <p-tag
               severity="success"
               [value]="('performance.pb' | transloco) + ' ' + group.pbLabel"
             />
           </header>
 
-          <div class="perf-chart mb-3">
+          <div class="perf-chart performance-panel__chart">
             @defer (on viewport) {
               <p-chart
                 type="line"
@@ -46,18 +46,18 @@
             }
           </div>
 
-          <ul class="divide-y divide-gray-100 text-sm">
+          <ul class="performance-panel__list">
             @for (entry of group.entries; track entry.id) {
-              <li class="flex items-center gap-3 py-1.5">
-                <span class="w-24 shrink-0 text-gray-500">
+              <li class="performance-panel__row">
+                <span class="performance-panel__date">
                   {{ entry.recorded_on | localizedDate: 'mediumDate' }}
                 </span>
-                <span class="font-medium text-gray-900">{{ formatEntryValue(entry) }}</span>
+                <span class="performance-panel__value">{{ formatEntryValue(entry) }}</span>
                 @if (entry.notes) {
-                  <span class="truncate text-gray-500">{{ entry.notes }}</span>
+                  <span class="performance-panel__notes">{{ entry.notes }}</span>
                 }
                 @if (canMutate()) {
-                  <span class="ml-auto flex shrink-0 items-center gap-1">
+                  <span class="performance-panel__row-actions">
                     <p-button
                       icon="pi pi-pencil"
                       severity="secondary"
@@ -101,9 +101,9 @@
       (editingId() === null ? 'performance.add' : 'performance.edit') | transloco
     "
   >
-    <form [formGroup]="form" class="flex flex-col gap-4">
-      <div class="flex flex-col gap-2">
-        <label for="perf_label" class="text-sm font-medium text-gray-700">
+    <form [formGroup]="form" class="performance-panel__form">
+      <div class="performance-panel__field">
+        <label for="perf_label" class="performance-panel__label">
           {{ 'performance.fields.label' | transloco }}
         </label>
         <input
@@ -122,9 +122,9 @@
         </datalist>
       </div>
 
-      <div class="flex gap-4">
-        <div class="flex flex-1 flex-col gap-2">
-          <label for="perf_value" class="text-sm font-medium text-gray-700">
+      <div class="performance-panel__field-row">
+        <div class="performance-panel__field performance-panel__field--grow">
+          <label for="perf_value" class="performance-panel__label">
             {{ 'performance.fields.value' | transloco }}
           </label>
           <p-inputNumber
@@ -136,8 +136,8 @@
             [disabled]="saving()"
           />
         </div>
-        <div class="flex flex-1 flex-col gap-2">
-          <label for="perf_unit" class="text-sm font-medium text-gray-700">
+        <div class="performance-panel__field performance-panel__field--grow">
+          <label for="perf_unit" class="performance-panel__label">
             {{ 'performance.fields.unit' | transloco }}
           </label>
           <p-select
@@ -152,8 +152,8 @@
         </div>
       </div>
 
-      <div class="flex flex-col gap-2">
-        <label for="perf_date" class="text-sm font-medium text-gray-700">
+      <div class="performance-panel__field">
+        <label for="perf_date" class="performance-panel__label">
           {{ 'performance.fields.date' | transloco }}
         </label>
         <p-datepicker
@@ -166,8 +166,8 @@
         />
       </div>
 
-      <div class="flex flex-col gap-2">
-        <label for="perf_notes" class="text-sm font-medium text-gray-700">
+      <div class="performance-panel__field">
+        <label for="perf_notes" class="performance-panel__label">
           {{ 'performance.fields.notes' | transloco }}
         </label>
         <textarea

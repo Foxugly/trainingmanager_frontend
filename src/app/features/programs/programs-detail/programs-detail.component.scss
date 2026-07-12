@@ -1,3 +1,438 @@
 :host {
   display: block;
 }
+
+.programs-detail {
+  // ── Loading skeleton ──────────────────────────────────────────────────
+  &__skel {
+    margin-top: 1rem;
+  }
+
+  &__skel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  &__skel-title {
+    display: flex;
+    flex: 1 1 0%;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__skel-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__skel-body {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1.5rem;
+
+    @media (min-width: 1024px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  // ── Not-found / error states ──────────────────────────────────────────
+  &__notfound {
+    margin-top: 1rem;
+    color: var(--muted);
+  }
+
+  &__error {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  // ── Archived banner (in detail-header) ────────────────────────────────
+  &__banner {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    border-radius: var(--radius-sm);
+    border: 1px solid color-mix(in srgb, var(--warn) 35%, transparent);
+    background: var(--warn-soft);
+    padding: 1rem;
+  }
+
+  &__banner-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--warn);
+  }
+
+  &__banner-title {
+    font-weight: 500;
+  }
+
+  &__archived-badge {
+    border-radius: var(--radius-sm);
+    background: var(--border);
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+  }
+
+  // ── Header meta list ──────────────────────────────────────────────────
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    column-gap: 2rem;
+    row-gap: 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  &__meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__meta-icon {
+    color: var(--muted);
+  }
+
+  &__meta-label {
+    color: var(--muted);
+  }
+
+  &__meta-value {
+    font-weight: 500;
+
+    &--strong {
+      color: var(--ink);
+    }
+  }
+
+  &__meta-link {
+    color: var(--accent-strong);
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  // ── Generation success box ────────────────────────────────────────────
+  &__success {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: var(--accent-soft);
+    border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+    border-radius: var(--radius-sm);
+  }
+
+  &__success-title {
+    font-weight: 600;
+    color: var(--accent-strong);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__success-text {
+    font-size: 0.875rem;
+    color: var(--accent-strong);
+    margin-bottom: 0.5rem;
+  }
+
+  &__success-rationale {
+    font-size: 0.875rem;
+    color: var(--ink-soft);
+    font-style: italic;
+    white-space: pre-line;
+  }
+
+  // ── Sections / headings ───────────────────────────────────────────────
+  &__section {
+    margin-bottom: 2rem;
+
+    &--narrow {
+      max-width: 42rem;
+    }
+  }
+
+  &__h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+
+    &--tight {
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  &__desc {
+    color: var(--ink-soft);
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+
+    @media (min-width: 1024px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  &__panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  &__count {
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--muted);
+  }
+
+  // ── Calendar ──────────────────────────────────────────────────────────
+  &__cal-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    flex-wrap: wrap;
+  }
+
+  &__cal-month {
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    min-width: 8rem;
+    text-align: center;
+  }
+
+  &__cal-loading {
+    color: var(--muted);
+    font-size: 0.875rem;
+    margin-bottom: 0.75rem;
+  }
+
+  &__calendar {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  &__weekday {
+    background: var(--surface-2);
+    padding: 0.375rem 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    text-align: center;
+    text-transform: capitalize;
+  }
+
+  &__day {
+    background: var(--surface);
+    min-height: 6rem;
+    padding: 0.375rem;
+
+    &--outside {
+      background: var(--surface-2);
+      opacity: 0.6;
+    }
+  }
+
+  &__daynum {
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 999px;
+    color: var(--muted);
+
+    &--today {
+      background: var(--accent-strong);
+      color: #fff;
+      font-weight: 600;
+    }
+  }
+
+  &__chip {
+    display: block;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    margin-bottom: 0.25rem;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border-left: 4px solid transparent;
+    // Chip sits on a fixed light event colour (inline style), so keep the text
+    // dark in both themes rather than following --ink.
+    color: #111827;
+
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+
+  &__chip-time {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    margin-right: 0.25rem;
+  }
+
+  &__chip-total {
+    opacity: 0.75;
+  }
+
+  &__cal-empty {
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  // ── Events list ───────────────────────────────────────────────────────
+  &__list-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  &__list-loading {
+    color: var(--muted);
+    font-size: 0.875rem;
+  }
+
+  &__list-empty {
+    border-radius: var(--radius-sm);
+    border: 1px dashed var(--border);
+    padding: 2rem;
+    text-align: center;
+  }
+
+  &__list-empty-icon {
+    font-size: 1.5rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  &__list-empty-text {
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  &__list {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    max-height: 36rem;
+    overflow-y: auto;
+
+    > * + * {
+      border-top: 1px solid var(--border);
+    }
+  }
+
+  &__list-item {
+    transition: all 0.15s ease;
+
+    &:hover {
+      background: var(--surface-2);
+    }
+  }
+
+  &__list-link {
+    display: flex;
+    align-items: stretch;
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  &__list-bar {
+    width: 0.25rem;
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+  }
+
+  &__list-main {
+    min-width: 0;
+    flex: 1 1 0%;
+  }
+
+  &__list-namerow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 0.5rem;
+    row-gap: 0.25rem;
+  }
+
+  &__list-name {
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  &__list-date {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 0.125rem;
+  }
+
+  &__list-total {
+    align-self: center;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+    padding: 0.125rem 0.625rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent-strong);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__list-chevron {
+    color: var(--border);
+    align-self: center;
+  }
+}
+
+:host ::ng-deep {
+  .programs-detail__mb-2 {
+    margin-bottom: 0.5rem;
+  }
+
+  .programs-detail__mb-3 {
+    margin-bottom: 0.75rem;
+  }
+}

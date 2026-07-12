@@ -24,6 +24,7 @@ import { LocalizedDatePipe } from '../../../shared/datetime/localized-date.pipe'
   selector: 'app-team-roster-history',
   imports: [LocalizedDatePipe, TableModule, Tag, TranslocoPipe, EmptyStateComponent],
   templateUrl: './team-roster-history.component.html',
+  styleUrl: './team-roster-history.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TeamRosterHistoryComponent {

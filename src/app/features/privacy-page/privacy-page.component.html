@@ -1,0 +1,31 @@
+<article class="privacy-page">
+  <section class="privacy-section" data-slug="intro">
+    <div class="privacy-section-inner">
+      <h1>{{ ui().intro.title }}</h1>
+      <p class="lead">{{ ui().intro.lead }}</p>
+    </div>
+  </section>
+
+  <section class="privacy-section" data-slug="content">
+    <div class="privacy-section-inner">
+      @for (sec of ui().sections; track sec.slug) {
+        <section class="privacy-block" [attr.data-slug]="sec.slug">
+          <h2>{{ sec.title }}</h2>
+          <p>{{ sec.body }}</p>
+        </section>
+      }
+
+      <section class="privacy-block privacy-contact" data-slug="contact">
+        <h2>{{ ui().contact.title }}</h2>
+        <p>{{ ui().contact.body }}</p>
+        <p class="privacy-email">
+          <span class="email-display">{{ emailDisplay() }}</span>
+          <button type="button" class="email-cta" (click)="onEmailClick()">
+            <i class="pi pi-envelope" aria-hidden="true"></i>
+            <span>{{ ui().contact.cta }}</span>
+          </button>
+        </p>
+      </section>
+    </div>
+  </section>
+</article>

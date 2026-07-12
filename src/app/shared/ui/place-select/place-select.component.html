@@ -1,4 +1,4 @@
-<div class="flex items-center gap-2">
+<div class="place-select__control">
   <p-select
     [inputId]="inputId()"
     [options]="places()"
@@ -11,24 +11,24 @@
     [disabled]="disabled"
     [placeholder]="'place.select_placeholder' | transloco"
     [emptyMessage]="'place.none' | transloco"
-    styleClass="flex-1 min-w-0"
+    styleClass="place-select__field"
     appendTo="body"
   >
     <ng-template let-place #selectedItem>
       @if (place) {
-        <div class="flex flex-col">
+        <div class="place-select__option">
           <span>{{ place.name }}</span>
           @if (place.address) {
-            <span class="text-xs text-gray-500">{{ place.address }}</span>
+            <span class="place-select__option-sub">{{ place.address }}</span>
           }
         </div>
       }
     </ng-template>
     <ng-template let-place #item>
-      <div class="flex flex-col">
+      <div class="place-select__option">
         <span>{{ place.name }}</span>
         @if (place.address) {
-          <span class="text-xs text-gray-500">{{ place.address }}</span>
+          <span class="place-select__option-sub">{{ place.address }}</span>
         }
       </div>
     </ng-template>
@@ -56,9 +56,9 @@
   [style]="{ width: '28rem' }"
   appendTo="body"
 >
-  <div class="flex flex-col gap-4 pt-1">
-    <div class="flex flex-col gap-1">
-      <label for="new_place_name" class="text-sm font-medium text-gray-700">
+  <div class="place-select__form">
+    <div class="place-select__field-group">
+      <label for="new_place_name" class="place-select__label">
         {{ 'place.name' | transloco }}
       </label>
       <input
@@ -70,11 +70,11 @@
         [attr.aria-invalid]="nameError() ? 'true' : null"
       />
       @if (nameError()) {
-        <small class="text-red-600">{{ nameError() }}</small>
+        <small class="place-select__error">{{ nameError() }}</small>
       }
     </div>
-    <div class="flex flex-col gap-1">
-      <label for="new_place_address" class="text-sm font-medium text-gray-700">
+    <div class="place-select__field-group">
+      <label for="new_place_address" class="place-select__label">
         {{ 'place.address' | transloco }}
       </label>
       <textarea
@@ -84,7 +84,7 @@
         (ngModelChange)="newAddress.set($event)"
         maxlength="500"
         rows="2"
-        class="w-full"
+        class="place-select__textarea"
       ></textarea>
     </div>
   </div>

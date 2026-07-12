@@ -1,3 +1,210 @@
 :host {
   display: block;
 }
+
+.teams-list {
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  &__header-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+  }
+
+  &__actions-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  &__quota {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    border-radius: 999px;
+    padding-inline: 0.625rem;
+    padding-block: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+
+    &--ok {
+      background: var(--surface-2);
+      color: var(--ink-soft);
+    }
+
+    &--full {
+      background: var(--warn-soft);
+      color: var(--warn);
+    }
+
+    &--legacy {
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+  }
+
+  &__quota-icon {
+    font-size: 10px;
+  }
+
+  &__quota-note {
+    max-width: 28rem;
+    font-size: 0.75rem;
+    text-align: right;
+    color: var(--muted);
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1rem;
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @media (min-width: 1024px) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  &__skeleton-card {
+    padding: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  &__skeleton-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  &__card {
+    display: block;
+    padding: 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    transition: all 0.15s ease;
+
+    &:hover {
+      border-color: var(--accent);
+      box-shadow: var(--shadow-card);
+      transform: translateY(-0.125rem);
+    }
+
+    &:hover .teams-list__card-arrow {
+      opacity: 1;
+    }
+  }
+
+  &__card-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  &__logo {
+    flex-shrink: 0;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    object-fit: cover;
+  }
+
+  // Role icon pill (fallback when a team has no logo). Emerald soft island.
+  &__pill {
+    flex-shrink: 0;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+  }
+
+  &__pill-icon {
+    font-size: 1.125rem;
+  }
+
+  // Role chip (soft island: static dark text on soft bg, readable clair+sombre).
+  &__role {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+
+    &--owner {
+      background: var(--info-soft);
+      color: var(--info-strong);
+    }
+
+    &--manager {
+      background: var(--accent-soft);
+      color: var(--accent-strong);
+    }
+
+    &--member {
+      background: var(--surface-2);
+      color: var(--ink-soft);
+    }
+  }
+
+  &__card-body {
+    min-width: 0;
+    flex: 1 1 0%;
+  }
+
+  &__card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__card-sub {
+    font-size: 0.75rem;
+    color: var(--muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  &__card-arrow {
+    font-size: 0.75rem;
+    color: var(--accent-strong);
+    opacity: 0;
+    transition: all 0.15s ease;
+  }
+}
