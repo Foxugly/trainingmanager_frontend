@@ -21,6 +21,7 @@ import { Button } from 'primeng/button';
 import { Message } from 'primeng/message';
 import { Password } from 'primeng/password';
 import { AuthService } from '../../../core/auth/auth.service';
+import { AuthCardComponent } from '../../../shared/components/auth-card/auth-card.component';
 
 interface FieldErrors {
   [field: string]: string[];
@@ -42,6 +43,7 @@ function passwordsMatchValidator(group: AbstractControl): ValidationErrors | nul
     Button,
     Message,
     TranslocoPipe,
+    AuthCardComponent,
   ],
   templateUrl: './reset-password.component.html',
   styleUrl: './reset-password.component.scss',

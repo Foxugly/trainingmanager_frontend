@@ -1,25 +1,27 @@
-<section class="email-confirm">
-  <div class="email-confirm__bg" aria-hidden="true"></div>
-  <div class="email-confirm__card">
-    @switch (phase()) {
-      @case ('loading') {
-        <div class="email-confirm__icon">
-          <i class="pi pi-spin pi-spinner email-confirm__icon-glyph" aria-hidden="true"></i>
-        </div>
-        <p class="email-confirm__text">{{ 'auth.email_confirm.loading' | transloco }}</p>
-      }
-      @case ('success') {
-        <div class="email-confirm__icon">
-          <i class="pi pi-check-circle email-confirm__icon-glyph" aria-hidden="true"></i>
-        </div>
-        <h1 class="email-confirm__title">{{ 'auth.email_confirm.success_title' | transloco }}</h1>
+@switch (phase()) {
+  @case ('loading') {
+    <app-auth-card
+      [icon]="'pi pi-spin pi-spinner'"
+      [title]="'auth.email_confirm.loading' | transloco"
+    />
+  }
+  @case ('success') {
+    <app-auth-card
+      [icon]="'pi pi-check-circle'"
+      [title]="'auth.email_confirm.success_title' | transloco"
+    >
+      <div class="email-confirm__state">
         <p class="email-confirm__text">{{ 'auth.email_confirm.success_redirect' | transloco }}</p>
-      }
-      @case ('invalid_token') {
-        <div class="email-confirm__icon email-confirm__icon--error">
-          <i class="pi pi-times-circle email-confirm__icon-glyph" aria-hidden="true"></i>
-        </div>
-        <h1 class="email-confirm__title">{{ 'auth.email_confirm.error_invalid_token_title' | transloco }}</h1>
+      </div>
+    </app-auth-card>
+  }
+  @case ('invalid_token') {
+    <app-auth-card
+      [icon]="'pi pi-times-circle'"
+      [tone]="'danger'"
+      [title]="'auth.email_confirm.error_invalid_token_title' | transloco"
+    >
+      <div class="email-confirm__state">
         <p class="email-confirm__text email-confirm__text--spaced">{{ 'auth.email_confirm.error_invalid_token' | transloco }}</p>
         <a [routerLink]="['/check-your-email']">
           <p-button
@@ -27,12 +29,16 @@
             icon="pi pi-refresh"
           />
         </a>
-      }
-      @case ('unknown_error') {
-        <div class="email-confirm__icon email-confirm__icon--warn">
-          <i class="pi pi-exclamation-triangle email-confirm__icon-glyph" aria-hidden="true"></i>
-        </div>
-        <h1 class="email-confirm__title">{{ 'auth.email_confirm.error_unknown_title' | transloco }}</h1>
+      </div>
+    </app-auth-card>
+  }
+  @case ('unknown_error') {
+    <app-auth-card
+      [icon]="'pi pi-exclamation-triangle'"
+      [tone]="'warn'"
+      [title]="'auth.email_confirm.error_unknown_title' | transloco"
+    >
+      <div class="email-confirm__state">
         <p class="email-confirm__text email-confirm__text--spaced">{{ 'auth.email_confirm.error_unknown' | transloco }}</p>
         <a [routerLink]="['/check-your-email']">
           <p-button
@@ -42,7 +48,7 @@
             [outlined]="true"
           />
         </a>
-      }
-    }
-  </div>
-</section>
+      </div>
+    </app-auth-card>
+  }
+}

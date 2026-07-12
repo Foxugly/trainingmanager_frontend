@@ -29,6 +29,7 @@ import { CompleteInvitationRequest } from '../../../api/model/complete-invitatio
 import { InvitationStatusEnum } from '../../../api/model/invitation-status-enum';
 import { ValidateInvitation } from '../../../api/model/validate-invitation';
 import { AuthService } from '../../../core/auth/auth.service';
+import { AuthCardComponent } from '../../../shared/components/auth-card/auth-card.component';
 
 interface FieldErrors {
   [field: string]: string[];
@@ -56,6 +57,7 @@ const matchPasswords = (control: AbstractControl): ValidationErrors | null => {
     Button,
     Message,
     TranslocoPipe,
+    AuthCardComponent,
   ],
   templateUrl: './invitation-accept.component.html',
   styleUrl: './invitation-accept.component.scss',

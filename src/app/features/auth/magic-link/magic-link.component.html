@@ -1,51 +1,46 @@
-<section class="magic">
-  <div class="magic__bg" aria-hidden="true"></div>
-  <div class="magic__card">
-    @switch (state()) {
-      @case ('loading') {
-        <div class="magic__loading">
-          <p-progressSpinner strokeWidth="3" aria-hidden="true" />
-          <p class="magic__text">{{ 'auth.magic_link.exchange.loading' | transloco }}</p>
-        </div>
-      }
-      @case ('expired') {
-        <div class="magic__state">
-          <div class="magic__icon magic__icon--warn">
-            <i class="pi pi-clock magic__icon-glyph" aria-hidden="true"></i>
-          </div>
-          <h1 class="magic__state-title">
-            {{ 'auth.magic_link.exchange.expired_title' | transloco }}
-          </h1>
-          <p class="magic__state-text">
-            {{ 'auth.magic_link.exchange.expired_body' | transloco }}
-          </p>
-          <a [routerLink]="['/login']">
-            <p-button
-              [label]="'auth.magic_link.exchange.request_new' | transloco"
-              icon="pi pi-envelope"
-            />
-          </a>
-        </div>
-      }
-      @case ('invalid') {
-        <div class="magic__state">
-          <div class="magic__icon magic__icon--error">
-            <i class="pi pi-times-circle magic__icon-glyph" aria-hidden="true"></i>
-          </div>
-          <h1 class="magic__state-title">
-            {{ 'auth.magic_link.exchange.invalid_title' | transloco }}
-          </h1>
-          <p class="magic__state-text">
-            {{ 'auth.magic_link.exchange.invalid_body' | transloco }}
-          </p>
-          <a [routerLink]="['/login']">
-            <p-button
-              [label]="'auth.magic_link.exchange.back_to_login' | transloco"
-              icon="pi pi-sign-in"
-            />
-          </a>
-        </div>
-      }
-    }
-  </div>
-</section>
+@switch (state()) {
+  @case ('loading') {
+    <app-auth-card
+      [icon]="'pi pi-spin pi-spinner'"
+      [title]="'auth.magic_link.exchange.loading' | transloco"
+    />
+  }
+  @case ('expired') {
+    <app-auth-card
+      [icon]="'pi pi-clock'"
+      [tone]="'warn'"
+      [title]="'auth.magic_link.exchange.expired_title' | transloco"
+    >
+      <div class="magic__state">
+        <p class="magic__state-text">
+          {{ 'auth.magic_link.exchange.expired_body' | transloco }}
+        </p>
+        <a [routerLink]="['/login']">
+          <p-button
+            [label]="'auth.magic_link.exchange.request_new' | transloco"
+            icon="pi pi-envelope"
+          />
+        </a>
+      </div>
+    </app-auth-card>
+  }
+  @case ('invalid') {
+    <app-auth-card
+      [icon]="'pi pi-times-circle'"
+      [tone]="'danger'"
+      [title]="'auth.magic_link.exchange.invalid_title' | transloco"
+    >
+      <div class="magic__state">
+        <p class="magic__state-text">
+          {{ 'auth.magic_link.exchange.invalid_body' | transloco }}
+        </p>
+        <a [routerLink]="['/login']">
+          <p-button
+            [label]="'auth.magic_link.exchange.back_to_login' | transloco"
+            icon="pi pi-sign-in"
+          />
+        </a>
+      </div>
+    </app-auth-card>
+  }
+}

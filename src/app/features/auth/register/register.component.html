@@ -1,15 +1,7 @@
-<section class="register">
-  <div class="register__bg" aria-hidden="true"></div>
-  <div class="register__card">
-    <div class="register__header">
-      <div class="register__icon">
-        <i class="pi pi-user-plus register__icon-glyph" aria-hidden="true"></i>
-      </div>
-      <h1 class="register__title">{{ 'auth.register.title' | transloco }}</h1>
-      <p class="register__subtitle">{{ 'auth.register.subtitle' | transloco }}</p>
-    </div>
+<app-auth-card [icon]="'pi pi-user-plus'" [title]="'auth.register.title' | transloco">
+  <p class="register__subtitle">{{ 'auth.register.subtitle' | transloco }}</p>
 
-    <form [formGroup]="form" (ngSubmit)="submit()" class="register__form">
+  <form [formGroup]="form" (ngSubmit)="submit()" class="register__form">
       <div class="register__grid">
         <div class="register__field">
           <label for="first_name" class="register__label">
@@ -148,6 +140,5 @@
           {{ 'auth.register.already_have_account_link' | transloco }}
         </a>
       </p>
-    </form>
-  </div>
-</section>
+  </form>
+</app-auth-card>

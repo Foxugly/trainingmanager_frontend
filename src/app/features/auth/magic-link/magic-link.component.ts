@@ -11,15 +11,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
-import { ProgressSpinner } from 'primeng/progressspinner';
 import { AuthService } from '../../../core/auth/auth.service';
+import { AuthCardComponent } from '../../../shared/components/auth-card/auth-card.component';
 import { safeReturnUrl } from '../shared/safe-return-url';
 
 type ExchangeState = 'loading' | 'expired' | 'invalid';
 
 @Component({
   selector: 'app-magic-link',
-  imports: [RouterLink, Button, ProgressSpinner, TranslocoPipe],
+  imports: [RouterLink, Button, TranslocoPipe, AuthCardComponent],
   templateUrl: './magic-link.component.html',
   styleUrl: './magic-link.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

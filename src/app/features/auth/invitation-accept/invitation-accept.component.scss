@@ -4,42 +4,10 @@
 }
 
 .invite {
-  display: flex;
-  min-height: 60vh;
-  align-items: center;
-  justify-content: center;
-  padding-inline: 1rem;
-  padding-block: 3rem;
-
-  @media (min-width: 768px) {
-    padding-block: 4rem;
-  }
-
-  &__card {
-    width: 100%;
-    max-width: 32rem;
-    padding: 2rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-card);
-  }
-
-  &__loading {
-    text-align: center;
-    color: var(--muted);
-  }
-
   &__stack {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-  }
-
-  &__error-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    text-align: center;
   }
 
   &__error-text {
@@ -59,17 +27,8 @@
     gap: 1.25rem;
   }
 
-  &__header {
-    text-align: center;
-  }
-
-  &__title {
-    margin-bottom: 0.5rem;
-    font-size: 1.5rem;
-    font-weight: 700;
-  }
-
   &__greeting {
+    text-align: center;
     color: var(--ink-soft);
   }
 
