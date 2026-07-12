@@ -138,7 +138,7 @@
 
 .teams-detail__sport-default {
   font-size: 0.75rem;
-  color: #fbbf24;
+  color: var(--warn);
 }
 
 // ── Archived banner ──────────────────────────────────────────────────────────
@@ -146,7 +146,7 @@
   margin-bottom: 1.5rem;
   padding-inline: 1rem;
   padding-block: 0.75rem;
-  border: 1px solid #fcd34d;
+  border: 1px solid var(--warn);
   border-radius: var(--radius-sm);
   background: var(--warn-soft);
   font-size: 0.875rem;
@@ -331,7 +331,7 @@
 .teams-detail__danger-zone {
   margin-top: 1.5rem;
   padding: 1rem;
-  border: 1px solid #fecaca;
+  border: 1px solid var(--danger-soft);
   border-radius: var(--radius-lg);
   background: var(--danger-soft);
 }

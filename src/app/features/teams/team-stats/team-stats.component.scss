@@ -123,11 +123,11 @@
 
 .team-stats__load-chip {
   border-radius: 999px;
-  background: #f3e8ff;
+  background: var(--info-soft);
   padding: 0.25rem 0.75rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #7e22ce;
+  color: var(--info-strong);
 }
 
 .team-stats__review-confidence {
@@ -361,7 +361,7 @@
   // AI load chip: categorical purple with no fleet token — flip to a dark-purple
   // fill + light text so it isn't a light island in dark mode.
   .team-stats__load-chip {
-    background: color-mix(in srgb, #a855f7 22%, transparent);
-    color: #e9d5ff;
+    background: color-mix(in srgb, var(--info) 22%, transparent);
+    color: var(--info-soft);
   }
 }

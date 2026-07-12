@@ -124,7 +124,7 @@
   }
 
   &--warn {
-    border: 1px solid #fcd34d;
+    border: 1px solid var(--warn);
     background: var(--warn-soft);
   }
 }

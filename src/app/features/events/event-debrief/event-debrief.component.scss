@@ -83,6 +83,6 @@
 // lighten just this stat so it stays legible in dark mode.
 :host-context(.dark-mode) {
   .debrief__stat--rsvp {
-    color: #fbbf24;
+    color: var(--warn-soft);
   }
 }
