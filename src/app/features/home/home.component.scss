@@ -3,6 +3,33 @@
   scroll-behavior: smooth;
 }
 
+// Dark mode: the hero's base gradient uses --accent-soft (a light emerald that
+// has no dark override) and the decorative blobs are light emerald/teal rgba —
+// both are tuned for a LIGHT hero, so on a dark surface they read as a muddy
+// light-on-dark blur. Swap to a dark slate base with only a faint emerald glow.
+:host-context(.dark-mode) .home-hero {
+  &__bg {
+    background: linear-gradient(
+      to bottom right,
+      color-mix(in srgb, var(--accent) 12%, var(--surface-2)),
+      var(--surface-2),
+      color-mix(in srgb, var(--accent) 8%, var(--surface-2))
+    );
+  }
+
+  &__blob {
+    opacity: 0.16;
+
+    &--top {
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.7), transparent 70%);
+    }
+
+    &--bottom {
+      background: radial-gradient(circle, rgba(20, 184, 166, 0.6), transparent 70%);
+    }
+  }
+}
+
 .home-hero {
   position: relative;
   overflow: hidden;
