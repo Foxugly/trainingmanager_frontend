@@ -42,6 +42,11 @@ test('manager can create a team', async ({ page }) => {
   await page.getByRole('option', { name: SEED.sport }).click();
   // Close the overlay so the default-sport select is interactable.
   await page.keyboard.press('Escape');
+  // Wait for the multiselect overlay to fully detach before opening the select.
+  // Otherwise both overlays expose an "E2E Sport" option at once and the next
+  // getByRole('option') hits a strict-mode violation (2 elements) — a flaky
+  // race, not a product bug.
+  await expect(page.getByRole('option', { name: SEED.sport })).toHaveCount(0);
 
   // Default sport select: open and choose the same sport (now an option). Same
   // inputId-on-hidden-input rule as the multiselect — click the <p-select> host.
