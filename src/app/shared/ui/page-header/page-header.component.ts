@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 /**
- * Three-column edit-page header: optional left slot (back button), centered
- * <h1> title with an optional [slot=title-after] (status badge), and an
- * optional right slot (active toggle + actions). Mirrors QuizOnline's
- * PageHeader. Distinct from DetailHeaderComponent (used on detail pages).
+ * Three-column page header (fleet standard — one header for every routed page:
+ * list, form, detail, admin): optional [slot=left] (back button), an optional
+ * leading `icon`, centered <h1> title with an optional [slot=title-after]
+ * (status badge), and an optional [slot=right] (active toggle + actions).
+ * Mirrors FoxRunner_frontend's PageHeader (the fleet reference). Replaces the
+ * former DetailHeaderComponent.
  */
 @Component({
   selector: 'app-page-header',
@@ -14,6 +16,9 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
         <ng-content select="[slot=left]" />
       </div>
       <div class="page-header__title-row">
+        @if (icon()) {
+          <i [class]="'pi ' + icon()" class="page-header__icon" aria-hidden="true"></i>
+        }
         <h1 class="page-header__title">{{ title() }}</h1>
         <ng-content select="[slot=title-after]" />
       </div>
@@ -38,12 +43,17 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
       justify-self: center;
       min-width: 0;
     }
+    .page-header__icon {
+      font-size: 1.5rem;
+      color: var(--accent);
+    }
     .page-header__title {
       margin: 0;
       text-align: center;
       min-width: 0;
       font-size: 1.5rem;
       line-height: 1.2;
+      font-weight: 600;
       color: var(--ink);
     }
     .page-header__slot {
@@ -65,4 +75,5 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 })
 export class PageHeaderComponent {
   readonly title = input.required<string>();
+  readonly icon = input<string>();
 }

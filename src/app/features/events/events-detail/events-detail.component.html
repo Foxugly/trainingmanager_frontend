@@ -38,15 +38,22 @@
       />
     </div>
   } @else if (event(); as e) {
-    <app-detail-header
-      [eyebrow]="'common.entity.event' | transloco"
-      [title]="e.name"
-      [backLink]="e.refer_program ? ['/programs', e.refer_program.id] : ['/programs']"
-      icon="pi-bolt"
-    >
+    <app-page-header [title]="e.name" icon="pi-bolt">
+      <a
+        slot="left"
+        pButton
+        [routerLink]="e.refer_program ? ['/programs', e.refer_program.id] : ['/programs']"
+        icon="pi pi-arrow-left"
+        severity="secondary"
+        [outlined]="true"
+        [rounded]="true"
+        [pTooltip]="'common.back' | transloco"
+        tooltipPosition="bottom"
+        [attr.aria-label]="'common.back' | transloco"
+      ></a>
       @if (eventTotalDistance() > 0 || e.total_target) {
         <span
-          detailHeaderTitleSuffix
+          slot="title-after"
           class="detail__volume"
           [pTooltip]="'events.detail.volume_computed_target_hint' | transloco"
           tooltipPosition="bottom"
@@ -58,12 +65,12 @@
           }
         </span>
       } @else if (e.total) {
-        <span detailHeaderTitleSuffix class="detail__volume">
+        <span slot="title-after" class="detail__volume">
           ({{ e.total }}{{ 'common.units.meters_short' | transloco }})
         </span>
       } @else if (distanceHidden()) {
         <span
-          detailHeaderTitleSuffix
+          slot="title-after"
           class="detail__volume-hidden"
         >
           <i class="pi pi-lock detail__lock" aria-hidden="true"></i>
@@ -71,19 +78,9 @@
         </span>
       }
 
-      @if (e.goal) {
-        <p detailHeaderSubtitle class="rich-text detail__goal" [innerHTML]="e.goal"></p>
-      } @else if (goalHidden()) {
-        <p detailHeaderSubtitle class="detail__goal-hidden">
-          <i class="pi pi-lock detail__lock" aria-hidden="true"></i>
-          {{ 'events.detail.hidden_goal.' + goalHiddenVariant() | transloco }}
-        </p>
-      }
-
-
       @if ((team()?.sports?.length ?? 0) > 1 && e.sport) {
         <span
-          detailHeaderBadges
+          slot="title-after"
           class="detail__badge detail__badge--sport"
         >
           <i class="pi pi-tag detail__badge-icon" aria-hidden="true"></i>
@@ -93,7 +90,7 @@
 
       @if (e.is_public) {
         <span
-          detailHeaderBadges
+          slot="title-after"
           class="detail__badge detail__badge--public"
         >
           <i class="pi pi-share-alt detail__badge-icon" aria-hidden="true"></i>
@@ -102,7 +99,7 @@
       }
 
       <a
-        detailHeaderActions
+        slot="right"
         pButton
         [routerLink]="['/events', e.id, 'print']"
         icon="pi pi-print"
@@ -115,7 +112,7 @@
       ></a>
       @if (canManage()) {
         <a
-          detailHeaderActions
+          slot="right"
           pButton
           [routerLink]="['/events', e.id, 'edit']"
           icon="pi pi-pencil"
@@ -129,7 +126,7 @@
       }
       @if (canManage()) {
         <p-button
-          detailHeaderActions
+          slot="right"
           icon="pi pi-copy"
           severity="secondary"
           [outlined]="true"
@@ -143,7 +140,7 @@
       }
       @if (canManage()) {
         <p-button
-          detailHeaderActions
+          slot="right"
           icon="pi pi-share-alt"
           severity="secondary"
           [outlined]="true"
@@ -157,7 +154,7 @@
       }
       @if (canRegenerate()) {
         <span
-          detailHeaderActions
+          slot="right"
           [pTooltip]="
             isPastEvent()
               ? ('events.detail.regenerate_past_blocked' | transloco)
@@ -181,7 +178,7 @@
       }
       @if (canManage()) {
         <p-button
-          detailHeaderActions
+          slot="right"
           icon="pi pi-trash"
           severity="danger"
           [outlined]="true"
@@ -194,7 +191,18 @@
         />
       }
 
-      <dl detailHeaderMeta class="detail__meta">
+    </app-page-header>
+
+    @if (e.goal) {
+      <p class="rich-text detail__goal" [innerHTML]="e.goal"></p>
+    } @else if (goalHidden()) {
+      <p class="detail__goal-hidden">
+        <i class="pi pi-lock detail__lock" aria-hidden="true"></i>
+        {{ 'events.detail.hidden_goal.' + goalHiddenVariant() | transloco }}
+      </p>
+    }
+
+    <dl class="detail__meta">
         @if (e.refer_program) {
           <div class="detail__meta-item">
             <i class="pi pi-list detail__meta-icon" aria-hidden="true"></i>
@@ -258,8 +266,7 @@
             <dd class="detail__meta-value rich-text" [innerHTML]="e.equipment"></dd>
           </div>
         }
-      </dl>
-    </app-detail-header>
+    </dl>
 
     <p-tabs [value]="activeTab()" (valueChange)="activeTab.set($any($event))">
       <p-tablist>

@@ -30,12 +30,20 @@
       </a>
     </app-empty-state>
   } @else if (canManage() && teamId() !== null && memberId() !== null) {
-    <app-detail-header
-      [eyebrow]="'athlete.eyebrow' | transloco"
-      [title]="athleteName() || ('athlete.fallback' | transloco)"
-      [backLink]="backLink()"
-      icon="pi-user"
-    />
+    <app-page-header [title]="athleteName() || ('athlete.fallback' | transloco)" icon="pi-user">
+      <a
+        slot="left"
+        pButton
+        [routerLink]="backLink()"
+        icon="pi pi-arrow-left"
+        severity="secondary"
+        [outlined]="true"
+        [rounded]="true"
+        [pTooltip]="'common.back' | transloco"
+        tooltipPosition="bottom"
+        [attr.aria-label]="'common.back' | transloco"
+      ></a>
+    </app-page-header>
 
     <p-tabs [value]="activeTab()" (valueChange)="activeTab.set($any($event))">
       <p-tablist>

@@ -41,37 +41,32 @@
       />
     </div>
   } @else if (program(); as p) {
-    <app-detail-header
-      [eyebrow]="'common.entity.program' | transloco"
-      [title]="p.name"
-      [backLink]="['/programs']"
-      icon="pi-list"
-    >
+    <app-page-header [title]="p.name" icon="pi-list">
+      <a
+        slot="left"
+        pButton
+        [routerLink]="['/programs']"
+        icon="pi pi-arrow-left"
+        severity="secondary"
+        [outlined]="true"
+        [rounded]="true"
+        [pTooltip]="'common.back' | transloco"
+        tooltipPosition="bottom"
+        [attr.aria-label]="'common.back' | transloco"
+      ></a>
       @if (isArchived()) {
-        <div
-          detailHeaderBanner
-          class="programs-detail__banner"
-        >
-          <div class="programs-detail__banner-label">
-            <i class="pi pi-box" aria-hidden="true"></i>
-            <span class="programs-detail__banner-title">{{ 'programs.detail.archived_banner' | transloco }}</span>
-          </div>
-        </div>
-      }
-
-      @if (isArchived()) {
-        <span detailHeaderBadges class="programs-detail__archived-badge">
+        <span slot="title-after" class="programs-detail__archived-badge">
           {{ 'programs.list.archived_badge' | transloco }}
         </span>
       }
 
       @if (canManage()) {
-        <app-active-toggle detailHeaderActions
+        <app-active-toggle slot="right"
           [entityId]="p.id" [value]="activeValue()" [patch]="patchActive"
           [labels]="activeLabels()" (valueChange)="activeValue.set($event)" />
       }
       @if (canManage()) {
-        <a detailHeaderActions [routerLink]="['/programs', p.id, 'edit']">
+        <a slot="right" [routerLink]="['/programs', p.id, 'edit']">
           <p-button
             icon="pi pi-pencil"
             severity="info"
@@ -84,7 +79,18 @@
         </a>
       }
 
-      <dl detailHeaderMeta class="programs-detail__meta">
+    </app-page-header>
+
+    @if (isArchived()) {
+      <div class="programs-detail__banner">
+        <div class="programs-detail__banner-label">
+          <i class="pi pi-box" aria-hidden="true"></i>
+          <span class="programs-detail__banner-title">{{ 'programs.detail.archived_banner' | transloco }}</span>
+        </div>
+      </div>
+    }
+
+    <dl class="programs-detail__meta">
         @if (p.team) {
           <div class="programs-detail__meta-item">
             <i class="pi pi-users programs-detail__meta-icon" aria-hidden="true"></i>
@@ -113,8 +119,7 @@
             <dd class="programs-detail__meta-value programs-detail__meta-value--strong">{{ p.date_end | localizedDate: 'mediumDate' }}</dd>
           </div>
         }
-      </dl>
-    </app-detail-header>
+    </dl>
 
     @if (lastGenerationResult(); as result) {
       <div class="programs-detail__success">

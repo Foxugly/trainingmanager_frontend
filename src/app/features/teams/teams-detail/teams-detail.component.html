@@ -32,31 +32,28 @@
       />
     </div>
   } @else if (team(); as t) {
-    <app-detail-header
-      [eyebrow]="'common.entity.team' | transloco"
-      [title]="t.name"
-      [backLink]="['/teams']"
-      icon="pi-users"
-    >
-      @if (t.logo) {
-        <div detailHeaderBanner class="teams-detail__logo-wrap">
-          <img
-            [src]="t.logo"
-            [alt]="t.name"
-            class="teams-detail__logo"
-          />
-        </div>
-      }
-
+    <app-page-header [title]="t.name" icon="pi-users">
+      <a
+        slot="left"
+        pButton
+        [routerLink]="['/teams']"
+        icon="pi pi-arrow-left"
+        severity="secondary"
+        [outlined]="true"
+        [rounded]="true"
+        [pTooltip]="'common.back' | transloco"
+        tooltipPosition="bottom"
+        [attr.aria-label]="'common.back' | transloco"
+      ></a>
       @if (currentUserRole(); as role) {
-        <span detailHeaderTitleSuffix [class]="roleClasses[role] + ' teams-detail__role'">
+        <span slot="title-after" [class]="roleClasses[role] + ' teams-detail__role'">
           {{ 'teams.roles.' + role | transloco }}
         </span>
       }
 
       @if (canManage()) {
         <app-active-toggle
-          detailHeaderActions
+          slot="right"
           [entityId]="t.id"
           [value]="activeValue()"
           [patch]="patchActive"
@@ -65,7 +62,7 @@
         />
       }
       @if (canManage()) {
-        <a detailHeaderActions [routerLink]="['/teams', t.id, 'edit']">
+        <a slot="right" [routerLink]="['/teams', t.id, 'edit']">
           <p-button
             icon="pi pi-pencil"
             severity="info"
@@ -78,7 +75,19 @@
         </a>
       }
 
-      <dl detailHeaderMeta class="teams-detail__meta">
+    </app-page-header>
+
+    @if (t.logo) {
+      <div class="teams-detail__logo-wrap">
+        <img
+          [src]="t.logo"
+          [alt]="t.name"
+          class="teams-detail__logo"
+        />
+      </div>
+    }
+
+    <dl class="teams-detail__meta">
         @if (t.sports.length) {
           <div class="teams-detail__meta-item">
             <i class="pi pi-tag teams-detail__icon-muted" aria-hidden="true"></i>
@@ -125,8 +134,7 @@
             {{ (t.owner.first_name + ' ' + t.owner.last_name).trim() || '—' }}
           </dd>
         </div>
-      </dl>
-    </app-detail-header>
+    </dl>
 
     @if (!t.is_active) {
       <div class="teams-detail__archived">

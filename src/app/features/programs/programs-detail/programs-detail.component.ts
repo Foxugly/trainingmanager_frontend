@@ -14,7 +14,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { Button } from 'primeng/button';
+import { Button, ButtonDirective } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Message } from 'primeng/message';
 import { Skeleton } from 'primeng/skeleton';
@@ -34,7 +34,7 @@ import {
 } from '../generate-events-dialog/generate-events-dialog.component';
 import { ShortTimePipe } from '../../../shared/datetime/short-time.pipe';
 import { AttachmentListComponent } from '../../../shared/ui/attachment-list/attachment-list.component';
-import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-header.component';
+import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
 import {
   ActiveToggleComponent,
   ActiveToggleLabels,
@@ -75,6 +75,7 @@ function eventDateAsDate(e: Event): Date | null {
     LocalizedDatePipe,
     RouterLink,
     Button,
+    ButtonDirective,
     ConfirmDialog,
     GenerateEventsDialogComponent,
     Message,
@@ -82,7 +83,7 @@ function eventDateAsDate(e: Event): Date | null {
     Tooltip,
     TranslocoPipe,
     ShortTimePipe,
-    DetailHeaderComponent,
+    PageHeaderComponent,
     AttachmentListComponent,
     ActiveToggleComponent,
   ],

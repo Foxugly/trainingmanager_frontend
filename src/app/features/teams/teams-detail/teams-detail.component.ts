@@ -17,7 +17,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { ConfirmationService } from 'primeng/api';
 import { Badge } from 'primeng/badge';
-import { Button } from 'primeng/button';
+import { Button, ButtonDirective } from 'primeng/button';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Dialog } from 'primeng/dialog';
 import { InputText } from 'primeng/inputtext';
@@ -51,7 +51,7 @@ import {
   TeamDiscussionsComponent,
   type DiscussionRole,
 } from '../team-discussions/team-discussions.component';
-import { DetailHeaderComponent } from '../../../shared/ui/detail-header/detail-header.component';
+import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import {
   ActiveToggleComponent,
@@ -74,6 +74,7 @@ interface FieldErrors {
     RouterLink,
     Badge,
     Button,
+    ButtonDirective,
     ConfirmDialog,
     Dialog,
     InputText,
@@ -97,7 +98,7 @@ interface FieldErrors {
     MemberNotesComponent,
     PerformancePanelComponent,
     TeamDiscussionsComponent,
-    DetailHeaderComponent,
+    PageHeaderComponent,
     EmptyStateComponent,
     ActiveToggleComponent,
   ],
