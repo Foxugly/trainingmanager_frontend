@@ -11,14 +11,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
-import { Message } from 'primeng/message';
 import { AuthService } from '../../../core/auth/auth.service';
+import { AuthCardComponent } from '../../../shared/components/auth-card/auth-card.component';
 
 type Phase = 'loading' | 'success' | 'invalid_token' | 'unknown_error';
 
 @Component({
   selector: 'app-email-confirm',
-  imports: [RouterLink, Button, TranslocoPipe],
+  imports: [RouterLink, Button, TranslocoPipe, AuthCardComponent],
   templateUrl: './email-confirm.component.html',
   styleUrl: './email-confirm.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

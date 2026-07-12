@@ -1,0 +1,58 @@
+:host {
+  display: block;
+}
+
+// Rendered INSIDE the public-layout (topmenu + footer around it). No full-screen
+// shell — just a horizontally centred card. Reproduces the former per-page
+// `.login__card` look (surface, border, radius, shadow, 28rem).
+.auth-card {
+  display: flex;
+  justify-content: center;
+  padding-inline: 1rem;
+  padding-block: 3rem;
+
+  @media (min-width: 768px) {
+    padding-block: 4rem;
+  }
+}
+
+.auth-card__box {
+  width: 100%;
+  max-width: 28rem;
+  padding: 2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+}
+
+.auth-card__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.auth-card__icon {
+  font-size: 2rem;
+  color: var(--accent);
+
+  &--danger {
+    color: var(--danger);
+  }
+  &--warn {
+    color: var(--warn);
+  }
+  &--success {
+    color: var(--success);
+  }
+}
+
+.auth-card__title {
+  margin: 0;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--ink);
+}

@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { AuthCardComponent } from '../../../shared/components/auth-card/auth-card.component';
 
 @Component({
   selector: 'app-forgot-password-sent',
-  imports: [RouterLink, TranslocoPipe],
+  imports: [RouterLink, TranslocoPipe, AuthCardComponent],
   templateUrl: './forgot-password-sent.component.html',
   styleUrl: './forgot-password-sent.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

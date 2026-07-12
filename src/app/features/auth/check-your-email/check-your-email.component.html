@@ -1,14 +1,5 @@
-<section class="check-email">
-  <div class="check-email__bg" aria-hidden="true"></div>
-  <div class="check-email__card">
-    <div class="check-email__header">
-      <div class="check-email__icon">
-        <i class="pi pi-envelope check-email__icon-glyph" aria-hidden="true"></i>
-      </div>
-      <h1 class="check-email__title">{{ 'auth.check_email.title' | transloco }}</h1>
-    </div>
-
-    @if (email(); as e) {
+<app-auth-card [icon]="'pi pi-envelope'" [title]="'auth.check_email.title' | transloco">
+  @if (email(); as e) {
       <p class="check-email__body">
         {{ 'auth.check_email.body_with_email' | transloco: { email: e } }}
       </p>
@@ -62,10 +53,9 @@
       </form>
     }
 
-    <p class="check-email__footer">
-      <a [routerLink]="['/login']" class="check-email__link">
-        {{ 'auth.check_email.back_to_login' | transloco }}
-      </a>
-    </p>
-  </div>
-</section>
+  <p class="check-email__footer">
+    <a [routerLink]="['/login']" class="check-email__link">
+      {{ 'auth.check_email.back_to_login' | transloco }}
+    </a>
+  </p>
+</app-auth-card>

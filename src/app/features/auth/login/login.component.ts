@@ -20,6 +20,7 @@ import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { Password } from 'primeng/password';
 import { AuthService } from '../../../core/auth/auth.service';
+import { AuthCardComponent } from '../../../shared/components/auth-card/auth-card.component';
 import { parseRetryAfterSeconds } from '../shared/retry-after';
 import { safeReturnUrl } from '../shared/safe-return-url';
 
@@ -36,6 +37,7 @@ const RESEND_COOLDOWN_SECONDS = 30;
     Button,
     Message,
     TranslocoPipe,
+    AuthCardComponent,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',

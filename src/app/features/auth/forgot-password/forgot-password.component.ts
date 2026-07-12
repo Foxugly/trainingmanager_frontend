@@ -20,6 +20,7 @@ import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { getRuntimeConfig } from '../../../core/runtime-config';
 import { AuthService } from '../../../core/auth/auth.service';
+import { AuthCardComponent } from '../../../shared/components/auth-card/auth-card.component';
 import { parseRetryAfterSeconds } from '../shared/retry-after';
 
 interface TurnstileRenderOptions {
@@ -39,6 +40,7 @@ interface TurnstileRenderOptions {
     Button,
     Message,
     TranslocoPipe,
+    AuthCardComponent,
   ],
   templateUrl: './forgot-password.component.html',
   styleUrl: './forgot-password.component.scss',

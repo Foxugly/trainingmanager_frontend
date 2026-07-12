@@ -3,34 +3,6 @@
 }
 
 .login {
-  display: flex;
-  min-height: 60vh;
-  align-items: center;
-  justify-content: center;
-  padding-inline: 1rem;
-  padding-block: 3rem;
-
-  @media (min-width: 768px) {
-    padding-block: 4rem;
-  }
-
-  &__card {
-    width: 100%;
-    max-width: 28rem;
-    padding: 2rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-card);
-  }
-
-  &__title {
-    margin-bottom: 1.5rem;
-    font-size: 1.5rem;
-    font-weight: 700;
-    text-align: center;
-  }
-
   &__banner {
     display: flex;
     flex-direction: column;

@@ -32,6 +32,7 @@ import { RegisterRequest } from '../../../api/model/register-request';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AVAILABLE_LANGUAGES, LanguageCode } from '../../../core/i18n/available-languages';
 import { LanguageService } from '../../../core/i18n/language.service';
+import { AuthCardComponent } from '../../../shared/components/auth-card/auth-card.component';
 import { parseRetryAfterSeconds } from '../shared/retry-after';
 
 interface FieldErrors {
@@ -75,6 +76,7 @@ function passwordsMatchValidator(group: AbstractControl): ValidationErrors | nul
     Button,
     Message,
     TranslocoPipe,
+    AuthCardComponent,
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',
