@@ -1,0 +1,172 @@
+:host {
+  display: block;
+}
+
+.magic-action {
+  margin-inline: auto;
+  max-width: 36rem;
+}
+
+.magic-action__loading {
+  color: var(--muted);
+}
+
+// ── Card shell ───────────────────────────────────────────────────────────────
+.magic-action__card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-card);
+
+  @media (min-width: 640px) {
+    padding: 2rem;
+  }
+
+  &--center {
+    text-align: center;
+  }
+}
+
+// ── Error state ──────────────────────────────────────────────────────────────
+.magic-action__error-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-inline: auto;
+  margin-bottom: 1rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 999px;
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.magic-action__error-glyph {
+  font-size: 1.5rem;
+}
+
+.magic-action__error-title {
+  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.magic-action__error-message {
+  margin-bottom: 1.25rem;
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+}
+
+// ── Header ───────────────────────────────────────────────────────────────────
+.magic-action__eyebrow {
+  margin-bottom: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--accent-strong);
+}
+
+.magic-action__eyebrow-icon {
+  margin-right: 0.25rem;
+  font-size: 11px;
+}
+
+.magic-action__title {
+  margin-bottom: 0.25rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+}
+
+.magic-action__requester {
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.magic-action__requester-icon {
+  margin-right: 0.25rem;
+  color: var(--muted);
+}
+
+.magic-action__requester-meta {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+// ── Quote ────────────────────────────────────────────────────────────────────
+.magic-action__quote {
+  margin-bottom: 1.5rem;
+  padding: 0.75rem;
+  border-left: 4px solid #a7f3d0;
+  background: var(--accent-soft);
+  font-size: 0.875rem;
+  font-style: italic;
+  color: var(--ink-soft);
+}
+
+// ── Banners ──────────────────────────────────────────────────────────────────
+.magic-action__banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+
+  &--success {
+    border: 1px solid #a7f3d0;
+    background: var(--accent-soft);
+  }
+
+  &--warn {
+    border: 1px solid #fcd34d;
+    background: var(--warn-soft);
+  }
+}
+
+.magic-action__banner-icon {
+  margin-top: 0.125rem;
+
+  &--success {
+    color: var(--accent);
+  }
+
+  &--warn {
+    color: var(--warn);
+  }
+}
+
+.magic-action__banner-title {
+  font-weight: 600;
+  color: var(--accent-strong);
+}
+
+.magic-action__banner-text {
+  font-size: 0.875rem;
+  color: var(--accent-strong);
+}
+
+.magic-action__banner-warn-text {
+  font-size: 0.875rem;
+  color: var(--warn);
+}
+
+// ── Confirmation question + actions ──────────────────────────────────────────
+.magic-action__question {
+  margin-bottom: 1.25rem;
+  font-size: 1rem;
+  color: var(--ink-soft);
+}
+
+.magic-action__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}

@@ -38,8 +38,10 @@ describe('EmptyStateComponent', () => {
   });
 
   it('applies the requested tone class on the icon pill', () => {
-    const pill = fixture.nativeElement.querySelector('.size-14') as HTMLElement;
-    expect(pill.className).toContain('bg-emerald-100');
-    expect(pill.className).toContain('text-emerald-600');
+    // Tone is now a scoped BEM modifier (token-based colours) instead of
+    // Tailwind bg-/text- utilities.
+    const pill = fixture.nativeElement.querySelector('.empty-state__icon') as HTMLElement;
+    expect(pill).not.toBeNull();
+    expect(pill.className).toContain('empty-state__icon--emerald');
   });
 });

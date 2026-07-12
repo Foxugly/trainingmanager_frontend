@@ -6,6 +6,24 @@
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <!--
+      Anti-FOUC: apply the persisted (or system-preferred) theme on <html>
+      BEFORE Angular bootstraps, so a dark-mode reload never flashes light.
+      ThemeService takes over once the app is up.
+    -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme');
+          var dark =
+            stored === 'dark' ||
+            (!stored &&
+              window.matchMedia &&
+              window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (dark) document.documentElement.classList.add('dark-mode');
+        } catch (e) {}
+      })();
+    </script>
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   </head>
   <body>

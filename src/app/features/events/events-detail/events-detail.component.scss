@@ -35,3 +35,282 @@
 :host ::ng-deep .cdk-drop-list-dragging .cdk-drag {
   transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
 }
+
+// ── Loading skeleton ──────────────────────────────────────────────────────
+.detail-skeleton {
+  margin-top: 1rem;
+}
+
+.detail-skeleton__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.detail-skeleton__head-center {
+  display: flex;
+  flex: 1 1 0%;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.detail-skeleton__head-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.detail-skeleton__tabs {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+:host ::ng-deep .detail-skeleton__line {
+  margin-bottom: 0.75rem;
+}
+
+// ── Empty / error states ──────────────────────────────────────────────────
+.detail__notfound {
+  margin-top: 1rem;
+  color: var(--muted);
+}
+
+.detail__error {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+// ── Header title suffix (volume) + hidden hints ───────────────────────────
+.detail__volume {
+  font-size: 1.25rem;
+  color: var(--accent-strong);
+  font-weight: 600;
+
+  @media (min-width: 640px) {
+    font-size: 1.5rem;
+  }
+}
+
+.detail__volume-hidden {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.detail__lock {
+  font-size: 0.75rem;
+}
+
+.detail__goal {
+  font-style: italic;
+}
+
+.detail__goal-hidden {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-style: italic;
+  color: var(--muted);
+}
+
+// ── Header badges ─────────────────────────────────────────────────────────
+.detail__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 999px;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+
+  &--sport {
+    background: #e0e7ff;
+    color: #3730a3;
+  }
+
+  &--public {
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+  }
+}
+
+.detail__badge-icon {
+  font-size: 0.75rem;
+}
+
+// ── Header meta list ──────────────────────────────────────────────────────
+.detail__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem 2rem;
+  font-size: 0.875rem;
+}
+
+.detail__meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  &--full {
+    align-items: flex-start;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+.detail__meta-icon {
+  color: var(--muted);
+
+  &--top {
+    margin-top: 0.125rem;
+  }
+}
+
+.detail__meta-label {
+  color: var(--muted);
+}
+
+.detail__meta-value {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.detail__meta-link {
+  color: var(--accent-strong);
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.detail__meta-sub {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.detail__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.detail__chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: var(--surface-2);
+  padding: 0.125rem 0.5rem;
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+}
+
+// ── Tabs ──────────────────────────────────────────────────────────────────
+.detail__tab-icon {
+  margin-right: 0.5rem;
+}
+
+// ── Training tab ──────────────────────────────────────────────────────────
+.detail__block {
+  margin-bottom: 1rem;
+}
+
+.detail__training-type {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.detail__field-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.detail__result {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-soft);
+  border-radius: var(--radius-sm);
+}
+
+.detail__result-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--accent-strong);
+  margin-bottom: 0.5rem;
+}
+
+.detail__result-summary {
+  font-size: 0.875rem;
+  color: var(--accent-strong);
+  margin-bottom: 0.5rem;
+}
+
+.detail__result-rationale {
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+  font-style: italic;
+  white-space: pre-line;
+}
+
+.detail__hint {
+  font-size: 0.875rem;
+  color: var(--muted);
+
+  &--italic {
+    font-style: italic;
+  }
+}
+
+// ── Regeneration overlay ──────────────────────────────────────────────────
+.detail__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+}
+
+:host ::ng-deep .detail__spinner {
+  width: 4rem;
+  height: 4rem;
+}
+
+.detail__overlay-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--accent-strong);
+}
+
+.detail__mr {
+  margin-right: 0.5rem;
+}
+
+.detail__overlay-hint {
+  font-size: 0.75rem;
+  color: var(--muted);
+}

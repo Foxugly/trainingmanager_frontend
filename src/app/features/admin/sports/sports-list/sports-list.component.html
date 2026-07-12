@@ -1,17 +1,17 @@
-<div class="flex justify-between items-center mb-6">
-  <h1 class="text-2xl font-bold">{{ 'admin.sports.title' | transloco }}</h1>
+<div class="sports-list__head">
+  <h1 class="sports-list__title">{{ 'admin.sports.title' | transloco }}</h1>
   <a [routerLink]="['new']">
     <p-button [label]="'admin.sports.new' | transloco" icon="pi pi-plus" severity="success" />
   </a>
 </div>
 
-<div class="mb-4 flex items-center gap-2">
+<div class="sports-list__filter">
   <p-checkbox
     [(ngModel)]="includeInactiveModel"
     [binary]="true"
     inputId="include_inactive"
   />
-  <label for="include_inactive" class="text-sm cursor-pointer" style="color: var(--p-text-color)">
+  <label for="include_inactive" class="sports-list__filter-label" style="color: var(--p-text-color)">
     {{ 'admin.sports.show_inactive' | transloco }}
   </label>
 </div>
@@ -21,7 +21,7 @@
   [loading]="loading()"
   [paginator]="true"
   [rows]="20"
-  styleClass="rounded shadow-sm"
+  styleClass="sports-list__table"
 >
   <ng-template pTemplate="header">
     <tr>
@@ -35,7 +35,7 @@
   <ng-template pTemplate="body" let-sport>
     <tr>
       <td>{{ sport.name }}</td>
-      <td><code class="text-xs" style="color: var(--p-text-muted-color)">{{ sport.slug }}</code></td>
+      <td><code class="sports-list__slug" style="color: var(--p-text-muted-color)">{{ sport.slug }}</code></td>
       <td>{{ sport.energy_systems?.length || 0 }}</td>
       <td>
         <app-status-badge
@@ -43,7 +43,7 @@
           [label]="(sport.is_active ? 'common.active' : 'common.inactive') | transloco"
         />
       </td>
-      <td class="flex gap-1">
+      <td class="sports-list__actions">
         <a [routerLink]="[sport.id, 'edit']">
           <p-button
             icon="pi pi-pencil"
@@ -75,8 +75,8 @@
   <ng-template pTemplate="emptymessage">
     <tr>
       @if (error()) {
-        <td colspan="5" class="text-center py-4">
-          <div class="inline-flex flex-col items-center gap-2">
+        <td colspan="5" class="sports-list__empty-cell">
+          <div class="sports-list__empty-error">
             <p-message severity="error" [text]="'common.load_failed' | transloco" />
             <p-button
               [label]="'common.retry' | transloco"
@@ -89,7 +89,7 @@
           </div>
         </td>
       } @else {
-        <td colspan="5" class="text-center py-4" style="color: var(--p-text-muted-color)">—</td>
+        <td colspan="5" class="sports-list__empty-cell" style="color: var(--p-text-muted-color)">—</td>
       }
     </tr>
   </ng-template>

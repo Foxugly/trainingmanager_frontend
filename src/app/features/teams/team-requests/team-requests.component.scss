@@ -1,0 +1,161 @@
+:host {
+  display: block;
+}
+
+.team-requests {
+  &__toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 0.75rem;
+  }
+
+  &__section {
+    margin-bottom: 2rem;
+  }
+
+  &__section-title {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  &__loading {
+    color: var(--muted);
+  }
+
+  &__list {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+
+    > * + * {
+      border-top: 1px solid var(--border);
+    }
+  }
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem;
+  }
+
+  &__item-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  &__item-main {
+    min-width: 0;
+    flex: 1 1 0%;
+  }
+
+  &__identity {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 0.5rem;
+    row-gap: 0.125rem;
+    font-size: 0.875rem;
+  }
+
+  &__identity-icon {
+    align-self: center;
+    color: var(--muted);
+  }
+
+  &__name {
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  &__muted {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  &__message {
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: var(--ink-soft);
+    white-space: pre-line;
+  }
+
+  &__no-message {
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    font-style: italic;
+    color: var(--muted);
+  }
+
+  &__item-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  &__invitation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.75rem;
+  }
+
+  &__invitation-email {
+    font-weight: 500;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+
+  &__input {
+    width: 100%;
+  }
+
+  &__messages {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding-top: 0.5rem;
+
+    &--tight {
+      padding-top: 0.25rem;
+    }
+  }
+
+  &__dialog-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  &__help {
+    font-size: 0.875rem;
+    color: var(--ink-soft);
+  }
+}

@@ -1,0 +1,33 @@
+:host {
+  display: inline-block;
+}
+
+// Borderless chrome action, sized to match the language + user triggers
+// (mirrors .ls-trigger in the language-switcher).
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  min-width: 36px;
+  padding: 0 0.5rem;
+  border: 0;
+  border-radius: 0.4rem;
+  background: transparent;
+  color: #cbd5e1;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
+
+  &:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.4);
+    outline-offset: 2px;
+  }
+}

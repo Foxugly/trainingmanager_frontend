@@ -5,6 +5,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   selector: 'app-empty-state',
   imports: [CommonModule],
   templateUrl: './empty-state.component.html',
+  styleUrl: './empty-state.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmptyStateComponent {

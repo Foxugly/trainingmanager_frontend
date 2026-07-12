@@ -37,7 +37,7 @@
           [for]="'abv'"
           [error]="fieldError('abv')"
         >
-          <input pInputText id="abv" formControlName="abv" placeholder="Z1" class="w-full"
+          <input pInputText id="abv" formControlName="abv" placeholder="Z1" class="energy-segments-form__input"
             [attr.aria-describedby]="fieldError('abv') ? abvField.errorId() : null" />
         </app-meta-field>
 
@@ -54,7 +54,7 @@
             optionLabel="name"
             optionValue="id"
             [placeholder]="'admin.energy_segments.form.energy_system_placeholder' | transloco"
-            styleClass="w-full"
+            styleClass="energy-segments-form__input"
             [appAriaDescribes]="fieldError('energy_system_id') ? energySystemField.errorId() : null"
           />
         </app-meta-field>
@@ -75,23 +75,23 @@
             </p-tablist>
             <p-tabpanels>
               <p-tabpanel value="fr">
-                <textarea pTextarea formControlName="description_fr" rows="3" placeholder="Français" class="w-full"
+                <textarea pTextarea formControlName="description_fr" rows="3" placeholder="Français" class="energy-segments-form__input"
                   [attr.aria-describedby]="fieldError('description') ? descriptionField.errorId() : null"></textarea>
               </p-tabpanel>
               <p-tabpanel value="nl">
-                <textarea pTextarea formControlName="description_nl" rows="3" placeholder="Nederlands" class="w-full"
+                <textarea pTextarea formControlName="description_nl" rows="3" placeholder="Nederlands" class="energy-segments-form__input"
                   [attr.aria-describedby]="fieldError('description') ? descriptionField.errorId() : null"></textarea>
               </p-tabpanel>
               <p-tabpanel value="en">
-                <textarea pTextarea formControlName="description_en" rows="3" placeholder="English" class="w-full"
+                <textarea pTextarea formControlName="description_en" rows="3" placeholder="English" class="energy-segments-form__input"
                   [attr.aria-describedby]="fieldError('description') ? descriptionField.errorId() : null"></textarea>
               </p-tabpanel>
               <p-tabpanel value="it">
-                <textarea pTextarea formControlName="description_it" rows="3" placeholder="Italiano" class="w-full"
+                <textarea pTextarea formControlName="description_it" rows="3" placeholder="Italiano" class="energy-segments-form__input"
                   [attr.aria-describedby]="fieldError('description') ? descriptionField.errorId() : null"></textarea>
               </p-tabpanel>
               <p-tabpanel value="es">
-                <textarea pTextarea formControlName="description_es" rows="3" placeholder="Español" class="w-full"
+                <textarea pTextarea formControlName="description_es" rows="3" placeholder="Español" class="energy-segments-form__input"
                   [attr.aria-describedby]="fieldError('description') ? descriptionField.errorId() : null"></textarea>
               </p-tabpanel>
             </p-tabpanels>

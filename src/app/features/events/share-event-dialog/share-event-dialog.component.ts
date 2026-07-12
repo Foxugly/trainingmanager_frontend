@@ -19,6 +19,7 @@ import { ToastService } from '../../../core/notifications/toast.service';
   selector: 'app-share-event-dialog',
   imports: [FormsModule, Dialog, ToggleSwitch, InputText, Button, TranslocoPipe],
   templateUrl: './share-event-dialog.component.html',
+  styleUrl: './share-event-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ShareEventDialogComponent {

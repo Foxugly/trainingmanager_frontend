@@ -17,6 +17,7 @@ import { RsvpSummary } from '../../../api/model/rsvp-summary';
   selector: 'app-event-rsvp',
   imports: [Button, TranslocoPipe],
   templateUrl: './event-rsvp.component.html',
+  styleUrl: './event-rsvp.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EventRsvpComponent {

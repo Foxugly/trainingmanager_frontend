@@ -41,10 +41,307 @@
   grid-template-columns: 1fr;
   gap: 0.375rem 1.5rem;
   max-width: 100%;
+  margin-top: 1rem;
 
   @media (min-width: 640px) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+}
+
+// ── Root layout ────────────────────────────────────────────────────────────
+.team-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+// ── Controls bar (date range / presets / export / review) ──────────────────
+.team-stats__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.team-stats__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.team-stats__field-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.team-stats__datepicker {
+  width: 18rem;
+}
+
+.team-stats__group {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  padding-bottom: 0.125rem;
+
+  &--push {
+    margin-left: auto;
+  }
+}
+
+// ── AI review dialog ───────────────────────────────────────────────────────
+.team-stats__review-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-block: 1.5rem;
+  color: var(--muted);
+}
+
+.team-stats__spinner {
+  font-size: 1.25rem;
+}
+
+.team-stats__review-error {
+  padding-block: 1rem;
+  color: var(--danger);
+}
+
+.team-stats__review-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.team-stats__review-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.team-stats__load-chip {
+  border-radius: 999px;
+  background: #f3e8ff;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #7e22ce;
+}
+
+.team-stats__review-confidence {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.team-stats__review-summary {
+  line-height: 1.625;
+  color: var(--ink-soft);
+}
+
+.team-stats__review-subtitle {
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.team-stats__findings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.team-stats__finding {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.team-stats__finding-bullet {
+  margin-top: 0.25rem;
+  font-size: 0.5rem;
+}
+
+.team-stats__finding-area {
+  font-weight: 500;
+}
+
+.team-stats__adjustment {
+  font-size: 0.875rem;
+}
+
+.team-stats__adjustment-rec {
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+.team-stats__adjustment-rationale {
+  color: var(--muted);
+}
+
+.team-stats__disclaimer {
+  text-align: right;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+// ── Loading / empty ────────────────────────────────────────────────────────
+.team-stats__loading {
+  color: var(--muted);
+}
+
+.team-stats__empty-text {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+// ── Section heads + metrics ────────────────────────────────────────────────
+.team-stats__section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.team-stats__section-title {
+  font-size: 1rem;
+  font-weight: 600;
+
+  &--spaced {
+    margin-bottom: 0.75rem;
+  }
+}
+
+.team-stats__metric {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.team-stats__metric-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+
+  &--indigo {
+    color: #4f46e5;
+  }
+
+  &--emerald {
+    color: var(--accent);
+  }
+}
+
+.team-stats__metric-label {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+// ── Charts ─────────────────────────────────────────────────────────────────
+.team-stats__roti-chart {
+  margin-top: 1rem;
+}
+
+.team-stats__chart-title {
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+// ── Tables ─────────────────────────────────────────────────────────────────
+.team-stats__table {
+  margin-top: 1rem;
+}
+
+.team-stats__right {
+  text-align: right;
+}
+
+.team-stats__row {
+  cursor: pointer;
+}
+
+.team-stats__member-cell {
+  font-weight: 500;
+  color: #4338ca;
+}
+
+.team-stats__strong {
+  font-weight: 500;
+}
+
+// ── Attendance timeline list (member mode) ─────────────────────────────────
+.team-stats__list {
+  margin-top: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+
+  > * + * {
+    border-top: 1px solid var(--border);
+  }
+}
+
+.team-stats__list-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.team-stats__icon--present {
+  color: var(--accent);
+}
+
+.team-stats__icon--absent {
+  color: #fb7185;
+}
+
+.team-stats__item-name {
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.team-stats__item-meta {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+// ── Intensity legend items ─────────────────────────────────────────────────
+.team-stats__legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.team-stats__legend-swatch {
+  width: 0.75rem;
+  height: 0.75rem;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+}
+
+.team-stats__legend-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ink-soft);
+}
+
+.team-stats__legend-value {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-weight: 500;
+  color: var(--ink);
 }
 
 :host-context(.dark-mode) {

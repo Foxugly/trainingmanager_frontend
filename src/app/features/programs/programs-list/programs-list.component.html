@@ -1,10 +1,10 @@
 <div>
   @if (!teamFilter()) {
-    <div class="flex justify-between items-center mb-6 gap-3 flex-wrap">
-      <h1 class="text-2xl font-bold">{{ 'programs.list.title' | transloco }}</h1>
-      <div class="flex items-center gap-3 flex-wrap">
+    <div class="programs-list__toolbar">
+      <h1 class="programs-list__title">{{ 'programs.list.title' | transloco }}</h1>
+      <div class="programs-list__toolbar-actions">
         @if (canShowArchivedToggle()) {
-          <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+          <label class="programs-list__archived-toggle">
             <p-toggleswitch [(ngModel)]="showArchived" inputId="show-archived" />
             <span>{{ 'programs.list.show_archived' | transloco }}</span>
           </label>
@@ -17,9 +17,9 @@
       </div>
     </div>
   } @else {
-    <div class="flex items-center justify-end gap-3 mb-3 flex-wrap">
+    <div class="programs-list__toolbar programs-list__toolbar--nested">
       @if (canShowArchivedToggle()) {
-        <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+        <label class="programs-list__archived-toggle">
           <p-toggleswitch [(ngModel)]="showArchived" inputId="show-archived-nested" />
           <span>{{ 'programs.list.show_archived' | transloco }}</span>
         </label>
@@ -38,14 +38,14 @@
   }
 
   @if (loading()) {
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" aria-hidden="true">
+    <div class="programs-list__grid" aria-hidden="true">
       @for (_ of [1, 2, 3, 4, 5, 6]; track $index) {
-        <div class="p-4 bg-white border border-gray-200 rounded-lg">
-          <div class="flex items-start justify-between gap-2 mb-3">
+        <div class="programs-list__skeleton-card">
+          <div class="programs-list__skeleton-head">
             <p-skeleton width="55%" height="1.25rem" />
             <p-skeleton width="3rem" height="1.25rem" borderRadius="6px" />
           </div>
-          <p-skeleton width="70%" height="0.875rem" styleClass="mb-2" />
+          <p-skeleton width="70%" height="0.875rem" styleClass="programs-list__mb-2" />
           <p-skeleton width="35%" height="0.75rem" />
         </div>
       }
@@ -68,33 +68,33 @@
       }
     </app-empty-state>
   } @else {
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div class="programs-list__grid">
       @for (p of programs(); track p.id) {
         <a
           [routerLink]="['/programs', p.id]"
           [class]="cardClass(p)"
         >
-          <div class="flex items-start gap-3">
+          <div class="programs-list__card-head">
             <div
               [class]="
                 p.is_active === false
-                  ? 'shrink-0 size-11 rounded-xl bg-gray-200 text-gray-500 flex items-center justify-center'
-                  : 'shrink-0 size-11 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center'
+                  ? 'programs-list__icon programs-list__icon--inactive'
+                  : 'programs-list__icon programs-list__icon--active'
               "
             >
-              <i class="pi pi-list text-lg" aria-hidden="true"></i>
+              <i class="pi pi-list programs-list__icon-glyph" aria-hidden="true"></i>
             </div>
-            <div class="min-w-0 flex-1">
+            <div class="programs-list__card-main">
               <h2
                 [class]="
                   p.is_active === false
-                    ? 'text-base font-semibold text-gray-600 line-through truncate'
-                    : 'text-base font-semibold text-gray-900 truncate'
+                    ? 'programs-list__name programs-list__name--inactive'
+                    : 'programs-list__name'
                 "
               >
                 {{ p.name }}
               </h2>
-              <p class="text-xs text-gray-500 truncate">
+              <p class="programs-list__team">
                 @if (!teamFilter() && p.team.name) {
                   {{ p.team.name }}
                 }
@@ -113,23 +113,23 @@
               </p>
             </div>
           </div>
-          <div class="mt-4 flex items-center justify-between gap-2 flex-wrap">
-            <div class="flex items-center gap-1.5 flex-wrap">
+          <div class="programs-list__foot">
+            <div class="programs-list__badges">
               @if (isCurrent(p)) {
-                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-medium text-emerald-700">
-                  <i class="pi pi-circle-fill text-[8px]" aria-hidden="true"></i>
+                <span class="programs-list__badge programs-list__badge--current">
+                  <i class="pi pi-circle-fill programs-list__badge-icon programs-list__badge-icon--dot" aria-hidden="true"></i>
                   {{ 'programs.list.current_badge' | transloco }}
                 </span>
               }
               @if (p.is_active === false) {
-                <span class="inline-flex items-center gap-1 rounded-full bg-gray-200 px-2 py-0.5 text-[11px] font-medium text-gray-700">
-                  <i class="pi pi-box text-[9px]" aria-hidden="true"></i>
+                <span class="programs-list__badge programs-list__badge--archived">
+                  <i class="pi pi-box programs-list__badge-icon programs-list__badge-icon--box" aria-hidden="true"></i>
                   {{ 'programs.list.archived_badge' | transloco }}
                 </span>
               }
             </div>
             <i
-              class="pi pi-arrow-right text-xs text-emerald-700 opacity-0 transition group-hover:opacity-100"
+              class="pi pi-arrow-right programs-list__arrow"
               aria-hidden="true"
             ></i>
           </div>

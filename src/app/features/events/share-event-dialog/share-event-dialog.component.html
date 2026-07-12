@@ -6,9 +6,9 @@
   [style]="{ width: '32rem' }"
   [header]="'public_share.event.dialog_title' | transloco"
 >
-  <div class="flex flex-col gap-4">
-    <label class="flex items-center justify-between gap-3">
-      <span class="text-sm font-medium text-gray-700">
+  <div class="share-dialog__body">
+    <label class="share-dialog__toggle-row">
+      <span class="share-dialog__label">
         {{ 'public_share.event.toggle_label' | transloco }}
       </span>
       <p-toggleswitch
@@ -20,15 +20,15 @@
     </label>
 
     @if (publicUrl(); as url) {
-      <div class="flex flex-col gap-2">
-        <label for="share_url" class="text-sm font-medium text-gray-700">
+      <div class="share-dialog__field">
+        <label for="share_url" class="share-dialog__label">
           {{ 'public_share.event.url_label' | transloco }}
         </label>
-        <div class="flex items-center gap-2">
+        <div class="share-dialog__url-row">
           <input
             pInputText
             id="share_url"
-            class="flex-1"
+            class="share-dialog__url-input"
             [value]="url"
             readonly
             (focus)="$any($event.target).select()"

@@ -1,24 +1,24 @@
-<div class="member-notes flex flex-col gap-4">
+<div class="member-notes">
   @if (canEdit()) {
     <!-- Add / edit note (coach only) -->
-    <form [formGroup]="form" class="flex flex-col gap-3 rounded-lg border border-gray-200 p-3">
-      <div class="flex flex-wrap items-center justify-between gap-2">
-        <h3 class="text-sm font-semibold">
+    <form [formGroup]="form" class="member-notes__form">
+      <div class="member-notes__form-head">
+        <h3 class="member-notes__form-title">
           @if (editingId() !== null) {
             {{ 'common.edit' | transloco }}
           } @else {
             {{ 'notes.add' | transloco }}
           }
         </h3>
-        <div class="flex items-center gap-2">
-          <label class="text-sm text-gray-600" for="note_visible_to_athlete">
+        <div class="member-notes__visibility">
+          <label class="member-notes__visibility-label" for="note_visible_to_athlete">
             {{ 'notes.visible_to_athlete' | transloco }}
           </label>
           <p-toggleSwitch formControlName="visible_to_athlete" inputId="note_visible_to_athlete" />
         </div>
       </div>
       <app-rich-editor formControlName="content" [style]="{ height: '10rem' }" />
-      <div class="flex items-center justify-end gap-2">
+      <div class="member-notes__form-actions">
         @if (editingId() !== null) {
           <p-button
             type="button"
@@ -42,15 +42,15 @@
 
   <!-- Notes list -->
   @if (loading()) {
-    <p class="text-sm text-gray-500">{{ 'common.loading' | transloco }}…</p>
+    <p class="member-notes__status">{{ 'common.loading' | transloco }}…</p>
   } @else if (isEmpty()) {
-    <p class="text-sm text-gray-500">{{ 'notes.empty' | transloco }}</p>
+    <p class="member-notes__status">{{ 'notes.empty' | transloco }}</p>
   } @else {
-    <ul class="flex flex-col gap-3">
+    <ul class="member-notes__list">
       @for (note of notes(); track note.id) {
-        <li class="rounded-lg border border-gray-200 p-3">
-          <div class="mb-2 flex flex-wrap items-center gap-2 text-xs text-gray-500">
-            <span class="font-medium text-gray-700">{{ note.author_username || '—' }}</span>
+        <li class="member-notes__item">
+          <div class="member-notes__item-head">
+            <span class="member-notes__author">{{ note.author_username || '—' }}</span>
             <span>·</span>
             <span>{{ note.created_at | localizedDate: 'medium' }}</span>
             @if (note.visible_to_athlete) {
@@ -67,7 +67,7 @@
               />
             }
             @if (canEdit()) {
-              <span class="ml-auto flex items-center gap-1">
+              <span class="member-notes__item-actions">
                 <p-button
                   type="button"
                   icon="pi pi-pencil"
@@ -93,7 +93,7 @@
               </span>
             }
           </div>
-          <div class="note-content text-sm" [innerHTML]="note.content"></div>
+          <div class="note-content member-notes__content" [innerHTML]="note.content"></div>
         </li>
       }
     </ul>

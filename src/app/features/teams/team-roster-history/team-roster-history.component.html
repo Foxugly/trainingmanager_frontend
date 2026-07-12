@@ -1,7 +1,7 @@
 @if (loading()) {
-  <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+  <p class="roster-history__loading">{{ 'common.loading' | transloco }}…</p>
 } @else if (error()) {
-  <p class="py-4 text-red-600">{{ 'common.load_failed' | transloco }}</p>
+  <p class="roster-history__error">{{ 'common.load_failed' | transloco }}</p>
 } @else if (entries().length === 0) {
   <app-empty-state icon="users" tone="gray" [title]="'teams.roster_history.empty' | transloco" />
 } @else {

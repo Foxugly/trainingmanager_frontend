@@ -16,6 +16,7 @@ import { Textarea } from 'primeng/textarea';
   selector: 'app-regenerate-training-dialog',
   imports: [FormsModule, Dialog, Textarea, Button, TranslocoPipe],
   templateUrl: './regenerate-training-dialog.component.html',
+  styleUrl: './regenerate-training-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RegenerateTrainingDialogComponent {

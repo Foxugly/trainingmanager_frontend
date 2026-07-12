@@ -1,3 +1,57 @@
 :host {
   display: block;
 }
+
+.energy-segments-list__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.energy-segments-list__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.energy-segments-list__filter {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.energy-segments-list__filter-label {
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.energy-segments-list__table {
+  border-radius: var(--radius-sm);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+}
+
+.energy-segments-list__abv {
+  font-size: 0.75rem;
+}
+
+.energy-segments-list__desc {
+  font-size: 0.875rem;
+}
+
+.energy-segments-list__actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.energy-segments-list__empty-cell {
+  text-align: center;
+  padding-block: 1rem;
+}
+
+.energy-segments-list__empty-error {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}

@@ -1,0 +1,144 @@
+:host {
+  display: block;
+}
+
+.roti {
+  margin-inline: auto;
+  max-width: 36rem;
+}
+
+.roti__title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  text-align: center;
+  margin: 0 0 0.75rem;
+
+  &--tight {
+    margin-bottom: 0.25rem;
+  }
+}
+
+.roti__subtitle {
+  font-size: 0.875rem;
+  color: var(--muted);
+  text-align: center;
+  margin: 0 0 0.75rem;
+}
+
+.roti__scale {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.roti__my-label {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.roti__manager--spaced {
+  margin-top: 1.5rem;
+}
+
+.roti__kpis {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.roti__kpi {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  padding: 0.75rem 1rem;
+}
+
+.roti__kpi-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--accent-strong);
+
+  &--neutral {
+    color: var(--ink);
+  }
+}
+
+.roti__kpi-unit {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.roti__kpi-label {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.roti__dist-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  margin: 0 0 0.5rem;
+}
+
+.roti__bars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  > * + * {
+    margin-top: 0.5rem;
+  }
+}
+
+.roti__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.roti__bar-label {
+  width: 7rem;
+  flex-shrink: 0;
+  color: var(--ink-soft);
+}
+
+.roti__bar-track {
+  flex: 1 1 0%;
+  height: 0.75rem;
+  border-radius: 999px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.roti__bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+  transition: width 0.15s ease;
+}
+
+.roti__bar-count {
+  width: 1.5rem;
+  text-align: right;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+.roti__hint {
+  font-size: 0.875rem;
+  color: var(--muted);
+}

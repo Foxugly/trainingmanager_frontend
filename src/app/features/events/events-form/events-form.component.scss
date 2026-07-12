@@ -9,7 +9,31 @@
   color: var(--ink);
   margin: 0 0 0.5rem;
 
-  &.mt-6 {
+  &--spaced {
     margin-top: 1.5rem;
+  }
+}
+
+.events-form__hint {
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.events-form__color-input {
+  flex: 1 1 0%;
+}
+
+// Loading-skeleton spacing (styleClass lands on the p-skeleton child view).
+:host ::ng-deep {
+  .events-form__skel--lg {
+    margin-bottom: 1rem;
+  }
+
+  .events-form__skel--md {
+    margin-bottom: 0.75rem;
+  }
+
+  .events-form__skel--sm {
+    margin-bottom: 0.25rem;
   }
 }

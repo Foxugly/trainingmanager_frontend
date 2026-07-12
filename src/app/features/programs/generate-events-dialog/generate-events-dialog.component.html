@@ -6,24 +6,24 @@
   [header]="'programs.generate.dialog_title' | transloco"
 >
   @if (loading()) {
-    <div class="flex flex-col items-center justify-center gap-4 py-10">
-      <p-progressSpinner styleClass="w-12 h-12" strokeWidth="3" />
-      <p class="text-sm font-medium text-emerald-900">
-        <i class="pi pi-sparkles mr-2" aria-hidden="true"></i>
+    <div class="gen-dialog__loading">
+      <p-progressSpinner styleClass="gen-dialog__spinner" strokeWidth="3" />
+      <p class="gen-dialog__loading-title">
+        <i class="pi pi-sparkles" aria-hidden="true"></i>
         {{ 'ai.generating_events' | transloco }}
       </p>
-      <p class="text-xs text-gray-500">{{ 'ai.please_wait' | transloco }}</p>
+      <p class="gen-dialog__loading-hint">{{ 'ai.please_wait' | transloco }}</p>
     </div>
   }
   <form
     [formGroup]="form"
     (ngSubmit)="submit()"
-    class="flex flex-col gap-4"
-    [class.hidden]="loading()"
+    class="gen-dialog__form"
+    [class.gen-dialog__form--hidden]="loading()"
   >
-    <div class="grid grid-cols-2 gap-4">
-      <div class="flex flex-col gap-1">
-        <label for="date_start" class="text-sm font-medium text-gray-700">
+    <div class="gen-dialog__row">
+      <div class="gen-dialog__field">
+        <label for="date_start" class="gen-dialog__label">
           {{ 'programs.generate.date_start' | transloco }}
         </label>
         <p-datepicker
@@ -34,11 +34,11 @@
           [maxDate]="maxDate() ?? undefined"
           [showIcon]="true"
           appendTo="body"
-          styleClass="w-full"
+          styleClass="gen-dialog__control"
         />
       </div>
-      <div class="flex flex-col gap-1">
-        <label for="date_end" class="text-sm font-medium text-gray-700">
+      <div class="gen-dialog__field">
+        <label for="date_end" class="gen-dialog__label">
           {{ 'programs.generate.date_end' | transloco }}
         </label>
         <p-datepicker
@@ -49,24 +49,22 @@
           [maxDate]="maxDate() ?? undefined"
           [showIcon]="true"
           appendTo="body"
-          styleClass="w-full"
+          styleClass="gen-dialog__control"
         />
       </div>
     </div>
 
     @if (hasTemplate()) {
-      <div
-        class="flex flex-col gap-1 rounded-md border border-emerald-200 bg-emerald-50 p-3"
-      >
-        <span class="text-sm font-medium text-emerald-900">
-          <i class="pi pi-calendar mr-1" aria-hidden="true"></i>
+      <div class="gen-dialog__panel">
+        <span class="gen-dialog__panel-title">
+          <i class="pi pi-calendar" aria-hidden="true"></i>
           {{ 'training_template.summary_label' | transloco }}
         </span>
-        <span class="text-sm text-emerald-800">{{ templateSummary() }}</span>
+        <span class="gen-dialog__panel-text">{{ templateSummary() }}</span>
       </div>
     } @else {
-      <div class="flex flex-col gap-1">
-        <label for="frequency_per_week" class="text-sm font-medium text-gray-700">
+      <div class="gen-dialog__field">
+        <label for="frequency_per_week" class="gen-dialog__label">
           {{ 'programs.generate.frequency_per_week' | transloco }}
         </label>
         <p-inputnumber
@@ -75,15 +73,15 @@
           [min]="1"
           [max]="14"
           [showButtons]="true"
-          styleClass="w-full"
+          styleClass="gen-dialog__control"
         />
-        <small class="text-xs text-gray-500">
+        <small class="gen-dialog__hint">
           {{ 'programs.generate.frequency_help' | transloco }}
         </small>
-        <small class="text-xs text-gray-500">
+        <small class="gen-dialog__hint">
           {{ 'training_template.no_template_hint' | transloco }}
           <a
-            class="text-emerald-700 underline"
+            class="gen-dialog__link"
             [routerLink]="['/teams', program().team?.id, 'edit']"
             (click)="cancel()"
           >
@@ -93,8 +91,8 @@
       </div>
     }
 
-    <div class="flex flex-col gap-1">
-      <label for="description" class="text-sm font-medium text-gray-700">
+    <div class="gen-dialog__field">
+      <label for="description" class="gen-dialog__label">
         {{ 'programs.generate.description' | transloco }}
       </label>
       <textarea
@@ -103,15 +101,15 @@
         formControlName="description"
         rows="3"
         [placeholder]="'programs.generate.description_placeholder' | transloco"
-        class="w-full"
+        class="gen-dialog__textarea"
       ></textarea>
-      <small class="text-xs text-gray-500">
+      <small class="gen-dialog__hint">
         {{ 'programs.generate.description_help' | transloco }}
       </small>
     </div>
 
-    <div class="flex flex-col gap-1">
-      <label for="overlap_strategy" class="text-sm font-medium text-gray-700">
+    <div class="gen-dialog__field">
+      <label for="overlap_strategy" class="gen-dialog__label">
         {{ 'programs.generate.overlap_strategy' | transloco }}
       </label>
       <p-select
@@ -121,7 +119,7 @@
         optionLabel="label"
         optionValue="value"
         appendTo="body"
-        styleClass="w-full"
+        styleClass="gen-dialog__control"
       />
     </div>
 
@@ -129,7 +127,7 @@
       <p-message severity="error" [text]="msg" />
     }
 
-    <div class="flex justify-end gap-2 pt-2">
+    <div class="gen-dialog__actions">
       <p-button
         type="button"
         severity="secondary"

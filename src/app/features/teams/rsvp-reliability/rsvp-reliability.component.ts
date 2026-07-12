@@ -21,6 +21,7 @@ import { loadOn } from '../../../shared/data/load-on';
   selector: 'app-rsvp-reliability',
   imports: [TableModule, TranslocoPipe],
   templateUrl: './rsvp-reliability.component.html',
+  styleUrl: './rsvp-reliability.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RsvpReliabilityComponent {

@@ -9,9 +9,100 @@
   color: var(--ink);
   margin: 0 0 0.5rem;
 
-  &.mt-6 {
+  &--spaced {
     margin-top: 1.5rem;
   }
+}
+
+// Loading skeleton spacing (passed to p-skeleton via styleClass).
+.teams-form__sk-title {
+  margin-bottom: 1rem;
+}
+
+.teams-form__sk-label {
+  margin-bottom: 0.25rem;
+}
+
+.teams-form__sk-input {
+  margin-bottom: 0.75rem;
+}
+
+// Load-error card: stacked message + retry button.
+.teams-form__error-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+// Logo picker row (preview + upload/remove buttons).
+.teams-form__logo-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.teams-form__logo-img {
+  width: 4rem;
+  height: 4rem;
+  border-radius: var(--radius);
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+
+.teams-form__file-input {
+  display: none;
+}
+
+// Section-level hint with extra bottom spacing.
+.teams-form__hint {
+  margin-bottom: 0.5rem;
+}
+
+// Quota-exceeded alert box.
+.teams-form__quota {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid color-mix(in srgb, var(--danger) 30%, transparent);
+  background: var(--danger-soft);
+}
+
+.teams-form__quota-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.teams-form__quota-icon {
+  margin-top: 0.125rem;
+  color: var(--danger);
+}
+
+.teams-form__quota-title {
+  font-weight: 600;
+  color: var(--danger);
+}
+
+.teams-form__quota-text {
+  font-size: 0.875rem;
+  color: var(--danger);
+}
+
+.teams-form__quota-meta {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: color-mix(in srgb, var(--danger) 80%, transparent);
+}
+
+.teams-form__quota-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-left: 1.75rem;
 }
 
 // Encadrement: list of current managers.

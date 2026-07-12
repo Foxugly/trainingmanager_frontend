@@ -1,10 +1,10 @@
 <div>
-  <a [routerLink]="['/admin/modalities']" class="text-sm text-blue-600 hover:underline">
+  <a [routerLink]="['/admin/modalities']" class="modalities-list__back">
     ← {{ 'common.back' | transloco }}
   </a>
 
-  <div class="flex justify-between items-center mb-6 mt-2">
-    <h1 class="text-2xl font-bold">
+  <div class="modalities-list__head">
+    <h1 class="modalities-list__title">
       {{ 'admin.modalities.list.title' | transloco }}
       @if (sport(); as s) {
         — {{ s.name }}
@@ -15,13 +15,13 @@
     </a>
   </div>
 
-  <div class="mb-4 flex items-center gap-2">
+  <div class="modalities-list__filter">
     <p-checkbox
       [(ngModel)]="includeInactiveModel"
       [binary]="true"
       inputId="mod_include_inactive"
     />
-    <label for="mod_include_inactive" class="text-sm cursor-pointer" style="color: var(--p-text-color)">
+    <label for="mod_include_inactive" class="modalities-list__filter-label" style="color: var(--p-text-color)">
       {{ 'admin.modalities.show_inactive' | transloco }}
     </label>
   </div>
@@ -31,7 +31,7 @@
     [loading]="loading()"
     [paginator]="true"
     [rows]="20"
-    styleClass="rounded shadow-sm"
+    styleClass="modalities-list__table"
   >
     <ng-template pTemplate="header">
       <tr>
@@ -49,7 +49,7 @@
             [label]="(modality.is_active ? 'common.active' : 'common.inactive') | transloco"
           />
         </td>
-        <td class="flex gap-1">
+        <td class="modalities-list__actions">
           <a [routerLink]="[modality.id, 'edit']">
             <p-button
               icon="pi pi-pencil"
@@ -81,8 +81,8 @@
     <ng-template pTemplate="emptymessage">
       <tr>
         @if (error()) {
-          <td colspan="3" class="text-center py-4">
-            <div class="inline-flex flex-col items-center gap-2">
+          <td colspan="3" class="modalities-list__empty-cell">
+            <div class="modalities-list__empty-error">
               <p-message severity="error" [text]="'common.load_failed' | transloco" />
               <p-button
                 [label]="'common.retry' | transloco"
@@ -95,7 +95,7 @@
             </div>
           </td>
         } @else {
-          <td colspan="3" class="text-center py-4" style="color: var(--p-text-muted-color)">—</td>
+          <td colspan="3" class="modalities-list__empty-cell" style="color: var(--p-text-muted-color)">—</td>
         }
       </tr>
     </ng-template>

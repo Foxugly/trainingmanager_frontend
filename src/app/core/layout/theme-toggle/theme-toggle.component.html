@@ -1,0 +1,10 @@
+<button
+  type="button"
+  class="theme-toggle"
+  [attr.aria-label]="'topmenu.theme' | transloco"
+  [attr.title]="'topmenu.theme' | transloco"
+  [attr.aria-pressed]="isDark()"
+  (click)="toggle()"
+>
+  <i class="pi" [class.pi-moon]="!isDark()" [class.pi-sun]="isDark()" aria-hidden="true"></i>
+</button>

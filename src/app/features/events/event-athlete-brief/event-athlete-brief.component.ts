@@ -27,6 +27,7 @@ import { ToastService } from '../../../core/notifications/toast.service';
   selector: 'app-event-athlete-brief',
   imports: [FormsModule, Button, Textarea, TranslocoPipe],
   templateUrl: './event-athlete-brief.component.html',
+  styleUrl: './event-athlete-brief.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EventAthleteBriefComponent {

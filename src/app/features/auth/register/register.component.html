@@ -1,23 +1,18 @@
-<section class="relative flex min-h-[60vh] items-center justify-center px-4 py-12 md:py-16">
-  <div
-    class="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-emerald-50 via-white to-teal-50"
-    aria-hidden="true"
-  ></div>
-  <div class="w-full max-w-lg p-8 bg-white rounded-2xl shadow-md border border-gray-200">
-    <div class="flex flex-col items-center text-center mb-6">
-      <div
-        class="size-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mb-4"
-      >
-        <i class="pi pi-user-plus text-xl" aria-hidden="true"></i>
+<section class="register">
+  <div class="register__bg" aria-hidden="true"></div>
+  <div class="register__card">
+    <div class="register__header">
+      <div class="register__icon">
+        <i class="pi pi-user-plus register__icon-glyph" aria-hidden="true"></i>
       </div>
-      <h1 class="text-2xl font-bold mb-1">{{ 'auth.register.title' | transloco }}</h1>
-      <p class="text-sm text-gray-600">{{ 'auth.register.subtitle' | transloco }}</p>
+      <h1 class="register__title">{{ 'auth.register.title' | transloco }}</h1>
+      <p class="register__subtitle">{{ 'auth.register.subtitle' | transloco }}</p>
     </div>
 
-    <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div class="flex flex-col gap-2">
-          <label for="first_name" class="text-sm font-medium text-gray-700">
+    <form [formGroup]="form" (ngSubmit)="submit()" class="register__form">
+      <div class="register__grid">
+        <div class="register__field">
+          <label for="first_name" class="register__label">
             {{ 'auth.register.fields.first_name' | transloco }}
           </label>
           <input
@@ -28,11 +23,11 @@
             maxlength="150"
           />
           @if (fieldErrors()?.['first_name']; as msgs) {
-            <small class="text-xs text-red-700">{{ msgs.join(' · ') }}</small>
+            <small class="register__error">{{ msgs.join(' · ') }}</small>
           }
         </div>
-        <div class="flex flex-col gap-2">
-          <label for="last_name" class="text-sm font-medium text-gray-700">
+        <div class="register__field">
+          <label for="last_name" class="register__label">
             {{ 'auth.register.fields.last_name' | transloco }}
           </label>
           <input
@@ -43,23 +38,23 @@
             maxlength="150"
           />
           @if (fieldErrors()?.['last_name']; as msgs) {
-            <small class="text-xs text-red-700">{{ msgs.join(' · ') }}</small>
+            <small class="register__error">{{ msgs.join(' · ') }}</small>
           }
         </div>
       </div>
 
-      <div class="flex flex-col gap-2">
-        <label for="email" class="text-sm font-medium text-gray-700">
+      <div class="register__field">
+        <label for="email" class="register__label">
           {{ 'auth.register.fields.email' | transloco }}
         </label>
         <input pInputText id="email" type="email" formControlName="email" autocomplete="email" />
         @if (fieldErrors()?.['email']; as msgs) {
-          <small class="text-xs text-red-700">{{ msgs.join(' · ') }}</small>
+          <small class="register__error">{{ msgs.join(' · ') }}</small>
         }
       </div>
 
-      <div class="flex flex-col gap-2">
-        <label for="password" class="text-sm font-medium text-gray-700">
+      <div class="register__field">
+        <label for="password" class="register__label">
           {{ 'auth.register.fields.password' | transloco }}
         </label>
         <p-password
@@ -72,12 +67,12 @@
           [inputStyle]="{ width: '100%' }"
         />
         @if (fieldErrors()?.['password']; as msgs) {
-          <small class="text-xs text-red-700">{{ msgs.join(' · ') }}</small>
+          <small class="register__error">{{ msgs.join(' · ') }}</small>
         }
       </div>
 
-      <div class="flex flex-col gap-2">
-        <label for="confirm_password" class="text-sm font-medium text-gray-700">
+      <div class="register__field">
+        <label for="confirm_password" class="register__label">
           {{ 'auth.register.fields.confirm_password' | transloco }}
         </label>
         <p-password
@@ -90,14 +85,14 @@
           [inputStyle]="{ width: '100%' }"
         />
         @if (form.errors?.['password_mismatch'] && form.controls.confirm_password.touched) {
-          <small class="text-xs text-red-700">
+          <small class="register__error">
             {{ 'auth.register.password_mismatch' | transloco }}
           </small>
         }
       </div>
 
-      <div class="flex flex-col gap-2">
-        <label for="language" class="text-sm font-medium text-gray-700">
+      <div class="register__field">
+        <label for="language" class="register__label">
           {{ 'auth.register.fields.language' | transloco }}
         </label>
         <p-select
@@ -110,7 +105,7 @@
         />
       </div>
 
-      <div class="flex flex-col items-center gap-2 my-2">
+      <div class="register__turnstile">
         <div #turnstile></div>
         @if (turnstileFailed()) {
           <p-message severity="warn" [text]="'auth.turnstile_failed' | transloco" />
@@ -147,9 +142,9 @@
         styleClass="w-full"
       />
 
-      <p class="text-center text-sm text-gray-600 mt-2">
+      <p class="register__footer">
         {{ 'auth.register.already_have_account' | transloco }}
-        <a [routerLink]="['/login']" class="text-emerald-600 hover:underline font-medium">
+        <a [routerLink]="['/login']" class="register__link">
           {{ 'auth.register.already_have_account_link' | transloco }}
         </a>
       </p>

@@ -1,7 +1,7 @@
 <div class="builder-pane" [formGroup]="templateForm">
   <!-- Section header + green "add a slot" button. -->
-  <div class="flex items-center justify-between mb-2">
-    <h3 class="builder-section-title !mb-0">
+  <div class="slots-editor__header">
+    <h3 class="builder-section-title">
       {{ 'training_template.slots' | transloco }}
     </h3>
     <p-button
@@ -13,7 +13,7 @@
       (onClick)="addSlot()"
     />
   </div>
-  <p class="meta-hint mb-2">{{ 'training_template.slots_help' | transloco }}</p>
+  <p class="meta-hint slots-editor__help">{{ 'training_template.slots_help' | transloco }}</p>
 
   @if (templateLoading()) {
     <p class="meta-hint">{{ 'common.loading' | transloco }}…</p>
@@ -41,7 +41,7 @@
           @if (showSportColumn()) {
             <th>{{ 'teams.form.sport' | transloco }}</th>
           }
-          <th class="text-right">{{ 'common.actions' | transloco }}</th>
+          <th class="slots-editor__cell--right">{{ 'common.actions' | transloco }}</th>
         </tr>
       </ng-template>
       <ng-template #body let-slot let-i="rowIndex">
@@ -54,7 +54,7 @@
                 formControlName="weekday"
                 optionLabel="label"
                 optionValue="value"
-                styleClass="w-full"
+                styleClass="slots-editor__field"
                 [ariaLabel]="'training_template.weekday_label' | transloco"
               />
             </td>
@@ -65,7 +65,7 @@
                 [timeOnly]="true"
                 [showIcon]="true"
                 appendTo="body"
-                styleClass="w-full"
+                styleClass="slots-editor__field"
                 [ariaLabel]="'events.form.hour_start' | transloco"
               />
             </td>
@@ -76,11 +76,11 @@
                 [timeOnly]="true"
                 [showIcon]="true"
                 appendTo="body"
-                styleClass="w-full"
+                styleClass="slots-editor__field"
                 [ariaLabel]="'events.form.hour_end' | transloco"
               />
               @if (slotHasTimeError(i)) {
-                <small class="text-red-600 block mt-1">
+                <small class="slots-editor__error">
                   {{ 'training_template.time_range_error' | transloco }}
                 </small>
               }
@@ -96,7 +96,7 @@
                 [placeholder]="'place.select_placeholder' | transloco"
                 [emptyMessage]="'place.none' | transloco"
                 appendTo="body"
-                styleClass="w-full"
+                styleClass="slots-editor__field"
                 [ariaLabel]="'training_template.place_label' | transloco"
               />
             </td>
@@ -109,12 +109,12 @@
                   optionLabel="name"
                   optionValue="id"
                   appendTo="body"
-                  styleClass="w-full"
+                  styleClass="slots-editor__field"
                   [ariaLabel]="'teams.form.sport' | transloco"
                 />
               </td>
             }
-            <td class="text-right whitespace-nowrap">
+            <td class="slots-editor__actions">
               <p-button
                 type="button"
                 icon="pi pi-check"
@@ -145,15 +145,15 @@
             <td>{{ slotWeekdayLabel(i) }}</td>
             <td>{{ slotStart(i) }}</td>
             <td>{{ slotEnd(i) }}</td>
-            <td [class.text-gray-500]="slotPlaceName(i) === '—'">
+            <td [class.slots-editor__cell--muted]="slotPlaceName(i) === '—'">
               {{ slotPlaceName(i) }}
             </td>
             @if (showSportColumn()) {
-              <td [class.text-gray-500]="slotSportName(i) === '—'">
+              <td [class.slots-editor__cell--muted]="slotSportName(i) === '—'">
                 {{ slotSportName(i) }}
               </td>
             }
-            <td class="text-right whitespace-nowrap">
+            <td class="slots-editor__actions">
               <p-button
                 type="button"
                 icon="pi pi-pencil"

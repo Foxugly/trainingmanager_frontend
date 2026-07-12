@@ -1,0 +1,12 @@
+:host {
+  display: block;
+}
+
+.roster-history__loading {
+  color: var(--muted);
+}
+
+.roster-history__error {
+  padding-block: 1rem;
+  color: var(--danger);
+}

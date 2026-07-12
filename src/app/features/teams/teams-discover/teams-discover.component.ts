@@ -29,6 +29,7 @@ import { AuthService } from '../../../core/auth/auth.service';
     TranslocoPipe,
   ],
   templateUrl: './teams-discover.component.html',
+  styleUrl: './teams-discover.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TeamsDiscoverComponent implements OnInit {

@@ -1,0 +1,46 @@
+:host {
+  display: block;
+}
+
+.roti-drift {
+  &__loading {
+    color: var(--muted);
+  }
+
+  &__error {
+    color: var(--danger);
+  }
+
+  &__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  &__avg {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  &__cell--right {
+    text-align: right;
+  }
+
+  &__dash {
+    color: var(--muted);
+  }
+
+  &__hint {
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+}

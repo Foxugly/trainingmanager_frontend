@@ -54,6 +54,7 @@ import { PlaceRequest } from '../../../api/model/place-request';
     TranslocoPipe,
   ],
   templateUrl: './place-select.component.html',
+  styleUrl: './place-select.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {

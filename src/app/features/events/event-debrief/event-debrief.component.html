@@ -1,49 +1,49 @@
 @if (loading()) {
-  <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+  <p class="debrief__loading">{{ 'common.loading' | transloco }}…</p>
 } @else if (error()) {
-  <p class="py-4 text-red-600">{{ 'common.load_failed' | transloco }}</p>
+  <p class="debrief__error">{{ 'common.load_failed' | transloco }}</p>
 } @else if (data(); as d) {
-  <div class="flex flex-col gap-5">
+  <div class="debrief__body">
     <!-- Summary cards -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-      <div class="card text-center">
-        <div class="text-2xl font-bold text-indigo-600">
+    <div class="debrief__cards">
+      <div class="card debrief__card">
+        <div class="debrief__stat debrief__stat--present">
           {{ d.attendance.present
-          }}<span class="text-base text-gray-400">/{{ d.attendance.total }}</span>
+          }}<span class="debrief__stat-sub">/{{ d.attendance.total }}</span>
         </div>
-        <div class="text-xs text-gray-500">
+        <div class="debrief__stat-label">
           {{ 'events.debrief.present' | transloco }}
           @if (attendancePct() !== null) {
             <span>({{ attendancePct() }}%)</span>
           }
         </div>
       </div>
-      <div class="card text-center">
-        <div class="text-2xl font-bold text-emerald-600">
+      <div class="card debrief__card">
+        <div class="debrief__stat debrief__stat--roti">
           {{ d.roti.average === null ? '—' : d.roti.average }}
         </div>
-        <div class="text-xs text-gray-500">
+        <div class="debrief__stat-label">
           {{ 'events.debrief.roti_avg' | transloco }} ({{ d.roti.count }})
         </div>
       </div>
-      <div class="card text-center">
-        <div class="text-2xl font-bold text-amber-600">{{ d.rsvp.going }}</div>
-        <div class="text-xs text-gray-500">
+      <div class="card debrief__card">
+        <div class="debrief__stat debrief__stat--rsvp">{{ d.rsvp.going }}</div>
+        <div class="debrief__stat-label">
           {{ 'events.debrief.rsvp_going' | transloco }}
           @if (d.rsvp.no_response > 0) {
             <span>· {{ d.rsvp.no_response }} {{ 'events.debrief.no_response' | transloco }}</span>
           }
         </div>
       </div>
-      <div class="card text-center">
-        <div class="text-2xl font-bold text-gray-700">{{ d.attachments_count }}</div>
-        <div class="text-xs text-gray-500">{{ 'attachments.title' | transloco }}</div>
+      <div class="card debrief__card">
+        <div class="debrief__stat debrief__stat--attach">{{ d.attachments_count }}</div>
+        <div class="debrief__stat-label">{{ 'attachments.title' | transloco }}</div>
       </div>
     </div>
 
     <!-- Editable debrief note -->
-    <div class="flex flex-col gap-2">
-      <label for="debrief-note" class="text-sm font-medium text-gray-600">
+    <div class="debrief__note">
+      <label for="debrief-note" class="debrief__note-label">
         {{ 'events.debrief.note_label' | transloco }}
       </label>
       <textarea
@@ -53,7 +53,7 @@
         [ngModel]="debriefText()"
         (ngModelChange)="debriefText.set($event)"
         [placeholder]="'events.debrief.note_placeholder' | transloco"
-        class="w-full"
+        class="debrief__textarea"
       ></textarea>
       <div>
         <p-button

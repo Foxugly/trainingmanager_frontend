@@ -77,17 +77,17 @@
               <p-tab value="es">ES</p-tab>
             </p-tablist>
             <p-tabpanels>
-              <p-tabpanel value="fr"><input pInputText formControlName="name_fr" placeholder="Français" class="w-full" /></p-tabpanel>
-              <p-tabpanel value="nl"><input pInputText formControlName="name_nl" placeholder="Nederlands" class="w-full" /></p-tabpanel>
-              <p-tabpanel value="en"><input pInputText formControlName="name_en" placeholder="English" class="w-full" /></p-tabpanel>
-              <p-tabpanel value="it"><input pInputText formControlName="name_it" placeholder="Italiano" class="w-full" /></p-tabpanel>
-              <p-tabpanel value="es"><input pInputText formControlName="name_es" placeholder="Español" class="w-full" /></p-tabpanel>
+              <p-tabpanel value="fr"><input pInputText formControlName="name_fr" placeholder="Français" class="sports-form__input" /></p-tabpanel>
+              <p-tabpanel value="nl"><input pInputText formControlName="name_nl" placeholder="Nederlands" class="sports-form__input" /></p-tabpanel>
+              <p-tabpanel value="en"><input pInputText formControlName="name_en" placeholder="English" class="sports-form__input" /></p-tabpanel>
+              <p-tabpanel value="it"><input pInputText formControlName="name_it" placeholder="Italiano" class="sports-form__input" /></p-tabpanel>
+              <p-tabpanel value="es"><input pInputText formControlName="name_es" placeholder="Español" class="sports-form__input" /></p-tabpanel>
             </p-tabpanels>
           </p-tabs>
         </app-meta-field>
       </div>
       @if (form.errors?.['nameRequired'] && form.dirty) {
-        <small class="text-xs text-red-700">{{ 'admin.common.name_required' | transloco }}</small>
+        <small class="sports-form__error">{{ 'admin.common.name_required' | transloco }}</small>
       }
     </form>
 

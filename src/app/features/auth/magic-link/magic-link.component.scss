@@ -1,3 +1,95 @@
 :host {
   display: block;
 }
+
+.magic {
+  position: relative;
+  display: flex;
+  min-height: 60vh;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 1rem;
+  padding-block: 3rem;
+
+  @media (min-width: 768px) {
+    padding-block: 4rem;
+  }
+
+  &__bg {
+    position: absolute;
+    inset: 0;
+    z-index: -10;
+    pointer-events: none;
+    background: linear-gradient(
+      135deg,
+      var(--accent-soft),
+      var(--surface) 55%,
+      var(--accent-soft)
+    );
+  }
+
+  &__card {
+    width: 100%;
+    max-width: 28rem;
+    padding: 2rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+  }
+
+  &__loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding-block: 1rem;
+    text-align: center;
+  }
+
+  &__text {
+    color: var(--ink-soft);
+  }
+
+  &__state {
+    text-align: center;
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    margin-inline: auto;
+    margin-bottom: 1rem;
+    border-radius: var(--radius-lg);
+    color: var(--accent);
+    background: var(--accent-soft);
+
+    &--warn {
+      color: var(--warn);
+      background: var(--warn-soft);
+    }
+
+    &--error {
+      color: var(--danger);
+      background: var(--danger-soft);
+    }
+  }
+
+  &__icon-glyph {
+    font-size: 1.5rem;
+  }
+
+  &__state-title {
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  &__state-text {
+    margin-bottom: 1.5rem;
+    color: var(--ink-soft);
+  }
+}

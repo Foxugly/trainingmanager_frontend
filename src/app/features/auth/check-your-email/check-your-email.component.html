@@ -1,23 +1,20 @@
-<section class="relative flex min-h-[60vh] items-center justify-center px-4 py-12 md:py-16">
-  <div
-    class="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-emerald-50 via-white to-teal-50"
-    aria-hidden="true"
-  ></div>
-  <div class="w-full max-w-md p-8 bg-white rounded-2xl shadow-md border border-gray-200">
-    <div class="flex flex-col items-center text-center mb-6">
-      <div class="size-14 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mb-4">
-        <i class="pi pi-envelope text-2xl" aria-hidden="true"></i>
+<section class="check-email">
+  <div class="check-email__bg" aria-hidden="true"></div>
+  <div class="check-email__card">
+    <div class="check-email__header">
+      <div class="check-email__icon">
+        <i class="pi pi-envelope check-email__icon-glyph" aria-hidden="true"></i>
       </div>
-      <h1 class="text-2xl font-bold">{{ 'auth.check_email.title' | transloco }}</h1>
+      <h1 class="check-email__title">{{ 'auth.check_email.title' | transloco }}</h1>
     </div>
 
     @if (email(); as e) {
-      <p class="text-gray-700 text-center mb-6">
+      <p class="check-email__body">
         {{ 'auth.check_email.body_with_email' | transloco: { email: e } }}
       </p>
 
       @if (errorMessage(); as msg) {
-        <div class="mb-4">
+        <div class="check-email__notice">
           <p-message severity="warn" [text]="msg | transloco" />
         </div>
       }
@@ -36,11 +33,11 @@
         styleClass="w-full"
       />
     } @else {
-      <p class="text-gray-700 text-center mb-6">
+      <p class="check-email__body">
         {{ 'auth.check_email.body_no_email' | transloco }}
       </p>
 
-      <form [formGroup]="emailForm" (ngSubmit)="submitEmailForm()" class="flex flex-col gap-3">
+      <form [formGroup]="emailForm" (ngSubmit)="submitEmailForm()" class="check-email__form">
         <input
           pInputText
           type="email"
@@ -65,8 +62,8 @@
       </form>
     }
 
-    <p class="text-center text-sm text-gray-600 mt-6">
-      <a [routerLink]="['/login']" class="text-emerald-600 hover:underline font-medium">
+    <p class="check-email__footer">
+      <a [routerLink]="['/login']" class="check-email__link">
         {{ 'auth.check_email.back_to_login' | transloco }}
       </a>
     </p>

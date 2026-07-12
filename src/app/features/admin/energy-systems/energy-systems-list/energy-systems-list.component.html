@@ -1,17 +1,17 @@
-<div class="flex justify-between items-center mb-6">
-  <h1 class="text-2xl font-bold">{{ 'admin.energy_systems.title' | transloco }}</h1>
+<div class="energy-systems-list__head">
+  <h1 class="energy-systems-list__title">{{ 'admin.energy_systems.title' | transloco }}</h1>
   <a [routerLink]="['new']">
     <p-button [label]="'admin.energy_systems.new' | transloco" icon="pi pi-plus" severity="success" />
   </a>
 </div>
 
-<div class="mb-4 flex items-center gap-2">
+<div class="energy-systems-list__filter">
   <p-checkbox
     [(ngModel)]="includeInactiveModel"
     [binary]="true"
     inputId="es_include_inactive"
   />
-  <label for="es_include_inactive" class="text-sm cursor-pointer" style="color: var(--p-text-color)">
+  <label for="es_include_inactive" class="energy-systems-list__filter-label" style="color: var(--p-text-color)">
     {{ 'admin.energy_systems.show_inactive' | transloco }}
   </label>
 </div>
@@ -21,7 +21,7 @@
   [loading]="loading()"
   [paginator]="true"
   [rows]="20"
-  styleClass="rounded shadow-sm"
+  styleClass="energy-systems-list__table"
 >
   <ng-template pTemplate="header">
     <tr>
@@ -39,7 +39,7 @@
           [label]="(es.is_active ? 'common.active' : 'common.inactive') | transloco"
         />
       </td>
-      <td class="flex gap-1">
+      <td class="energy-systems-list__actions">
         <a [routerLink]="[es.id, 'edit']">
           <p-button
             icon="pi pi-pencil"
@@ -71,8 +71,8 @@
   <ng-template pTemplate="emptymessage">
     <tr>
       @if (error()) {
-        <td colspan="3" class="text-center py-4">
-          <div class="inline-flex flex-col items-center gap-2">
+        <td colspan="3" class="energy-systems-list__empty-cell">
+          <div class="energy-systems-list__empty-error">
             <p-message severity="error" [text]="'common.load_failed' | transloco" />
             <p-button
               [label]="'common.retry' | transloco"
@@ -85,7 +85,7 @@
           </div>
         </td>
       } @else {
-        <td colspan="3" class="text-center py-4" style="color: var(--p-text-muted-color)">—</td>
+        <td colspan="3" class="energy-systems-list__empty-cell" style="color: var(--p-text-muted-color)">—</td>
       }
     </tr>
   </ng-template>

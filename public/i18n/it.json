@@ -24,7 +24,8 @@
   "topmenu": {
     "open": "Apri menu",
     "close": "Chiudi menu",
-    "messages": "Messaggi"
+    "messages": "Messaggi",
+    "theme": "Cambia tema"
   },
   "messages": {
     "title": "Messaggi",

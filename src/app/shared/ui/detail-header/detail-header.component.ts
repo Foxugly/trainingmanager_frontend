@@ -19,6 +19,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
   selector: 'app-detail-header',
   imports: [CommonModule, RouterLink, TranslocoPipe],
   templateUrl: './detail-header.component.html',
+  styleUrl: './detail-header.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DetailHeaderComponent implements AfterViewInit, OnDestroy {

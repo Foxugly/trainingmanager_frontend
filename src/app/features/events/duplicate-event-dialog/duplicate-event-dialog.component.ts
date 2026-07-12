@@ -44,6 +44,7 @@ function toIsoDate(d: Date | null | undefined): string | null {
     TranslocoPipe,
   ],
   templateUrl: './duplicate-event-dialog.component.html',
+  styleUrl: './duplicate-event-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DuplicateEventDialogComponent {

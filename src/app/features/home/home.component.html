@@ -1,43 +1,28 @@
-<section id="hero" class="relative overflow-hidden">
-  <div
-    class="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-emerald-50 via-white to-teal-50"
-    aria-hidden="true"
-  ></div>
-  <div
-    class="pointer-events-none absolute -top-32 right-0 -z-10 h-[28rem] w-[28rem] rounded-full bg-gradient-to-br from-emerald-200/60 to-teal-200/40 blur-3xl"
-    aria-hidden="true"
-  ></div>
-  <div
-    class="pointer-events-none absolute -bottom-40 -left-32 -z-10 h-[28rem] w-[28rem] rounded-full bg-gradient-to-br from-emerald-100/60 to-cyan-100/40 blur-3xl"
-    aria-hidden="true"
-  ></div>
+<section id="hero" class="home-hero">
+  <div class="home-hero__bg" aria-hidden="true"></div>
+  <div class="home-hero__blob home-hero__blob--top" aria-hidden="true"></div>
+  <div class="home-hero__blob home-hero__blob--bottom" aria-hidden="true"></div>
 
-  <div class="container mx-auto px-6 py-16 md:py-24">
-    <div class="mx-auto max-w-3xl text-center">
-      <span class="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white/70 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-emerald-700 shadow-sm">
-        <i class="pi pi-sparkles text-[10px]" aria-hidden="true"></i>
+  <div class="home-hero__container">
+    <div class="home-hero__inner">
+      <span class="home-hero__badge">
+        <i class="pi pi-sparkles" aria-hidden="true"></i>
         {{ 'home.hero.tagline' | transloco }}
       </span>
-      <h1 class="mt-6 text-4xl font-extrabold leading-tight tracking-tight text-gray-900 md:text-6xl">
+      <h1 class="home-hero__title">
         {{ 'home.hero.title' | transloco }}
       </h1>
-      <p class="mt-6 text-lg text-gray-600 md:text-xl">
+      <p class="home-hero__subtitle">
         {{ 'home.hero.subtitle' | transloco }}
       </p>
-      <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-        <a
-          [routerLink]="['/login']"
-          class="inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 px-7 py-3 text-base font-semibold text-white shadow-lg shadow-emerald-500/20 transition hover:from-emerald-500 hover:to-teal-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
-        >
+      <div class="home-hero__actions">
+        <a [routerLink]="['/login']" class="home-hero__cta home-hero__cta--primary">
           {{ 'home.hero.cta_primary' | transloco }}
-          <i class="pi pi-arrow-right text-sm" aria-hidden="true"></i>
+          <i class="pi pi-arrow-right" aria-hidden="true"></i>
         </a>
-        <a
-          [routerLink]="['/features']"
-          class="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-7 py-3 text-base font-semibold text-gray-800 transition hover:border-emerald-300 hover:text-emerald-700"
-        >
+        <a [routerLink]="['/features']" class="home-hero__cta home-hero__cta--secondary">
           {{ 'home.hero.cta_secondary' | transloco }}
-          <i class="pi pi-arrow-right text-sm" aria-hidden="true"></i>
+          <i class="pi pi-arrow-right" aria-hidden="true"></i>
         </a>
       </div>
     </div>

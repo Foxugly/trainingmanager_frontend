@@ -68,9 +68,13 @@ describe('DetailHeaderComponent', () => {
     const fixture = TestBed.createComponent(HostComponent);
     fixture.detectChanges();
 
-    const html = fixture.nativeElement.outerHTML as string;
-    expect(html).toContain('text-center');
-    expect(html).toContain('items-center');
-    expect(html).toContain('justify-center');
+    // Single-line toolbar structure (centering now lives in scoped SCSS, not
+    // Tailwind utilities): a row with back link (left), main/title (centre) and
+    // an actions cluster (right).
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('.detail-header__row')).not.toBeNull();
+    expect(el.querySelector('.detail-header__back')).not.toBeNull();
+    expect(el.querySelector('.detail-header__title')).not.toBeNull();
+    expect(el.querySelector('.detail-header__actions')).not.toBeNull();
   });
 });

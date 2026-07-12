@@ -1,33 +1,33 @@
 <div>
   @if (loading() && !event()) {
-    <div class="mt-4" aria-hidden="true">
+    <div class="detail-skeleton" aria-hidden="true">
       <!-- Header skeleton (mirrors the detail-header toolbar) -->
-      <div class="flex items-center justify-between gap-4 mb-8">
+      <div class="detail-skeleton__head">
         <p-skeleton width="2.5rem" height="2.5rem" borderRadius="9999px" />
-        <div class="flex flex-1 flex-col items-center gap-2">
+        <div class="detail-skeleton__head-center">
           <p-skeleton width="6rem" height="0.75rem" />
           <p-skeleton width="14rem" height="1.75rem" />
         </div>
-        <div class="flex items-center gap-2">
+        <div class="detail-skeleton__head-actions">
           <p-skeleton width="2.5rem" height="2.5rem" borderRadius="9999px" />
           <p-skeleton width="2.5rem" height="2.5rem" borderRadius="9999px" />
         </div>
       </div>
       <!-- Body skeleton -->
-      <div class="flex gap-6 mb-6">
+      <div class="detail-skeleton__tabs">
         <p-skeleton width="8rem" height="2rem" borderRadius="0.375rem" />
         <p-skeleton width="8rem" height="2rem" borderRadius="0.375rem" />
         <p-skeleton width="8rem" height="2rem" borderRadius="0.375rem" />
       </div>
-      <p-skeleton width="100%" height="1.25rem" styleClass="mb-3" />
-      <p-skeleton width="90%" height="1.25rem" styleClass="mb-3" />
-      <p-skeleton width="75%" height="1.25rem" styleClass="mb-3" />
+      <p-skeleton width="100%" height="1.25rem" styleClass="detail-skeleton__line" />
+      <p-skeleton width="90%" height="1.25rem" styleClass="detail-skeleton__line" />
+      <p-skeleton width="75%" height="1.25rem" styleClass="detail-skeleton__line" />
       <p-skeleton width="100%" height="8rem" borderRadius="0.5rem" />
     </div>
   } @else if (notFound()) {
-    <p class="mt-4 text-gray-500">{{ 'events.detail.not_found' | transloco }}</p>
+    <p class="detail__notfound">{{ 'events.detail.not_found' | transloco }}</p>
   } @else if (loadError()) {
-    <div class="mt-4 flex flex-col items-start gap-3">
+    <div class="detail__error">
       <p-message severity="error" [text]="'events.detail.load_failed' | transloco" />
       <p-button
         icon="pi pi-refresh"
@@ -47,7 +47,7 @@
       @if (eventTotalDistance() > 0 || e.total_target) {
         <span
           detailHeaderTitleSuffix
-          class="text-xl sm:text-2xl text-emerald-700 font-semibold"
+          class="detail__volume"
           [pTooltip]="'events.detail.volume_computed_target_hint' | transloco"
           tooltipPosition="bottom"
         >
@@ -58,24 +58,24 @@
           }
         </span>
       } @else if (e.total) {
-        <span detailHeaderTitleSuffix class="text-xl sm:text-2xl text-emerald-700 font-semibold">
+        <span detailHeaderTitleSuffix class="detail__volume">
           ({{ e.total }}{{ 'common.units.meters_short' | transloco }})
         </span>
       } @else if (distanceHidden()) {
         <span
           detailHeaderTitleSuffix
-          class="inline-flex items-center gap-1 text-sm font-normal text-gray-400 italic"
+          class="detail__volume-hidden"
         >
-          <i class="pi pi-lock text-xs" aria-hidden="true"></i>
+          <i class="pi pi-lock detail__lock" aria-hidden="true"></i>
           {{ 'events.detail.hidden_distance.' + distanceHiddenVariant() | transloco }}
         </span>
       }
 
       @if (e.goal) {
-        <p detailHeaderSubtitle class="rich-text italic" [innerHTML]="e.goal"></p>
+        <p detailHeaderSubtitle class="rich-text detail__goal" [innerHTML]="e.goal"></p>
       } @else if (goalHidden()) {
-        <p detailHeaderSubtitle class="flex items-center gap-1 italic text-gray-400">
-          <i class="pi pi-lock text-xs" aria-hidden="true"></i>
+        <p detailHeaderSubtitle class="detail__goal-hidden">
+          <i class="pi pi-lock detail__lock" aria-hidden="true"></i>
           {{ 'events.detail.hidden_goal.' + goalHiddenVariant() | transloco }}
         </p>
       }
@@ -84,9 +84,9 @@
       @if ((team()?.sports?.length ?? 0) > 1 && e.sport) {
         <span
           detailHeaderBadges
-          class="inline-flex items-center gap-1 rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-medium text-indigo-800"
+          class="detail__badge detail__badge--sport"
         >
-          <i class="pi pi-tag text-xs" aria-hidden="true"></i>
+          <i class="pi pi-tag detail__badge-icon" aria-hidden="true"></i>
           {{ e.sport.name }}
         </span>
       }
@@ -94,9 +94,9 @@
       @if (e.is_public) {
         <span
           detailHeaderBadges
-          class="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800"
+          class="detail__badge detail__badge--public"
         >
-          <i class="pi pi-share-alt text-xs" aria-hidden="true"></i>
+          <i class="pi pi-share-alt detail__badge-icon" aria-hidden="true"></i>
           {{ 'public_share.event.badge' | transloco }}
         </span>
       }
@@ -194,15 +194,15 @@
         />
       }
 
-      <dl detailHeaderMeta class="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm">
+      <dl detailHeaderMeta class="detail__meta">
         @if (e.refer_program) {
-          <div class="flex items-center gap-2">
-            <i class="pi pi-list text-gray-400" aria-hidden="true"></i>
-            <dt class="text-gray-500">{{ 'events.fields.program' | transloco }}</dt>
-            <dd class="font-medium">
+          <div class="detail__meta-item">
+            <i class="pi pi-list detail__meta-icon" aria-hidden="true"></i>
+            <dt class="detail__meta-label">{{ 'events.fields.program' | transloco }}</dt>
+            <dd class="detail__meta-value">
               <a
                 [routerLink]="['/programs', e.refer_program.id]"
-                class="text-emerald-700 hover:underline"
+                class="detail__meta-link"
               >
                 {{ e.refer_program.name }}
               </a>
@@ -210,43 +210,41 @@
           </div>
         }
         @if (e.date) {
-          <div class="flex items-center gap-2">
-            <i class="pi pi-calendar text-gray-400" aria-hidden="true"></i>
-            <dt class="text-gray-500">{{ 'events.fields.date' | transloco }}</dt>
-            <dd class="font-medium text-gray-900">{{ e.date | localizedDate: 'fullDate' }}</dd>
+          <div class="detail__meta-item">
+            <i class="pi pi-calendar detail__meta-icon" aria-hidden="true"></i>
+            <dt class="detail__meta-label">{{ 'events.fields.date' | transloco }}</dt>
+            <dd class="detail__meta-value">{{ e.date | localizedDate: 'fullDate' }}</dd>
           </div>
         }
         @if (e.hour_start) {
-          <div class="flex items-center gap-2">
-            <i class="pi pi-clock text-gray-400" aria-hidden="true"></i>
-            <dt class="text-gray-500">{{ 'events.fields.hour_start' | transloco }}</dt>
-            <dd class="font-medium text-gray-900">
+          <div class="detail__meta-item">
+            <i class="pi pi-clock detail__meta-icon" aria-hidden="true"></i>
+            <dt class="detail__meta-label">{{ 'events.fields.hour_start' | transloco }}</dt>
+            <dd class="detail__meta-value">
               {{ e.hour_start.slice(0, 5) }}@if (e.hour_end) { –{{ e.hour_end.slice(0, 5) }} }
             </dd>
           </div>
         }
         @if (e.location) {
-          <div class="flex items-center gap-2">
-            <i class="pi pi-map-marker text-gray-400" aria-hidden="true"></i>
-            <dt class="text-gray-500">{{ 'events.fields.location' | transloco }}</dt>
-            <dd class="font-medium text-gray-900">
+          <div class="detail__meta-item">
+            <i class="pi pi-map-marker detail__meta-icon" aria-hidden="true"></i>
+            <dt class="detail__meta-label">{{ 'events.fields.location' | transloco }}</dt>
+            <dd class="detail__meta-value">
               {{ e.location }}
               @if (e.place?.address) {
-                <span class="block text-xs font-normal text-gray-500">{{ e.place?.address }}</span>
+                <span class="detail__meta-sub">{{ e.place?.address }}</span>
               }
             </dd>
           </div>
         }
         @if (e.equipment_items && e.equipment_items.length > 0) {
-          <div class="flex items-start gap-2 w-full justify-center">
-            <i class="pi pi-briefcase text-gray-400 mt-0.5" aria-hidden="true"></i>
-            <dt class="text-gray-500">{{ 'events.fields.equipment' | transloco }}</dt>
-            <dd class="font-medium text-gray-900">
-              <div class="flex flex-wrap gap-1">
+          <div class="detail__meta-item detail__meta-item--full">
+            <i class="pi pi-briefcase detail__meta-icon detail__meta-icon--top" aria-hidden="true"></i>
+            <dt class="detail__meta-label">{{ 'events.fields.equipment' | transloco }}</dt>
+            <dd class="detail__meta-value">
+              <div class="detail__chips">
                 @for (item of e.equipment_items; track item.id) {
-                  <span
-                    class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-700"
-                  >
+                  <span class="detail__chip">
                     {{ item.name }}
                   </span>
                 }
@@ -254,10 +252,10 @@
             </dd>
           </div>
         } @else if (e.equipment) {
-          <div class="flex items-start gap-2 w-full justify-center">
-            <i class="pi pi-briefcase text-gray-400 mt-0.5" aria-hidden="true"></i>
-            <dt class="text-gray-500">{{ 'events.fields.equipment' | transloco }}</dt>
-            <dd class="font-medium text-gray-900 rich-text" [innerHTML]="e.equipment"></dd>
+          <div class="detail__meta-item detail__meta-item--full">
+            <i class="pi pi-briefcase detail__meta-icon detail__meta-icon--top" aria-hidden="true"></i>
+            <dt class="detail__meta-label">{{ 'events.fields.equipment' | transloco }}</dt>
+            <dd class="detail__meta-value rich-text" [innerHTML]="e.equipment"></dd>
           </div>
         }
       </dl>
@@ -266,32 +264,32 @@
     <p-tabs [value]="activeTab()" (valueChange)="activeTab.set($any($event))">
       <p-tablist>
         <p-tab value="training">
-          <i class="pi pi-bolt mr-2" aria-hidden="true"></i>
+          <i class="pi pi-bolt detail__tab-icon" aria-hidden="true"></i>
           {{ 'events.detail.tabs.training' | transloco }}
         </p-tab>
         <p-tab value="attendance">
-          <i class="pi pi-list-check mr-2" aria-hidden="true"></i>
+          <i class="pi pi-list-check detail__tab-icon" aria-hidden="true"></i>
           {{ 'events.detail.tabs.attendance' | transloco }}
         </p-tab>
         @if (rotiEnabled()) {
           <p-tab value="difficulty">
-            <i class="pi pi-gauge mr-2" aria-hidden="true"></i>
+            <i class="pi pi-gauge detail__tab-icon" aria-hidden="true"></i>
             {{ 'events.roti.title' | transloco }}
           </p-tab>
         }
         @if (rsvpEnabled()) {
           <p-tab value="rsvp">
-            <i class="pi pi-calendar-plus mr-2" aria-hidden="true"></i>
+            <i class="pi pi-calendar-plus detail__tab-icon" aria-hidden="true"></i>
             {{ 'events.rsvp.tab' | transloco }}
           </p-tab>
         }
         <p-tab value="attachments">
-          <i class="pi pi-paperclip mr-2" aria-hidden="true"></i>
+          <i class="pi pi-paperclip detail__tab-icon" aria-hidden="true"></i>
           {{ 'attachments.title' | transloco }}
         </p-tab>
         @if (canManage()) {
           <p-tab value="debrief">
-            <i class="pi pi-clipboard mr-2" aria-hidden="true"></i>
+            <i class="pi pi-clipboard detail__tab-icon" aria-hidden="true"></i>
             {{ 'events.debrief.tab' | transloco }}
           </p-tab>
         }
@@ -306,13 +304,13 @@
             [canManage]="canManage()"
           />
           @if (canManage()) {
-            <div class="mb-4">
+            <div class="detail__block">
               <app-save-as-template-button [eventId]="e.id" />
             </div>
           }
           @if (canManage()) {
-            <div class="mb-4 flex items-center gap-3">
-              <label for="training_type" class="text-sm font-medium text-gray-600">
+            <div class="detail__training-type">
+              <label for="training_type" class="detail__field-label">
                 {{ 'teams.form.training_type_label' | transloco }}
               </label>
               <p-select
@@ -344,12 +342,12 @@
           }
 
           @if (lastResult(); as result) {
-            <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded">
-              <h3 class="font-semibold text-emerald-900 mb-2 flex items-center gap-2">
+            <div class="detail__result">
+              <h3 class="detail__result-title">
                 <i class="pi pi-check-circle"></i>
                 {{ 'events.regenerate.success_title' | transloco }}
               </h3>
-              <p class="text-sm text-emerald-800 mb-2">
+              <p class="detail__result-summary">
                 {{
                   'events.regenerate.success_summary'
                     | transloco
@@ -361,7 +359,7 @@
                 }}
               </p>
               @if (result.rationale) {
-                <div class="text-sm text-gray-700 italic whitespace-pre-line">
+                <div class="detail__result-rationale">
                   {{ result.rationale }}
                 </div>
               }
@@ -378,11 +376,11 @@
           @if (canManage() && team(); as t) {
             <app-attendance-manager [event]="e" [team]="t" [rsvpByMember]="rsvpByMember()" />
           } @else if (!canManage()) {
-            <p class="text-sm text-gray-500 italic">
+            <p class="detail__hint detail__hint--italic">
               {{ 'events.detail.attendance_manager_only' | transloco }}
             </p>
           } @else {
-            <p class="text-sm text-gray-500">{{ 'common.loading' | transloco }}…</p>
+            <p class="detail__hint">{{ 'common.loading' | transloco }}…</p>
           }
         </p-tabpanel>
 
@@ -434,17 +432,17 @@
 
 @if (regenerating()) {
   <div
-    class="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-4 bg-white/80 backdrop-blur-sm"
+    class="detail__overlay"
     role="alertdialog"
     aria-live="polite"
     aria-busy="true"
   >
-    <p-progressSpinner styleClass="w-16 h-16" strokeWidth="3" />
-    <p class="text-base font-medium text-emerald-900">
-      <i class="pi pi-sparkles mr-2" aria-hidden="true"></i>
+    <p-progressSpinner styleClass="detail__spinner" strokeWidth="3" />
+    <p class="detail__overlay-title">
+      <i class="pi pi-sparkles detail__mr" aria-hidden="true"></i>
       {{ 'ai.generating_event' | transloco }}
     </p>
-    <p class="text-xs text-gray-500">{{ 'ai.please_wait' | transloco }}</p>
+    <p class="detail__overlay-hint">{{ 'ai.please_wait' | transloco }}</p>
   </div>
 }
 

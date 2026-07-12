@@ -57,6 +57,7 @@ import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.
     TranslocoPipe,
   ],
   templateUrl: './team-place-pool.component.html',
+  styleUrl: './team-place-pool.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TeamPlacePoolComponent {

@@ -59,6 +59,7 @@ import { LocalizedDatePipe } from '../../../shared/datetime/localized-date.pipe'
     EmptyStateComponent,
   ],
   templateUrl: './team-requests.component.html',
+  styleUrl: './team-requests.component.scss',
   providers: [ConfirmationService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

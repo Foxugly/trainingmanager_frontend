@@ -44,6 +44,7 @@ function passwordsMatchValidator(group: AbstractControl): ValidationErrors | nul
     TranslocoPipe,
   ],
   templateUrl: './reset-password.component.html',
+  styleUrl: './reset-password.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResetPasswordComponent implements OnInit {

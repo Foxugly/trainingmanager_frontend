@@ -35,6 +35,7 @@ type ConfirmationCase =
   selector: 'app-magic-action',
   imports: [CommonModule, LocalizedDatePipe, RouterLink, Button, TranslocoPipe],
   templateUrl: './magic-action.component.html',
+  styleUrl: './magic-action.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MagicActionComponent implements OnInit {

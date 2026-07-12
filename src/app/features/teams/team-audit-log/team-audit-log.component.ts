@@ -41,6 +41,7 @@ interface AuditRow {
   selector: 'app-team-audit-log',
   imports: [TranslocoPipe, Button, EmptyStateComponent],
   templateUrl: './team-audit-log.component.html',
+  styleUrl: './team-audit-log.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TeamAuditLogComponent {

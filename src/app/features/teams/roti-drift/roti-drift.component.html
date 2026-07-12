@@ -1,17 +1,17 @@
 @if (loading()) {
   <section class="card">
-    <p class="text-gray-500">{{ 'common.loading' | transloco }}…</p>
+    <p class="roti-drift__loading">{{ 'common.loading' | transloco }}…</p>
   </section>
 } @else if (error()) {
   <section class="card">
-    <p class="text-red-600">{{ 'common.load_failed' | transloco }}</p>
+    <p class="roti-drift__error">{{ 'common.load_failed' | transloco }}</p>
   </section>
 } @else if (hasData()) {
   <section class="card">
-    <div class="flex items-baseline justify-between gap-3 mb-3 flex-wrap">
-      <h3 class="text-base font-semibold">{{ 'stats.roti_drift.title' | transloco }}</h3>
+    <div class="roti-drift__head">
+      <h3 class="roti-drift__title">{{ 'stats.roti_drift.title' | transloco }}</h3>
       @if (squadAverage() !== null) {
-        <span class="text-xs text-gray-500">
+        <span class="roti-drift__avg">
           {{ 'stats.roti_drift.squad_average' | transloco }}: {{ squadAverage() }}
         </span>
       }
@@ -20,16 +20,16 @@
       <ng-template pTemplate="header">
         <tr>
           <th>{{ 'stats.member' | transloco }}</th>
-          <th class="text-right">{{ 'stats.roti_drift.average' | transloco }}</th>
-          <th class="text-right">{{ 'stats.roti_drift.delta' | transloco }}</th>
+          <th class="roti-drift__cell--right">{{ 'stats.roti_drift.average' | transloco }}</th>
+          <th class="roti-drift__cell--right">{{ 'stats.roti_drift.delta' | transloco }}</th>
           <th>{{ 'stats.roti_drift.flag' | transloco }}</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-row>
         <tr>
           <td>{{ row.name }}</td>
-          <td class="text-right">{{ row.average }}</td>
-          <td class="text-right">{{ deltaLabel(row.delta) }}</td>
+          <td class="roti-drift__cell--right">{{ row.average }}</td>
+          <td class="roti-drift__cell--right">{{ deltaLabel(row.delta) }}</td>
           <td>
             @if (row.flag !== 'normal') {
               <p-tag
@@ -37,12 +37,12 @@
                 [value]="'stats.roti_drift.flag_' + row.flag | transloco"
               />
             } @else {
-              <span class="text-gray-400">—</span>
+              <span class="roti-drift__dash">—</span>
             }
           </td>
         </tr>
       </ng-template>
     </p-table>
-    <p class="mt-2 text-xs text-gray-400">{{ 'stats.roti_drift.hint' | transloco }}</p>
+    <p class="roti-drift__hint">{{ 'stats.roti_drift.hint' | transloco }}</p>
   </section>
 }

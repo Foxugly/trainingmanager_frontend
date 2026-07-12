@@ -6,9 +6,9 @@
   [style]="{ width: '30rem' }"
   [header]="'events.duplicate.title' | transloco"
 >
-  <form [formGroup]="form" class="flex flex-col gap-4">
-    <div class="flex flex-col gap-2">
-      <label for="duplicate_date" class="text-sm font-medium text-gray-700">
+  <form [formGroup]="form" class="dup-dialog__body">
+    <div class="dup-dialog__field">
+      <label for="duplicate_date" class="dup-dialog__label">
         {{ 'events.duplicate.date' | transloco }}
       </label>
       <p-datepicker
@@ -21,16 +21,16 @@
       />
     </div>
 
-    <label class="flex items-center justify-between gap-3">
-      <span class="text-sm font-medium text-gray-700">
+    <label class="dup-dialog__toggle-row">
+      <span class="dup-dialog__label">
         {{ 'events.duplicate.repeat_weekly' | transloco }}
       </span>
       <p-toggleswitch formControlName="repeat_weekly" [disabled]="loading()" />
     </label>
 
     @if (repeatWeekly()) {
-      <div class="flex flex-col gap-2">
-        <label for="duplicate_occurrences" class="text-sm font-medium text-gray-700">
+      <div class="dup-dialog__field">
+        <label for="duplicate_occurrences" class="dup-dialog__label">
           {{ 'events.duplicate.occurrences' | transloco }}
         </label>
         <p-inputNumber

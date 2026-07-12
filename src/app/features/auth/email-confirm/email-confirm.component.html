@@ -1,29 +1,26 @@
-<section class="relative flex min-h-[60vh] items-center justify-center px-4 py-12 md:py-16">
-  <div
-    class="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-emerald-50 via-white to-teal-50"
-    aria-hidden="true"
-  ></div>
-  <div class="w-full max-w-md p-8 bg-white rounded-2xl shadow-md border border-gray-200 text-center">
+<section class="email-confirm">
+  <div class="email-confirm__bg" aria-hidden="true"></div>
+  <div class="email-confirm__card">
     @switch (phase()) {
       @case ('loading') {
-        <div class="size-14 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4">
-          <i class="pi pi-spin pi-spinner text-2xl" aria-hidden="true"></i>
+        <div class="email-confirm__icon">
+          <i class="pi pi-spin pi-spinner email-confirm__icon-glyph" aria-hidden="true"></i>
         </div>
-        <p class="text-gray-700">{{ 'auth.email_confirm.loading' | transloco }}</p>
+        <p class="email-confirm__text">{{ 'auth.email_confirm.loading' | transloco }}</p>
       }
       @case ('success') {
-        <div class="size-14 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4">
-          <i class="pi pi-check-circle text-2xl" aria-hidden="true"></i>
+        <div class="email-confirm__icon">
+          <i class="pi pi-check-circle email-confirm__icon-glyph" aria-hidden="true"></i>
         </div>
-        <h1 class="text-xl font-bold mb-2">{{ 'auth.email_confirm.success_title' | transloco }}</h1>
-        <p class="text-gray-700">{{ 'auth.email_confirm.success_redirect' | transloco }}</p>
+        <h1 class="email-confirm__title">{{ 'auth.email_confirm.success_title' | transloco }}</h1>
+        <p class="email-confirm__text">{{ 'auth.email_confirm.success_redirect' | transloco }}</p>
       }
       @case ('invalid_token') {
-        <div class="size-14 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-4">
-          <i class="pi pi-times-circle text-2xl" aria-hidden="true"></i>
+        <div class="email-confirm__icon email-confirm__icon--error">
+          <i class="pi pi-times-circle email-confirm__icon-glyph" aria-hidden="true"></i>
         </div>
-        <h1 class="text-xl font-bold mb-2">{{ 'auth.email_confirm.error_invalid_token_title' | transloco }}</h1>
-        <p class="text-gray-700 mb-6">{{ 'auth.email_confirm.error_invalid_token' | transloco }}</p>
+        <h1 class="email-confirm__title">{{ 'auth.email_confirm.error_invalid_token_title' | transloco }}</h1>
+        <p class="email-confirm__text email-confirm__text--spaced">{{ 'auth.email_confirm.error_invalid_token' | transloco }}</p>
         <a [routerLink]="['/check-your-email']">
           <p-button
             [label]="'auth.email_confirm.request_resend_button' | transloco"
@@ -32,11 +29,11 @@
         </a>
       }
       @case ('unknown_error') {
-        <div class="size-14 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-4">
-          <i class="pi pi-exclamation-triangle text-2xl" aria-hidden="true"></i>
+        <div class="email-confirm__icon email-confirm__icon--warn">
+          <i class="pi pi-exclamation-triangle email-confirm__icon-glyph" aria-hidden="true"></i>
         </div>
-        <h1 class="text-xl font-bold mb-2">{{ 'auth.email_confirm.error_unknown_title' | transloco }}</h1>
-        <p class="text-gray-700 mb-6">{{ 'auth.email_confirm.error_unknown' | transloco }}</p>
+        <h1 class="email-confirm__title">{{ 'auth.email_confirm.error_unknown_title' | transloco }}</h1>
+        <p class="email-confirm__text email-confirm__text--spaced">{{ 'auth.email_confirm.error_unknown' | transloco }}</p>
         <a [routerLink]="['/check-your-email']">
           <p-button
             [label]="'auth.email_confirm.request_resend_button' | transloco"
