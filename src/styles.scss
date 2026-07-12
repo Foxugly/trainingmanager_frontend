@@ -6,6 +6,24 @@
 
 @import "primeicons/primeicons.css";
 
+/* Base typographique flotte : sans-serif système sur html/body pour que les
+ * éléments HTML nus (titres h1/h2, titres de carte, hero) HÉRITENT du sans-serif
+ * au lieu du défaut navigateur (Times/serif). Sans cette règle, seuls les
+ * composants PrimeNG (qui portent leur propre --p-font-family) étaient en
+ * sans-serif, et tous les titres tombaient en serif. Aligné sur
+ * FoxRunner_frontend (référence flotte). */
+html,
+body {
+  margin: 0;
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  color: var(--ink);
+}
+
 /*
  * Quill's snow-theme CSS (`quill/dist/quill.snow.css`, ~24 kB) is intentionally
  * NOT imported here. It used to live in this GLOBAL stylesheet, which put it in
