@@ -71,6 +71,29 @@
   font-size: 0.875rem;
 }
 
+// Role chip (soft island: static dark text on soft bg, readable clair+sombre).
+.teams-detail__role-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+
+  &--owner {
+    background: var(--info-soft);
+    color: var(--info-strong);
+  }
+
+  &--manager {
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+  }
+
+  &--member {
+    background: var(--surface-2);
+    color: var(--ink-soft);
+  }
+}
+
 .teams-detail__meta {
   display: flex;
   flex-wrap: wrap;

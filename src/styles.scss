@@ -4,7 +4,6 @@
 @use "styles/forms-meta";
 @use "styles/builder";
 
-@import "tailwindcss";
 @import "primeicons/primeicons.css";
 
 /*
@@ -19,8 +18,17 @@
 
 /* You can add global styles to this file, and also import other style files */
 
-/* Rendered rich-text (Quill HTML) from goal/equipment etc. Restores basic
-   block/list formatting that Tailwind's preflight resets away. */
+/* Full-width utility (fleet: replaces the old Tailwind `w-full` passthrough on
+   PrimeNG controls). Applied via `styleClass="u-full"` on p-button / p-password /
+   p-inputtext / p-multiselect etc. so the control fills its row. Global on
+   purpose — `styleClass` classes land on PrimeNG-rendered elements, mirroring the
+   global `.meta-value` field-stretch convention in `_forms-meta.scss`. */
+.u-full {
+  width: 100%;
+}
+
+/* Rendered rich-text (Quill HTML) from goal/equipment etc. Sets explicit
+   block/list formatting for the sanitized Quill markup. */
 .rich-text {
   p {
     margin: 0 0 0.5em;

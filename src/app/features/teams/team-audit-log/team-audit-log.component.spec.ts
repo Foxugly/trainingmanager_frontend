@@ -113,14 +113,12 @@ describe('TeamAuditLogComponent', () => {
 
   it('toAuditRow maps actor_label and assigns a destructive tag class for member_removed', () => {
     const row = access(component).auditRows()[0];
-    expect(row.tagClass).toContain('bg-rose-100');
-    expect(row.tagClass).toContain('text-rose-800');
+    expect(row.tagClass).toContain('audit-log__tag--danger');
   });
 
   it('assigns the share tag class for session_shared', () => {
     const row = access(component).auditRows()[1];
-    expect(row.tagClass).toContain('bg-sky-100');
-    expect(row.tagClass).toContain('text-sky-800');
+    expect(row.tagClass).toContain('audit-log__tag--info');
   });
 
   it('reloads page 1 (and resets rows) when teamId changes', () => {

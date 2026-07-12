@@ -62,16 +62,18 @@ export class TeamsListComponent implements OnInit {
     return q !== null && q.used > q.max;
   });
 
+  // Token-based BEM (styles in the SCSS) so role chips dark-adapt.
   protected readonly roleClasses: Record<TeamRole, string> = {
-    owner: 'text-xs font-semibold px-2 py-1 rounded bg-blue-100 text-blue-800',
-    manager: 'text-xs font-semibold px-2 py-1 rounded bg-emerald-100 text-emerald-800',
-    member: 'text-xs font-semibold px-2 py-1 rounded bg-gray-100 text-gray-800',
+    owner: 'teams-list__role teams-list__role--owner',
+    manager: 'teams-list__role teams-list__role--manager',
+    member: 'teams-list__role teams-list__role--member',
   };
 
+  // Emerald icon pill (same soft treatment for every role); styles in the SCSS.
   protected readonly roleIconPillClass: Record<TeamRole, string> = {
-    owner: 'shrink-0 size-11 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center',
-    manager: 'shrink-0 size-11 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center',
-    member: 'shrink-0 size-11 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center',
+    owner: 'teams-list__pill',
+    manager: 'teams-list__pill',
+    member: 'teams-list__pill',
   };
 
   ngOnInit(): void {

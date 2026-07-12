@@ -63,7 +63,7 @@
           [toggleMask]="true"
           inputId="password"
           autocomplete="new-password"
-          styleClass="w-full"
+          styleClass="u-full"
           [inputStyle]="{ width: '100%' }"
         />
         @if (fieldErrors()?.['password']; as msgs) {
@@ -81,7 +81,7 @@
           [toggleMask]="true"
           inputId="confirm_password"
           autocomplete="new-password"
-          styleClass="w-full"
+          styleClass="u-full"
           [inputStyle]="{ width: '100%' }"
         />
         @if (form.errors?.['password_mismatch'] && form.controls.confirm_password.touched) {
@@ -101,7 +101,7 @@
           [options]="availableLanguages"
           optionLabel="nativeName"
           optionValue="code"
-          styleClass="w-full"
+          styleClass="u-full"
         />
       </div>
 
@@ -139,7 +139,7 @@
         "
         [loading]="loading()"
         [disabled]="submitDisabled()"
-        styleClass="w-full"
+        styleClass="u-full"
       />
 
       <p class="register__footer">

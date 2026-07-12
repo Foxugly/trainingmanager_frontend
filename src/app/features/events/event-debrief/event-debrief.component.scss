@@ -37,7 +37,7 @@
   line-height: 1;
 
   &--present {
-    color: #4f46e5;
+    color: var(--info);
   }
 
   &--roti {
@@ -45,7 +45,7 @@
   }
 
   &--rsvp {
-    color: #d97706;
+    color: var(--warn);
   }
 
   &--attach {
@@ -77,4 +77,12 @@
 
 .debrief__textarea {
   width: 100%;
+}
+
+// --warn (#b45309) is too dark for a large stat number on a dark surface;
+// lighten just this stat so it stays legible in dark mode.
+:host-context(.dark-mode) {
+  .debrief__stat--rsvp {
+    color: #fbbf24;
+  }
 }

@@ -23,8 +23,8 @@
 }
 
 .empty-state__icon--indigo {
-  background: #e0e7ff;
-  color: #4f46e5;
+  background: var(--info-soft);
+  color: var(--info-strong);
 }
 
 .empty-state__icon--emerald {
@@ -33,8 +33,8 @@
 }
 
 .empty-state__icon--rose {
-  background: #ffe4e6;
-  color: #e11d48;
+  background: var(--danger-soft);
+  color: var(--danger);
 }
 
 .empty-state__icon--gray {

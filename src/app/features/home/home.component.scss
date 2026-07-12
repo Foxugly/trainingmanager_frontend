@@ -12,7 +12,12 @@
     position: absolute;
     inset: 0;
     z-index: -10;
-    background: linear-gradient(to bottom right, #ecfdf5, #ffffff, #f0fdfa);
+    background: linear-gradient(
+      to bottom right,
+      var(--accent-soft),
+      var(--surface),
+      var(--accent-soft)
+    );
   }
 
   &__blob {
@@ -134,12 +139,12 @@
     }
 
     &--primary {
-      background: linear-gradient(to right, var(--accent-strong), #0d9488);
+      background: linear-gradient(to right, var(--accent-strong), var(--accent));
       color: #fff;
       box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.2);
 
       &:hover {
-        background: linear-gradient(to right, var(--accent), #14b8a6);
+        background: linear-gradient(to right, var(--accent), var(--accent-strong));
       }
     }
 

@@ -323,10 +323,11 @@ export class TeamsDetailComponent implements OnInit {
       });
   }
 
+  // Token-based BEM (styles in the SCSS) so the role chip dark-adapts.
   protected readonly roleClasses: Record<TeamRole, string> = {
-    owner: 'text-xs font-semibold px-2 py-1 rounded bg-blue-100 text-blue-800',
-    manager: 'text-xs font-semibold px-2 py-1 rounded bg-emerald-100 text-emerald-800',
-    member: 'text-xs font-semibold px-2 py-1 rounded bg-gray-100 text-gray-800',
+    owner: 'teams-detail__role-badge teams-detail__role-badge--owner',
+    manager: 'teams-detail__role-badge teams-detail__role-badge--manager',
+    member: 'teams-detail__role-badge teams-detail__role-badge--member',
   };
 
   protected readonly addMemberForm = this.fb.nonNullable.group({

@@ -30,7 +30,7 @@
         [loading]="resending()"
         [disabled]="resending() || cooldownActive()"
         (onClick)="resend()"
-        styleClass="w-full"
+        styleClass="u-full"
       />
     } @else {
       <p class="check-email__body">
@@ -57,7 +57,7 @@
           "
           [loading]="resending()"
           [disabled]="emailForm.invalid || resending() || cooldownActive()"
-          styleClass="w-full"
+          styleClass="u-full"
         />
       </form>
     }

@@ -72,7 +72,7 @@
             [toggleMask]="true"
             inputId="password"
             autocomplete="current-password"
-            styleClass="w-full"
+            styleClass="u-full"
             [inputStyle]="{ width: '100%' }"
           />
         </div>
@@ -107,7 +107,7 @@
           [label]="'auth.login.submit' | transloco"
           [loading]="loading()"
           [disabled]="submitDisabled() || form.invalid"
-          styleClass="w-full"
+          styleClass="u-full"
         />
       </form>
 
@@ -165,7 +165,7 @@
               icon="pi pi-envelope"
               [loading]="magicLinkSubmitting()"
               [disabled]="magicLinkSubmitting()"
-              styleClass="w-full"
+              styleClass="u-full"
             />
           </form>
         }

@@ -131,8 +131,44 @@
     object-fit: cover;
   }
 
+  // Role icon pill (fallback when a team has no logo). Emerald soft island.
+  &__pill {
+    flex-shrink: 0;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+  }
+
   &__pill-icon {
     font-size: 1.125rem;
+  }
+
+  // Role chip (soft island: static dark text on soft bg, readable clair+sombre).
+  &__role {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+
+    &--owner {
+      background: var(--info-soft);
+      color: var(--info-strong);
+    }
+
+    &--manager {
+      background: var(--accent-soft);
+      color: var(--accent-strong);
+    }
+
+    &--member {
+      background: var(--surface-2);
+      color: var(--ink-soft);
+    }
   }
 
   &__card-body {

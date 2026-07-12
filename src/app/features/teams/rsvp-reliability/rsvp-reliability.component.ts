@@ -51,12 +51,12 @@ export class RsvpReliabilityComponent {
       : Math.round(entry.reliability * 100);
   }
 
-  /** Tailwind text color by reliability band (green ≥80%, amber ≥50%, red below). */
+  /** Token-based BEM modifier by reliability band (green ≥80%, amber ≥50%, red below). */
   protected colorClass(entry: RsvpReliabilityEntry): string {
     const p = this.pct(entry);
-    if (p === null) return 'text-gray-500';
-    if (p >= 80) return 'text-emerald-600';
-    if (p >= 50) return 'text-amber-600';
-    return 'text-red-600';
+    if (p === null) return 'rsvp__rate--na';
+    if (p >= 80) return 'rsvp__rate--good';
+    if (p >= 50) return 'rsvp__rate--mid';
+    return 'rsvp__rate--bad';
   }
 }

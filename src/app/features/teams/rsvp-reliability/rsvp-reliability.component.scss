@@ -31,6 +31,23 @@
     font-weight: 600;
   }
 
+  // Reliability band colours (token-based, from colorClass()).
+  &__rate--good {
+    color: var(--accent-strong);
+  }
+
+  &__rate--mid {
+    color: var(--warn);
+  }
+
+  &__rate--bad {
+    color: var(--danger);
+  }
+
+  &__rate--na {
+    color: var(--muted);
+  }
+
   &__hint {
     margin-top: 0.5rem;
     font-size: 0.75rem;

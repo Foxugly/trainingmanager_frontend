@@ -32,6 +32,12 @@
   --warn-soft: #fef3c7;
   --danger: #dc2626;
   --danger-soft: #fee2e2;
+  // Info (bleu) : liens/admin/présence — distinct de l'accent emerald.
+  // --info s'éclaircit en sombre (usage 1er plan sur surface : liens, métriques).
+  --info: #2563eb;
+  // --info-strong reste foncé (texte de chip sur --info-soft, lisible clair+sombre).
+  --info-strong: #1d4ed8;
+  --info-soft: #dbeafe;
 
   // ── Layout / grille de contenu ──────────────────────────────────────────
   --content-max: 80rem;
@@ -58,4 +64,6 @@
   --surface-2: #0f172a;
   --border: #334155;
   --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.4);
+  // Bleu plus clair pour rester lisible sur surface sombre.
+  --info: #60a5fa;
 }

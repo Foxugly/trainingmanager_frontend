@@ -60,4 +60,28 @@
     display: flex;
     justify-content: center;
   }
+
+  // Action-category pill (soft island: static dark text on soft bg).
+  &__tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.125rem 0.5rem;
+    border-radius: var(--radius-sm);
+
+    &--danger {
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+
+    &--info {
+      background: var(--info-soft);
+      color: var(--info-strong);
+    }
+
+    &--neutral {
+      background: var(--surface-2);
+      color: var(--ink-soft);
+    }
+  }
 }

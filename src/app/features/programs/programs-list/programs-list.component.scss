@@ -178,11 +178,43 @@
   }
 }
 
-// The card container class comes from cardClass() in the component (Tailwind,
-// out of scope for this pass) and still carries the `group` class; reveal the
-// arrow on card hover via that hook.
-.group:hover .programs-list__arrow {
-  opacity: 1;
+// Card container — classes come from cardClass() in the component. Token-based
+// so it dark-adapts (archived greyed / current emerald highlight / default).
+.program-card {
+  display: block;
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-0.125rem);
+    box-shadow: var(--shadow-card);
+    border-color: var(--accent);
+  }
+
+  &:hover .programs-list__arrow {
+    opacity: 1;
+  }
+
+  &--archived {
+    background: var(--surface-2);
+    border-color: var(--border);
+    opacity: 0.75;
+  }
+
+  // Highlight via an emerald ring (not a fill) so the card body text stays
+  // legible in dark mode.
+  &--current {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-soft);
+
+    &:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-soft), var(--shadow-card);
+    }
+  }
 }
 
 :host ::ng-deep {

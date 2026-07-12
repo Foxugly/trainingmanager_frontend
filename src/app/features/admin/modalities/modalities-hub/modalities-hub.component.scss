@@ -56,7 +56,7 @@
 
   &:hover {
     box-shadow: var(--shadow-card);
-    border-color: #93c5fd;
+    border-color: var(--info);
   }
 }
 
@@ -68,6 +68,6 @@
 
 .modalities-hub__card-link {
   font-size: 0.875rem;
-  color: #2563eb;
+  color: var(--info);
   margin-top: 0.5rem;
 }

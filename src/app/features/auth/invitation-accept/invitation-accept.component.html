@@ -63,7 +63,7 @@
               [toggleMask]="true"
               inputId="password"
               autocomplete="new-password"
-              styleClass="w-full"
+              styleClass="u-full"
               [inputStyle]="{ width: '100%' }"
             />
           </div>
@@ -78,7 +78,7 @@
               [toggleMask]="true"
               inputId="password_confirm"
               autocomplete="new-password"
-              styleClass="w-full"
+              styleClass="u-full"
               [inputStyle]="{ width: '100%' }"
             />
             @if (form.errors?.['password_mismatch'] && form.controls.password_confirm.touched) {
@@ -106,7 +106,7 @@
             [label]="'invitation_accept.submit' | transloco"
             [loading]="accepting()"
             [disabled]="form.invalid || !canSubmit()"
-            styleClass="w-full"
+            styleClass="u-full"
           />
         </form>
       </div>

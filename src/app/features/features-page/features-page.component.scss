@@ -86,6 +86,29 @@
     i {
       font-size: 1.25rem;
     }
+
+    // Token-based tone modifiers (soft island: static dark text on soft bg,
+    // readable in both light and dark themes).
+    &--emerald,
+    &--teal {
+      background: var(--accent-soft);
+      color: var(--accent-strong);
+    }
+
+    &--amber {
+      background: var(--warn-soft);
+      color: var(--warn);
+    }
+
+    &--cyan {
+      background: var(--info-soft);
+      color: var(--info-strong);
+    }
+
+    &--rose {
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
   }
 
   &__card-title {
@@ -112,7 +135,7 @@
     justify-content: center;
     gap: 0.5rem;
     border-radius: var(--radius);
-    background: linear-gradient(to right, var(--accent-strong), #0d9488);
+    background: linear-gradient(to right, var(--accent-strong), var(--accent));
     padding-inline: 1.75rem;
     padding-block: 0.75rem;
     font-size: 1rem;
@@ -127,7 +150,7 @@
     }
 
     &:hover {
-      background: linear-gradient(to right, var(--accent), #14b8a6);
+      background: linear-gradient(to right, var(--accent), var(--accent-strong));
     }
 
     &:focus-visible {
