@@ -1,30 +1,44 @@
 # Backlog — harmonisation layout · trainingmanager_frontend
 
-> **Cible :** `STANDARD-frontend-layout.md` (repo `foxugly-ops`).
-> Le standard est **VALIDÉ 2026-07-11** ; l'implémentation de **référence complète** est désormais
-> **`FoxRunner_frontend`** (copier ses tokens, son chrome, ses pages). TM a inspiré plusieurs briques
-> (langue, user, cloches, footer, page-header, About) mais l'écart restant est surtout **thème +
-> retrait Tailwind (~879) + adoption des tokens/chrome de la réf**.
-> Exécuter sur branche **`feat/scss-standard`** — **jamais `main`** (auto-deploy prod).
+> **Cible :** `STANDARD-frontend-layout.md` (repo `foxugly-ops`) ; réf complète = **`FoxRunner_frontend`**
+> (+ app runnable `foxugly-ops/frontend-reference/foo-app`).
+> Travail sur **`feat/scss-standard`** → **`feat/tailwind-removal`** (PR #9). **Jamais `main`** (auto-deploy prod).
+> **PR #9 n'est PAS déployée** : gros reskin (78 fichiers) sur produit live → **revue visuelle humaine requise**
+> (clair + sombre) avant merge.
 
-## ✅ Déjà conforme (souvent la réf)
-- `app-topmenu` · `core/layout/topmenu/` · `[mode]` public/authenticated.
-- Cloches msg + notif ; `app-language-switcher` (Transloco, 5 langues) ; `app-user-menu` + login « Login ».
-- Shell `main`/`public`/`admin-layout` + **skip-link** ; `app-footer` (version runtime, dark).
-- `app-page-header` 3 colonnes (slots) ; About en `p-tabs` ; `app-empty-state` + skeletons.
+## ✅ Fait (branche feat/tailwind-removal, PR #9) — build + 834 tests + 5 e2e verts
+- `app-topmenu` (`core/layout/`, `[mode]`), cloches, `app-language-switcher` (Transloco 5 langues), `app-user-menu`.
+- Shell `main`/`public`/`admin` + skip-link ; `app-page-header` (slots) ; About `p-tabs` ; `app-empty-state` + skeletons.
+- **`ThemeService` + `app-theme-toggle` borderless + dark mode + anti-FOUC** (toggle placé avant la langue).
+- **Footer `Privacy` + page `/privacy`** ; `footer.privacy` i18n 5 langues.
+- `user-menu` relocalisé → `core/layout/` ; tokenisation chrome (exact-match) ; breakpoints canoniques.
+- **Tailwind → SCSS/BEM (tokens)** sur ~68 templates feature/shared.
 
-## Phase 1 — structurel
-- [ ] **Thème** : ajouter le **toggle + `ThemeService`** (aujourd'hui `.dark-mode` configuré mais **aucune UI**) → `localStorage['theme']`, `.dark-mode`, **anti-FOUC** inline. Placer le bouton avant la langue.
-- [ ] **Classes topmenu** : `.topbar/.nav/.actions` (plat) → **BEM `topbar__*`**.
-- [ ] **Breakpoints** : 960/480 → échelle `sm 640 / md 768 / lg 1024 / xl 1280` ; topmenu drawer à **1024**.
-- [ ] **Largeur** : unifier le double 1280/1440 → **`--content-max: 80rem`** partout (topbar/page/footer alignés).
-- [ ] **Page-header** : **supprimer le `detail-header`** résiduel → migrer les pages de détail vers `app-page-header`.
-- [ ] **Login** : libellé « Login » → **« Se connecter »**.
-- [ ] **Bouton login** : garder l'intégration dans `app-user-menu` (déjà OK).
+## Reste — conformité restante
+- [ ] **Largeur topmenu/footer `1440px` → `var(--content-max)`** (encore `1440` : `footer.component.scss:18`,
+      `topmenu.component.scss:21`) pour aligner topbar/page/footer.
+- [ ] **`detail-header` → `app-page-header`** : le composant `shared/ui/detail-header/` + **4 templates** l'utilisent
+      encore → migrer puis supprimer le composant.
 
-## Phase 2 — CSS (le gros morceau de TM)
-- [ ] **Retirer Tailwind** (~879 usages) → SCSS/BEM + CSS moderne. Commencer par la page **Features** (Tailwind) → grille CSS-grid native.
-- [ ] Désinstaller `tailwindcss` quand le dernier usage a disparu.
+## Reste — retrait Tailwind (le `@import "tailwindcss"` est encore là, `styles.scss:7`)
+- [ ] **Convertir les 14 derniers fichiers Tailwind** :
+  - **8 HTML** : `styleClass="w-full"` (passthrough PrimeNG) — `login`, `register`, `reset-password`,
+    `forgot-password`, `invitation-accept`, `check-your-email`, `team-templates`, `equipment-select`
+    → règle partagée / `::ng-deep`.
+  - **6 TS** : maps de classes couleur renvoyant du Tailwind — `features-page`, `programs-list` (`cardClass`),
+    `teams-list` (`roleClasses`), `teams-detail`, `team-stats`, `rsvp-reliability`.
+- [ ] **Retirer `@import "tailwindcss"`** + désinstaller `tailwindcss`/`@tailwindcss/postcss` une fois les 14 faits.
+
+## Reste — dark mode complet (des éléments restent clairs en sombre)
+- [ ] **Tokeniser les couleurs littérales hors-token** (pas d'équivalent flotte → ne s'adaptent pas au sombre) :
+      chips indigo/violet présence & IA (`teams-detail`, `team-stats`), cartes admin bleues, stats RSVP rose/ambre
+      (`event-rsvp`, `event-debrief`), chips d'événement du calendrier, **stop teal** des dégradés CTA auth/home.
+- [ ] **Convertir les maps de classes couleur TS** (`roleClasses`/`cardClass`/`toneClasses`/`rsvp-reliability`)
+      en classes token-based pour qu'elles **se recolorent en sombre** (aujourd'hui light-only).
+
+## Revue avant merge/deploy (PR #9)
+- [ ] **Regarder en clair ET sombre** : `dashboard`, `teams-detail`, `programs-detail`, `team-stats`, `events-detail`
+      (le plus de règles converties) + les zones couleur ci-dessus.
 
 ## i18n
-- [ ] ✅ Déjà Transloco 5 langues — rien à migrer.
+- ✅ Déjà Transloco 5 langues — rien à migrer.
