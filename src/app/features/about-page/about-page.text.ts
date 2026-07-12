@@ -193,7 +193,7 @@ const FR_CONTENT: AboutContent = {
     frontend: {
       title: 'Frontend',
       intro: "Single-page app pour l'administration et l'accès aux séances.",
-      items: ['Angular 21 · TypeScript 5.9 (strict)', 'PrimeNG 21 · Tailwind 4', 'Transloco 8', 'Vitest 4 · openapi-generator-cli'],
+      items: ['Angular 21 · TypeScript 5.9 (strict)', 'PrimeNG 21 · SCSS/BEM', 'Transloco 8', 'Vitest 4 · openapi-generator-cli'],
     },
   },
 };
@@ -295,7 +295,7 @@ const EN_CONTENT: AboutContent = {
     frontend: {
       title: 'Frontend',
       intro: 'Single-page app for administration and session access.',
-      items: ['Angular 21 · TypeScript 5.9 (strict)', 'PrimeNG 21 · Tailwind 4', 'Transloco 8', 'Vitest 4 · openapi-generator-cli'],
+      items: ['Angular 21 · TypeScript 5.9 (strict)', 'PrimeNG 21 · SCSS/BEM', 'Transloco 8', 'Vitest 4 · openapi-generator-cli'],
     },
   },
 };
@@ -397,7 +397,7 @@ const NL_CONTENT: AboutContent = {
     frontend: {
       title: 'Frontend',
       intro: 'Single-page app voor administratie en toegang tot sessies.',
-      items: ['Angular 21 · TypeScript 5.9 (strict)', 'PrimeNG 21 · Tailwind 4', 'Transloco 8', 'Vitest 4 · openapi-generator-cli'],
+      items: ['Angular 21 · TypeScript 5.9 (strict)', 'PrimeNG 21 · SCSS/BEM', 'Transloco 8', 'Vitest 4 · openapi-generator-cli'],
     },
   },
 };
@@ -499,7 +499,7 @@ const IT_CONTENT: AboutContent = {
     frontend: {
       title: 'Frontend',
       intro: "Single-page app per l'amministrazione e l'accesso alle sessioni.",
-      items: ['Angular 21 · TypeScript 5.9 (strict)', 'PrimeNG 21 · Tailwind 4', 'Transloco 8', 'Vitest 4 · openapi-generator-cli'],
+      items: ['Angular 21 · TypeScript 5.9 (strict)', 'PrimeNG 21 · SCSS/BEM', 'Transloco 8', 'Vitest 4 · openapi-generator-cli'],
     },
   },
 };
@@ -601,7 +601,7 @@ const ES_CONTENT: AboutContent = {
     frontend: {
       title: 'Frontend',
       intro: 'Single-page app para la administración y el acceso a las sesiones.',
-      items: ['Angular 21 · TypeScript 5.9 (strict)', 'PrimeNG 21 · Tailwind 4', 'Transloco 8', 'Vitest 4 · openapi-generator-cli'],
+      items: ['Angular 21 · TypeScript 5.9 (strict)', 'PrimeNG 21 · SCSS/BEM', 'Transloco 8', 'Vitest 4 · openapi-generator-cli'],
     },
   },
 };
