@@ -10,7 +10,7 @@
 
 
 /**
- * * `member_anonymized` - Member anonymized * `member_removed` - Member removed from team * `account_deleted` - Account deleted * `session_shared` - Session shared publicly * `session_unshared` - Session sharing disabled * `attachment_deleted` - Attachment deleted * `team_config_updated` - Team configuration updated
+ * * `member_anonymized` - Member anonymized * `member_removed` - Member removed from team * `account_deleted` - Account deleted * `session_shared` - Session shared publicly * `session_unshared` - Session sharing disabled * `attachment_deleted` - Attachment deleted * `team_config_updated` - Team configuration updated * `subscription_bypass_granted` - Offered access granted * `subscription_bypass_revoked` - Offered access revoked
  */
 export enum ActionEnum {
 
@@ -26,6 +26,10 @@ export enum ActionEnum {
 
     AttachmentDeleted = 'attachment_deleted',
 
-    TeamConfigUpdated = 'team_config_updated'
+    TeamConfigUpdated = 'team_config_updated',
+
+    SubscriptionBypassGranted = 'subscription_bypass_granted',
+
+    SubscriptionBypassRevoked = 'subscription_bypass_revoked'
 }
 
