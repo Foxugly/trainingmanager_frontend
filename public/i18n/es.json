@@ -1213,6 +1213,7 @@
       }
     },
     "title": "Perfil",
+    "offered_access": "Acceso gratuito",
     "email": "Correo",
     "email_readonly_help": "La dirección de correo solo puede ser modificada por un administrador.",
     "first_name": "Nombre",

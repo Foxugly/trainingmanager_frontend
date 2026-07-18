@@ -20,6 +20,7 @@ import { InputText } from 'primeng/inputtext';
 import { Password } from 'primeng/password';
 import { Select } from 'primeng/select';
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from 'primeng/tabs';
+import { Tag } from 'primeng/tag';
 import { ToggleSwitch } from 'primeng/toggleswitch';
 import { AuthService as AuthApi } from '../../api/api/auth.service';
 import { MeService } from '../../api/api/me.service';
@@ -69,6 +70,7 @@ interface ProfileFormValue {
     TabPanels,
     TabPanel,
     ToggleSwitch,
+    Tag,
     PageHeaderComponent,
     MetaFieldComponent,
     FormFooterComponent,

@@ -9,6 +9,14 @@
       [label]="'common.back' | transloco"
       [routerLink]="['/dashboard']"
     />
+    @if (user()?.subscription_bypass) {
+      <p-tag
+        slot="title-after"
+        severity="success"
+        icon="pi pi-gift"
+        [value]="'profile.offered_access' | transloco"
+      />
+    }
   </app-page-header>
 
   @if (user(); as me) {

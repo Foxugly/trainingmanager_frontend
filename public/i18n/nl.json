@@ -1213,6 +1213,7 @@
       }
     },
     "title": "Profiel",
+    "offered_access": "Gratis toegang",
     "email": "E-mail",
     "email_readonly_help": "Het e-mailadres kan alleen door een beheerder worden gewijzigd.",
     "first_name": "Voornaam",

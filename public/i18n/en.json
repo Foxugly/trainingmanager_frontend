@@ -1213,6 +1213,7 @@
       }
     },
     "title": "Profile",
+    "offered_access": "Offered access",
     "email": "Email",
     "email_readonly_help": "The email address can only be changed by an administrator.",
     "first_name": "First name",
