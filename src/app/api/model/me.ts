@@ -41,6 +41,10 @@ export interface Me {
     readonly date_joined: string;
     readonly team_quota: TeamQuotaStatus;
     /**
+     * When True, grants every paid feature without a subscription (offered access): the team quota becomes unlimited. Distinct from is_staff, which grants no business entitlement.
+     */
+    readonly subscription_bypass: boolean;
+    /**
      * Unguessable token embedded in the user\'s personal iCal (.ics) subscription URL. The token IS the authentication for that (otherwise anonymous) feed. Rotate it to revoke an old URL.
      */
     readonly calendar_token: string;
