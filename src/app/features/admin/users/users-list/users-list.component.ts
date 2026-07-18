@@ -33,6 +33,7 @@ export class UsersListComponent {
   protected readonly loading = signal(false);
   protected readonly error = signal(false);
   protected readonly busy = signal<number | null>(null);
+  protected readonly notes = signal<Record<number, string>>({});
 
   constructor() {
     this.search();
@@ -44,6 +45,9 @@ export class UsersListComponent {
     this.staffService.staffUsersRetrieve({ q: this.query || undefined }).subscribe({
       next: (response) => {
         this.users.set(response.results);
+        this.notes.set(
+          Object.fromEntries(response.results.map((u) => [u.id, u.bypass_note ?? ''])),
+        );
         this.loading.set(false);
       },
       error: () => {
@@ -53,16 +57,26 @@ export class UsersListComponent {
     });
   }
 
+  protected noteFor(id: number): string {
+    return this.notes()[id] ?? '';
+  }
+
+  protected setNote(id: number, value: string): void {
+    this.notes.update((byId) => ({ ...byId, [id]: value }));
+  }
+
   protected toggle(user: StaffUser, next: boolean): void {
     this.busy.set(user.id);
+    const bypassNote = this.noteFor(user.id);
     this.staffService
       .staffUsersPartialUpdate({
         id: user.id,
-        patchedStaffUserRequest: { subscription_bypass: next, bypass_note: user.bypass_note },
+        patchedStaffUserRequest: { subscription_bypass: next, bypass_note: bypassNote },
       })
       .subscribe({
         next: (updated) => {
           this.users.update((list) => list.map((u) => (u.id === updated.id ? updated : u)));
+          this.notes.update((byId) => ({ ...byId, [updated.id]: updated.bypass_note ?? '' }));
           this.busy.set(null);
           this.toast.success('admin.users.actions.saved');
         },

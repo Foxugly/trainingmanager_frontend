@@ -41,7 +41,15 @@
           <p-tag severity="success" icon="pi pi-gift" [value]="'admin.users.fields.bypass' | transloco" />
         }
       </td>
-      <td>{{ user.bypass_note }}</td>
+      <td>
+        <input
+          pInputText
+          class="users-list__note"
+          [ngModel]="noteFor(user.id)"
+          (ngModelChange)="setNote(user.id, $event)"
+          [placeholder]="'admin.users.fields.note_placeholder' | transloco"
+        />
+      </td>
     </tr>
   </ng-template>
   <ng-template pTemplate="emptymessage">

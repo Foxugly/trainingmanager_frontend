@@ -26,6 +26,7 @@ interface ProtectedFields {
   query: string;
   search(): void;
   toggle(user: StaffUser, next: boolean): void;
+  setNote(id: number, value: string): void;
 }
 const access = (c: UsersListComponent) => c as unknown as ProtectedFields;
 
@@ -92,6 +93,17 @@ describe('UsersListComponent', () => {
     expect(access(component).users()[0].subscription_bypass).toBe(true);
     expect(messageMock.add).toHaveBeenCalledTimes(1);
     expect(messageMock.add.mock.calls[0][0].severity).toBe('success');
+  });
+
+  it('envoie le motif saisi avec la bascule', () => {
+    access(component).search();
+    access(component).setNote(1, 'asso X');
+    access(component).toggle({ id: 1, bypass_note: '' } as StaffUser, true);
+
+    expect(staffMock.staffUsersPartialUpdate).toHaveBeenCalledWith({
+      id: 1,
+      patchedStaffUserRequest: { subscription_bypass: true, bypass_note: 'asso X' },
+    });
   });
 
   it('affiche une erreur quand la recherche echoue', () => {

@@ -31,6 +31,11 @@
   gap: 0.5rem;
 }
 
+.users-list__note {
+  width: 100%;
+  min-width: 12rem;
+}
+
 .users-list__empty-cell {
   text-align: center;
   padding-block: 1rem;

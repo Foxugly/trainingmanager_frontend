@@ -1398,7 +1398,8 @@
         "email": "E-mail",
         "name": "Naam",
         "bypass": "Gratis toegang",
-        "note": "Reden"
+        "note": "Reden",
+        "note_placeholder": "Waarom deze toegang wordt aangeboden"
       },
       "actions": {
         "saved": "Account bijgewerkt."

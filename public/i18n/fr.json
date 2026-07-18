@@ -1398,7 +1398,8 @@
         "email": "Email",
         "name": "Nom",
         "bypass": "Accès offert",
-        "note": "Motif"
+        "note": "Motif",
+        "note_placeholder": "Pourquoi cet accès est offert"
       },
       "actions": {
         "saved": "Compte mis à jour."
