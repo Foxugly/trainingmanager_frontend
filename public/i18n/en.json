@@ -1266,7 +1266,8 @@
       "sports": "Sports",
       "energy_systems": "Energy Systems",
       "energy_segments": "Energy Segments",
-      "modalities": "Modalities"
+      "modalities": "Modalities",
+      "users": "Accounts"
     },
     "modalities": {
       "hub": {
@@ -1388,6 +1389,23 @@
         "unknown": "Something went wrong."
       },
       "default_training_type": "Default training type"
+    },
+    "users": {
+      "title": "Account management",
+      "search": "Search",
+      "search_placeholder": "Email or name",
+      "fields": {
+        "email": "Email",
+        "name": "Name",
+        "bypass": "Offered access",
+        "note": "Reason"
+      },
+      "actions": {
+        "saved": "Account updated."
+      },
+      "errors": {
+        "save_failed": "Failed to update the account."
+      }
     }
   },
   "stats": {

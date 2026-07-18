@@ -171,6 +171,13 @@ export const routes: Routes = [
                 (m) => m.ModalitiesHubComponent,
               ),
           },
+          {
+            path: 'users',
+            loadComponent: () =>
+              import('./features/admin/users/users-list/users-list.component').then(
+                (m) => m.UsersListComponent,
+              ),
+          },
         ],
       },
     ],

@@ -1266,7 +1266,8 @@
       "sports": "Deportes",
       "energy_systems": "Sistemas energéticos",
       "energy_segments": "Segmentos energéticos",
-      "modalities": "Modalidades"
+      "modalities": "Modalidades",
+      "users": "Cuentas"
     },
     "modalities": {
       "hub": {
@@ -1388,6 +1389,23 @@
         "unknown": "Se ha producido un error."
       },
       "default_training_type": "Tipo de entrenamiento predeterminado"
+    },
+    "users": {
+      "title": "Administración de cuentas",
+      "search": "Buscar",
+      "search_placeholder": "Email o nombre",
+      "fields": {
+        "email": "Email",
+        "name": "Nombre",
+        "bypass": "Acceso gratuito",
+        "note": "Motivo"
+      },
+      "actions": {
+        "saved": "Cuenta actualizada."
+      },
+      "errors": {
+        "save_failed": "No se pudo actualizar la cuenta."
+      }
     }
   },
   "stats": {
