@@ -86,6 +86,7 @@ function makeMe(quota: TeamQuotaStatus): Me {
     is_superuser: false,
     member_id: null,
     team_quota: quota,
+    subscription_bypass: false,
     calendar_token: 'tok-test',
   };
 }
