@@ -24,7 +24,7 @@ export interface AuditLogEntry {
      */
     readonly actor_label: string;
     /**
-     * Stable code identifying the audited action.  * `member_anonymized` - Member anonymized * `member_removed` - Member removed from team * `account_deleted` - Account deleted * `session_shared` - Session shared publicly * `session_unshared` - Session sharing disabled * `attachment_deleted` - Attachment deleted * `team_config_updated` - Team configuration updated
+     * Stable code identifying the audited action.  * `member_anonymized` - Member anonymized * `member_removed` - Member removed from team * `account_deleted` - Account deleted * `session_shared` - Session shared publicly * `session_unshared` - Session sharing disabled * `attachment_deleted` - Attachment deleted * `team_config_updated` - Team configuration updated * `subscription_bypass_granted` - Offered access granted * `subscription_bypass_revoked` - Offered access revoked
      */
     readonly action: ActionEnum;
     readonly action_display: string;

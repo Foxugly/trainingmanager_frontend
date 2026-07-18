@@ -30,10 +30,12 @@ const baseUser: Me = {
   member_id: null,
   weekly_recap_opt_in: true,
   team_quota: { used: 0, max: 0, can_create: false },
+  subscription_bypass: false,
   calendar_token: 'tok-abc123',
 };
 
 interface ProtectedFields {
+  hydrate(me: Me): void;
   form: {
     invalid: boolean;
     valid: boolean;
@@ -186,6 +188,12 @@ describe('ProfileComponent', () => {
       digest_email: false,
     });
     expect(access(component).form.valid).toBe(true);
+  });
+
+  it('expose le flag acces offert du compte', () => {
+    const me = { ...baseUser, subscription_bypass: true };
+    access(component).hydrate(me);
+    expect(access(component).user()?.subscription_bypass).toBe(true);
   });
 
   it('falls back to fetchMe() when no current user is set', async () => {

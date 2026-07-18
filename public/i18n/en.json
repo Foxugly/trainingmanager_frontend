@@ -1213,6 +1213,7 @@
       }
     },
     "title": "Profile",
+    "offered_access": "Offered access",
     "email": "Email",
     "email_readonly_help": "The email address can only be changed by an administrator.",
     "first_name": "First name",
@@ -1265,7 +1266,8 @@
       "sports": "Sports",
       "energy_systems": "Energy Systems",
       "energy_segments": "Energy Segments",
-      "modalities": "Modalities"
+      "modalities": "Modalities",
+      "users": "Accounts"
     },
     "modalities": {
       "hub": {
@@ -1387,6 +1389,24 @@
         "unknown": "Something went wrong."
       },
       "default_training_type": "Default training type"
+    },
+    "users": {
+      "title": "Account management",
+      "search": "Search",
+      "search_placeholder": "Email or name",
+      "fields": {
+        "email": "Email",
+        "name": "Name",
+        "bypass": "Offered access",
+        "note": "Reason",
+        "note_placeholder": "Why this access is offered"
+      },
+      "actions": {
+        "saved": "Account updated."
+      },
+      "errors": {
+        "save_failed": "Failed to update the account."
+      }
     }
   },
   "stats": {

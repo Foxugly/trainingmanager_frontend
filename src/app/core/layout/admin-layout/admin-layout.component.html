@@ -30,6 +30,13 @@
       >
         {{ 'admin.nav.modalities' | transloco }}
       </a>
+      <a
+        [routerLink]="['/admin/users']"
+        routerLinkActive="admin-shell__link--active"
+        class="admin-shell__link"
+      >
+        {{ 'admin.nav.users' | transloco }}
+      </a>
     </nav>
   </aside>
   <!-- Not a <main>: this shell nests inside MainLayout's <main>; a second one

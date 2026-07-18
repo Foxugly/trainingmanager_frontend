@@ -59,6 +59,8 @@ api/rounds.service.ts
 api/rounds.serviceInterface.ts
 api/sports.service.ts
 api/sports.serviceInterface.ts
+api/staff.service.ts
+api/staff.serviceInterface.ts
 api/teams.service.ts
 api/teams.serviceInterface.ts
 configuration.ts
@@ -231,6 +233,7 @@ model/patched-place-request.ts
 model/patched-program-request.ts
 model/patched-round-request.ts
 model/patched-sport-admin-request.ts
+model/patched-staff-user-request.ts
 model/patched-team-join-request-request.ts
 model/patched-team-request.ts
 model/patched-topic-message-request.ts
@@ -279,6 +282,8 @@ model/sport-admin.ts
 model/sport-training-type-write-request.ts
 model/sport-training-type-write.ts
 model/sport.ts
+model/staff-user-list-response.ts
+model/staff-user.ts
 model/stats-attendance-by-member.ts
 model/stats-attendance-by-session.ts
 model/stats-attendance.ts

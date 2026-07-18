@@ -1213,6 +1213,7 @@
       }
     },
     "title": "Profilo",
+    "offered_access": "Accesso offerto",
     "email": "Email",
     "email_readonly_help": "L'indirizzo email può essere modificato solo da un amministratore.",
     "first_name": "Nome",
@@ -1265,7 +1266,8 @@
       "sports": "Sport",
       "energy_systems": "Sistemi energetici",
       "energy_segments": "Segmenti energetici",
-      "modalities": "Modalità"
+      "modalities": "Modalità",
+      "users": "Account"
     },
     "modalities": {
       "hub": {
@@ -1387,6 +1389,24 @@
         "unknown": "Si è verificato un errore."
       },
       "default_training_type": "Tipo di allenamento predefinito"
+    },
+    "users": {
+      "title": "Gestione degli account",
+      "search": "Cerca",
+      "search_placeholder": "Email o nome",
+      "fields": {
+        "email": "Email",
+        "name": "Nome",
+        "bypass": "Accesso offerto",
+        "note": "Motivo",
+        "note_placeholder": "Perché questo accesso è offerto"
+      },
+      "actions": {
+        "saved": "Account aggiornato."
+      },
+      "errors": {
+        "save_failed": "Aggiornamento dell'account non riuscito."
+      }
     }
   },
   "stats": {

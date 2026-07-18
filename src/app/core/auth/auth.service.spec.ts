@@ -23,6 +23,7 @@ const fakeUser: Me = {
   is_superuser: false,
   member_id: null,
   team_quota: { used: 0, max: 3, can_create: true },
+  subscription_bypass: false,
   calendar_token: 'tok-test',
 };
 

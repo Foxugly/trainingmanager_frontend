@@ -1213,6 +1213,7 @@
       }
     },
     "title": "Profiel",
+    "offered_access": "Gratis toegang",
     "email": "E-mail",
     "email_readonly_help": "Het e-mailadres kan alleen door een beheerder worden gewijzigd.",
     "first_name": "Voornaam",
@@ -1265,7 +1266,8 @@
       "sports": "Sporten",
       "energy_systems": "Energiesystemen",
       "energy_segments": "Energiesegmenten",
-      "modalities": "Modaliteiten"
+      "modalities": "Modaliteiten",
+      "users": "Accounts"
     },
     "modalities": {
       "hub": {
@@ -1387,6 +1389,24 @@
         "unknown": "Er is een fout opgetreden."
       },
       "default_training_type": "Standaard trainingstype"
+    },
+    "users": {
+      "title": "Accountbeheer",
+      "search": "Zoeken",
+      "search_placeholder": "E-mail of naam",
+      "fields": {
+        "email": "E-mail",
+        "name": "Naam",
+        "bypass": "Gratis toegang",
+        "note": "Reden",
+        "note_placeholder": "Waarom deze toegang wordt aangeboden"
+      },
+      "actions": {
+        "saved": "Account bijgewerkt."
+      },
+      "errors": {
+        "save_failed": "Het bijwerken van het account is mislukt."
+      }
     }
   },
   "stats": {
