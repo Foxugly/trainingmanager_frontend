@@ -11,7 +11,7 @@
       BEFORE Angular bootstraps, so a dark-mode reload never flashes light.
       ThemeService takes over once the app is up.
     -->
-    <script>
+    <script data-theme-init>
       (function () {
         try {
           var stored = localStorage.getItem('theme');
