@@ -3,7 +3,7 @@ export const EMAIL_HOST = 'foxugly';
 export const EMAIL_TLD = 'com';
 
 export const PHONE_COUNTRY = '+32';
-export const PHONE_PARTS = ['478', '811988'] as const;
+export const PHONE_PARTS = ['470', '672', '572'] as const;
 
 export const WEBSITE_URL = 'https://www.foxugly.com';
 export const WEBSITE_DISPLAY = 'www.foxugly.com';

@@ -21,7 +21,7 @@ describe('contact util', () => {
 
   it('exposes phone country + parts and website constants', () => {
     expect(PHONE_COUNTRY).toBe('+32');
-    expect(PHONE_PARTS).toEqual(['478', '811988']);
+    expect(PHONE_PARTS).toEqual(['470', '672', '572']);
     expect(WEBSITE_URL).toBe('https://www.foxugly.com');
     expect(WEBSITE_DISPLAY).toBe('www.foxugly.com');
   });
@@ -34,7 +34,7 @@ describe('contact util', () => {
   });
 
   it('phoneDisplay() returns parts joined by spaces with country prefix', () => {
-    expect(phoneDisplay()).toBe('+32 478 811988');
+    expect(phoneDisplay()).toBe('+32 470 672 572');
   });
 
   describe('openContactEmail()', () => {
