@@ -121,9 +121,9 @@ describe('AboutPageComponent', () => {
     }
   });
 
-  it('Company tab: phone displayed as "+32 478 811988"', async () => {
+  it('Company tab: phone displayed as "+32 470 672 572"', async () => {
     await setup();
-    expect(fixture.nativeElement.textContent).toContain('+32 478 811988');
+    expect(fixture.nativeElement.textContent).toContain('+32 470 672 572');
   });
 
   it('Company tab: website link with WEBSITE_URL, target=_blank, rel=noopener noreferrer', async () => {
