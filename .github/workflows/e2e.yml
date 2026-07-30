@@ -2,7 +2,7 @@ name: E2E
 
 # Run the Playwright critical-path suite (e2e/) against a freshly-built local
 # stack on every push and PR. The job builds the WHOLE stack from source:
-#   - the backend (separate private repo Foxugly/trainingmanager_server) is
+#   - the backend (separate repo Foxugly/trainingmanager_server) is
 #     checked out into ./backend, installed, migrated, seeded with
 #     `create_e2e_data`, and served on :8000 (sqlite, dev settings);
 #   - this frontend is `npm ci`-installed and served by `ng serve` on :4200.
@@ -11,17 +11,20 @@ name: E2E
 #     config in dev).
 # Then `playwright test` runs with E2E_BASE_URL=http://localhost:4200.
 #
-# REQUIRED REPO SECRET: E2E_BACKEND_TOKEN — a token (classic PAT or
-# fine-grained) with READ (contents) access to Foxugly/trainingmanager_server,
-# used for the cross-repo checkout of the backend. See e2e/README.md.
+# NO REPO SECRET NEEDED. The backend checkout used to pass
+# `token: ${{ secrets.E2E_BACKEND_TOKEN }}`, from the days when
+# trainingmanager_server was private. It is public now, so the default
+# GITHUB_TOKEN reads it fine — and unlike a repo secret, that token IS
+# available to Dependabot-triggered runs. With the secret, every Dependabot
+# PR failed at once with "Input required and not supplied: token", because
+# Dependabot has its own secret store (empty here), separate from Actions'.
 
 on:
   pull_request:
   push:
     branches:
       - "**"
-  # Manual trigger (Actions tab → "Run workflow"), e.g. to re-run the suite
-  # after setting the E2E_BACKEND_TOKEN secret without pushing a commit.
+  # Manual trigger (Actions tab → "Run workflow").
   workflow_dispatch:
 
 concurrency:
@@ -37,13 +40,14 @@ jobs:
       - name: Checkout frontend
         uses: actions/checkout@v5
 
-      # 2. Backend repo (separate private repo) into ./backend.
+      # 2. Backend repo (separate public repo) into ./backend.
+      #    No `token:` — the default GITHUB_TOKEN can read any public repo,
+      #    and it is the only one Dependabot runs get.
       - name: Checkout backend
         uses: actions/checkout@v5
         with:
           repository: Foxugly/trainingmanager_server
           ref: main
-          token: ${{ secrets.E2E_BACKEND_TOKEN }}
           path: backend
 
       # 3. Python + backend deps (version matches the backend's deploy.yml).

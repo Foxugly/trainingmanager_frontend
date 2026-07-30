@@ -12,8 +12,10 @@ name: API client drift
 # re-vendors the backend schema, regenerates the client, and fails if either
 # differs from what is committed.
 #
-# Reuses the existing E2E_BACKEND_TOKEN secret (read access to the backend repo) —
-# no new secret needed.
+# NO SECRET NEEDED. This used to reuse E2E_BACKEND_TOKEN, from the days when
+# trainingmanager_server was private. It is public now, so the default
+# GITHUB_TOKEN suffices — and unlike a repo secret, that token IS available to
+# Dependabot-triggered runs (their secret store is separate, and empty here).
 
 on:
   pull_request:
@@ -35,12 +37,12 @@ jobs:
         uses: actions/checkout@v5
 
       # Only the backend's schema file is needed — sparse checkout keeps it fast.
+      # No `token:` — see the header note.
       - name: Checkout backend schema
         uses: actions/checkout@v5
         with:
           repository: Foxugly/trainingmanager_server
           ref: main
-          token: ${{ secrets.E2E_BACKEND_TOKEN }}
           path: backend
           sparse-checkout: |
             openapi-schema.yaml
