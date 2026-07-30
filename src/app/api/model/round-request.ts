@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { ExerciseTStart } from './exercise-t-start';
 import { LanguageEnum } from './language-enum';
 
 
@@ -15,14 +16,8 @@ export interface RoundRequest {
     language: LanguageEnum;
     order?: number;
     count?: number;
-    /**
-     * MM:SS format, e.g. 1:30.
-     */
-    t_start?: string | null;
-    /**
-     * MM:SS format, e.g. 1:30.
-     */
-    t_break?: string | null;
+    t_start?: ExerciseTStart | null;
+    t_break?: ExerciseTStart | null;
     exercises?: Array<number>;
     /**
      * Optional. If provided on POST, the newly created Round is atomically attached to this Event. The request user must manage the Event\'s team. Ignored on PATCH/PUT.

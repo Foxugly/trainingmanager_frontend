@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { MemberEmail } from './member-email';
 import { CustomUserPublic } from './custom-user-public';
 
 
@@ -15,7 +16,7 @@ export interface Member {
     firstname: string;
     lastname: string;
     readonly fullname: string;
-    email?: string | null;
+    email?: MemberEmail | null;
     phonenumber?: string | null;
     readonly teams: Array<number>;
     readonly user: CustomUserPublic;

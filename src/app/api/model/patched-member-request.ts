@@ -7,12 +7,13 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { MemberEmail } from './member-email';
 
 
 export interface PatchedMemberRequest { 
     firstname?: string;
     lastname?: string;
-    email?: string | null;
+    email?: MemberEmail | null;
     phonenumber?: string | null;
     user_id?: number | null;
 }

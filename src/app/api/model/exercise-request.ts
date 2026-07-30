@@ -7,6 +7,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { ExerciseTStart } from './exercise-t-start';
 import { LanguageEnum } from './language-enum';
 
 
@@ -15,14 +16,8 @@ export interface ExerciseRequest {
     repetition?: number;
     distance?: number;
     notes?: string;
-    /**
-     * MM:SS format, e.g. 1:30.
-     */
-    t_start?: string | null;
-    /**
-     * MM:SS format, e.g. 1:30.
-     */
-    t_break?: string | null;
+    t_start?: ExerciseTStart | null;
+    t_break?: ExerciseTStart | null;
     modality_id?: number | null;
     energysegment_id?: number | null;
     /**
