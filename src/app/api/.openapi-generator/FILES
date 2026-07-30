@@ -142,6 +142,7 @@ model/event-share-response.ts
 model/event-template.ts
 model/event.ts
 model/exercise-request.ts
+model/exercise-t-start.ts
 model/exercise.ts
 model/explain-session-response.ts
 model/generate-plan-request-request.ts
@@ -169,6 +170,7 @@ model/magic-link-exchange-response.ts
 model/magic-link-request-request.ts
 model/magic-link-request-response.ts
 model/me.ts
+model/member-email.ts
 model/member-request.ts
 model/member.ts
 model/modality-admin-request.ts

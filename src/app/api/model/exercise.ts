@@ -8,6 +8,7 @@
  * Do not edit the class manually.
  */
 import { EnergySegment } from './energy-segment';
+import { ExerciseTStart } from './exercise-t-start';
 import { LanguageEnum } from './language-enum';
 import { Modality } from './modality';
 
@@ -18,14 +19,8 @@ export interface Exercise {
     repetition?: number;
     distance?: number;
     notes?: string;
-    /**
-     * MM:SS format, e.g. 1:30.
-     */
-    t_start?: string | null;
-    /**
-     * MM:SS format, e.g. 1:30.
-     */
-    t_break?: string | null;
+    t_start?: ExerciseTStart | null;
+    t_break?: ExerciseTStart | null;
     readonly modality: Modality;
     readonly energysegment: EnergySegment;
     language: LanguageEnum;
