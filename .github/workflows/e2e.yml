@@ -38,13 +38,13 @@ jobs:
     steps:
       # 1. Frontend repo (this repo) into the workspace root.
       - name: Checkout frontend
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       # 2. Backend repo (separate public repo) into ./backend.
       #    No `token:` — the default GITHUB_TOKEN can read any public repo,
       #    and it is the only one Dependabot runs get.
       - name: Checkout backend
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           repository: Foxugly/trainingmanager_server
           ref: main
@@ -52,7 +52,7 @@ jobs:
 
       # 3. Python + backend deps (version matches the backend's deploy.yml).
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: "3.12"
           cache: pip
@@ -120,7 +120,7 @@ jobs:
 
       # 7. Node + frontend deps (version matches this repo's deploy.yml).
       - name: Set up Node
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v7
         with:
           node-version: "22"
           cache: npm
@@ -158,7 +158,7 @@ jobs:
       # 11. Always publish the HTML report (+ server logs for debugging).
       - name: Upload Playwright report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report
           path: |
