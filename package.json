@@ -26,7 +26,7 @@
     "@sentry/angular": "^10.56.0",
     "chart.js": "^4.5.1",
     "primeicons": "^7.0.0",
-    "primeng": "^21.1.6",
+    "primeng": "^22.0.0",
     "qrcode": "^1.5.4",
     "quill": "^2.0.3",
     "rxjs": "~7.8.0",
