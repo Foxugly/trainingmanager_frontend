@@ -69,29 +69,30 @@ serves backend :8000 + frontend :4200, then runs `playwright test`. The HTML
 report and server logs are uploaded as the `playwright-report` artifact
 (14-day retention) on every run, pass or fail.
 
-### Required repo secret: `E2E_BACKEND_TOKEN`
+### No repo secret needed (and don't add one back)
 
-The job checks out the **private** backend repo `Foxugly/trainingmanager_server`,
-which the workflow's automatic `GITHUB_TOKEN` cannot access (it is scoped to
-this repo only). Provide a token with **read access to the backend repo's
-contents**:
+The backend checkout needs **no token**. `Foxugly/trainingmanager_server` is a
+**public** repo, and the workflow's automatic `GITHUB_TOKEN` can read any public
+repo.
 
-1. Create a **fine-grained PAT** (recommended, least privilege):
-   GitHub → Settings → Developer settings →
-   *Fine-grained personal access tokens* → **Generate new token**
-   - Resource owner: `Foxugly`
-   - Repository access: *Only select repositories* → `trainingmanager_server`
-   - Repository permissions: **Contents → Read-only** (nothing else)
-   - Set an expiration (renew before it lapses).
+This section used to require an `E2E_BACKEND_TOKEN` secret, from the days when
+the backend was private. That requirement was removed on **2026-07-30** because
+it silently broke every Dependabot pull request:
 
-   A classic PAT with the `repo` scope also works but is broader.
+```
+##[error]Input required and not supplied: token
+```
 
-2. Add it as a repo secret on **this** repo:
+Dependabot runs use a **separate secret store** from Actions (the run log shows
+`Secret source: Dependabot`). A secret set with `gh secret set` lands in the
+*Actions* store only, so `secrets.E2E_BACKEND_TOKEN` resolved to an empty string
+on Dependabot PRs and `actions/checkout` aborted before installing anything —
+no matter what the PR contained.
 
-   ```bash
-   gh secret set E2E_BACKEND_TOKEN -R Foxugly/trainingmanager_frontend --body "<token>"
-   gh secret list -R Foxugly/trainingmanager_frontend   # verify it appears
-   ```
+If the backend ever goes private again, do **not** simply restore the old
+recipe. Set the token in **both** stores, or the Dependabot breakage returns:
 
-Without this secret the **Checkout backend** step fails and the whole job
-stops there.
+```bash
+gh secret set E2E_BACKEND_TOKEN -R Foxugly/trainingmanager_frontend --body "<token>"
+gh secret set E2E_BACKEND_TOKEN -R Foxugly/trainingmanager_frontend --app dependabot --body "<token>"
+```
