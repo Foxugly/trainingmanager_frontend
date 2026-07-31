@@ -81,6 +81,15 @@ jobs:
           #  the COMMITTED git blob (never the django tree → §3.10); 6. enable
           #  unit; 7. pull the bundle from S3 via the instance role (blank the
           #  certbot creds so the role is used) and atomic-swap it into the
+          #  NB le docroot garde UNE generation de chunks en plus de la
+          #  courante. Sans cela `rsync --delete` effacait les anciens chunks a
+          #  chaque deploiement, et un onglet ouvert avant le deploiement
+          #  reclamait un fichier disparu des que son proprietaire naviguait
+          #  vers une route pas encore visitee (TM-FRONTEND-5). .bundle-current
+          #  et .bundle-prev sont des copies PURES du bundle, pas du docroot,
+          #  sinon la retention s'empilerait indefiniment ; le
+          #  `--ignore-existing` garantit que l'ancienne generation n'ecrase
+          #  jamais la nouvelle (index.html et i18n en particulier).
           #  docroot; 8. restart the runtime-fetch unit (writes the SSM snippet;
           #  it only reloads nginx when the snippet CHANGED); 8b. unconditional
           #  `nginx -t && reload` so vhost edits in this commit always take
@@ -97,7 +106,12 @@ jobs:
             "$GB:deploy/nginx/tm-frontend.conf > /etc/nginx/sites-available/tm-frontend.conf && ln -sf /etc/nginx/sites-available/tm-frontend.conf /etc/nginx/sites-enabled/tm-frontend.conf",
             "systemctl daemon-reload && systemctl enable --quiet tm-frontend-runtime-fetch",
             "env AWS_SHARED_CREDENTIALS_FILE=/dev/null AWS_CONFIG_FILE=/dev/null aws s3 cp s3://$BUCKET/builds/tm-frontend/$SHA.tar.gz /tmp/tmfe.tar.gz --region eu-west-1",
-            "rm -rf /tmp/tmfe && mkdir -p /tmp/tmfe && tar -xzf /tmp/tmfe.tar.gz -C /tmp/tmfe && mkdir -p $DOC && rsync -a --delete /tmp/tmfe/ $DOC/ && rm -rf /tmp/tmfe /tmp/tmfe.tar.gz",
+            "rm -rf /tmp/tmfe && mkdir -p /tmp/tmfe && tar -xzf /tmp/tmfe.tar.gz -C /tmp/tmfe",
+            "rm -rf $APP/dist/.bundle-prev; [ -d $APP/dist/.bundle-current ] && mv $APP/dist/.bundle-current $APP/dist/.bundle-prev || true",
+            "rm -rf $APP/dist/.bundle-current && cp -a /tmp/tmfe $APP/dist/.bundle-current",
+            "mkdir -p $DOC && rsync -a --delete $APP/dist/.bundle-current/ $DOC/",
+            "[ -d $APP/dist/.bundle-prev ] && rsync -a --ignore-existing $APP/dist/.bundle-prev/ $DOC/ || true",
+            "rm -rf /tmp/tmfe /tmp/tmfe.tar.gz",
             "systemctl restart tm-frontend-runtime-fetch",
             "nginx -t && systemctl reload nginx",
             "chown -R django:www-data $APP && chmod -R g-w,o-rwx $APP"
