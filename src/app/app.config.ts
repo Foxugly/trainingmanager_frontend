@@ -11,6 +11,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideRouter } from '@angular/router';
 import { provideTransloco } from '@jsverse/transloco';
 import { MessageService } from 'primeng/api';
+import { StaleChunkService } from './core/app-update/stale-chunk.service';
 import { providePrimeNG } from 'primeng/config';
 import { definePreset } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
@@ -93,6 +94,8 @@ export const appConfig: ApplicationConfig = {
       // Force LanguageService instantiation so its currentUser-watching effect is wired
       // before bootstrap() sets the user, ensuring Transloco picks up me.language at startup.
       inject(LanguageService);
+      // Recovers tabs opened before a deploy, whose lazy chunks no longer exist.
+      inject(StaleChunkService).init();
       return firstValueFrom(authService.bootstrap()).catch(() => false);
     }),
     {

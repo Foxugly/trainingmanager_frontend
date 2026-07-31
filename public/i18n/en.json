@@ -1618,5 +1618,9 @@
       "toast": "Athlete anonymized",
       "error": "Anonymization failed, please try again."
     }
+  },
+  "appUpdate": {
+    "title": "A new version is available",
+    "detail": "The app was updated while you were here. Reload the page to continue."
   }
 }
