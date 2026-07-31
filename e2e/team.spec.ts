@@ -38,19 +38,32 @@ test('manager can create a team', async ({ page }) => {
   // on the clickable trigger, so click the <p-multiselect> host (its
   // onContainerClick opens the overlay); options land in an overlay as listbox
   // options.
-  await page.locator('p-multiselect:has(#sport_ids)').click();
+  const multiselect = page.locator('p-multiselect:has(#sport_ids)');
+  await multiselect.click();
   await page.getByRole('option', { name: SEED.sport }).click();
-  // Close the overlay so the default-sport select is interactable.
-  await page.keyboard.press('Escape');
-  // Wait for the multiselect overlay to fully detach before opening the select.
-  // Otherwise both overlays expose an "E2E Sport" option at once and the next
-  // getByRole('option') hits a strict-mode violation (2 elements) — a flaky
-  // race, not a product bug.
-  await expect(page.getByRole('option', { name: SEED.sport })).toHaveCount(0);
+
+  // Close the overlay so the default-sport select is interactable, then wait for
+  // it to actually detach — otherwise both overlays expose an "E2E Sport" option
+  // at once and the next getByRole('option') hits a strict-mode violation.
+  //
+  // Two things were wrong here and made the test flaky (green on retry, so the
+  // run stayed green and nobody saw it — reproduced on main, without any app
+  // change, on 2026-07-31):
+  //
+  //   1. `Escape` only closes the overlay when focus is inside it. After
+  //      clicking an option PrimeNG can leave focus on the host, and the key
+  //      then goes nowhere. Clicking the host toggles the overlay shut whatever
+  //      the focus is.
+  //   2. Waiting on the option COUNT conflated "overlay gone" with "option gone"
+  //      and silently depended on the option label. We now wait on the overlay
+  //      element itself, which is what we actually mean.
+  await multiselect.click();
+  await expect(page.locator('.p-multiselect-overlay')).toHaveCount(0);
 
   // Default sport select: open and choose the same sport (now an option). Same
   // inputId-on-hidden-input rule as the multiselect — click the <p-select> host.
   await page.locator('p-select:has(#default_sport_id)').click();
+  await expect(page.locator('.p-select-overlay')).toBeVisible();
   await page.getByRole('option', { name: SEED.sport }).click();
 
   // Save (form-footer). The footer renders a submit-style button; the text is
