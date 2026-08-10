@@ -47,6 +47,7 @@ import { PlaceSelectComponent } from '../../../shared/ui/place-select/place-sele
 import { EquipmentSelectComponent } from '../../../shared/ui/equipment-select/equipment-select.component';
 import { RichEditorComponent } from '../../../shared/ui/rich-editor/rich-editor.component';
 import { AriaDescribesDirective } from '../../../shared/a11y/aria-describes.directive';
+import { LanguageService } from '../../../core/i18n/language.service';
 
 function toIsoDate(d: Date | null | undefined): string | null {
   if (!d) return null;
@@ -121,6 +122,7 @@ export class EventsFormComponent implements OnInit {
   private readonly programsService = inject(ProgramsService);
   private readonly messageService = inject(MessageService);
   private readonly transloco = inject(TranslocoService);
+  private readonly language = inject(LanguageService);
   private readonly toast = inject(ToastService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -159,7 +161,7 @@ export class EventsFormComponent implements OnInit {
 
   /** Visibility-mode select options, re-translated on language change. */
   protected readonly visibilityOptions = computed(() => {
-    this.transloco.getActiveLang();
+    this.language.revision();
     return buildVisibilityOptions(this.transloco);
   });
 

@@ -56,6 +56,7 @@ import {
 import { ShareEventDialogComponent } from '../share-event-dialog/share-event-dialog.component';
 import { EventShareResponse } from '../../../api/model/event-share-response';
 import { LocalizedDatePipe } from '../../../shared/datetime/localized-date.pipe';
+import { LanguageService } from '../../../core/i18n/language.service';
 @Component({
   selector: 'app-events-detail',
   imports: [
@@ -108,6 +109,7 @@ export class EventsDetailComponent implements OnInit {
   private readonly messageService = inject(MessageService);
   private readonly toast = inject(ToastService);
   private readonly transloco = inject(TranslocoService);
+  private readonly language = inject(LanguageService);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly eventId = signal<number | null>(null);
@@ -168,7 +170,7 @@ export class EventsDetailComponent implements OnInit {
 
   /** Select options, re-translated on language change. */
   protected readonly trainingTypeOptions = computed(() => {
-    this.transloco.getActiveLang();
+    this.language.revision();
     return [
       {
         label: this.transloco.translate('events.training.type_structured'),

@@ -34,6 +34,7 @@ import { TrainingSlot } from '../../../api/model/training-slot';
 import { WeekdayEnum } from '../../../api/model/weekday-enum';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { ToastService } from '../../../core/notifications/toast.service';
+import { LanguageService } from '../../../core/i18n/language.service';
 
 function toHourMinute(d: Date | null | undefined): string | null {
   if (!d) return null;
@@ -98,6 +99,7 @@ export class TeamSlotsEditorComponent {
   private readonly fb = inject(FormBuilder);
   private readonly teamsService = inject(TeamsService);
   private readonly transloco = inject(TranslocoService);
+  private readonly language = inject(LanguageService);
   private readonly messageService = inject(MessageService);
   private readonly toast = inject(ToastService);
   private readonly confirmationService = inject(ConfirmationService);
@@ -123,7 +125,7 @@ export class TeamSlotsEditorComponent {
 
   /** Weekday select options (Mon=0 … Sun=6), re-translated on language change. */
   protected readonly weekdayOptions = computed(() => {
-    this.transloco.getActiveLang();
+    this.language.revision();
     const keys = [
       'training_template.weekday.monday',
       'training_template.weekday.tuesday',

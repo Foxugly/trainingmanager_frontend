@@ -35,6 +35,7 @@ import { FormFooterComponent } from '../../../../shared/ui/form-footer/form-foot
 import { MetaFieldComponent } from '../../../../shared/ui/meta-field/meta-field.component';
 import { PageHeaderComponent } from '../../../../shared/ui/page-header/page-header.component';
 import { StatusBadgeComponent } from '../../../../shared/ui/status-badge/status-badge.component';
+import { LanguageService } from '../../../../core/i18n/language.service';
 
 @Component({
   selector: 'app-sports-form',
@@ -72,6 +73,7 @@ export class SportsFormComponent implements OnInit {
   private readonly energySystemsService = inject(EnergySystemsService);
   private readonly toast = inject(ToastService);
   private readonly transloco = inject(TranslocoService);
+  private readonly language = inject(LanguageService);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly sportId = signal<number | null>(null);
@@ -111,7 +113,7 @@ export class SportsFormComponent implements OnInit {
 
   /** Training-type select options, re-translated on language change. */
   protected readonly trainingTypeOptions = computed(() => {
-    this.transloco.getActiveLang();
+    this.language.revision();
     return [
       {
         label: this.transloco.translate('events.training.type_structured'),

@@ -33,6 +33,7 @@ import { ToastService } from '../../../core/notifications/toast.service';
 import { isoDate } from '../../date/calendar';
 import { EmptyStateComponent } from '../empty-state/empty-state.component';
 import { LocalizedDatePipe } from '../../datetime/localized-date.pipe';
+import { LanguageService } from '../../../core/i18n/language.service';
 
 interface ChartConfig {
   data: unknown;
@@ -100,6 +101,7 @@ export class PerformancePanelComponent {
   private readonly confirmationService = inject(ConfirmationService);
   private readonly toast = inject(ToastService);
   private readonly transloco = inject(TranslocoService);
+  private readonly language = inject(LanguageService);
   private readonly destroyRef = inject(DestroyRef);
 
   /** Optional in supplied mode; required (effectively) in fetch mode. */
@@ -126,13 +128,16 @@ export class PerformancePanelComponent {
   /** Id of the performance being edited, or null when adding a new one. */
   protected readonly editingId = signal<number | null>(null);
 
-  protected readonly unitOptions = computed<UnitOption[]>(() => [
-    { value: UnitEnum.S, label: this.transloco.translate('performance.units.s') },
-    { value: UnitEnum.M, label: this.transloco.translate('performance.units.m') },
-    { value: UnitEnum.Reps, label: this.transloco.translate('performance.units.reps') },
-    { value: UnitEnum.Kg, label: this.transloco.translate('performance.units.kg') },
-    { value: UnitEnum.Pts, label: this.transloco.translate('performance.units.pts') },
-  ]);
+  protected readonly unitOptions = computed<UnitOption[]>(() => {
+    this.language.revision();
+    return [
+      { value: UnitEnum.S, label: this.transloco.translate('performance.units.s') },
+      { value: UnitEnum.M, label: this.transloco.translate('performance.units.m') },
+      { value: UnitEnum.Reps, label: this.transloco.translate('performance.units.reps') },
+      { value: UnitEnum.Kg, label: this.transloco.translate('performance.units.kg') },
+      { value: UnitEnum.Pts, label: this.transloco.translate('performance.units.pts') },
+    ];
+  });
 
   protected readonly form = this.fb.nonNullable.group({
     label: ['', [Validators.required, Validators.maxLength(120)]],
