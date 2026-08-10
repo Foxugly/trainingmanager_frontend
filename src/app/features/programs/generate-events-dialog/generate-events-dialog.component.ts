@@ -31,6 +31,7 @@ import { Program } from '../../../api/model/program';
 import { TrainingTemplate } from '../../../api/model/training-template';
 import { AiErrorMappingService } from '../../ai/ai-error-mapping.service';
 import { shortTime } from '../../../shared/datetime/short-time';
+import { LanguageService } from '../../../core/i18n/language.service';
 
 export interface GenerateEventsResult {
   created: number;
@@ -78,6 +79,7 @@ export class GenerateEventsDialogComponent {
   private readonly teamsService = inject(TeamsService);
   private readonly aiErrorMapping = inject(AiErrorMappingService);
   private readonly transloco = inject(TranslocoService);
+  private readonly language = inject(LanguageService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly program = input.required<Program>();
@@ -99,7 +101,7 @@ export class GenerateEventsDialogComponent {
   protected readonly templateSummary = computed(() => {
     const tpl = this.template();
     if (!tpl || !tpl.slots?.length) return '';
-    this.transloco.getActiveLang();
+    this.language.revision();
     const dayKeys = [
       'training_template.weekday_short.monday',
       'training_template.weekday_short.tuesday',
@@ -132,16 +134,19 @@ export class GenerateEventsDialogComponent {
     ]),
   });
 
-  protected readonly overlapOptions = computed(() => [
-    {
-      value: 'add_only',
-      label: this.transloco.translate('programs.generate.overlap.add_only'),
-    },
-    {
-      value: 'replace',
-      label: this.transloco.translate('programs.generate.overlap.replace'),
-    },
-  ]);
+  protected readonly overlapOptions = computed(() => {
+    this.language.revision();
+    return [
+      {
+        value: 'add_only',
+        label: this.transloco.translate('programs.generate.overlap.add_only'),
+      },
+      {
+        value: 'replace',
+        label: this.transloco.translate('programs.generate.overlap.replace'),
+      },
+    ];
+  });
 
   /** Program start — the earliest a session may be generated (issue #12). */
   protected readonly minDate = computed(() => parseDate(this.program().date_start));

@@ -2,7 +2,7 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { TranslocoService } from '@jsverse/transloco';
 import { PrimeNG } from 'primeng/config';
-import { of, throwError } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MeService } from '../../api/api/me.service';
 import { LanguageEnum } from '../../api/model/language-enum';
@@ -30,9 +30,11 @@ const updatedMe: Me = {
 
 describe('LanguageService', () => {
   let service: LanguageService;
+  let translocoEvents: Subject<{ type: string }>;
   let translocoMock: {
     getActiveLang: ReturnType<typeof vi.fn>;
     setActiveLang: ReturnType<typeof vi.fn>;
+    events$: Subject<{ type: string }>;
   };
   let meMock: { mePartialUpdate: ReturnType<typeof vi.fn> };
   let authMock: {
@@ -42,9 +44,11 @@ describe('LanguageService', () => {
   let primeNGMock: { setTranslation: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
+    translocoEvents = new Subject<{ type: string }>();
     translocoMock = {
       getActiveLang: vi.fn().mockReturnValue('fr'),
       setActiveLang: vi.fn(),
+      events$: translocoEvents,
     };
     meMock = { mePartialUpdate: vi.fn() };
     const userSignal = signal<Me | null>(null);
@@ -64,6 +68,37 @@ describe('LanguageService', () => {
       ],
     });
     service = TestBed.inject(LanguageService);
+  });
+
+  // `revision` existe parce que translate() n'est pas reactif : un computed qui
+  // l'appelle avant que le catalogue soit charge fige la clef brute et, la langue
+  // n'ayant pas change, ne se recalcule jamais. getActiveLang() ne pouvait pas
+  // servir de dependance — c'est un getter, pas un signal.
+  it('revision change quand un catalogue arrive, sans bascule de langue', async () => {
+    const before = service.revision();
+
+    translocoEvents.next({ type: 'translationLoadSuccess' });
+    // L'ecriture est repoussee d'une microtache pour ne pas tomber pendant un rendu.
+    await Promise.resolve();
+
+    expect(service.revision()).not.toBe(before);
+  });
+
+  it('revision ignore les evenements Transloco qui ne sont pas un chargement', async () => {
+    const before = service.revision();
+
+    translocoEvents.next({ type: 'langChanged' });
+    await Promise.resolve();
+
+    expect(service.revision()).toBe(before);
+  });
+
+  it('revision change aussi a la bascule de langue', () => {
+    const before = service.revision();
+
+    service.applyToTranslocoOnly('it');
+
+    expect(service.revision()).not.toBe(before);
   });
 
   it('initialises activeLang from the current Transloco lang', () => {

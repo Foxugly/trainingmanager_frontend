@@ -66,6 +66,7 @@ import { AriaDescribesDirective } from '../../../shared/a11y/aria-describes.dire
 import { TeamManagersComponent } from '../team-managers/team-managers.component';
 import { TeamPlacePoolComponent } from '../team-place-pool/team-place-pool.component';
 import { TeamSlotsEditorComponent } from '../team-slots-editor/team-slots-editor.component';
+import { LanguageService } from '../../../core/i18n/language.service';
 
 @Component({
   selector: 'app-teams-form',
@@ -116,6 +117,7 @@ export class TeamsFormComponent implements OnInit {
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly transloco = inject(TranslocoService);
+  private readonly language = inject(LanguageService);
   private readonly toast = inject(ToastService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -143,7 +145,7 @@ export class TeamsFormComponent implements OnInit {
   /** Visibility-mode select options, re-translated on language change. */
   protected readonly visibilityOptions = computed(() => {
     // Touch the active lang so the labels recompute when it changes.
-    this.transloco.getActiveLang();
+    this.language.revision();
     return buildVisibilityOptions(this.transloco);
   });
 
@@ -153,7 +155,7 @@ export class TeamsFormComponent implements OnInit {
   /** Topic-creation policy select options, re-translated on language change. */
   protected readonly topicCreationOptions = computed(() => {
     // Touch the active lang so labels recompute when it changes.
-    this.transloco.getActiveLang();
+    this.language.revision();
     return [
       {
         label: this.transloco.translate('teams.topic_creation.owner'),
@@ -261,7 +263,7 @@ export class TeamsFormComponent implements OnInit {
   /** Per-sport training-type select options, re-translated on language change.
    *  The first option (inherit) maps to null. */
   protected readonly sportTrainingTypeOptions = computed(() => {
-    this.transloco.getActiveLang();
+    this.language.revision();
     return [
       {
         label: this.transloco.translate('teams.form.training_type_inherit'),

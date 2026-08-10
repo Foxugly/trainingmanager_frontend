@@ -1,5 +1,7 @@
-import { Injectable, effect, inject, signal } from '@angular/core';
+import { Injectable, computed, effect, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoService } from '@jsverse/transloco';
+import { filter } from 'rxjs';
 import { PrimeNG } from 'primeng/config';
 import { Observable, catchError, tap, throwError } from 'rxjs';
 import { LanguageEnum } from '../../api/model/language-enum';
@@ -22,7 +24,34 @@ export class LanguageService {
   );
   readonly activeLang = this._activeLang.asReadonly();
 
+  // Transloco charge ses catalogues apres le premier rendu. Le pipe | transloco
+  // s'abonne a cette arrivee, translate() non : un computed qui l'appelle trop tot
+  // rend la clef brute et la met en cache. Ce compteur lui donne la dependance
+  // manquante.
+  private readonly _loads = signal(0);
+
+  /**
+   * A lire dans tout computed qui appelle translate(). Change a la bascule de langue
+   * *et* a chaque catalogue charge.
+   *
+   * Ne pas y substituer `transloco.getActiveLang()` : c'est un getter, pas un signal,
+   * donc le lire dans un computed ne cree aucune dependance — le computed n'etait
+   * alors jamais recalcule, pas meme au changement de langue.
+   */
+  readonly revision = computed(() => `${this._activeLang()}#${this._loads()}`);
+
   constructor() {
+    this.transloco.events$
+      .pipe(
+        filter((e) => e.type === 'translationLoadSuccess'),
+        takeUntilDestroyed(),
+      )
+      // queueMicrotask, pas un set direct : le catalogue est demande *pendant* le
+      // rendu (par le pipe | transloco), et l'evenement revient donc souvent dans
+      // ce meme rendu — ecrire un signal la leve NG0600. On repousse au tick
+      // suivant, ou l'ecriture est legitime et provoque un nouveau rendu.
+      .subscribe(() => queueMicrotask(() => this._loads.update((n) => n + 1)));
+
     // Initial sync: PrimeNG ships with English-only translations until we call
     // setTranslation. Apply the dictionary that matches Transloco's current lang.
     this.primeNG.setTranslation(PRIMENG_TRANSLATIONS[this._activeLang()]);

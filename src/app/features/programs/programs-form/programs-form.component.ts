@@ -41,6 +41,7 @@ import { RichEditorComponent } from '../../../shared/ui/rich-editor/rich-editor.
 import { StatusBadgeComponent } from '../../../shared/ui/status-badge/status-badge.component';
 import { AriaDescribesDirective } from '../../../shared/a11y/aria-describes.directive';
 import { TeamRole, computeTeamRole } from '../../teams/teams-list/teams-list.component';
+import { LanguageService } from '../../../core/i18n/language.service';
 
 function toIsoDate(d: Date | null | undefined): string | null {
   if (!d) return null;
@@ -93,6 +94,7 @@ export class ProgramsFormComponent implements OnInit {
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly transloco = inject(TranslocoService);
+  private readonly language = inject(LanguageService);
   private readonly toast = inject(ToastService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -121,13 +123,16 @@ export class ProgramsFormComponent implements OnInit {
       },
     });
 
-  protected readonly activeLabels = computed<ActiveToggleLabels>(() => ({
-    active: this.transloco.translate('common.active'),
-    inactive: this.transloco.translate('common.inactive'),
-    confirm: this.transloco.translate('common.confirm_deactivate'),
-    errorSummary: this.transloco.translate('common.error'),
-    errorDetail: this.transloco.translate('common.update_failed'),
-  }));
+  protected readonly activeLabels = computed<ActiveToggleLabels>(() => {
+    this.language.revision();
+    return {
+      active: this.transloco.translate('common.active'),
+      inactive: this.transloco.translate('common.inactive'),
+      confirm: this.transloco.translate('common.confirm_deactivate'),
+      errorSummary: this.transloco.translate('common.error'),
+      errorDetail: this.transloco.translate('common.update_failed'),
+    };
+  });
 
   protected readonly form = this.fb.nonNullable.group({
     name: ['', [Validators.required]],

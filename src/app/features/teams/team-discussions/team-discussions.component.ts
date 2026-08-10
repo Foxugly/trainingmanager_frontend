@@ -36,6 +36,7 @@ import { RichEditorComponent } from '../../../shared/ui/rich-editor/rich-editor.
 import { AttachmentListComponent } from '../../../shared/ui/attachment-list/attachment-list.component';
 import { LocalizedDatePipe } from '../../../shared/datetime/localized-date.pipe';
 import { EMOJIS } from './emojis';
+import { LanguageService } from '../../../core/i18n/language.service';
 
 /** owner | manager | member — the viewer's role within this team. */
 export type DiscussionRole = 'owner' | 'manager' | 'member';
@@ -86,6 +87,7 @@ export class TeamDiscussionsComponent {
   private readonly toast = inject(ToastService);
   private readonly messagesService = inject(MessagesService);
   private readonly transloco = inject(TranslocoService);
+  private readonly language = inject(LanguageService);
   private readonly destroyRef = inject(DestroyRef);
 
   /** Topic ids already marked read this session (avoid spamming the endpoint). */
@@ -153,7 +155,7 @@ export class TeamDiscussionsComponent {
 
   /** Audience options for the new-topic dialog (coaches only — athletes are forced to team). */
   protected readonly audienceOptions = computed(() => {
-    this.transloco.getActiveLang();
+    this.language.revision();
     return [
       {
         label: this.transloco.translate('teams.discussions.audience_team'),
