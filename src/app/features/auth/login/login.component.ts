@@ -2,12 +2,16 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  ElementRef,
   Injector,
   OnDestroy,
   afterNextRender,
   computed,
+  effect,
   inject,
   signal,
+  untracked,
+  viewChild,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -20,7 +24,9 @@ import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { Password } from 'primeng/password';
 import { AuthService } from '../../../core/auth/auth.service';
+import { getRuntimeConfig } from '../../../core/runtime-config';
 import { AuthCardComponent } from '../../../shared/components/auth-card/auth-card.component';
+import { authErrorKey } from '../shared/auth-error';
 import { parseRetryAfterSeconds } from '../shared/retry-after';
 import { safeReturnUrl } from '../shared/safe-return-url';
 
@@ -72,6 +78,7 @@ export class LoginComponent implements OnDestroy {
   protected readonly resendDone = signal(false);
   protected readonly resendError = signal<string | null>(null);
   protected readonly retryCountdown = signal<number | null>(null);
+  protected readonly turnstileFailed = signal(false);
   /** Timed cooldown after a resend so the button re-enables (no permanent lock). */
   protected readonly resendCooldown = signal<number | null>(null);
   protected readonly resendCooldownActive = computed(() => {
@@ -88,7 +95,25 @@ export class LoginComponent implements OnDestroy {
   private countdownTimer: ReturnType<typeof setInterval> | null = null;
   private resendCooldownTimer: ReturnType<typeof setInterval> | null = null;
 
+  // Turnstile (lien magique) : le conteneur n'existe que dans le formulaire du mode
+  // « lien magique ». Le widget est rendu à son apparition et retiré à sa disparition.
+  private readonly turnstileSiteKey = getRuntimeConfig().turnstileSiteKey;
+  private readonly turnstileContainer = viewChild<ElementRef<HTMLDivElement>>('turnstile');
+  private turnstileWidgetId: string | null = null;
+  private turnstileRetryTimer: ReturnType<typeof setTimeout> | null = null;
+
+  constructor() {
+    effect(() => {
+      const container = this.turnstileContainer();
+      untracked(() => {
+        if (container) this.tryRenderTurnstile(0);
+        else this.removeTurnstile();
+      });
+    });
+  }
+
   ngOnDestroy(): void {
+    this.removeTurnstile();
     // Stop the rate-limit countdown if the user navigates away mid-cooldown,
     // otherwise the interval keeps firing on a destroyed component.
     if (this.countdownTimer !== null) clearInterval(this.countdownTimer);
@@ -116,7 +141,7 @@ export class LoginComponent implements OnDestroy {
         },
         error: (err: HttpErrorResponse) => {
           this.loading.set(false);
-          const body = (err?.error ?? null) as { code?: string; detail?: string } | null;
+          const body = (err?.error ?? null) as { code?: string } | null;
 
           if (err.status === 429) {
             const retryAfter = parseRetryAfterSeconds(err.headers);
@@ -130,13 +155,10 @@ export class LoginComponent implements OnDestroy {
             return;
           }
 
-          if (err.status === 401 && body?.code === 'authentication_failed') {
-            this.errorMessage.set(this.transloco.translate('auth.errors.invalid_credentials'));
-          } else if (body?.detail) {
-            this.errorMessage.set(body.detail);
-          } else {
-            this.errorMessage.set(this.transloco.translate('auth.errors.unknown'));
-          }
+          // Jamais le `detail` brut du backend : message traduit selon le code HTTP.
+          this.errorMessage.set(
+            this.transloco.translate(authErrorKey(err, { credentials: true })),
+          );
         },
       });
   }
@@ -160,10 +182,17 @@ export class LoginComponent implements OnDestroy {
       this.magicLinkError.set('auth.magic_link.email_required');
       return;
     }
+    const turnstileToken = document
+      .querySelector<HTMLInputElement>('input[name="cf-turnstile-response"]')
+      ?.value;
+    if (!turnstileToken) {
+      this.magicLinkError.set('auth.magic_link.captcha_required');
+      return;
+    }
     this.magicLinkSubmitting.set(true);
     this.magicLinkError.set(null);
     this.authService
-      .requestMagicLink(email)
+      .requestMagicLink(email, turnstileToken)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         // Constant-time UX: any 2xx maps to the same neutral confirmation.
@@ -173,13 +202,63 @@ export class LoginComponent implements OnDestroy {
         },
         error: (err: HttpErrorResponse) => {
           this.magicLinkSubmitting.set(false);
+          this.resetTurnstileWidget();
+          const code = (err?.error as { code?: string } | null)?.code;
           if (err.status === 429) {
             this.magicLinkError.set('auth.magic_link.rate_limited');
+          } else if (err.status === 400 && code === 'captcha_failed') {
+            this.magicLinkError.set('auth.magic_link.captcha_failed');
           } else {
-            this.magicLinkError.set('auth.errors.unknown');
+            this.magicLinkError.set(authErrorKey(err));
           }
         },
       });
+  }
+
+  /** Relance du chargement du widget après un échec (bloqueur de publicités, réseau). */
+  protected retryTurnstile(): void {
+    this.turnstileFailed.set(false);
+    this.tryRenderTurnstile(0);
+  }
+
+  private tryRenderTurnstile(attempts: number): void {
+    if (typeof window === 'undefined') return;
+    if (this.turnstileRetryTimer !== null) {
+      clearTimeout(this.turnstileRetryTimer);
+      this.turnstileRetryTimer = null;
+    }
+    if (!window.turnstile?.render) {
+      if (attempts >= 20) {
+        // Le script ne s'est jamais chargé : on l'indique plutôt que de laisser un
+        // cadre vide qui échouera à l'envoi.
+        this.turnstileFailed.set(true);
+        return;
+      }
+      this.turnstileRetryTimer = setTimeout(() => this.tryRenderTurnstile(attempts + 1), 500);
+      return;
+    }
+    const container = this.turnstileContainer()?.nativeElement;
+    if (!container || this.turnstileWidgetId !== null) return;
+    this.turnstileWidgetId = window.turnstile.render(container, {
+      sitekey: this.turnstileSiteKey,
+    });
+  }
+
+  private resetTurnstileWidget(): void {
+    if (typeof window === 'undefined' || !window.turnstile?.reset) return;
+    if (this.turnstileWidgetId !== null) window.turnstile.reset(this.turnstileWidgetId);
+  }
+
+  private removeTurnstile(): void {
+    if (this.turnstileRetryTimer !== null) {
+      clearTimeout(this.turnstileRetryTimer);
+      this.turnstileRetryTimer = null;
+    }
+    if (this.turnstileWidgetId !== null && typeof window !== 'undefined') {
+      window.turnstile?.remove?.(this.turnstileWidgetId);
+    }
+    this.turnstileWidgetId = null;
+    this.turnstileFailed.set(false);
   }
 
   protected resendVerification(): void {

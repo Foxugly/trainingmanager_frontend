@@ -29,8 +29,8 @@ All providers live in `src/app/app.config.ts`; routes in `src/app/app.routes.ts`
 
 - **PublicLayoutComponent** — public-facing pages, no auth required:
   `/`, `/home`, `/features`, `/contribute`, `/login`, `/register`,
-  `/check-your-email`, `/auth/confirm-email/:key`, `/auth/forgot-password`,
-  `/auth/forgot-password/sent`, `/auth/reset-password/:key`,
+  `/check-your-email`, `/auth/confirm-email/:key`, `/forgot-password`,
+  `/forgot-password/sent`, `/auth/reset-password/:key`,
   `/invitation/:token`. Hosts the public marketing nav + UserMenu when
   authenticated.
 - **MainLayoutComponent** — authenticated app shell (`canActivate: [authGuard]`):

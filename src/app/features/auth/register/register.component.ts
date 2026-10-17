@@ -33,6 +33,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { AVAILABLE_LANGUAGES, LanguageCode } from '../../../core/i18n/available-languages';
 import { LanguageService } from '../../../core/i18n/language.service';
 import { AuthCardComponent } from '../../../shared/components/auth-card/auth-card.component';
+import { authErrorKey } from '../shared/auth-error';
 import { parseRetryAfterSeconds } from '../shared/retry-after';
 
 interface FieldErrors {
@@ -263,7 +264,7 @@ export class RegisterComponent implements AfterViewInit, OnDestroy {
       }
     }
 
-    this.errorMessage.set(body?.detail ?? 'auth.errors.unknown');
+    this.errorMessage.set(authErrorKey(err));
   }
 
   private resetTurnstileWidget(): void {

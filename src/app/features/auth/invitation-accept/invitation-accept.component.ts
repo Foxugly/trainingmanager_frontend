@@ -30,6 +30,7 @@ import { InvitationStatusEnum } from '../../../api/model/invitation-status-enum'
 import { ValidateInvitation } from '../../../api/model/validate-invitation';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AuthCardComponent } from '../../../shared/components/auth-card/auth-card.component';
+import { authErrorKey } from '../shared/auth-error';
 
 interface FieldErrors {
   [field: string]: string[];
@@ -214,6 +215,6 @@ export class InvitationAcceptComponent implements OnInit {
       return;
     }
 
-    this.acceptError.set(body?.detail ?? 'invitation_accept.errors.unknown');
+    this.acceptError.set(authErrorKey(err, { fallback: 'invitation_accept.errors.unknown' }));
   }
 }

@@ -13,14 +13,16 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { getRuntimeConfig } from '../../../core/runtime-config';
 import { AuthService } from '../../../core/auth/auth.service';
+import { AuthBackLinkComponent } from '../../../shared/components/auth-card/auth-back-link.component';
 import { AuthCardComponent } from '../../../shared/components/auth-card/auth-card.component';
+import { authErrorKey } from '../shared/auth-error';
 import { parseRetryAfterSeconds } from '../shared/retry-after';
 
 interface TurnstileRenderOptions {
@@ -35,12 +37,12 @@ interface TurnstileRenderOptions {
   selector: 'app-forgot-password',
   imports: [
     ReactiveFormsModule,
-    RouterLink,
     InputText,
     Button,
     Message,
     TranslocoPipe,
     AuthCardComponent,
+    AuthBackLinkComponent,
   ],
   templateUrl: './forgot-password.component.html',
   styleUrl: './forgot-password.component.scss',
@@ -144,7 +146,7 @@ export class ForgotPasswordComponent implements AfterViewInit, OnDestroy {
       .subscribe({
         next: () => {
           this.loading.set(false);
-          this.router.navigate(['/auth/forgot-password/sent'], {
+          this.router.navigate(['/forgot-password/sent'], {
             state: { email },
           });
         },
@@ -163,13 +165,13 @@ export class ForgotPasswordComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
-    const body = err?.error as { code?: string; detail?: string } | null | undefined;
+    const body = err?.error as { code?: string } | null | undefined;
     if (err.status === 400 && body?.code === 'captcha_failed') {
       this.captchaError.set(true);
       this.errorMessage.set('auth.forgot_password.captcha_failed');
       return;
     }
-    this.errorMessage.set(body?.detail ?? 'auth.errors.unknown');
+    this.errorMessage.set(authErrorKey(err));
   }
 
   private resetTurnstileWidget(): void {

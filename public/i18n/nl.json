@@ -1067,13 +1067,12 @@
       "title": "Inloggen",
       "remember_me_label": "Mij onthouden",
       "forgot_password_link": "Wachtwoord vergeten?",
-      "email": "E-mail",
+      "email": "E-mailadres",
       "password": "Wachtwoord",
       "submit": "Aanmelden",
       "rate_limit_message": "Te veel pogingen. Probeer het over enkele minuten opnieuw.",
       "rate_limit_countdown": "Probeer over {{seconds}} seconden opnieuw.",
       "email_not_verified_banner": "Je e-mail is niet geverifieerd. Vul hieronder je adres in om een nieuwe bevestigingslink te ontvangen.",
-      "email_for_resend_placeholder": "jij@voorbeeld.com",
       "resend_email_button": "Bevestigingsmail opnieuw versturen",
       "resend_email_required": "Geef je e-mailadres op om een nieuwe link te ontvangen.",
       "resend_email_sent": "E-mail verzonden. Controleer je inbox.",
@@ -1083,10 +1082,9 @@
       "or": "of"
     },
     "magic_link": {
-      "login_cta": "Aanmelden via magische link",
+      "login_cta": "Ontvang een aanmeldlink",
       "intro": "Voer je e-mailadres in en we sturen je een veilige aanmeldlink.",
       "email_label": "E-mailadres",
-      "email_placeholder": "jij@voorbeeld.com",
       "email_required": "Vul je e-mailadres in.",
       "send": "Verstuur de link",
       "sent": "Als er een account bestaat voor dit adres, is er zojuist een aanmeldlink verzonden. Controleer je mailbox.",
@@ -1098,14 +1096,15 @@
         "expired_body": "Deze aanmeldlink is verlopen. Vraag een nieuwe aan om je aan te melden.",
         "request_new": "Nieuwe link aanvragen",
         "invalid_title": "Ongeldige link",
-        "invalid_body": "Deze aanmeldlink is ongeldig of is al gebruikt.",
-        "back_to_login": "Terug naar aanmelden"
-      }
+        "invalid_body": "Deze aanmeldlink is ongeldig of is al gebruikt."
+      },
+      "captcha_required": "Voltooi de captcha voor je verdergaat.",
+      "captcha_failed": "De captcha is mislukt. Probeer het opnieuw."
     },
     "register": {
       "title": "Account aanmaken",
       "fields": {
-        "email": "E-mail",
+        "email": "E-mailadres",
         "password": "Wachtwoord",
         "confirm_password": "Wachtwoord bevestigen",
         "first_name": "Voornaam",
@@ -1130,8 +1129,7 @@
       "resend_button": "E-mail opnieuw versturen",
       "resend_cooldown": "Opnieuw versturen ({{seconds}}s)",
       "resent_toast": "E-mail verzonden. Controleer je inbox.",
-      "resend_rate_limited": "Te veel verzoeken. Probeer het over enkele minuten opnieuw.",
-      "back_to_login": "← Terug naar inloggen"
+      "resend_rate_limited": "Te veel verzoeken. Probeer het over enkele minuten opnieuw."
     },
     "email_confirm": {
       "loading": "Je e-mail wordt bevestigd…",
@@ -1144,26 +1142,23 @@
       "request_resend_button": "Nieuwe link aanvragen"
     },
     "forgot_password": {
-      "title": "Wachtwoord vergeten?",
+      "title": "Wachtwoord vergeten",
       "fields": {
-        "email": "E-mailadres",
-        "email_placeholder": "jij@voorbeeld.com"
+        "email": "E-mailadres"
       },
       "captcha_required": "Voltooi de captcha voor je verdergaat.",
       "captcha_failed": "De captcha is mislukt. Probeer het opnieuw.",
       "submit": "Stuur de link",
       "requesting": "Bezig met verzenden…",
       "rate_limit_message": "Te veel pogingen. Probeer het later opnieuw.",
-      "rate_limit_countdown": "Te veel pogingen. Probeer over {{seconds}}s opnieuw.",
-      "back_to_login": "← Terug naar inloggen"
+      "rate_limit_countdown": "Te veel pogingen. Probeer over {{seconds}}s opnieuw."
     },
     "turnstile_failed": "De verificatiewidget kon niet worden geladen. Controleer je adblocker / netwerk en probeer het opnieuw.",
     "forgot_password_sent": {
       "title": "Controleer je inbox",
       "body_with_email": "Als er een account is dat overeenkomt met {{email}}, is er net een resetlink verstuurd.",
       "body_no_email": "Als er een account is dat overeenkomt met je adres, is er net een resetlink verstuurd.",
-      "check_spam_hint": "Vergeet niet je spam te controleren als je hem binnen enkele minuten niet vindt.",
-      "back_to_login": "Terug naar inloggen"
+      "check_spam_hint": "Vergeet niet je spam te controleren als je hem binnen enkele minuten niet vindt."
     },
     "reset_password": {
       "title": "Kies een nieuw wachtwoord",
@@ -1182,9 +1177,11 @@
       "error_no_key": "Deze resetlink is onvolledig. Vraag een nieuwe aan."
     },
     "errors": {
-      "invalid_credentials": "Ongeldige inloggegevens",
-      "unknown": "Er is een fout opgetreden, probeer het opnieuw."
-    }
+      "invalid_credentials": "Onjuiste inloggegevens",
+      "unknown": "Er is een fout opgetreden, probeer het opnieuw.",
+      "rate_limited": "Te veel pogingen. Probeer het over enkele minuten opnieuw."
+    },
+    "back_to_login": "Terug naar inloggen"
   },
   "notifications": {
     "bell_label": "Meldingen",

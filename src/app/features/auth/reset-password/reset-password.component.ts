@@ -21,6 +21,8 @@ import { Button } from 'primeng/button';
 import { Message } from 'primeng/message';
 import { Password } from 'primeng/password';
 import { AuthService } from '../../../core/auth/auth.service';
+import { authErrorKey } from '../shared/auth-error';
+import { AuthBackLinkComponent } from '../../../shared/components/auth-card/auth-back-link.component';
 import { AuthCardComponent } from '../../../shared/components/auth-card/auth-card.component';
 
 interface FieldErrors {
@@ -44,6 +46,7 @@ function passwordsMatchValidator(group: AbstractControl): ValidationErrors | nul
     Message,
     TranslocoPipe,
     AuthCardComponent,
+    AuthBackLinkComponent,
   ],
   templateUrl: './reset-password.component.html',
   styleUrl: './reset-password.component.scss',
@@ -139,6 +142,6 @@ export class ResetPasswordComponent implements OnInit {
       }
     }
 
-    this.errorMessage.set(body?.detail ?? 'auth.errors.unknown');
+    this.errorMessage.set(authErrorKey(err));
   }
 }

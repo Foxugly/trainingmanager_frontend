@@ -11,13 +11,14 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { Message } from 'primeng/message';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ToastService } from '../../../core/notifications/toast.service';
+import { AuthBackLinkComponent } from '../../../shared/components/auth-card/auth-back-link.component';
 import { AuthCardComponent } from '../../../shared/components/auth-card/auth-card.component';
 import { parseRetryAfterSeconds } from '../shared/retry-after';
 
@@ -27,12 +28,12 @@ const RESEND_DEBOUNCE_SECONDS = 30;
   selector: 'app-check-your-email',
   imports: [
     ReactiveFormsModule,
-    RouterLink,
     InputText,
     Button,
     Message,
     TranslocoPipe,
     AuthCardComponent,
+    AuthBackLinkComponent,
   ],
   templateUrl: './check-your-email.component.html',
   styleUrl: './check-your-email.component.scss',

@@ -1067,26 +1067,24 @@
       "title": "Accedi",
       "remember_me_label": "Ricordami",
       "forgot_password_link": "Password dimenticata?",
-      "email": "Email",
+      "email": "Indirizzo e-mail",
       "password": "Password",
       "submit": "Accedi",
       "rate_limit_message": "Troppi tentativi. Riprova tra qualche minuto.",
       "rate_limit_countdown": "Riprova tra {{seconds}} secondi.",
       "email_not_verified_banner": "La tua email non è verificata. Inseriscila qui sotto per ricevere un nuovo link di conferma.",
-      "email_for_resend_placeholder": "tu@esempio.com",
       "resend_email_button": "Reinvia email di conferma",
       "resend_email_required": "Inserisci la tua email per ricevere un nuovo link.",
       "resend_email_sent": "Email inviata. Controlla la tua casella.",
       "resend_rate_limited": "Troppe richieste. Riprova tra qualche minuto.",
       "no_account_yet": "Non hai ancora un account?",
-      "no_account_yet_link": "Registrati",
+      "no_account_yet_link": "Crea un account",
       "or": "oppure"
     },
     "magic_link": {
-      "login_cta": "Accedi con un link magico",
+      "login_cta": "Ricevi un link di accesso",
       "intro": "Inserisci il tuo indirizzo email e ti invieremo un link di accesso sicuro.",
-      "email_label": "Indirizzo email",
-      "email_placeholder": "tu@esempio.com",
+      "email_label": "Indirizzo e-mail",
       "email_required": "Inserisci il tuo indirizzo email.",
       "send": "Invia il link",
       "sent": "Se esiste un account per questo indirizzo, è appena stato inviato un link di accesso. Controlla la tua casella di posta.",
@@ -1098,14 +1096,15 @@
         "expired_body": "Questo link di accesso è scaduto. Richiedine uno nuovo per accedere.",
         "request_new": "Richiedi un nuovo link",
         "invalid_title": "Link non valido",
-        "invalid_body": "Questo link di accesso non è valido o è già stato utilizzato.",
-        "back_to_login": "Torna all'accesso"
-      }
+        "invalid_body": "Questo link di accesso non è valido o è già stato utilizzato."
+      },
+      "captcha_required": "Completa il captcha prima di continuare.",
+      "captcha_failed": "Il captcha non è andato a buon fine. Riprova."
     },
     "register": {
       "title": "Crea un account",
       "fields": {
-        "email": "Email",
+        "email": "Indirizzo e-mail",
         "password": "Password",
         "confirm_password": "Conferma password",
         "first_name": "Nome",
@@ -1130,8 +1129,7 @@
       "resend_button": "Reinvia email",
       "resend_cooldown": "Reinvia ({{seconds}}s)",
       "resent_toast": "Email inviata. Controlla la tua casella.",
-      "resend_rate_limited": "Troppe richieste. Riprova tra qualche minuto.",
-      "back_to_login": "← Torna ad accedere"
+      "resend_rate_limited": "Troppe richieste. Riprova tra qualche minuto."
     },
     "email_confirm": {
       "loading": "Conferma della tua email in corso…",
@@ -1144,26 +1142,23 @@
       "request_resend_button": "Richiedi un nuovo link"
     },
     "forgot_password": {
-      "title": "Password dimenticata?",
+      "title": "Password dimenticata",
       "fields": {
-        "email": "Indirizzo email",
-        "email_placeholder": "tu@esempio.com"
+        "email": "Indirizzo e-mail"
       },
       "captcha_required": "Completa il captcha prima di continuare.",
       "captcha_failed": "Il captcha non è andato a buon fine. Riprova.",
       "submit": "Invia il link",
       "requesting": "Invio in corso…",
       "rate_limit_message": "Troppi tentativi. Riprova più tardi.",
-      "rate_limit_countdown": "Troppi tentativi. Riprova tra {{seconds}}s.",
-      "back_to_login": "← Torna ad accedere"
+      "rate_limit_countdown": "Troppi tentativi. Riprova tra {{seconds}}s."
     },
     "turnstile_failed": "Il widget di verifica non si è caricato. Controlla il tuo ad-blocker / la rete, quindi riprova.",
     "forgot_password_sent": {
       "title": "Controlla la tua casella",
       "body_with_email": "Se esiste un account corrispondente a {{email}}, è appena stato inviato un link di reset.",
       "body_no_email": "Se esiste un account corrispondente al tuo indirizzo, è appena stato inviato un link di reset.",
-      "check_spam_hint": "Ricordati di controllare la cartella spam se non lo trovi entro qualche minuto.",
-      "back_to_login": "Torna ad accedere"
+      "check_spam_hint": "Ricordati di controllare la cartella spam se non lo trovi entro qualche minuto."
     },
     "reset_password": {
       "title": "Scegli una nuova password",
@@ -1182,9 +1177,11 @@
       "error_no_key": "Questo link di reset è incompleto. Richiedine uno nuovo."
     },
     "errors": {
-      "invalid_credentials": "Credenziali non valide",
-      "unknown": "Si è verificato un errore, riprova."
-    }
+      "invalid_credentials": "Credenziali errate",
+      "unknown": "Si è verificato un errore, riprova.",
+      "rate_limited": "Troppi tentativi. Riprova tra qualche minuto."
+    },
+    "back_to_login": "Torna ad accedere"
   },
   "notifications": {
     "bell_label": "Notifiche",

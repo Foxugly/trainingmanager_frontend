@@ -1044,26 +1044,24 @@
       "title": "Sign in",
       "remember_me_label": "Remember me",
       "forgot_password_link": "Forgot password?",
-      "email": "Email",
+      "email": "Email address",
       "password": "Password",
       "submit": "Sign in",
       "rate_limit_message": "Too many attempts. Try again in a few minutes.",
       "rate_limit_countdown": "Retry in {{seconds}} seconds.",
       "email_not_verified_banner": "Your email is not verified. Enter it below to receive a new confirmation link.",
-      "email_for_resend_placeholder": "you@example.com",
       "resend_email_button": "Resend confirmation email",
       "resend_email_required": "Enter your email to receive a new link.",
       "resend_email_sent": "Email sent. Check your inbox.",
       "resend_rate_limited": "Too many requests. Try again in a few minutes.",
-      "no_account_yet": "Don't have an account yet?",
-      "no_account_yet_link": "Sign up",
+      "no_account_yet": "No account yet?",
+      "no_account_yet_link": "Create an account",
       "or": "or"
     },
     "magic_link": {
-      "login_cta": "Sign in with a magic link",
+      "login_cta": "Get a sign-in link",
       "intro": "Enter your email address and we'll send you a secure sign-in link.",
       "email_label": "Email address",
-      "email_placeholder": "you@example.com",
       "email_required": "Please enter your email address.",
       "send": "Send the link",
       "sent": "If an account exists for this address, a sign-in link has just been sent. Check your inbox.",
@@ -1075,14 +1073,15 @@
         "expired_body": "This sign-in link has expired. Request a new one to sign in.",
         "request_new": "Request a new link",
         "invalid_title": "Invalid link",
-        "invalid_body": "This sign-in link is invalid or has already been used.",
-        "back_to_login": "Back to login"
-      }
+        "invalid_body": "This sign-in link is invalid or has already been used."
+      },
+      "captcha_required": "Please complete the captcha before continuing.",
+      "captcha_failed": "Captcha failed. Please try again."
     },
     "register": {
       "title": "Create an account",
       "fields": {
-        "email": "Email",
+        "email": "Email address",
         "password": "Password",
         "confirm_password": "Confirm password",
         "first_name": "First name",
@@ -1107,8 +1106,7 @@
       "resend_button": "Resend email",
       "resend_cooldown": "Resend ({{seconds}}s)",
       "resent_toast": "Email sent. Check your inbox.",
-      "resend_rate_limited": "Too many requests. Try again in a few minutes.",
-      "back_to_login": "← Back to sign in"
+      "resend_rate_limited": "Too many requests. Try again in a few minutes."
     },
     "email_confirm": {
       "loading": "Confirming your email…",
@@ -1121,26 +1119,23 @@
       "request_resend_button": "Request a new link"
     },
     "forgot_password": {
-      "title": "Forgot your password?",
+      "title": "Forgot password",
       "fields": {
-        "email": "Email address",
-        "email_placeholder": "you@example.com"
+        "email": "Email address"
       },
       "captcha_required": "Please complete the captcha before continuing.",
       "captcha_failed": "Captcha failed. Please try again.",
       "submit": "Send the link",
       "requesting": "Sending…",
       "rate_limit_message": "Too many attempts. Please try again later.",
-      "rate_limit_countdown": "Too many attempts. Try again in {{seconds}}s.",
-      "back_to_login": "← Back to sign in"
+      "rate_limit_countdown": "Too many attempts. Try again in {{seconds}}s."
     },
     "turnstile_failed": "The verification widget failed to load. Check your ad-blocker / network, then retry.",
     "forgot_password_sent": {
       "title": "Check your inbox",
       "body_with_email": "If an account matches {{email}}, a reset link has just been sent.",
       "body_no_email": "If an account matches your address, a reset link has just been sent.",
-      "check_spam_hint": "Don't forget to check your spam folder if you don't see it within a few minutes.",
-      "back_to_login": "Back to sign in"
+      "check_spam_hint": "Don't forget to check your spam folder if you don't see it within a few minutes."
     },
     "reset_password": {
       "title": "Choose a new password",
@@ -1159,9 +1154,11 @@
       "error_no_key": "This reset link is incomplete. Request a new one."
     },
     "errors": {
-      "invalid_credentials": "Invalid credentials",
-      "unknown": "Something went wrong, please try again."
-    }
+      "invalid_credentials": "Incorrect credentials",
+      "unknown": "Something went wrong, please try again.",
+      "rate_limited": "Too many attempts. Try again in a few minutes."
+    },
+    "back_to_login": "Back to sign in"
   },
   "invitation_accept": {
     "title": "You're invited",
