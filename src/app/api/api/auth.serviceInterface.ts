@@ -147,7 +147,7 @@ export interface AuthServiceInterface {
 
     /**
      * 
-     * POST /api/v1/auth/magic-link/request/ — public: email a sign-in link.  Anti-leak: ALWAYS returns 200 with the same body, whether the email matches an active, email-confirmed User or not. If it does, an email with a 15-minute signed magic-link is dispatched (frontend URL: {FRONTEND_URL}/auth/magic-link/{token}, no trailing slash). If it doesn\&#39;t, the call is a silent no-op — the response is byte-for-byte identical (no user enumeration, timing-insensitive wording).  Rate-limited to 5 requests per hour per IP.
+     * POST /api/v1/auth/magic-link/request/ — public: email a sign-in link.  Anti-leak: ALWAYS returns 200 with the same body, whether the email matches an active, email-confirmed User or not. If it does, an email with a 15-minute signed magic-link is dispatched (frontend URL: {FRONTEND_URL}/auth/magic-link/{token}, no trailing slash). If it doesn\&#39;t, the call is a silent no-op — the response is byte-for-byte identical (no user enumeration, timing-insensitive wording).  Rate-limited to 5 requests per hour per IP. An optional Cloudflare Turnstile &#x60;&#x60;turnstile_token&#x60;&#x60; is verified when supplied (400 &#x60;&#x60;captcha_failed&#x60;&#x60; on failure); it is not yet required.
      * @endpoint post /api/v1/auth/magic-link/request/
 * @param requestParameters
      */
