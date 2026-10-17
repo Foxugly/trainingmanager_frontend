@@ -34,13 +34,8 @@
         <p class="magic__state-text">
           {{ 'auth.magic_link.exchange.invalid_body' | transloco }}
         </p>
-        <a [routerLink]="['/login']">
-          <p-button
-            [label]="'auth.magic_link.exchange.back_to_login' | transloco"
-            icon="pi pi-sign-in"
-          />
-        </a>
       </div>
+      <app-auth-back-link />
     </app-auth-card>
   }
 }

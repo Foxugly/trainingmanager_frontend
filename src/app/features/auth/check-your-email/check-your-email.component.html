@@ -29,11 +29,14 @@
       </p>
 
       <form [formGroup]="emailForm" (ngSubmit)="submitEmailForm()" class="check-email__form">
+        <label for="email" class="check-email__label">
+          {{ 'auth.register.fields.email' | transloco }}
+        </label>
         <input
           pInputText
+          id="email"
           type="email"
           formControlName="email"
-          [placeholder]="'auth.register.fields.email' | transloco"
           autocomplete="email"
         />
         @if (errorMessage(); as msg) {
@@ -53,9 +56,5 @@
       </form>
     }
 
-  <p class="check-email__footer">
-    <a [routerLink]="['/login']" class="check-email__link">
-      {{ 'auth.check_email.back_to_login' | transloco }}
-    </a>
-  </p>
+  <app-auth-back-link />
 </app-auth-card>

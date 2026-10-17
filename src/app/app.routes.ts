@@ -33,6 +33,7 @@ export const routes: Routes = [
       },
       {
         path: 'features',
+        data: { titleKey: 'public.nav.features' },
         loadComponent: () =>
           import('./features/features-page/features-page.component').then(
             (m) => m.FeaturesPageComponent,
@@ -40,11 +41,13 @@ export const routes: Routes = [
       },
       {
         path: 'about',
+        data: { titleKey: 'public.nav.about' },
         loadComponent: () =>
           import('./features/about-page/about-page.component').then((m) => m.AboutPageComponent),
       },
       {
         path: 'contribute',
+        data: { titleKey: 'public.nav.contribute' },
         loadComponent: () =>
           import('./features/contribute-page/contribute-page.component').then(
             (m) => m.ContributePageComponent,
@@ -52,6 +55,7 @@ export const routes: Routes = [
       },
       {
         path: 'privacy',
+        data: { titleKey: 'footer.privacy' },
         loadComponent: () =>
           import('./features/privacy-page/privacy-page.component').then(
             (m) => m.PrivacyPageComponent,
@@ -59,16 +63,19 @@ export const routes: Routes = [
       },
       {
         path: 'login',
+        data: { titleKey: 'auth.login.title' },
         loadComponent: () =>
           import('./features/auth/login/login.component').then((m) => m.LoginComponent),
       },
       {
         path: 'register',
+        data: { titleKey: 'auth.register.title' },
         loadComponent: () =>
           import('./features/auth/register/register.component').then((m) => m.RegisterComponent),
       },
       {
         path: 'check-your-email',
+        data: { titleKey: 'auth.check_email.title' },
         loadComponent: () =>
           import('./features/auth/check-your-email/check-your-email.component').then(
             (m) => m.CheckYourEmailComponent,
@@ -90,6 +97,7 @@ export const routes: Routes = [
       },
       {
         path: 'invitation/:token',
+        data: { titleKey: 'invitation_accept.title' },
         loadComponent: () =>
           import('./features/auth/invitation-accept/invitation-accept.component').then(
             (m) => m.InvitationAcceptComponent,
@@ -105,22 +113,28 @@ export const routes: Routes = [
           ),
       },
       {
-        path: 'auth/forgot-password',
+        path: 'forgot-password',
         pathMatch: 'full',
+        data: { titleKey: 'auth.forgot_password.title' },
         loadComponent: () =>
           import('./features/auth/forgot-password/forgot-password.component').then(
             (m) => m.ForgotPasswordComponent,
           ),
       },
       {
-        path: 'auth/forgot-password/sent',
+        path: 'forgot-password/sent',
+        data: { titleKey: 'auth.forgot_password_sent.title' },
         loadComponent: () =>
           import('./features/auth/forgot-password-sent/forgot-password-sent.component').then(
             (m) => m.ForgotPasswordSentComponent,
           ),
       },
+      // Anciennes URL de la demande de réinitialisation (liens/favoris existants).
+      { path: 'auth/forgot-password', pathMatch: 'full', redirectTo: 'forgot-password' },
+      { path: 'auth/forgot-password/sent', pathMatch: 'full', redirectTo: 'forgot-password/sent' },
       {
         path: 'auth/reset-password/:key',
+        data: { titleKey: 'auth.reset_password.title' },
         loadComponent: () =>
           import('./features/auth/reset-password/reset-password.component').then(
             (m) => m.ResetPasswordComponent,
@@ -143,6 +157,7 @@ export const routes: Routes = [
       {
         path: '',
         component: AdminLayoutComponent,
+        data: { titleKey: 'admin.title' },
         children: [
           { path: '', redirectTo: 'sports', pathMatch: 'full' },
           {
@@ -207,21 +222,25 @@ export const routes: Routes = [
     children: [
       {
         path: 'dashboard',
+        data: { titleKey: 'nav.dashboard' },
         loadComponent: () =>
           import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent),
       },
       {
         path: 'messages',
+        data: { titleKey: 'messages.title' },
         loadComponent: () =>
           import('./features/messages/messages.component').then((m) => m.MessagesComponent),
       },
       {
         path: 'profile',
+        data: { titleKey: 'profile.title' },
         loadComponent: () =>
           import('./features/profile/profile.component').then((m) => m.ProfileComponent),
       },
       {
         path: 'profile/password',
+        data: { titleKey: 'public.user_menu.change_password' },
         loadComponent: () =>
           import('./features/profile/change-password/change-password.component').then(
             (m) => m.ChangePasswordComponent,
@@ -232,6 +251,7 @@ export const routes: Routes = [
         children: [
           {
             path: '',
+            data: { titleKey: 'nav.calendar' },
             loadComponent: () =>
               import('./features/events/events-calendar/events-calendar.component').then(
                 (m) => m.EventsCalendarComponent,
@@ -267,6 +287,7 @@ export const routes: Routes = [
         children: [
           {
             path: '',
+            data: { titleKey: 'programs.list.title' },
             loadComponent: () =>
               import('./features/programs/programs-list/programs-list.component').then(
                 (m) => m.ProgramsListComponent,
@@ -302,6 +323,7 @@ export const routes: Routes = [
         children: [
           {
             path: '',
+            data: { titleKey: 'teams.list.title' },
             loadComponent: () =>
               import('./features/teams/teams-list/teams-list.component').then(
                 (m) => m.TeamsListComponent,
@@ -309,6 +331,7 @@ export const routes: Routes = [
           },
           {
             path: 'discover',
+            data: { titleKey: 'teams.discover.title' },
             loadComponent: () =>
               import('./features/teams/teams-discover/teams-discover.component').then(
                 (m) => m.TeamsDiscoverComponent,

@@ -35,6 +35,7 @@ describe('LanguageService', () => {
     getActiveLang: ReturnType<typeof vi.fn>;
     setActiveLang: ReturnType<typeof vi.fn>;
     events$: Subject<{ type: string }>;
+    langChanges$: Subject<string>;
   };
   let meMock: { mePartialUpdate: ReturnType<typeof vi.fn> };
   let authMock: {
@@ -49,6 +50,7 @@ describe('LanguageService', () => {
       getActiveLang: vi.fn().mockReturnValue('fr'),
       setActiveLang: vi.fn(),
       events$: translocoEvents,
+      langChanges$: new Subject<string>(),
     };
     meMock = { mePartialUpdate: vi.fn() };
     const userSignal = signal<Me | null>(null);

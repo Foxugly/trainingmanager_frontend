@@ -52,6 +52,11 @@ export class LanguageService {
       // suivant, ou l'ecriture est legitime et provoque un nouveau rendu.
       .subscribe(() => queueMicrotask(() => this._loads.update((n) => n + 1)));
 
+    // <html lang> suit la langue active (WCAG 3.1.1) : valeur initiale puis chaque bascule.
+    this.transloco.langChanges$
+      .pipe(takeUntilDestroyed())
+      .subscribe((lang) => (document.documentElement.lang = lang));
+
     // Initial sync: PrimeNG ships with English-only translations until we call
     // setTranslation. Apply the dictionary that matches Transloco's current lang.
     this.primeNG.setTranslation(PRIMENG_TRANSLATIONS[this._activeLang()]);

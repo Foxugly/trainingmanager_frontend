@@ -768,7 +768,7 @@
       "no_results": "Aucune équipe ne correspond",
       "no_results_subtitle": "Essayez un autre mot-clé ou élargissez la recherche.",
       "empty": "Aucune équipe publique pour le moment",
-      "empty_subtitle": "Reviens plus tard, de nouvelles équipes apparaîtront ici.",
+      "empty_subtitle": "Revenez plus tard, de nouvelles équipes apparaîtront ici.",
       "view_team": "Voir l'équipe"
     },
     "join_request": {
@@ -984,7 +984,7 @@
       "admin": "Admin"
     },
     "user_menu": {
-      "login": "Connexion",
+      "login": "Se connecter",
       "profile": "Profil",
       "change_password": "Changer de mot de passe",
       "admin": "Admin",
@@ -1044,26 +1044,24 @@
       "title": "Connexion",
       "remember_me_label": "Se souvenir de moi",
       "forgot_password_link": "Mot de passe oublié ?",
-      "email": "Email",
+      "email": "Adresse e-mail",
       "password": "Mot de passe",
       "submit": "Se connecter",
       "rate_limit_message": "Trop de tentatives. Réessayez dans quelques minutes.",
       "rate_limit_countdown": "Réessayez dans {{seconds}} secondes.",
       "email_not_verified_banner": "Votre email n'est pas vérifié. Saisissez-le ci-dessous pour recevoir un nouveau lien de confirmation.",
-      "email_for_resend_placeholder": "votre@email.com",
       "resend_email_button": "Renvoyer l'email de confirmation",
       "resend_email_required": "Indiquez votre email pour recevoir un nouveau lien.",
       "resend_email_sent": "Email envoyé. Vérifiez votre boîte de réception.",
       "resend_rate_limited": "Trop de demandes. Réessayez dans quelques minutes.",
       "no_account_yet": "Pas encore de compte ?",
-      "no_account_yet_link": "Inscrivez-vous",
+      "no_account_yet_link": "Créer un compte",
       "or": "ou"
     },
     "magic_link": {
-      "login_cta": "Se connecter par lien magique",
+      "login_cta": "Recevoir un lien de connexion",
       "intro": "Saisissez votre adresse email et nous vous enverrons un lien de connexion sécurisé.",
-      "email_label": "Adresse email",
-      "email_placeholder": "vous@exemple.com",
+      "email_label": "Adresse e-mail",
       "email_required": "Indiquez votre adresse email.",
       "send": "Envoyer le lien",
       "sent": "Si un compte existe pour cette adresse, un lien de connexion vient d'être envoyé. Vérifiez votre boîte mail.",
@@ -1075,14 +1073,15 @@
         "expired_body": "Ce lien de connexion a expiré. Demandez-en un nouveau pour vous connecter.",
         "request_new": "Demander un nouveau lien",
         "invalid_title": "Lien invalide",
-        "invalid_body": "Ce lien de connexion est invalide ou a déjà été utilisé.",
-        "back_to_login": "Retour à la connexion"
-      }
+        "invalid_body": "Ce lien de connexion est invalide ou a déjà été utilisé."
+      },
+      "captcha_required": "Veuillez compléter le captcha avant de continuer.",
+      "captcha_failed": "Le captcha a échoué. Réessayez."
     },
     "register": {
       "title": "Créer un compte",
       "fields": {
-        "email": "Email",
+        "email": "Adresse e-mail",
         "password": "Mot de passe",
         "confirm_password": "Confirmer le mot de passe",
         "first_name": "Prénom",
@@ -1097,8 +1096,8 @@
       "captcha_failed": "Captcha invalide. Réessayez.",
       "rate_limit_message": "Trop d'inscriptions récentes. Réessayez plus tard.",
       "rate_limit_countdown": "Réessayez dans {{seconds}} secondes.",
-      "already_have_account": "Vous avez déjà un compte ?",
-      "already_have_account_link": "Connectez-vous"
+      "already_have_account": "Déjà un compte ?",
+      "already_have_account_link": "Se connecter"
     },
     "check_email": {
       "title": "Vérifiez votre boîte mail",
@@ -1107,8 +1106,7 @@
       "resend_button": "Renvoyer l'email",
       "resend_cooldown": "Renvoyer ({{seconds}}s)",
       "resent_toast": "Email envoyé. Vérifiez votre boîte de réception.",
-      "resend_rate_limited": "Trop de demandes. Réessayez dans quelques minutes.",
-      "back_to_login": "← Retour à la connexion"
+      "resend_rate_limited": "Trop de demandes. Réessayez dans quelques minutes."
     },
     "email_confirm": {
       "loading": "Confirmation de votre email en cours…",
@@ -1121,26 +1119,23 @@
       "request_resend_button": "Demander un nouveau lien"
     },
     "forgot_password": {
-      "title": "Mot de passe oublié ?",
+      "title": "Mot de passe oublié",
       "fields": {
-        "email": "Adresse email",
-        "email_placeholder": "vous@exemple.com"
+        "email": "Adresse e-mail"
       },
       "captcha_required": "Veuillez compléter le captcha avant de continuer.",
       "captcha_failed": "Le captcha a échoué. Réessayez.",
       "submit": "Envoyer le lien",
       "requesting": "Envoi en cours…",
       "rate_limit_message": "Trop de tentatives. Réessayez plus tard.",
-      "rate_limit_countdown": "Trop de tentatives. Réessayez dans {{seconds}}s.",
-      "back_to_login": "← Retour à la connexion"
+      "rate_limit_countdown": "Trop de tentatives. Réessayez dans {{seconds}}s."
     },
     "turnstile_failed": "Le widget de vérification n'a pas pu se charger. Vérifiez votre bloqueur de publicités / votre connexion, puis réessayez.",
     "forgot_password_sent": {
       "title": "Vérifiez vos emails",
       "body_with_email": "Si un compte correspond à {{email}}, un lien de réinitialisation vient d'être envoyé.",
       "body_no_email": "Si un compte correspond à votre adresse, un lien de réinitialisation vient d'être envoyé.",
-      "check_spam_hint": "Pensez à vérifier vos spams si vous ne le trouvez pas dans les prochaines minutes.",
-      "back_to_login": "Retour à la connexion"
+      "check_spam_hint": "Pensez à vérifier vos spams si vous ne le trouvez pas dans les prochaines minutes."
     },
     "reset_password": {
       "title": "Choisir un nouveau mot de passe",
@@ -1159,9 +1154,11 @@
       "error_no_key": "Ce lien de réinitialisation est incomplet. Demandez-en un nouveau."
     },
     "errors": {
-      "invalid_credentials": "Identifiants invalides",
-      "unknown": "Une erreur est survenue, réessayez."
-    }
+      "invalid_credentials": "Identifiants incorrects",
+      "unknown": "Une erreur est survenue, réessayez.",
+      "rate_limited": "Trop de tentatives. Réessayez dans quelques minutes."
+    },
+    "back_to_login": "Retour à la connexion"
   },
   "invitation_accept": {
     "title": "Vous êtes invité",
@@ -1481,7 +1478,7 @@
       "flag": "Signal",
       "flag_high": "Trouve plus dur",
       "flag_low": "Trouve plus facile",
-      "hint": "Compare la difficulté perçue de chaque athlète à l'équipe — signal possible de sur/sous-entraînement."
+      "hint": "Comparez la difficulté perçue de chaque athlète à l'équipe — signal possible de sur/sous-entraînement."
     }
   },
   "notes": {

@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideRouter } from '@angular/router';
+import { TitleStrategy, provideRouter } from '@angular/router';
 import { provideTransloco } from '@jsverse/transloco';
 import { MessageService } from 'primeng/api';
 import { StaleChunkService } from './core/app-update/stale-chunk.service';
@@ -65,12 +65,14 @@ import { AuthService } from './core/auth/auth.service';
 import { authInterceptor } from './core/auth/auth.interceptor';
 import { languageInterceptor } from './core/i18n/language.interceptor';
 import { LanguageService } from './core/i18n/language.service';
+import { AppTitleStrategy } from './core/title/app-title.strategy';
 import { TranslocoHttpLoader } from './transloco-loader';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
+    { provide: TitleStrategy, useExisting: AppTitleStrategy },
     provideAnimationsAsync(),
     providePrimeNG({
       theme: { preset: AuraEmerald, options: { darkModeSelector: '.dark-mode' } },

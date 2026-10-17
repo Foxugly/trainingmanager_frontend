@@ -37,6 +37,18 @@ interface ProtectedFields {
   submitMagicLink(): void;
 }
 
+function withTurnstileToken(token: string, fn: () => void): void {
+  const input = document.createElement('input');
+  input.name = 'cf-turnstile-response';
+  input.value = token;
+  document.body.appendChild(input);
+  try {
+    fn();
+  } finally {
+    input.remove();
+  }
+}
+
 describe('LoginComponent', () => {
   let fixture: ComponentFixture<LoginComponent>;
   let component: LoginComponent;
@@ -141,7 +153,7 @@ describe('LoginComponent', () => {
     expect(access(component).loading()).toBe(false);
   });
 
-  it('falls back to error.detail when the backend returns one', () => {
+  it('never shows the raw backend detail: maps 400 to invalid credentials', () => {
     authMock.login.mockReturnValue(
       throwError(() => ({ status: 400, error: { detail: 'Account locked' } })),
     );
@@ -149,7 +161,7 @@ describe('LoginComponent', () => {
     access(component).form.patchValue({ email: 'alice@example.com', password: 'pw' });
     access(component).submit();
 
-    expect(access(component).errorMessage()).toBe('Account locked');
+    expect(access(component).errorMessage()).toBe('auth.errors.invalid_credentials');
   });
 
   it('falls back to the unknown i18n key when no detail and no recognised code', () => {
@@ -206,11 +218,18 @@ describe('LoginComponent', () => {
   it('submitMagicLink(): calls requestMagicLink and shows the neutral confirmation', () => {
     authMock.requestMagicLink.mockReturnValue(of({ detail: 'ok' }));
     access(component).form.patchValue({ email: 'a@b.c' });
-    access(component).submitMagicLink();
+    withTurnstileToken('tok', () => access(component).submitMagicLink());
 
-    expect(authMock.requestMagicLink).toHaveBeenCalledWith('a@b.c');
+    expect(authMock.requestMagicLink).toHaveBeenCalledWith('a@b.c', 'tok');
     expect(access(component).magicLinkSent()).toBe(true);
     expect(access(component).magicLinkError()).toBeNull();
+  });
+
+  it('submitMagicLink(): requires the captcha token', () => {
+    access(component).form.patchValue({ email: 'a@b.c' });
+    access(component).submitMagicLink();
+    expect(authMock.requestMagicLink).not.toHaveBeenCalled();
+    expect(access(component).magicLinkError()).toBe('auth.magic_link.captcha_required');
   });
 
   it('submitMagicLink(): requires an email', () => {
@@ -222,7 +241,7 @@ describe('LoginComponent', () => {
   it('submitMagicLink(): 429 → rate_limited error', () => {
     authMock.requestMagicLink.mockReturnValue(throwError(() => ({ status: 429 })));
     access(component).form.patchValue({ email: 'a@b.c' });
-    access(component).submitMagicLink();
+    withTurnstileToken('tok', () => access(component).submitMagicLink());
 
     expect(access(component).magicLinkError()).toBe('auth.magic_link.rate_limited');
     expect(access(component).magicLinkSent()).toBe(false);

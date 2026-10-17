@@ -84,7 +84,7 @@ describe('ForgotPasswordComponent', () => {
     expect(access(component).errorMessage()).toBe('auth.forgot_password.captcha_required');
   });
 
-  it('on success, navigates to /auth/forgot-password/sent with the email in state', () => {
+  it('on success, navigates to /forgot-password/sent with the email in state', () => {
     access(component).form.patchValue({ email: 'a@b.com' });
     setTurnstileToken('cf-token-xxx');
     access(component).submit();
@@ -93,7 +93,7 @@ describe('ForgotPasswordComponent', () => {
       turnstile_token: 'cf-token-xxx',
     });
     expect(router.navigate).toHaveBeenCalledWith(
-      ['/auth/forgot-password/sent'],
+      ['/forgot-password/sent'],
       { state: { email: 'a@b.com' } },
     );
   });

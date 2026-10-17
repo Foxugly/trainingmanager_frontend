@@ -12,6 +12,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { AuthService } from '../../../core/auth/auth.service';
+import { AuthBackLinkComponent } from '../../../shared/components/auth-card/auth-back-link.component';
 import { AuthCardComponent } from '../../../shared/components/auth-card/auth-card.component';
 import { safeReturnUrl } from '../shared/safe-return-url';
 
@@ -19,7 +20,7 @@ type ExchangeState = 'loading' | 'expired' | 'invalid';
 
 @Component({
   selector: 'app-magic-link',
-  imports: [RouterLink, Button, TranslocoPipe, AuthCardComponent],
+  imports: [RouterLink, Button, TranslocoPipe, AuthCardComponent, AuthBackLinkComponent],
   templateUrl: './magic-link.component.html',
   styleUrl: './magic-link.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

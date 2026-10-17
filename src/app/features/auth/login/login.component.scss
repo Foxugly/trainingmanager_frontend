@@ -105,26 +105,17 @@
     background: var(--border);
   }
 
-  &__magic-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    width: 100%;
+  // p-button pleine largeur : le style vient de PrimeNG, on ne garde que l'espacement.
+  &__magic {
     margin-top: 1rem;
-    padding-inline: 1rem;
-    padding-block: 0.5rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--accent-strong);
-    background: var(--accent-soft);
-    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
-    border-radius: var(--radius-sm);
-    cursor: pointer;
+  }
 
-    &:hover {
-      background: color-mix(in srgb, var(--accent-soft) 80%, var(--accent));
-    }
+  &__turnstile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin-block: 0.5rem;
   }
 
   &__footer {

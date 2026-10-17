@@ -152,9 +152,12 @@ export class AuthService {
   /**
    * Request a passwordless sign-in email. The backend always answers 200 with
    * the same body (no user enumeration); the caller shows a neutral message.
+   * `turnstileToken` is the Cloudflare Turnstile response (checked server-side).
    */
-  requestMagicLink(email: string): Observable<MagicLinkRequestResponse> {
-    const payload: MagicLinkRequestRequest = { email };
+  requestMagicLink(email: string, turnstileToken?: string): Observable<MagicLinkRequestResponse> {
+    const payload: MagicLinkRequestRequest = turnstileToken
+      ? { email, turnstile_token: turnstileToken }
+      : { email };
     return this.apiAuth.authMagicLinkRequestCreate({ magicLinkRequestRequest: payload });
   }
 
