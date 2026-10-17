@@ -1,6 +1,4 @@
 <app-auth-card [icon]="'pi pi-user-plus'" [title]="'auth.register.title' | transloco">
-  <p class="register__subtitle">{{ 'auth.register.subtitle' | transloco }}</p>
-
   <form [formGroup]="form" (ngSubmit)="submit()" class="register__form">
       <div class="register__grid">
         <div class="register__field">

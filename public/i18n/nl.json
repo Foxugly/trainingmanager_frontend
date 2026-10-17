@@ -1104,7 +1104,6 @@
     },
     "register": {
       "title": "Account aanmaken",
-      "subtitle": "Registreer je gratis om je teams en trainingen te beheren.",
       "fields": {
         "email": "E-mail",
         "password": "Wachtwoord",
@@ -1146,7 +1145,6 @@
     },
     "forgot_password": {
       "title": "Wachtwoord vergeten?",
-      "subtitle": "Voer je e-mail in — als er een account bestaat, sturen we je een link om je wachtwoord opnieuw in te stellen.",
       "fields": {
         "email": "E-mailadres",
         "email_placeholder": "jij@voorbeeld.com"
@@ -1169,7 +1167,6 @@
     },
     "reset_password": {
       "title": "Kies een nieuw wachtwoord",
-      "subtitle": "Kies een sterk wachtwoord (minstens 8 tekens).",
       "fields": {
         "new_password": "Nieuw wachtwoord",
         "confirm_password": "Bevestiging"
