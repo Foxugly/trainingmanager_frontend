@@ -1104,7 +1104,6 @@
     },
     "register": {
       "title": "Crea un account",
-      "subtitle": "Registrati gratuitamente per gestire le tue squadre e i tuoi allenamenti.",
       "fields": {
         "email": "Email",
         "password": "Password",
@@ -1146,7 +1145,6 @@
     },
     "forgot_password": {
       "title": "Password dimenticata?",
-      "subtitle": "Inserisci la tua email — se esiste un account, ti invieremo un link per reimpostare la password.",
       "fields": {
         "email": "Indirizzo email",
         "email_placeholder": "tu@esempio.com"
@@ -1169,7 +1167,6 @@
     },
     "reset_password": {
       "title": "Scegli una nuova password",
-      "subtitle": "Scegli una password sicura (almeno 8 caratteri).",
       "fields": {
         "new_password": "Nuova password",
         "confirm_password": "Conferma"
