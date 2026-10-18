@@ -63,17 +63,33 @@ for p in params:
     if key in values:
         values[key] = value
 
+# Every value but FEATURES lands inside a double-quoted nginx `set` AND a
+# double-quoted JS string in index.html: a quote, backslash, `$` (nginx variable
+# interpolation), `;` or `<`/`>` (could close the <script>) would corrupt the
+# page. Refuse them; none occurs in a URL, version, site key, DSN or env name.
+FORBIDDEN = set('"$;<>') | {chr(92)}
+for key, value in values.items():
+    if key != "FEATURES" and FORBIDDEN & set(value):
+        sys.stderr.write(f"ERROR: value for {key} contains a forbidden character; refusing.\n")
+        sys.exit(1)
+
 # FEATURES must be valid JSON, else fall back to {} (don't break the page). The
 # vhost sub_filter injects it WITHOUT quotes (window.__TM_FEATURES=$tm_features
 # → literal JS object), but the nginx `set` directive below MUST be quoted (a
 # bare {} would be read as an nginx block). nginx strips the quotes when storing
 # the variable, so the value stays the raw JSON; escape internal " for nginx.
+# It is re-serialized, not passed through as typed: `<`, `>`, `&` and `$` can
+# only occur inside JSON strings, where their \uXXXX escapes are equivalent, so a
+# value can neither close the inline <script> nor trigger nginx interpolation.
 features = values["FEATURES"].strip() or "{}"
 try:
-    json.loads(features)
+    parsed = json.loads(features)
 except ValueError:
     sys.stderr.write(f"WARN: FEATURES is not valid JSON ({features!r}); using {{}}.\n")
-    features = "{}"
+    parsed = {}
+features = json.dumps(parsed, separators=(",", ":"), ensure_ascii=True)
+for ch in "<>&$":
+    features = features.replace(ch, "\\u%04x" % ord(ch))
 features_nginx = features.replace("\\", "\\\\").replace('"', '\\"')
 
 # Derive the Sentry CSP report endpoint from the DSN so the ENFORCED CSP can
@@ -117,15 +133,29 @@ if [ -f "$OUT_FILE" ] && cmp -s "$TMP_FILE" "$OUT_FILE"; then
 fi
 
 mkdir -p "$(dirname "$OUT_FILE")"
+# Keep the previous snippet: if the new one fails `nginx -t`, it is put back, so
+# a bad value never stays on disk to break the next nginx reload or restart.
+BACKUP_FILE=""
+if [ -f "$OUT_FILE" ]; then
+    BACKUP_FILE="$(mktemp)"
+    cp -p "$OUT_FILE" "$BACKUP_FILE"
+fi
 install -m 0644 -o root -g root "$TMP_FILE" "$OUT_FILE"
-echo "[frontend-runtime] $OUT_FILE updated"
 
-# Validate the full config (vhost + snippet) before reloading. If KO, don't
-# reload (the master keeps running the previous valid config).
+# Validate the full config (vhost + snippet) before reloading. If KO, restore
+# the previous snippet and don't reload (nginx keeps the running config).
 if ! nginx -t; then
-    echo "ERROR: nginx -t failed after writing $OUT_FILE — skipping reload" >&2
+    if [ -n "$BACKUP_FILE" ]; then
+        install -m 0644 -o root -g root "$BACKUP_FILE" "$OUT_FILE"
+        rm -f "$BACKUP_FILE"
+    else
+        rm -f "$OUT_FILE"
+    fi
+    echo "ERROR: nginx -t failed with the new $OUT_FILE — previous snippet restored, no reload" >&2
     exit 3
 fi
+if [ -n "$BACKUP_FILE" ]; then rm -f "$BACKUP_FILE"; fi
+echo "[frontend-runtime] $OUT_FILE updated"
 
 systemctl reload nginx
 echo "[frontend-runtime] nginx reloaded"
