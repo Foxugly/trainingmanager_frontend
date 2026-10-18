@@ -39,8 +39,13 @@ jobs:
           cache: "npm"
       - run: npm ci
 
+      # The commit SHA is frozen into the bundle (src/app/core/build-info.ts):
+      # the Sentry release becomes tm-frontend@<sha> and wins over the SSM
+      # SENTRY_RELEASE value.
       - name: Build (production)
-        run: npm run build
+        env:
+          BUILD_SHA: ${{ github.sha }}
+        run: npm run build -- --define "TM_BUILD_SHA='${BUILD_SHA}'"
 
       - name: Verify build output
         run: test -f dist/trainingmanager-frontend/browser/index.html

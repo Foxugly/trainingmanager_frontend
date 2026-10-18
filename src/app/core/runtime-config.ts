@@ -9,6 +9,7 @@
  */
 import { environment } from '../../environments/environment';
 import { APP_VERSION } from '../shared/app-version';
+import { BUILD_SHA, resolveSentryRelease } from './build-info';
 
 export interface RuntimeSentryConfig {
   dsn: string;
@@ -69,7 +70,8 @@ export function getRuntimeConfig(): RuntimeConfig {
     sentry: {
       dsn: (globals.__TM_SENTRY_DSN ?? '').trim(),
       environment: trimmedOr(globals.__TM_SENTRY_ENV, DEFAULT_SENTRY_ENV),
-      release: (globals.__TM_SENTRY_RELEASE ?? '').trim(),
+      // tm-frontend@<git sha> when the deploy build injected it, else SSM.
+      release: resolveSentryRelease(BUILD_SHA, globals.__TM_SENTRY_RELEASE),
     },
     features,
   };

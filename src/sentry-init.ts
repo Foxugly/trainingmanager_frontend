@@ -1,6 +1,7 @@
 /**
  * Initialise Sentry BEFORE the Angular bootstrap (imported first in main.ts) so
- * errors during app init are captured too.
+ * errors during app init are captured too. Errors raised inside Angular reach
+ * Sentry through the ErrorHandler provided in app.config.ts.
  *
  * Values come from the runtime config (globals injected by nginx). If the DSN
  * is empty (dev, or a boot before SSM is seeded), Sentry.init is not called —
@@ -9,6 +10,7 @@
 import * as Sentry from '@sentry/angular';
 
 import { getRuntimeConfig } from './app/core/runtime-config';
+import { scrubBreadcrumb, scrubEvent } from './app/core/sentry-scrub';
 
 const { sentry } = getRuntimeConfig();
 
@@ -22,5 +24,11 @@ if (sentry.dsn) {
     tracesSampleRate: 0.1,
     // Propagate trace headers only to our own backend.
     tracePropagationTargets: [/^https:\/\/tm-api\.foxugly\.com\/api/],
+    // Tokens carried in URLs (confirm / reset / magic-link / invitation /
+    // public event links) are masked in URLs, transaction names, spans and
+    // breadcrumbs (core/sentry-scrub.ts).
+    beforeSend: (event) => scrubEvent(event),
+    beforeSendTransaction: (event) => scrubEvent(event),
+    beforeBreadcrumb: (breadcrumb) => scrubBreadcrumb(breadcrumb),
   });
 }

@@ -1,5 +1,6 @@
 import {
   ApplicationConfig,
+  ErrorHandler,
   LOCALE_ID,
   inject,
   isDevMode,
@@ -8,7 +9,8 @@ import {
 } from '@angular/core';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { TitleStrategy, provideRouter } from '@angular/router';
+import { Router, TitleStrategy, provideRouter } from '@angular/router';
+import * as Sentry from '@sentry/angular';
 import { provideTransloco } from '@jsverse/transloco';
 import { MessageService } from 'primeng/api';
 import { StaleChunkService } from './core/app-update/stale-chunk.service';
@@ -71,6 +73,15 @@ import { TranslocoHttpLoader } from './transloco-loader';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
+    // Sentry: errors caught by Angular (templates, lifecycle, handlers) never
+    // reach window.onerror — they go through ErrorHandler. createErrorHandler
+    // reports them (a no-op when Sentry.init was skipped) and still logs to the
+    // console. TraceService names routing transactions after the route pattern.
+    { provide: ErrorHandler, useValue: Sentry.createErrorHandler() },
+    { provide: Sentry.TraceService, deps: [Router] },
+    provideAppInitializer(() => {
+      inject(Sentry.TraceService);
+    }),
     provideRouter(routes),
     { provide: TitleStrategy, useExisting: AppTitleStrategy },
     provideAnimationsAsync(),
