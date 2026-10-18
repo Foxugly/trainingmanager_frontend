@@ -24,6 +24,7 @@ import { AuthBackLinkComponent } from '../../../shared/components/auth-card/auth
 import { AuthCardComponent } from '../../../shared/components/auth-card/auth-card.component';
 import { authErrorKey } from '../shared/auth-error';
 import { parseRetryAfterSeconds } from '../shared/retry-after';
+import { ensureTurnstileScript } from '../../../core/auth/turnstile-loader';
 
 interface TurnstileRenderOptions {
   sitekey: string;
@@ -95,6 +96,7 @@ export class ForgotPasswordComponent implements AfterViewInit, OnDestroy {
   private tryRenderTurnstile(attempts: number): void {
     if (typeof window === 'undefined') return;
     if (!window.turnstile?.render) {
+      ensureTurnstileScript();
       if (attempts >= 20) {
         // The script never became ready (ad-blocker, network) — surface a
         // hint + retry rather than leaving an empty box that fails on submit.

@@ -29,6 +29,7 @@ import { AuthCardComponent } from '../../../shared/components/auth-card/auth-car
 import { authErrorKey } from '../shared/auth-error';
 import { parseRetryAfterSeconds } from '../shared/retry-after';
 import { safeReturnUrl } from '../shared/safe-return-url';
+import { ensureTurnstileScript } from '../../../core/auth/turnstile-loader';
 
 const RESEND_COOLDOWN_SECONDS = 30;
 
@@ -228,6 +229,7 @@ export class LoginComponent implements OnDestroy {
       this.turnstileRetryTimer = null;
     }
     if (!window.turnstile?.render) {
+      ensureTurnstileScript();
       if (attempts >= 20) {
         // Le script ne s'est jamais chargé : on l'indique plutôt que de laisser un
         // cadre vide qui échouera à l'envoi.
