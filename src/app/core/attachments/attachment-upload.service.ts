@@ -5,6 +5,22 @@ import { Attachment } from '../../api/model/attachment';
 import { TargetTypeEnum } from '../../api/model/target-type-enum';
 
 /**
+ * True for an https URL on an AWS S3 host (`*.amazonaws.com`), the only place a
+ * presigned attachment URL can legitimately point. Guards `window.open` and the
+ * PUT against a tampered or unexpected API response sending the user (or the
+ * file bytes) elsewhere.
+ */
+export function isStorageUrl(raw: string): boolean {
+  let url: URL;
+  try {
+    url = new URL(raw);
+  } catch {
+    return false;
+  }
+  return url.protocol === 'https:' && url.hostname.endsWith('.amazonaws.com');
+}
+
+/**
  * Orchestrates the 3-step S3 presigned-upload dance and download helpers.
  *
  * 1. presign  → backend mints a short-lived S3 PUT URL + a `pending` Attachment.
@@ -46,6 +62,9 @@ export class AttachmentUploadService {
     // Step 2: raw bytes straight to S3. NOT HttpClient — the presigned URL is
     // signed for this exact method + Content-Type; an extra Authorization
     // header would break the signature and trigger CORS pre-flight.
+    if (!isStorageUrl(presign.upload_url)) {
+      throw new Error('Unexpected upload URL host');
+    }
     const putResponse = await fetch(presign.upload_url, {
       method: 'PUT',
       body: file,
@@ -55,12 +74,17 @@ export class AttachmentUploadService {
       throw new Error(`S3 upload failed with status ${putResponse.status}`);
     }
 
-    return firstValueFrom(this.attachments.attachmentsCompleteCreate({ id: presign.attachment_id }));
+    return firstValueFrom(
+      this.attachments.attachmentsCompleteCreate({ id: presign.attachment_id }),
+    );
   }
 
   /** Mint a presigned GET URL and open it in a new tab. */
   async download(id: number): Promise<void> {
     const res = await firstValueFrom(this.attachments.attachmentsDownloadRetrieve({ id }));
+    if (!isStorageUrl(res.url)) {
+      throw new Error('Unexpected download URL host');
+    }
     window.open(res.url, '_blank', 'noopener');
   }
 
