@@ -59,7 +59,7 @@ export interface InvitationsServiceInterface {
 
     /**
      * 
-     * Trainer pre-registers an athlete on a managed team by sending an invitation email. Refused with code&#x3D;user_already_registered if the email matches an existing user account; the trainer must use a different flow (e.g. ask the user to issue a TeamJoinRequest) for registered users.
+     * Trainer pre-registers an athlete on a managed team by sending an invitation email. The response is the same whether or not the email already has an account: an existing account is never enrolled directly — its owner receives a notice inviting them to sign in and request to join the team, and the pending invitation simply expires.
      * @endpoint post /api/v1/invitations/
 * @param requestParameters
      */

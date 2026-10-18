@@ -36,6 +36,7 @@ describe('ChangePasswordComponent', () => {
   const access = (c: ChangePasswordComponent) => c as unknown as ProtectedFields;
 
   beforeEach(async () => {
+    localStorage.clear();
     authApiMock = { authPasswordChangeCreate: vi.fn() };
 
     await TestBed.configureTestingModule({
@@ -78,8 +79,12 @@ describe('ChangePasswordComponent', () => {
     expect(access(component).fieldError('new_password_confirm')).not.toBeNull();
   });
 
-  it('calls the API and navigates to /profile on success', () => {
-    authApiMock.authPasswordChangeCreate.mockReturnValue(of({ detail: 'ok' }));
+  it('calls the API, stores the new token pair and navigates to /profile on success', () => {
+    localStorage.setItem('tm_access_token', 'a-old');
+    localStorage.setItem('tm_refresh_token', 'r-old');
+    authApiMock.authPasswordChangeCreate.mockReturnValue(
+      of({ detail: 'ok', access: 'a-new', refresh: 'r-new' }),
+    );
     const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
     access(component).form.patchValue({
       current_password: 'old',
@@ -99,6 +104,10 @@ describe('ChangePasswordComponent', () => {
       expect.objectContaining({ severity: 'success' }),
     );
     expect(navigate).toHaveBeenCalledWith(['/profile']);
+    // The backend revoked every previous refresh token: the session must carry
+    // on with the pair it returned.
+    expect(localStorage.getItem('tm_access_token')).toBe('a-new');
+    expect(localStorage.getItem('tm_refresh_token')).toBe('r-new');
   });
 
   it('maps current_password_invalid to a field error', () => {

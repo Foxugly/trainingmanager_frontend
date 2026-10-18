@@ -1135,11 +1135,12 @@
       "loading": "Confirmando tu correo…",
       "success_title": "¡Correo confirmado!",
       "success_redirect": "Has iniciado sesión. Redirigiendo al panel…",
-      "error_invalid_token_title": "Enlace no válido o caducado",
-      "error_invalid_token": "El enlace de confirmación no es válido o ha caducado. Solicita uno nuevo desde la página de verificación.",
+      "error_invalid_token_title": "El enlace ya no es válido",
+      "error_invalid_token": "Este enlace de confirmación no es válido, ha caducado o ya se ha utilizado. Si ya confirmaste tu correo, simplemente inicia sesión. Si no, solicita un nuevo enlace.",
       "error_unknown_title": "Error inesperado",
       "error_unknown": "Se ha producido un error. Vuelve a intentarlo o solicita un nuevo enlace.",
-      "request_resend_button": "Solicitar un nuevo enlace"
+      "request_resend_button": "Solicitar un nuevo enlace",
+      "sign_in_button": "Iniciar sesión"
     },
     "forgot_password": {
       "title": "Contraseña olvidada",

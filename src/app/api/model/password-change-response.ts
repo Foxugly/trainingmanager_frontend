@@ -11,5 +11,7 @@
 
 export interface PasswordChangeResponse { 
     detail: string;
+    access: string;
+    refresh: string;
 }
 

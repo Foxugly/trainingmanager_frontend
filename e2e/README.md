@@ -20,6 +20,8 @@ e2e/
   team.spec.ts     # manager: create a team
   event.spec.ts    # manager: create a session under the seeded program
   rsvp.spec.ts     # athlete: set RSVP to "going" on a team event
+  email-confirm.spec.ts   # logged-out: an invalid / already-used confirmation link offers sign-in
+  password-change.spec.ts # manager: password change stores the new token pair and stays signed in
 ```
 
 Playwright projects (see `playwright.config.ts`): `chromium` runs the
