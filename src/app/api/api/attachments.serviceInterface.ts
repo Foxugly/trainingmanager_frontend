@@ -53,7 +53,7 @@ export interface AttachmentsServiceInterface {
 
     /**
      * 
-     * Finalize an upload: HEAD the S3 object, record its real size, and flip the Attachment to &#x60;ready&#x60;. Caller must be the uploader or able to write the target.
+     * Finalize an upload: HEAD the S3 object, record its real size, and flip the Attachment to &#x60;ready&#x60;. Caller must be able to write the target (being the uploader is not enough).
      * @endpoint post /api/v1/attachments/{id}/complete/
 * @param requestParameters
      */
@@ -61,7 +61,7 @@ export interface AttachmentsServiceInterface {
 
     /**
      * 
-     * Delete an attachment: best-effort removal of the S3 object then the row. Caller must be the uploader or able to write the target.
+     * Delete an attachment: best-effort removal of the S3 object then the row. Caller must be able to write the target (being the uploader is not enough).
      * @endpoint delete /api/v1/attachments/{id}/
 * @param requestParameters
      */
