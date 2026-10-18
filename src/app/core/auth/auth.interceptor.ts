@@ -48,6 +48,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       if (err.status !== 401 || req.context.get(SKIP_REFRESH_ON_401)) {
         return throwError(() => err);
       }
+      // Anonymous visitor (no token at all, e.g. on a public page): a 401 is a
+      // plain error for the caller, not an expired session — no refresh, no
+      // redirect to /login.
+      if (!access && !tokenStorage.getRefresh()) {
+        return throwError(() => err);
+      }
       return authService.refresh().pipe(
         // Placed BEFORE the replay so it only sees refresh failures: an error of
         // the replayed request (e.g. a legitimate 403 on the resource) must not
