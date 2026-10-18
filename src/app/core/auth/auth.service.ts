@@ -1,7 +1,23 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { HttpContext, HttpErrorResponse } from '@angular/common/http';
+import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, catchError, finalize, map, of, shareReplay, switchMap, tap, throwError } from 'rxjs';
-import { TokenStorage } from './token.storage';
+import {
+  Observable,
+  catchError,
+  defer,
+  finalize,
+  firstValueFrom,
+  from,
+  map,
+  of,
+  shareReplay,
+  switchMap,
+  tap,
+  throwError,
+  timeout,
+} from 'rxjs';
+import { ACCESS_KEY, REFRESH_KEY, TokenStorage } from './token.storage';
+import { SKIP_REFRESH_ON_401 } from './auth-context';
 import { AuthService as ApiAuthService } from '../../api/api/auth.service';
 import { MeService } from '../../api/api/me.service';
 import { EmailConfirmRequest } from '../../api/model/email-confirm-request';
@@ -21,6 +37,46 @@ import { RegisterResponse } from '../../api/model/register-response';
 import { TokenRefresh } from '../../api/model/token-refresh';
 import { VerifiedTokenObtainPairRequest } from '../../api/model/verified-token-obtain-pair-request';
 
+/** Web Locks name serialising the refresh-token rotation across every tab of the origin. */
+export const REFRESH_LOCK_NAME = 'tm.refresh';
+
+export const NO_REFRESH_TOKEN = 'NO_REFRESH_TOKEN';
+
+/** Seconds of margin under which an access token is treated as already expired. */
+const ACCESS_EXPIRY_SKEW_S = 30;
+
+/** Upper bound on the best-effort server logout before the local session is cleared anyway. */
+const LOGOUT_TIMEOUT_MS = 5000;
+
+/**
+ * True when a refresh failure means the session is really over: the backend
+ * rejected the refresh token (401/403 — expired, blacklisted, user gone) or
+ * there is no refresh token left (logged out in another tab). A network error
+ * or a 5xx (backend restarting during a deploy) is NOT: the tokens are kept and
+ * the next call retries.
+ */
+export function isSessionEndingError(error: unknown): boolean {
+  if (error instanceof Error && !(error instanceof HttpErrorResponse)) {
+    return error.message === NO_REFRESH_TOKEN;
+  }
+  const status = (error as { status?: unknown } | null)?.status;
+  return status === 401 || status === 403;
+}
+
+/** `exp` (seconds) of a JWT, or null when the payload cannot be decoded. */
+export function jwtExp(token: string): number | null {
+  const payload = token.split('.')[1];
+  if (!payload) {
+    return null;
+  }
+  try {
+    const json = JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
+    return typeof json.exp === 'number' ? json.exp : null;
+  } catch {
+    return null;
+  }
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly tokenStorage = inject(TokenStorage);
@@ -37,21 +93,52 @@ export class AuthService {
   // BLACKLIST_AFTER_ROTATION), so two parallel 401s each POSTing the same
   // refresh would let only the first win — the rest present a now-blacklisted
   // token, 401, and get logged out. Sharing one in-flight refresh prevents it.
+  // Across tabs the same race exists, so the rotation also runs under a Web
+  // Lock (see withRefreshLock / refreshOrAdopt).
   private refresh$: Observable<TokenRefresh> | null = null;
+
+  constructor() {
+    // Multi-tab: `storage` fires in the OTHER tabs on every localStorage write.
+    // TokenStorage always reads localStorage, so rotated tokens are picked up
+    // as-is; what needs resyncing is the in-memory user (logout / login
+    // elsewhere).
+    if (typeof window !== 'undefined') {
+      const onStorage = (event: StorageEvent) => this.onStorageEvent(event);
+      window.addEventListener('storage', onStorage);
+      inject(DestroyRef).onDestroy(() => window.removeEventListener('storage', onStorage));
+    }
+  }
 
   bootstrap(): Observable<boolean> {
     if (!this.tokenStorage.hasRefresh()) {
       return of(false);
     }
-    return this.refresh().pipe(
+    // A still-valid access token needs no refresh: otherwise every new tab
+    // rotates the refresh token on open (and races its siblings).
+    const tokens$: Observable<unknown> = this.hasValidAccess() ? of(null) : this.refresh();
+    return tokens$.pipe(
       switchMap(() => this.fetchMe()),
       map(() => true),
-      catchError(() => {
-        this.tokenStorage.clear();
+      catchError((err: unknown) => {
+        // Only a rejected refresh token ends the session. A network error or a
+        // 5xx at boot keeps the tokens so the next load can recover.
+        if (isSessionEndingError(err)) {
+          this.tokenStorage.clear();
+        }
         this._currentUser.set(null);
         return of(false);
       }),
     );
+  }
+
+  /** Whether the stored access token decodes and is not about to expire. */
+  hasValidAccess(): boolean {
+    const access = this.tokenStorage.getAccess();
+    if (!access) {
+      return false;
+    }
+    const exp = jwtExp(access);
+    return exp !== null && exp - ACCESS_EXPIRY_SKEW_S > Date.now() / 1000;
   }
 
   login(email: string, password: string, remember = false): Observable<Me> {
@@ -67,16 +154,48 @@ export class AuthService {
     return this.fetchMe();
   }
 
+  /**
+   * User-initiated logout: revoke the refresh token server-side first
+   * (POST auth/logout/ blacklists it and its rotation descendants), best-effort
+   * and bounded by a timeout, then clear the local session whatever the
+   * outcome. A 401 on that call must not trigger a refresh (SKIP_REFRESH_ON_401).
+   */
   logout(): void {
+    const refresh = this.tokenStorage.getRefresh();
+    if (!refresh || !this.tokenStorage.getAccess()) {
+      this.clearSession();
+      return;
+    }
+    this.apiAuth
+      .authLogoutCreate({ logoutRequest: { refresh } }, 'body', false, {
+        context: new HttpContext().set(SKIP_REFRESH_ON_401, true),
+      })
+      .pipe(
+        timeout(LOGOUT_TIMEOUT_MS),
+        catchError(() => of(null)),
+        finalize(() => this.clearSession()),
+      )
+      .subscribe();
+  }
+
+  /** Drop the local session (tokens + user) and go to /login. No server call. */
+  clearSession(): void {
     this.tokenStorage.clear();
     this._currentUser.set(null);
     this.router.navigate(['/login']);
   }
 
+  /**
+   * Obtain a fresh token pair. Concurrent callers in this tab share one
+   * request; across tabs the rotation is serialised with the Web Locks API
+   * and, once inside the lock, storage is re-read: if another tab already
+   * rotated the refresh token we adopt its pair instead of presenting the
+   * (now blacklisted) one we hold.
+   */
   refresh(): Observable<TokenRefresh> {
     const refreshToken = this.tokenStorage.getRefresh();
     if (!refreshToken) {
-      return throwError(() => new Error('NO_REFRESH_TOKEN'));
+      return throwError(() => new Error(NO_REFRESH_TOKEN));
     }
     // De-duplicate concurrent refreshes: several requests can 401 in parallel
     // (cold start, mid-session expiry) and each would otherwise fire its own
@@ -84,24 +203,73 @@ export class AuthService {
     if (this.refresh$) {
       return this.refresh$;
     }
-    const payload = { refresh: refreshToken };
-    this.refresh$ = this.apiAuth.authTokenRefreshCreate({ tokenRefreshRequest: payload }).pipe(
-      tap((tokens) => {
-        if (tokens.access) {
-          this.tokenStorage.setAccess(tokens.access);
-        }
-        // Persist the rotated refresh from the response — the one we just
-        // presented has been blacklisted server-side.
-        if (tokens.refresh) {
-          this.tokenStorage.setRefresh(tokens.refresh);
-        }
-      }),
+    this.refresh$ = defer(() => this.withRefreshLock(() => this.refreshOrAdopt(refreshToken))).pipe(
       finalize(() => {
         this.refresh$ = null;
       }),
       shareReplay(1),
     );
     return this.refresh$;
+  }
+
+  private refreshOrAdopt(usedRefresh: string): Observable<TokenRefresh> {
+    const storedRefresh = this.tokenStorage.getRefresh();
+    if (!storedRefresh) {
+      // Logged out in another tab while we waited for the lock.
+      return throwError(() => new Error(NO_REFRESH_TOKEN));
+    }
+    if (storedRefresh !== usedRefresh) {
+      const access = this.tokenStorage.getAccess();
+      if (access) {
+        // Another tab rotated meanwhile: its pair is already in storage.
+        return of({ access, refresh: storedRefresh });
+      }
+    }
+    return this.postRefresh(storedRefresh);
+  }
+
+  private postRefresh(refresh: string): Observable<TokenRefresh> {
+    return this.apiAuth.authTokenRefreshCreate({ tokenRefreshRequest: { refresh } }).pipe(
+      tap((tokens) => {
+        if (tokens.access) {
+          this.tokenStorage.setAccess(tokens.access);
+        }
+        // Persist the rotated refresh from the response — the one we just
+        // presented has been blacklisted server-side. Written after the access
+        // so a tab reacting to it reads a matching pair.
+        if (tokens.refresh) {
+          this.tokenStorage.setRefresh(tokens.refresh);
+        }
+      }),
+    );
+  }
+
+  /** Run `task` under the cross-tab refresh lock; plain call when Web Locks is unavailable. */
+  private withRefreshLock<T>(task: () => Observable<T>): Observable<T> {
+    const locks = typeof navigator !== 'undefined' ? navigator.locks : undefined;
+    if (!locks?.request) {
+      return task();
+    }
+    return from(locks.request(REFRESH_LOCK_NAME, () => firstValueFrom(task())) as Promise<T>);
+  }
+
+  private onStorageEvent(event: StorageEvent): void {
+    // event.key === null <=> localStorage.clear() in another tab.
+    if (event.key !== null && event.key !== REFRESH_KEY && event.key !== ACCESS_KEY) {
+      return;
+    }
+    if (!this.tokenStorage.hasRefresh()) {
+      // Logged out elsewhere (storage is already empty): drop our user.
+      if (this._currentUser() !== null) {
+        this._currentUser.set(null);
+        this.router.navigate(['/login']);
+      }
+      return;
+    }
+    if (event.key === REFRESH_KEY && this._currentUser() === null) {
+      // Signed in from another tab: pick the session up here too.
+      this.refreshMe();
+    }
   }
 
   fetchMe(): Observable<Me> {

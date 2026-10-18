@@ -34,11 +34,11 @@ export default defineConfig({
       testMatch: /(login|assetlinks)\.spec\.ts$/,
     },
 
-    // Manager critical paths (team + event); each spec logs in as the manager.
+    // Manager critical paths (team + event + session robustness); each spec logs in as the manager.
     {
       name: 'chromium-manager',
       use: { ...devices['Desktop Chrome'] },
-      testMatch: /(team|event)\.spec\.ts$/,
+      testMatch: /(team|event|session)\.spec\.ts$/,
     },
 
     // Athlete critical path (rsvp); each spec logs in as the athlete.

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
-const ACCESS_KEY = 'tm_access_token';
-const REFRESH_KEY = 'tm_refresh_token';
+export const ACCESS_KEY = 'tm_access_token';
+export const REFRESH_KEY = 'tm_refresh_token';
 
 @Injectable({ providedIn: 'root' })
 export class TokenStorage {
@@ -27,8 +27,9 @@ export class TokenStorage {
   }
 
   clear(): void {
-    localStorage.removeItem(ACCESS_KEY);
+    // Refresh first: it is the key other tabs read as "logged out" (storage event).
     localStorage.removeItem(REFRESH_KEY);
+    localStorage.removeItem(ACCESS_KEY);
   }
 
   hasRefresh(): boolean {

@@ -71,14 +71,20 @@ All providers live in `src/app/app.config.ts`; routes in `src/app/app.routes.ts`
 - `login(username, password, remember = false)` — `remember` toggles 30d refresh TTL (default 7d).
 - `register(payload)` + `confirmEmail(key)` + `resendEmail(email)`.
 - `requestPasswordReset({email, turnstile_token})` + `confirmPasswordReset(key, newPassword)` (auto-login on success via `loginWithTokens`).
-- `bootstrap()` runs from `provideAppInitializer`: refresh + fetch `/me/` before the router activates so guards see the right state on first navigation.
+- `bootstrap()` runs from `provideAppInitializer`: refresh (skipped when the stored access JWT is still valid) + fetch `/me/` before the router activates so guards see the right state on first navigation. A network error / 5xx keeps the tokens; only a 401/403 clears them.
 - `refreshMe()` — fire-and-forget /me/ resync after team-quota-affecting mutations.
+- `logout()` — best-effort `POST auth/logout/` (blacklists the refresh; 5 s timeout, flagged `SKIP_REFRESH_ON_401`), then `clearSession()`. `clearSession()` = local clear + `/login`, no server call.
+- **Multi-tab** (refresh tokens rotate + blacklist): `refresh()` is shared in-tab and runs under the Web Lock `tm.refresh` across tabs; inside the lock it re-reads storage and **adopts** a pair another tab already rotated instead of POSTing a blacklisted token. A `storage` listener drops the user when another tab logs out and loads `/me/` when another tab logs in.
 
 `authInterceptor`:
 
-1. Skips non-API URLs and `AUTH_PATHS` (token, refresh, register, email confirm/resend, password reset/confirm).
+1. Skips non-API URLs and `AUTH_PATHS` (token, refresh, register, email confirm/resend, password reset/confirm). `AuthService` is injected only after that check — the i18n catalog request fires while `AuthService` is being constructed (NG0200 otherwise).
 2. Attaches `Authorization: Bearer <access>` on every other API call.
-3. On 401 → `AuthService.refresh()` then retry; on refresh failure → `logout()` (clears tokens, navigates to `/login`).
+3. On 401 → `AuthService.refresh()` then retry. Refresh failure: `clearSession()` only on 401/403 or a missing refresh token (`isSessionEndingError`); network/5xx errors propagate and keep the session. Errors of the replayed request never end the session.
+
+Sentry: `ErrorHandler` = `Sentry.createErrorHandler()` + `TraceService` (app.config.ts); `core/sentry-scrub.ts` masks URL tokens (confirm/reset/magic-link/invitation/`s/e`/magic-action routes, their API lookups, encoded `returnUrl`, `uid|token|key|code` params) in `beforeSend`/`beforeSendTransaction`/`beforeBreadcrumb`. Release = `tm-frontend@<sha>` when deploy.yml builds with `--define TM_BUILD_SHA=…` (`core/build-info.ts`), else SSM `SENTRY_RELEASE`.
+
+CI: `ci.yml` job **`Unit tests`** (Vitest + prod build) on every PR — required check, alongside `drift` and `e2e`.
 
 `authGuard` redirects unauthenticated users to `/login?returnUrl=<state.url>`. `LoginComponent` reads `returnUrl` post-success.
 

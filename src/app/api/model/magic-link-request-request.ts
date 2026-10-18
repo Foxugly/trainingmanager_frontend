@@ -10,7 +10,7 @@
 
 
 /**
- * Body of POST /api/v1/auth/magic-link/request/.  Anti-leak by design — the view always returns the same 200 payload regardless of whether `email` matches a confirmed user. Validation here only enforces the field shape.  `turnstile_token` is optional for now (backward compatibility with frontends deployed before the widget was added): when present and Turnstile is configured, the view verifies it; when absent the request is still accepted. A follow-up change can make it required.
+ * Body of POST /api/v1/auth/magic-link/request/.  Anti-leak by design — the view always returns the same 200 payload regardless of whether `email` matches a confirmed user. Validation here only enforces the field shape.  `turnstile_token` is required whenever Turnstile is configured server-side: the view verifies it and a missing, blank or invalid token yields 400 `captcha_failed` (fail-closed). It is declared optional here only so dev/test setups without a Turnstile secret keep working.
  */
 export interface MagicLinkRequestRequest { 
     email: string;

@@ -1,10 +1,17 @@
-import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpContext,
+  HttpErrorResponse,
+  provideHttpClient,
+  withInterceptors,
+} from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { Subject } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { environment } from '../../../environments/environment';
-import { AuthService } from './auth.service';
+import { SKIP_REFRESH_ON_401 } from './auth-context';
+import { AuthService, NO_REFRESH_TOKEN } from './auth.service';
 import { authInterceptor } from './auth.interceptor';
 import { TokenStorage } from './token.storage';
 
@@ -12,7 +19,11 @@ describe('authInterceptor', () => {
   let http: HttpClient;
   let httpMock: HttpTestingController;
   let tokenStorage: TokenStorage;
-  let authMock: { refresh: ReturnType<typeof vi.fn>; logout: ReturnType<typeof vi.fn> };
+  let authMock: {
+    refresh: ReturnType<typeof vi.fn>;
+    logout: ReturnType<typeof vi.fn>;
+    clearSession: ReturnType<typeof vi.fn>;
+  };
 
   const apiUrl = `${environment.apiBase}/teams/`;
   const authUrl = `${environment.apiBase}/auth/token/`;
@@ -21,7 +32,7 @@ describe('authInterceptor', () => {
 
   beforeEach(() => {
     localStorage.clear();
-    authMock = { refresh: vi.fn(), logout: vi.fn() };
+    authMock = { refresh: vi.fn(), logout: vi.fn(), clearSession: vi.fn() };
 
     TestBed.configureTestingModule({
       providers: [
@@ -90,10 +101,10 @@ describe('authInterceptor', () => {
     replayed.flush({ ok: true });
 
     expect(await result).toEqual({ ok: true });
-    expect(authMock.logout).not.toHaveBeenCalled();
+    expect(authMock.clearSession).not.toHaveBeenCalled();
   });
 
-  it('on 401, when refresh fails, calls logout and propagates the error', async () => {
+  it('on 401, when the refresh token is rejected (401), clears the session and propagates', async () => {
     tokenStorage.setAccess('stale');
     const refresh$ = new Subject<unknown>();
     authMock.refresh.mockReturnValue(refresh$.asObservable());
@@ -109,7 +120,81 @@ describe('authInterceptor', () => {
     refresh$.error({ status: 401 });
 
     await error;
-    expect(authMock.logout).toHaveBeenCalledTimes(1);
+    expect(authMock.clearSession).toHaveBeenCalledTimes(1);
+    // Local clear only: the server logout would be pointless with a dead refresh.
+    expect(authMock.logout).not.toHaveBeenCalled();
+  });
+
+  for (const status of [0, 500, 502, 503]) {
+    it(`on 401, when refresh fails with ${status} (network / backend down), keeps the session`, async () => {
+      tokenStorage.setTokens('stale', 'r');
+      authMock.refresh.mockReturnValue(
+        throwError(() => new HttpErrorResponse({ status, statusText: 'x' })),
+      );
+
+      const done = new Promise<HttpErrorResponse>((resolve) =>
+        http.get(apiUrl).subscribe({ error: resolve }),
+      );
+      httpMock.expectOne(apiUrl).flush({}, { status: 401, statusText: 'Unauthorized' });
+
+      // The refresh error reaches the caller untouched.
+      expect((await done).status).toBe(status);
+      expect(authMock.clearSession).not.toHaveBeenCalled();
+      expect(tokenStorage.getRefresh()).toBe('r');
+    });
+  }
+
+  it('on 401, when refresh answers 403, clears the session', async () => {
+    tokenStorage.setTokens('stale', 'r');
+    authMock.refresh.mockReturnValue(
+      throwError(() => new HttpErrorResponse({ status: 403, statusText: 'Forbidden' })),
+    );
+    const done = new Promise<unknown>((resolve) => http.get(apiUrl).subscribe({ error: resolve }));
+    httpMock.expectOne(apiUrl).flush({}, { status: 401, statusText: 'Unauthorized' });
+    await done;
+    expect(authMock.clearSession).toHaveBeenCalledTimes(1);
+  });
+
+  it('on 401, when the refresh token is gone (logged out in another tab), clears the session', async () => {
+    tokenStorage.setAccess('stale');
+    authMock.refresh.mockReturnValue(throwError(() => new Error(NO_REFRESH_TOKEN)));
+    const done = new Promise<unknown>((resolve) => http.get(apiUrl).subscribe({ error: resolve }));
+    httpMock.expectOne(apiUrl).flush({}, { status: 401, statusText: 'Unauthorized' });
+    await done;
+    expect(authMock.clearSession).toHaveBeenCalledTimes(1);
+  });
+
+  it('an error of the replayed request (403 on the resource) does not end the session', async () => {
+    tokenStorage.setTokens('stale', 'r');
+    authMock.refresh.mockReturnValue(of({ access: 'fresh', refresh: 'r2' }));
+    const done = new Promise<HttpErrorResponse>((resolve) =>
+      http.get(apiUrl).subscribe({ error: resolve }),
+    );
+    httpMock.expectOne(apiUrl).flush({}, { status: 401, statusText: 'Unauthorized' });
+    httpMock.expectOne(apiUrl).flush({}, { status: 403, statusText: 'Forbidden' });
+    expect((await done).status).toBe(403);
+    expect(authMock.clearSession).not.toHaveBeenCalled();
+  });
+
+  it('does not refresh on a 401 of a request flagged SKIP_REFRESH_ON_401', async () => {
+    tokenStorage.setTokens('a', 'r');
+    const done = new Promise<HttpErrorResponse>((resolve) =>
+      http
+        .post(
+          `${environment.apiBase}/auth/logout/`,
+          { refresh: 'r' },
+          {
+            context: new HttpContext().set(SKIP_REFRESH_ON_401, true),
+          },
+        )
+        .subscribe({ error: resolve }),
+    );
+    const req = httpMock.expectOne(`${environment.apiBase}/auth/logout/`);
+    expect(req.request.headers.get('Authorization')).toBe('Bearer a');
+    req.flush({}, { status: 401, statusText: 'Unauthorized' });
+    expect((await done).status).toBe(401);
+    expect(authMock.refresh).not.toHaveBeenCalled();
+    expect(authMock.clearSession).not.toHaveBeenCalled();
   });
 
   it('does not trigger refresh on a 401 from /auth/token/refresh/ itself', () => {
@@ -126,6 +211,6 @@ describe('authInterceptor', () => {
     req.flush({}, { status: 401, statusText: 'Unauthorized' });
 
     expect(authMock.refresh).not.toHaveBeenCalled();
-    expect(authMock.logout).not.toHaveBeenCalled();
+    expect(authMock.clearSession).not.toHaveBeenCalled();
   });
 });
