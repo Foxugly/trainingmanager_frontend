@@ -164,6 +164,16 @@ describe('authInterceptor', () => {
     expect(authMock.clearSession).toHaveBeenCalledTimes(1);
   });
 
+  it('on 401 without any session (anonymous visitor), neither refreshes nor clears', async () => {
+    const done = new Promise<HttpErrorResponse>((resolve) =>
+      http.get(apiUrl).subscribe({ error: resolve }),
+    );
+    httpMock.expectOne(apiUrl).flush({}, { status: 401, statusText: 'Unauthorized' });
+    expect((await done).status).toBe(401);
+    expect(authMock.refresh).not.toHaveBeenCalled();
+    expect(authMock.clearSession).not.toHaveBeenCalled();
+  });
+
   it('an error of the replayed request (403 on the resource) does not end the session', async () => {
     tokenStorage.setTokens('stale', 'r');
     authMock.refresh.mockReturnValue(of({ access: 'fresh', refresh: 'r2' }));

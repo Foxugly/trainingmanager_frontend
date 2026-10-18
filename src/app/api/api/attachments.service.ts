@@ -52,7 +52,7 @@ export class AttachmentsService extends BaseService implements AttachmentsServic
     }
 
     /**
-     * Finalize an upload: HEAD the S3 object, record its real size, and flip the Attachment to &#x60;ready&#x60;. Caller must be the uploader or able to write the target.
+     * Finalize an upload: HEAD the S3 object, record its real size, and flip the Attachment to &#x60;ready&#x60;. Caller must be able to write the target (being the uploader is not enough).
      * @endpoint post /api/v1/attachments/{id}/complete/
      * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
@@ -112,7 +112,7 @@ export class AttachmentsService extends BaseService implements AttachmentsServic
     }
 
     /**
-     * Delete an attachment: best-effort removal of the S3 object then the row. Caller must be the uploader or able to write the target.
+     * Delete an attachment: best-effort removal of the S3 object then the row. Caller must be able to write the target (being the uploader is not enough).
      * @endpoint delete /api/v1/attachments/{id}/
      * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.

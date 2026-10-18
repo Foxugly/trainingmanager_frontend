@@ -27,11 +27,11 @@ export default defineConfig({
   // backend rotates+blacklists refresh tokens, so replaying one frozen token
   // across specs/retries 401s on refresh and logs the app out. See e2e/auth.ts.
   projects: [
-    // Public/unauthenticated: the login flow, the e-mail confirmation page + static well-known files (no auth).
+    // Public/unauthenticated: the login flow, the e-mail confirmation page, public auth pages + static well-known files (no auth).
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
-      testMatch: /(login|assetlinks|email-confirm)\.spec\.ts$/,
+      testMatch: /(login|assetlinks|email-confirm|public-auth)\.spec\.ts$/,
     },
 
     // Manager critical paths (team + event + session robustness + password change); each spec logs in as the manager.
