@@ -48,6 +48,9 @@ export class EmailConfirmComponent implements OnInit {
         },
         error: (err: HttpErrorResponse) => {
           const body = err?.error as { code?: string; detail?: string } | null | undefined;
+          // Confirmation links are single-use: the backend answers the same
+          // 400 for an already-used link as for an invalid / expired one, so
+          // the invalid_token screen offers sign-in first, then a new link.
           if (err.status === 400 && body?.code === 'invalid_or_expired_token') {
             this.phase.set('invalid_token');
           } else {

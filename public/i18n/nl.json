@@ -1135,11 +1135,12 @@
       "loading": "Je e-mail wordt bevestigd…",
       "success_title": "E-mail bevestigd!",
       "success_redirect": "Je bent ingelogd. Je wordt doorgestuurd naar het dashboard…",
-      "error_invalid_token_title": "Ongeldige of verlopen link",
-      "error_invalid_token": "De bevestigingslink is ongeldig of verlopen. Vraag een nieuwe link aan op de verificatiepagina.",
+      "error_invalid_token_title": "Link niet meer geldig",
+      "error_invalid_token": "Deze bevestigingslink is ongeldig, verlopen of al gebruikt. Heb je je e-mail al bevestigd? Log dan gewoon in. Vraag anders een nieuwe link aan.",
       "error_unknown_title": "Onverwachte fout",
       "error_unknown": "Er is een fout opgetreden. Probeer het opnieuw of vraag een nieuwe link aan.",
-      "request_resend_button": "Nieuwe link aanvragen"
+      "request_resend_button": "Nieuwe link aanvragen",
+      "sign_in_button": "Inloggen"
     },
     "forgot_password": {
       "title": "Wachtwoord vergeten",

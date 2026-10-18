@@ -23,12 +23,24 @@
     >
       <div class="email-confirm__state">
         <p class="email-confirm__text email-confirm__text--spaced">{{ 'auth.email_confirm.error_invalid_token' | transloco }}</p>
-        <a [routerLink]="['/check-your-email']">
-          <p-button
-            [label]="'auth.email_confirm.request_resend_button' | transloco"
-            icon="pi pi-refresh"
-          />
-        </a>
+        <!-- Links are single-use: a second click lands here although the
+             account is confirmed, so signing in is the primary way out. -->
+        <div class="email-confirm__actions">
+          <a [routerLink]="['/login']" data-testid="email-confirm-sign-in">
+            <p-button
+              [label]="'auth.email_confirm.sign_in_button' | transloco"
+              icon="pi pi-sign-in"
+            />
+          </a>
+          <a [routerLink]="['/check-your-email']">
+            <p-button
+              [label]="'auth.email_confirm.request_resend_button' | transloco"
+              icon="pi pi-refresh"
+              severity="secondary"
+              [outlined]="true"
+            />
+          </a>
+        </div>
       </div>
       <app-auth-back-link />
     </app-auth-card>

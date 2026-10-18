@@ -12,7 +12,7 @@ import { Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { Password } from 'primeng/password';
-import { AuthService as AuthApi } from '../../../api/api/auth.service';
+import { AuthService } from '../../../core/auth/auth.service';
 import { PasswordChangeRequest } from '../../../api/model/password-change-request';
 import { type FieldErrors, extractServerError } from '../../../shared/forms/notify-error';
 import { ToastService } from '../../../core/notifications/toast.service';
@@ -40,7 +40,7 @@ import { AriaDescribesDirective } from '../../../shared/a11y/aria-describes.dire
 })
 export class ChangePasswordComponent {
   private readonly fb = inject(FormBuilder);
-  private readonly authApi = inject(AuthApi);
+  private readonly authService = inject(AuthService);
   private readonly toast = inject(ToastService);
   private readonly transloco = inject(TranslocoService);
   private readonly router = inject(Router);
@@ -75,8 +75,10 @@ export class ChangePasswordComponent {
       current_password: value.current_password,
       new_password: value.new_password,
     };
-    this.authApi
-      .authPasswordChangeCreate({ passwordChangeRequest: payload })
+    // AuthService stores the fresh token pair the backend returns (it revokes
+    // every previous refresh token), so this session stays signed in.
+    this.authService
+      .changePassword(payload)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

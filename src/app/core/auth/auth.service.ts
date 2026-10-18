@@ -26,6 +26,8 @@ import { MagicLinkExchangeRequestRequest } from '../../api/model/magic-link-exch
 import { MagicLinkRequestRequest } from '../../api/model/magic-link-request-request';
 import { MagicLinkRequestResponse } from '../../api/model/magic-link-request-response';
 import { Me } from '../../api/model/me';
+import { PasswordChangeRequest } from '../../api/model/password-change-request';
+import { PasswordChangeResponse } from '../../api/model/password-change-response';
 import { PasswordResetConfirmRequest } from '../../api/model/password-reset-confirm-request';
 import { PasswordResetConfirmResponse } from '../../api/model/password-reset-confirm-response';
 import { PasswordResetRequest } from '../../api/model/password-reset-request';
@@ -315,6 +317,21 @@ export class AuthService {
     return this.apiAuth
       .authPasswordResetConfirmCreate({ passwordResetConfirmRequest: payload })
       .pipe(switchMap((res) => this.loginWithTokens(res.access, res.refresh)));
+  }
+
+  /**
+   * Change the signed-in user's password. The backend revokes EVERY refresh
+   * token of the user (other devices must sign in again) and returns a fresh
+   * {access, refresh} pair for this session: store it right away, otherwise
+   * the next refresh presents a blacklisted token and the user is logged out.
+   * setTokens writes the access before the refresh, so the other tabs of this
+   * browser (which read the same localStorage, see onStorageEvent) pick up a
+   * matching pair and stay signed in too.
+   */
+  changePassword(payload: PasswordChangeRequest): Observable<PasswordChangeResponse> {
+    return this.apiAuth
+      .authPasswordChangeCreate({ passwordChangeRequest: payload })
+      .pipe(tap((res) => this.tokenStorage.setTokens(res.access, res.refresh)));
   }
 
   /**

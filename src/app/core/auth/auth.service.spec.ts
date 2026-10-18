@@ -44,6 +44,7 @@ describe('AuthService', () => {
     authLogoutCreate: ReturnType<typeof vi.fn>;
     authPasswordResetCreate: ReturnType<typeof vi.fn>;
     authPasswordResetConfirmCreate: ReturnType<typeof vi.fn>;
+    authPasswordChangeCreate: ReturnType<typeof vi.fn>;
   };
   let meService: { meRetrieve: ReturnType<typeof vi.fn> };
   let router: { navigate: ReturnType<typeof vi.fn> };
@@ -56,6 +57,7 @@ describe('AuthService', () => {
       authLogoutCreate: vi.fn(),
       authPasswordResetCreate: vi.fn(),
       authPasswordResetConfirmCreate: vi.fn(),
+      authPasswordChangeCreate: vi.fn(),
     };
     meService = { meRetrieve: vi.fn() };
     router = { navigate: vi.fn() };
@@ -272,6 +274,48 @@ describe('AuthService', () => {
     expect(tokenStorage.getRefresh()).toBe('r-new');
     expect(me).toEqual(fakeUser);
     expect(service.currentUser()).toEqual(fakeUser);
+  });
+
+  describe('changePassword()', () => {
+    it('stores the fresh pair returned by the backend (old refresh tokens are revoked)', async () => {
+      tokenStorage.setTokens('a-old', 'r-old');
+      service.setCurrentUser(fakeUser);
+      apiAuth.authPasswordChangeCreate.mockReturnValue(
+        of({ detail: 'Password updated.', access: 'a-new', refresh: 'r-new' }),
+      );
+
+      const res = await new Promise((resolve) =>
+        service
+          .changePassword({ current_password: 'old', new_password: 'newpass1' })
+          .subscribe(resolve),
+      );
+
+      expect(apiAuth.authPasswordChangeCreate).toHaveBeenCalledWith({
+        passwordChangeRequest: { current_password: 'old', new_password: 'newpass1' },
+      });
+      expect(res).toEqual({ detail: 'Password updated.', access: 'a-new', refresh: 'r-new' });
+      expect(tokenStorage.getAccess()).toBe('a-new');
+      expect(tokenStorage.getRefresh()).toBe('r-new');
+      // Still signed in: no /me/ reload, no redirect.
+      expect(service.currentUser()).toEqual(fakeUser);
+      expect(router.navigate).not.toHaveBeenCalled();
+    });
+
+    it('keeps the current tokens when the change is refused', async () => {
+      tokenStorage.setTokens('a-old', 'r-old');
+      apiAuth.authPasswordChangeCreate.mockReturnValue(
+        throwError(() => ({ status: 400, error: { code: 'current_password_invalid' } })),
+      );
+
+      await new Promise<void>((resolve) =>
+        service
+          .changePassword({ current_password: 'bad', new_password: 'newpass1' })
+          .subscribe({ error: () => resolve() }),
+      );
+
+      expect(tokenStorage.getAccess()).toBe('a-old');
+      expect(tokenStorage.getRefresh()).toBe('r-old');
+    });
   });
 
   describe('logout() server revocation', () => {
