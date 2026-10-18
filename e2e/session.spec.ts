@@ -97,7 +97,7 @@ test('login sets an HttpOnly cookie; reloads and 401s refresh through it', async
   expect(refreshes).toEqual([200, 200]);
 });
 
-test('a 5xx on token refresh keeps the session, a missing cookie ends it', async ({
+test('a 5xx keeps the session, a legacy token migrates, a missing cookie ends it', async ({
   page,
   context,
 }) => {
@@ -118,72 +118,7 @@ test('a 5xx on token refresh keeps the session, a missing cookie ends it', async
   await page.goto('/dashboard');
   await expectSignedIn(page);
 
-  // A missing (or rejected) cookie, on the other hand, ends the session.
-  await context.clearCookies();
-  await page.goto('/dashboard');
-  await page.waitForURL(/\/login/);
-  expect(await hint(page)).toBeNull();
-});
-
-test('logout revokes and clears the refresh cookie', async ({ page, context }) => {
-  await loginAs(page, 'manager');
-  const cookie = await refreshCookie(context);
-
-  const logoutCall = page.waitForResponse(
-    (res) => res.url().endsWith('/api/v1/auth/logout/') && res.request().method() === 'POST',
-  );
-  await logoutFromMenu(page);
-  const logout = await logoutCall;
-  expect(logout.status()).toBe(204);
-  // The cookie authenticates the call: no Bearer.
-  expect(logout.request().headers()['authorization']).toBeUndefined();
-  await page.waitForURL(/\/login/);
-  expect(await hint(page)).toBeNull();
-  expect(await refreshCookie(context)).toBeUndefined();
-
-  // The revoked token can no longer mint tokens (body mode, as the app would).
-  const replay = await page.request.post(`${API_BASE}/api/v1/auth/token/refresh/`, {
-    data: { refresh: cookie },
-  });
-  expect(replay.status()).toBe(401);
-});
-
-test('logging out in one tab signs the other tab out', async ({ context }) => {
-  const first = await context.newPage();
-  await loginAs(first, 'manager');
-  const second = await context.newPage();
-  await second.goto('/dashboard');
-  await expectSignedIn(second);
-
-  // PrimeNG's popup menu animates on requestAnimationFrame, which a background
-  // tab does not run.
-  await first.bringToFront();
-  await logoutFromMenu(first);
-  await first.waitForURL(/\/login/);
-  await second.waitForURL(/\/login/);
-});
-
-test('two tabs refreshing at the same time both stay signed in', async ({ context }) => {
-  const first = await context.newPage();
-  await loginAs(first, 'manager');
-  const second = await context.newPage();
-
-  // Both boots refresh (the access token lives in memory only); the backend
-  // blacklists the first cookie presented, so without the cross-tab lock one
-  // tab would be logged out.
-  await Promise.all([first.goto('/dashboard'), second.goto('/dashboard')]);
-  // A background tab may not render (no requestAnimationFrame): check each in front.
-  await first.bringToFront();
-  await expectSignedIn(first);
-  await second.bringToFront();
-  await expectSignedIn(second);
-});
-
-test('a refresh token left in localStorage by the old SPA is migrated to the cookie', async ({
-  page,
-  context,
-}) => {
-  await loginAs(page, 'manager');
+  // A refresh token left in localStorage by the old SPA is migrated to the cookie.
   // Simulate a pre-cookie session: the token in localStorage, no cookie, no hint.
   const legacy = await refreshCookie(context);
   await context.clearCookies();
@@ -217,4 +152,60 @@ test('a refresh token left in localStorage by the old SPA is migrated to the coo
   await page.reload();
   expect((await next).request().postDataJSON() ?? {}).toEqual({});
   await expectSignedIn(page);
+
+  // A missing (or rejected) cookie, on the other hand, ends the session.
+  await context.clearCookies();
+  await page.goto('/dashboard');
+  await page.waitForURL(/\/login/);
+  expect(await hint(page)).toBeNull();
+});
+
+test('logout revokes and clears the refresh cookie', async ({ page, context }) => {
+  await loginAs(page, 'manager');
+  const cookie = await refreshCookie(context);
+
+  const logoutCall = page.waitForResponse(
+    (res) => res.url().endsWith('/api/v1/auth/logout/') && res.request().method() === 'POST',
+  );
+  await logoutFromMenu(page);
+  const logout = await logoutCall;
+  expect(logout.status()).toBe(204);
+  // The cookie authenticates the call: no Bearer.
+  expect(logout.request().headers()['authorization']).toBeUndefined();
+  await page.waitForURL(/\/login/);
+  expect(await hint(page)).toBeNull();
+  expect(await refreshCookie(context)).toBeUndefined();
+
+  // The revoked token can no longer mint tokens (body mode, as the app would).
+  const replay = await page.request.post(`${API_BASE}/api/v1/auth/token/refresh/`, {
+    data: { refresh: cookie },
+  });
+  expect(replay.status()).toBe(401);
+});
+
+// One login per test is the budget: auth/token/ is throttled at 10/min per IP
+// and the whole suite runs from one IP, so related checks share a test.
+test('two tabs refreshing together stay signed in; logging out in one signs the other out', async ({
+  context,
+}) => {
+  const first = await context.newPage();
+  await loginAs(first, 'manager');
+  const second = await context.newPage();
+
+  // Both boots refresh (the access token lives in memory only); the backend
+  // blacklists the first cookie presented, so without the cross-tab lock one
+  // tab would be logged out.
+  await Promise.all([first.goto('/dashboard'), second.goto('/dashboard')]);
+  // A background tab may not render (no requestAnimationFrame): check each in front.
+  await first.bringToFront();
+  await expectSignedIn(first);
+  await second.bringToFront();
+  await expectSignedIn(second);
+
+  // PrimeNG's popup menu animates on requestAnimationFrame, which a background
+  // tab does not run.
+  await first.bringToFront();
+  await logoutFromMenu(first);
+  await first.waitForURL(/\/login/);
+  await second.waitForURL(/\/login/);
 });
