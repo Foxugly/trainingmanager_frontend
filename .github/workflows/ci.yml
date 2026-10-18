@@ -1,0 +1,38 @@
+name: CI
+
+# Unit tests (Vitest) + production build on every PR, so a red unit suite
+# blocks the merge — Dependabot PRs included, which auto-merge once the
+# required checks pass. Until 2026-10-18 the unit tests only ran in deploy.yml,
+# i.e. after the merge (audit F-I6). The job name "Unit tests" is a required
+# status check on main.
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - run: npm ci
+
+      - name: Unit tests (Vitest)
+        run: npx ng test --watch=false
+
+      # Same command as the deploy build: catches template / type errors and
+      # bundle-budget overruns before the merge.
+      - name: Build (production)
+        run: npm run build
