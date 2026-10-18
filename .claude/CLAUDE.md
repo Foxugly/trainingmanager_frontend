@@ -66,21 +66,24 @@ All providers live in `src/app/app.config.ts`; routes in `src/app/app.routes.ts`
 
 ### Auth flow
 
-`AuthService` (`src/app/core/auth/auth.service.ts`) holds the current `Me` as a signal. JWT pair lives in `TokenStorage`. Surfaces:
+**Refresh token in an HttpOnly cookie, access token in memory** (fleet design piloted on PushIT, `OPERATIONS.md §3.25`; backend side in trainingmanager_server `CLAUDE.md` › "Refresh token transport"). The auth calls (login `auth/token/`, `auth/token/refresh/`, `auth/logout/`, magic-link exchange, email confirm, password reset confirm, password change, account delete, invitation completion) carry the `COOKIE_AUTH` HttpContext flag (`cookieAuthContext()` in `core/auth/auth-context.ts`); `authInterceptor` turns it into `X-Auth-Mode: cookie` + `withCredentials`. The backend then sets / rotates / clears the `tm_refresh` cookie (`HttpOnly; Secure; SameSite=Lax; Path=/api/v1/auth/` on tm-api) and leaves `refresh` out of the body. Every other API call stays plain Bearer, without credentials. The KMP app keeps body tokens (no header).
 
-- `login(username, password, remember = false)` — `remember` toggles 30d refresh TTL (default 7d).
-- `register(payload)` + `confirmEmail(key)` + `resendEmail(email)`.
-- `requestPasswordReset({email, turnstile_token})` + `confirmPasswordReset(key, newPassword)` (auto-login on success via `loginWithTokens`).
-- `bootstrap()` runs from `provideAppInitializer`: refresh (skipped when the stored access JWT is still valid) + fetch `/me/` before the router activates so guards see the right state on first navigation. A network error / 5xx keeps the tokens; only a 401/403 clears them.
+`AuthService` (`src/app/core/auth/auth.service.ts`) holds the current `Me` as a signal; `TokenStorage` holds the access token **in memory** plus the non-secret `tm.session` hint in localStorage. Surfaces:
+
+- `login(email, password, remember = false)` — `remember` picks the refresh lifetime server-side (30 d instead of 7 d), and with it the cookie's Max-Age.
+- `startSession(access)` — adopt the access token of any cookie-mode sign-in response (login, magic link, email confirm, password reset, invitation), load `/me/`, set the hint.
+- `bootstrap()` runs from `provideAppInitializer` (silent restore): only when the hint (or a legacy token) exists, `POST auth/token/refresh/` (cookie) then `/me/`, capped at 10 s. Anonymous visitors make no call. A 401/403 ends the session; a network error / 5xx keeps the hint (next load retries).
 - `refreshMe()` — fire-and-forget /me/ resync after team-quota-affecting mutations.
-- `logout()` — best-effort `POST auth/logout/` (blacklists the refresh; 5 s timeout, flagged `SKIP_REFRESH_ON_401`), then `clearSession()`. `clearSession()` = local clear + `/login`, no server call.
-- **Multi-tab** (refresh tokens rotate + blacklist): `refresh()` is shared in-tab and runs under the Web Lock `tm.refresh` across tabs; inside the lock it re-reads storage and **adopts** a pair another tab already rotated instead of POSTing a blacklisted token. A `storage` listener drops the user when another tab logs out and loads `/me/` when another tab logs in.
+- `logout()` — best-effort `POST auth/logout/` **without Bearer** (in `AUTH_PATHS`; the cookie authenticates it, so an expired access token cannot 401 it; 5 s timeout, `SKIP_REFRESH_ON_401`), then `clearSession()` = local clear (memory + hint) + `/login`. Account deletion clears the cookie server-side, then `clearSession()`.
+- **Migration**: a `tm_refresh_token` left in localStorage by the pre-cookie SPA is presented **once** in the refresh body (cookie mode on, so the rotated token lands in the cookie), then `tm_access_token`/`tm_refresh_token` are deleted (also on 401/403; kept on a network error).
+- **Multi-tab**: `refresh()` is shared in-tab and runs under the Web Lock `tm.refresh` across tabs, so two tabs never present the same rotated cookie. `storage` events on `tm.session` carry only "session changed" (new value → the other tabs re-run `bootstrap()` from the shared cookie) or "logged out" (removed → drop the user, `/login`). They never carry a token.
 
 `authInterceptor`:
 
-1. Skips non-API URLs and `AUTH_PATHS` (token, refresh, register, email confirm/resend, password reset/confirm). `AuthService` is injected only after that check — the i18n catalog request fires while `AuthService` is being constructed (NG0200 otherwise).
-2. Attaches `Authorization: Bearer <access>` on every other API call.
-3. On 401 → `AuthService.refresh()` then retry. Refresh failure: `clearSession()` only on 401/403 or a missing refresh token (`isSessionEndingError`); network/5xx errors propagate and keep the session. Errors of the replayed request never end the session.
+1. Adds `X-Auth-Mode: cookie` + `withCredentials` on API requests flagged `COOKIE_AUTH`.
+2. Skips non-API URLs and `AUTH_PATHS` (token, refresh, logout, register, email confirm/resend, password reset/confirm, magic link). `AuthService` is injected only after that check — the i18n catalog request fires while `AuthService` is being constructed (NG0200 otherwise).
+3. Attaches `Authorization: Bearer <access>` on every other API call.
+4. On 401 (and a session exists) → `AuthService.refresh()` then retry. Refresh failure: `clearSession()` only on 401/403 or no session left (`isSessionEndingError`); network/5xx errors propagate and keep the session. Errors of the replayed request never end the session.
 
 Sentry: `ErrorHandler` = `Sentry.createErrorHandler()` + `TraceService` (app.config.ts); `core/sentry-scrub.ts` masks URL tokens (confirm/reset/magic-link/invitation/`s/e`/magic-action routes, their API lookups, encoded `returnUrl`, `uid|token|key|code` params) in `beforeSend`/`beforeSendTransaction`/`beforeBreadcrumb`. Release = `tm-frontend@<sha>` when deploy.yml builds with `--define TM_BUILD_SHA=…` (`core/build-info.ts`), else SSM `SENTRY_RELEASE`.
 
@@ -180,7 +183,7 @@ Prettier: 100-col, single quotes, Angular parser for `*.html`. 2-space indent (`
 
 ## Gotchas
 
-- **Turnstile (Cloudflare)**: the `<script>` is **not** in `index.html` (a third-party script on every route, next to the JWTs in localStorage): `ensureTurnstileScript()` (`core/auth/turnstile-loader.ts`) injects it on demand from the render/retry loop of the forms that show a widget. Render explicitly via `window.turnstile.render(container, {sitekey})` with a retry loop (20 × 500ms) until the script is ready. Pattern shared by `RegisterComponent`, `ForgotPasswordComponent` and the magic-link mode of `LoginComponent`; `e2e/public-auth.spec.ts` checks the script stays off the other routes.
+- **Turnstile (Cloudflare)**: the `<script>` is **not** in `index.html` (a third-party script on every route): `ensureTurnstileScript()` (`core/auth/turnstile-loader.ts`) injects it on demand from the render/retry loop of the forms that show a widget. Render explicitly via `window.turnstile.render(container, {sitekey})` with a retry loop (20 × 500ms) until the script is ready. Pattern shared by `RegisterComponent`, `ForgotPasswordComponent` and the magic-link mode of `LoginComponent`; `e2e/public-auth.spec.ts` checks the script stays off the other routes.
 - **CSP (enforced in prod)**: the SPA is served under a strict, nonce-based `Content-Security-Policy` defined in `deploy/nginx/tm-frontend.conf` (the `index.html` location) — **enforced**, not Report-Only, since 2026-06-11; violations report to Sentry via a `report-uri` the runtime-fetch script derives from the Sentry DSN. `script-src` has **no `'unsafe-inline'`** (inline `<script>` must carry `'nonce-$request_id'`). When you add an external resource you MUST widen the matching directive or it is silently blocked in prod: a new API/S3/analytics origin → `connect-src`; remote images → `img-src` (own API images e.g. team logos are already allowed via `https://tm-api.foxugly.com`); third-party widgets → `script-src`/`frame-src` (Cloudflare Turnstile is allowlisted). Inline `on*` handlers are narrowly re-allowed via `script-src-attr 'unsafe-inline'` (Turnstile relies on it) — do **not** lean on that for app code. Rollback = rename the header to `Content-Security-Policy-Report-Only` and redeploy. After any policy-touching change, verify against the Sentry CSP reports.
 - **NG8107**: `?.` on non-nullable codegen types — drop the `?.` when the field is required by the schema.
 - **Windows LF→CRLF** git warnings on every commit are noise, not errors.

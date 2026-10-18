@@ -7,6 +7,8 @@ import { MessageService } from 'primeng/api';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AuthService as AuthApi } from '../../../api/api/auth.service';
+import { COOKIE_AUTH } from '../../../core/auth/auth-context';
+import { TokenStorage } from '../../../core/auth/token.storage';
 import { ChangePasswordComponent } from './change-password.component';
 
 interface ProtectedFields {
@@ -79,12 +81,11 @@ describe('ChangePasswordComponent', () => {
     expect(access(component).fieldError('new_password_confirm')).not.toBeNull();
   });
 
-  it('calls the API, stores the new token pair and navigates to /profile on success', () => {
-    localStorage.setItem('tm_access_token', 'a-old');
-    localStorage.setItem('tm_refresh_token', 'r-old');
-    authApiMock.authPasswordChangeCreate.mockReturnValue(
-      of({ detail: 'ok', access: 'a-new', refresh: 'r-new' }),
-    );
+  it('calls the API in cookie mode, keeps the new access token and navigates to /profile', () => {
+    const tokenStorage = TestBed.inject(TokenStorage);
+    tokenStorage.setAccess('a-old');
+    // Cookie mode: the new refresh token is in the HttpOnly cookie, not the body.
+    authApiMock.authPasswordChangeCreate.mockReturnValue(of({ detail: 'ok', access: 'a-new' }));
     const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
     access(component).form.patchValue({
       current_password: 'old',
@@ -94,20 +95,22 @@ describe('ChangePasswordComponent', () => {
 
     access(component).submit();
 
-    expect(authApiMock.authPasswordChangeCreate).toHaveBeenCalledWith({
+    const [params, , , options] = authApiMock.authPasswordChangeCreate.mock.calls[0];
+    expect(params).toEqual({
       passwordChangeRequest: {
         current_password: 'old',
         new_password: 'newpass1',
       },
     });
+    expect(options.context.get(COOKIE_AUTH)).toBe(true);
     expect(messageService.add).toHaveBeenCalledWith(
       expect.objectContaining({ severity: 'success' }),
     );
     expect(navigate).toHaveBeenCalledWith(['/profile']);
-    // The backend revoked every previous refresh token: the session must carry
-    // on with the pair it returned.
-    expect(localStorage.getItem('tm_access_token')).toBe('a-new');
-    expect(localStorage.getItem('tm_refresh_token')).toBe('r-new');
+    // The backend revoked every previous refresh token and re-set the cookie:
+    // the session carries on with the access token it returned.
+    expect(tokenStorage.getAccess()).toBe('a-new');
+    expect(Object.keys(localStorage).join(',')).not.toMatch(/token/);
   });
 
   it('maps current_password_invalid to a field error', () => {

@@ -48,7 +48,7 @@ it does not break existing call sites by argument-order shift.
 - Providers in `src/app/app.config.ts`; routes in `src/app/app.routes.ts`. Standalone components only.
 - Three layout shells: `PublicLayout` (marketing/auth), `MainLayout` (`authGuard`), `AdminLayout` (`superuserGuard`, taxonomy CRUD — the admin entry is superuser-gated, not plain staff).
 - Per-feature folders under `src/app/features/{feature}/` with the `{feature}-list/-form/-detail` trio.
-- Auth: `AuthService` holds the current `Me` signal; JWT pair in `TokenStorage`; `authInterceptor` attaches the bearer + refreshes on 401.
+- Auth: `AuthService` holds the current `Me` signal; the refresh token lives in an HttpOnly cookie set by the API (opt-in `X-Auth-Mode: cookie` on the auth calls), the access token in memory (`TokenStorage`); `authInterceptor` attaches the bearer + refreshes on 401.
 - i18n: Transloco catalogs in `public/i18n/*.json`; `LanguageService` is the source of truth. New keys go to **all 5 languages**.
 - Generated client (`src/app/api/`): import services/models from there; do not edit by hand.
 

@@ -42,6 +42,7 @@ import { Configuration }                                     from '../configurat
 
 export interface AuthAccountDeleteCreateRequestParams {
     accountDeleteRequest: AccountDeleteRequest;
+    xAuthMode?: 'cookie';
 }
 
 export interface AuthEmailChangeConfirmCreateRequestParams {
@@ -50,6 +51,7 @@ export interface AuthEmailChangeConfirmCreateRequestParams {
 
 export interface AuthEmailConfirmCreateRequestParams {
     emailConfirmRequest: EmailConfirmRequest;
+    xAuthMode?: 'cookie';
 }
 
 export interface AuthEmailResendCreateRequestParams {
@@ -57,11 +59,13 @@ export interface AuthEmailResendCreateRequestParams {
 }
 
 export interface AuthLogoutCreateRequestParams {
-    logoutRequest: LogoutRequest;
+    xAuthMode?: 'cookie';
+    logoutRequest?: LogoutRequest;
 }
 
 export interface AuthMagicLinkExchangeCreateRequestParams {
     magicLinkExchangeRequestRequest: MagicLinkExchangeRequestRequest;
+    xAuthMode?: 'cookie';
 }
 
 export interface AuthMagicLinkRequestCreateRequestParams {
@@ -70,10 +74,12 @@ export interface AuthMagicLinkRequestCreateRequestParams {
 
 export interface AuthPasswordChangeCreateRequestParams {
     passwordChangeRequest: PasswordChangeRequest;
+    xAuthMode?: 'cookie';
 }
 
 export interface AuthPasswordResetConfirmCreateRequestParams {
     passwordResetConfirmRequest: PasswordResetConfirmRequest;
+    xAuthMode?: 'cookie';
 }
 
 export interface AuthPasswordResetCreateRequestParams {
@@ -86,10 +92,12 @@ export interface AuthRegisterCreateRequestParams {
 
 export interface AuthTokenCreateRequestParams {
     verifiedTokenObtainPairRequest: VerifiedTokenObtainPairRequest;
+    xAuthMode?: 'cookie';
 }
 
 export interface AuthTokenRefreshCreateRequestParams {
-    tokenRefreshRequest: TokenRefreshRequest;
+    xAuthMode?: 'cookie';
+    tokenRefreshRequest?: TokenRefreshRequest;
 }
 
 
@@ -131,7 +139,7 @@ export interface AuthServiceInterface {
 
     /**
      * 
-     * POST /api/v1/auth/logout/ — revoke a refresh token.  The caller authenticates with their access token and posts the refresh they want revoked. On success (204), that refresh — and any rotation descendants produced by /auth/token/refresh/ — can no longer be used. The access token itself is short-lived and not invalidated here; it naturally expires within ACCESS_TOKEN_LIFETIME.  Ownership is verified before blacklisting: a holder of someone else\&#39;s refresh string cannot use this endpoint to revoke it. We respond with a generic invalid_token to avoid signalling whether the token exists or only doesn\&#39;t belong to the caller.
+     * POST /api/v1/auth/logout/ — revoke a refresh token.  Body mode (mobile app): the caller authenticates with their access token and posts the refresh they want revoked. On success (204), that refresh — and any rotation descendants produced by /auth/token/refresh/ — can no longer be used. The access token itself is short-lived and not invalidated here; it naturally expires within ACCESS_TOKEN_LIFETIME.  Ownership is verified before blacklisting: a holder of someone else\&#39;s refresh string cannot use this endpoint to revoke it. We respond with a generic invalid_token to avoid signalling whether the token exists or only doesn\&#39;t belong to the caller.  Cookie mode (&#x60;&#x60;X-Auth-Mode: cookie&#x60;&#x60;, web SPA): no Bearer needed. The body token, or else the HttpOnly refresh cookie, is blacklisted (with the same ownership check when a Bearer is present), the cookie is always cleared and the answer is always 204 (idempotent).
      * @endpoint post /api/v1/auth/logout/
 * @param requestParameters
      */
@@ -194,8 +202,8 @@ export interface AuthServiceInterface {
     authTokenCreate(requestParameters: AuthTokenCreateRequestParams, extraHttpRequestParams?: any): Observable<TokenObtainPairResponse>;
 
     /**
-     * 
-     * Takes a refresh type JSON web token and returns an access type JSON web token if the refresh token is valid.
+     * Refresh a token
+     * Generates a new access token from a refresh token and rotates the refresh token (the presented one is blacklisted). Body mode: &#x60;{refresh}&#x60; in, &#x60;{access, refresh}&#x60; out. Cookie mode (&#x60;X-Auth-Mode: cookie&#x60;): the body &#x60;refresh&#x60; is optional; when absent the HttpOnly cookie is used (401 &#x60;refresh_cookie_missing&#x60; if there is none); the rotated token is set in the cookie and omitted from the body. A body token sent in cookie mode is the one-time migration path for SPAs that still hold one in storage.
      * @endpoint post /api/v1/auth/token/refresh/
 * @param requestParameters
      */

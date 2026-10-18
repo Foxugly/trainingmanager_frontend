@@ -10,7 +10,7 @@ import { TestBed } from '@angular/core/testing';
 import { Subject, of, throwError } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { environment } from '../../../environments/environment';
-import { SKIP_REFRESH_ON_401 } from './auth-context';
+import { SKIP_REFRESH_ON_401, cookieAuthContext } from './auth-context';
 import { AuthService, NO_REFRESH_TOKEN } from './auth.service';
 import { authInterceptor } from './auth.interceptor';
 import { TokenStorage } from './token.storage';
@@ -127,7 +127,8 @@ describe('authInterceptor', () => {
 
   for (const status of [0, 500, 502, 503]) {
     it(`on 401, when refresh fails with ${status} (network / backend down), keeps the session`, async () => {
-      tokenStorage.setTokens('stale', 'r');
+      tokenStorage.setAccess('stale');
+      tokenStorage.announceSession();
       authMock.refresh.mockReturnValue(
         throwError(() => new HttpErrorResponse({ status, statusText: 'x' })),
       );
@@ -140,12 +141,13 @@ describe('authInterceptor', () => {
       // The refresh error reaches the caller untouched.
       expect((await done).status).toBe(status);
       expect(authMock.clearSession).not.toHaveBeenCalled();
-      expect(tokenStorage.getRefresh()).toBe('r');
+      expect(tokenStorage.hasHint()).toBe(true);
     });
   }
 
   it('on 401, when refresh answers 403, clears the session', async () => {
-    tokenStorage.setTokens('stale', 'r');
+    tokenStorage.setAccess('stale');
+    tokenStorage.announceSession();
     authMock.refresh.mockReturnValue(
       throwError(() => new HttpErrorResponse({ status: 403, statusText: 'Forbidden' })),
     );
@@ -175,7 +177,8 @@ describe('authInterceptor', () => {
   });
 
   it('an error of the replayed request (403 on the resource) does not end the session', async () => {
-    tokenStorage.setTokens('stale', 'r');
+    tokenStorage.setAccess('stale');
+    tokenStorage.announceSession();
     authMock.refresh.mockReturnValue(of({ access: 'fresh', refresh: 'r2' }));
     const done = new Promise<HttpErrorResponse>((resolve) =>
       http.get(apiUrl).subscribe({ error: resolve }),
@@ -187,24 +190,68 @@ describe('authInterceptor', () => {
   });
 
   it('does not refresh on a 401 of a request flagged SKIP_REFRESH_ON_401', async () => {
-    tokenStorage.setTokens('a', 'r');
+    tokenStorage.setAccess('a');
+    tokenStorage.announceSession();
+    const url = `${environment.apiBase}/me/`;
     const done = new Promise<HttpErrorResponse>((resolve) =>
       http
-        .post(
-          `${environment.apiBase}/auth/logout/`,
-          { refresh: 'r' },
-          {
-            context: new HttpContext().set(SKIP_REFRESH_ON_401, true),
-          },
-        )
+        .get(url, { context: new HttpContext().set(SKIP_REFRESH_ON_401, true) })
         .subscribe({ error: resolve }),
     );
-    const req = httpMock.expectOne(`${environment.apiBase}/auth/logout/`);
+    const req = httpMock.expectOne(url);
     expect(req.request.headers.get('Authorization')).toBe('Bearer a');
     req.flush({}, { status: 401, statusText: 'Unauthorized' });
     expect((await done).status).toBe(401);
     expect(authMock.refresh).not.toHaveBeenCalled();
     expect(authMock.clearSession).not.toHaveBeenCalled();
+  });
+
+  it('sends logout without Bearer (the refresh cookie authenticates it)', () => {
+    tokenStorage.setAccess('a');
+    const url = `${environment.apiBase}/auth/logout/`;
+    http.post(url, {}, { context: cookieAuthContext() }).subscribe();
+    const req = httpMock.expectOne(url);
+    expect(req.request.headers.has('Authorization')).toBe(false);
+    req.flush(null, { status: 204, statusText: 'No Content' });
+  });
+
+  describe('cookie mode', () => {
+    it('adds X-Auth-Mode: cookie + withCredentials on a flagged auth call', () => {
+      http.post(refreshUrl, {}, { context: cookieAuthContext() }).subscribe();
+      const req = httpMock.expectOne(refreshUrl);
+      expect(req.request.headers.get('X-Auth-Mode')).toBe('cookie');
+      expect(req.request.withCredentials).toBe(true);
+      expect(req.request.headers.has('Authorization')).toBe(false);
+      req.flush({ access: 'a' });
+    });
+
+    it('keeps the Bearer on a flagged authenticated call (password change)', () => {
+      tokenStorage.setAccess('a');
+      const url = `${environment.apiBase}/auth/password/change/`;
+      http.post(url, {}, { context: cookieAuthContext() }).subscribe();
+      const req = httpMock.expectOne(url);
+      expect(req.request.headers.get('Authorization')).toBe('Bearer a');
+      expect(req.request.headers.get('X-Auth-Mode')).toBe('cookie');
+      expect(req.request.withCredentials).toBe(true);
+      req.flush({});
+    });
+
+    it('never sends credentials on ordinary API calls', () => {
+      tokenStorage.setAccess('a');
+      http.get(apiUrl).subscribe();
+      const req = httpMock.expectOne(apiUrl);
+      expect(req.request.headers.has('X-Auth-Mode')).toBe(false);
+      expect(req.request.withCredentials).toBe(false);
+      req.flush({});
+    });
+
+    it('never opts in for a request outside the API', () => {
+      http.get(externalUrl, { context: cookieAuthContext() }).subscribe();
+      const req = httpMock.expectOne(externalUrl);
+      expect(req.request.headers.has('X-Auth-Mode')).toBe(false);
+      expect(req.request.withCredentials).toBe(false);
+      req.flush({});
+    });
   });
 
   it('does not trigger refresh on a 401 from /auth/token/refresh/ itself', () => {

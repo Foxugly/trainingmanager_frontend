@@ -32,6 +32,7 @@ import { LanguageEnum } from '../../api/model/language-enum';
 import { Me } from '../../api/model/me';
 import { EmailChangeRequestRequest } from '../../api/model/email-change-request-request';
 import { PatchedMeRequest } from '../../api/model/patched-me-request';
+import { cookieAuthContext } from '../../core/auth/auth-context';
 import { AuthService } from '../../core/auth/auth.service';
 import { getRuntimeConfig } from '../../core/runtime-config';
 import { AVAILABLE_LANGUAGES, LanguageCode } from '../../core/i18n/available-languages';
@@ -431,14 +432,18 @@ export class ProfileComponent implements OnInit {
       current_password: this.deleteForm.getRawValue().current_password,
     };
     this.authApi
-      .authAccountDeleteCreate({ accountDeleteRequest: payload })
+      .authAccountDeleteCreate({ accountDeleteRequest: payload }, 'body', false, {
+        // Cookie mode: the backend also clears the HttpOnly refresh cookie.
+        context: cookieAuthContext(),
+      })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.deleteLoading.set(false);
           this.deleteOpen.set(false);
           this.toast.success('profile.account_deleted');
-          this.authService.logout();
+          // The account, its refresh tokens and the cookie are gone: local clear only.
+          this.authService.clearSession();
         },
         error: (err: HttpErrorResponse) => {
           this.deleteLoading.set(false);

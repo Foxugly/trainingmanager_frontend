@@ -12,6 +12,9 @@
 export interface PasswordChangeResponse { 
     detail: string;
     access: string;
-    refresh: string;
+    /**
+     * Fresh refresh token. Omitted when the request sent `X-Auth-Mode: cookie`: the token is then set in the HttpOnly refresh cookie instead.
+     */
+    refresh?: string;
 }
 

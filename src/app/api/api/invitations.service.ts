@@ -324,8 +324,12 @@ export class InvitationsService extends BaseService implements InvitationsServic
         if (completeInvitationRequest === null || completeInvitationRequest === undefined) {
             throw new Error('Required parameter completeInvitationRequest was null or undefined when calling invitationsLookupCreate.');
         }
+        const xAuthMode = requestParameters?.xAuthMode;
 
         let localVarHeaders = this.defaultHeaders;
+        if (xAuthMode !== undefined && xAuthMode !== null) {
+            localVarHeaders = localVarHeaders.set('X-Auth-Mode', String(xAuthMode));
+        }
 
         const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
             'application/json'
