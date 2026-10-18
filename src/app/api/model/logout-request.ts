@@ -13,6 +13,9 @@
  * Body of POST /api/v1/auth/logout/.  The caller\'s access token authenticates the request; the refresh token they want to revoke is passed in the body. The view validates ownership (refresh.user_id == request.user.id) before blacklisting — without that check, a holder of someone else\'s refresh string could blacklist it unilaterally.
  */
 export interface LogoutRequest { 
-    refresh: string;
+    /**
+     * Refresh token to invalidate. Required in body mode; in cookie mode (`X-Auth-Mode: cookie`) the HttpOnly refresh cookie is used when omitted.
+     */
+    refresh?: string;
 }
 

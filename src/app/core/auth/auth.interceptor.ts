@@ -2,7 +2,12 @@ import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { isApiUrl, requestPathname } from '../http/api-url';
-import { SKIP_REFRESH_ON_401 } from './auth-context';
+import {
+  AUTH_MODE_COOKIE,
+  AUTH_MODE_HEADER,
+  COOKIE_AUTH,
+  SKIP_REFRESH_ON_401,
+} from './auth-context';
 import { AuthService, isSessionEndingError } from './auth.service';
 import { TokenStorage } from './token.storage';
 
@@ -19,10 +24,24 @@ const AUTH_PATHS = [
   '/auth/email/change/confirm/',
   '/auth/magic-link/request/',
   '/auth/magic-link/exchange/',
+  // Cookie mode: logout authenticates with the HttpOnly refresh cookie, not a
+  // Bearer (an expired in-memory access token must not turn it into a 401).
+  '/auth/logout/',
 ];
 
-export const authInterceptor: HttpInterceptorFn = (req, next) => {
+export const authInterceptor: HttpInterceptorFn = (originalReq, next) => {
   const tokenStorage = inject(TokenStorage);
+
+  // Cookie mode (auth calls only): opt in to the HttpOnly refresh cookie and
+  // let the browser store / send it on this cross-origin call. Every other API
+  // call stays plain Bearer, without credentials.
+  const req =
+    originalReq.context.get(COOKIE_AUTH) && isApiUrl(originalReq.url)
+      ? originalReq.clone({
+          setHeaders: { [AUTH_MODE_HEADER]: AUTH_MODE_COOKIE },
+          withCredentials: true,
+        })
+      : originalReq;
 
   // Anchor the auth-path match to the request PATHNAME (endsWith) instead of a
   // bare substring, so a query param or resource path containing '/auth/...'
@@ -48,10 +67,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       if (err.status !== 401 || req.context.get(SKIP_REFRESH_ON_401)) {
         return throwError(() => err);
       }
-      // Anonymous visitor (no token at all, e.g. on a public page): a 401 is a
-      // plain error for the caller, not an expired session — no refresh, no
+      // Anonymous visitor (no session at all, e.g. on a public page): a 401 is
+      // a plain error for the caller, not an expired session — no refresh, no
       // redirect to /login.
-      if (!access && !tokenStorage.getRefresh()) {
+      if (!tokenStorage.hasSession()) {
         return throwError(() => err);
       }
       return authService.refresh().pipe(

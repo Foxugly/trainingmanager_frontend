@@ -28,6 +28,7 @@ import { InvitationsService } from '../../../api/api/invitations.service';
 import { CompleteInvitationRequest } from '../../../api/model/complete-invitation-request';
 import { InvitationStatusEnum } from '../../../api/model/invitation-status-enum';
 import { ValidateInvitation } from '../../../api/model/validate-invitation';
+import { cookieAuthContext } from '../../../core/auth/auth-context';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AuthCardComponent } from '../../../shared/components/auth-card/auth-card.component';
 import { authErrorKey } from '../shared/auth-error';
@@ -136,12 +137,15 @@ export class InvitationAcceptComponent implements OnInit {
     };
 
     this.invitationsService
-      .invitationsLookupCreate({ token, completeInvitationRequest: payload })
+      .invitationsLookupCreate({ token, completeInvitationRequest: payload }, 'body', false, {
+        // Cookie mode: the refresh token goes into the HttpOnly cookie.
+        context: cookieAuthContext(),
+      })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
           this.authService
-            .loginWithTokens(res.access, res.refresh)
+            .startSession(res.access)
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe({
               next: () => {
@@ -193,9 +197,7 @@ export class InvitationAcceptComponent implements OnInit {
 
   private applyAcceptError(err: HttpErrorResponse): void {
     const body = err?.error as
-      | { code?: string; detail?: string; fields?: FieldErrors }
-      | null
-      | undefined;
+      { code?: string; detail?: string; fields?: FieldErrors } | null | undefined;
 
     if (body?.code === 'invitation_expired') {
       this.lookupError.set('expired');

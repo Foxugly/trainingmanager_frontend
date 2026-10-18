@@ -14,6 +14,7 @@ import { LanguageEnum } from '../../api/model/language-enum';
 import { Me } from '../../api/model/me';
 import { AuthService } from '../../core/auth/auth.service';
 import { LanguageService } from '../../core/i18n/language.service';
+import { COOKIE_AUTH } from '../../core/auth/auth-context';
 import { ProfileComponent } from './profile.component';
 
 const baseUser: Me = {
@@ -110,6 +111,7 @@ describe('ProfileComponent', () => {
     fetchMe: ReturnType<typeof vi.fn>;
     setCurrentUser: ReturnType<typeof vi.fn>;
     logout: ReturnType<typeof vi.fn>;
+    clearSession: ReturnType<typeof vi.fn>;
   };
   let authApiMock: {
     authAccountDeleteCreate: ReturnType<typeof vi.fn>;
@@ -136,6 +138,7 @@ describe('ProfileComponent', () => {
       fetchMe: vi.fn().mockReturnValue(of(baseUser)),
       setCurrentUser: vi.fn(),
       logout: vi.fn(),
+      clearSession: vi.fn(),
     };
     authApiMock = {
       authAccountDeleteCreate: vi.fn(),
@@ -275,17 +278,20 @@ describe('ProfileComponent', () => {
 
   // --- Delete-account flow ---
 
-  it('submitDelete() calls the API, logs out and toasts on 204', () => {
+  it('submitDelete() calls the API in cookie mode, clears the session and toasts on 204', () => {
     authApiMock.authAccountDeleteCreate.mockReturnValue(of(null));
     access(component).openDeleteDialog();
     access(component).deleteForm.patchValue({ current_password: 'pw' });
 
     access(component).submitDelete();
 
-    expect(authApiMock.authAccountDeleteCreate).toHaveBeenCalledWith({
-      accountDeleteRequest: { current_password: 'pw' },
-    });
-    expect(authMock.logout).toHaveBeenCalled();
+    const [params, , , options] = authApiMock.authAccountDeleteCreate.mock.calls[0];
+    expect(params).toEqual({ accountDeleteRequest: { current_password: 'pw' } });
+    // Cookie mode: the backend also clears the HttpOnly refresh cookie.
+    expect(options.context.get(COOKIE_AUTH)).toBe(true);
+    // Account and tokens are gone: local clear, no logout call.
+    expect(authMock.clearSession).toHaveBeenCalled();
+    expect(authMock.logout).not.toHaveBeenCalled();
     expect(messageService.add).toHaveBeenCalledWith(
       expect.objectContaining({ severity: 'success' }),
     );
@@ -300,7 +306,7 @@ describe('ProfileComponent', () => {
 
     access(component).submitDelete();
 
-    expect(authMock.logout).not.toHaveBeenCalled();
+    expect(authMock.clearSession).not.toHaveBeenCalled();
     expect(access(component).deleteOpen()).toBe(true);
     expect(messageService.add).toHaveBeenCalledWith(
       expect.objectContaining({ severity: 'error', detail: 'You own teams.' }),
@@ -317,7 +323,7 @@ describe('ProfileComponent', () => {
     access(component).submitDelete();
 
     expect(access(component).deleteFieldError('current_password')).not.toBeNull();
-    expect(authMock.logout).not.toHaveBeenCalled();
+    expect(authMock.clearSession).not.toHaveBeenCalled();
   });
 
   // --- Notification preferences matrix ---

@@ -113,8 +113,12 @@ export class AuthService extends BaseService implements AuthServiceInterface {
         if (accountDeleteRequest === null || accountDeleteRequest === undefined) {
             throw new Error('Required parameter accountDeleteRequest was null or undefined when calling authAccountDeleteCreate.');
         }
+        const xAuthMode = requestParameters?.xAuthMode;
 
         let localVarHeaders = this.defaultHeaders;
+        if (xAuthMode !== undefined && xAuthMode !== null) {
+            localVarHeaders = localVarHeaders.set('X-Auth-Mode', String(xAuthMode));
+        }
 
         // authentication (jwtAuth) required
         localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
@@ -253,8 +257,12 @@ export class AuthService extends BaseService implements AuthServiceInterface {
         if (emailConfirmRequest === null || emailConfirmRequest === undefined) {
             throw new Error('Required parameter emailConfirmRequest was null or undefined when calling authEmailConfirmCreate.');
         }
+        const xAuthMode = requestParameters?.xAuthMode;
 
         let localVarHeaders = this.defaultHeaders;
+        if (xAuthMode !== undefined && xAuthMode !== null) {
+            localVarHeaders = localVarHeaders.set('X-Auth-Mode', String(xAuthMode));
+        }
 
         const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
             'application/json'
@@ -376,23 +384,24 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     }
 
     /**
-     * POST /api/v1/auth/logout/ — revoke a refresh token.  The caller authenticates with their access token and posts the refresh they want revoked. On success (204), that refresh — and any rotation descendants produced by /auth/token/refresh/ — can no longer be used. The access token itself is short-lived and not invalidated here; it naturally expires within ACCESS_TOKEN_LIFETIME.  Ownership is verified before blacklisting: a holder of someone else\&#39;s refresh string cannot use this endpoint to revoke it. We respond with a generic invalid_token to avoid signalling whether the token exists or only doesn\&#39;t belong to the caller.
+     * POST /api/v1/auth/logout/ — revoke a refresh token.  Body mode (mobile app): the caller authenticates with their access token and posts the refresh they want revoked. On success (204), that refresh — and any rotation descendants produced by /auth/token/refresh/ — can no longer be used. The access token itself is short-lived and not invalidated here; it naturally expires within ACCESS_TOKEN_LIFETIME.  Ownership is verified before blacklisting: a holder of someone else\&#39;s refresh string cannot use this endpoint to revoke it. We respond with a generic invalid_token to avoid signalling whether the token exists or only doesn\&#39;t belong to the caller.  Cookie mode (&#x60;&#x60;X-Auth-Mode: cookie&#x60;&#x60;, web SPA): no Bearer needed. The body token, or else the HttpOnly refresh cookie, is blacklisted (with the same ownership check when a Bearer is present), the cookie is always cleared and the answer is always 204 (idempotent).
      * @endpoint post /api/v1/auth/logout/
      * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public authLogoutCreate(requestParameters: AuthLogoutCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
-    public authLogoutCreate(requestParameters: AuthLogoutCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
-    public authLogoutCreate(requestParameters: AuthLogoutCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
-    public authLogoutCreate(requestParameters: AuthLogoutCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public authLogoutCreate(requestParameters?: AuthLogoutCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public authLogoutCreate(requestParameters?: AuthLogoutCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public authLogoutCreate(requestParameters?: AuthLogoutCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public authLogoutCreate(requestParameters?: AuthLogoutCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const xAuthMode = requestParameters?.xAuthMode;
         const logoutRequest = requestParameters?.logoutRequest;
-        if (logoutRequest === null || logoutRequest === undefined) {
-            throw new Error('Required parameter logoutRequest was null or undefined when calling authLogoutCreate.');
-        }
 
         let localVarHeaders = this.defaultHeaders;
+        if (xAuthMode !== undefined && xAuthMode !== null) {
+            localVarHeaders = localVarHeaders.set('X-Auth-Mode', String(xAuthMode));
+        }
 
         // authentication (jwtAuth) required
         localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
@@ -462,8 +471,12 @@ export class AuthService extends BaseService implements AuthServiceInterface {
         if (magicLinkExchangeRequestRequest === null || magicLinkExchangeRequestRequest === undefined) {
             throw new Error('Required parameter magicLinkExchangeRequestRequest was null or undefined when calling authMagicLinkExchangeCreate.');
         }
+        const xAuthMode = requestParameters?.xAuthMode;
 
         let localVarHeaders = this.defaultHeaders;
+        if (xAuthMode !== undefined && xAuthMode !== null) {
+            localVarHeaders = localVarHeaders.set('X-Auth-Mode', String(xAuthMode));
+        }
 
         const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
             'application/json'
@@ -600,8 +613,12 @@ export class AuthService extends BaseService implements AuthServiceInterface {
         if (passwordChangeRequest === null || passwordChangeRequest === undefined) {
             throw new Error('Required parameter passwordChangeRequest was null or undefined when calling authPasswordChangeCreate.');
         }
+        const xAuthMode = requestParameters?.xAuthMode;
 
         let localVarHeaders = this.defaultHeaders;
+        if (xAuthMode !== undefined && xAuthMode !== null) {
+            localVarHeaders = localVarHeaders.set('X-Auth-Mode', String(xAuthMode));
+        }
 
         // authentication (jwtAuth) required
         localVarHeaders = this.configuration.addCredentialToHeaders('jwtAuth', 'Authorization', localVarHeaders, 'Bearer ');
@@ -672,8 +689,12 @@ export class AuthService extends BaseService implements AuthServiceInterface {
         if (passwordResetConfirmRequest === null || passwordResetConfirmRequest === undefined) {
             throw new Error('Required parameter passwordResetConfirmRequest was null or undefined when calling authPasswordResetConfirmCreate.');
         }
+        const xAuthMode = requestParameters?.xAuthMode;
 
         let localVarHeaders = this.defaultHeaders;
+        if (xAuthMode !== undefined && xAuthMode !== null) {
+            localVarHeaders = localVarHeaders.set('X-Auth-Mode', String(xAuthMode));
+        }
 
         const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
             'application/json'
@@ -879,8 +900,12 @@ export class AuthService extends BaseService implements AuthServiceInterface {
         if (verifiedTokenObtainPairRequest === null || verifiedTokenObtainPairRequest === undefined) {
             throw new Error('Required parameter verifiedTokenObtainPairRequest was null or undefined when calling authTokenCreate.');
         }
+        const xAuthMode = requestParameters?.xAuthMode;
 
         let localVarHeaders = this.defaultHeaders;
+        if (xAuthMode !== undefined && xAuthMode !== null) {
+            localVarHeaders = localVarHeaders.set('X-Auth-Mode', String(xAuthMode));
+        }
 
         const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
             'application/json'
@@ -933,23 +958,25 @@ export class AuthService extends BaseService implements AuthServiceInterface {
     }
 
     /**
-     * Takes a refresh type JSON web token and returns an access type JSON web token if the refresh token is valid.
+     * Refresh a token
+     * Generates a new access token from a refresh token and rotates the refresh token (the presented one is blacklisted). Body mode: &#x60;{refresh}&#x60; in, &#x60;{access, refresh}&#x60; out. Cookie mode (&#x60;X-Auth-Mode: cookie&#x60;): the body &#x60;refresh&#x60; is optional; when absent the HttpOnly cookie is used (401 &#x60;refresh_cookie_missing&#x60; if there is none); the rotated token is set in the cookie and omitted from the body. A body token sent in cookie mode is the one-time migration path for SPAs that still hold one in storage.
      * @endpoint post /api/v1/auth/token/refresh/
      * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      * @param options additional options
      */
-    public authTokenRefreshCreate(requestParameters: AuthTokenRefreshCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TokenRefresh>;
-    public authTokenRefreshCreate(requestParameters: AuthTokenRefreshCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TokenRefresh>>;
-    public authTokenRefreshCreate(requestParameters: AuthTokenRefreshCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TokenRefresh>>;
-    public authTokenRefreshCreate(requestParameters: AuthTokenRefreshCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public authTokenRefreshCreate(requestParameters?: AuthTokenRefreshCreateRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<TokenRefresh>;
+    public authTokenRefreshCreate(requestParameters?: AuthTokenRefreshCreateRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<TokenRefresh>>;
+    public authTokenRefreshCreate(requestParameters?: AuthTokenRefreshCreateRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<TokenRefresh>>;
+    public authTokenRefreshCreate(requestParameters?: AuthTokenRefreshCreateRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        const xAuthMode = requestParameters?.xAuthMode;
         const tokenRefreshRequest = requestParameters?.tokenRefreshRequest;
-        if (tokenRefreshRequest === null || tokenRefreshRequest === undefined) {
-            throw new Error('Required parameter tokenRefreshRequest was null or undefined when calling authTokenRefreshCreate.');
-        }
 
         let localVarHeaders = this.defaultHeaders;
+        if (xAuthMode !== undefined && xAuthMode !== null) {
+            localVarHeaders = localVarHeaders.set('X-Auth-Mode', String(xAuthMode));
+        }
 
         const localVarHttpHeaderAcceptSelected: string | undefined = options?.httpHeaderAccept ?? this.configuration.selectHeaderAccept([
             'application/json'

@@ -42,6 +42,7 @@ export interface InvitationsListRequestParams {
 export interface InvitationsLookupCreateRequestParams {
     token: string;
     completeInvitationRequest: CompleteInvitationRequest;
+    xAuthMode?: 'cookie';
 }
 
 export interface InvitationsLookupRetrieveRequestParams {

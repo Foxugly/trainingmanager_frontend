@@ -1,38 +1,88 @@
 import { Injectable } from '@angular/core';
 
-export const ACCESS_KEY = 'tm_access_token';
-export const REFRESH_KEY = 'tm_refresh_token';
+/**
+ * Non-secret "a session exists" hint in localStorage. It tells a fresh page
+ * load whether to try the silent restore, and its `storage` events tell the
+ * other tabs "session changed" (new value) or "logged out" (removed). It never
+ * carries a token: the refresh token lives in the backend's HttpOnly cookie
+ * (`tm_refresh`, see auth-cookie.ts) and the access token in memory only.
+ */
+export const SESSION_HINT_KEY = 'tm.session';
+
+/** Pre-cookie storage keys. Read once for the migration, then deleted. */
+export const LEGACY_ACCESS_KEY = 'tm_access_token';
+export const LEGACY_REFRESH_KEY = 'tm_refresh_token';
 
 @Injectable({ providedIn: 'root' })
 export class TokenStorage {
+  // Memory only: a reload re-obtains the access token from the refresh cookie.
+  private access: string | null = null;
+
   getAccess(): string | null {
-    return localStorage.getItem(ACCESS_KEY);
+    return this.access;
   }
 
   setAccess(token: string): void {
-    localStorage.setItem(ACCESS_KEY, token);
+    this.access = token;
   }
 
-  getRefresh(): string | null {
-    return localStorage.getItem(REFRESH_KEY);
+  /**
+   * Whether a refresh is worth attempting: a live in-memory session, the
+   * session hint, or a legacy refresh token still waiting for its migration.
+   */
+  hasSession(): boolean {
+    return this.access !== null || this.hasHint() || this.getLegacyRefresh() !== null;
   }
 
-  setRefresh(token: string): void {
-    localStorage.setItem(REFRESH_KEY, token);
+  hasHint(): boolean {
+    return read(SESSION_HINT_KEY) !== null;
   }
 
-  setTokens(access: string, refresh: string): void {
-    this.setAccess(access);
-    this.setRefresh(refresh);
+  /** New hint value -> a `storage` event in every other tab ("session changed"). */
+  announceSession(): void {
+    write(SESSION_HINT_KEY, String(Date.now()));
   }
 
+  /** Refresh token left in localStorage by the pre-cookie SPA, if any. */
+  getLegacyRefresh(): string | null {
+    return read(LEGACY_REFRESH_KEY);
+  }
+
+  dropLegacy(): void {
+    remove(LEGACY_REFRESH_KEY);
+    remove(LEGACY_ACCESS_KEY);
+  }
+
+  /** Drop the local session; removing the hint tells the other tabs "logged out". */
   clear(): void {
-    // Refresh first: it is the key other tabs read as "logged out" (storage event).
-    localStorage.removeItem(REFRESH_KEY);
-    localStorage.removeItem(ACCESS_KEY);
+    this.access = null;
+    remove(SESSION_HINT_KEY);
+    this.dropLegacy();
   }
+}
 
-  hasRefresh(): boolean {
-    return this.getRefresh() !== null;
+// Storage can throw (privacy mode, blocked site data): the hint is a
+// convenience, the session itself still works for this tab without it.
+function read(key: string): string | null {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function write(key: string, value: string): void {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    /* ignore */
+  }
+}
+
+function remove(key: string): void {
+  try {
+    localStorage.removeItem(key);
+  } catch {
+    /* ignore */
   }
 }

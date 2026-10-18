@@ -16,8 +16,8 @@ import {
   throwError,
   timeout,
 } from 'rxjs';
-import { ACCESS_KEY, REFRESH_KEY, TokenStorage } from './token.storage';
-import { SKIP_REFRESH_ON_401 } from './auth-context';
+import { SESSION_HINT_KEY, TokenStorage } from './token.storage';
+import { SKIP_REFRESH_ON_401, cookieAuthContext } from './auth-context';
 import { AuthService as ApiAuthService } from '../../api/api/auth.service';
 import { MeService } from '../../api/api/me.service';
 import { EmailConfirmRequest } from '../../api/model/email-confirm-request';
@@ -29,10 +29,8 @@ import { Me } from '../../api/model/me';
 import { PasswordChangeRequest } from '../../api/model/password-change-request';
 import { PasswordChangeResponse } from '../../api/model/password-change-response';
 import { PasswordResetConfirmRequest } from '../../api/model/password-reset-confirm-request';
-import { PasswordResetConfirmResponse } from '../../api/model/password-reset-confirm-response';
 import { PasswordResetRequest } from '../../api/model/password-reset-request';
 import { PasswordResetRequestResponse } from '../../api/model/password-reset-request-response';
-import { EmailConfirmResponse } from '../../api/model/email-confirm-response';
 import { EmailResendResponse } from '../../api/model/email-resend-response';
 import { RegisterRequest } from '../../api/model/register-request';
 import { RegisterResponse } from '../../api/model/register-response';
@@ -42,20 +40,21 @@ import { VerifiedTokenObtainPairRequest } from '../../api/model/verified-token-o
 /** Web Locks name serialising the refresh-token rotation across every tab of the origin. */
 export const REFRESH_LOCK_NAME = 'tm.refresh';
 
+/** Error message of a refresh attempted with no session left to restore. */
 export const NO_REFRESH_TOKEN = 'NO_REFRESH_TOKEN';
-
-/** Seconds of margin under which an access token is treated as already expired. */
-const ACCESS_EXPIRY_SKEW_S = 30;
 
 /** Upper bound on the best-effort server logout before the local session is cleared anyway. */
 const LOGOUT_TIMEOUT_MS = 5000;
 
+/** Upper bound on the boot-time restore, so a hung API never blocks the SPA. */
+const RESTORE_TIMEOUT_MS = 10_000;
+
 /**
  * True when a refresh failure means the session is really over: the backend
- * rejected the refresh token (401/403 — expired, blacklisted, user gone) or
- * there is no refresh token left (logged out in another tab). A network error
- * or a 5xx (backend restarting during a deploy) is NOT: the tokens are kept and
- * the next call retries.
+ * rejected the refresh cookie (401/403 — expired, blacklisted, absent, user
+ * gone) or there is no session left (logged out in another tab). A network
+ * error or a 5xx (backend restarting during a deploy) is NOT: the session is
+ * kept and the next call retries.
  */
 export function isSessionEndingError(error: unknown): boolean {
   if (error instanceof Error && !(error instanceof HttpErrorResponse)) {
@@ -65,20 +64,12 @@ export function isSessionEndingError(error: unknown): boolean {
   return status === 401 || status === 403;
 }
 
-/** `exp` (seconds) of a JWT, or null when the payload cannot be decoded. */
-export function jwtExp(token: string): number | null {
-  const payload = token.split('.')[1];
-  if (!payload) {
-    return null;
-  }
-  try {
-    const json = JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
-    return typeof json.exp === 'number' ? json.exp : null;
-  } catch {
-    return null;
-  }
-}
-
+/**
+ * Session lifecycle. The refresh token lives in the backend's HttpOnly cookie
+ * (cookie mode on the auth calls, see auth-context.ts) and the access token in
+ * memory only (TokenStorage). A reload restores the session through
+ * `POST auth/token/refresh/` + `GET me/` (bootstrap).
+ */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly tokenStorage = inject(TokenStorage);
@@ -92,18 +83,15 @@ export class AuthService {
 
   // In-flight refresh shared across concurrent callers. The backend rotates +
   // blacklists the refresh token on every refresh (ROTATE_REFRESH_TOKENS +
-  // BLACKLIST_AFTER_ROTATION), so two parallel 401s each POSTing the same
-  // refresh would let only the first win — the rest present a now-blacklisted
-  // token, 401, and get logged out. Sharing one in-flight refresh prevents it.
-  // Across tabs the same race exists, so the rotation also runs under a Web
-  // Lock (see withRefreshLock / refreshOrAdopt).
+  // BLACKLIST_AFTER_ROTATION), so two parallel refreshes would present the same
+  // cookie and the second would be rejected. Sharing one in-flight refresh
+  // prevents it in this tab; across tabs the rotation runs under a Web Lock.
   private refresh$: Observable<TokenRefresh> | null = null;
 
   constructor() {
-    // Multi-tab: `storage` fires in the OTHER tabs on every localStorage write.
-    // TokenStorage always reads localStorage, so rotated tokens are picked up
-    // as-is; what needs resyncing is the in-memory user (logout / login
-    // elsewhere).
+    // Multi-tab: `storage` fires in the OTHER tabs when the session hint
+    // changes ("session changed") or disappears ("logged out"). It never
+    // carries a token: the other tabs re-restore from the shared cookie.
     if (typeof window !== 'undefined') {
       const onStorage = (event: StorageEvent) => this.onStorageEvent(event);
       window.addEventListener('storage', onStorage);
@@ -111,66 +99,73 @@ export class AuthService {
     }
   }
 
+  /**
+   * Silent restore (app initializer, and when another tab signs in): refresh
+   * through the cookie, then load `/me/`. Runs only when there is a session to
+   * restore (hint, or a legacy token to migrate), so anonymous visitors make no
+   * call. Never errors: a rejected refresh (401/403) ends the session; a
+   * network error or a 5xx keeps the hint so the next load retries.
+   */
   bootstrap(): Observable<boolean> {
-    if (!this.tokenStorage.hasRefresh()) {
+    if (!this.tokenStorage.hasSession()) {
       return of(false);
     }
-    // A still-valid access token needs no refresh: otherwise every new tab
-    // rotates the refresh token on open (and races its siblings).
-    const tokens$: Observable<unknown> = this.hasValidAccess() ? of(null) : this.refresh();
-    return tokens$.pipe(
+    return this.refresh().pipe(
       switchMap(() => this.fetchMe()),
+      timeout(RESTORE_TIMEOUT_MS),
+      tap(() => {
+        if (!this.tokenStorage.hasHint()) {
+          // Migrated from a legacy token: start announcing the session.
+          this.tokenStorage.announceSession();
+        }
+      }),
       map(() => true),
       catchError((err: unknown) => {
-        // Only a rejected refresh token ends the session. A network error or a
-        // 5xx at boot keeps the tokens so the next load can recover.
+        // At boot the user is still null, so a network error / 5xx renders as
+        // signed out until a later retry; a tab already signed in keeps its user.
         if (isSessionEndingError(err)) {
           this.tokenStorage.clear();
+          this._currentUser.set(null);
         }
-        this._currentUser.set(null);
         return of(false);
       }),
     );
   }
 
-  /** Whether the stored access token decodes and is not about to expire. */
-  hasValidAccess(): boolean {
-    const access = this.tokenStorage.getAccess();
-    if (!access) {
-      return false;
-    }
-    const exp = jwtExp(access);
-    return exp !== null && exp - ACCESS_EXPIRY_SKEW_S > Date.now() / 1000;
-  }
-
   login(email: string, password: string, remember = false): Observable<Me> {
+    // `remember` picks the refresh lifetime server-side (30 days instead of 7),
+    // and with it the cookie's Max-Age.
     const payload: VerifiedTokenObtainPairRequest = { email, password, remember };
-    return this.apiAuth.authTokenCreate({ verifiedTokenObtainPairRequest: payload }).pipe(
-      tap((tokens) => this.tokenStorage.setTokens(tokens.access, tokens.refresh)),
-      switchMap(() => this.fetchMe()),
-    );
+    return this.apiAuth
+      .authTokenCreate({ verifiedTokenObtainPairRequest: payload }, 'body', false, {
+        context: cookieAuthContext(),
+      })
+      .pipe(switchMap((tokens) => this.startSession(tokens.access)));
   }
 
-  loginWithTokens(access: string, refresh: string): Observable<Me> {
-    this.tokenStorage.setTokens(access, refresh);
+  /**
+   * Adopt the access token of a cookie-mode sign-in response (login, magic
+   * link, email confirm, password reset, invitation): the refresh token is
+   * already in the HttpOnly cookie. Loads /me/ and tells the other tabs.
+   */
+  startSession(access: string): Observable<Me> {
+    this.tokenStorage.setAccess(access);
+    this.tokenStorage.dropLegacy();
+    this.tokenStorage.announceSession();
     return this.fetchMe();
   }
 
   /**
-   * User-initiated logout: revoke the refresh token server-side first
-   * (POST auth/logout/ blacklists it and its rotation descendants), best-effort
-   * and bounded by a timeout, then clear the local session whatever the
-   * outcome. A 401 on that call must not trigger a refresh (SKIP_REFRESH_ON_401).
+   * User-initiated logout: revoke the refresh cookie server-side first
+   * (POST auth/logout/ blacklists and clears it; no Bearer needed, so an
+   * expired access token cannot turn it into a 401), best-effort and bounded
+   * by a timeout, then clear the local session whatever the outcome.
    */
   logout(): void {
-    const refresh = this.tokenStorage.getRefresh();
-    if (!refresh || !this.tokenStorage.getAccess()) {
-      this.clearSession();
-      return;
-    }
+    const legacy = this.tokenStorage.getLegacyRefresh();
     this.apiAuth
-      .authLogoutCreate({ logoutRequest: { refresh } }, 'body', false, {
-        context: new HttpContext().set(SKIP_REFRESH_ON_401, true),
+      .authLogoutCreate({ logoutRequest: legacy ? { refresh: legacy } : {} }, 'body', false, {
+        context: cookieAuthContext(new HttpContext().set(SKIP_REFRESH_ON_401, true)),
       })
       .pipe(
         timeout(LOGOUT_TIMEOUT_MS),
@@ -180,7 +175,7 @@ export class AuthService {
       .subscribe();
   }
 
-  /** Drop the local session (tokens + user) and go to /login. No server call. */
+  /** Drop the local session (token + hint + user) and go to /login. No server call. */
   clearSession(): void {
     this.tokenStorage.clear();
     this._currentUser.set(null);
@@ -188,24 +183,20 @@ export class AuthService {
   }
 
   /**
-   * Obtain a fresh token pair. Concurrent callers in this tab share one
-   * request; across tabs the rotation is serialised with the Web Locks API
-   * and, once inside the lock, storage is re-read: if another tab already
-   * rotated the refresh token we adopt its pair instead of presenting the
-   * (now blacklisted) one we hold.
+   * Obtain a fresh access token from the refresh cookie. Concurrent callers in
+   * this tab share one request; across tabs the rotation is serialised with the
+   * Web Locks API, so two tabs never present the same cookie. The browser sends
+   * whatever cookie is current when the request leaves, so a tab that waited
+   * for the lock uses the token the other tab just rotated.
    */
   refresh(): Observable<TokenRefresh> {
-    const refreshToken = this.tokenStorage.getRefresh();
-    if (!refreshToken) {
+    if (!this.tokenStorage.hasSession()) {
       return throwError(() => new Error(NO_REFRESH_TOKEN));
     }
-    // De-duplicate concurrent refreshes: several requests can 401 in parallel
-    // (cold start, mid-session expiry) and each would otherwise fire its own
-    // POST with the same — soon blacklisted — refresh token.
     if (this.refresh$) {
       return this.refresh$;
     }
-    this.refresh$ = defer(() => this.withRefreshLock(() => this.refreshOrAdopt(refreshToken))).pipe(
+    this.refresh$ = defer(() => this.withRefreshLock(() => this.postRefresh())).pipe(
       finalize(() => {
         this.refresh$ = null;
       }),
@@ -214,36 +205,40 @@ export class AuthService {
     return this.refresh$;
   }
 
-  private refreshOrAdopt(usedRefresh: string): Observable<TokenRefresh> {
-    const storedRefresh = this.tokenStorage.getRefresh();
-    if (!storedRefresh) {
+  private postRefresh(): Observable<TokenRefresh> {
+    if (!this.tokenStorage.hasSession()) {
       // Logged out in another tab while we waited for the lock.
       return throwError(() => new Error(NO_REFRESH_TOKEN));
     }
-    if (storedRefresh !== usedRefresh) {
-      const access = this.tokenStorage.getAccess();
-      if (access) {
-        // Another tab rotated meanwhile: its pair is already in storage.
-        return of({ access, refresh: storedRefresh });
-      }
-    }
-    return this.postRefresh(storedRefresh);
-  }
-
-  private postRefresh(refresh: string): Observable<TokenRefresh> {
-    return this.apiAuth.authTokenRefreshCreate({ tokenRefreshRequest: { refresh } }).pipe(
-      tap((tokens) => {
-        if (tokens.access) {
-          this.tokenStorage.setAccess(tokens.access);
-        }
-        // Persist the rotated refresh from the response — the one we just
-        // presented has been blacklisted server-side. Written after the access
-        // so a tab reacting to it reads a matching pair.
-        if (tokens.refresh) {
-          this.tokenStorage.setRefresh(tokens.refresh);
-        }
-      }),
-    );
+    // Migration: a token left in localStorage by the pre-cookie SPA is
+    // presented once in the body (cookie mode on, so the rotated token lands in
+    // the cookie), then deleted. Read inside the lock: another tab may already
+    // have migrated it.
+    const legacy = this.tokenStorage.getLegacyRefresh();
+    return this.apiAuth
+      .authTokenRefreshCreate(
+        { tokenRefreshRequest: legacy ? { refresh: legacy } : {} },
+        'body',
+        false,
+        { context: cookieAuthContext() },
+      )
+      .pipe(
+        tap({
+          next: (tokens) => {
+            this.tokenStorage.setAccess(tokens.access);
+            if (legacy) {
+              this.tokenStorage.dropLegacy();
+            }
+          },
+          error: (error: unknown) => {
+            // A rejected legacy token is dead: drop it. A network error / 5xx
+            // keeps it for the next attempt.
+            if (legacy && isSessionEndingError(error)) {
+              this.tokenStorage.dropLegacy();
+            }
+          },
+        }),
+      );
   }
 
   /** Run `task` under the cross-tab refresh lock; plain call when Web Locks is unavailable. */
@@ -257,21 +252,22 @@ export class AuthService {
 
   private onStorageEvent(event: StorageEvent): void {
     // event.key === null <=> localStorage.clear() in another tab.
-    if (event.key !== null && event.key !== REFRESH_KEY && event.key !== ACCESS_KEY) {
+    if (event.key !== null && event.key !== SESSION_HINT_KEY) {
       return;
     }
-    if (!this.tokenStorage.hasRefresh()) {
-      // Logged out elsewhere (storage is already empty): drop our user.
-      if (this._currentUser() !== null) {
-        this._currentUser.set(null);
+    if (!this.tokenStorage.hasHint()) {
+      // Logged out elsewhere (the cookie is gone too): drop our copy.
+      const hadSession = this._currentUser() !== null;
+      this.tokenStorage.clear();
+      this._currentUser.set(null);
+      if (hadSession) {
         this.router.navigate(['/login']);
       }
       return;
     }
-    if (event.key === REFRESH_KEY && this._currentUser() === null) {
-      // Signed in from another tab: pick the session up here too.
-      this.refreshMe();
-    }
+    // Signed in / password changed elsewhere: the shared cookie already holds
+    // the new session; pick it up (access token + user).
+    this.bootstrap().subscribe();
   }
 
   fetchMe(): Observable<Me> {
@@ -299,8 +295,10 @@ export class AuthService {
   confirmEmail(key: string): Observable<Me> {
     const payload: EmailConfirmRequest = { key };
     return this.apiAuth
-      .authEmailConfirmCreate({ emailConfirmRequest: payload })
-      .pipe(switchMap((res) => this.loginWithTokens(res.access, res.refresh)));
+      .authEmailConfirmCreate({ emailConfirmRequest: payload }, 'body', false, {
+        context: cookieAuthContext(),
+      })
+      .pipe(switchMap((res) => this.startSession(res.access)));
   }
 
   resendEmail(email: string): Observable<EmailResendResponse> {
@@ -315,23 +313,30 @@ export class AuthService {
   confirmPasswordReset(key: string, newPassword: string): Observable<Me> {
     const payload: PasswordResetConfirmRequest = { key, new_password: newPassword };
     return this.apiAuth
-      .authPasswordResetConfirmCreate({ passwordResetConfirmRequest: payload })
-      .pipe(switchMap((res) => this.loginWithTokens(res.access, res.refresh)));
+      .authPasswordResetConfirmCreate({ passwordResetConfirmRequest: payload }, 'body', false, {
+        context: cookieAuthContext(),
+      })
+      .pipe(switchMap((res) => this.startSession(res.access)));
   }
 
   /**
    * Change the signed-in user's password. The backend revokes EVERY refresh
-   * token of the user (other devices must sign in again) and returns a fresh
-   * {access, refresh} pair for this session: store it right away, otherwise
-   * the next refresh presents a blacklisted token and the user is logged out.
-   * setTokens writes the access before the refresh, so the other tabs of this
-   * browser (which read the same localStorage, see onStorageEvent) pick up a
-   * matching pair and stay signed in too.
+   * token of the user (other devices must sign in again) and issues a fresh
+   * pair for this session: in cookie mode the new refresh token replaces the
+   * HttpOnly cookie (shared by every tab of this browser, which re-restore on
+   * the session hint) and only the access token comes back in the body.
    */
   changePassword(payload: PasswordChangeRequest): Observable<PasswordChangeResponse> {
     return this.apiAuth
-      .authPasswordChangeCreate({ passwordChangeRequest: payload })
-      .pipe(tap((res) => this.tokenStorage.setTokens(res.access, res.refresh)));
+      .authPasswordChangeCreate({ passwordChangeRequest: payload }, 'body', false, {
+        context: cookieAuthContext(),
+      })
+      .pipe(
+        tap((res) => {
+          this.tokenStorage.setAccess(res.access);
+          this.tokenStorage.announceSession();
+        }),
+      );
   }
 
   /**
@@ -347,14 +352,16 @@ export class AuthService {
   }
 
   /**
-   * Trade a magic-link token for a JWT pair, then adopt those tokens and load
-   * /me/ via the same helper the password-login path uses — the resulting auth
-   * state is indistinguishable from a regular sign-in.
+   * Trade a magic-link token for a session, then adopt the access token and
+   * load /me/ via the same helper the password-login path uses — the resulting
+   * auth state is indistinguishable from a regular sign-in.
    */
   exchangeMagicLink(token: string): Observable<Me> {
     const payload: MagicLinkExchangeRequestRequest = { token };
     return this.apiAuth
-      .authMagicLinkExchangeCreate({ magicLinkExchangeRequestRequest: payload })
-      .pipe(switchMap((res) => this.loginWithTokens(res.access, res.refresh)));
+      .authMagicLinkExchangeCreate({ magicLinkExchangeRequestRequest: payload }, 'body', false, {
+        context: cookieAuthContext(),
+      })
+      .pipe(switchMap((res) => this.startSession(res.access)));
   }
 }

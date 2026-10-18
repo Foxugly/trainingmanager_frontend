@@ -11,6 +11,7 @@ import { InvitationStatusEnum } from '../../../api/model/invitation-status-enum'
 import { Me } from '../../../api/model/me';
 import { ValidateInvitation } from '../../../api/model/validate-invitation';
 import { AuthService } from '../../../core/auth/auth.service';
+import { COOKIE_AUTH } from '../../../core/auth/auth-context';
 import { InvitationAcceptComponent } from './invitation-accept.component';
 
 const validInvitation: ValidateInvitation = {
@@ -46,7 +47,7 @@ describe('InvitationAcceptComponent', () => {
   };
   let authMock: {
     currentUser: ReturnType<typeof signal<Me | null>>;
-    loginWithTokens: ReturnType<typeof vi.fn>;
+    startSession: ReturnType<typeof vi.fn>;
     logout: ReturnType<typeof vi.fn>;
   };
   let routeToken: string | null;
@@ -72,12 +73,12 @@ describe('InvitationAcceptComponent', () => {
       invitationsLookupRetrieve: lookupRetrieve,
       invitationsLookupCreate: vi
         .fn()
-        .mockReturnValue(of({ detail: 'ok', email: 'u@example.com', access: 'A', refresh: 'R' })),
+        .mockReturnValue(of({ detail: 'ok', email: 'u@example.com', access: 'A' })),
     };
     const userSig = signal<Me | null>(null);
     authMock = {
       currentUser: userSig,
-      loginWithTokens: vi.fn().mockReturnValue(of({ id: 1, email: 'u@example.com' })),
+      startSession: vi.fn().mockReturnValue(of({ id: 1, email: 'u@example.com' })),
       logout: vi.fn(),
     };
 
@@ -155,19 +156,21 @@ describe('InvitationAcceptComponent', () => {
     expect(invitationsMock.invitationsLookupCreate).not.toHaveBeenCalled();
   });
 
-  it('on submit success calls accept then loginWithTokens then navigates to /teams', () => {
+  it('on submit success calls accept (cookie mode) then startSession then navigates to /teams', () => {
     access(component).form.patchValue({
       password: 'StrongPass1!',
       password_confirm: 'StrongPass1!',
     });
     access(component).submit();
-    expect(invitationsMock.invitationsLookupCreate).toHaveBeenCalledWith({
+    const [params, , , options] = invitationsMock.invitationsLookupCreate.mock.calls[0];
+    expect(params).toEqual({
       token: 'tok-abc',
       completeInvitationRequest: {
         password: 'StrongPass1!',
       },
     });
-    expect(authMock.loginWithTokens).toHaveBeenCalledWith('A', 'R');
+    expect(options.context.get(COOKIE_AUTH)).toBe(true);
+    expect(authMock.startSession).toHaveBeenCalledWith('A');
     expect(router.navigate).toHaveBeenCalledWith(['/teams']);
   });
 

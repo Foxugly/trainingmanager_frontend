@@ -9,8 +9,14 @@
  */
 
 
+/**
+ * Body of POST /api/v1/auth/token/refresh/ (request and response).  `refresh` is optional both ways because of the cookie mode.
+ */
 export interface TokenRefresh { 
     readonly access: string;
-    refresh: string;
+    /**
+     * In: the refresh token, required in body mode; in cookie mode (`X-Auth-Mode: cookie`) the HttpOnly refresh cookie is used when omitted. Out: the rotated refresh token (the presented one is blacklisted). Omitted when the request sent `X-Auth-Mode: cookie`: the token is then set in the HttpOnly refresh cookie instead.
+     */
+    refresh?: string;
 }
 
