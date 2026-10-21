@@ -13,7 +13,10 @@
 #   - instance role foxugly-fleet-ec2 granted ssm:GetParametersByPath on BOTH
 #     /tm-frontend/prod and /tm-frontend/prod/*  (no kms: config is public String)
 #
-#   bash /var/www/django_websites/trainingmanager_frontend/deploy/setup-server.sh
+# ⚠️ §3.10: run THIS script from a checkout django cannot write — never from
+#    the django-owned app tree (the script runs with ubuntu's sudo). E.g.:
+#      D=$(mktemp -d) && git clone --depth=1 https://github.com/Foxugly/trainingmanager_frontend.git "$D" \
+#        && bash "$D/deploy/setup-server.sh"
 # Idempotent.
 # =============================================================================
 set -euo pipefail
@@ -43,12 +46,24 @@ fi
 sudo -u "$APP_USER" mkdir -p "$DOC_DIR"   # empty until the first bundle deploy
 
 echo "=== 3/6 Install root-only runtime-fetch script + unit (§3.10) ==="
-sudo install -o root -g root -m 0755 "$APP_DIR/deploy/fetch-frontend-runtime-from-ssm.sh" /usr/local/sbin/tm-frontend-runtime-fetch.sh
-sudo install -o root -g root -m 0644 "$APP_DIR/deploy/systemd/tm-frontend-runtime-fetch.service" /etc/systemd/system/tm-frontend-runtime-fetch.service
+# §3.10 / §3.11: every file root installs is read from ROOT'S OWN bare mirror
+# (/var/lib/fleet-deploy/trainingmanager_frontend.git, root:root 700) fetched from GitHub —
+# never from $APP_DIR or its .git, which django owns and could rewrite before
+# root copies them (django -> root escalation). Same mirror as the CI deploy.
+MIRROR=/var/lib/fleet-deploy/trainingmanager_frontend.git
+sudo install -d -m 700 -o root -g root /var/lib/fleet-deploy
+sudo test -d "$MIRROR" || sudo git init --quiet --bare "$MIRROR"
+sudo git --git-dir="$MIRROR" fetch --quiet --depth=1 "$REPO" main
+SHA=$(sudo git --git-dir="$MIRROR" rev-parse FETCH_HEAD)
+root_install() {  # <mode> <path in repo> <destination>
+    sudo git --git-dir="$MIRROR" show "$SHA:$2" | sudo install -o root -g root -m "$1" /dev/stdin "$3"
+}
+root_install 0755 deploy/fetch-frontend-runtime-from-ssm.sh /usr/local/sbin/tm-frontend-runtime-fetch.sh
+root_install 0644 deploy/systemd/tm-frontend-runtime-fetch.service /etc/systemd/system/tm-frontend-runtime-fetch.service
 sudo systemctl daemon-reload
 
 echo "=== 4/6 nginx vhost (wildcard TLS) ==="
-sudo install -o root -g root -m 0644 "$APP_DIR/deploy/nginx/tm-frontend.conf" /etc/nginx/sites-available/tm-frontend.conf
+root_install 0644 deploy/nginx/tm-frontend.conf /etc/nginx/sites-available/tm-frontend.conf
 sudo ln -sf /etc/nginx/sites-available/tm-frontend.conf /etc/nginx/sites-enabled/tm-frontend.conf
 sudo nginx -t
 sudo systemctl reload nginx
@@ -62,8 +77,9 @@ if ! sudo systemctl start tm-frontend-runtime-fetch; then
 fi
 
 echo "=== 6/6 Normalise perms ==="
-sudo chown -R "$APP_USER:$APP_GROUP" "$APP_DIR"
-sudo chmod -R g-w,o-rwx "$APP_DIR"
+# chown -h: never follow a symlink django may have planted; chmod as django.
+sudo chown -R -h "$APP_USER:$APP_GROUP" "$APP_DIR"
+sudo -u "$APP_USER" chmod -R g-w,o-rwx "$APP_DIR"
 
 echo ""
 echo "=== Setup complete ==="
