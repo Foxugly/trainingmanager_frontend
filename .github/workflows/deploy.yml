@@ -50,6 +50,41 @@ jobs:
       - name: Verify build output
         run: test -f dist/trainingmanager-frontend/browser/index.html
 
+      # Source maps « hidden » (angular.json : pas de commentaire
+      # sourceMappingURL dans les .js). Envoyées à Sentry SEULEMENT si le secret
+      # SENTRY_AUTH_TOKEN existe ; sinon étape sautée proprement. Un échec Sentry
+      # ne bloque pas le déploiement (continue-on-error) : les .map sont de toute
+      # façon retirées à l'étape suivante. Projet surchargeable par la variable
+      # de dépôt SENTRY_PROJECT. Même modèle que PushIT_frontend.
+      - name: Upload source maps to Sentry (optional)
+        continue-on-error: true
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_URL: https://de.sentry.io/
+          SENTRY_ORG: foxugly-srl
+          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT || 'tm-frontend' }}
+          RELEASE: tm-frontend@${{ github.sha }}
+        run: |
+          if [ -z "$SENTRY_AUTH_TOKEN" ]; then
+            echo "::notice::SENTRY_AUTH_TOKEN absent : upload des source maps sauté."
+            exit 0
+          fi
+          DIR=dist/trainingmanager-frontend/browser
+          # Debug IDs dans les .js ET les .map (appariement sans dépendre des URLs).
+          npx --no-install sentry-cli sourcemaps inject "$DIR"
+          npx --no-install sentry-cli releases new "$RELEASE"
+          npx --no-install sentry-cli sourcemaps upload --release "$RELEASE" --url-prefix '~/' "$DIR"
+          npx --no-install sentry-cli releases finalize "$RELEASE"
+
+      # Les .map ne quittent JAMAIS le runner : ni dans le tar S3, ni dans le
+      # docroot (le vhost les refuse aussi, en défense en profondeur).
+      - name: Strip source maps from the bundle
+        run: |
+          find dist/trainingmanager-frontend/browser -name '*.map' -delete
+          if find dist/trainingmanager-frontend/browser -name '*.map' | grep -q .; then
+            echo "::error::source maps still present in the bundle"; exit 1
+          fi
+
       - name: Precompress assets (brotli + gzip)
         run: node scripts/precompress.mjs
 

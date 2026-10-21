@@ -85,7 +85,7 @@ All providers live in `src/app/app.config.ts`; routes in `src/app/app.routes.ts`
 3. Attaches `Authorization: Bearer <access>` on every other API call.
 4. On 401 (and a session exists) → `AuthService.refresh()` then retry. Refresh failure: `clearSession()` only on 401/403 or no session left (`isSessionEndingError`); network/5xx errors propagate and keep the session. Errors of the replayed request never end the session.
 
-Sentry: `ErrorHandler` = `Sentry.createErrorHandler()` + `TraceService` (app.config.ts); `core/sentry-scrub.ts` masks URL tokens (confirm/reset/magic-link/invitation/`s/e`/magic-action routes, their API lookups, encoded `returnUrl`, `uid|token|key|code` params) in `beforeSend`/`beforeSendTransaction`/`beforeBreadcrumb`. Release = `tm-frontend@<sha>` when deploy.yml builds with `--define TM_BUILD_SHA=…` (`core/build-info.ts`), else SSM `SENTRY_RELEASE`.
+Sentry: `ErrorHandler` = `Sentry.createErrorHandler()` + `TraceService` (app.config.ts); `core/sentry-scrub.ts` masks URL tokens (confirm/reset/magic-link/invitation/`s/e`/magic-action routes, their API lookups, encoded `returnUrl`, `uid|token|key|code` params) in `beforeSend`/`beforeSendTransaction`/`beforeBreadcrumb`. Release = `tm-frontend@<sha>` when deploy.yml builds with `--define TM_BUILD_SHA=…` (`core/build-info.ts`), else SSM `SENTRY_RELEASE`. Prod builds emit **hidden** source maps (`angular.json`); `deploy.yml` uploads them to Sentry (`sentry-cli`, project `tm-frontend` or repo var `SENTRY_PROJECT`) only when the `SENTRY_AUTH_TOKEN` secret exists, then deletes every `.map` before packaging (the vhost also 404s `*.map`).
 
 CI: `ci.yml` job **`Unit tests`** (Vitest + prod build) on every PR — required check, alongside `drift` and `e2e`.
 
