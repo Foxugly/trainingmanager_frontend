@@ -24,7 +24,7 @@
     "@jsverse/transloco": "^8.3.0",
     "@primeuix/themes": "^2.0.3",
     "@sentry/angular": "^10.76.2",
-    "chart.js": "^4.5.1",
+    "chart.js": "^4.6.1",
     "primeicons": "^7.0.0",
     "primeng": "^21.1.10",
     "qrcode": "^1.5.4",
@@ -34,17 +34,17 @@
   },
   "devDependencies": {
     "@angular/build": "^21.2.26",
-    "@angular/cli": "^22.2.3",
+    "@angular/cli": "^22.2.4",
     "@angular/compiler-cli": "^21.2.25",
-    "@openapitools/openapi-generator-cli": "^2.41.0",
+    "@openapitools/openapi-generator-cli": "^2.42.0",
     "@playwright/test": "^1.64.1",
-    "@sentry/cli": "3.8.0",
+    "@sentry/cli": "3.8.2",
     "@types/qrcode": "^1.5.6",
     "jsdom": "^28.0.0",
-    "postcss": "^8.5.30",
+    "postcss": "^8.5.31",
     "prettier": "^3.9.10",
     "typescript": "~5.9.2",
-    "vitest": "^4.0.8"
+    "vitest": "^4.1.12"
   },
   "overrides": {
     "vite": "7.3.7"
