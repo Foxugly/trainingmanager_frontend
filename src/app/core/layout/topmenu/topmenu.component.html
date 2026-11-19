@@ -43,7 +43,7 @@
         <i class="pi pi-heart" aria-hidden="true"></i> {{ 'public.nav.support' | transloco }}
       </a>
       @if (isSuperuser()) {
-        <a class="topbar__link" [routerLink]="['/admin']" routerLinkActive="active">
+        <a class="topbar__link" [routerLink]="['/console']" routerLinkActive="active">
           <i class="pi pi-cog" aria-hidden="true"></i> {{ 'public.nav.admin' | transloco }}
         </a>
       }
@@ -128,7 +128,7 @@
             <i class="pi pi-heart" aria-hidden="true"></i> {{ 'public.nav.support' | transloco }}
           </a>
           @if (isSuperuser()) {
-            <a class="topbar__link" [routerLink]="['/admin']" routerLinkActive="active" (click)="closeMobile()">
+            <a class="topbar__link" [routerLink]="['/console']" routerLinkActive="active" (click)="closeMobile()">
               <i class="pi pi-cog" aria-hidden="true"></i> {{ 'public.nav.admin' | transloco }}
             </a>
           }

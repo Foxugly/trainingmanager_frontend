@@ -149,12 +149,12 @@ describe('TopmenuComponent', () => {
     expect(fixture.nativeElement.innerHTML).not.toContain('public.nav.admin');
   });
 
-  it('authenticated mode renders an Admin link to /admin for superusers', async () => {
+  it('authenticated mode renders an Admin link to /console for superusers', async () => {
     await setup({ mode: 'authenticated', user: superuser });
     const html = fixture.nativeElement.innerHTML as string;
     expect(html).toContain('public.nav.admin');
     const adminLink = Array.from(fixture.nativeElement.querySelectorAll('a')).find(
-      (a) => (a as HTMLAnchorElement).getAttribute('href') === '/admin',
+      (a) => (a as HTMLAnchorElement).getAttribute('href') === '/console',
     ) as HTMLAnchorElement | undefined;
     expect(adminLink).toBeTruthy();
   });

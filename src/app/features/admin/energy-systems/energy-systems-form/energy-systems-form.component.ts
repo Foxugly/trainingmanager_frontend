@@ -131,7 +131,7 @@ export class EnergySystemsFormComponent implements OnInit {
   }
 
   protected cancel(): void {
-    this.router.navigate(['/admin/energy-systems']);
+    this.router.navigate(['/console/energy-systems']);
   }
 
   protected submit(): void {
@@ -165,7 +165,7 @@ export class EnergySystemsFormComponent implements OnInit {
       next: () => {
         this.toast.success('admin.energy_systems.actions.saved');
         this.saving.set(false);
-        this.router.navigate(['/admin/energy-systems']);
+        this.router.navigate(['/console/energy-systems']);
       },
       error: (err: HttpErrorResponse) => {
         this.applyServerError(err);

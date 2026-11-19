@@ -144,7 +144,7 @@ describe('EnergySystemsFormComponent', () => {
       name_fr: 'Test',
       name_nl: null,
     });
-    expect(navigate).toHaveBeenCalledWith(['/admin/energy-systems']);
+    expect(navigate).toHaveBeenCalledWith(['/console/energy-systems']);
   });
 
   it('submit() in edit mode calls energySystemsPartialUpdate(id, undefined, payload)', async () => {
@@ -160,7 +160,7 @@ describe('EnergySystemsFormComponent', () => {
     expect(id).toBe(10);
     expect(includeInactive).toBeUndefined();
     expect(patchedEnergySystemAdminRequest).toMatchObject({ name_nl: 'Endurance NL' });
-    expect(navigate).toHaveBeenCalledWith(['/admin/energy-systems']);
+    expect(navigate).toHaveBeenCalledWith(['/console/energy-systems']);
   });
 
   it('maps backend field errors into fieldErrors()', () => {

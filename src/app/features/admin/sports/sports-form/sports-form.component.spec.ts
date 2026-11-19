@@ -145,7 +145,7 @@ describe('SportsFormComponent', () => {
     });
   });
 
-  it('submit() in create mode calls sportsCreate and navigates to /admin/sports', async () => {
+  it('submit() in create mode calls sportsCreate and navigates to /console/sports', async () => {
     const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
     access(component).form.patchValue({ slug: 'tennis', name_fr: 'Tennis' });
 
@@ -154,7 +154,7 @@ describe('SportsFormComponent', () => {
     expect(sportsServiceMock.sportsCreate).toHaveBeenCalledTimes(1);
     const payload = sportsServiceMock.sportsCreate.mock.calls[0][0].sportAdminRequest;
     expect(payload).toMatchObject({ slug: 'tennis', name_fr: 'Tennis', name_nl: null });
-    expect(navigate).toHaveBeenCalledWith(['/admin/sports']);
+    expect(navigate).toHaveBeenCalledWith(['/console/sports']);
   });
 
   it('submit() in edit mode calls sportsPartialUpdate with undefined 2nd arg', async () => {
@@ -170,7 +170,7 @@ describe('SportsFormComponent', () => {
     expect(id).toBe(7);
     expect(includeInactive).toBeUndefined();
     expect(patchedSportAdminRequest).toMatchObject({ name_nl: 'Hardlopen' });
-    expect(navigate).toHaveBeenCalledWith(['/admin/sports']);
+    expect(navigate).toHaveBeenCalledWith(['/console/sports']);
   });
 
   it('includes default_training_type in the create payload', () => {

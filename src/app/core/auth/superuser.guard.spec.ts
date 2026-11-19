@@ -52,10 +52,10 @@ describe('superuserGuard', () => {
   });
 
   it('redirects unauthenticated users to /login with returnUrl', () => {
-    const result = runGuard({ url: '/admin/sports' } as RouterStateSnapshot);
+    const result = runGuard({ url: '/console/sports' } as RouterStateSnapshot);
     expect(result).toBeInstanceOf(UrlTree);
     const expected = router.createUrlTree(['/login'], {
-      queryParams: { returnUrl: '/admin/sports' },
+      queryParams: { returnUrl: '/console/sports' },
     });
     expect(router.serializeUrl(result as UrlTree)).toBe(router.serializeUrl(expected));
   });
@@ -64,7 +64,7 @@ describe('superuserGuard', () => {
     isAuthenticated = true;
     userSignal.set({ ...baseUser, is_staff: true, is_superuser: false });
 
-    const result = runGuard({ url: '/admin/sports' } as RouterStateSnapshot);
+    const result = runGuard({ url: '/console/sports' } as RouterStateSnapshot);
     expect(result).toBeInstanceOf(UrlTree);
     expect(router.serializeUrl(result as UrlTree)).toBe(
       router.serializeUrl(router.createUrlTree(['/'])),
@@ -75,7 +75,7 @@ describe('superuserGuard', () => {
     isAuthenticated = true;
     userSignal.set({ ...baseUser, is_superuser: true });
 
-    const result = runGuard({ url: '/admin/sports' } as RouterStateSnapshot);
+    const result = runGuard({ url: '/console/sports' } as RouterStateSnapshot);
     expect(result).toBe(true);
   });
 });

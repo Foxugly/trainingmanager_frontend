@@ -7,7 +7,7 @@
       [outlined]="true"
       icon="pi pi-arrow-left"
       [label]="'common.back' | transloco"
-      [routerLink]="['/admin/sports']"
+      [routerLink]="['/console/sports']"
     />
     @if (sportId()) {
       <app-status-badge
@@ -36,7 +36,7 @@
         [pTooltip]="'admin.sports.form.manage_modalities' | transloco"
         tooltipPosition="bottom"
         [ariaLabel]="'admin.sports.form.manage_modalities' | transloco"
-        [routerLink]="['/admin/sports', sportId(), 'modalities']"
+        [routerLink]="['/console/sports', sportId(), 'modalities']"
       />
     }
   </app-page-header>
