@@ -146,7 +146,7 @@ export class EnergySegmentsFormComponent implements OnInit {
   }
 
   protected cancel(): void {
-    this.router.navigate(['/admin/energy-segments']);
+    this.router.navigate(['/console/energy-segments']);
   }
 
   protected submit(): void {
@@ -180,7 +180,7 @@ export class EnergySegmentsFormComponent implements OnInit {
       next: () => {
         this.toast.success('admin.energy_segments.actions.saved');
         this.saving.set(false);
-        this.router.navigate(['/admin/energy-segments']);
+        this.router.navigate(['/console/energy-segments']);
       },
       error: (err: HttpErrorResponse) => {
         this.applyServerError(err);

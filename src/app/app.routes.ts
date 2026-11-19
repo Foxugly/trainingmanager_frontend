@@ -150,7 +150,7 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'admin',
+    path: 'console',
     component: MainLayoutComponent,
     canActivate: [authGuard, superuserGuard],
     children: [

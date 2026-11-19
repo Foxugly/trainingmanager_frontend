@@ -173,7 +173,7 @@ describe('EnergySegmentsFormComponent', () => {
       description_fr: 'Pour test',
       description_nl: null,
     });
-    expect(navigate).toHaveBeenCalledWith(['/admin/energy-segments']);
+    expect(navigate).toHaveBeenCalledWith(['/console/energy-segments']);
   });
 
   it('submit() in edit mode calls energySegmentsPartialUpdate(id, undefined, payload)', async () => {
@@ -189,7 +189,7 @@ describe('EnergySegmentsFormComponent', () => {
     expect(id).toBe(3);
     expect(includeInactive).toBeUndefined();
     expect(patchedEnergySegmentAdminRequest).toMatchObject({ description_nl: 'beschrijving' });
-    expect(navigate).toHaveBeenCalledWith(['/admin/energy-segments']);
+    expect(navigate).toHaveBeenCalledWith(['/console/energy-segments']);
   });
 
   it('maps backend field errors into fieldErrors()', () => {

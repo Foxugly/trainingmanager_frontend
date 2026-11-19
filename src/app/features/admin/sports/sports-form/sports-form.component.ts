@@ -170,7 +170,7 @@ export class SportsFormComponent implements OnInit {
   }
 
   protected cancel(): void {
-    this.router.navigate(['/admin/sports']);
+    this.router.navigate(['/console/sports']);
   }
 
   protected submit(): void {
@@ -202,7 +202,7 @@ export class SportsFormComponent implements OnInit {
       next: () => {
         this.toast.success('admin.sports.actions.saved');
         this.saving.set(false);
-        this.router.navigate(['/admin/sports']);
+        this.router.navigate(['/console/sports']);
       },
       error: (err: HttpErrorResponse) => {
         this.applyServerError(err);

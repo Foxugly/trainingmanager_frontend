@@ -27,7 +27,7 @@
     <div class="modalities-hub__grid">
       @for (sport of sports(); track sport.id) {
         <a
-          [routerLink]="['/admin/sports', sport.id, 'modalities']"
+          [routerLink]="['/console/sports', sport.id, 'modalities']"
           class="modalities-hub__card"
         >
           <h2 class="modalities-hub__card-title">{{ sport.name }}</h2>

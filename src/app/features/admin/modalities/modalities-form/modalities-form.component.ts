@@ -119,7 +119,7 @@ export class ModalitiesFormComponent implements OnInit {
     const sportIdParam = this.route.snapshot.paramMap.get('sportId');
     const sportId = sportIdParam ? Number(sportIdParam) : NaN;
     if (!Number.isFinite(sportId)) {
-      this.router.navigate(['/admin/modalities']);
+      this.router.navigate(['/console/modalities']);
       return;
     }
     this.sportId.set(sportId);
@@ -173,7 +173,7 @@ export class ModalitiesFormComponent implements OnInit {
   }
 
   protected cancel(): void {
-    this.router.navigate(['/admin/sports', this.sportId(), 'modalities']);
+    this.router.navigate(['/console/sports', this.sportId(), 'modalities']);
   }
 
   protected submit(): void {
@@ -211,7 +211,7 @@ export class ModalitiesFormComponent implements OnInit {
       next: () => {
         this.toast.success('admin.modalities.actions.saved');
         this.saving.set(false);
-        this.router.navigate(['/admin/sports', sportId, 'modalities']);
+        this.router.navigate(['/console/sports', sportId, 'modalities']);
       },
       error: (err: HttpErrorResponse) => {
         this.applyServerError(err);

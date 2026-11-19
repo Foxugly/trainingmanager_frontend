@@ -37,7 +37,7 @@ All providers live in `src/app/app.config.ts`; routes in `src/app/app.routes.ts`
   `/dashboard`, `/profile`, `/profile/password` (change-password is a **dedicated
   page**, not a dialog), `/messages`, `/events`, `/programs`, `/teams`,
   `/teams/discover`, `/team-join-requests/magic-action/:token`.
-- **AdminLayoutComponent** — nested inside MainLayout under `/admin` with
+- **AdminLayoutComponent** — nested inside MainLayout under `/console` with
   `[authGuard, superuserGuard]` (`core/auth/superuser.guard.ts`); taxonomy CRUD (sports, energy-systems, energy-segments, modalities). The admin entry in the topmenu is gated the same way (`isSuperuser` computed off `Me.is_superuser`) — superuser, **not** plain staff.
 
 ### Per-feature convention

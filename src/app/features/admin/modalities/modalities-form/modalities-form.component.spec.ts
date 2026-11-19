@@ -178,7 +178,7 @@ describe('ModalitiesFormComponent', () => {
     const { sportPk, modalityAdminRequest } = serviceMock.sportsModalitiesCreate.mock.calls[0][0];
     expect(sportPk).toBe(1);
     expect(modalityAdminRequest).toMatchObject({ name_fr: 'Papillon', sport: 1 });
-    expect(navigate).toHaveBeenCalledWith(['/admin/sports', 1, 'modalities']);
+    expect(navigate).toHaveBeenCalledWith(['/console/sports', 1, 'modalities']);
   });
 
   it('submit() in edit mode calls sportsModalitiesPartialUpdate(id, sportPk, undefined, payload)', async () => {
@@ -195,7 +195,7 @@ describe('ModalitiesFormComponent', () => {
     expect(sportPk).toBe(1);
     expect(includeInactive).toBeUndefined();
     expect(patchedModalityAdminRequest).toMatchObject({ name_nl: 'Crawl NL', sport: 1 });
-    expect(navigate).toHaveBeenCalledWith(['/admin/sports', 1, 'modalities']);
+    expect(navigate).toHaveBeenCalledWith(['/console/sports', 1, 'modalities']);
   });
 
   it('maps backend field errors into fieldErrors()', () => {
