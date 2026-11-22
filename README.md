@@ -8,7 +8,7 @@ accent, PrimeNG Aura).
 
 - Angular 21.2 (standalone components, signals, TypeScript 5.9 strict)
 - PrimeNG 21 (Aura preset, dark mode via `.dark-mode` on `<html>`)
-- Tailwind 4 (`@tailwindcss/postcss`)
+- SCSS (BEM + design tokens in `src/styles/`) — Tailwind was removed
 - Transloco 8 — 5 languages (fr default, nl/en/it/es)
 - Vitest 4 (unit tests)
 - openapi-generator-cli (typescript-angular) — the API client in `src/app/api/` is generated, **never hand-edited**
