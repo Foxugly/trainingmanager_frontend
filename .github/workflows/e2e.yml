@@ -58,7 +58,12 @@ jobs:
           cache: pip
 
       - name: Install backend dependencies
-        run: pip install -r backend/requirements.txt -r backend/requirements-dev.txt
+        # The backend's requirements.txt is a hash-pinned lock (trainingmanager_server#65):
+        # pip enforces hashes on a whole install as soon as one line has one, so the
+        # unhashed dev tools must be installed in a second step (same as the backend CI).
+        run: |
+          pip install --require-hashes -r backend/requirements.txt
+          pip install -r backend/requirements-dev.txt
 
       # 4. CI .env for the backend. settings/base.py reads these with NO default
       #    (fail-loud): SECRET_KEY, DEBUG, ALLOWED_HOSTS, FRONTEND_BASE_URL,
