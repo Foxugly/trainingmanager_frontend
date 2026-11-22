@@ -64,6 +64,25 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Restored AFTER `npm ci`, which wipes node_modules. Key = generator version
+      # (openapitools.json); bump both together. Without it every run downloads the
+      # JAR from Maven Central, which rate-limits CI runners (429).
+      - name: Cache OpenAPI generator JAR
+        id: generator-cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: node_modules/@openapitools/openapi-generator-cli/versions
+          key: openapi-generator-7.21.0
+
+      - name: Download generator JAR (cache miss, 3 tries)
+        if: steps.generator-cache.outputs.cache-hit != 'true'
+        run: |
+          for i in 1 2 3; do
+            npx openapi-generator-cli version-manager set 7.21.0 && exit 0
+            echo "download attempt $i failed"; sleep 10
+          done
+          exit 1
+
       - name: Check client is in sync with the backend schema
         run: |
           cp backend/openapi-schema.yaml openapi/Training_Manager_API.yaml
