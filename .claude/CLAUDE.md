@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Common commands
 
 - `npm start` — dev server on http://localhost:4200 (no proxy; calls `environment.apiBase` directly).
-- `npm run build` — production build into `dist/`. Initial-bundle budget set to `1MB` warning / `1.5MB` error in `angular.json` (current size ~930 kB given Angular 21 + PrimeNG 21 + Tailwind 4 + Transloco footprint).
+- `npm run build` — production build into `dist/`. Initial-bundle budget set to `1MB` warning / `1.5MB` error in `angular.json` (Angular 21 + PrimeNG 21 + Transloco footprint; check the build output for the current size).
 - `npm run watch` — incremental dev build.
 - `npm test` — Vitest via `@angular/build:unit-test`. Filter a single spec: `npm test -- --include "src/app/core/auth/auth.service.spec.ts"` (the bare path is interpreted as a project name by `ng test` and fails).
 - `npm run api:gen` — regenerates the typed client in `src/app/api/` from `openapi/Training_Manager_API.yaml` (config in `openapitools.json`).
@@ -16,10 +16,10 @@ Backend runs separately at `http://localhost:8000` (set in `src/environments/env
 
 - Angular 21.2 (TypeScript 5.9 strict)
 - PrimeNG 21 (Aura preset, dark mode via `.dark-mode` on `<html>`)
-- Tailwind 4 (`@tailwindcss/postcss`)
+- SCSS (BEM + design tokens in `src/styles/`) — Tailwind was removed, do not reintroduce utility classes
 - Transloco 8 (5 langs: fr default, nl/en/it/es)
 - Vitest 4
-- openapi-generator-cli 2.31 (typescript-angular generator, `stringEnums=true`)
+- openapi-generator-cli (generator 7.21.0 pinned in `openapitools.json`, typescript-angular, `stringEnums=true`)
 
 ## Architecture
 
@@ -50,7 +50,7 @@ All providers live in `src/app/app.config.ts`; routes in `src/app/app.routes.ts`
 
 ### Shared UI (`src/app/shared/ui/`)
 
-- **TopmenuComponent** (`src/app/core/layout/topmenu/`) — sticky top bar (`position: sticky` on `:host`), `mode = input<'public'|'authenticated'>()`, embeds `app-language-switcher` + `app-user-menu`. Hamburger drawer ≤ 960 px via CSS media query (NOT Tailwind `md:`). Owns `mobileMenuOpen` signal; closes on `NavigationEnd`, click-outside, Escape. `aria-controls` linkage + focus trap + focus restoration in the drawer.
+- **TopmenuComponent** (`src/app/core/layout/topmenu/`) — sticky top bar (`position: sticky` on `:host`), `mode = input<'public'|'authenticated'>()`, embeds `app-language-switcher` + `app-user-menu`. Hamburger drawer ≤ 960 px via CSS media query. Owns `mobileMenuOpen` signal; closes on `NavigationEnd`, click-outside, Escape. `aria-controls` linkage + focus trap + focus restoration in the drawer.
 - **FooterComponent** (`src/app/core/layout/footer/`) — single-line ~35 px footer used only by `PublicLayoutComponent`. Renders `app.title · app.tagline · Version X.Y.Z · author · ©year`.
 - **DetailHeaderComponent** — single-line toolbar header
   `[← back] [icon + eyebrow + title + suffix + badges centered] [icon-only actions]`
@@ -148,7 +148,7 @@ Catalogs in `public/i18n/*.json`. Namespace by `feature.section.key`. New keys A
 
 ### UI
 
-- PrimeNG for forms/dialogs/toasts; Tailwind for layout/spacing/typography.
+- PrimeNG for forms/dialogs/toasts; component SCSS (BEM + tokens from `src/styles/`) for layout/spacing/typography.
 - `MessageService` provided globally; `ConfirmationService` per-component (PrimeNG dialog scope).
 - DetailHeader on every detail page; EmptyState on every list/dashboard empty section (consistency).
 
@@ -191,7 +191,7 @@ Prettier: 100-col, single quotes, Angular parser for `*.html`. 2-space indent (`
 - **Magic-link URL**: `/team-join-requests/magic-action/:token` (frontend route) ≠ `/api/v1/join-magic/:token/` (API endpoint). Don't conflate.
 - **Codegen single-request-parameter**: the client is generated with `useSingleRequestParameter=true`, so every method takes one typed `*RequestParams` object (`eventsList({ dateGte, referProgram })`, `teamsPartialUpdate({ id, patchedTeam })`). Adding a backend query filter just adds an optional field to the params interface — no argument-order shift, no call-site breakage. Field names come from the `*RequestParams` interfaces in `src/app/api/api/*.serviceInterface.ts`.
 - **Accept-Language**: `languageInterceptor` (`src/app/core/i18n/`) attaches `Accept-Language: <activeLang>` on every API call so the backend can localize translatable model fields (modality.name, status.label, etc.).
-- **Hamburger breakpoint = 960 px** (not Tailwind's `md:` 768 px) — convention from QuizOnline-style layout. Use CSS `@media (max-width: 960px)`, not Tailwind utilities, for the topmenu hamburger toggle.
+- **Hamburger breakpoint = 960 px** — convention from QuizOnline-style layout. Use CSS `@media (max-width: 960px)` for the topmenu hamburger toggle.
 - **Dark-mode parity**: PrimeNG dark mode is `.dark-mode` on `<html>`. New surfaces must include `:host-context(.dark-mode) { ... }` overrides — see `footer.component.scss`, `contribute-page.component.scss`, `about-page.component.scss` for the pattern.
 - **`role="menu"` contract**: any element with `role="menu"` MUST support arrow-key navigation (ArrowUp/Down/Home/End) + roving tabindex. See `language-switcher.component.ts` for the reference implementation. Conversely, don't slap `role="menu"`/`role="menuitem"` on a widget that's just a grid of buttons — the team-discussions emoji picker is a plain `role="group"` of Tab-navigable `<button>`s (no menu promise, no arrow-key requirement).
 - **team-discussions data load**: topic loading uses `toObservable(teamId) → switchMap` (cancels the in-flight request on team switch), the preferred pattern over a side-effecting `effect()` for data. Emoji insertion parses the editor HTML with an inert `<template>` and appends the emoji as a text node (no fragile HTML regex).
