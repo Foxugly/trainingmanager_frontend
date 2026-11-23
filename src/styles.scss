@@ -36,6 +36,15 @@ body {
 
 /* You can add global styles to this file, and also import other style files */
 
+/* Optimus UI 2.0 turned `.p-tab` into a flex container (`display: flex`,
+   `align-items: center`, plus the Aura `gap: 0.5rem` that used to be inert).
+   Our tabs already space their icon with `margin-right`, so the label moved
+   8px further right on every tab. Keep the Optimus 1 / PrimeNG 21 block
+   rendering; `p-tab.p-tab` outranks the runtime-injected `.p-tab` rule. */
+p-tab.p-tab {
+  display: block;
+}
+
 /* Full-width utility (fleet: replaces the old Tailwind `w-full` passthrough on
    Optimus UI controls). Applied via `styleClass="u-full"` on p-button / p-password /
    p-inputtext / p-multiselect etc. so the control fills its row. Global on
