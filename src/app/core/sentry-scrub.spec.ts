@@ -1,6 +1,6 @@
 import type { Breadcrumb, Event } from '@sentry/angular';
 import { describe, expect, it } from 'vitest';
-import { FILTERED, scrubBreadcrumb, scrubEvent, scrubUrl } from './sentry-scrub';
+import { FILTERED, scrubBreadcrumb, scrubEvent, scrubSpan, scrubUrl } from './sentry-scrub';
 
 describe('scrubUrl', () => {
   const cases: [string, string][] = [
@@ -89,5 +89,51 @@ describe('scrubEvent / scrubBreadcrumb', () => {
       data: { url: 'https://tm-api.foxugly.com/api/v1/invitations/lookup/secret/' },
     };
     expect(JSON.stringify(scrubBreadcrumb(crumb))).not.toContain('secret');
+  });
+});
+
+describe('scrubSpan', () => {
+  it('scrubs a static span description and its URL attributes', () => {
+    const span = scrubSpan({
+      description: 'GET /auth/magic-link/s3cr3t',
+      data: { 'url.full': 'https://tm.foxugly.com/invitation/abc?token=1', other: 'kept' },
+    });
+    expect(span.description).toBe(`GET /auth/magic-link/${FILTERED}`);
+    expect(span.data).toEqual({
+      'url.full': `https://tm.foxugly.com/invitation/${FILTERED}?token=${FILTERED}`,
+      other: 'kept',
+    });
+  });
+});
+
+describe('span / trace attributes', () => {
+  it('scrubs every URL-bearing attribute, whatever its key (url.path, url.full, ...)', () => {
+    const event = {
+      type: 'transaction',
+      transaction: '/auth/magic-link/:token/',
+      contexts: {
+        trace: {
+          data: {
+            'sentry.op': 'pageload',
+            'url.path': '/auth/magic-link/s3cr3t',
+            'url.full': 'https://tm.foxugly.com/auth/magic-link/s3cr3t',
+          },
+        },
+      },
+      spans: [
+        {
+          description: 'https://tm.foxugly.com/invitation/s3cr3t',
+          data: { 'sentry.op': 'browser.dns', 'url.full': 'https://tm.foxugly.com/invitation/s3cr3t', list: ['/s/e/abc-123', 42] },
+        },
+      ],
+    } as unknown as Event;
+
+    const out = scrubEvent(event);
+
+    expect(JSON.stringify(out)).not.toContain('s3cr3t');
+    expect(JSON.stringify(out)).not.toContain('abc-123');
+    expect(out.contexts?.trace?.data?.['url.path']).toBe(`/auth/magic-link/${FILTERED}`);
+    expect(out.contexts?.trace?.data?.['sentry.op']).toBe('pageload');
+    expect(out.transaction).toBe('/auth/magic-link/:token/');
   });
 });
