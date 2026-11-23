@@ -82,7 +82,7 @@
           {{ 'training_template.no_template_hint' | transloco }}
           <a
             class="gen-dialog__link"
-            [routerLink]="['/teams', program().team?.id, 'edit']"
+            [routerLink]="['/teams', $safeNavigationMigration(program().team?.id), 'edit']"
             (click)="cancel()"
           >
             {{ 'training_template.no_template_link' | transloco }}

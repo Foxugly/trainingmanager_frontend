@@ -7,7 +7,7 @@ import {
   provideAppInitializer,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withInterceptors, withXhr } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { Router, TitleStrategy, provideRouter } from '@angular/router';
 import * as Sentry from '@sentry/angular';
@@ -88,7 +88,7 @@ export const appConfig: ApplicationConfig = {
     provideOptimus({
       theme: { preset: AuraEmerald, options: { darkModeSelector: '.dark-mode' } },
     }),
-    provideHttpClient(withInterceptors([authInterceptor, languageInterceptor])),
+    provideHttpClient(withXhr(), withInterceptors([authInterceptor, languageInterceptor])),
     // Prod: apiBase comes from the runtime config (window.__TM_API_BASE_URL,
     // injected by nginx from SSM → https://tm-api.foxugly.com). Dev: falls back
     // to environment.apiBase (the local backend). See core/runtime-config.ts.

@@ -6,8 +6,8 @@ accent, Optimus UI Aura).
 
 ## Stack
 
-- Angular 21.2 (standalone components, signals, TypeScript 5.9 strict)
-- Optimus UI 1 (`@openng/optimus-ui`, MIT community fork of PrimeNG 21: same components, `p-*` selectors and Aura
+- Angular 22.3 (standalone components, signals, TypeScript 6.0 strict)
+- Optimus UI 2 (`@openng/optimus-ui`, MIT community fork of PrimeNG 21: same components, `p-*` selectors and Aura
   preset, dark mode via `.dark-mode` on `<html>`; `pi pi-*` icons from `@openng/icons`). **PrimeNG ≥ 22 is banned in
   the fleet** (commercial licence) — see foxugly-ops `STANDARD-frontend-layout.md` « Bibliothèque UI ».
 - SCSS (BEM + design tokens in `src/styles/`) — Tailwind was removed

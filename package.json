@@ -14,13 +14,13 @@
   "private": true,
   "packageManager": "npm@10.9.0",
   "dependencies": {
-    "@angular/animations": "^21.2.10",
-    "@angular/common": "^21.2.26",
-    "@angular/compiler": "^21.2.26",
-    "@angular/core": "^21.2.26",
-    "@angular/forms": "^21.2.26",
-    "@angular/platform-browser": "^21.2.26",
-    "@angular/router": "^21.2.26",
+    "@angular/animations": "^22.3.0",
+    "@angular/common": "^22.3.0",
+    "@angular/compiler": "^22.3.0",
+    "@angular/core": "^22.3.0",
+    "@angular/forms": "^22.3.0",
+    "@angular/platform-browser": "^22.3.0",
+    "@angular/router": "^22.3.0",
     "@jsverse/transloco": "^8.3.0",
     "@sentry/angular": "^10.78.0",
     "chart.js": "^4.6.1",
@@ -28,14 +28,14 @@
     "quill": "^2.0.3",
     "rxjs": "~7.8.0",
     "tslib": "^2.9.1",
-    "@openng/optimus-ui": "^1.0.2",
+    "@openng/optimus-ui": "^2.0.2",
     "@openng/icons": "^1.0.0",
-    "@openng/optimus-ui-themes": "^1.0.2"
+    "@openng/optimus-ui-themes": "^2.0.2"
   },
   "devDependencies": {
-    "@angular/build": "^21.2.30",
+    "@angular/build": "^22.3.0",
     "@angular/cli": "^22.3.0",
-    "@angular/compiler-cli": "^21.2.26",
+    "@angular/compiler-cli": "^22.3.0",
     "@openapitools/openapi-generator-cli": "^2.42.2",
     "@playwright/test": "^1.65.1",
     "@sentry/cli": "3.8.2",
@@ -43,11 +43,10 @@
     "jsdom": "^28.0.0",
     "postcss": "^8.5.33",
     "prettier": "^3.10.1",
-    "typescript": "~5.9.2",
+    "typescript": "~6.0.3",
     "vitest": "^4.1.12"
   },
   "overrides": {
-    "vite": "7.3.7",
     "get-uri": "8.0.2"
   }
 }
