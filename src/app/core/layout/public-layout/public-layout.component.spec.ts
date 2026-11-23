@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { Router, provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { MessageService } from '@openng/optimus-ui/api';
 import { Subject } from 'rxjs';
 import { signal } from '@angular/core';
 import { beforeEach, describe, expect, it } from 'vitest';
@@ -27,14 +27,26 @@ describe('PublicLayoutComponent', () => {
         provideNoopAnimations(),
         provideRouter([]),
         MessageService,
-        { provide: AuthService, useValue: { currentUser: signal(null).asReadonly(), logout: () => undefined } },
-        { provide: LanguageService, useValue: { activeLang: signal('fr').asReadonly(), switchLanguage: () => ({ subscribe: () => undefined }) } },
+        {
+          provide: AuthService,
+          useValue: { currentUser: signal(null).asReadonly(), logout: () => undefined },
+        },
+        {
+          provide: LanguageService,
+          useValue: {
+            activeLang: signal('fr').asReadonly(),
+            switchLanguage: () => ({ subscribe: () => undefined }),
+          },
+        },
       ],
     }).compileComponents();
 
     // Patch the real Router's events stream (topmenu inside subscribes to NavigationEnd).
     const router = TestBed.inject(Router);
-    Object.defineProperty(router, 'events', { value: new Subject().asObservable(), configurable: true });
+    Object.defineProperty(router, 'events', {
+      value: new Subject().asObservable(),
+      configurable: true,
+    });
 
     fixture = TestBed.createComponent(PublicLayoutComponent);
     fixture.detectChanges();

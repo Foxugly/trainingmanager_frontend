@@ -20,12 +20,12 @@ import {
   tap,
 } from 'rxjs/operators';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { AutoComplete, AutoCompleteCompleteEvent } from 'primeng/autocomplete';
-import { Button } from 'primeng/button';
-import { Dialog } from 'primeng/dialog';
-import { InputText } from 'primeng/inputtext';
-import { TableModule } from 'primeng/table';
-import { Tooltip } from 'primeng/tooltip';
+import { AutoComplete, AutoCompleteCompleteEvent } from '@openng/optimus-ui/autocomplete';
+import { Button } from '@openng/optimus-ui/button';
+import { Dialog } from '@openng/optimus-ui/dialog';
+import { InputText } from '@openng/optimus-ui/inputtext';
+import { TableModule } from '@openng/optimus-ui/table';
+import { Tooltip } from '@openng/optimus-ui/tooltip';
 import { PlacesService } from '../../../api/api/places.service';
 import { Place } from '../../../api/model/place';
 import { NominatimResult, NominatimService } from '../../../core/geo/nominatim.service';

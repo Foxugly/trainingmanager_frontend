@@ -10,9 +10,9 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { Button } from 'primeng/button';
-import { InputText } from 'primeng/inputtext';
-import { Skeleton } from 'primeng/skeleton';
+import { Button } from '@openng/optimus-ui/button';
+import { InputText } from '@openng/optimus-ui/inputtext';
+import { Skeleton } from '@openng/optimus-ui/skeleton';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { TeamsService } from '../../../api/api/teams.service';
 import { Team } from '../../../api/model/team';
@@ -20,14 +20,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-teams-discover',
-  imports: [
-    RouterLink,
-    Button,
-    InputText,
-    Skeleton,
-    EmptyStateComponent,
-    TranslocoPipe,
-  ],
+  imports: [RouterLink, Button, InputText, Skeleton, EmptyStateComponent, TranslocoPipe],
   templateUrl: './teams-discover.component.html',
   styleUrl: './teams-discover.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -62,8 +55,7 @@ export class TeamsDiscoverComponent implements OnInit {
     const list = this.discoverable();
     if (!q) return list;
     return list.filter(
-      (t) =>
-        t.name.toLowerCase().includes(q) || (t.sport?.name ?? '').toLowerCase().includes(q),
+      (t) => t.name.toLowerCase().includes(q) || (t.sport?.name ?? '').toLowerCase().includes(q),
     );
   });
 

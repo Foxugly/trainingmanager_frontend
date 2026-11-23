@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router, provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { MessageService } from '@openng/optimus-ui/api';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { EnergySystemsService } from '../../../../api/api/energy-systems.service';
@@ -108,7 +108,10 @@ describe('EnergySystemsFormComponent', () => {
     await setup('10');
 
     expect(access(component).esId()).toBe(10);
-    expect(serviceMock.energySystemsRetrieve).toHaveBeenCalledWith({ id: 10, includeInactive: true });
+    expect(serviceMock.energySystemsRetrieve).toHaveBeenCalledWith({
+      id: 10,
+      includeInactive: true,
+    });
     expect(access(component).activeValue()).toBe(true);
     expect(access(component).form.value).toMatchObject({
       name_fr: 'Endurance',
@@ -140,10 +143,12 @@ describe('EnergySystemsFormComponent', () => {
     access(component).submit();
 
     expect(serviceMock.energySystemsCreate).toHaveBeenCalledTimes(1);
-    expect(serviceMock.energySystemsCreate.mock.calls[0][0].energySystemAdminRequest).toMatchObject({
-      name_fr: 'Test',
-      name_nl: null,
-    });
+    expect(serviceMock.energySystemsCreate.mock.calls[0][0].energySystemAdminRequest).toMatchObject(
+      {
+        name_fr: 'Test',
+        name_nl: null,
+      },
+    );
     expect(navigate).toHaveBeenCalledWith(['/console/energy-systems']);
   });
 

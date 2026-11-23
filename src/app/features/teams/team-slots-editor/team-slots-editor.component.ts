@@ -22,12 +22,12 @@ import {
   Validators,
 } from '@angular/forms';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { Button } from 'primeng/button';
-import { DatePicker } from 'primeng/datepicker';
-import { Select } from 'primeng/select';
-import { TableModule } from 'primeng/table';
-import { Tooltip } from 'primeng/tooltip';
+import { ConfirmationService, MessageService } from '@openng/optimus-ui/api';
+import { Button } from '@openng/optimus-ui/button';
+import { DatePicker } from '@openng/optimus-ui/datepicker';
+import { Select } from '@openng/optimus-ui/select';
+import { TableModule } from '@openng/optimus-ui/table';
+import { Tooltip } from '@openng/optimus-ui/tooltip';
 import { TeamsService } from '../../../api/api/teams.service';
 import { Place } from '../../../api/model/place';
 import { TrainingSlot } from '../../../api/model/training-slot';
@@ -179,10 +179,9 @@ export class TeamSlotsEditorComponent {
     return this.fb.group(
       {
         id: this.fb.control<number | null>(slot?.id ?? null),
-        weekday: this.fb.nonNullable.control<WeekdayEnum>(
-          slot?.weekday ?? WeekdayEnum.NUMBER_0,
-          [Validators.required],
-        ),
+        weekday: this.fb.nonNullable.control<WeekdayEnum>(slot?.weekday ?? WeekdayEnum.NUMBER_0, [
+          Validators.required,
+        ]),
         hour_start: this.fb.nonNullable.control<Date | null>(parseTime(slot?.hour_start), [
           Validators.required,
         ]),
@@ -347,9 +346,7 @@ export class TeamSlotsEditorComponent {
   /** Toast a per-slot save error (place_not_in_team / validation / forbidden). */
   private notifySlotError(err: HttpErrorResponse): void {
     const body = err?.error as
-      | { code?: string; place_id?: unknown; sport_id?: unknown }
-      | null
-      | undefined;
+      { code?: string; place_id?: unknown; sport_id?: unknown } | null | undefined;
     let detail: string;
     if (body?.code === 'place_not_in_team' || body?.place_id) {
       detail = this.transloco.translate('training_template.place_not_in_team');

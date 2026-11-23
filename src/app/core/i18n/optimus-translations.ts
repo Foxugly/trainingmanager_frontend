@@ -1,4 +1,4 @@
-import type { Translation } from 'primeng/api';
+import type { Translation } from '@openng/optimus-ui/api';
 import { LanguageCode } from './available-languages';
 
 const fr: Translation = {
@@ -426,7 +426,7 @@ const es: Translation = {
   pm: 'PM',
 };
 
-export const PRIMENG_TRANSLATIONS: Record<LanguageCode, Translation> = {
+export const OPTIMUS_TRANSLATIONS: Record<LanguageCode, Translation> = {
   fr,
   nl,
   en,

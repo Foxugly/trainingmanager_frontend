@@ -1,10 +1,17 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  OnInit,
+  inject,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { Button } from 'primeng/button';
-import { Message } from 'primeng/message';
+import { Button } from '@openng/optimus-ui/button';
+import { Message } from '@openng/optimus-ui/message';
 import { AuthService as AuthApi } from '../../../api/api/auth.service';
 import { AuthService } from '../../../core/auth/auth.service';
 

@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router, provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { MessageService } from '@openng/optimus-ui/api';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { EnergySystemsService } from '../../../../api/api/energy-systems.service';
@@ -175,7 +175,11 @@ describe('SportsFormComponent', () => {
 
   it('includes default_training_type in the create payload', () => {
     vi.spyOn(router, 'navigate').mockResolvedValue(true);
-    access(component).form.patchValue({ slug: 'tennis', name_fr: 'Tennis', default_training_type: 'freeform' });
+    access(component).form.patchValue({
+      slug: 'tennis',
+      name_fr: 'Tennis',
+      default_training_type: 'freeform',
+    });
     access(component).submit();
     expect(sportsServiceMock.sportsCreate).toHaveBeenCalledWith({
       sportAdminRequest: expect.objectContaining({ default_training_type: 'freeform' }),

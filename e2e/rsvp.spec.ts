@@ -22,7 +22,7 @@ test.beforeEach(async ({ page }) => {
  * chosen one becomes aria-pressed="true" + a colored (non-secondary) severity.
  * The control lives inside the events-detail "Availability" tab (p-tab).
  *
- * Selector notes: the events-detail tabs are PrimeNG <p-tab> (rendered as
+ * Selector notes: the events-detail tabs are Optimus UI <p-tab> (rendered as
  * role="tab"); the RSVP tab label is locale-dependent ("Availability"/
  * "Disponibilité"...). The status buttons expose a stable aria-label per the
  * transloco value ("Going"/"Présent"...) so we match on the localized set.

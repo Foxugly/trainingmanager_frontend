@@ -7,8 +7,8 @@ import {
   input,
 } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { Tag } from 'primeng/tag';
-import { TableModule } from 'primeng/table';
+import { Tag } from '@openng/optimus-ui/tag';
+import { TableModule } from '@openng/optimus-ui/table';
 import { TeamsService } from '../../../api/api/teams.service';
 import { RotiDriftEntry } from '../../../api/model/roti-drift-entry';
 import { loadOn } from '../../../shared/data/load-on';

@@ -21,11 +21,11 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { Button } from 'primeng/button';
-import { InputText } from 'primeng/inputtext';
-import { Message } from 'primeng/message';
-import { Password } from 'primeng/password';
-import { Select } from 'primeng/select';
+import { Button } from '@openng/optimus-ui/button';
+import { InputText } from '@openng/optimus-ui/inputtext';
+import { Message } from '@openng/optimus-ui/message';
+import { Password } from '@openng/optimus-ui/password';
+import { Select } from '@openng/optimus-ui/select';
 import { getRuntimeConfig } from '../../../core/runtime-config';
 import { LanguageEnum } from '../../../api/model/language-enum';
 import { RegisterRequest } from '../../../api/model/register-request';
@@ -237,9 +237,7 @@ export class RegisterComponent implements AfterViewInit, OnDestroy {
     }
 
     const body = err?.error as
-      | { code?: string; detail?: string; fields?: FieldErrors }
-      | null
-      | undefined;
+      { code?: string; detail?: string; fields?: FieldErrors } | null | undefined;
 
     if (err.status === 400 && body?.code === 'captcha_failed') {
       this.captchaError.set(true);

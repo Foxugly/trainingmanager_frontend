@@ -13,12 +13,12 @@ import { Subject, catchError, of, switchMap, tap } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { Button, ButtonDirective } from 'primeng/button';
-import { ConfirmDialog } from 'primeng/confirmdialog';
-import { Message } from 'primeng/message';
-import { Skeleton } from 'primeng/skeleton';
-import { Tooltip } from 'primeng/tooltip';
+import { ConfirmationService, MessageService } from '@openng/optimus-ui/api';
+import { Button, ButtonDirective } from '@openng/optimus-ui/button';
+import { ConfirmDialog } from '@openng/optimus-ui/confirmdialog';
+import { Message } from '@openng/optimus-ui/message';
+import { Skeleton } from '@openng/optimus-ui/skeleton';
+import { Tooltip } from '@openng/optimus-ui/tooltip';
 import { EventsService } from '../../../api/api/events.service';
 import { ProgramsService } from '../../../api/api/programs.service';
 import { TeamsService } from '../../../api/api/teams.service';
@@ -450,5 +450,4 @@ export class ProgramsDetailComponent implements OnInit {
       this.currentMonth.set(new Date(m.getFullYear(), m.getMonth(), 1));
     }
   }
-
 }

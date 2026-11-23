@@ -1,9 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { TranslocoService } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { MessageService } from '@openng/optimus-ui/api';
 
 /**
- * Thin wrapper over PrimeNG's MessageService that standardises the project's
+ * Thin wrapper over Optimus UI's MessageService that standardises the project's
  * toast shape: a severity-appropriate translated `summary` (common.success /
  * common.error / common.warning / common.info) + a translated `detail`.
  *

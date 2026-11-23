@@ -15,18 +15,18 @@ import { catchError, switchMap, tap } from 'rxjs/operators';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { ConfirmationService } from 'primeng/api';
-import { Badge } from 'primeng/badge';
-import { Button, ButtonDirective } from 'primeng/button';
-import { ConfirmDialog } from 'primeng/confirmdialog';
-import { Dialog } from 'primeng/dialog';
-import { InputText } from 'primeng/inputtext';
-import { Message } from 'primeng/message';
-import { Select } from 'primeng/select';
-import { Skeleton } from 'primeng/skeleton';
-import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
-import { Textarea } from 'primeng/textarea';
-import { Tooltip } from 'primeng/tooltip';
+import { ConfirmationService } from '@openng/optimus-ui/api';
+import { Badge } from '@openng/optimus-ui/badge';
+import { Button, ButtonDirective } from '@openng/optimus-ui/button';
+import { ConfirmDialog } from '@openng/optimus-ui/confirmdialog';
+import { Dialog } from '@openng/optimus-ui/dialog';
+import { InputText } from '@openng/optimus-ui/inputtext';
+import { Message } from '@openng/optimus-ui/message';
+import { Select } from '@openng/optimus-ui/select';
+import { Skeleton } from '@openng/optimus-ui/skeleton';
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@openng/optimus-ui/tabs';
+import { Textarea } from '@openng/optimus-ui/textarea';
+import { Tooltip } from '@openng/optimus-ui/tooltip';
 import { JoinRequestsService } from '../../../api/api/join-requests.service';
 import { MembersService } from '../../../api/api/members.service';
 import { TeamsService } from '../../../api/api/teams.service';
@@ -722,9 +722,7 @@ export class TeamsDetailComponent implements OnInit {
 
   private applyAddMemberError(err: HttpErrorResponse): void {
     const body = err?.error as
-      | { code?: string; detail?: string; fields?: FieldErrors }
-      | null
-      | undefined;
+      { code?: string; detail?: string; fields?: FieldErrors } | null | undefined;
 
     if (body?.fields && Object.keys(body.fields).length > 0) {
       const userIdErrors = body.fields['user_id'];

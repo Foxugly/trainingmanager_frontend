@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { ToggleSwitch } from 'primeng/toggleswitch';
-import { Tooltip } from 'primeng/tooltip';
+import { ConfirmationService, MessageService } from '@openng/optimus-ui/api';
+import { ToggleSwitch } from '@openng/optimus-ui/toggleswitch';
+import { Tooltip } from '@openng/optimus-ui/tooltip';
 import { Observable } from 'rxjs';
 
 export interface ActiveToggleLabels {

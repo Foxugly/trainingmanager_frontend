@@ -12,9 +12,9 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { Dialog } from 'primeng/dialog';
-import { InputNumber } from 'primeng/inputnumber';
-import { InputText } from 'primeng/inputtext';
+import { Dialog } from '@openng/optimus-ui/dialog';
+import { InputNumber } from '@openng/optimus-ui/inputnumber';
+import { InputText } from '@openng/optimus-ui/inputtext';
 import { RoundsService } from '../../../api/api/rounds.service';
 import { LanguageEnum } from '../../../api/model/language-enum';
 import { Round } from '../../../api/model/round';

@@ -18,12 +18,12 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { Button } from 'primeng/button';
-import { Dialog } from 'primeng/dialog';
-import { InputText } from 'primeng/inputtext';
-import { Select } from 'primeng/select';
-import { Textarea } from 'primeng/textarea';
-import { Tooltip } from 'primeng/tooltip';
+import { Button } from '@openng/optimus-ui/button';
+import { Dialog } from '@openng/optimus-ui/dialog';
+import { InputText } from '@openng/optimus-ui/inputtext';
+import { Select } from '@openng/optimus-ui/select';
+import { Textarea } from '@openng/optimus-ui/textarea';
+import { Tooltip } from '@openng/optimus-ui/tooltip';
 import { ToastService } from '../../../core/notifications/toast.service';
 import { PlacesService } from '../../../api/api/places.service';
 import { Place } from '../../../api/model/place';

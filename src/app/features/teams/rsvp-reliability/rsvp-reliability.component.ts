@@ -7,7 +7,7 @@ import {
   input,
 } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { TableModule } from 'primeng/table';
+import { TableModule } from '@openng/optimus-ui/table';
 import { TeamsService } from '../../../api/api/teams.service';
 import { RsvpReliabilityEntry } from '../../../api/model/rsvp-reliability-entry';
 import { loadOn } from '../../../shared/data/load-on';

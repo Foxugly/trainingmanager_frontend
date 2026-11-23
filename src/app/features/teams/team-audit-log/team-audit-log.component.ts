@@ -11,7 +11,7 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { of } from 'rxjs';
 import { catchError, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { Button } from 'primeng/button';
+import { Button } from '@openng/optimus-ui/button';
 import { AuditLogService } from '../../../api/api/audit-log.service';
 import { ActionEnum } from '../../../api/model/action-enum';
 import { AuditLogEntry } from '../../../api/model/audit-log-entry';
@@ -75,9 +75,7 @@ export class TeamAuditLogComponent {
         }),
         // auditLogList(ordering, page, pageSize, search, team) — newest-first by default.
         switchMap((id) =>
-          this.auditLogService
-            .auditLogList({ page: 1, team: id })
-            .pipe(catchError(() => of(null))),
+          this.auditLogService.auditLogList({ page: 1, team: id }).pipe(catchError(() => of(null))),
         ),
         takeUntilDestroyed(this.destroyRef),
       )

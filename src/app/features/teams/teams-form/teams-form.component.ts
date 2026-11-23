@@ -12,18 +12,18 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from '@openng/optimus-ui/api';
 import { handleInvalidSubmit } from '../../../shared/form-validation';
-import { Button } from 'primeng/button';
-import { Checkbox } from 'primeng/checkbox';
-import { ConfirmDialog } from 'primeng/confirmdialog';
-import { InputText } from 'primeng/inputtext';
-import { Message } from 'primeng/message';
-import { MultiSelect } from 'primeng/multiselect';
-import { Select } from 'primeng/select';
-import { Skeleton } from 'primeng/skeleton';
-import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
-import { ToggleSwitch } from 'primeng/toggleswitch';
+import { Button } from '@openng/optimus-ui/button';
+import { Checkbox } from '@openng/optimus-ui/checkbox';
+import { ConfirmDialog } from '@openng/optimus-ui/confirmdialog';
+import { InputText } from '@openng/optimus-ui/inputtext';
+import { Message } from '@openng/optimus-ui/message';
+import { MultiSelect } from '@openng/optimus-ui/multiselect';
+import { Select } from '@openng/optimus-ui/select';
+import { Skeleton } from '@openng/optimus-ui/skeleton';
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@openng/optimus-ui/tabs';
+import { ToggleSwitch } from '@openng/optimus-ui/toggleswitch';
 import { AttendanceStatusesService } from '../../../api/api/attendance-statuses.service';
 import { LevelsService } from '../../../api/api/levels.service';
 import { EquipmentService } from '../../../api/api/equipment.service';
@@ -258,7 +258,9 @@ export class TeamsFormComponent implements OnInit {
   /** Map of sport id → its training-type override (null = inherit the sport's
    *  default). Seeded from the loaded team's sports[].training_type in edit
    *  mode; written to the team payload as sport_training_types on submit. */
-  protected readonly sportTrainingTypes = signal<Map<number, SportTrainingTypeWriteRequestTrainingTypeEnum | null>>(new Map());
+  protected readonly sportTrainingTypes = signal<
+    Map<number, SportTrainingTypeWriteRequestTrainingTypeEnum | null>
+  >(new Map());
 
   /** Per-sport training-type select options, re-translated on language change.
    *  The first option (inherit) maps to null. */
@@ -271,22 +273,29 @@ export class TeamsFormComponent implements OnInit {
       },
       {
         label: this.transloco.translate('events.training.type_structured'),
-        value: SportTrainingTypeWriteRequestTrainingTypeEnum.Structured as SportTrainingTypeWriteRequestTrainingTypeEnum | null,
+        value:
+          SportTrainingTypeWriteRequestTrainingTypeEnum.Structured as SportTrainingTypeWriteRequestTrainingTypeEnum | null,
       },
       {
         label: this.transloco.translate('events.training.type_freeform'),
-        value: SportTrainingTypeWriteRequestTrainingTypeEnum.Freeform as SportTrainingTypeWriteRequestTrainingTypeEnum | null,
+        value:
+          SportTrainingTypeWriteRequestTrainingTypeEnum.Freeform as SportTrainingTypeWriteRequestTrainingTypeEnum | null,
       },
     ];
   });
 
   /** Current override for a sport (null = inherit), read by the template select. */
-  protected sportTrainingType(sportId: number): SportTrainingTypeWriteRequestTrainingTypeEnum | null {
+  protected sportTrainingType(
+    sportId: number,
+  ): SportTrainingTypeWriteRequestTrainingTypeEnum | null {
     return this.sportTrainingTypes().get(sportId) ?? null;
   }
 
   /** Set (or clear, when value is null) a sport's training-type override. */
-  protected setSportTrainingType(sportId: number, value: SportTrainingTypeWriteRequestTrainingTypeEnum | null): void {
+  protected setSportTrainingType(
+    sportId: number,
+    value: SportTrainingTypeWriteRequestTrainingTypeEnum | null,
+  ): void {
     this.sportTrainingTypes.update((cur) => {
       const next = new Map(cur);
       next.set(sportId, value);
@@ -767,5 +776,4 @@ export class TeamsFormComponent implements OnInit {
     this.form.controls.equipment_ids.setValue(next);
     this.form.controls.equipment_ids.markAsDirty();
   }
-
 }

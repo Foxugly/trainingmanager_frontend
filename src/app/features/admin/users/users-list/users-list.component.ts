@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { Button } from 'primeng/button';
-import { InputText } from 'primeng/inputtext';
-import { Message } from 'primeng/message';
-import { TableModule } from 'primeng/table';
-import { Tag } from 'primeng/tag';
-import { ToggleSwitch } from 'primeng/toggleswitch';
+import { Button } from '@openng/optimus-ui/button';
+import { InputText } from '@openng/optimus-ui/inputtext';
+import { Message } from '@openng/optimus-ui/message';
+import { TableModule } from '@openng/optimus-ui/table';
+import { Tag } from '@openng/optimus-ui/tag';
+import { ToggleSwitch } from '@openng/optimus-ui/toggleswitch';
 import { StaffService } from '../../../../api/api/staff.service';
 import { StaffUser } from '../../../../api/model/staff-user';
 import { ToastService } from '../../../../core/notifications/toast.service';

@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { Router, NavigationEnd, provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { MessageService } from '@openng/optimus-ui/api';
 import { Subject } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Me } from '../../../api/model/me';
@@ -166,7 +166,9 @@ describe('TopmenuComponent', () => {
 
   it('authenticated mode renders the Soutenir CTA as a nav-cta link to /contribute', async () => {
     await setup({ mode: 'authenticated', user: baseUser });
-    const cta = fixture.nativeElement.querySelector('a.topbar__link--support') as HTMLAnchorElement | null;
+    const cta = fixture.nativeElement.querySelector(
+      'a.topbar__link--support',
+    ) as HTMLAnchorElement | null;
     expect(cta).toBeTruthy();
     expect(cta!.getAttribute('href')).toBe('/contribute');
     expect(cta!.innerHTML).toContain('public.nav.support');
@@ -216,7 +218,9 @@ describe('TopmenuComponent', () => {
 
   it('sets aria-controls on the hamburger linking to the drawer id', async () => {
     await setup();
-    const hamburger = fixture.nativeElement.querySelector('button.topbar__toggle') as HTMLButtonElement;
+    const hamburger = fixture.nativeElement.querySelector(
+      'button.topbar__toggle',
+    ) as HTMLButtonElement;
     expect(hamburger).toBeTruthy();
     expect(hamburger.getAttribute('aria-controls')).toBe('topmenu-drawer');
   });
@@ -243,7 +247,9 @@ describe('TopmenuComponent', () => {
 
   it('hamburger aria-expanded reflects mobileMenuOpen()', async () => {
     await setup();
-    const hamburger = fixture.nativeElement.querySelector('button.topbar__toggle') as HTMLButtonElement;
+    const hamburger = fixture.nativeElement.querySelector(
+      'button.topbar__toggle',
+    ) as HTMLButtonElement;
     expect(hamburger.getAttribute('aria-expanded')).toBe('false');
     const c = access(fixture.componentInstance);
     c.toggleMobile();
@@ -267,7 +273,9 @@ describe('TopmenuComponent', () => {
     expect(fixture.nativeElement.querySelector('app-message-bell')).toBeFalsy();
 
     await setup({ mode: 'authenticated', user: baseUser });
-    expect(fixture.nativeElement.querySelector('.topbar__actions--desktop app-message-bell')).toBeTruthy();
+    expect(
+      fixture.nativeElement.querySelector('.topbar__actions--desktop app-message-bell'),
+    ).toBeTruthy();
   });
 
   it('orders the desktop actions cluster: messages, bell, language switcher, user menu', async () => {

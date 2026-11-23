@@ -13,7 +13,7 @@ export interface HasUnsavedChanges {
  * fires on a genuine abandon (Back / Cancel / nav-link with dirty fields).
  *
  * Uses the native confirm() — synchronous and reliable from a guard (a styled
- * PrimeNG dialog can't be hosted outside a component context). Note this does
+ * Optimus UI dialog can't be hosted outside a component context). Note this does
  * NOT cover a browser refresh/close; add a `beforeunload` handler for that if
  * ever needed.
  */

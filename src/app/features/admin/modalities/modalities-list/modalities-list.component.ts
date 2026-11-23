@@ -2,12 +2,12 @@ import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/cor
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { ConfirmationService } from 'primeng/api';
-import { Button } from 'primeng/button';
-import { Checkbox } from 'primeng/checkbox';
-import { ConfirmDialog } from 'primeng/confirmdialog';
-import { Message } from 'primeng/message';
-import { TableModule } from 'primeng/table';
+import { ConfirmationService } from '@openng/optimus-ui/api';
+import { Button } from '@openng/optimus-ui/button';
+import { Checkbox } from '@openng/optimus-ui/checkbox';
+import { ConfirmDialog } from '@openng/optimus-ui/confirmdialog';
+import { Message } from '@openng/optimus-ui/message';
+import { TableModule } from '@openng/optimus-ui/table';
 import { Observable, map } from 'rxjs';
 import { SportsService } from '../../../../api/api/sports.service';
 import { Modality } from '../../../../api/model/modality';

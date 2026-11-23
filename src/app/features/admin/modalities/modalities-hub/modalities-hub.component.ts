@@ -9,9 +9,9 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { Button } from 'primeng/button';
-import { Message } from 'primeng/message';
-import { Skeleton } from 'primeng/skeleton';
+import { Button } from '@openng/optimus-ui/button';
+import { Message } from '@openng/optimus-ui/message';
+import { Skeleton } from '@openng/optimus-ui/skeleton';
 import { SportsService } from '../../../../api/api/sports.service';
 import { Sport } from '../../../../api/model/sport';
 

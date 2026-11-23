@@ -2,12 +2,14 @@
 
 Angular SPA for **TrainingManager**, the sport-training planner. Talks to the
 `trainingmanager_server` DRF API. Mirrors the QuizOnline design system (emerald
-accent, PrimeNG Aura).
+accent, Optimus UI Aura).
 
 ## Stack
 
 - Angular 21.2 (standalone components, signals, TypeScript 5.9 strict)
-- PrimeNG 21 (Aura preset, dark mode via `.dark-mode` on `<html>`)
+- Optimus UI 1 (`@openng/optimus-ui`, MIT community fork of PrimeNG 21: same components, `p-*` selectors and Aura
+  preset, dark mode via `.dark-mode` on `<html>`; `pi pi-*` icons from `@openng/icons`). **PrimeNG ≥ 22 is banned in
+  the fleet** (commercial licence) — see foxugly-ops `STANDARD-frontend-layout.md` « Bibliothèque UI ».
 - SCSS (BEM + design tokens in `src/styles/`) — Tailwind was removed
 - Transloco 8 — 5 languages (fr default, nl/en/it/es)
 - Vitest 4 (unit tests)

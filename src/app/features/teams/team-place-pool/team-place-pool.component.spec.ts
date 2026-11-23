@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { MessageService } from '@openng/optimus-ui/api';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PlacesService } from '../../../api/api/places.service';
@@ -96,7 +96,11 @@ describe('TeamPlacePoolComponent', () => {
     await setup({ sportIds: [1, 2] });
     expect(placesMock.placesList).toHaveBeenCalledTimes(2);
     // Same POOL returned for both sports → merged unique.
-    expect(access(component).places().map((p) => p.id)).toEqual([7, 9]);
+    expect(
+      access(component)
+        .places()
+        .map((p) => p.id),
+    ).toEqual([7, 9]);
   });
 
   it('emits the fetched pool via poolChange', async () => {
@@ -112,7 +116,11 @@ describe('TeamPlacePoolComponent', () => {
 
   it('selectedPlaces is the linked subset of the pool', async () => {
     await setup({ placeIds: [9] });
-    expect(access(component).selectedPlaces().map((p) => p.id)).toEqual([9]);
+    expect(
+      access(component)
+        .selectedPlaces()
+        .map((p) => p.id),
+    ).toEqual([9]);
   });
 
   it('togglePlace emits the new linked set (add then remove)', async () => {
@@ -184,7 +192,11 @@ describe('TeamPlacePoolComponent', () => {
     await setup({ placeIds: [7] });
     access(component).searchPool({ query: 'piscine' });
     // 7 is linked → excluded; only 9 matches and is free.
-    expect(access(component).placePoolSuggestions().map((p) => p.id)).toEqual([9]);
+    expect(
+      access(component)
+        .placePoolSuggestions()
+        .map((p) => p.id),
+    ).toEqual([9]);
   });
 
   it('toasts an error when the pool fails to load', async () => {

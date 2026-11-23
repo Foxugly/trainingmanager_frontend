@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { Toast } from 'primeng/toast';
+import { Toast } from '@openng/optimus-ui/toast';
 import { FooterComponent } from '../footer/footer.component';
 import { TopmenuComponent } from '../topmenu/topmenu.component';
 

@@ -2,7 +2,7 @@ import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoService } from '@jsverse/transloco';
 import { filter } from 'rxjs';
-import { PrimeNG } from 'primeng/config';
+import { Optimus } from '@openng/optimus-ui/config';
 import { Observable, catchError, tap, throwError } from 'rxjs';
 import { LanguageEnum } from '../../api/model/language-enum';
 import { Me } from '../../api/model/me';
@@ -10,14 +10,14 @@ import { PatchedMeRequest } from '../../api/model/patched-me-request';
 import { MeService } from '../../api/api/me.service';
 import { AuthService } from '../auth/auth.service';
 import { LanguageCode } from './available-languages';
-import { PRIMENG_TRANSLATIONS } from './primeng-translations';
+import { OPTIMUS_TRANSLATIONS } from './optimus-translations';
 
 @Injectable({ providedIn: 'root' })
 export class LanguageService {
   private readonly transloco = inject(TranslocoService);
   private readonly meService = inject(MeService);
   private readonly authService = inject(AuthService);
-  private readonly primeNG = inject(PrimeNG);
+  private readonly optimus = inject(Optimus);
 
   private readonly _activeLang = signal<LanguageCode>(
     this.transloco.getActiveLang() as LanguageCode,
@@ -57,9 +57,9 @@ export class LanguageService {
       .pipe(takeUntilDestroyed())
       .subscribe((lang) => (document.documentElement.lang = lang));
 
-    // Initial sync: PrimeNG ships with English-only translations until we call
+    // Initial sync: Optimus UI ships with English-only translations until we call
     // setTranslation. Apply the dictionary that matches Transloco's current lang.
-    this.primeNG.setTranslation(PRIMENG_TRANSLATIONS[this._activeLang()]);
+    this.optimus.setTranslation(OPTIMUS_TRANSLATIONS[this._activeLang()]);
 
     // Keep Transloco in sync with the authenticated user's language preference.
     // Fires on bootstrap (after fetchMe), on login (after fetchMe), and after profile save.
@@ -98,6 +98,6 @@ export class LanguageService {
   applyToTranslocoOnly(code: LanguageCode): void {
     this.transloco.setActiveLang(code);
     this._activeLang.set(code);
-    this.primeNG.setTranslation(PRIMENG_TRANSLATIONS[code]);
+    this.optimus.setTranslation(OPTIMUS_TRANSLATIONS[code]);
   }
 }

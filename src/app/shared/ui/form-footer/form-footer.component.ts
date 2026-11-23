@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { Button } from 'primeng/button';
+import { Button } from '@openng/optimus-ui/button';
 
 /**
  * Shared form footer: Cancel (secondary outlined) + Save (primary, loading).

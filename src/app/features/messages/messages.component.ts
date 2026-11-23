@@ -9,9 +9,9 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { Button } from 'primeng/button';
-import { Skeleton } from 'primeng/skeleton';
-import { Tag } from 'primeng/tag';
+import { Button } from '@openng/optimus-ui/button';
+import { Skeleton } from '@openng/optimus-ui/skeleton';
+import { Tag } from '@openng/optimus-ui/tag';
 import { forkJoin, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.component';
@@ -32,7 +32,15 @@ export interface TopicRow {
 
 @Component({
   selector: 'app-messages',
-  imports: [LocalizedDatePipe, RouterLink, Button, Skeleton, Tag, EmptyStateComponent, TranslocoPipe],
+  imports: [
+    LocalizedDatePipe,
+    RouterLink,
+    Button,
+    Skeleton,
+    Tag,
+    EmptyStateComponent,
+    TranslocoPipe,
+  ],
   templateUrl: './messages.component.html',
   styleUrl: './messages.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

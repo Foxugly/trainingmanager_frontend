@@ -13,9 +13,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { Button } from 'primeng/button';
-import { InputText } from 'primeng/inputtext';
-import { Message } from 'primeng/message';
+import { Button } from '@openng/optimus-ui/button';
+import { InputText } from '@openng/optimus-ui/inputtext';
+import { Message } from '@openng/optimus-ui/message';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ToastService } from '../../../core/notifications/toast.service';
 import { AuthBackLinkComponent } from '../../../shared/components/auth-card/auth-back-link.component';
@@ -65,8 +65,7 @@ export class CheckYourEmailComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const navState = this.router.getCurrentNavigation()?.extras.state as
-      | { email?: string }
-      | undefined;
+      { email?: string } | undefined;
     const fromState = navState?.email ?? (history.state as { email?: string } | null)?.email;
     const fromQuery = this.route.snapshot.queryParamMap.get('email');
     const email = fromState ?? fromQuery ?? null;

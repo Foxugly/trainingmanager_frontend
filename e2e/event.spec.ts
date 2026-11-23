@@ -43,7 +43,7 @@ test('manager can create an event under the seeded program', async ({ page }) =>
 
   // 3. Fill name, then pick a date from the calendar overlay.
   await page.locator('#name').fill(eventName);
-  // Typing into the PrimeNG datepicker does NOT commit to the reactive form
+  // Typing into the Optimus UI datepicker does NOT commit to the reactive form
   // control (the input stays empty, form.invalid stays true and the footer Save
   // button stays disabled). Open the picker and click a day in the month it
   // opens on (the current month) — day 15 always exists and is unambiguous.

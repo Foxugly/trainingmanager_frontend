@@ -1,7 +1,7 @@
 import { DestroyRef, Directive, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { TranslocoService } from '@jsverse/transloco';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService } from '@openng/optimus-ui/api';
 import { Observable, catchError, finalize, of, switchMap, tap } from 'rxjs';
 import { ToastService } from '../../../core/notifications/toast.service';
 import { Paginated, TaxonomyEntity } from './taxonomy-list.base';

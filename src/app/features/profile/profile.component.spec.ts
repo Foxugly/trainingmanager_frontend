@@ -3,7 +3,7 @@ import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from '@openng/optimus-ui/api';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AuthService as AuthApi } from '../../api/api/auth.service';
@@ -396,7 +396,7 @@ describe('ProfileComponent', () => {
     );
   });
 
-  // The rotation now goes through PrimeNG's ConfirmationService (themed dialog),
+  // The rotation now goes through Optimus UI's ConfirmationService (themed dialog),
   // not native window.confirm. Drive accept/reject via the captured confirm options.
   const confirmService = () => fixture.debugElement.injector.get(ConfirmationService);
 

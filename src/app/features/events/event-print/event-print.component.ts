@@ -10,7 +10,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { Button } from 'primeng/button';
+import { Button } from '@openng/optimus-ui/button';
 import QRCode from 'qrcode';
 import { EventsService } from '../../../api/api/events.service';
 import { TeamsService } from '../../../api/api/teams.service';

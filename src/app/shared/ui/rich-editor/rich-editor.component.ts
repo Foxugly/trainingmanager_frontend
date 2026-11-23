@@ -8,10 +8,10 @@ import {
   input,
 } from '@angular/core';
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { Editor } from 'primeng/editor';
+import { Editor } from '@openng/optimus-ui/editor';
 
 /**
- * Thin wrapper around PrimeNG's <p-editor> (Quill).
+ * Thin wrapper around Optimus UI's <p-editor> (Quill).
  *
  * Why this exists: Quill's snow-theme CSS (~24 kB) and Quill itself are heavy.
  * Quill's JS is already code-split by route-level lazy loading, but the CSS used

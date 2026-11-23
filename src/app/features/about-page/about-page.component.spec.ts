@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { LanguageService } from '../../core/i18n/language.service';
 import { AboutPageComponent } from './about-page.component';
 
-// Polyfill ResizeObserver for jsdom — PrimeNG's <p-tablist> uses it on view init.
+// Polyfill ResizeObserver for jsdom — Optimus UI's <p-tablist> uses it on view init.
 class ResizeObserverPolyfill {
   observe() {}
   unobserve() {}

@@ -12,8 +12,8 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
-import { Popover } from 'primeng/popover';
-import { OverlayBadge } from 'primeng/overlaybadge';
+import { Popover } from '@openng/optimus-ui/popover';
+import { OverlayBadge } from '@openng/optimus-ui/overlaybadge';
 import { filter } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
 
@@ -48,13 +48,13 @@ export class BellComponent {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
-  /** FontAwesome/PrimeIcons class for the trigger, e.g. `pi-bell`. */
+  /** FontAwesome/OpenNG Icons class for the trigger, e.g. `pi-bell`. */
   readonly icon = input.required<string>();
   /** Accessible label for the trigger button. */
   readonly label = input.required<string>();
   /** Unread count driving the badge (0 hides it). */
   readonly count = input<number>(0);
-  /** styleClass forwarded to the PrimeNG popover. */
+  /** styleClass forwarded to the Optimus UI popover. */
   readonly panelClass = input<string>('');
 
   readonly poll = output<void>();

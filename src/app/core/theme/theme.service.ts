@@ -9,8 +9,8 @@ const STORAGE_KEY = 'theme';
  *
  * - Persists the choice in `localStorage['theme']` (`'light' | 'dark'`).
  * - Applies the `.dark-mode` class on `<html>` — this matches both the token
- *   overrides in `styles/_tokens.scss` and PrimeNG's
- *   `providePrimeNG({ theme: { options: { darkModeSelector: '.dark-mode' } } })`.
+ *   overrides in `styles/_tokens.scss` and Optimus UI's
+ *   `provideOptimus({ theme: { options: { darkModeSelector: '.dark-mode' } } })`.
  * - Falls back to `prefers-color-scheme` when nothing is stored yet.
  *
  * An inline anti-FOUC script in `index.html` sets `.dark-mode` on `<html>`

@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from '@openng/optimus-ui/api';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TeamsService } from '../../../api/api/teams.service';
@@ -57,7 +57,9 @@ describe('MemberNotesComponent', () => {
   async function setup(canEdit = true, listResult: Note[] = [makeNote()]) {
     TestBed.resetTestingModule();
     teamsMock = {
-      teamsMembersNotesList: vi.fn().mockReturnValue(of({ count: listResult.length, results: listResult })),
+      teamsMembersNotesList: vi
+        .fn()
+        .mockReturnValue(of({ count: listResult.length, results: listResult })),
       teamsMembersNotesCreate: vi.fn(),
       teamsMembersNotesPartialUpdate: vi.fn(),
       teamsMembersNotesDestroy: vi.fn(),
@@ -116,7 +118,10 @@ describe('MemberNotesComponent', () => {
     expect(teamsMock.teamsMembersNotesCreate).toHaveBeenCalledWith({
       memberPk: 3,
       teamPk: 7,
-      noteRequest: expect.objectContaining({ content: '<p>Nouvelle</p>', visible_to_athlete: true }),
+      noteRequest: expect.objectContaining({
+        content: '<p>Nouvelle</p>',
+        visible_to_athlete: true,
+      }),
     });
     expect(access(component).notes()[0].id).toBe(2);
     expect(access(component).notes().length).toBe(2);
@@ -142,7 +147,10 @@ describe('MemberNotesComponent', () => {
       id: existing.id,
       memberPk: 3,
       teamPk: 7,
-      patchedNoteRequest: expect.objectContaining({ content: '<p>MAJ</p>', visible_to_athlete: true }),
+      patchedNoteRequest: expect.objectContaining({
+        content: '<p>MAJ</p>',
+        visible_to_athlete: true,
+      }),
     });
     expect(access(component).notes()[0].visible_to_athlete).toBe(true);
     expect(access(component).editingId()).toBeNull();
@@ -157,14 +165,16 @@ describe('MemberNotesComponent', () => {
 
     access(component).confirmDelete(makeNote());
 
-    expect(teamsMock.teamsMembersNotesDestroy).toHaveBeenCalledWith({ id: 1, memberPk: 3, teamPk: 7 });
+    expect(teamsMock.teamsMembersNotesDestroy).toHaveBeenCalledWith({
+      id: 1,
+      memberPk: 3,
+      teamPk: 7,
+    });
     expect(access(component).notes().length).toBe(0);
   });
 
   it('keeps the list intact when create fails', () => {
-    teamsMock.teamsMembersNotesCreate.mockReturnValue(
-      throwError(() => ({ status: 500 })),
-    );
+    teamsMock.teamsMembersNotesCreate.mockReturnValue(throwError(() => ({ status: 500 })));
     access(component).form.patchValue({ content: '<p>x</p>' });
     access(component).submit();
     expect(access(component).notes().length).toBe(1);

@@ -14,15 +14,15 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { Button, ButtonDirective } from 'primeng/button';
-import { ConfirmDialog } from 'primeng/confirmdialog';
-import { Message } from 'primeng/message';
-import { ProgressSpinner } from 'primeng/progressspinner';
-import { Select } from 'primeng/select';
-import { Skeleton } from 'primeng/skeleton';
-import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'primeng/tabs';
-import { Tooltip } from 'primeng/tooltip';
+import { ConfirmationService, MessageService } from '@openng/optimus-ui/api';
+import { Button, ButtonDirective } from '@openng/optimus-ui/button';
+import { ConfirmDialog } from '@openng/optimus-ui/confirmdialog';
+import { Message } from '@openng/optimus-ui/message';
+import { ProgressSpinner } from '@openng/optimus-ui/progressspinner';
+import { Select } from '@openng/optimus-ui/select';
+import { Skeleton } from '@openng/optimus-ui/skeleton';
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@openng/optimus-ui/tabs';
+import { Tooltip } from '@openng/optimus-ui/tooltip';
 import { catchError, firstValueFrom, of, switchMap } from 'rxjs';
 import { EventsService } from '../../../api/api/events.service';
 import { RoundsService } from '../../../api/api/rounds.service';
@@ -162,7 +162,7 @@ export class EventsDetailComponent implements OnInit {
    *  reactive FormControl (not one-way ngModel) so a rejected confirm can write
    *  the original value straight back into the widget — even when it equals the
    *  control's current value, which a signal `.set()` of the same value would
-   *  not flush to PrimeNG's internal state. */
+   *  not flush to Optimus UI's internal state. */
   protected readonly trainingTypeControl = new FormControl<TrainingTypeEnum>(
     TrainingTypeEnum.Structured,
     { nonNullable: true },
@@ -759,7 +759,7 @@ export class EventsDetailComponent implements OnInit {
   /**
    * Reset the select control back to the loaded event's current type. Writing
    * through the FormControl (with emitEvent:false so we don't re-fire
-   * onTrainingTypeChange) always flushes to PrimeNG's widget state, so the
+   * onTrainingTypeChange) always flushes to Optimus UI's widget state, so the
    * dropdown visually reverts even when the value is unchanged.
    */
   private revertTrainingType(): void {

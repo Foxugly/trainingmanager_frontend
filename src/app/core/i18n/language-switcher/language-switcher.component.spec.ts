@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { MessageService } from '@openng/optimus-ui/api';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AVAILABLE_LANGUAGES } from '../available-languages';
@@ -27,7 +27,10 @@ describe('LanguageSwitcherComponent', () => {
       ],
       providers: [
         provideNoopAnimations(),
-        { provide: LanguageService, useValue: { activeLang: langSig.asReadonly(), switchLanguage: switchSpy } },
+        {
+          provide: LanguageService,
+          useValue: { activeLang: langSig.asReadonly(), switchLanguage: switchSpy },
+        },
         { provide: MessageService, useValue: { add: messageSpy } },
       ],
     });
@@ -69,7 +72,9 @@ describe('LanguageSwitcherComponent', () => {
 
   it('renders the trigger with the uppercase active code', () => {
     const { fixture } = build('nl');
-    const trigger = fixture.nativeElement.querySelector('button[aria-haspopup="menu"]') as HTMLButtonElement;
+    const trigger = fixture.nativeElement.querySelector(
+      'button[aria-haspopup="menu"]',
+    ) as HTMLButtonElement;
     expect(trigger).not.toBeNull();
     expect(trigger.textContent).toContain('NL');
   });
@@ -80,7 +85,9 @@ describe('LanguageSwitcherComponent', () => {
     fixture.detectChanges();
     const items = fixture.nativeElement.querySelectorAll('[role="menuitem"]');
     expect(items.length).toBe(5);
-    const active = fixture.nativeElement.querySelector('[role="menuitem"][aria-current="true"]') as HTMLElement;
+    const active = fixture.nativeElement.querySelector(
+      '[role="menuitem"][aria-current="true"]',
+    ) as HTMLElement;
     expect(active).not.toBeNull();
     expect(active.textContent).toContain('en');
     expect(active.textContent).not.toContain('English');
@@ -158,7 +165,9 @@ describe('LanguageSwitcherComponent', () => {
     expect(component.focusedIndex()).toBe(1);
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
     // Dispatch on host element since the host listener is bound there.
-    fixture.nativeElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    fixture.nativeElement.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }),
+    );
     fixture.detectChanges();
     expect(switchSpy).toHaveBeenCalledWith('nl');
   });
