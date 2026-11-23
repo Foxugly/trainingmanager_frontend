@@ -19,15 +19,15 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { MessageService } from '@openng/optimus-ui/api';
 import { handleInvalidSubmit } from '../../../shared/form-validation';
-import { Button } from 'primeng/button';
-import { ColorPicker } from 'primeng/colorpicker';
-import { DatePicker } from 'primeng/datepicker';
-import { InputNumber } from 'primeng/inputnumber';
-import { InputText } from 'primeng/inputtext';
-import { Select } from 'primeng/select';
-import { Skeleton } from 'primeng/skeleton';
+import { Button } from '@openng/optimus-ui/button';
+import { ColorPicker } from '@openng/optimus-ui/colorpicker';
+import { DatePicker } from '@openng/optimus-ui/datepicker';
+import { InputNumber } from '@openng/optimus-ui/inputnumber';
+import { InputText } from '@openng/optimus-ui/inputtext';
+import { Select } from '@openng/optimus-ui/select';
+import { Skeleton } from '@openng/optimus-ui/skeleton';
 import { EventsService } from '../../../api/api/events.service';
 import { ProgramsService } from '../../../api/api/programs.service';
 import { TeamsService } from '../../../api/api/teams.service';
@@ -305,9 +305,7 @@ export class EventsFormComponent implements OnInit {
 
   private async fetchProgramsForTeams(teamIds: number[]): Promise<void> {
     try {
-      this.availablePrograms.set(
-        await loadProgramsForTeams(this.programsService, teamIds),
-      );
+      this.availablePrograms.set(await loadProgramsForTeams(this.programsService, teamIds));
       // The program list may arrive after the event/param did; (re)resolve the
       // team now that team ids are known so the Place selector can load places.
       this.resolveTeamForProgram(this.form.controls.refer_program_id.value);

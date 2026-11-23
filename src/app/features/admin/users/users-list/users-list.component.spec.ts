@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { MessageService } from '@openng/optimus-ui/api';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { StaffService } from '../../../../api/api/staff.service';
@@ -42,9 +42,7 @@ describe('UsersListComponent', () => {
   beforeEach(async () => {
     staffMock = {
       staffUsersRetrieve: vi.fn().mockReturnValue(of({ results: [user1] })),
-      staffUsersPartialUpdate: vi
-        .fn()
-        .mockReturnValue(of({ ...user1, subscription_bypass: true })),
+      staffUsersPartialUpdate: vi.fn().mockReturnValue(of({ ...user1, subscription_bypass: true })),
     };
     messageMock = { add: vi.fn() };
 

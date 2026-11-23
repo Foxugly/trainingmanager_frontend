@@ -22,14 +22,23 @@ import {
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { ConfirmationService } from 'primeng/api';
-import { Button } from 'primeng/button';
-import { ConfirmDialog } from 'primeng/confirmdialog';
-import { InputNumber } from 'primeng/inputnumber';
-import { InputText } from 'primeng/inputtext';
-import { Select } from 'primeng/select';
-import { Tooltip } from 'primeng/tooltip';
-import { catchError, distinctUntilChanged, filter, firstValueFrom, forkJoin, of, switchMap, tap } from 'rxjs';
+import { ConfirmationService } from '@openng/optimus-ui/api';
+import { Button } from '@openng/optimus-ui/button';
+import { ConfirmDialog } from '@openng/optimus-ui/confirmdialog';
+import { InputNumber } from '@openng/optimus-ui/inputnumber';
+import { InputText } from '@openng/optimus-ui/inputtext';
+import { Select } from '@openng/optimus-ui/select';
+import { Tooltip } from '@openng/optimus-ui/tooltip';
+import {
+  catchError,
+  distinctUntilChanged,
+  filter,
+  firstValueFrom,
+  forkJoin,
+  of,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { EnergySegmentsService } from '../../../api/api/energy-segments.service';
 import { ExercisesService } from '../../../api/api/exercises.service';
 import { RoundsService } from '../../../api/api/rounds.service';
@@ -210,14 +219,12 @@ export class RoundExercisesComponent {
   private buildRowForm(ex: Exercise | null, prefill?: Partial<Exercise>): ExerciseRowForm {
     const src = ex ?? prefill ?? {};
     return this.fb.nonNullable.group({
-      modality_id: this.fb.nonNullable.control<number | null>(
-        src.modality?.id ?? null,
-        [Validators.required],
-      ),
-      energysegment_id: this.fb.nonNullable.control<number | null>(
-        src.energysegment?.id ?? null,
-        [Validators.required],
-      ),
+      modality_id: this.fb.nonNullable.control<number | null>(src.modality?.id ?? null, [
+        Validators.required,
+      ]),
+      energysegment_id: this.fb.nonNullable.control<number | null>(src.energysegment?.id ?? null, [
+        Validators.required,
+      ]),
       repetition: this.fb.nonNullable.control<number>(src.repetition ?? 1, [
         Validators.required,
         Validators.min(1),

@@ -12,15 +12,15 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { Router, TitleStrategy, provideRouter } from '@angular/router';
 import * as Sentry from '@sentry/angular';
 import { provideTransloco } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { MessageService } from '@openng/optimus-ui/api';
 import { StaleChunkService } from './core/app-update/stale-chunk.service';
-import { providePrimeNG } from 'primeng/config';
-import { definePreset } from '@primeuix/themes';
-import Aura from '@primeuix/themes/aura';
+import { provideOptimus } from '@openng/optimus-ui/config';
+import { definePreset } from '@openng/optimus-ui-themes';
+import Aura from '@openng/optimus-ui-themes/aura';
 import { firstValueFrom } from 'rxjs';
 
 // Styled mode = Aura preset with Emerald as the primary colour. The `{emerald.*}`
-// tokens reference the palette shipped by @primeuix/themes, so the whole
+// tokens reference the palette shipped by @openng/optimus-ui-themes, so the whole
 // primary scale (buttons, links, focus rings, …) follows Emerald in both light
 // and dark mode without touching individual components.
 const AuraEmerald = definePreset(Aura, {
@@ -85,7 +85,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     { provide: TitleStrategy, useExisting: AppTitleStrategy },
     provideAnimationsAsync(),
-    providePrimeNG({
+    provideOptimus({
       theme: { preset: AuraEmerald, options: { darkModeSelector: '.dark-mode' } },
     }),
     provideHttpClient(withInterceptors([authInterceptor, languageInterceptor])),

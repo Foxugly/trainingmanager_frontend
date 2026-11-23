@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { ActivatedRoute, provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from '@openng/optimus-ui/api';
 import { of } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SportsService } from '../../../../api/api/sports.service';
@@ -86,7 +86,9 @@ describe('ModalitiesListComponent', () => {
         { provide: MessageService, useValue: messageMock },
         {
           provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: { get: (k: string) => (k === 'sportId' ? '1' : null) } } },
+          useValue: {
+            snapshot: { paramMap: { get: (k: string) => (k === 'sportId' ? '1' : null) } },
+          },
         },
       ],
     })

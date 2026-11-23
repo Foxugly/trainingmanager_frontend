@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from '@openng/optimus-ui/api';
 import { of } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PerformancesService } from '../../../api/api/performances.service';
@@ -10,7 +10,7 @@ import { Performance } from '../../../api/model/performance';
 import { UnitEnum } from '../../../api/model/unit-enum';
 import { PerformancePanelComponent } from './performance-panel.component';
 
-// Polyfill ResizeObserver for jsdom — PrimeNG UIChart / p-dialog use it.
+// Polyfill ResizeObserver for jsdom — Optimus UI UIChart / p-dialog use it.
 class ResizeObserverPolyfill {
   observe() {}
   unobserve() {}
@@ -135,21 +135,44 @@ describe('PerformancePanelComponent', () => {
     await setup({
       list: [
         makePerf({ id: 1, label: '100m', value: '12.50', is_lower_better: true }),
-        makePerf({ id: 2, label: '100m', value: '11.90', is_lower_better: true, recorded_on: '2026-03-01' }),
+        makePerf({
+          id: 2,
+          label: '100m',
+          value: '11.90',
+          is_lower_better: true,
+          recorded_on: '2026-03-01',
+        }),
       ],
     });
-    const group = access(component).groups().find((g) => g.label === '100m');
+    const group = access(component)
+      .groups()
+      .find((g) => g.label === '100m');
     expect(group?.pbLabel).toBe('11.90 s');
   });
 
   it('computes the personal best as the max for higher-is-better (distance)', async () => {
     await setup({
       list: [
-        makePerf({ id: 1, label: 'Long jump', value: '2800', unit: UnitEnum.M, is_lower_better: false }),
-        makePerf({ id: 2, label: 'Long jump', value: '3100', unit: UnitEnum.M, is_lower_better: false, recorded_on: '2026-03-01' }),
+        makePerf({
+          id: 1,
+          label: 'Long jump',
+          value: '2800',
+          unit: UnitEnum.M,
+          is_lower_better: false,
+        }),
+        makePerf({
+          id: 2,
+          label: 'Long jump',
+          value: '3100',
+          unit: UnitEnum.M,
+          is_lower_better: false,
+          recorded_on: '2026-03-01',
+        }),
       ],
     });
-    const group = access(component).groups().find((g) => g.label === 'Long jump');
+    const group = access(component)
+      .groups()
+      .find((g) => g.label === 'Long jump');
     expect(group?.pbLabel).toBe('3100 m');
   });
 

@@ -13,7 +13,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { Button } from 'primeng/button';
+import { Button } from '@openng/optimus-ui/button';
 import { EventsService } from '../../../api/api/events.service';
 import { Event } from '../../../api/model/event';
 import { ToastService } from '../../../core/notifications/toast.service';
@@ -61,7 +61,10 @@ export class EventFreeformComponent {
     if (this.saving()) return;
     this.saving.set(true);
     this.eventsService
-      .eventsPartialUpdate({ id: this.event().id, patchedEventRequest: { training_richtext: this.draft() } })
+      .eventsPartialUpdate({
+        id: this.event().id,
+        patchedEventRequest: { training_richtext: this.draft() },
+      })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

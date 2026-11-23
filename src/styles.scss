@@ -1,15 +1,15 @@
-@use "styles/tokens";
-@use "styles/layout";
-@use "styles/cards";
-@use "styles/forms-meta";
-@use "styles/builder";
+@use 'styles/tokens';
+@use 'styles/layout';
+@use 'styles/cards';
+@use 'styles/forms-meta';
+@use 'styles/builder';
 
-@import "primeicons/primeicons.css";
+@import '@openng/icons/openng-icons.css';
 
 /* Base typographique flotte : sans-serif système sur html/body pour que les
  * éléments HTML nus (titres h1/h2, titres de carte, hero) HÉRITENT du sans-serif
  * au lieu du défaut navigateur (Times/serif). Sans cette règle, seuls les
- * composants PrimeNG (qui portent leur propre --p-font-family) étaient en
+ * composants Optimus UI (qui portent leur propre --p-font-family) étaient en
  * sans-serif, et tous les titres tombaient en serif. Aligné sur
  * FoxRunner_frontend (référence flotte). */
 html,
@@ -18,7 +18,7 @@ body {
   font-family:
     system-ui,
     -apple-system,
-    "Segoe UI",
+    'Segoe UI',
     Roboto,
     sans-serif;
   color: var(--ink);
@@ -37,9 +37,9 @@ body {
 /* You can add global styles to this file, and also import other style files */
 
 /* Full-width utility (fleet: replaces the old Tailwind `w-full` passthrough on
-   PrimeNG controls). Applied via `styleClass="u-full"` on p-button / p-password /
+   Optimus UI controls). Applied via `styleClass="u-full"` on p-button / p-password /
    p-inputtext / p-multiselect etc. so the control fills its row. Global on
-   purpose — `styleClass` classes land on PrimeNG-rendered elements, mirroring the
+   purpose — `styleClass` classes land on Optimus UI-rendered elements, mirroring the
    global `.meta-value` field-stretch convention in `_forms-meta.scss`. */
 .u-full {
   width: 100%;

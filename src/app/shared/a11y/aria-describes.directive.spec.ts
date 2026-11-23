@@ -13,7 +13,7 @@ class NativeHostComponent {
 }
 
 // Host where the directive sits on a wrapper whose inner focusable element is a
-// `.p-inputtext` div (mirrors the PrimeNG case: host !== focusable element).
+// `.p-inputtext` div (mirrors the Optimus UI case: host !== focusable element).
 @Component({
   imports: [AriaDescribesDirective],
   template: `

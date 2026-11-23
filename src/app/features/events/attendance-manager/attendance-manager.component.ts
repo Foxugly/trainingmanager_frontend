@@ -14,10 +14,10 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
-import { Button } from 'primeng/button';
-import { Message } from 'primeng/message';
-import { Tooltip } from 'primeng/tooltip';
+import { MessageService } from '@openng/optimus-ui/api';
+import { Button } from '@openng/optimus-ui/button';
+import { Message } from '@openng/optimus-ui/message';
+import { Tooltip } from '@openng/optimus-ui/tooltip';
 import { firstValueFrom, forkJoin } from 'rxjs';
 import { AttendanceStatusesService } from '../../../api/api/attendance-statuses.service';
 import { EventsService } from '../../../api/api/events.service';
@@ -81,9 +81,7 @@ export class AttendanceManagerComponent implements OnInit, OnDestroy {
   private readonly originalStatusByMember = new Map<number, string>();
 
   protected readonly orderedStatuses = computed(() =>
-    [...this.statuses()]
-      .filter((s) => s.is_active)
-      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
+    [...this.statuses()].filter((s) => s.is_active).sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
   );
 
   protected readonly defaultStatusCode = computed<string | null>(() => {

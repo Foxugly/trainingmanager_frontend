@@ -12,7 +12,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { Button } from 'primeng/button';
+import { Button } from '@openng/optimus-ui/button';
 import { JoinMagicService } from '../../../api/api/join-magic.service';
 import { ActionProposedEnum } from '../../../api/model/action-proposed-enum';
 import { JoinMagicCancelledResponse } from '../../../api/model/join-magic-cancelled-response';

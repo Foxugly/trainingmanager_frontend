@@ -78,7 +78,7 @@
   // NOTE: this is a GLOBAL stylesheet, so ::ng-deep must NOT be used here —
   // it is only meaningful inside component styles and makes the selector
   // invalid (dropped by the browser) in a global file. Plain descendant
-  // selectors reach the projected PrimeNG widgets and force full width so
+  // selectors reach the projected Optimus UI widgets and force full width so
   // every control fills its (now stretched) wrapper.
   .p-inputtext,
   .p-select,

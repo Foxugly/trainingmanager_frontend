@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Common commands
 
 - `npm start` — dev server on http://localhost:4200 (no proxy; calls `environment.apiBase` directly).
-- `npm run build` — production build into `dist/`. Initial-bundle budget set to `1MB` warning / `1.5MB` error in `angular.json` (Angular 21 + PrimeNG 21 + Transloco footprint; check the build output for the current size).
+- `npm run build` — production build into `dist/`. Initial-bundle budget set to `1MB` warning / `1.5MB` error in `angular.json` (Angular 21 + Optimus UI 1 + Transloco footprint; check the build output for the current size).
 - `npm run watch` — incremental dev build.
 - `npm test` — Vitest via `@angular/build:unit-test`. Filter a single spec: `npm test -- --include "src/app/core/auth/auth.service.spec.ts"` (the bare path is interpreted as a project name by `ng test` and fails).
 - `npm run api:gen` — regenerates the typed client in `src/app/api/` from `openapi/Training_Manager_API.yaml` (config in `openapitools.json`).
@@ -15,7 +15,9 @@ Backend runs separately at `http://localhost:8000` (set in `src/environments/env
 ## Stack
 
 - Angular 21.2 (TypeScript 5.9 strict)
-- PrimeNG 21 (Aura preset, dark mode via `.dark-mode` on `<html>`)
+- Optimus UI 1 (`@openng/optimus-ui`, MIT community fork of PrimeNG 21: same components, `p-*` selectors and Aura
+  preset, dark mode via `.dark-mode` on `<html>`; `pi pi-*` icons from `@openng/icons`). **PrimeNG ≥ 22 is banned in
+  the fleet** (commercial licence) — see foxugly-ops `STANDARD-frontend-layout.md` « Bibliothèque UI ».
 - SCSS (BEM + design tokens in `src/styles/`) — Tailwind was removed, do not reintroduce utility classes
 - Transloco 8 (5 langs: fr default, nl/en/it/es)
 - Vitest 4
@@ -148,8 +150,8 @@ Catalogs in `public/i18n/*.json`. Namespace by `feature.section.key`. New keys A
 
 ### UI
 
-- PrimeNG for forms/dialogs/toasts; component SCSS (BEM + tokens from `src/styles/`) for layout/spacing/typography.
-- `MessageService` provided globally; `ConfirmationService` per-component (PrimeNG dialog scope).
+- Optimus UI for forms/dialogs/toasts; component SCSS (BEM + tokens from `src/styles/`) for layout/spacing/typography.
+- `MessageService` provided globally; `ConfirmationService` per-component (Optimus UI dialog scope).
 - DetailHeader on every detail page; EmptyState on every list/dashboard empty section (consistency).
 
 ### Shared patterns
@@ -172,14 +174,14 @@ Prettier: 100-col, single quotes, Angular parser for `*.html`. 2-space indent (`
 
 ## Tests (Vitest)
 
-- Most specs use `overrideComponent({ set: { template: '', imports: [] } })` to bypass PrimeNG rendering and test logic only via a `ProtectedFields` helper interface that exposes signal getters / methods.
+- Most specs use `overrideComponent({ set: { template: '', imports: [] } })` to bypass Optimus UI rendering and test logic only via a `ProtectedFields` helper interface that exposes signal getters / methods.
 - ngOnInit fires API calls — set mocks BEFORE `fixture.detectChanges()`. The common pattern is a `setup({ ...overrides })` helper that recreates the TestBed per test for isolation.
 - AuthService mocks need `refreshMe: vi.fn()` (used after team mutations).
 - `Me` fixtures must include `team_quota: { used, max, can_create }` and `is_superuser` (both required in the codegen; `is_superuser` drives the admin-link / `superuserGuard` gating).
 - **`vi.fn()` with setter usage** (e.g. `Object.defineProperty(window, 'location', {value: { set href(v){ spy(v) } }})`) needs an explicit generic under TS strict: `vi.fn<(v: string) => void>()`. Bare `vi.fn()` resolves to `Mock<Procedure|Constructable>` and TS rejects the call site.
 - **Router stub**: use `provideRouter([])` AND patch `events` via `Object.defineProperty(router, 'events', { value: subject.asObservable() })`. Fully replacing the `Router` token (`{ provide: Router, useValue: ... }`) breaks `RouterLink`/`RouterLinkActive` directives at DI resolution.
 - **`vi.mock` / `vi.spyOn` are blocked** for relative-import ESM bindings under the Angular unit-test runner. Stub `window.location` (with try/finally restore) to observe `mailto:` side effects instead.
-- **PrimeNG `<p-tabs>` under jsdom** requires a `ResizeObserver` polyfill at the top of the spec file. Copy the pattern from `about-page.component.spec.ts:9-17`.
+- **Optimus UI `<p-tabs>` under jsdom** requires a `ResizeObserver` polyfill at the top of the spec file. Copy the pattern from `about-page.component.spec.ts:9-17`.
 
 ## Gotchas
 
@@ -192,7 +194,7 @@ Prettier: 100-col, single quotes, Angular parser for `*.html`. 2-space indent (`
 - **Codegen single-request-parameter**: the client is generated with `useSingleRequestParameter=true`, so every method takes one typed `*RequestParams` object (`eventsList({ dateGte, referProgram })`, `teamsPartialUpdate({ id, patchedTeam })`). Adding a backend query filter just adds an optional field to the params interface — no argument-order shift, no call-site breakage. Field names come from the `*RequestParams` interfaces in `src/app/api/api/*.serviceInterface.ts`.
 - **Accept-Language**: `languageInterceptor` (`src/app/core/i18n/`) attaches `Accept-Language: <activeLang>` on every API call so the backend can localize translatable model fields (modality.name, status.label, etc.).
 - **Hamburger breakpoint = 960 px** — convention from QuizOnline-style layout. Use CSS `@media (max-width: 960px)` for the topmenu hamburger toggle.
-- **Dark-mode parity**: PrimeNG dark mode is `.dark-mode` on `<html>`. New surfaces must include `:host-context(.dark-mode) { ... }` overrides — see `footer.component.scss`, `contribute-page.component.scss`, `about-page.component.scss` for the pattern.
+- **Dark-mode parity**: Optimus UI dark mode is `.dark-mode` on `<html>`. New surfaces must include `:host-context(.dark-mode) { ... }` overrides — see `footer.component.scss`, `contribute-page.component.scss`, `about-page.component.scss` for the pattern.
 - **`role="menu"` contract**: any element with `role="menu"` MUST support arrow-key navigation (ArrowUp/Down/Home/End) + roving tabindex. See `language-switcher.component.ts` for the reference implementation. Conversely, don't slap `role="menu"`/`role="menuitem"` on a widget that's just a grid of buttons — the team-discussions emoji picker is a plain `role="group"` of Tab-navigable `<button>`s (no menu promise, no arrow-key requirement).
 - **team-discussions data load**: topic loading uses `toObservable(teamId) → switchMap` (cancels the in-flight request on team switch), the preferred pattern over a side-effecting `effect()` for data. Emoji insertion parses the editor HTML with an inert `<template>` and appends the emoji as a text node (no fragile HTML regex).
 - **Rich-text editor / Quill**: never use `p-editor` (or import `quill.snow.css` globally) directly. Use `app-rich-editor` (`src/app/shared/ui/rich-editor/`) — a transparent `ControlValueAccessor` wrapper that keeps `formControlName`/`[formControl]` working and ships Quill's ~24 kB CSS in a lazy chunk (via `ViewEncapsulation.None` component style) instead of the initial bundle. Importing `quill/dist/quill.snow.css` in `src/styles.scss` would put it back in the initial bundle and blow the 1 MB budget. The wrapper's scss intentionally exceeds the per-component-style warning (4 kB); the `anyComponentStyle` error ceiling in `angular.json` is raised to 28 kB to allow this one vendored file.

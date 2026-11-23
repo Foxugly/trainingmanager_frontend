@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router, provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { MessageService } from '@openng/optimus-ui/api';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { EnergySegmentsService } from '../../../../api/api/energy-segments.service';
@@ -167,7 +167,9 @@ describe('EnergySegmentsFormComponent', () => {
     access(component).submit();
 
     expect(segmentsServiceMock.energySegmentsCreate).toHaveBeenCalledTimes(1);
-    expect(segmentsServiceMock.energySegmentsCreate.mock.calls[0][0].energySegmentAdminRequest).toMatchObject({
+    expect(
+      segmentsServiceMock.energySegmentsCreate.mock.calls[0][0].energySegmentAdminRequest,
+    ).toMatchObject({
       abv: 'ZTEST',
       energy_system_id: 1,
       description_fr: 'Pour test',

@@ -14,13 +14,13 @@ import { forkJoin, of } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { ConfirmationService } from 'primeng/api';
-import { Button } from 'primeng/button';
-import { ConfirmDialog } from 'primeng/confirmdialog';
-import { Dialog } from 'primeng/dialog';
-import { InputText } from 'primeng/inputtext';
-import { Message } from 'primeng/message';
-import { Textarea } from 'primeng/textarea';
+import { ConfirmationService } from '@openng/optimus-ui/api';
+import { Button } from '@openng/optimus-ui/button';
+import { ConfirmDialog } from '@openng/optimus-ui/confirmdialog';
+import { Dialog } from '@openng/optimus-ui/dialog';
+import { InputText } from '@openng/optimus-ui/inputtext';
+import { Message } from '@openng/optimus-ui/message';
+import { Textarea } from '@openng/optimus-ui/textarea';
 import { InvitationsService } from '../../../api/api/invitations.service';
 import { JoinRequestsService } from '../../../api/api/join-requests.service';
 import { CreateInvitationRequest } from '../../../api/model/create-invitation-request';
@@ -315,9 +315,7 @@ export class TeamRequestsComponent {
 
   private applyInviteError(err: HttpErrorResponse): void {
     const body = err?.error as
-      | { code?: string; detail?: string; fields?: FieldErrors }
-      | null
-      | undefined;
+      { code?: string; detail?: string; fields?: FieldErrors } | null | undefined;
 
     const matchKnown = (s: string): string | null => {
       if (/already_pending|invitation.*exists|already_invited/i.test(s)) {

@@ -8,7 +8,7 @@ import { Directive, ElementRef, afterNextRender, effect, inject, input } from '@
  * block with `role="alert"`. For native `<input>/<textarea>` (and `p-inputNumber`,
  * which has its own `ariaDescribedBy` input) a plain
  * `[attr.aria-describedby]="… ? field.errorId() : null"` lands on the right
- * element. But PrimeNG widgets (`p-select`, `p-multiSelect`, `p-datepicker`,
+ * element. But Optimus UI widgets (`p-select`, `p-multiSelect`, `p-datepicker`,
  * `p-password`) and our custom wrappers (`app-place-select`, `app-equipment-select`,
  * `app-rich-editor`) render the actual focusable control *inside* the host, so a
  * host-level attribute never reaches it and the error is not announced.
@@ -20,7 +20,7 @@ import { Directive, ElementRef, afterNextRender, effect, inject, input } from '@
  * Usage:
  *   <p-select … [appAriaDescribes]="hasError ? field.errorId() : null" />
  *
- * Timing: PrimeNG often renders the inner element after this directive's
+ * Timing: Optimus UI often renders the inner element after this directive's
  * constructor runs, so initial wiring is deferred to `afterNextRender`. The
  * `effect()` also re-queries the DOM on every value change, so a late-rendered
  * inner element still gets wired the next time the id changes.
@@ -48,7 +48,7 @@ export class AriaDescribesDirective {
       this.apply(this.appAriaDescribes());
     });
 
-    // Robust initial wiring: PrimeNG may render the inner element after the
+    // Robust initial wiring: Optimus UI may render the inner element after the
     // effect's first synchronous run, so re-apply once the DOM has rendered.
     afterNextRender(() => {
       this.apply(this.appAriaDescribes());

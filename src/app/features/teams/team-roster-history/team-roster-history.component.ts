@@ -7,8 +7,8 @@ import {
   input,
 } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { Tag } from 'primeng/tag';
-import { TableModule } from 'primeng/table';
+import { Tag } from '@openng/optimus-ui/tag';
+import { TableModule } from '@openng/optimus-ui/table';
 import { TeamsService } from '../../../api/api/teams.service';
 import { RosterHistoryEntry } from '../../../api/model/roster-history-entry';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';

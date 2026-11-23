@@ -5,7 +5,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from '@openng/optimus-ui/api';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { EnergySegmentsService } from '../../../api/api/energy-segments.service';
@@ -760,7 +760,7 @@ describe('EventsDetailComponent', () => {
   it('rejecting the confirm reverts the select control to the original type and does not PATCH', async () => {
     await setup('7', { ...eventWithRounds, training_type: TrainingTypeEnum.Structured });
     // Simulate the widget having moved to the rejected option, mirroring how
-    // PrimeNG would have written the new value into the control before onChange.
+    // Optimus UI would have written the new value into the control before onChange.
     access(component).trainingTypeControl.setValue(TrainingTypeEnum.Freeform, { emitEvent: false });
     const confirmation = fixture.debugElement.injector.get(ConfirmationService);
     vi.spyOn(confirmation, 'confirm').mockImplementation((cfg) => {

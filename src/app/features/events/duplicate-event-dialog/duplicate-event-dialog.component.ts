@@ -9,11 +9,11 @@ import {
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { Button } from 'primeng/button';
-import { DatePicker } from 'primeng/datepicker';
-import { Dialog } from 'primeng/dialog';
-import { InputNumber } from 'primeng/inputnumber';
-import { ToggleSwitch } from 'primeng/toggleswitch';
+import { Button } from '@openng/optimus-ui/button';
+import { DatePicker } from '@openng/optimus-ui/datepicker';
+import { Dialog } from '@openng/optimus-ui/dialog';
+import { InputNumber } from '@openng/optimus-ui/inputnumber';
+import { ToggleSwitch } from '@openng/optimus-ui/toggleswitch';
 
 /** Payload emitted on confirm; the parent performs the API call. */
 export interface DuplicateEventSubmit {

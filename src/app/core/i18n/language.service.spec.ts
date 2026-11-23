@@ -1,7 +1,7 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { TranslocoService } from '@jsverse/transloco';
-import { PrimeNG } from 'primeng/config';
+import { Optimus } from '@openng/optimus-ui/config';
 import { Subject, of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MeService } from '../../api/api/me.service';
@@ -9,7 +9,7 @@ import { LanguageEnum } from '../../api/model/language-enum';
 import { Me } from '../../api/model/me';
 import { AuthService } from '../auth/auth.service';
 import { LanguageService } from './language.service';
-import { PRIMENG_TRANSLATIONS } from './primeng-translations';
+import { OPTIMUS_TRANSLATIONS } from './optimus-translations';
 
 const updatedMe: Me = {
   id: 1,
@@ -42,7 +42,7 @@ describe('LanguageService', () => {
     currentUser: () => Me | null;
     setCurrentUser: ReturnType<typeof vi.fn>;
   };
-  let primeNGMock: { setTranslation: ReturnType<typeof vi.fn> };
+  let optimusMock: { setTranslation: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
     translocoEvents = new Subject<{ type: string }>();
@@ -58,7 +58,7 @@ describe('LanguageService', () => {
       currentUser: userSignal.asReadonly(),
       setCurrentUser: vi.fn(),
     };
-    primeNGMock = { setTranslation: vi.fn() };
+    optimusMock = { setTranslation: vi.fn() };
 
     TestBed.configureTestingModule({
       providers: [
@@ -66,7 +66,7 @@ describe('LanguageService', () => {
         { provide: TranslocoService, useValue: translocoMock },
         { provide: MeService, useValue: meMock },
         { provide: AuthService, useValue: authMock },
-        { provide: PrimeNG, useValue: primeNGMock },
+        { provide: Optimus, useValue: optimusMock },
       ],
     });
     service = TestBed.inject(LanguageService);
@@ -107,21 +107,21 @@ describe('LanguageService', () => {
     expect(service.activeLang()).toBe('fr');
   });
 
-  it('applies PrimeNG translation for the initial lang on construction', () => {
-    expect(primeNGMock.setTranslation).toHaveBeenCalledWith(PRIMENG_TRANSLATIONS.fr);
+  it('applies Optimus UI translation for the initial lang on construction', () => {
+    expect(optimusMock.setTranslation).toHaveBeenCalledWith(OPTIMUS_TRANSLATIONS.fr);
   });
 
-  it('applyToTranslocoOnly() applies the matching PrimeNG translation', () => {
-    primeNGMock.setTranslation.mockClear();
+  it('applyToTranslocoOnly() applies the matching Optimus UI translation', () => {
+    optimusMock.setTranslation.mockClear();
     service.applyToTranslocoOnly('it');
-    expect(primeNGMock.setTranslation).toHaveBeenCalledWith(PRIMENG_TRANSLATIONS.it);
+    expect(optimusMock.setTranslation).toHaveBeenCalledWith(OPTIMUS_TRANSLATIONS.it);
   });
 
-  it('switchLanguage() applies the PrimeNG translation alongside Transloco', async () => {
-    primeNGMock.setTranslation.mockClear();
+  it('switchLanguage() applies the Optimus UI translation alongside Transloco', async () => {
+    optimusMock.setTranslation.mockClear();
     meMock.mePartialUpdate.mockReturnValue(of(updatedMe));
     await new Promise<Me>((resolve) => service.switchLanguage('nl').subscribe(resolve));
-    expect(primeNGMock.setTranslation).toHaveBeenCalledWith(PRIMENG_TRANSLATIONS.nl);
+    expect(optimusMock.setTranslation).toHaveBeenCalledWith(OPTIMUS_TRANSLATIONS.nl);
   });
 
   it('switchLanguage() applies Transloco immediately, then PATCHes /me/, then syncs the user', async () => {

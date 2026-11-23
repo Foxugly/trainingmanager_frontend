@@ -18,11 +18,11 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { Button } from 'primeng/button';
-import { Checkbox } from 'primeng/checkbox';
-import { InputText } from 'primeng/inputtext';
-import { Message } from 'primeng/message';
-import { Password } from 'primeng/password';
+import { Button } from '@openng/optimus-ui/button';
+import { Checkbox } from '@openng/optimus-ui/checkbox';
+import { InputText } from '@openng/optimus-ui/inputtext';
+import { Message } from '@openng/optimus-ui/message';
+import { Password } from '@openng/optimus-ui/password';
 import { AuthService } from '../../../core/auth/auth.service';
 import { getRuntimeConfig } from '../../../core/runtime-config';
 import { AuthCardComponent } from '../../../shared/components/auth-card/auth-card.component';
@@ -157,9 +157,7 @@ export class LoginComponent implements OnDestroy {
           }
 
           // Jamais le `detail` brut du backend : message traduit selon le code HTTP.
-          this.errorMessage.set(
-            this.transloco.translate(authErrorKey(err, { credentials: true })),
-          );
+          this.errorMessage.set(this.transloco.translate(authErrorKey(err, { credentials: true })));
         },
       });
   }
@@ -183,9 +181,9 @@ export class LoginComponent implements OnDestroy {
       this.magicLinkError.set('auth.magic_link.email_required');
       return;
     }
-    const turnstileToken = document
-      .querySelector<HTMLInputElement>('input[name="cf-turnstile-response"]')
-      ?.value;
+    const turnstileToken = document.querySelector<HTMLInputElement>(
+      'input[name="cf-turnstile-response"]',
+    )?.value;
     if (!turnstileToken) {
       this.magicLinkError.set('auth.magic_link.captcha_required');
       return;

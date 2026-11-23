@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { ActivatedRoute, provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { MessageService } from '@openng/optimus-ui/api';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -86,7 +86,9 @@ describe('CheckYourEmailComponent', () => {
 
   it('resend(): 429 → cooldown started from Retry-After + error set', async () => {
     await setup('a@b.c');
-    const mockHeaders = { get: (name: string) => (name.toLowerCase() === 'retry-after' ? '600' : null) };
+    const mockHeaders = {
+      get: (name: string) => (name.toLowerCase() === 'retry-after' ? '600' : null),
+    };
     authMock.resendEmail.mockReturnValue(throwError(() => ({ status: 429, headers: mockHeaders })));
     access(component).resend();
     expect(access(component).cooldownSeconds()).toBe(600);

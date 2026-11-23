@@ -10,8 +10,8 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { Button } from 'primeng/button';
-import { Tooltip } from 'primeng/tooltip';
+import { Button } from '@openng/optimus-ui/button';
+import { Tooltip } from '@openng/optimus-ui/tooltip';
 import { catchError, of, switchMap, tap } from 'rxjs';
 import { EventsService } from '../../../api/api/events.service';
 import { RotiSummary } from '../../../api/model/roti-summary';

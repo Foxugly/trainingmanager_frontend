@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { Button } from 'primeng/button';
+import { Button } from '@openng/optimus-ui/button';
 import { RsvpStatusEnum } from '../../../api/model/rsvp-status-enum';
 import { RsvpSummary } from '../../../api/model/rsvp-summary';
 
@@ -49,7 +49,7 @@ export class EventRsvpComponent {
     return mine != null && (mine as string) === (status as string);
   }
 
-  /** Maps an RSVP status to a PrimeNG button severity (going=success, maybe=warn, not_going=danger). */
+  /** Maps an RSVP status to a Optimus UI button severity (going=success, maybe=warn, not_going=danger). */
   protected rsvpSeverity(status: RsvpStatusEnum): 'success' | 'warn' | 'danger' {
     switch (status) {
       case RsvpStatusEnum.Going:

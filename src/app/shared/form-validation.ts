@@ -1,6 +1,6 @@
 import { FormGroup } from '@angular/forms';
 import { TranslocoService } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { MessageService } from '@openng/optimus-ui/api';
 
 /**
  * Handle a submit attempt on a possibly-invalid reactive form.

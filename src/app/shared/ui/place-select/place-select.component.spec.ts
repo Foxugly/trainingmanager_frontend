@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { MessageService } from '@openng/optimus-ui/api';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PlacesService } from '../../../api/api/places.service';
@@ -39,9 +39,7 @@ describe('PlaceSelectComponent', () => {
           results: [{ id: 7, name: 'Piscine olympique', address: '1 rue X' } as Place],
         }),
       ),
-      placesCreate: vi
-        .fn()
-        .mockReturnValue(of({ id: 8, name: 'Nouveau', address: '' } as Place)),
+      placesCreate: vi.fn().mockReturnValue(of({ id: 8, name: 'Nouveau', address: '' } as Place)),
     };
 
     await TestBed.configureTestingModule({
@@ -98,7 +96,11 @@ describe('PlaceSelectComponent', () => {
     expect(placesMock.placesCreate).toHaveBeenCalledWith({
       placeRequest: expect.objectContaining({ team: 5, name: 'Nouveau' }),
     });
-    expect(access(component).places().some((p) => p.id === 8)).toBe(true);
+    expect(
+      access(component)
+        .places()
+        .some((p) => p.id === 8),
+    ).toBe(true);
     expect(pushed).toBe(8);
     expect(access(component).dialogVisible()).toBe(false);
   });

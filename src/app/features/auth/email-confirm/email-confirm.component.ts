@@ -10,7 +10,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { Button } from 'primeng/button';
+import { Button } from '@openng/optimus-ui/button';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AuthBackLinkComponent } from '../../../shared/components/auth-card/auth-back-link.component';
 import { AuthCardComponent } from '../../../shared/components/auth-card/auth-card.component';

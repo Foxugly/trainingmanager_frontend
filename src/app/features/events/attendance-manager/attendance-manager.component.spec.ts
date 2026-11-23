@@ -4,7 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { MessageService } from '@openng/optimus-ui/api';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AttendanceStatusesService } from '../../../api/api/attendance-statuses.service';
@@ -134,7 +134,7 @@ describe('AttendanceManagerComponent', () => {
     expect(rows.find((r) => r.member_id === 11)?.status_code).toBe('unknown');
   });
 
-  it('maps status codes to PrimeIcons (with fallback)', () => {
+  it('maps status codes to OpenNG Icons (`pi-*`) (with fallback)', () => {
     expect(access(component).statusIcon('present')).toBe('pi-check-circle');
     expect(access(component).statusIcon('unknown')).toBe('pi-question-circle');
     expect(access(component).statusIcon('absent')).toBe('pi-times-circle');

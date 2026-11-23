@@ -17,9 +17,9 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { Button } from 'primeng/button';
-import { Message } from 'primeng/message';
-import { Password } from 'primeng/password';
+import { Button } from '@openng/optimus-ui/button';
+import { Message } from '@openng/optimus-ui/message';
+import { Password } from '@openng/optimus-ui/password';
 import { AuthService } from '../../../core/auth/auth.service';
 import { authErrorKey } from '../shared/auth-error';
 import { AuthBackLinkComponent } from '../../../shared/components/auth-card/auth-back-link.component';
@@ -114,9 +114,7 @@ export class ResetPasswordComponent implements OnInit {
   private applyServerError(err: HttpErrorResponse): void {
     this.loading.set(false);
     const body = err?.error as
-      | { code?: string; detail?: string; fields?: FieldErrors }
-      | null
-      | undefined;
+      { code?: string; detail?: string; fields?: FieldErrors } | null | undefined;
 
     if (err.status === 400 && body?.code === 'invalid_or_expired_token') {
       this.invalidToken.set(true);

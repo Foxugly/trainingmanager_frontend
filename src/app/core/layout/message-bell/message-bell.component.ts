@@ -8,8 +8,8 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { Button } from 'primeng/button';
-import { Message } from 'primeng/message';
+import { Button } from '@openng/optimus-ui/button';
+import { Message } from '@openng/optimus-ui/message';
 import { UnreadTopic } from '../../../api/model/unread-topic';
 import { MessagesService } from '../../messages/messages.service';
 import { BellComponent } from '../bell/bell.component';

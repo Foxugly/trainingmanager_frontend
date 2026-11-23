@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { of } from 'rxjs';
 import { TranslocoService } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
+import { MessageService } from '@openng/optimus-ui/api';
 import { EventAthleteBriefComponent } from './event-athlete-brief.component';
 import { EventsService } from '../../../api/api/events.service';
 
@@ -20,7 +20,9 @@ describe('EventAthleteBriefComponent', () => {
 
   beforeEach(async () => {
     eventsMock = {
-      eventsExplainCreate: vi.fn().mockReturnValue(of({ athlete_brief: 'Brief IA fraîchement généré.' })),
+      eventsExplainCreate: vi
+        .fn()
+        .mockReturnValue(of({ athlete_brief: 'Brief IA fraîchement généré.' })),
       eventsPartialUpdate: vi.fn().mockReturnValue(of({ id: 7 })),
     };
     messageMock = { add: vi.fn() };

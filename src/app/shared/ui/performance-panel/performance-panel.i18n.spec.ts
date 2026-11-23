@@ -2,14 +2,14 @@ import { provideHttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { TranslocoService, TranslocoTestingModule } from '@jsverse/transloco';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from '@openng/optimus-ui/api';
 import { firstValueFrom, of } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PerformancesService } from '../../../api/api/performances.service';
 import { LanguageService } from '../../../core/i18n/language.service';
 import { PerformancePanelComponent } from './performance-panel.component';
 
-// Polyfill ResizeObserver for jsdom — PrimeNG UIChart / p-dialog use it.
+// Polyfill ResizeObserver for jsdom — Optimus UI UIChart / p-dialog use it.
 class ResizeObserverPolyfill {
   observe() {}
   unobserve() {}
@@ -42,8 +42,12 @@ describe('PerformancePanelComponent — retraduction au changement de langue', (
         PerformancePanelComponent,
         TranslocoTestingModule.forRoot({
           langs: {
-            fr: { performance: { units: { s: 'secondes', m: 'm', reps: 'reps', kg: 'kg', pts: 'pts' } } },
-            en: { performance: { units: { s: 'seconds', m: 'm', reps: 'reps', kg: 'kg', pts: 'pts' } } },
+            fr: {
+              performance: { units: { s: 'secondes', m: 'm', reps: 'reps', kg: 'kg', pts: 'pts' } },
+            },
+            en: {
+              performance: { units: { s: 'seconds', m: 'm', reps: 'reps', kg: 'kg', pts: 'pts' } },
+            },
           },
           translocoConfig: { availableLangs: ['fr', 'en'], defaultLang: 'fr' },
         }),

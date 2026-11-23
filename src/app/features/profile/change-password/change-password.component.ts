@@ -1,17 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { Button } from 'primeng/button';
-import { Password } from 'primeng/password';
+import { Button } from '@openng/optimus-ui/button';
+import { Password } from '@openng/optimus-ui/password';
 import { AuthService } from '../../../core/auth/auth.service';
 import { PasswordChangeRequest } from '../../../api/model/password-change-request';
 import { type FieldErrors, extractServerError } from '../../../shared/forms/notify-error';

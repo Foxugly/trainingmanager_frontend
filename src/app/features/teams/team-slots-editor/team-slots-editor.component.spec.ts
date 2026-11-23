@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from '@openng/optimus-ui/api';
 import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TeamsService } from '../../../api/api/teams.service';
@@ -19,7 +19,10 @@ interface SlotRow {
 interface Protected {
   slots: {
     length: number;
-    at(i: number): { patchValue(v: unknown): void; controls: { place_id: { value: number | null } } };
+    at(i: number): {
+      patchValue(v: unknown): void;
+      controls: { place_id: { value: number | null } };
+    };
   };
   addSlot(): void;
   removeSlot(i: number): void;
@@ -48,7 +51,9 @@ describe('TeamSlotsEditorComponent', () => {
     start.setHours(18, 0, 0, 0);
     const end = new Date();
     end.setHours(19, 30, 0, 0);
-    access(component).slots.at(i).patchValue({ weekday, hour_start: start, hour_end: end, place_id });
+    access(component)
+      .slots.at(i)
+      .patchValue({ weekday, hour_start: start, hour_end: end, place_id });
   }
 
   async function setup(
@@ -69,8 +74,9 @@ describe('TeamSlotsEditorComponent', () => {
         ),
       teamsTrainingSlotsPartialUpdate: vi
         .fn()
-        .mockImplementation((p: { id: number; patchedTrainingSlotRequest: { place_id?: number | null } }) =>
-          of(echo(p.id, p.patchedTrainingSlotRequest)),
+        .mockImplementation(
+          (p: { id: number; patchedTrainingSlotRequest: { place_id?: number | null } }) =>
+            of(echo(p.id, p.patchedTrainingSlotRequest)),
         ),
       teamsTrainingSlotsDestroy: vi.fn().mockReturnValue(of(undefined)),
     };
@@ -91,7 +97,9 @@ describe('TeamSlotsEditorComponent', () => {
         // Auto-accept the delete confirmation dialog.
         {
           provide: ConfirmationService,
-          useValue: { confirm: vi.fn().mockImplementation((o: { accept?: () => void }) => o.accept?.()) },
+          useValue: {
+            confirm: vi.fn().mockImplementation((o: { accept?: () => void }) => o.accept?.()),
+          },
         },
       ],
     })
@@ -114,7 +122,9 @@ describe('TeamSlotsEditorComponent', () => {
   });
 
   it('hydrates existing slot rows from the list response', async () => {
-    await setup({ slots: [{ id: 7, weekday: 1, hour_start: '18:00', hour_end: '19:30', place: null }] });
+    await setup({
+      slots: [{ id: 7, weekday: 1, hour_start: '18:00', hour_end: '19:30', place: null }],
+    });
     expect(access(component).slots.length).toBe(1);
     expect(access(component).isSlotEditing(0)).toBe(false);
     expect(access(component).slotStart(0)).toBe('18:00');
@@ -143,9 +153,15 @@ describe('TeamSlotsEditorComponent', () => {
     fillSlot(0, 2, null);
     access(component).confirmSlot(0);
     expect(teamsMock.teamsTrainingSlotsCreate).toHaveBeenCalledTimes(1);
-    const { teamPk, trainingSlotRequest: body } = teamsMock.teamsTrainingSlotsCreate.mock.calls[0][0];
+    const { teamPk, trainingSlotRequest: body } =
+      teamsMock.teamsTrainingSlotsCreate.mock.calls[0][0];
     expect(teamPk).toBe(5);
-    expect(body).toMatchObject({ weekday: 2, hour_start: '18:00', hour_end: '19:30', place_id: null });
+    expect(body).toMatchObject({
+      weekday: 2,
+      hour_start: '18:00',
+      hour_end: '19:30',
+      place_id: null,
+    });
     expect(access(component).isSlotEditing(0)).toBe(false);
   });
 
@@ -153,11 +169,15 @@ describe('TeamSlotsEditorComponent', () => {
     access(component).addSlot();
     fillSlot(0, 0, 7);
     access(component).confirmSlot(0);
-    expect(teamsMock.teamsTrainingSlotsCreate.mock.calls[0][0].trainingSlotRequest.place_id).toBe(7);
+    expect(teamsMock.teamsTrainingSlotsCreate.mock.calls[0][0].trainingSlotRequest.place_id).toBe(
+      7,
+    );
   });
 
   it('confirmSlot on an existing row PATCHes by id + teamPk', async () => {
-    await setup({ slots: [{ id: 42, weekday: 1, hour_start: '18:00', hour_end: '19:30', place: null }] });
+    await setup({
+      slots: [{ id: 42, weekday: 1, hour_start: '18:00', hour_end: '19:30', place: null }],
+    });
     access(component).editSlot(0);
     fillSlot(0, 3, null);
     access(component).confirmSlot(0);
@@ -181,7 +201,9 @@ describe('TeamSlotsEditorComponent', () => {
   });
 
   it('removeSlot on a persisted row confirms then DELETEs by id + teamPk', async () => {
-    await setup({ slots: [{ id: 88, weekday: 1, hour_start: '18:00', hour_end: '19:30', place: null }] });
+    await setup({
+      slots: [{ id: 88, weekday: 1, hour_start: '18:00', hour_end: '19:30', place: null }],
+    });
     expect(access(component).slots.length).toBe(1);
     access(component).removeSlot(0);
     expect(teamsMock.teamsTrainingSlotsDestroy).toHaveBeenCalledWith({ id: 88, teamPk: 5 });

@@ -202,7 +202,7 @@ test('two tabs refreshing together stay signed in; logging out in one signs the 
   await second.bringToFront();
   await expectSignedIn(second);
 
-  // PrimeNG's popup menu animates on requestAnimationFrame, which a background
+  // Optimus UI's popup menu animates on requestAnimationFrame, which a background
   // tab does not run.
   await first.bringToFront();
   await logoutFromMenu(first);

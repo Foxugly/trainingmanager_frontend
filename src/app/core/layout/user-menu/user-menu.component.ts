@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { MenuItem } from 'primeng/api';
-import { Button } from 'primeng/button';
-import { Menu } from 'primeng/menu';
+import { MenuItem } from '@openng/optimus-ui/api';
+import { Button } from '@openng/optimus-ui/button';
+import { Menu } from '@openng/optimus-ui/menu';
 import { AuthService } from '../../auth/auth.service';
 
 @Component({

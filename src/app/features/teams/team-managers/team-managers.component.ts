@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { Button } from 'primeng/button';
-import { Dialog } from 'primeng/dialog';
-import { Select } from 'primeng/select';
+import { Button } from '@openng/optimus-ui/button';
+import { Dialog } from '@openng/optimus-ui/dialog';
+import { Select } from '@openng/optimus-ui/select';
 import { CustomUserPublic } from '../../../api/model/custom-user-public';
 import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 

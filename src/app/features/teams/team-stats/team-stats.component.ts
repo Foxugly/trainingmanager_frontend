@@ -14,12 +14,12 @@ import { of } from 'rxjs';
 import { catchError, distinctUntilChanged, filter, switchMap, tap } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { Button } from 'primeng/button';
-import { UIChart } from 'primeng/chart';
-import { DatePicker } from 'primeng/datepicker';
-import { Dialog } from 'primeng/dialog';
-import { Skeleton } from 'primeng/skeleton';
-import { TableModule } from 'primeng/table';
+import { Button } from '@openng/optimus-ui/button';
+import { UIChart } from '@openng/optimus-ui/chart';
+import { DatePicker } from '@openng/optimus-ui/datepicker';
+import { Dialog } from '@openng/optimus-ui/dialog';
+import { Skeleton } from '@openng/optimus-ui/skeleton';
+import { TableModule } from '@openng/optimus-ui/table';
 import { TeamsService } from '../../../api/api/teams.service';
 import { ReviewBlockResponse } from '../../../api/model/review-block-response';
 import { StatsAttendanceByMember } from '../../../api/model/stats-attendance-by-member';
@@ -102,7 +102,7 @@ export class TeamStatsComponent {
   /** Emitted (aggregate mode only) when an athlete row is clicked, for drill-down. */
   readonly selectMember = output<number>();
 
-  /** Range as a two-element [from, to] tuple of Date objects (PrimeNG range mode). */
+  /** Range as a two-element [from, to] tuple of Date objects (Optimus UI range mode). */
   protected readonly range = signal<Date[]>(TeamStatsComponent.defaultRange());
 
   /** When false, the interactive date-range picker + preset buttons are hidden. */

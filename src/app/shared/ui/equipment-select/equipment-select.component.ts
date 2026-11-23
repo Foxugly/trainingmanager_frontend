@@ -19,7 +19,7 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { TranslocoPipe } from '@jsverse/transloco';
-import { MultiSelect } from 'primeng/multiselect';
+import { MultiSelect } from '@openng/optimus-ui/multiselect';
 import { EquipmentService } from '../../../api/api/equipment.service';
 import { Equipment } from '../../../api/model/equipment';
 

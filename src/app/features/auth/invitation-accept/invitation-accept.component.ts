@@ -19,11 +19,11 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { MessageService } from 'primeng/api';
-import { Button } from 'primeng/button';
-import { InputText } from 'primeng/inputtext';
-import { Message } from 'primeng/message';
-import { Password } from 'primeng/password';
+import { MessageService } from '@openng/optimus-ui/api';
+import { Button } from '@openng/optimus-ui/button';
+import { InputText } from '@openng/optimus-ui/inputtext';
+import { Message } from '@openng/optimus-ui/message';
+import { Password } from '@openng/optimus-ui/password';
 import { InvitationsService } from '../../../api/api/invitations.service';
 import { CompleteInvitationRequest } from '../../../api/model/complete-invitation-request';
 import { InvitationStatusEnum } from '../../../api/model/invitation-status-enum';

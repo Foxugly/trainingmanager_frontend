@@ -13,11 +13,11 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { ConfirmationService } from 'primeng/api';
-import { Button } from 'primeng/button';
-import { ConfirmDialog } from 'primeng/confirmdialog';
-import { Fieldset } from 'primeng/fieldset';
-import { Tooltip } from 'primeng/tooltip';
+import { ConfirmationService } from '@openng/optimus-ui/api';
+import { Button } from '@openng/optimus-ui/button';
+import { ConfirmDialog } from '@openng/optimus-ui/confirmdialog';
+import { Fieldset } from '@openng/optimus-ui/fieldset';
+import { Tooltip } from '@openng/optimus-ui/tooltip';
 import { firstValueFrom } from 'rxjs';
 import { ToastService } from '../../../core/notifications/toast.service';
 import { EventsService } from '../../../api/api/events.service';
@@ -228,7 +228,10 @@ export class EventTrainingComponent {
     );
     const map = new Map<number, Exercise[]>();
     for (const rd of sorted) {
-      map.set(rd.id, [...rd.exercises].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
+      map.set(
+        rd.id,
+        [...rd.exercises].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
+      );
     }
     this.exercisesByRound.set(map);
   }

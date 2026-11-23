@@ -12,10 +12,10 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
-import { ConfirmationService } from 'primeng/api';
-import { Button } from 'primeng/button';
-import { ConfirmDialog } from 'primeng/confirmdialog';
-import { Tooltip } from 'primeng/tooltip';
+import { ConfirmationService } from '@openng/optimus-ui/api';
+import { Button } from '@openng/optimus-ui/button';
+import { ConfirmDialog } from '@openng/optimus-ui/confirmdialog';
+import { Tooltip } from '@openng/optimus-ui/tooltip';
 import { AttachmentsService } from '../../../api/api/attachments.service';
 import { Attachment } from '../../../api/model/attachment';
 import { AttachmentStatusEnum } from '../../../api/model/attachment-status-enum';
@@ -77,16 +77,17 @@ export class AttachmentListComponent {
     });
   }
 
-  private load(targetId: number, targetType: 'event' | 'message' | 'program' | 'performance'): void {
+  private load(
+    targetId: number,
+    targetType: 'event' | 'message' | 'program' | 'performance',
+  ): void {
     this.loading.set(true);
     this.attachments
       .attachmentsList({ targetId, targetType })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
-          const ready = (res.results ?? []).filter(
-            (a) => a.status === AttachmentStatusEnum.Ready,
-          );
+          const ready = (res.results ?? []).filter((a) => a.status === AttachmentStatusEnum.Ready);
           this.items.set(ready);
           this.loading.set(false);
         },
@@ -102,7 +103,7 @@ export class AttachmentListComponent {
       });
   }
 
-  /** PrimeIcons class for an attachment's MIME kind. */
+  /** OpenNG Icons (`pi-*`) class for an attachment's MIME kind. */
   protected iconFor(mime: string): string {
     if (mime === 'application/pdf') return 'pi pi-file-pdf';
     if (mime.startsWith('image/')) return 'pi pi-image';

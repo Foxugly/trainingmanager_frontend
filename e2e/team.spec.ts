@@ -21,7 +21,7 @@ test.beforeEach(async ({ page }) => {
  * We then visit /teams and assert the new team shows in the grid (each card
  * renders an <h2> with team.name).
  *
- * Selector notes: PrimeNG widgets are driven via their stable `inputId` (the
+ * Selector notes: Optimus UI widgets are driven via their stable `inputId` (the
  * label text would be locale-dependent — the app defaults to French). Sport
  * option text ("E2E Sport") comes from the seeded sport and is locale-stable.
  */
@@ -34,7 +34,7 @@ test('manager can create a team', async ({ page }) => {
   await page.locator('#name').fill(teamName);
 
   // Sports multiselect: open the panel, tick the seeded sport, close it.
-  // PrimeNG puts inputId (#sport_ids) on a visually-hidden combobox input, not
+  // Optimus UI puts inputId (#sport_ids) on a visually-hidden combobox input, not
   // on the clickable trigger, so click the <p-multiselect> host (its
   // onContainerClick opens the overlay); options land in an overlay as listbox
   // options.
@@ -51,7 +51,7 @@ test('manager can create a team', async ({ page }) => {
   // change, on 2026-07-31):
   //
   //   1. `Escape` only closes the overlay when focus is inside it. After
-  //      clicking an option PrimeNG can leave focus on the host, and the key
+  //      clicking an option Optimus UI can leave focus on the host, and the key
   //      then goes nowhere. Clicking the host toggles the overlay shut whatever
   //      the focus is.
   //   2. Waiting on the option COUNT conflated "overlay gone" with "option gone"

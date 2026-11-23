@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { TranslocoTestingModule } from '@jsverse/transloco';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from '@openng/optimus-ui/api';
 import { of } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AttachmentsService } from '../../../api/api/attachments.service';
@@ -106,7 +106,10 @@ describe('AttachmentListComponent', () => {
   });
 
   it('lists ready attachments for the target (positional targetId, targetType)', () => {
-    expect(attachmentsMock.attachmentsList).toHaveBeenCalledWith({ targetId: 10, targetType: 'message' });
+    expect(attachmentsMock.attachmentsList).toHaveBeenCalledWith({
+      targetId: 10,
+      targetType: 'message',
+    });
     expect(access(component).items().length).toBe(1);
   });
 
@@ -136,12 +139,10 @@ describe('AttachmentListComponent', () => {
 
   it('confirm-delete then destroy removes the item from the list', async () => {
     await setup({ items: [makeAttachment({ id: 7 })], canEdit: true });
-    const confirmSpy = vi
-      .spyOn(confirmationService, 'confirm')
-      .mockImplementation((opts) => {
-        opts.accept?.();
-        return confirmationService;
-      });
+    const confirmSpy = vi.spyOn(confirmationService, 'confirm').mockImplementation((opts) => {
+      opts.accept?.();
+      return confirmationService;
+    });
     access(component).confirmDelete(makeAttachment({ id: 7 }));
     expect(confirmSpy).toHaveBeenCalled();
     expect(attachmentsMock.attachmentsDestroy).toHaveBeenCalledWith({ id: 7 });
@@ -152,6 +153,9 @@ describe('AttachmentListComponent', () => {
     attachmentsMock.attachmentsList.mockClear();
     fixture.componentRef.setInput('targetId', 42);
     fixture.detectChanges();
-    expect(attachmentsMock.attachmentsList).toHaveBeenCalledWith({ targetId: 42, targetType: 'message' });
+    expect(attachmentsMock.attachmentsList).toHaveBeenCalledWith({
+      targetId: 42,
+      targetType: 'message',
+    });
   });
 });
