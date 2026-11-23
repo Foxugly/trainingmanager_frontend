@@ -20,7 +20,7 @@ Backend runs separately at `http://localhost:8000` (set in `src/environments/env
   the fleet** (commercial licence) — see foxugly-ops `STANDARD-frontend-layout.md` « Bibliothèque UI ».
 - SCSS (BEM + design tokens in `src/styles/`) — Tailwind was removed, do not reintroduce utility classes
 - Transloco 8 (5 langs: fr default, nl/en/it/es)
-- Vitest 4
+- Vitest 5
 - openapi-generator-cli (generator 7.21.0 pinned in `openapitools.json`, typescript-angular, `stringEnums=true`)
 
 ## Architecture
