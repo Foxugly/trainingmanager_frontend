@@ -53,14 +53,18 @@ function navigateWithToken(): void {
       name: '/auth/reset-password/abc-123',
       op: 'navigation',
       forceTransaction: true,
-      attributes: { 'sentry.segment.name.source': 'url' },
+      attributes: {
+        'sentry.segment.name.source': 'url',
+        'url.path': '/auth/reset-password/abc-123',
+        'url.full': 'https://tm.foxugly.com/auth/reset-password/abc-123',
+      },
     },
     () => {
       Sentry.startSpan(
         {
           name: 'GET https://tm.foxugly.com/auth/magic-link/s3cr3t',
           op: 'http.client',
-          attributes: { url: 'https://tm.foxugly.com/auth/magic-link/s3cr3t' },
+          attributes: { 'url.full': 'https://tm.foxugly.com/auth/magic-link/s3cr3t' },
         },
         () => undefined,
       );

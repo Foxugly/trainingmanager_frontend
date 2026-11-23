@@ -50,14 +50,22 @@ export function scrubUrl(value: string | undefined): string | undefined {
     .replace(SENSITIVE_QUERY, (_match, prefix: string) => `${prefix}${FILTERED}`);
 }
 
+/**
+ * Mask every string value of a data record (breadcrumb, span, trace). No key
+ * allowlist: the SDK stores URLs under shifting names (`url`, `url.full`,
+ * `url.path`, `http.url`...) and the list missed `url.path`, which carried the
+ * token of the pageload trace to Sentry. `scrubUrl` only rewrites the
+ * sensitive segments, every other value is left unchanged.
+ */
 function scrubRecordUrls(data: Record<string, unknown> | undefined): void {
   if (!data) {
     return;
   }
-  for (const key of ['url', 'from', 'to', 'http.url', 'http.query', 'url.full', 'http.target']) {
-    const value = data[key];
+  for (const [key, value] of Object.entries(data)) {
     if (typeof value === 'string') {
       data[key] = scrubUrl(value);
+    } else if (Array.isArray(value)) {
+      data[key] = value.map((item: unknown) => (typeof item === 'string' ? scrubUrl(item) : item));
     }
   }
 }

@@ -105,3 +105,35 @@ describe('scrubSpan', () => {
     });
   });
 });
+
+describe('span / trace attributes', () => {
+  it('scrubs every URL-bearing attribute, whatever its key (url.path, url.full, ...)', () => {
+    const event = {
+      type: 'transaction',
+      transaction: '/auth/magic-link/:token/',
+      contexts: {
+        trace: {
+          data: {
+            'sentry.op': 'pageload',
+            'url.path': '/auth/magic-link/s3cr3t',
+            'url.full': 'https://tm.foxugly.com/auth/magic-link/s3cr3t',
+          },
+        },
+      },
+      spans: [
+        {
+          description: 'https://tm.foxugly.com/invitation/s3cr3t',
+          data: { 'sentry.op': 'browser.dns', 'url.full': 'https://tm.foxugly.com/invitation/s3cr3t', list: ['/s/e/abc-123', 42] },
+        },
+      ],
+    } as unknown as Event;
+
+    const out = scrubEvent(event);
+
+    expect(JSON.stringify(out)).not.toContain('s3cr3t');
+    expect(JSON.stringify(out)).not.toContain('abc-123');
+    expect(out.contexts?.trace?.data?.['url.path']).toBe(`/auth/magic-link/${FILTERED}`);
+    expect(out.contexts?.trace?.data?.['sentry.op']).toBe('pageload');
+    expect(out.transaction).toBe('/auth/magic-link/:token/');
+  });
+});
