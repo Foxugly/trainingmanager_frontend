@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Common commands
 
 - `npm start` — dev server on http://localhost:4200 (no proxy; calls `environment.apiBase` directly).
-- `npm run build` — production build into `dist/`. Initial-bundle budget set to `1MB` warning / `1.5MB` error in `angular.json` (Angular 21 + Optimus UI 1 + Transloco footprint; check the build output for the current size).
+- `npm run build` — production build into `dist/`. Initial-bundle budget set to `1MB` warning / `1.5MB` error in `angular.json` (Angular 22 + Optimus UI 2 + Transloco footprint; check the build output for the current size).
 - `npm run watch` — incremental dev build.
 - `npm test` — Vitest via `@angular/build:unit-test`. Filter a single spec: `npm test -- --include "src/app/core/auth/auth.service.spec.ts"` (the bare path is interpreted as a project name by `ng test` and fails).
 - `npm run api:gen` — regenerates the typed client in `src/app/api/` from `openapi/Training_Manager_API.yaml` (config in `openapitools.json`).
@@ -14,8 +14,8 @@ Backend runs separately at `http://localhost:8000` (set in `src/environments/env
 
 ## Stack
 
-- Angular 21.2 (TypeScript 5.9 strict)
-- Optimus UI 1 (`@openng/optimus-ui`, MIT community fork of PrimeNG 21: same components, `p-*` selectors and Aura
+- Angular 22.3 (TypeScript 6.0 strict)
+- Optimus UI 2 (`@openng/optimus-ui`, MIT community fork of PrimeNG 21: same components, `p-*` selectors and Aura
   preset, dark mode via `.dark-mode` on `<html>`; `pi pi-*` icons from `@openng/icons`). **PrimeNG ≥ 22 is banned in
   the fleet** (commercial licence) — see foxugly-ops `STANDARD-frontend-layout.md` « Bibliothèque UI ».
 - SCSS (BEM + design tokens in `src/styles/`) — Tailwind was removed, do not reintroduce utility classes
