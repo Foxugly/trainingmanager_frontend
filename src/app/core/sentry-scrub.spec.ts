@@ -1,6 +1,6 @@
 import type { Breadcrumb, Event } from '@sentry/angular';
 import { describe, expect, it } from 'vitest';
-import { FILTERED, scrubBreadcrumb, scrubEvent, scrubUrl } from './sentry-scrub';
+import { FILTERED, scrubBreadcrumb, scrubEvent, scrubSpan, scrubUrl } from './sentry-scrub';
 
 describe('scrubUrl', () => {
   const cases: [string, string][] = [
@@ -89,5 +89,19 @@ describe('scrubEvent / scrubBreadcrumb', () => {
       data: { url: 'https://tm-api.foxugly.com/api/v1/invitations/lookup/secret/' },
     };
     expect(JSON.stringify(scrubBreadcrumb(crumb))).not.toContain('secret');
+  });
+});
+
+describe('scrubSpan', () => {
+  it('scrubs a static span description and its URL attributes', () => {
+    const span = scrubSpan({
+      description: 'GET /auth/magic-link/s3cr3t',
+      data: { 'url.full': 'https://tm.foxugly.com/invitation/abc?token=1', other: 'kept' },
+    });
+    expect(span.description).toBe(`GET /auth/magic-link/${FILTERED}`);
+    expect(span.data).toEqual({
+      'url.full': `https://tm.foxugly.com/invitation/${FILTERED}?token=${FILTERED}`,
+      other: 'kept',
+    });
   });
 });

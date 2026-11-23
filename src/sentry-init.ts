@@ -5,30 +5,16 @@
  *
  * Values come from the runtime config (globals injected by nginx). If the DSN
  * is empty (dev, or a boot before SSM is seeded), Sentry.init is not called —
- * the SDK stays inert, no network calls.
+ * the SDK stays inert, no network calls. The options (token scrubbing
+ * included) live in app/core/sentry-options.ts.
  */
 import * as Sentry from '@sentry/angular';
 
 import { getRuntimeConfig } from './app/core/runtime-config';
-import { scrubBreadcrumb, scrubEvent } from './app/core/sentry-scrub';
+import { buildSentryOptions } from './app/core/sentry-options';
 
 const { sentry } = getRuntimeConfig();
 
 if (sentry.dsn) {
-  Sentry.init({
-    dsn: sentry.dsn,
-    environment: sentry.environment,
-    release: sentry.release || undefined,
-    integrations: [Sentry.browserTracingIntegration()],
-    // 10% of transactions traced in prod: a volume/cost compromise.
-    tracesSampleRate: 0.1,
-    // Propagate trace headers only to our own backend.
-    tracePropagationTargets: [/^https:\/\/tm-api\.foxugly\.com\/api/],
-    // Tokens carried in URLs (confirm / reset / magic-link / invitation /
-    // public event links) are masked in URLs, transaction names, spans and
-    // breadcrumbs (core/sentry-scrub.ts).
-    beforeSend: (event) => scrubEvent(event),
-    beforeSendTransaction: (event) => scrubEvent(event),
-    beforeBreadcrumb: (breadcrumb) => scrubBreadcrumb(breadcrumb),
-  });
+  Sentry.init(buildSentryOptions(sentry));
 }

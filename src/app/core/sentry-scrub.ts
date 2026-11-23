@@ -70,6 +70,18 @@ export function scrubBreadcrumb(breadcrumb: Breadcrumb): Breadcrumb {
   return breadcrumb;
 }
 
+/**
+ * Clean a span in the "static" format (`beforeSendSpan` wrapped with
+ * `Sentry.withStaticSpan`): description and URL attributes.
+ */
+export function scrubSpan<T extends { description?: string; data?: object }>(span: T): T {
+  if (span.description) {
+    span.description = scrubUrl(span.description);
+  }
+  scrubRecordUrls(span.data as Record<string, unknown> | undefined);
+  return span;
+}
+
 /** Clean the fields shared by error events and transactions. */
 export function scrubEvent<T extends Event>(event: T): T {
   if (event.request) {
